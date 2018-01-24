@@ -19,17 +19,16 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     :type enabled: bool
     :param firewall_mode: Web application firewall mode. Possible values
      include: 'Detection', 'Prevention'
-    :type firewall_mode: str or :class:`ApplicationGatewayFirewallMode
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallMode>`
+    :type firewall_mode: str or
+     ~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallMode
     :param rule_set_type: The type of the web application firewall rule set.
      Possible values are: 'OWASP'.
     :type rule_set_type: str
     :param rule_set_version: The version of the rule set type.
     :type rule_set_version: str
     :param disabled_rule_groups: The disabled rule groups.
-    :type disabled_rule_groups: list of
-     :class:`ApplicationGatewayFirewallDisabledRuleGroup
-     <azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallDisabledRuleGroup>`
+    :type disabled_rule_groups:
+     list[~azure.mgmt.network.v2017_03_01.models.ApplicationGatewayFirewallDisabledRuleGroup]
     """
 
     _validation = {
@@ -48,6 +47,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     }
 
     def __init__(self, enabled, firewall_mode, rule_set_type, rule_set_version, disabled_rule_groups=None):
+        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__()
         self.enabled = enabled
         self.firewall_mode = firewall_mode
         self.rule_set_type = rule_set_type

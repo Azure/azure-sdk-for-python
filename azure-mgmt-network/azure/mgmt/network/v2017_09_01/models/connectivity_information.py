@@ -19,12 +19,12 @@ class ConnectivityInformation(Model):
     sending a request.
 
     :ivar hops: List of hops between the source and the destination.
-    :vartype hops: list of :class:`ConnectivityHop
-     <azure.mgmt.network.v2017_09_01.models.ConnectivityHop>`
+    :vartype hops:
+     list[~azure.mgmt.network.v2017_09_01.models.ConnectivityHop]
     :ivar connection_status: The connection status. Possible values include:
      'Unknown', 'Connected', 'Disconnected', 'Degraded'
-    :vartype connection_status: str or :class:`ConnectionStatus
-     <azure.mgmt.network.v2017_09_01.models.ConnectionStatus>`
+    :vartype connection_status: str or
+     ~azure.mgmt.network.v2017_09_01.models.ConnectionStatus
     :ivar avg_latency_in_ms: Average latency in milliseconds.
     :vartype avg_latency_in_ms: int
     :ivar min_latency_in_ms: Minimum latency in milliseconds.
@@ -58,6 +58,7 @@ class ConnectivityInformation(Model):
     }
 
     def __init__(self):
+        super(ConnectivityInformation, self).__init__()
         self.hops = None
         self.connection_status = None
         self.avg_latency_in_ms = None

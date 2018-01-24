@@ -16,17 +16,17 @@ class VirtualMachineScaleSetVMProfile(Model):
     """Describes a virtual machine scale set virtual machine profile.
 
     :param os_profile: The virtual machine scale set OS profile.
-    :type os_profile: :class:`VirtualMachineScaleSetOSProfile
-     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetOSProfile>`
+    :type os_profile:
+     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetOSProfile
     :param storage_profile: The virtual machine scale set storage profile.
-    :type storage_profile: :class:`VirtualMachineScaleSetStorageProfile
-     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetStorageProfile>`
+    :type storage_profile:
+     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetStorageProfile
     :param network_profile: The virtual machine scale set network profile.
-    :type network_profile: :class:`VirtualMachineScaleSetNetworkProfile
-     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetNetworkProfile>`
+    :type network_profile:
+     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetNetworkProfile
     :param extension_profile: The virtual machine scale set extension profile.
-    :type extension_profile: :class:`VirtualMachineScaleSetExtensionProfile
-     <azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetExtensionProfile>`
+    :type extension_profile:
+     ~azure.mgmt.compute.v2015_06_15.models.VirtualMachineScaleSetExtensionProfile
     """
 
     _attribute_map = {
@@ -37,6 +37,7 @@ class VirtualMachineScaleSetVMProfile(Model):
     }
 
     def __init__(self, os_profile=None, storage_profile=None, network_profile=None, extension_profile=None):
+        super(VirtualMachineScaleSetVMProfile, self).__init__()
         self.os_profile = os_profile
         self.storage_profile = storage_profile
         self.network_profile = network_profile

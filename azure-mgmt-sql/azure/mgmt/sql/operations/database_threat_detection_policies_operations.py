@@ -27,6 +27,8 @@ class DatabaseThreatDetectionPoliciesOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -55,13 +57,9 @@ class DatabaseThreatDetectionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DatabaseSecurityAlertPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -123,20 +121,15 @@ class DatabaseThreatDetectionPoliciesOperations(object):
          Threat Detection policy is defined.
         :type database_name: str
         :param parameters: The database Threat Detection policy.
-        :type parameters: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>`
+        :type parameters: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DatabaseSecurityAlertPolicy
-         <azure.mgmt.sql.models.DatabaseSecurityAlertPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DatabaseSecurityAlertPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

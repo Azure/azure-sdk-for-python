@@ -16,11 +16,10 @@ class ConnectivityParameters(Model):
     """Parameters that determine how the connectivity check will be performed.
 
     :param source:
-    :type source: :class:`ConnectivitySource
-     <azure.mgmt.network.v2017_06_01.models.ConnectivitySource>`
+    :type source: ~azure.mgmt.network.v2017_06_01.models.ConnectivitySource
     :param destination:
-    :type destination: :class:`ConnectivityDestination
-     <azure.mgmt.network.v2017_06_01.models.ConnectivityDestination>`
+    :type destination:
+     ~azure.mgmt.network.v2017_06_01.models.ConnectivityDestination
     """
 
     _validation = {
@@ -34,5 +33,6 @@ class ConnectivityParameters(Model):
     }
 
     def __init__(self, source, destination):
+        super(ConnectivityParameters, self).__init__()
         self.source = source
         self.destination = destination

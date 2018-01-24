@@ -16,9 +16,9 @@ class GetObjectsParameters(Model):
     """Request parameters for the GetObjectsByObjectIds API.
 
     :param object_ids: The requested object IDs.
-    :type object_ids: list of str
+    :type object_ids: list[str]
     :param types: The requested object types.
-    :type types: list of str
+    :type types: list[str]
     :param include_directory_object_references: If true, also searches for
      object IDs in the partner tenant.
     :type include_directory_object_references: bool

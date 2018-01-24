@@ -26,6 +26,8 @@ class ResourceSkusOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2017-03-30".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -45,10 +47,9 @@ class ResourceSkusOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ResourceSku
-         <azure.mgmt.compute.v2017_03_30.models.ResourceSku>`
-        :rtype: :class:`ResourceSkuPaged
-         <azure.mgmt.compute.v2017_03_30.models.ResourceSkuPaged>`
+        :return: An iterator like instance of ResourceSku
+        :rtype:
+         ~azure.mgmt.compute.v2017_03_30.models.ResourceSkuPaged[~azure.mgmt.compute.v2017_03_30.models.ResourceSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -82,7 +83,7 @@ class ResourceSkusOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

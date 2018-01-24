@@ -15,13 +15,16 @@ from .dataset_storage_format import DatasetStorageFormat
 class ParquetFormat(DatasetStorageFormat):
     """The data stored in Parquet format.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param serializer: Serializer. Type: string (or Expression with resultType
      string).
     :type serializer: object
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -29,6 +32,6 @@ class ParquetFormat(DatasetStorageFormat):
         'type': {'required': True},
     }
 
-    def __init__(self, serializer=None, deserializer=None):
-        super(ParquetFormat, self).__init__(serializer=serializer, deserializer=deserializer)
+    def __init__(self, additional_properties=None, serializer=None, deserializer=None):
+        super(ParquetFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer)
         self.type = 'ParquetFormat'

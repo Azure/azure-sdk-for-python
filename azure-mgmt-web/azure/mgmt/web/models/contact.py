@@ -19,7 +19,7 @@ class Contact(Model):
     directories as per ICANN requirements.
 
     :param address_mailing: Mailing address.
-    :type address_mailing: :class:`Address <azure.mgmt.web.models.Address>`
+    :type address_mailing: ~azure.mgmt.web.models.Address
     :param email: Email address.
     :type email: str
     :param fax: Fax number.

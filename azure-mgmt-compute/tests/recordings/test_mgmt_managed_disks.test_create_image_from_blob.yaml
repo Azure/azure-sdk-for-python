@@ -14,7 +14,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [aaefdaec-5d36-11e7-af9e-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage?api-version=2017-12-01
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\":
         {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n
@@ -24,7 +24,7 @@ interactions:
         \ \"location\": \"westus\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage\",\r\n
         \ \"name\": \"myImage\"\r\n}"}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/53c76029-51ee-40c5-843a-3ab96eba05f4?api-version=2017-03-30']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/53c76029-51ee-40c5-843a-3ab96eba05f4?api-version=2017-12-01']
       Cache-Control: [no-cache]
       Content-Length: ['622']
       Content-Type: [application/json; charset=utf-8]
@@ -51,7 +51,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [aaefdaec-5d36-11e7-af9e-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/53c76029-51ee-40c5-843a-3ab96eba05f4?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/53c76029-51ee-40c5-843a-3ab96eba05f4?api-version=2017-12-01
   response:
     body: {string: "{\r\n  \"startTime\": \"2017-06-30T01:51:43.9432726+00:00\",\r\n
         \ \"endTime\": \"2017-06-30T01:52:04.5545491+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
@@ -85,7 +85,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [aaefdaec-5d36-11e7-af9e-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_create_image_from_blob1cfb14b2/providers/Microsoft.Compute/images/myImage?api-version=2017-12-01
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"storageProfile\": {\r\n      \"osDisk\":
         {\r\n        \"osType\": \"Linux\",\r\n        \"osState\": \"Generalized\",\r\n

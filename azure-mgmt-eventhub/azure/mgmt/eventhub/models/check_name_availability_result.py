@@ -27,8 +27,7 @@ class CheckNameAvailabilityResult(Model):
     :param reason: The reason for unavailability of a Namespace. Possible
      values include: 'None', 'InvalidName', 'SubscriptionIsDisabled',
      'NameInUse', 'NameInLockdown', 'TooManyNamespaceInCurrentSubscription'
-    :type reason: str or :class:`UnavailableReason
-     <azure.mgmt.eventhub.models.UnavailableReason>`
+    :type reason: str or ~azure.mgmt.eventhub.models.UnavailableReason
     """
 
     _validation = {
@@ -42,6 +41,7 @@ class CheckNameAvailabilityResult(Model):
     }
 
     def __init__(self, name_available=None, reason=None):
+        super(CheckNameAvailabilityResult, self).__init__()
         self.message = None
         self.name_available = name_available
         self.reason = reason

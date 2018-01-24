@@ -27,6 +27,8 @@ class VirtualNetworkRulesOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -54,13 +56,9 @@ class VirtualNetworkRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualNetworkRule
-         <azure.mgmt.sql.models.VirtualNetworkRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualNetworkRule
-         <azure.mgmt.sql.models.VirtualNetworkRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualNetworkRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.VirtualNetworkRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -108,7 +106,7 @@ class VirtualNetworkRulesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, virtual_network_rule_name, virtual_network_subnet_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, virtual_network_rule_name, virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an existing virtual network rule.
 
         :param resource_group_name: The name of the resource group that
@@ -123,21 +121,20 @@ class VirtualNetworkRulesOperations(object):
         :param virtual_network_subnet_id: The ARM resource id of the virtual
          network subnet.
         :type virtual_network_subnet_id: str
+        :param ignore_missing_vnet_service_endpoint: Create firewall rule
+         before the virtual network has vnet service endpoint enabled.
+        :type ignore_missing_vnet_service_endpoint: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualNetworkRule
-         <azure.mgmt.sql.models.VirtualNetworkRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         VirtualNetworkRule or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.VirtualNetworkRule]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id)
+        parameters = models.VirtualNetworkRule(virtual_network_subnet_id=virtual_network_subnet_id, ignore_missing_vnet_service_endpoint=ignore_missing_vnet_service_endpoint)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{virtualNetworkRuleName}'
@@ -183,7 +180,7 @@ class VirtualNetworkRulesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 201]:
+            if response.status_code not in [200, 201, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -228,14 +225,10 @@ class VirtualNetworkRulesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -313,10 +306,9 @@ class VirtualNetworkRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualNetworkRule
-         <azure.mgmt.sql.models.VirtualNetworkRule>`
-        :rtype: :class:`VirtualNetworkRulePaged
-         <azure.mgmt.sql.models.VirtualNetworkRulePaged>`
+        :return: An iterator like instance of VirtualNetworkRule
+        :rtype:
+         ~azure.mgmt.sql.models.VirtualNetworkRulePaged[~azure.mgmt.sql.models.VirtualNetworkRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -19,15 +19,15 @@ class ResourceSkuRestrictions(Model):
     sending a request.
 
     :ivar type: The type of restrictions. Possible values include: 'Location'
-    :vartype type: str or :class:`ResourceSkuRestrictionsType
-     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictionsType>`
+    :vartype type: str or
+     ~azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictionsType
     :ivar values: The value of restrictions. If the restriction type is set to
      location. This would be different locations where the SKU is restricted.
-    :vartype values: list of str
+    :vartype values: list[str]
     :ivar reason_code: The reason for restriction. Possible values include:
      'QuotaId', 'NotAvailableForSubscription'
-    :vartype reason_code: str or :class:`ResourceSkuRestrictionsReasonCode
-     <azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictionsReasonCode>`
+    :vartype reason_code: str or
+     ~azure.mgmt.compute.v2017_03_30.models.ResourceSkuRestrictionsReasonCode
     """
 
     _validation = {
@@ -43,6 +43,7 @@ class ResourceSkuRestrictions(Model):
     }
 
     def __init__(self):
+        super(ResourceSkuRestrictions, self).__init__()
         self.type = None
         self.values = None
         self.reason_code = None

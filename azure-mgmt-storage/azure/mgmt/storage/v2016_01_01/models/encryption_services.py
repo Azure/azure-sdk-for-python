@@ -16,8 +16,7 @@ class EncryptionServices(Model):
     """A list of services that support encryption.
 
     :param blob: The encryption function of the blob storage service.
-    :type blob: :class:`EncryptionService
-     <azure.mgmt.storage.v2016_01_01.models.EncryptionService>`
+    :type blob: ~azure.mgmt.storage.v2016_01_01.models.EncryptionService
     """
 
     _attribute_map = {
@@ -25,4 +24,5 @@ class EncryptionServices(Model):
     }
 
     def __init__(self, blob=None):
+        super(EncryptionServices, self).__init__()
         self.blob = blob

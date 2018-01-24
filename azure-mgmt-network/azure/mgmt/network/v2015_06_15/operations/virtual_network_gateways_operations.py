@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -27,6 +28,8 @@ class VirtualNetworkGatewaysOperations(object):
     :ivar api_version: Client API version. Constant value: "2015-06-15".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -36,34 +39,9 @@ class VirtualNetworkGatewaysOperations(object):
 
         self.config = config
 
-    def create_or_update(
-            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a virtual network gateway in the specified resource
-        group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param virtual_network_gateway_name: The name of the virtual network
-         gateway.
-        :type virtual_network_gateway_name: str
-        :param parameters: Parameters supplied to create or update virtual
-         network gateway operation.
-        :type parameters: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
         path_format_arguments = {
@@ -91,19 +69,76 @@ class VirtualNetworkGatewaysOperations(object):
         body_content = self._serialize.body(parameters, 'VirtualNetworkGateway')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualNetworkGateway', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('VirtualNetworkGateway', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a virtual network gateway in the specified resource
+        group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param virtual_network_gateway_name: The name of the virtual network
+         gateway.
+        :type virtual_network_gateway_name: str
+        :param parameters: Parameters supplied to create or update virtual
+         network gateway operation.
+        :type parameters:
+         ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VirtualNetworkGateway or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            virtual_network_gateway_name=virtual_network_gateway_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -112,22 +147,13 @@ class VirtualNetworkGatewaysOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('VirtualNetworkGateway', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('VirtualNetworkGateway', response)
+            deserialized = self._deserialize('VirtualNetworkGateway', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -150,13 +176,9 @@ class VirtualNetworkGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VirtualNetworkGateway or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -184,7 +206,7 @@ class VirtualNetworkGatewaysOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -202,28 +224,9 @@ class VirtualNetworkGatewaysOperations(object):
 
         return deserialized
 
-    def delete(
-            self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified virtual network gateway.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param virtual_network_gateway_name: The name of the virtual network
-         gateway.
-        :type virtual_network_gateway_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
         path_format_arguments = {
@@ -248,22 +251,63 @@ class VirtualNetworkGatewaysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete(
+            self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified virtual network gateway.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param virtual_network_gateway_name: The name of the virtual network
+         gateway.
+        :type virtual_network_gateway_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            virtual_network_gateway_name=virtual_network_gateway_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 202, 200]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -271,10 +315,6 @@ class VirtualNetworkGatewaysOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -294,10 +334,9 @@ class VirtualNetworkGatewaysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>`
-        :rtype: :class:`VirtualNetworkGatewayPaged
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayPaged>`
+        :return: An iterator like instance of VirtualNetworkGateway
+        :rtype:
+         ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGatewayPaged[~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -332,7 +371,7 @@ class VirtualNetworkGatewaysOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -351,34 +390,9 @@ class VirtualNetworkGatewaysOperations(object):
 
         return deserialized
 
-    def reset(
-            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Resets the primary of the virtual network gateway in the specified
-        resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param virtual_network_gateway_name: The name of the virtual network
-         gateway.
-        :type virtual_network_gateway_name: str
-        :param parameters: Virtual network gateway vip address supplied to the
-         begin reset of the active-active feature enabled gateway.
-        :type parameters: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _reset_initial(
+            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/reset'
         path_format_arguments = {
@@ -406,41 +420,89 @@ class VirtualNetworkGatewaysOperations(object):
         body_content = self._serialize.body(parameters, 'VirtualNetworkGateway')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualNetworkGateway', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def reset(
+            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Resets the primary of the virtual network gateway in the specified
+        resource group.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param virtual_network_gateway_name: The name of the virtual network
+         gateway.
+        :type virtual_network_gateway_name: str
+        :param parameters: Virtual network gateway vip address supplied to the
+         begin reset of the active-active feature enabled gateway.
+        :type parameters:
+         ~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         VirtualNetworkGateway or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2015_06_15.models.VirtualNetworkGateway]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._reset_initial(
+            resource_group_name=resource_group_name,
+            virtual_network_gateway_name=virtual_network_gateway_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 200]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('VirtualNetworkGateway', response)
+            deserialized = self._deserialize('VirtualNetworkGateway', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -462,18 +524,15 @@ class VirtualNetworkGatewaysOperations(object):
         :param processor_architecture: VPN client Processor Architecture.
          Possible values are: 'AMD64' and 'X86'. Possible values include:
          'Amd64', 'X86'
-        :type processor_architecture: str or :class:`ProcessorArchitecture
-         <azure.mgmt.network.v2015_06_15.models.ProcessorArchitecture>`
+        :type processor_architecture: str or
+         ~azure.mgmt.network.v2015_06_15.models.ProcessorArchitecture
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.VpnClientParameters(processor_architecture=processor_architecture)
@@ -507,7 +566,7 @@ class VirtualNetworkGatewaysOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             exp = CloudError(response)

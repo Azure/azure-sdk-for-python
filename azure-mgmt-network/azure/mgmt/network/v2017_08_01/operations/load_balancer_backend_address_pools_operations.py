@@ -26,6 +26,8 @@ class LoadBalancerBackendAddressPoolsOperations(object):
     :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -48,10 +50,9 @@ class LoadBalancerBackendAddressPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>`
-        :rtype: :class:`BackendAddressPoolPaged
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPoolPaged>`
+        :return: An iterator like instance of BackendAddressPool
+        :rtype:
+         ~azure.mgmt.network.v2017_08_01.models.BackendAddressPoolPaged[~azure.mgmt.network.v2017_08_01.models.BackendAddressPool]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -87,7 +88,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -122,13 +123,9 @@ class LoadBalancerBackendAddressPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackendAddressPool
-         <azure.mgmt.network.v2017_08_01.models.BackendAddressPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackendAddressPool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_08_01.models.BackendAddressPool or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -157,7 +154,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

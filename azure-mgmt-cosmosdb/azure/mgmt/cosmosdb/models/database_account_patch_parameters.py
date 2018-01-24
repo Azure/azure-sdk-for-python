@@ -16,16 +16,12 @@ class DatabaseAccountPatchParameters(Model):
     """Parameters for patching Azure Cosmos DB database account properties.
 
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     """
-
-    _validation = {
-        'tags': {'required': True},
-    }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, tags):
+    def __init__(self, tags=None):
         self.tags = tags

@@ -28,12 +28,11 @@ class DatabaseAccount(Resource):
      belongs.
     :type location: str
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     :param kind: Indicates the type of database account. This can only be set
      at database account creation. Possible values include: 'GlobalDocumentDB',
      'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
-    :type kind: str or :class:`DatabaseAccountKind
-     <azure.mgmt.cosmosdb.models.DatabaseAccountKind>`
+    :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
     :param provisioning_state:
     :type provisioning_state: str
     :ivar document_endpoint: The connection endpoint for the Cosmos DB
@@ -43,8 +42,7 @@ class DatabaseAccount(Resource):
      database account. Default value: Standard. Possible values include:
      'Standard'
     :vartype database_account_offer_type: str or
-     :class:`DatabaseAccountOfferType
-     <azure.mgmt.cosmosdb.models.DatabaseAccountOfferType>`
+     ~azure.mgmt.cosmosdb.models.DatabaseAccountOfferType
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
      as the allowed list of client IPs for a given database account. IP
@@ -57,20 +55,17 @@ class DatabaseAccount(Resource):
     :type enable_automatic_failover: bool
     :param consistency_policy: The consistency policy for the Cosmos DB
      database account.
-    :type consistency_policy: :class:`ConsistencyPolicy
-     <azure.mgmt.cosmosdb.models.ConsistencyPolicy>`
+    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
     :ivar write_locations: An array that contains the write location for the
      Cosmos DB account.
-    :vartype write_locations: list of :class:`Location
-     <azure.mgmt.cosmosdb.models.Location>`
+    :vartype write_locations: list[~azure.mgmt.cosmosdb.models.Location]
     :ivar read_locations: An array that contains of the read locations enabled
      for the Cosmos DB account.
-    :vartype read_locations: list of :class:`Location
-     <azure.mgmt.cosmosdb.models.Location>`
+    :vartype read_locations: list[~azure.mgmt.cosmosdb.models.Location]
     :ivar failover_policies: An array that contains the regions ordered by
      their failover priorities.
-    :vartype failover_policies: list of :class:`FailoverPolicy
-     <azure.mgmt.cosmosdb.models.FailoverPolicy>`
+    :vartype failover_policies:
+     list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
     """
 
     _validation = {

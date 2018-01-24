@@ -27,6 +27,8 @@ class GeoBackupPoliciesOperations(object):
     :ivar geo_backup_policy_name: The name of the geo backup policy. Constant value: "Default".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -51,20 +53,15 @@ class GeoBackupPoliciesOperations(object):
         :type database_name: str
         :param state: The state of the geo backup policy. Possible values
          include: 'Disabled', 'Enabled'
-        :type state: str or :class:`GeoBackupPolicyState
-         <azure.mgmt.sql.models.GeoBackupPolicyState>`
+        :type state: str or ~azure.mgmt.sql.models.GeoBackupPolicyState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`GeoBackupPolicy
-         <azure.mgmt.sql.models.GeoBackupPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`GeoBackupPolicy
-         <azure.mgmt.sql.models.GeoBackupPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: GeoBackupPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.GeoBackupPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.GeoBackupPolicy(state=state)
@@ -102,16 +99,16 @@ class GeoBackupPoliciesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [201, 200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('GeoBackupPolicy', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('GeoBackupPolicy', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('GeoBackupPolicy', response)
 
         if raw:
@@ -137,13 +134,9 @@ class GeoBackupPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`GeoBackupPolicy
-         <azure.mgmt.sql.models.GeoBackupPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`GeoBackupPolicy
-         <azure.mgmt.sql.models.GeoBackupPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: GeoBackupPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.GeoBackupPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -208,10 +201,9 @@ class GeoBackupPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`GeoBackupPolicy
-         <azure.mgmt.sql.models.GeoBackupPolicy>`
-        :rtype: :class:`GeoBackupPolicyPaged
-         <azure.mgmt.sql.models.GeoBackupPolicyPaged>`
+        :return: An iterator like instance of GeoBackupPolicy
+        :rtype:
+         ~azure.mgmt.sql.models.GeoBackupPolicyPaged[~azure.mgmt.sql.models.GeoBackupPolicy]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

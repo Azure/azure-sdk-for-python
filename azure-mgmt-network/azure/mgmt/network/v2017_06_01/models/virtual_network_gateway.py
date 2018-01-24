@@ -27,21 +27,19 @@ class VirtualNetworkGateway(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param ip_configurations: IP configurations for virtual network gateway.
-    :type ip_configurations: list of
-     :class:`VirtualNetworkGatewayIPConfiguration
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayIPConfiguration>`
+    :type ip_configurations:
+     list[~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayIPConfiguration]
     :param gateway_type: The type of this virtual network gateway. Possible
      values are: 'Vpn' and 'ExpressRoute'. Possible values include: 'Vpn',
      'ExpressRoute'
-    :type gateway_type: str or :class:`VirtualNetworkGatewayType
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayType>`
+    :type gateway_type: str or
+     ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewayType
     :param vpn_type: The type of this virtual network gateway. Possible values
      are: 'PolicyBased' and 'RouteBased'. Possible values include:
      'PolicyBased', 'RouteBased'
-    :type vpn_type: str or :class:`VpnType
-     <azure.mgmt.network.v2017_06_01.models.VpnType>`
+    :type vpn_type: str or ~azure.mgmt.network.v2017_06_01.models.VpnType
     :param enable_bgp: Whether BGP is enabled for this virtual network gateway
      or not.
     :type enable_bgp: bool
@@ -50,20 +48,18 @@ class VirtualNetworkGateway(Resource):
     :param gateway_default_site: The reference of the LocalNetworkGateway
      resource which represents local network site having default routes. Assign
      Null value in case of removing existing default site setting.
-    :type gateway_default_site: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type gateway_default_site:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param sku: The reference of the VirtualNetworkGatewaySku resource which
      represents the SKU selected for Virtual network gateway.
-    :type sku: :class:`VirtualNetworkGatewaySku
-     <azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySku>`
+    :type sku: ~azure.mgmt.network.v2017_06_01.models.VirtualNetworkGatewaySku
     :param vpn_client_configuration: The reference of the
      VpnClientConfiguration resource which represents the P2S VpnClient
      configurations.
-    :type vpn_client_configuration: :class:`VpnClientConfiguration
-     <azure.mgmt.network.v2017_06_01.models.VpnClientConfiguration>`
+    :type vpn_client_configuration:
+     ~azure.mgmt.network.v2017_06_01.models.VpnClientConfiguration
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
-    :type bgp_settings: :class:`BgpSettings
-     <azure.mgmt.network.v2017_06_01.models.BgpSettings>`
+    :type bgp_settings: ~azure.mgmt.network.v2017_06_01.models.BgpSettings
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.
     :type resource_guid: str

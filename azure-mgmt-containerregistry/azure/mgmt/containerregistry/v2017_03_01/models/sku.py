@@ -23,8 +23,8 @@ class Sku(Model):
     :type name: str
     :ivar tier: The SKU tier based on the SKU name. Possible values include:
      'Basic'
-    :vartype tier: str or :class:`SkuTier
-     <azure.mgmt.containerregistry.v2017_03_01.models.SkuTier>`
+    :vartype tier: str or
+     ~azure.mgmt.containerregistry.v2017_03_01.models.SkuTier
     """
 
     _validation = {

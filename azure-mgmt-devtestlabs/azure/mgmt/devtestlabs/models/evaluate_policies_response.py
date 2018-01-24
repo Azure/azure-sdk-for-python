@@ -16,8 +16,7 @@ class EvaluatePoliciesResponse(Model):
     """Response body for evaluating a policy set.
 
     :param results: Results of evaluating a policy set.
-    :type results: list of :class:`PolicySetResult
-     <azure.mgmt.devtestlabs.models.PolicySetResult>`
+    :type results: list[~azure.mgmt.devtestlabs.models.PolicySetResult]
     """
 
     _attribute_map = {

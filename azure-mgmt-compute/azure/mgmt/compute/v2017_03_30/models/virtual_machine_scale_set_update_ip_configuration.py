@@ -20,33 +20,31 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
     :param name: The IP configuration name.
     :type name: str
     :param subnet: The subnet.
-    :type subnet: :class:`ApiEntityReference
-     <azure.mgmt.compute.v2017_03_30.models.ApiEntityReference>`
+    :type subnet: ~azure.mgmt.compute.v2017_03_30.models.ApiEntityReference
     :param primary: Specifies the primary IP Configuration in case the network
      interface has more than one IP Configuration.
     :type primary: bool
     :param public_ip_address_configuration: The publicIPAddressConfiguration.
     :type public_ip_address_configuration:
-     :class:`VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration>`
+     ~azure.mgmt.compute.v2017_03_30.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
     :param private_ip_address_version: Available from Api-Version 2017-03-30
      onwards, it represents whether the specific ipconfiguration is IPv4 or
      IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
      Possible values include: 'IPv4', 'IPv6'
-    :type private_ip_address_version: str or :class:`IPVersion
-     <azure.mgmt.compute.v2017_03_30.models.IPVersion>`
+    :type private_ip_address_version: str or
+     ~azure.mgmt.compute.v2017_03_30.models.IPVersion
     :param application_gateway_backend_address_pools: The application gateway
      backend address pools.
-    :type application_gateway_backend_address_pools: list of
-     :class:`SubResource <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type application_gateway_backend_address_pools:
+     list[~azure.mgmt.compute.v2017_03_30.models.SubResource]
     :param load_balancer_backend_address_pools: The load balancer backend
      address pools.
-    :type load_balancer_backend_address_pools: list of :class:`SubResource
-     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type load_balancer_backend_address_pools:
+     list[~azure.mgmt.compute.v2017_03_30.models.SubResource]
     :param load_balancer_inbound_nat_pools: The load balancer inbound nat
      pools.
-    :type load_balancer_inbound_nat_pools: list of :class:`SubResource
-     <azure.mgmt.compute.v2017_03_30.models.SubResource>`
+    :type load_balancer_inbound_nat_pools:
+     list[~azure.mgmt.compute.v2017_03_30.models.SubResource]
     """
 
     _attribute_map = {

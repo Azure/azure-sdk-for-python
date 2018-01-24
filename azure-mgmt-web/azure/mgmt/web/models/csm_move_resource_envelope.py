@@ -19,7 +19,7 @@ class CsmMoveResourceEnvelope(Model):
     :param target_resource_group:
     :type target_resource_group: str
     :param resources:
-    :type resources: list of str
+    :type resources: list[str]
     """
 
     _validation = {

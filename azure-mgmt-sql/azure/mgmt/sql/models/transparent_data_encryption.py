@@ -28,8 +28,8 @@ class TransparentDataEncryption(ProxyResource):
     :vartype location: str
     :param status: The status of the database transparent data encryption.
      Possible values include: 'Enabled', 'Disabled'
-    :type status: str or :class:`TransparentDataEncryptionStatus
-     <azure.mgmt.sql.models.TransparentDataEncryptionStatus>`
+    :type status: str or
+     ~azure.mgmt.sql.models.TransparentDataEncryptionStatus
     """
 
     _validation = {

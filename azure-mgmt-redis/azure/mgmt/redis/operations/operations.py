@@ -45,10 +45,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Operation
-         <azure.mgmt.redis.models.Operation>`
-        :rtype: :class:`OperationPaged
-         <azure.mgmt.redis.models.OperationPaged>`
+        :return: An iterator like instance of Operation
+        :rtype:
+         ~azure.mgmt.redis.models.OperationPaged[~azure.mgmt.redis.models.Operation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

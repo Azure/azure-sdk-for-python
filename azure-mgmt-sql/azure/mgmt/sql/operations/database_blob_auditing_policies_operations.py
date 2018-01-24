@@ -27,6 +27,8 @@ class DatabaseBlobAuditingPoliciesOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -55,13 +57,9 @@ class DatabaseBlobAuditingPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DatabaseBlobAuditingPolicy
-         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DatabaseBlobAuditingPolicy
-         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DatabaseBlobAuditingPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -123,20 +121,15 @@ class DatabaseBlobAuditingPoliciesOperations(object):
          auditing policy will be defined.
         :type database_name: str
         :param parameters: The database blob auditing policy.
-        :type parameters: :class:`DatabaseBlobAuditingPolicy
-         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>`
+        :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DatabaseBlobAuditingPolicy
-         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DatabaseBlobAuditingPolicy
-         <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DatabaseBlobAuditingPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

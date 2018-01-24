@@ -9,6 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .acl_create_or_update_parameters import AclCreateOrUpdateParameters
+from .acl_delete_parameters import AclDeleteParameters
+from .acl import Acl
+from .acl_list import AclList
 from .data_lake_analytics_catalog_secret_create_or_update_parameters import DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
 from .data_lake_analytics_catalog_credential_create_parameters import DataLakeAnalyticsCatalogCredentialCreateParameters
 from .data_lake_analytics_catalog_credential_delete_parameters import DataLakeAnalyticsCatalogCredentialDeleteParameters
@@ -56,10 +60,16 @@ from .usql_assembly_clr_paged import USqlAssemblyClrPaged
 from .usql_schema_paged import USqlSchemaPaged
 from .usql_database_paged import USqlDatabasePaged
 from .data_lake_analytics_catalog_management_client_enums import (
+    AclType,
+    PermissionType,
     FileType,
 )
 
 __all__ = [
+    'AclCreateOrUpdateParameters',
+    'AclDeleteParameters',
+    'Acl',
+    'AclList',
     'DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters',
     'DataLakeAnalyticsCatalogCredentialCreateParameters',
     'DataLakeAnalyticsCatalogCredentialDeleteParameters',
@@ -106,5 +116,7 @@ __all__ = [
     'USqlAssemblyClrPaged',
     'USqlSchemaPaged',
     'USqlDatabasePaged',
+    'AclType',
+    'PermissionType',
     'FileType',
 ]

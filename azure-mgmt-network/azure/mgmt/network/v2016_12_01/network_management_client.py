@@ -66,14 +66,12 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(NetworkManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('networkmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-network/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -221,13 +219,10 @@ class NetworkManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DnsNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.network.v2016_12_01.models.DnsNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -256,7 +251,7 @@ class NetworkManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

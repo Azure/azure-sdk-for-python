@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.container_services_operations import ContainerServicesOperations
+from .operations.managed_clusters_operations import ManagedClustersOperations
 from . import models
 
 
@@ -39,14 +40,12 @@ class ContainerServiceClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(ContainerServiceClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('containerserviceclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-containerservice/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -61,6 +60,8 @@ class ContainerServiceClient(object):
 
     :ivar container_services: ContainerServices operations
     :vartype container_services: azure.mgmt.containerservice.operations.ContainerServicesOperations
+    :ivar managed_clusters: ManagedClusters operations
+    :vartype managed_clusters: azure.mgmt.containerservice.operations.ManagedClustersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -79,9 +80,10 @@ class ContainerServiceClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-01-31'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.container_services = ContainerServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_clusters = ManagedClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -24,6 +24,8 @@ class EventHubsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Client API Version. Constant value: "2017-04-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -48,8 +50,9 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EventhubPaged
-         <azure.mgmt.eventhub.models.EventhubPaged>`
+        :return: An iterator like instance of Eventhub
+        :rtype:
+         ~azure.mgmt.eventhub.models.EventhubPaged[~azure.mgmt.eventhub.models.Eventhub]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -86,7 +89,7 @@ class EventHubsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -117,16 +120,15 @@ class EventHubsOperations(object):
         :type event_hub_name: str
         :param parameters: Parameters supplied to create an Event Hub
          resource.
-        :type parameters: :class:`Eventhub
-         <azure.mgmt.eventhub.models.Eventhub>`
+        :type parameters: ~azure.mgmt.eventhub.models.Eventhub
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Eventhub <azure.mgmt.eventhub.models.Eventhub>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Eventhub or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.Eventhub or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -135,7 +137,7 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -160,7 +162,7 @@ class EventHubsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -192,9 +194,8 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -203,7 +204,7 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -224,9 +225,9 @@ class EventHubsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -249,9 +250,9 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Eventhub <azure.mgmt.eventhub.models.Eventhub>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Eventhub or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.Eventhub or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -260,7 +261,7 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -281,7 +282,7 @@ class EventHubsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -313,8 +314,9 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AuthorizationRulePaged
-         <azure.mgmt.eventhub.models.AuthorizationRulePaged>`
+        :return: An iterator like instance of AuthorizationRule
+        :rtype:
+         ~azure.mgmt.eventhub.models.AuthorizationRulePaged[~azure.mgmt.eventhub.models.AuthorizationRule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -326,7 +328,7 @@ class EventHubsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -352,7 +354,7 @@ class EventHubsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -370,7 +372,7 @@ class EventHubsOperations(object):
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, rights=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an AuthorizationRule for the specified Event Hub.
 
         :param resource_group_name: Name of the resource group within the
@@ -383,17 +385,15 @@ class EventHubsOperations(object):
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
-        :type rights: list of str or :class:`AccessRights
-         <azure.mgmt.eventhub.models.AccessRights>`
+        :type rights: list[str or ~azure.mgmt.eventhub.models.AccessRights]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AuthorizationRule
-         <azure.mgmt.eventhub.models.AuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -404,8 +404,8 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -430,7 +430,7 @@ class EventHubsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -464,10 +464,9 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AuthorizationRule
-         <azure.mgmt.eventhub.models.AuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -476,8 +475,8 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -498,7 +497,7 @@ class EventHubsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -532,9 +531,8 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -543,8 +541,8 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -565,9 +563,9 @@ class EventHubsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -592,9 +590,9 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccessKeys <azure.mgmt.eventhub.models.AccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -603,8 +601,8 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -625,7 +623,7 @@ class EventHubsOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -656,8 +654,7 @@ class EventHubsOperations(object):
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
-        :type key_type: str or :class:`KeyType
-         <azure.mgmt.eventhub.models.KeyType>`
+        :type key_type: str or ~azure.mgmt.eventhub.models.KeyType
         :param key: Optional, if the key value provided, is set for KeyType or
          autogenerated Key value set for keyType
         :type key: str
@@ -666,9 +663,9 @@ class EventHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccessKeys <azure.mgmt.eventhub.models.AccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.eventhub.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -679,8 +676,8 @@ class EventHubsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -705,7 +702,7 @@ class EventHubsOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)

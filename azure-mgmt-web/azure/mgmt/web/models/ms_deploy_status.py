@@ -30,8 +30,8 @@ class MSDeployStatus(ProxyOnlyResource):
     :vartype deployer: str
     :ivar provisioning_state: Provisioning state. Possible values include:
      'accepted', 'running', 'succeeded', 'failed', 'canceled'
-    :vartype provisioning_state: str or :class:`MSDeployProvisioningState
-     <azure.mgmt.web.models.MSDeployProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.web.models.MSDeployProvisioningState
     :ivar start_time: Start time of deploy operation
     :vartype start_time: datetime
     :ivar end_time: End time of deploy operation

@@ -3,6 +3,36 @@
 Release History
 ===============
 
+0.4.0 (2017-12-12)
+++++++++++++++++++
+
+**Features**
+
+- Add alternate_name to some models (GEO DR pairing)
+- Add disaster_recovery_configs.check_name_availability_method
+- Add disaster_recovery_configs.list_authorization_rules
+- Add disaster_recovery_configs.get_authorization_rule
+- Add disaster_recovery_configs.list_keys
+
+0.3.1 (2017-12-08)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Add missing forward_to, forward_dead_lettered_messages_to
+- "rights" is now required, as expected, for operations called create_or_update_authorization_rule
+
+0.3.0 (2017-10-26)
+++++++++++++++++++
+
+**Features**
+
+- Add disaster_recovery_configs operation group
+- Add regions operation group
+- Add premium_messgings_regions operation group
+- Add event_hubs operation group
+- Add Geo DR
+
 0.2.0 (2017-06-26)
 ++++++++++++++++++
 

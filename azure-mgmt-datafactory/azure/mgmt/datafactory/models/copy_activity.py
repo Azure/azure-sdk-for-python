@@ -15,38 +15,36 @@ from .execution_activity import ExecutionActivity
 class CopyActivity(ExecutionActivity):
     """Copy activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param source: Copy activity source.
-    :type source: :class:`CopySource
-     <azure.mgmt.datafactory.models.CopySource>`
+    :type source: ~azure.mgmt.datafactory.models.CopySource
     :param sink: Copy activity sink.
-    :type sink: :class:`CopySink <azure.mgmt.datafactory.models.CopySink>`
+    :type sink: ~azure.mgmt.datafactory.models.CopySink
     :param translator: Copy activity translator. If not specificed, tabular
      translator is used.
-    :type translator: :class:`CopyTranslator
-     <azure.mgmt.datafactory.models.CopyTranslator>`
+    :type translator: ~azure.mgmt.datafactory.models.CopyTranslator
     :param enable_staging: Specifies whether to copy data via an interim
      staging. Default value is false. Type: boolean (or Expression with
      resultType boolean).
     :type enable_staging: object
     :param staging_settings: Specifies interim staging settings when
      EnableStaging is true.
-    :type staging_settings: :class:`StagingSettings
-     <azure.mgmt.datafactory.models.StagingSettings>`
+    :type staging_settings: ~azure.mgmt.datafactory.models.StagingSettings
     :param parallel_copies: Maximum number of concurrent sessions opened on
      the source or sink to avoid overloading the data store. Type: integer (or
      Expression with resultType integer), minimum: 0.
@@ -62,14 +60,11 @@ class CopyActivity(ExecutionActivity):
     :param redirect_incompatible_row_settings: Redirect incompatible row
      settings when EnableSkipIncompatibleRow is true.
     :type redirect_incompatible_row_settings:
-     :class:`RedirectIncompatibleRowSettings
-     <azure.mgmt.datafactory.models.RedirectIncompatibleRowSettings>`
+     ~azure.mgmt.datafactory.models.RedirectIncompatibleRowSettings
     :param inputs: List of inputs for the activity.
-    :type inputs: list of :class:`DatasetReference
-     <azure.mgmt.datafactory.models.DatasetReference>`
+    :type inputs: list[~azure.mgmt.datafactory.models.DatasetReference]
     :param outputs: List of outputs for the activity.
-    :type outputs: list of :class:`DatasetReference
-     <azure.mgmt.datafactory.models.DatasetReference>`
+    :type outputs: list[~azure.mgmt.datafactory.models.DatasetReference]
     """
 
     _validation = {
@@ -80,6 +75,7 @@ class CopyActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -99,8 +95,8 @@ class CopyActivity(ExecutionActivity):
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, name, source, sink, description=None, depends_on=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, cloud_data_movement_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None):
-        super(CopyActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, source, sink, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, cloud_data_movement_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None):
+        super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.source = source
         self.sink = sink
         self.translator = translator

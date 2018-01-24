@@ -44,8 +44,10 @@ from .server_keys_operations import ServerKeysOperations
 from .sync_agents_operations import SyncAgentsOperations
 from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
+from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .database_operations import DatabaseOperations
+from .server_dns_aliases_operations import ServerDnsAliasesOperations
 
 __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
@@ -83,6 +85,8 @@ __all__ = [
     'SyncAgentsOperations',
     'SyncGroupsOperations',
     'SyncMembersOperations',
+    'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
     'DatabaseOperations',
+    'ServerDnsAliasesOperations',
 ]

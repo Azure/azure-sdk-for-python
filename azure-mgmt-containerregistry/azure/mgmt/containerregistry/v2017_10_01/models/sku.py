@@ -19,14 +19,14 @@ class Sku(Model):
     sending a request.
 
     :param name: The SKU name of the container registry. Required for registry
-     creation. Possible values include: 'Classic', 'Managed_Basic',
-     'Managed_Standard', 'Managed_Premium'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.containerregistry.v2017_10_01.models.SkuName>`
+     creation. Possible values include: 'Classic', 'Basic', 'Standard',
+     'Premium'
+    :type name: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.SkuName
     :ivar tier: The SKU tier based on the SKU name. Possible values include:
-     'Classic', 'Managed'
-    :vartype tier: str or :class:`SkuTier
-     <azure.mgmt.containerregistry.v2017_10_01.models.SkuTier>`
+     'Classic', 'Basic', 'Standard', 'Premium'
+    :vartype tier: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.SkuTier
     """
 
     _validation = {

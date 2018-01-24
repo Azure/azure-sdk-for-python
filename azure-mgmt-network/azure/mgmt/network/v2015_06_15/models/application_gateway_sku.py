@@ -19,12 +19,12 @@ class ApplicationGatewaySku(Model):
      'Standard_Small', 'Standard_Medium', 'Standard_Large', 'WAF_Medium', and
      'WAF_Large'. Possible values include: 'Standard_Small', 'Standard_Medium',
      'Standard_Large'
-    :type name: str or :class:`ApplicationGatewaySkuName
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewaySkuName>`
+    :type name: str or
+     ~azure.mgmt.network.v2015_06_15.models.ApplicationGatewaySkuName
     :param tier: Tier of an application gateway. Possible values include:
      'Standard'
-    :type tier: str or :class:`ApplicationGatewayTier
-     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayTier>`
+    :type tier: str or
+     ~azure.mgmt.network.v2015_06_15.models.ApplicationGatewayTier
     :param capacity: Capacity (instance count) of an application gateway.
     :type capacity: int
     """
@@ -36,6 +36,7 @@ class ApplicationGatewaySku(Model):
     }
 
     def __init__(self, name=None, tier=None, capacity=None):
+        super(ApplicationGatewaySku, self).__init__()
         self.name = name
         self.tier = tier
         self.capacity = capacity

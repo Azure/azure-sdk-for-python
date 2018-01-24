@@ -56,6 +56,7 @@ class DatabaseUsage(Model):
     }
 
     def __init__(self):
+        super(DatabaseUsage, self).__init__()
         self.name = None
         self.resource_name = None
         self.display_name = None

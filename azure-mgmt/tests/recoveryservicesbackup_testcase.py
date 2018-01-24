@@ -8,29 +8,34 @@ import time
 
 from datetime import datetime, timedelta
 
+from azure.mgmt.recoveryservices.models import Sku, SkuName, Vault, VaultProperties
+
 try:
     from urllib.parse import urlparse
 except ImportError:
     # Python 2 compatibility
     from urlparse import urlparse
 
-from azure.mgmt.recoveryservicesbackup.models import (AzureIaaSComputeVMProtectedItem, BackupRequestResource, IaasVMBackupRequest,
-                                                      IaasVMILRRegistrationRequest, IaasVMRestoreRequest, ILRRequestResource, JobStatus,
-                                                      OperationStatusValues, ProtectedItemResource, ProtectionState, RecoveryType,
+from azure.mgmt.recoveryservicesbackup.models import (AzureIaaSComputeVMProtectedItem, BackupRequestResource,
+                                                      IaasVMBackupRequest,
+                                                      IaasVMILRRegistrationRequest, IaasVMRestoreRequest,
+                                                      ILRRequestResource, JobStatus,
+                                                      OperationStatusValues, ProtectedItemResource, ProtectionState,
+                                                      RecoveryType,
                                                       RestoreRequestResource,
-                                                      )
+                                                      BackupManagementType)
 from msrestazure.azure_exceptions import CloudError
 
 
 class MgmtRecoveryServicesBackupTestDefinition(object):
 
-    vm_friendly_name = "pysdktestv2vm1"
-    vm_rg_name = "pysdktestrg"
+    vm_friendly_name = "swaggersdktest"
+    vm_rg_name = "swaggersdktestrg"
     vm_type = "Compute"
-    restore_storage_acc_name = "pysdktestrg"
-    restore_storage_acc_rg_name = "pysdktestrg"
+    restore_storage_acc_name = "swaggersdktest"
+    restore_storage_acc_rg_name = "swaggersdktestrg"
     fabric_name = "Azure"
-    location = "westcentralus"
+    location = "southeastasia"
     
     def __init__(self, subscription_id, vault_name, vault_rg_name):
         self.subscription_id = subscription_id
@@ -66,28 +71,43 @@ class MgmtRecoveryServicesBackupTestHelper(object):
 
     def __init__(self, test_context):
         self.context = test_context
-        self.client = self.context.client  # type: azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient
+        self.vault_client = self.context.vault_client  # type: azure.mgmt.recoveryservicesbackup.RecoveryServicesClient
+        self.backup_client = self.context.backup_client  # type: azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient
         self.test_definition = self.context.test_definition
         self.vault_name = self.test_definition.vault_name
         self.resource_group = self.test_definition.vault_rg_name
         self.fabric_name = self.test_definition.fabric_name
 
+    def create_vault(self):
+        vault = Vault(
+            location='southeastasia',
+            sku=Sku(
+                name=SkuName.standard,
+            ),
+            properties=VaultProperties()
+        )
+        self.vault_client.vaults.create_or_update(self.resource_group, self.vault_name, vault)
+
+    def delete_vault(self):
+        return self.vault_client.vaults.delete(self.resource_group, self.vault_name)
+
     def enable_protection(self, container_name, protected_item_name, policy_name):
         policy = self.get_policy_with_retries(policy_name)
         self.context.assertIsNotNone(policy)
 
-        response = self.client.protection_containers.refresh(self.vault_name, self.resource_group, self.test_definition.fabric_name, raw=True)
+        response = self.backup_client.protection_containers.refresh(self.vault_name, self.resource_group, self.test_definition.fabric_name, raw=True)
         self._validate_operation_response(response)
 
         self._get_operation_response(
             response,
-            lambda operation_id: self.client.protection_container_refresh_operation_results.get(
+            lambda operation_id: self.backup_client.protection_container_refresh_operation_results.get(
                 self.vault_name, self.resource_group, self.fabric_name, operation_id, raw=True,
             ),
             None,
         )
 
-        protectable_items = self.client.backup_protectable_items.list(self.vault_name, self.resource_group)
+        iaasvm_odata_filter = "backupManagementType eq '{}'".format(BackupManagementType.azure_iaas_vm.value)
+        protectable_items = self.backup_client.backup_protectable_items.list(self.vault_name, self.resource_group, filter=iaasvm_odata_filter)
         
         desired_protectable_item = next(protectable_item for protectable_item in protectable_items if protectable_item.name.lower() in container_name.lower()).properties
         self.context.assertIsNotNone(desired_protectable_item)
@@ -96,16 +116,16 @@ class MgmtRecoveryServicesBackupTestHelper(object):
             properties=AzureIaaSComputeVMProtectedItem(policy_id=policy.id, source_resource_id=desired_protectable_item.virtual_machine_id)
             )
 
-        response = self.client.protected_items.create_or_update(self.vault_name, self.resource_group, self.fabric_name, container_name,
-                                                                protected_item_name, protected_item_resource, raw=True)
+        response = self.backup_client.protected_items.create_or_update(self.vault_name, self.resource_group, self.fabric_name, container_name,
+                                                                       protected_item_name, protected_item_resource, raw=True)
         self._validate_operation_response(response)
 
         job_response = self._get_operation_response(
             response,
-            lambda operation_id: self.client.protected_item_operation_results.get(
+            lambda operation_id: self.backup_client.protected_item_operation_results.get(
                 self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, operation_id, raw=True,
                 ),
-            lambda operation_id: self.client.protected_item_operation_statuses.get(
+            lambda operation_id: self.backup_client.protected_item_operation_statuses.get(
                 self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, operation_id,
                 ),
             )
@@ -114,7 +134,7 @@ class MgmtRecoveryServicesBackupTestHelper(object):
         return job_response.job_id
 
     def list_protected_items(self):
-        return self.client.backup_protected_items.list(self.vault_name, self.resource_group)
+        return self.backup_client.backup_protected_items.list(self.vault_name, self.resource_group)
 
     def trigger_backup(self, container_name, protected_item_name):
         expiry_time = datetime.utcnow() + timedelta(days=2)
@@ -123,16 +143,16 @@ class MgmtRecoveryServicesBackupTestHelper(object):
             properties=IaasVMBackupRequest(recovery_point_expiry_time_in_utc=expiry_time),
             )
 
-        response = self.client.backups.trigger(self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name,
-                                               backup_request, raw=True)
+        response = self.backup_client.backups.trigger(self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name,
+                                                      backup_request, raw=True)
         self._validate_operation_response(response)
 
         job_response = self._get_operation_response(
             response,
-            lambda operation_id: self.client.protected_item_operation_results.get(
+            lambda operation_id: self.backup_client.protected_item_operation_results.get(
                 self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, operation_id, raw=True,
                 ),
-            lambda operation_id: self.client.protected_item_operation_statuses.get(
+            lambda operation_id: self.backup_client.protected_item_operation_statuses.get(
                 self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, operation_id,
                 ),
             )
@@ -141,10 +161,10 @@ class MgmtRecoveryServicesBackupTestHelper(object):
         return job_response.job_id
 
     def list_backup_jobs(self):
-        return self.client.backup_jobs.list(self.vault_name, self.resource_group)
+        return self.backup_client.backup_jobs.list(self.vault_name, self.resource_group)
 
     def list_recovery_points(self, container_name, protected_item_name):
-        return self.client.recovery_points.list(self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name)
+        return self.backup_client.recovery_points.list(self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name)
 
     def trigger_restore(self, container_name, protected_item_name, recovery_point_name, source_resource_id, storage_account_id):
         restore_request = RestoreRequestResource(
@@ -158,16 +178,16 @@ class MgmtRecoveryServicesBackupTestHelper(object):
                 )
             )
 
-        response = self.client.restores.trigger(self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name,
-                                                recovery_point_name, restore_request, raw=True)
+        response = self.backup_client.restores.trigger(self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name,
+                                                       recovery_point_name, restore_request, raw=True)
         self._validate_operation_response(response)
 
         job_response = self._get_operation_response(
             response,
-            lambda operation_id: self.client.protected_item_operation_results.get(
+            lambda operation_id: self.backup_client.protected_item_operation_results.get(
                 self.vault_name, self.resource_group, self.test_definition.fabric_name, container_name, protected_item_name, operation_id, raw=True,
                 ),
-            lambda operation_id: self.client.protected_item_operation_statuses.get(
+            lambda operation_id: self.backup_client.protected_item_operation_statuses.get(
                 self.vault_name, self.resource_group, self.test_definition.fabric_name, container_name, protected_item_name, operation_id,
                 ),
             )
@@ -183,7 +203,7 @@ class MgmtRecoveryServicesBackupTestHelper(object):
                                                        )
         )
 
-        response = self.client.protected_items.create_or_update(
+        response = self.backup_client.protected_items.create_or_update(
             self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name,
             protected_item_resource, raw=True
         )
@@ -192,10 +212,10 @@ class MgmtRecoveryServicesBackupTestHelper(object):
 
         job_response = self._get_operation_response(
             response,
-            lambda operation_id: self.client.protected_item_operation_results.get(
+            lambda operation_id: self.backup_client.protected_item_operation_results.get(
                 self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, operation_id, raw=True,
             ),
-            lambda operation_id: self.client.protected_item_operation_statuses.get(
+            lambda operation_id: self.backup_client.protected_item_operation_statuses.get(
                 self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, operation_id,
             ),
         )
@@ -204,13 +224,13 @@ class MgmtRecoveryServicesBackupTestHelper(object):
         return job_response.job_id
 
     def delete_protection(self, container_name, protected_item_name):
-        response = self.client.protected_items.delete(
+        response = self.backup_client.protected_items.delete(
             self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, raw=True)
         self._validate_operation_response(response)
 
         job_response = self._get_operation_status(
             response,
-            lambda operation_id: self.client.backup_operation_statuses.get(self.vault_name, self.resource_group, operation_id),
+            lambda operation_id: self.backup_client.backup_operation_statuses.get(self.vault_name, self.resource_group, operation_id),
         )
 
         self.context.assertIsNotNone(job_response.job_id)
@@ -226,17 +246,17 @@ class MgmtRecoveryServicesBackupTestHelper(object):
                 )
             )
 
-        response = self.client.item_level_recovery_connections.provision(
+        response = self.backup_client.item_level_recovery_connections.provision(
             self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, recovery_point_name, ilr_request, raw=True,
             )
         self._validate_operation_response(response)
 
         ilr_response_extended_info = self._get_operation_response(
             response,
-            lambda operation_id: self.client.protected_item_operation_results.get(
+            lambda operation_id: self.backup_client.protected_item_operation_results.get(
                 self.vault_name, self.resource_group, self.test_definition.fabric_name, container_name, protected_item_name, operation_id, raw=True,
                 ),
-            lambda operation_id: self.client.protected_item_operation_statuses.get(
+            lambda operation_id: self.backup_client.protected_item_operation_statuses.get(
                 self.vault_name, self.resource_group, self.test_definition.fabric_name, container_name, protected_item_name, operation_id,
                 ),
             )
@@ -249,17 +269,17 @@ class MgmtRecoveryServicesBackupTestHelper(object):
 
     def revoke_item_level_recovery(self, container_name, protected_item_name, recovery_point_name):
 
-        response = self.client.item_level_recovery_connections.revoke(
+        response = self.backup_client.item_level_recovery_connections.revoke(
             self.vault_name, self.resource_group, self.fabric_name, container_name, protected_item_name, recovery_point_name, raw=True,
             )
         self._validate_operation_response(response)
 
         job_response = self._get_operation_response(
             response,
-            lambda operation_id: self.client.protected_item_operation_results.get(
+            lambda operation_id: self.backup_client.protected_item_operation_results.get(
                 self.vault_name, self.resource_group, self.test_definition.fabric_name, container_name, protected_item_name, operation_id, raw=True,
                 ),
-            lambda operation_id: self.client.protected_item_operation_statuses.get(
+            lambda operation_id: self.backup_client.protected_item_operation_statuses.get(
                 self.vault_name, self.resource_group, self.test_definition.fabric_name, container_name, protected_item_name, operation_id,
                 ),
             )
@@ -273,7 +293,7 @@ class MgmtRecoveryServicesBackupTestHelper(object):
             )
 
     def get_job_status(self, job_id):
-        response = self.client.job_details.get(self.vault_name, self.resource_group, job_id)
+        response = self.backup_client.job_details.get(self.vault_name, self.resource_group, job_id)
         self.context.assertIsNotNone(response)
         return response.properties.status
 
@@ -286,7 +306,7 @@ class MgmtRecoveryServicesBackupTestHelper(object):
     def get_policy_with_retries(self, policy_name):
         
         return self.retry_action_with_timeout(
-            lambda: self.client.protection_policies.get(self.vault_name, self.resource_group, policy_name),
+            lambda: self.backup_client.protection_policies.get(self.vault_name, self.resource_group, policy_name),
             lambda result: result is not None,
             5 * 60,
             self._resource_not_synced_retry_logic
@@ -310,7 +330,7 @@ class MgmtRecoveryServicesBackupTestHelper(object):
         return result
 
     def list_operations(self):
-        operations = self.client.operations.list()
+        operations = self.backup_client.operations.list()
         return operations
 
     def _resource_not_synced_retry_logic(self, status_code):

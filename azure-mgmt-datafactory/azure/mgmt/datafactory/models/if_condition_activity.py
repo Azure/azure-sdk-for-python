@@ -17,30 +17,29 @@ class IfConditionActivity(ControlActivity):
     activities under the ifTrueActivities property or the ifFalseActivities
     property depending on the result of the expression.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param expression: An expression that would evaluate to Boolean. This is
      used to determine the block of activities (ifTrueActivities or
      ifFalseActivities) that will be executed.
-    :type expression: :class:`Expression
-     <azure.mgmt.datafactory.models.Expression>`
+    :type expression: ~azure.mgmt.datafactory.models.Expression
     :param if_true_activities: List of activities to execute if expression is
      evaluated to true. This is an optional property and if not provided, the
      activity will exit without any action.
-    :type if_true_activities: list of :class:`Activity
-     <azure.mgmt.datafactory.models.Activity>`
+    :type if_true_activities: list[~azure.mgmt.datafactory.models.Activity]
     :param if_false_activities: List of activities to execute if expression is
      evaluated to false. This is an optional property and if not provided, the
      activity will exit without any action.
-    :type if_false_activities: list of :class:`Activity
-     <azure.mgmt.datafactory.models.Activity>`
+    :type if_false_activities: list[~azure.mgmt.datafactory.models.Activity]
     """
 
     _validation = {
@@ -50,6 +49,7 @@ class IfConditionActivity(ControlActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -59,8 +59,8 @@ class IfConditionActivity(ControlActivity):
         'if_false_activities': {'key': 'typeProperties.ifFalseActivities', 'type': '[Activity]'},
     }
 
-    def __init__(self, name, expression, description=None, depends_on=None, if_true_activities=None, if_false_activities=None):
-        super(IfConditionActivity, self).__init__(name=name, description=description, depends_on=depends_on)
+    def __init__(self, name, expression, additional_properties=None, description=None, depends_on=None, if_true_activities=None, if_false_activities=None):
+        super(IfConditionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
         self.expression = expression
         self.if_true_activities = if_true_activities
         self.if_false_activities = if_false_activities

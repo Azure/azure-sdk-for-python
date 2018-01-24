@@ -61,8 +61,8 @@ class OSProfile(Model):
     :type custom_data: str
     :param windows_configuration: Specifies Windows operating system settings
      on the virtual machine.
-    :type windows_configuration: :class:`WindowsConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.WindowsConfiguration>`
+    :type windows_configuration:
+     ~azure.mgmt.compute.v2017_03_30.models.WindowsConfiguration
     :param linux_configuration: Specifies the Linux operating system settings
      on the virtual machine. <br><br>For a list of supported Linux
      distributions, see [Linux on Azure-Endorsed
@@ -70,12 +70,12 @@ class OSProfile(Model):
      <br><br> For running non-endorsed distributions, see [Information for
      Non-Endorsed
      Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
-    :type linux_configuration: :class:`LinuxConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.LinuxConfiguration>`
+    :type linux_configuration:
+     ~azure.mgmt.compute.v2017_03_30.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed
      onto the virtual machine.
-    :type secrets: list of :class:`VaultSecretGroup
-     <azure.mgmt.compute.v2017_03_30.models.VaultSecretGroup>`
+    :type secrets:
+     list[~azure.mgmt.compute.v2017_03_30.models.VaultSecretGroup]
     """
 
     _attribute_map = {
@@ -89,6 +89,7 @@ class OSProfile(Model):
     }
 
     def __init__(self, computer_name=None, admin_username=None, admin_password=None, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
+        super(OSProfile, self).__init__()
         self.computer_name = computer_name
         self.admin_username = admin_username
         self.admin_password = admin_password

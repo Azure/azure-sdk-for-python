@@ -26,4 +26,5 @@ class ContainerRegistryProperties(Model):
     }
 
     def __init__(self, resource_id=None):
+        super(ContainerRegistryProperties, self).__init__()
         self.resource_id = resource_id

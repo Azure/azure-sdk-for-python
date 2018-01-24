@@ -20,8 +20,8 @@ class ExpressRouteCircuitRoutesTable(Model):
     :param next_hop_type: Gets NextHopType. Possible values include:
      'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
      'None'
-    :type next_hop_type: str or :class:`RouteNextHopType
-     <azure.mgmt.network.v2015_06_15.models.RouteNextHopType>`
+    :type next_hop_type: str or
+     ~azure.mgmt.network.v2015_06_15.models.RouteNextHopType
     :param next_hop_ip: Gets NextHopIP.
     :type next_hop_ip: str
     :param as_path: Gets AsPath.
@@ -40,6 +40,7 @@ class ExpressRouteCircuitRoutesTable(Model):
     }
 
     def __init__(self, next_hop_type, address_prefix=None, next_hop_ip=None, as_path=None):
+        super(ExpressRouteCircuitRoutesTable, self).__init__()
         self.address_prefix = address_prefix
         self.next_hop_type = next_hop_type
         self.next_hop_ip = next_hop_ip

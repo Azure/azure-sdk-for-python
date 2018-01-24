@@ -17,13 +17,16 @@ class RegenerateKeyParameters(Model):
 
     :param key_name: key name to generate (Key1|Key2). Possible values
      include: 'Key1', 'Key2'
-    :type key_name: str or :class:`KeyName
-     <azure.mgmt.cognitiveservices.models.KeyName>`
+    :type key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
     """
+
+    _validation = {
+        'key_name': {'required': True},
+    }
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'KeyName'},
     }
 
-    def __init__(self, key_name=None):
+    def __init__(self, key_name):
         self.key_name = key_name

@@ -22,8 +22,7 @@ class Error(Model):
     :param target:
     :type target: str
     :param details:
-    :type details: list of :class:`ErrorDetails
-     <azure.mgmt.network.v2017_03_01.models.ErrorDetails>`
+    :type details: list[~azure.mgmt.network.v2017_03_01.models.ErrorDetails]
     :param inner_error:
     :type inner_error: str
     """
@@ -37,6 +36,7 @@ class Error(Model):
     }
 
     def __init__(self, code=None, message=None, target=None, details=None, inner_error=None):
+        super(Error, self).__init__()
         self.code = code
         self.message = message
         self.target = target

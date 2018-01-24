@@ -16,11 +16,11 @@ class OperationServiceSpecification(Model):
     """Details about a service operation.
 
     :param log_specifications: Details about operations related to logs.
-    :type log_specifications: list of :class:`OperationLogSpecification
-     <azure.mgmt.datafactory.models.OperationLogSpecification>`
+    :type log_specifications:
+     list[~azure.mgmt.datafactory.models.OperationLogSpecification]
     :param metric_specifications: Details about operations related to metrics.
-    :type metric_specifications: list of :class:`OperationMetricSpecification
-     <azure.mgmt.datafactory.models.OperationMetricSpecification>`
+    :type metric_specifications:
+     list[~azure.mgmt.datafactory.models.OperationMetricSpecification]
     """
 
     _attribute_map = {

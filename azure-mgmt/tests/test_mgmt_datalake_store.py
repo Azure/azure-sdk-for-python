@@ -16,7 +16,8 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtDataLakeStoreTest, self).setUp()
-        self.region = 'East US 2' # this is the ADL produciton region for now.
+        # this is the ADL produciton region for now
+        self.region = 'East US 2'
         self.adls_account_client = self.create_mgmt_client(
             azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient
         )
@@ -36,41 +37,44 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
                 type = azure.mgmt.datalake.store.models.EncryptionConfigType.service_managed
             ),
             encryption_state = azure.mgmt.datalake.store.models.EncryptionState.enabled,
-            tags={
+            tags = {
+                'tag1': 'value1'
+            }
+        )
+        params_create_no_encryption = azure.mgmt.datalake.store.models.DataLakeStoreAccount(
+            location = self.region,
+            tags = {
                 'tag1': 'value1'
             }
         )
 
-        params_create_no_encryption = azure.mgmt.datalake.store.models.DataLakeStoreAccount(
-            location = self.region,
-            tags={
-                'tag1': 'value1'
-            }
-        )
+        # ensure that the account name is available
+        name_availability = self.adls_account_client.account.check_name_availability('EastUS2', account_name)
+        self.assertTrue(name_availability.name_available)
+
         # create and validate an ADLS account
-        result_create = self.adls_account_client.account.create(
+        adls_account = self.adls_account_client.account.create(
             self.group_name,
             account_name,
             params_create,
-        )
+        ).result()
 
-        adls_account = result_create.result()
+        # ensure that the account name is no longer available
+        name_availability = self.adls_account_client.account.check_name_availability('EastUS2', account_name)
+        self.assertFalse(name_availability.name_available)
         
         # full validation of the create
         self.assertEqual(adls_account.name, account_name)
-
-        # TODO: re-enable once it is determined why this property is still in "creating" state.
-        # self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
-
+        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
         self.assertIsNotNone(adls_account.id)
         self.assertIn(account_name, adls_account.id)
-        # self.assertIn(account_name, adls_account.endpoint)
+        self.assertIn(account_name, adls_account.endpoint)
         self.assertEqual(self.region, adls_account.location)
         self.assertEqual('Microsoft.DataLakeStore/accounts', adls_account.type)
-        # self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.encryption_state)
+        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.encryption_state)
         self.assertEqual('SystemAssigned', adls_account.identity.type)
-        # self.assertIsNotNone(adls_account.identity.principal_id)
-        # self.assertIsNotNone(adls_account.identity.tenant_id)
+        self.assertIsNotNone(adls_account.identity.principal_id)
+        self.assertIsNotNone(adls_account.identity.tenant_id)
         self.assertEqual(adls_account.tags['tag1'], 'value1')
 
         # get the account and do the same checks
@@ -95,13 +99,12 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # create no encryption account
         # create and validate an ADLS account
-        result_create = self.adls_account_client.account.create(
+        adls_account_no_encryption = self.adls_account_client.account.create(
             self.group_name,
             account_name_no_encryption,
             params_create_no_encryption,
-        )
+        ).result()
 
-        adls_account_no_encryption = result_create.result()
         adls_account_no_encryption = self.adls_account_client.account.get(
             self.group_name,
             account_name_no_encryption
@@ -120,17 +123,12 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertEqual(adls_account_no_encryption.tags['tag1'], 'value1')
 
         # list all the accounts
-        result_list = self.adls_account_client.account.list_by_resource_group(
-            self.group_name,
-        )
-        result_list = list(result_list)
+        result_list = list(self.adls_account_client.account.list_by_resource_group(self.group_name))
         self.assertGreater(len(result_list), 1)
 
-        result_list = self.adls_account_client.account.list()
-        result_list = list(result_list)
+        result_list = list(self.adls_account_client.account.list())
         self.assertGreater(len(result_list), 1)
 
-        
         # update the tags
         adls_account = self.adls_account_client.account.update(
             self.group_name,
@@ -143,6 +141,15 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         ).result()
 
         self.assertEqual(adls_account.tags['tag2'], 'value2')
+        
+        # confirm that 'locations.get_capability' is functional 
+        get_capability = self.adls_account_client.locations.get_capability('EastUS2')
+        self.assertIsNotNone(get_capability)
+
+        # confirm that 'operations.list' is functional
+        operations_list = self.adls_account_client.operations.list()
+        self.assertIsNotNone(operations_list)
+        
         self.adls_account_client.account.delete(
             self.group_name,
             account_name

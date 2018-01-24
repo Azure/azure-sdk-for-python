@@ -12,6 +12,8 @@
 from .graph_error import GraphError, GraphErrorException
 from .key_credential import KeyCredential
 from .password_credential import PasswordCredential
+from .resource_access import ResourceAccess
+from .required_resource_access import RequiredResourceAccess
 from .application_create_parameters import ApplicationCreateParameters
 from .application_update_parameters import ApplicationUpdateParameters
 from .application import Application
@@ -52,6 +54,8 @@ __all__ = [
     'GraphError', 'GraphErrorException',
     'KeyCredential',
     'PasswordCredential',
+    'ResourceAccess',
+    'RequiredResourceAccess',
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
     'Application',

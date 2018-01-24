@@ -13,14 +13,19 @@ from msrest.serialization import Model
 
 
 class LinuxConfiguration(Model):
-    """Describes Windows configuration of the OS Profile.
+    """Specifies the Linux operating system settings on the virtual machine.
+    <br><br>For a list of supported Linux distributions, see [Linux on
+    Azure-Endorsed
+    Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
+    <br><br> For running non-endorsed distributions, see [Information for
+    Non-Endorsed
+    Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
 
     :param disable_password_authentication: Specifies whether password
      authentication should be disabled.
     :type disable_password_authentication: bool
-    :param ssh: The SSH configuration for linux VMs.
-    :type ssh: :class:`SshConfiguration
-     <azure.mgmt.compute.v2016_03_30.models.SshConfiguration>`
+    :param ssh: Specifies the ssh key configuration for a Linux OS.
+    :type ssh: ~azure.mgmt.compute.v2016_03_30.models.SshConfiguration
     """
 
     _attribute_map = {
@@ -29,5 +34,6 @@ class LinuxConfiguration(Model):
     }
 
     def __init__(self, disable_password_authentication=None, ssh=None):
+        super(LinuxConfiguration, self).__init__()
         self.disable_password_authentication = disable_password_authentication
         self.ssh = ssh

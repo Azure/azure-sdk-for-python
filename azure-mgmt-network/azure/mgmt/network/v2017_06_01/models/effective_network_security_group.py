@@ -17,18 +17,17 @@ class EffectiveNetworkSecurityGroup(Model):
 
     :param network_security_group: The ID of network security group that is
      applied.
-    :type network_security_group: :class:`SubResource
-     <azure.mgmt.network.v2017_06_01.models.SubResource>`
+    :type network_security_group:
+     ~azure.mgmt.network.v2017_06_01.models.SubResource
     :param association: Associated resources.
-    :type association: :class:`EffectiveNetworkSecurityGroupAssociation
-     <azure.mgmt.network.v2017_06_01.models.EffectiveNetworkSecurityGroupAssociation>`
+    :type association:
+     ~azure.mgmt.network.v2017_06_01.models.EffectiveNetworkSecurityGroupAssociation
     :param effective_security_rules: A collection of effective security rules.
-    :type effective_security_rules: list of
-     :class:`EffectiveNetworkSecurityRule
-     <azure.mgmt.network.v2017_06_01.models.EffectiveNetworkSecurityRule>`
+    :type effective_security_rules:
+     list[~azure.mgmt.network.v2017_06_01.models.EffectiveNetworkSecurityRule]
     :param tag_map: Mapping of tags to list of IP Addresses included within
      the tag.
-    :type tag_map: dict
+    :type tag_map: dict[str, list[str]]
     """
 
     _attribute_map = {
@@ -39,6 +38,7 @@ class EffectiveNetworkSecurityGroup(Model):
     }
 
     def __init__(self, network_security_group=None, association=None, effective_security_rules=None, tag_map=None):
+        super(EffectiveNetworkSecurityGroup, self).__init__()
         self.network_security_group = network_security_group
         self.association = association
         self.effective_security_rules = effective_security_rules

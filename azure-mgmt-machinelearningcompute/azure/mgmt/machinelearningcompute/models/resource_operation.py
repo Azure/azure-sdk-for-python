@@ -18,8 +18,8 @@ class ResourceOperation(Model):
     :param name: Name of this operation.
     :type name: str
     :param display: Display of the operation.
-    :type display: :class:`ResourceOperationDisplay
-     <azure.mgmt.machinelearningcompute.models.ResourceOperationDisplay>`
+    :type display:
+     ~azure.mgmt.machinelearningcompute.models.ResourceOperationDisplay
     :param origin: The operation origin.
     :type origin: str
     """
@@ -31,6 +31,7 @@ class ResourceOperation(Model):
     }
 
     def __init__(self, name=None, display=None, origin=None):
+        super(ResourceOperation, self).__init__()
         self.name = name
         self.display = display
         self.origin = origin

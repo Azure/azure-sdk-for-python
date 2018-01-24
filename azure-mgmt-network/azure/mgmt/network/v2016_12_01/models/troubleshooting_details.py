@@ -24,9 +24,8 @@ class TroubleshootingDetails(Model):
     :param detail: Details on troubleshooting results.
     :type detail: str
     :param recommended_actions: List of recommended actions.
-    :type recommended_actions: list of
-     :class:`TroubleshootingRecommendedActions
-     <azure.mgmt.network.v2016_12_01.models.TroubleshootingRecommendedActions>`
+    :type recommended_actions:
+     list[~azure.mgmt.network.v2016_12_01.models.TroubleshootingRecommendedActions]
     """
 
     _attribute_map = {
@@ -38,6 +37,7 @@ class TroubleshootingDetails(Model):
     }
 
     def __init__(self, id=None, reason_type=None, summary=None, detail=None, recommended_actions=None):
+        super(TroubleshootingDetails, self).__init__()
         self.id = id
         self.reason_type = reason_type
         self.summary = summary

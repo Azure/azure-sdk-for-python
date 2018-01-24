@@ -23,7 +23,7 @@ class EventHubProperties(Model):
      messages in days. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages
     :type retention_time_in_days: long
-    :param partition_count: The number of paritions for receiving
+    :param partition_count: The number of partitions for receiving
      device-to-cloud messages in the Event Hub-compatible endpoint. See:
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
     :type partition_count: int

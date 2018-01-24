@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class ContainerServiceSshConfiguration(Model):
     """SSH configuration for Linux-based VMs running on Azure.
 
-    :param public_keys: the list of SSH public keys used to authenticate with
-     Linux-based VMs.
-    :type public_keys: list of :class:`ContainerServiceSshPublicKey
-     <azure.mgmt.containerservice.models.ContainerServiceSshPublicKey>`
+    :param public_keys: The list of SSH public keys used to authenticate with
+     Linux-based VMs. Only expect one key specified.
+    :type public_keys:
+     list[~azure.mgmt.containerservice.models.ContainerServiceSshPublicKey]
     """
 
     _validation = {

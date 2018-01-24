@@ -73,6 +73,7 @@ class JobRecurrenceInformation(Model):
     }
 
     def __init__(self):
+        super(JobRecurrenceInformation, self).__init__()
         self.recurrence_id = None
         self.recurrence_name = None
         self.num_jobs_failed = None

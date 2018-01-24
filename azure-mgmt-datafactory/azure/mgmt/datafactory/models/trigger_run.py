@@ -18,6 +18,9 @@ class TriggerRun(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar trigger_run_id: Trigger run id.
     :vartype trigger_run_id: str
     :ivar trigger_name: Trigger name.
@@ -28,16 +31,15 @@ class TriggerRun(Model):
     :vartype trigger_run_timestamp: datetime
     :ivar status: Trigger run status. Possible values include: 'Succeeded',
      'Failed', 'Inprogress'
-    :vartype status: str or :class:`TriggerRunStatus
-     <azure.mgmt.datafactory.models.TriggerRunStatus>`
+    :vartype status: str or ~azure.mgmt.datafactory.models.TriggerRunStatus
     :ivar message: Trigger error message.
     :vartype message: str
     :ivar properties: List of property name and value related to trigger run.
      Name, value pair depends on type of trigger.
-    :vartype properties: dict
+    :vartype properties: dict[str, str]
     :ivar triggered_pipelines: List of pipeline name and run Id triggered by
      the trigger run.
-    :vartype triggered_pipelines: dict
+    :vartype triggered_pipelines: dict[str, str]
     """
 
     _validation = {
@@ -52,6 +54,7 @@ class TriggerRun(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'trigger_run_id': {'key': 'triggerRunId', 'type': 'str'},
         'trigger_name': {'key': 'triggerName', 'type': 'str'},
         'trigger_type': {'key': 'triggerType', 'type': 'str'},
@@ -62,7 +65,8 @@ class TriggerRun(Model):
         'triggered_pipelines': {'key': 'triggeredPipelines', 'type': '{str}'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
+        self.additional_properties = additional_properties
         self.trigger_run_id = None
         self.trigger_name = None
         self.trigger_type = None

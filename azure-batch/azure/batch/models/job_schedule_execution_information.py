@@ -25,7 +25,7 @@ class JobScheduleExecutionInformation(Model):
     :param recent_job: Information about the most recent job under the job
      schedule. This property is present only if the at least one job has run
      under the schedule.
-    :type recent_job: :class:`RecentJob <azure.batch.models.RecentJob>`
+    :type recent_job: ~azure.batch.models.RecentJob
     :param end_time: The time at which the schedule ended. This property is
      set only if the job schedule is in the completed state.
     :type end_time: datetime

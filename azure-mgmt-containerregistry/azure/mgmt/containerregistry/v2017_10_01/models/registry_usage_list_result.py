@@ -16,8 +16,8 @@ class RegistryUsageListResult(Model):
     """The result of a request to get container registry quota usages.
 
     :param value: The list of container registry quota usages.
-    :type value: list of :class:`RegistryUsage
-     <azure.mgmt.containerregistry.v2017_10_01.models.RegistryUsage>`
+    :type value:
+     list[~azure.mgmt.containerregistry.v2017_10_01.models.RegistryUsage]
     """
 
     _attribute_map = {

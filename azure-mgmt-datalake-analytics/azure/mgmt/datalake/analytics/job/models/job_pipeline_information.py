@@ -50,11 +50,11 @@ class JobPipelineInformation(Model):
     :vartype last_submit_time: datetime
     :ivar runs: the list of recurrence identifiers representing each run of
      this pipeline.
-    :vartype runs: list of :class:`JobPipelineRunInformation
-     <azure.mgmt.datalake.analytics.job.models.JobPipelineRunInformation>`
+    :vartype runs:
+     list[~azure.mgmt.datalake.analytics.job.models.JobPipelineRunInformation]
     :ivar recurrences: the list of recurrence identifiers representing each
      run of this pipeline.
-    :vartype recurrences: list of str
+    :vartype recurrences: list[str]
     """
 
     _validation = {
@@ -88,6 +88,7 @@ class JobPipelineInformation(Model):
     }
 
     def __init__(self):
+        super(JobPipelineInformation, self).__init__()
         self.pipeline_id = None
         self.pipeline_name = None
         self.pipeline_uri = None

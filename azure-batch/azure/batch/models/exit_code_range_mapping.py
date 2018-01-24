@@ -22,7 +22,7 @@ class ExitCodeRangeMapping(Model):
     :type end: int
     :param exit_options: How the Batch service should respond if the task
      exits with an exit code in the range start to end (inclusive).
-    :type exit_options: :class:`ExitOptions <azure.batch.models.ExitOptions>`
+    :type exit_options: ~azure.batch.models.ExitOptions
     """
 
     _validation = {

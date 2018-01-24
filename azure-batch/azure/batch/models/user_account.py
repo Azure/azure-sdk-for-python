@@ -25,13 +25,11 @@ class UserAccount(Model):
      auto user is a user with elevated access and operates with full
      Administrator permissions. The default value is nonAdmin. Possible values
      include: 'nonAdmin', 'admin'
-    :type elevation_level: str or :class:`ElevationLevel
-     <azure.batch.models.ElevationLevel>`
+    :type elevation_level: str or ~azure.batch.models.ElevationLevel
     :param linux_user_configuration: The Linux-specific user configuration for
      the user account. This property is ignored if specified on a Windows pool.
      If not specified, the user is created with the default options.
-    :type linux_user_configuration: :class:`LinuxUserConfiguration
-     <azure.batch.models.LinuxUserConfiguration>`
+    :type linux_user_configuration: ~azure.batch.models.LinuxUserConfiguration
     """
 
     _validation = {

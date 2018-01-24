@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ProviderPaged(Paged):
     """
-    A paging container for iterating over a list of Provider object
+    A paging container for iterating over a list of :class:`Provider <azure.mgmt.resource.resources.v2016_09_01.models.Provider>` object
     """
 
     _attribute_map = {

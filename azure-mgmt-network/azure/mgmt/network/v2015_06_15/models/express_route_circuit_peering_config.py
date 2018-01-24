@@ -17,14 +17,13 @@ class ExpressRouteCircuitPeeringConfig(Model):
 
     :param advertised_public_prefixes: The reference of
      AdvertisedPublicPrefixes.
-    :type advertised_public_prefixes: list of str
+    :type advertised_public_prefixes: list[str]
     :param advertised_public_prefixes_state: AdvertisedPublicPrefixState of
      the Peering resource. Possible values are 'NotConfigured', 'Configuring',
      'Configured', and 'ValidationNeeded'. Possible values include:
      'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
-     :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
-     <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
+     ~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
     :param customer_asn: The CustomerASN of the peering.
     :type customer_asn: int
     :param routing_registry_name: The RoutingRegistryName of the
@@ -40,6 +39,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
     }
 
     def __init__(self, advertised_public_prefixes=None, advertised_public_prefixes_state=None, customer_asn=None, routing_registry_name=None):
+        super(ExpressRouteCircuitPeeringConfig, self).__init__()
         self.advertised_public_prefixes = advertised_public_prefixes
         self.advertised_public_prefixes_state = advertised_public_prefixes_state
         self.customer_asn = customer_asn

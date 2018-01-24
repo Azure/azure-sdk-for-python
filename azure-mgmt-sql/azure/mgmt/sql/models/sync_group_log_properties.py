@@ -22,8 +22,7 @@ class SyncGroupLogProperties(Model):
     :vartype timestamp: datetime
     :ivar type: Type of the sync group log. Possible values include: 'All',
      'Error', 'Warning', 'Success'
-    :vartype type: str or :class:`SyncGroupLogType
-     <azure.mgmt.sql.models.SyncGroupLogType>`
+    :vartype type: str or ~azure.mgmt.sql.models.SyncGroupLogType
     :ivar source: Source of the sync group log.
     :vartype source: str
     :ivar details: Details of the sync group log.
@@ -53,6 +52,7 @@ class SyncGroupLogProperties(Model):
     }
 
     def __init__(self):
+        super(SyncGroupLogProperties, self).__init__()
         self.timestamp = None
         self.type = None
         self.source = None

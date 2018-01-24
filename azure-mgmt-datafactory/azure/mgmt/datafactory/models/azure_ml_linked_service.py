@@ -15,19 +15,21 @@ from .linked_service import LinkedService
 class AzureMLLinkedService(LinkedService):
     """Azure ML Web Service linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param ml_endpoint: The Batch Execution REST URL for an Azure ML Web
      Service endpoint. Type: string (or Expression with resultType string).
     :type ml_endpoint: object
     :param api_key: The API key for accessing the Azure ML model endpoint.
-    :type api_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type api_key: ~azure.mgmt.datafactory.models.SecureString
     :param update_resource_endpoint: The Update Resource REST URL for an Azure
      ML Web Service endpoint. Type: string (or Expression with resultType
      string).
@@ -39,8 +41,7 @@ class AzureMLLinkedService(LinkedService):
     :param service_principal_key: The key of the service principal used to
      authenticate against the ARM-based updateResourceEndpoint of an Azure ML
      web service.
-    :type service_principal_key: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecureString
     :param tenant: The name or ID of the tenant to which the service principal
      belongs. Type: string (or Expression with resultType string).
     :type tenant: object
@@ -57,6 +58,7 @@ class AzureMLLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -69,8 +71,8 @@ class AzureMLLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, ml_endpoint, api_key, connect_via=None, description=None, update_resource_endpoint=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None):
-        super(AzureMLLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, ml_endpoint, api_key, additional_properties=None, connect_via=None, description=None, update_resource_endpoint=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None):
+        super(AzureMLLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.ml_endpoint = ml_endpoint
         self.api_key = api_key
         self.update_resource_endpoint = update_resource_endpoint

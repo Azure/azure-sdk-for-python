@@ -48,8 +48,10 @@ from .operations.server_keys_operations import ServerKeysOperations
 from .operations.sync_agents_operations import SyncAgentsOperations
 from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
+from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.database_operations import DatabaseOperations
+from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from . import models
 
 
@@ -74,14 +76,12 @@ class SqlManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(SqlManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('sqlmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-sql/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -164,10 +164,14 @@ class SqlManagementClient(object):
     :vartype sync_groups: azure.mgmt.sql.operations.SyncGroupsOperations
     :ivar sync_members: SyncMembers operations
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
+    :ivar subscription_usages: SubscriptionUsages operations
+    :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
+    :ivar server_dns_aliases: ServerDnsAliases operations
+    :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -258,7 +262,11 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_usages = SubscriptionUsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_dns_aliases = ServerDnsAliasesOperations(
             self._client, self.config, self._serialize, self._deserialize)

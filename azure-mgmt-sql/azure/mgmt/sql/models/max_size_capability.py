@@ -22,12 +22,10 @@ class MaxSizeCapability(Model):
     :vartype limit: long
     :ivar unit: The units that the limit is expressed in. Possible values
      include: 'Megabytes', 'Gigabytes', 'Terabytes', 'Petabytes'
-    :vartype unit: str or :class:`MaxSizeUnits
-     <azure.mgmt.sql.models.MaxSizeUnits>`
+    :vartype unit: str or ~azure.mgmt.sql.models.MaxSizeUnits
     :ivar status: The status of the maximum size capability. Possible values
      include: 'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     """
 
     _validation = {
@@ -43,6 +41,7 @@ class MaxSizeCapability(Model):
     }
 
     def __init__(self):
+        super(MaxSizeCapability, self).__init__()
         self.limit = None
         self.unit = None
         self.status = None

@@ -24,8 +24,7 @@ class AutoScaleRunError(Model):
     :type message: str
     :param values: A list of additional error details related to the autoscale
      error.
-    :type values: list of :class:`NameValuePair
-     <azure.batch.models.NameValuePair>`
+    :type values: list[~azure.batch.models.NameValuePair]
     """
 
     _attribute_map = {

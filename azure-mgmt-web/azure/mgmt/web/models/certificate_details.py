@@ -18,21 +18,21 @@ class CertificateDetails(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar version: Version.
+    :ivar version: Certificate Version.
     :vartype version: int
-    :ivar serial_number: Serial Number.
+    :ivar serial_number: Certificate Serial Number.
     :vartype serial_number: str
-    :ivar thumbprint: Thumbprint.
+    :ivar thumbprint: Certificate Thumbprint.
     :vartype thumbprint: str
-    :ivar subject: Subject.
+    :ivar subject: Certificate Subject.
     :vartype subject: str
-    :ivar not_before: Valid from.
+    :ivar not_before: Date Certificate is valid from.
     :vartype not_before: datetime
-    :ivar not_after: Valid to.
+    :ivar not_after: Date Certificate is valid to.
     :vartype not_after: datetime
-    :ivar signature_algorithm: Signature algorithm.
+    :ivar signature_algorithm: Certificate Signature algorithm.
     :vartype signature_algorithm: str
-    :ivar issuer: Issuer.
+    :ivar issuer: Certificate Issuer.
     :vartype issuer: str
     :ivar raw_data: Raw certificate data.
     :vartype raw_data: str

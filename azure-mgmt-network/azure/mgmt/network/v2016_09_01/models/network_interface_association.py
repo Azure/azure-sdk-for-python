@@ -21,8 +21,8 @@ class NetworkInterfaceAssociation(Model):
     :ivar id: Network interface ID.
     :vartype id: str
     :param security_rules: Collection of custom security rules.
-    :type security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2016_09_01.models.SecurityRule>`
+    :type security_rules:
+     list[~azure.mgmt.network.v2016_09_01.models.SecurityRule]
     """
 
     _validation = {
@@ -35,5 +35,6 @@ class NetworkInterfaceAssociation(Model):
     }
 
     def __init__(self, security_rules=None):
+        super(NetworkInterfaceAssociation, self).__init__()
         self.id = None
         self.security_rules = security_rules

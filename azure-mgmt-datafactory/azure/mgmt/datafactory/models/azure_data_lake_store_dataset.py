@@ -15,17 +15,21 @@ from .dataset import Dataset
 class AzureDataLakeStoreDataset(Dataset):
     """Azure Data Lake Store dataset.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param description: Dataset description.
     :type description: str
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
-    :type parameters: dict
-    :param type: Polymorphic Discriminator
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param type: Constant filled by server.
     :type type: str
     :param folder_path: Path to the folder in the Azure Data Lake Store. Type:
      string (or Expression with resultType string).
@@ -34,16 +38,10 @@ class AzureDataLakeStoreDataset(Dataset):
      string (or Expression with resultType string).
     :type file_name: object
     :param format: The format of the Data Lake Store.
-    :type format: :class:`DatasetStorageFormat
-     <azure.mgmt.datafactory.models.DatasetStorageFormat>`
+    :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param compression: The data compression method used for the item(s) in
      the Azure Data Lake Store.
-    :type compression: :class:`DatasetCompression
-     <azure.mgmt.datafactory.models.DatasetCompression>`
-    :param partitioned_by: Specify a dynamic path and filename for time series
-     data.
-    :type partitioned_by: list of :class:`DatasetPartition
-     <azure.mgmt.datafactory.models.DatasetPartition>`
+    :type compression: ~azure.mgmt.datafactory.models.DatasetCompression
     """
 
     _validation = {
@@ -53,6 +51,7 @@ class AzureDataLakeStoreDataset(Dataset):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
@@ -62,14 +61,12 @@ class AzureDataLakeStoreDataset(Dataset):
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
-        'partitioned_by': {'key': 'typeProperties.partitionedBy', 'type': '[DatasetPartition]'},
     }
 
-    def __init__(self, linked_service_name, folder_path, description=None, structure=None, parameters=None, file_name=None, format=None, compression=None, partitioned_by=None):
-        super(AzureDataLakeStoreDataset, self).__init__(description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, folder_path, additional_properties=None, description=None, structure=None, parameters=None, file_name=None, format=None, compression=None):
+        super(AzureDataLakeStoreDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
         self.folder_path = folder_path
         self.file_name = file_name
         self.format = format
         self.compression = compression
-        self.partitioned_by = partitioned_by
         self.type = 'AzureDataLakeStoreFile'

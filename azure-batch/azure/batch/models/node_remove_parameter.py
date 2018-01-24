@@ -17,7 +17,7 @@ class NodeRemoveParameter(Model):
 
     :param node_list: A list containing the IDs of the compute nodes to be
      removed from the specified pool.
-    :type node_list: list of str
+    :type node_list: list[str]
     :param resize_timeout: The timeout for removal of compute nodes to the
      pool. The default value is 15 minutes. The minimum value is 5 minutes. If
      you specify a value less than 5 minutes, the Batch service returns an
@@ -29,8 +29,7 @@ class NodeRemoveParameter(Model):
      value is requeue. Possible values include: 'requeue', 'terminate',
      'taskCompletion', 'retainedData'
     :type node_deallocation_option: str or
-     :class:`ComputeNodeDeallocationOption
-     <azure.batch.models.ComputeNodeDeallocationOption>`
+     ~azure.batch.models.ComputeNodeDeallocationOption
     """
 
     _validation = {

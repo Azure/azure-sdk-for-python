@@ -16,8 +16,8 @@ class AvailableOperations(Model):
     """Available operation list.
 
     :param value: An array of available operations.
-    :type value: list of :class:`ResourceOperation
-     <azure.mgmt.machinelearningcompute.models.ResourceOperation>`
+    :type value:
+     list[~azure.mgmt.machinelearningcompute.models.ResourceOperation]
     """
 
     _attribute_map = {
@@ -25,4 +25,5 @@ class AvailableOperations(Model):
     }
 
     def __init__(self, value=None):
+        super(AvailableOperations, self).__init__()
         self.value = value

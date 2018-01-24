@@ -17,8 +17,8 @@ class KeyVaultAndSecretReference(Model):
 
     :param source_vault: Resource id of the KeyVault containing the key or
      secret
-    :type source_vault: :class:`SourceVault
-     <azure.mgmt.compute.v2016_04_30_preview.models.SourceVault>`
+    :type source_vault:
+     ~azure.mgmt.compute.v2016_04_30_preview.models.SourceVault
     :param secret_url: Url pointing to a key or secret in KeyVault
     :type secret_url: str
     """
@@ -34,5 +34,6 @@ class KeyVaultAndSecretReference(Model):
     }
 
     def __init__(self, source_vault, secret_url):
+        super(KeyVaultAndSecretReference, self).__init__()
         self.source_vault = source_vault
         self.secret_url = secret_url

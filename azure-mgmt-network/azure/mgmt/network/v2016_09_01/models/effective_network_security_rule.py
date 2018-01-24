@@ -21,8 +21,8 @@ class EffectiveNetworkSecurityRule(Model):
     :param protocol: The network protocol this rule applies to. Possible
      values are: 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp', 'Udp',
      '*'
-    :type protocol: str or :class:`SecurityRuleProtocol
-     <azure.mgmt.network.v2016_09_01.models.SecurityRuleProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.network.v2016_09_01.models.SecurityRuleProtocol
     :param source_port_range: The source port or range.
     :type source_port_range: str
     :param destination_port_range: The destination port or range.
@@ -32,20 +32,20 @@ class EffectiveNetworkSecurityRule(Model):
     :param destination_address_prefix: The destination address prefix.
     :type destination_address_prefix: str
     :param expanded_source_address_prefix: The expanded source address prefix.
-    :type expanded_source_address_prefix: list of str
+    :type expanded_source_address_prefix: list[str]
     :param expanded_destination_address_prefix: Expanded destination address
      prefix.
-    :type expanded_destination_address_prefix: list of str
+    :type expanded_destination_address_prefix: list[str]
     :param access: Whether network traffic is allowed or denied. Possible
      values are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
-    :type access: str or :class:`SecurityRuleAccess
-     <azure.mgmt.network.v2016_09_01.models.SecurityRuleAccess>`
+    :type access: str or
+     ~azure.mgmt.network.v2016_09_01.models.SecurityRuleAccess
     :param priority: The priority of the rule.
     :type priority: int
     :param direction: The direction of the rule. Possible values are: 'Inbound
      and Outbound'. Possible values include: 'Inbound', 'Outbound'
-    :type direction: str or :class:`SecurityRuleDirection
-     <azure.mgmt.network.v2016_09_01.models.SecurityRuleDirection>`
+    :type direction: str or
+     ~azure.mgmt.network.v2016_09_01.models.SecurityRuleDirection
     """
 
     _attribute_map = {
@@ -63,6 +63,7 @@ class EffectiveNetworkSecurityRule(Model):
     }
 
     def __init__(self, name=None, protocol=None, source_port_range=None, destination_port_range=None, source_address_prefix=None, destination_address_prefix=None, expanded_source_address_prefix=None, expanded_destination_address_prefix=None, access=None, priority=None, direction=None):
+        super(EffectiveNetworkSecurityRule, self).__init__()
         self.name = name
         self.protocol = protocol
         self.source_port_range = source_port_range

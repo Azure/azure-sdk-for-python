@@ -27,6 +27,8 @@ class TransparentDataEncryptionsOperations(object):
     :ivar transparent_data_encryption_name: The name of the transparent data encryption configuration. Constant value: "current".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -53,20 +55,16 @@ class TransparentDataEncryptionsOperations(object):
         :type database_name: str
         :param status: The status of the database transparent data encryption.
          Possible values include: 'Enabled', 'Disabled'
-        :type status: str or :class:`TransparentDataEncryptionStatus
-         <azure.mgmt.sql.models.TransparentDataEncryptionStatus>`
+        :type status: str or
+         ~azure.mgmt.sql.models.TransparentDataEncryptionStatus
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TransparentDataEncryption
-         <azure.mgmt.sql.models.TransparentDataEncryption>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TransparentDataEncryption
-         <azure.mgmt.sql.models.TransparentDataEncryption>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TransparentDataEncryption or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.TransparentDataEncryption or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.TransparentDataEncryption(status=status)
@@ -140,13 +138,9 @@ class TransparentDataEncryptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TransparentDataEncryption
-         <azure.mgmt.sql.models.TransparentDataEncryption>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TransparentDataEncryption
-         <azure.mgmt.sql.models.TransparentDataEncryption>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TransparentDataEncryption or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.TransparentDataEncryption or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

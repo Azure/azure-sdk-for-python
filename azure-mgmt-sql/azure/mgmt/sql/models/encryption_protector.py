@@ -36,8 +36,7 @@ class EncryptionProtector(ProxyResource):
     :param server_key_type: The encryption protector type like
      'ServiceManaged', 'AzureKeyVault'. Possible values include:
      'ServiceManaged', 'AzureKeyVault'
-    :type server_key_type: str or :class:`ServerKeyType
-     <azure.mgmt.sql.models.ServerKeyType>`
+    :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
     :ivar uri: The URI of the server key.
     :vartype uri: str
     :ivar thumbprint: Thumbprint of the server key.

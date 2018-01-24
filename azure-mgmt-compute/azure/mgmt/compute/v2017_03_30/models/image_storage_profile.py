@@ -19,14 +19,13 @@ class ImageStorageProfile(Model):
      by the virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    :type os_disk: :class:`ImageOSDisk
-     <azure.mgmt.compute.v2017_03_30.models.ImageOSDisk>`
+    :type os_disk: ~azure.mgmt.compute.v2017_03_30.models.ImageOSDisk
     :param data_disks: Specifies the parameters that are used to add a data
      disk to a virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    :type data_disks: list of :class:`ImageDataDisk
-     <azure.mgmt.compute.v2017_03_30.models.ImageDataDisk>`
+    :type data_disks:
+     list[~azure.mgmt.compute.v2017_03_30.models.ImageDataDisk]
     """
 
     _validation = {
@@ -39,5 +38,6 @@ class ImageStorageProfile(Model):
     }
 
     def __init__(self, os_disk, data_disks=None):
+        super(ImageStorageProfile, self).__init__()
         self.os_disk = os_disk
         self.data_disks = data_disks

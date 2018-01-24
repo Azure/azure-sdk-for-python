@@ -16,8 +16,7 @@ class FailoverPolicies(Model):
     """The list of new failover policies for the failover priority change.
 
     :param failover_policies: List of failover policies.
-    :type failover_policies: list of :class:`FailoverPolicy
-     <azure.mgmt.cosmosdb.models.FailoverPolicy>`
+    :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
     """
 
     _attribute_map = {

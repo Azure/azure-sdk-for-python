@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -46,17 +46,16 @@ class PolicySetsOperations(object):
         :param name: The name of the policy set.
         :type name: str
         :param policies: Policies to evaluate.
-        :type policies: list of :class:`EvaluatePoliciesProperties
-         <azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties>`
+        :type policies:
+         list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`EvaluatePoliciesResponse
-         <azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: EvaluatePoliciesResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         evaluate_policies_request = models.EvaluatePoliciesRequest(policies=policies)

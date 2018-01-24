@@ -18,13 +18,11 @@ class SslConfiguration(Model):
 
     :param status: SSL status. Allowed values are Enabled and Disabled.
      Possible values include: 'Enabled', 'Disabled'. Default value: "Enabled" .
-    :type status: str or :class:`Status
-     <azure.mgmt.machinelearningcompute.models.Status>`
-    :param cert: The SSL cert data in PEM format encoded as base64 string
+    :type status: str or ~azure.mgmt.machinelearningcompute.models.Status
+    :param cert: The SSL cert data in PEM format.
     :type cert: str
-    :param key: The SSL key data in PEM format encoded as base64 string. This
-     is not returned in response of GET/PUT on the resource. To see this please
-     call listKeys API.
+    :param key: The SSL key data in PEM format. This is not returned in
+     response of GET/PUT on the resource. To see this please call listKeys API.
     :type key: str
     :param cname: The CName of the certificate.
     :type cname: str
@@ -38,6 +36,7 @@ class SslConfiguration(Model):
     }
 
     def __init__(self, status="Enabled", cert=None, key=None, cname=None):
+        super(SslConfiguration, self).__init__()
         self.status = status
         self.cert = cert
         self.key = key

@@ -24,7 +24,7 @@ class ServicePrincipal(Model):
     :param app_id: The application ID.
     :type app_id: str
     :param service_principal_names: A collection of service principal names.
-    :type service_principal_names: list of str
+    :type service_principal_names: list[str]
     """
 
     _attribute_map = {

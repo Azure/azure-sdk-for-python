@@ -18,12 +18,9 @@ class Operation(Model):
     :param name: Name of the operation
     :type name: str
     :param display: Display name of the operation
-    :type display: :class:`OperationInfo
-     <azure.mgmt.eventgrid.models.OperationInfo>`
-    :param origin: Origin of the operation. Possible values include: 'User',
-     'System', 'UserAndSystem'
-    :type origin: str or :class:`OperationOrigin
-     <azure.mgmt.eventgrid.models.OperationOrigin>`
+    :type display: ~azure.mgmt.eventgrid.models.OperationInfo
+    :param origin: Origin of the operation
+    :type origin: str
     :param properties: Properties of the operation
     :type properties: object
     """
@@ -36,6 +33,7 @@ class Operation(Model):
     }
 
     def __init__(self, name=None, display=None, origin=None, properties=None):
+        super(Operation, self).__init__()
         self.name = name
         self.display = display
         self.origin = origin

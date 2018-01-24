@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -22,15 +22,17 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2017-02-27-preview. Constant value: "2017-04-24-preview".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2017-11-30. Constant value: "2017-11-30".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-24-preview"
+        self.api_version = "2017-11-30"
 
         self.config = config
 
@@ -43,8 +45,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationPaged
-         <azure.mgmt.consumption.models.OperationPaged>`
+        :return: An iterator like instance of Operation
+        :rtype:
+         ~azure.mgmt.consumption.models.OperationPaged[~azure.mgmt.consumption.models.Operation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """

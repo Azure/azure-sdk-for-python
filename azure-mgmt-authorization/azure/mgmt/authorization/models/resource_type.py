@@ -20,8 +20,7 @@ class ResourceType(Model):
     :param display_name: The resource type display name.
     :type display_name: str
     :param operations: The resource type operations.
-    :type operations: list of :class:`ProviderOperation
-     <azure.mgmt.authorization.models.ProviderOperation>`
+    :type operations: list[~azure.mgmt.authorization.models.ProviderOperation]
     """
 
     _attribute_map = {

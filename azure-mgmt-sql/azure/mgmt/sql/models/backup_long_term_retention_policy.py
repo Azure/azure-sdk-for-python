@@ -28,8 +28,8 @@ class BackupLongTermRetentionPolicy(ProxyResource):
     :vartype location: str
     :param state: The status of the backup long term retention policy.
      Possible values include: 'Disabled', 'Enabled'
-    :type state: str or :class:`BackupLongTermRetentionPolicyState
-     <azure.mgmt.sql.models.BackupLongTermRetentionPolicyState>`
+    :type state: str or
+     ~azure.mgmt.sql.models.BackupLongTermRetentionPolicyState
     :param recovery_services_backup_policy_resource_id: The azure recovery
      services backup protection policy resource id
     :type recovery_services_backup_policy_resource_id: str

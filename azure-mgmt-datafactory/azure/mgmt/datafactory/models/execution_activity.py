@@ -15,21 +15,30 @@ from .activity import Activity
 class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DataLakeAnalyticsUSQLActivity,
+    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
+    GetMetadataActivity, WebActivity, LookupActivity,
+    SqlServerStoredProcedureActivity, CustomActivity, HDInsightSparkActivity,
+    HDInsightStreamingActivity, HDInsightMapReduceActivity,
+    HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     """
 
     _validation = {
@@ -38,6 +47,7 @@ class ExecutionActivity(Activity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -50,8 +60,8 @@ class ExecutionActivity(Activity):
         'type': {'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
-    def __init__(self, name, description=None, depends_on=None, linked_service_name=None, policy=None):
-        super(ExecutionActivity, self).__init__(name=name, description=description, depends_on=depends_on)
+    def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None):
+        super(ExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
         self.linked_service_name = linked_service_name
         self.policy = policy
         self.type = 'Execution'

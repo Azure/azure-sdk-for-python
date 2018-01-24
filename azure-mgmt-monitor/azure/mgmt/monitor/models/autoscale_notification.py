@@ -22,11 +22,9 @@ class AutoscaleNotification(Model):
      value must be "scale". Default value: "Scale" .
     :vartype operation: str
     :param email: the email notification.
-    :type email: :class:`EmailNotification
-     <azure.mgmt.monitor.models.EmailNotification>`
+    :type email: ~azure.mgmt.monitor.models.EmailNotification
     :param webhooks: the collection of webhook notifications.
-    :type webhooks: list of :class:`WebhookNotification
-     <azure.mgmt.monitor.models.WebhookNotification>`
+    :type webhooks: list[~azure.mgmt.monitor.models.WebhookNotification]
     """
 
     _validation = {

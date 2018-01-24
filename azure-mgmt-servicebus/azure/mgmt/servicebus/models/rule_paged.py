@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class RulePaged(Paged):
     """
-    A paging container for iterating over a list of Rule object
+    A paging container for iterating over a list of :class:`Rule <azure.mgmt.servicebus.models.Rule>` object
     """
 
     _attribute_map = {

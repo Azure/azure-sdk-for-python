@@ -13,28 +13,27 @@ from msrest.serialization import Model
 
 
 class AdditionalUnattendContent(Model):
-    """Additional XML formatted information that can be included in the
+    """Specifies additional XML formatted information that can be included in the
     Unattend.xml file, which is used by Windows Setup. Contents are defined by
-    setting name, component name, and the pass in which the content is a
-    applied.
+    setting name, component name, and the pass in which the content is applied.
 
     :param pass_name: The pass name. Currently, the only allowable value is
-     oobeSystem. Possible values include: 'oobeSystem'
-    :type pass_name: str or :class:`PassNames
-     <azure.mgmt.compute.v2016_03_30.models.PassNames>`
+     OobeSystem. Possible values include: 'OobeSystem'
+    :type pass_name: str or ~azure.mgmt.compute.v2016_03_30.models.PassNames
     :param component_name: The component name. Currently, the only allowable
      value is Microsoft-Windows-Shell-Setup. Possible values include:
      'Microsoft-Windows-Shell-Setup'
-    :type component_name: str or :class:`ComponentNames
-     <azure.mgmt.compute.v2016_03_30.models.ComponentNames>`
-    :param setting_name: Setting name (e.g. FirstLogonCommands, AutoLogon ).
+    :type component_name: str or
+     ~azure.mgmt.compute.v2016_03_30.models.ComponentNames
+    :param setting_name: Specifies the name of the setting to which the
+     content applies. Possible values are: FirstLogonCommands and AutoLogon.
      Possible values include: 'AutoLogon', 'FirstLogonCommands'
-    :type setting_name: str or :class:`SettingNames
-     <azure.mgmt.compute.v2016_03_30.models.SettingNames>`
-    :param content: XML formatted content that is added to the unattend.xml
-     file in the specified pass and component. The XML must be less than 4 KB
-     and must include the root element for the setting or feature that is being
-     inserted.
+    :type setting_name: str or
+     ~azure.mgmt.compute.v2016_03_30.models.SettingNames
+    :param content: Specifies the XML formatted content that is added to the
+     unattend.xml file for the specified path and component. The XML must be
+     less than 4KB and must include the root element for the setting or feature
+     that is being inserted.
     :type content: str
     """
 
@@ -46,6 +45,7 @@ class AdditionalUnattendContent(Model):
     }
 
     def __init__(self, pass_name=None, component_name=None, setting_name=None, content=None):
+        super(AdditionalUnattendContent, self).__init__()
         self.pass_name = pass_name
         self.component_name = component_name
         self.setting_name = setting_name

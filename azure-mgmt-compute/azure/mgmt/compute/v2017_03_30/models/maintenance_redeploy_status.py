@@ -33,8 +33,7 @@ class MaintenanceRedeployStatus(Model):
      Code. Possible values include: 'None', 'RetryLater', 'MaintenanceAborted',
      'MaintenanceCompleted'
     :type last_operation_result_code: str or
-     :class:`MaintenanceOperationResultCodeTypes
-     <azure.mgmt.compute.v2017_03_30.models.MaintenanceOperationResultCodeTypes>`
+     ~azure.mgmt.compute.v2017_03_30.models.MaintenanceOperationResultCodeTypes
     :param last_operation_message: Message returned for the last Maintenance
      Operation.
     :type last_operation_message: str
@@ -51,6 +50,7 @@ class MaintenanceRedeployStatus(Model):
     }
 
     def __init__(self, is_customer_initiated_maintenance_allowed=None, pre_maintenance_window_start_time=None, pre_maintenance_window_end_time=None, maintenance_window_start_time=None, maintenance_window_end_time=None, last_operation_result_code=None, last_operation_message=None):
+        super(MaintenanceRedeployStatus, self).__init__()
         self.is_customer_initiated_maintenance_allowed = is_customer_initiated_maintenance_allowed
         self.pre_maintenance_window_start_time = pre_maintenance_window_start_time
         self.pre_maintenance_window_end_time = pre_maintenance_window_end_time

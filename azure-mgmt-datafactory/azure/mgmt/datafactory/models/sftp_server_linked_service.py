@@ -15,12 +15,15 @@ from .linked_service import LinkedService
 class SftpServerLinkedService(LinkedService):
     """A linked service for an SSH File Transfer Protocol (SFTP) server. .
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param host: The SFTP server host name. Type: string (or Expression with
      resultType string).
@@ -31,15 +34,14 @@ class SftpServerLinkedService(LinkedService):
     :type port: object
     :param authentication_type: The authentication type to be used to connect
      to the FTP server. Possible values include: 'Basic', 'SshPublicKey'
-    :type authentication_type: str or :class:`SftpAuthenticationType
-     <azure.mgmt.datafactory.models.SftpAuthenticationType>`
+    :type authentication_type: str or
+     ~azure.mgmt.datafactory.models.SftpAuthenticationType
     :param user_name: The username used to log on to the SFTP server. Type:
      string (or Expression with resultType string).
     :type user_name: object
     :param password: Password to logon the SFTP server for Basic
      authentication.
-    :type password: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -54,12 +56,10 @@ class SftpServerLinkedService(LinkedService):
      SshPublicKey authentication. For on-premises copy with SshPublicKey
      authentication, either PrivateKeyPath or PrivateKeyContent should be
      specified. SSH private key should be OpenSSH format.
-    :type private_key_content: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type private_key_content: ~azure.mgmt.datafactory.models.SecureString
     :param pass_phrase: The password to decrypt the SSH private key if the SSH
      private key is encrypted.
-    :type pass_phrase: :class:`SecureString
-     <azure.mgmt.datafactory.models.SecureString>`
+    :type pass_phrase: ~azure.mgmt.datafactory.models.SecureString
     :param skip_host_key_validation: If true, skip the SSH host key
      validation. Default value is false. Type: boolean (or Expression with
      resultType boolean).
@@ -76,6 +76,7 @@ class SftpServerLinkedService(LinkedService):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -92,8 +93,8 @@ class SftpServerLinkedService(LinkedService):
         'host_key_fingerprint': {'key': 'typeProperties.hostKeyFingerprint', 'type': 'object'},
     }
 
-    def __init__(self, host, connect_via=None, description=None, port=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, private_key_path=None, private_key_content=None, pass_phrase=None, skip_host_key_validation=None, host_key_fingerprint=None):
-        super(SftpServerLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, host, additional_properties=None, connect_via=None, description=None, port=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, private_key_path=None, private_key_content=None, pass_phrase=None, skip_host_key_validation=None, host_key_fingerprint=None):
+        super(SftpServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.host = host
         self.port = port
         self.authentication_type = authentication_type

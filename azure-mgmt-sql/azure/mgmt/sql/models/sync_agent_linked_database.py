@@ -26,8 +26,7 @@ class SyncAgentLinkedDatabase(ProxyResource):
     :vartype type: str
     :ivar database_type: Type of the sync agent linked database. Possible
      values include: 'AzureSqlDatabase', 'SqlServerDatabase'
-    :vartype database_type: str or :class:`SyncMemberDbType
-     <azure.mgmt.sql.models.SyncMemberDbType>`
+    :vartype database_type: str or ~azure.mgmt.sql.models.SyncMemberDbType
     :ivar database_id: Id of the sync agent linked database.
     :vartype database_id: str
     :ivar description: Description of the sync agent linked database.

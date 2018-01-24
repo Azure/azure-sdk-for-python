@@ -20,8 +20,8 @@ class DiskSku(Model):
 
     :param name: The sku name. Possible values include: 'Standard_LRS',
      'Premium_LRS'
-    :type name: str or :class:`StorageAccountTypes
-     <azure.mgmt.compute.v2017_03_30.models.StorageAccountTypes>`
+    :type name: str or
+     ~azure.mgmt.compute.v2017_03_30.models.StorageAccountTypes
     :ivar tier: The sku tier. Default value: "Standard" .
     :vartype tier: str
     """
@@ -36,5 +36,6 @@ class DiskSku(Model):
     }
 
     def __init__(self, name=None):
+        super(DiskSku, self).__init__()
         self.name = name
         self.tier = None

@@ -17,16 +17,16 @@ class FailoverGroupUpdate(Model):
 
     :param read_write_endpoint: Read-write endpoint of the failover group
      instance.
-    :type read_write_endpoint: :class:`FailoverGroupReadWriteEndpoint
-     <azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint>`
+    :type read_write_endpoint:
+     ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
     :param read_only_endpoint: Read-only endpoint of the failover group
      instance.
-    :type read_only_endpoint: :class:`FailoverGroupReadOnlyEndpoint
-     <azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint>`
+    :type read_only_endpoint:
+     ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
     :param databases: List of databases in the failover group.
-    :type databases: list of str
+    :type databases: list[str]
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -37,6 +37,7 @@ class FailoverGroupUpdate(Model):
     }
 
     def __init__(self, read_write_endpoint=None, read_only_endpoint=None, databases=None, tags=None):
+        super(FailoverGroupUpdate, self).__init__()
         self.read_write_endpoint = read_write_endpoint
         self.read_only_endpoint = read_only_endpoint
         self.databases = databases

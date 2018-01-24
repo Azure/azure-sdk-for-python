@@ -27,6 +27,8 @@ class ServerKeysOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -51,9 +53,9 @@ class ServerKeysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`ServerKey
-         <azure.mgmt.sql.models.ServerKey>`
-        :rtype: :class:`ServerKeyPaged <azure.mgmt.sql.models.ServerKeyPaged>`
+        :return: An iterator like instance of ServerKey
+        :rtype:
+         ~azure.mgmt.sql.models.ServerKeyPaged[~azure.mgmt.sql.models.ServerKey]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -125,11 +127,9 @@ class ServerKeysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServerKey <azure.mgmt.sql.models.ServerKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServerKey <azure.mgmt.sql.models.ServerKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServerKey or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerKey or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -194,19 +194,15 @@ class ServerKeysOperations(object):
          YourVaultName_YourKeyName_01234567890123456789012345678901
         :type key_name: str
         :param parameters: The requested server key resource state.
-        :type parameters: :class:`ServerKey <azure.mgmt.sql.models.ServerKey>`
+        :type parameters: ~azure.mgmt.sql.models.ServerKey
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ServerKey
-         <azure.mgmt.sql.models.ServerKey>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns ServerKey or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ServerKey]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -253,7 +249,7 @@ class ServerKeysOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 201]:
+            if response.status_code not in [200, 201, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -297,14 +293,10 @@ class ServerKeysOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

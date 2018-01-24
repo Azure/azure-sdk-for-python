@@ -15,21 +15,24 @@ from msrest.serialization import Model
 class RecurrenceSchedule(Model):
     """The recurrence schedule.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param minutes: The minutes.
-    :type minutes: list of int
+    :type minutes: list[int]
     :param hours: The hours.
-    :type hours: list of int
+    :type hours: list[int]
     :param week_days: The days of the week.
-    :type week_days: list of str or :class:`DaysOfWeek
-     <azure.mgmt.datafactory.models.DaysOfWeek>`
+    :type week_days: list[str or ~azure.mgmt.datafactory.models.DaysOfWeek]
     :param month_days: The month days.
-    :type month_days: list of int
+    :type month_days: list[int]
     :param monthly_occurrences: The monthly occurrences.
-    :type monthly_occurrences: list of :class:`RecurrenceScheduleOccurrence
-     <azure.mgmt.datafactory.models.RecurrenceScheduleOccurrence>`
+    :type monthly_occurrences:
+     list[~azure.mgmt.datafactory.models.RecurrenceScheduleOccurrence]
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'minutes': {'key': 'minutes', 'type': '[int]'},
         'hours': {'key': 'hours', 'type': '[int]'},
         'week_days': {'key': 'weekDays', 'type': '[DaysOfWeek]'},
@@ -37,7 +40,8 @@ class RecurrenceSchedule(Model):
         'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[RecurrenceScheduleOccurrence]'},
     }
 
-    def __init__(self, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
+    def __init__(self, additional_properties=None, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
+        self.additional_properties = additional_properties
         self.minutes = minutes
         self.hours = hours
         self.week_days = week_days

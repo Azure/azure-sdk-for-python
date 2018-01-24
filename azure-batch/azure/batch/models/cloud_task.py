@@ -37,19 +37,17 @@ class CloudTask(Model):
     :type creation_time: datetime
     :param exit_conditions: How the Batch service should respond when the task
      completes.
-    :type exit_conditions: :class:`ExitConditions
-     <azure.batch.models.ExitConditions>`
+    :type exit_conditions: ~azure.batch.models.ExitConditions
     :param state: The current state of the task. Possible values include:
      'active', 'preparing', 'running', 'completed'
-    :type state: str or :class:`TaskState <azure.batch.models.TaskState>`
+    :type state: str or ~azure.batch.models.TaskState
     :param state_transition_time: The time at which the task entered its
      current state.
     :type state_transition_time: datetime
     :param previous_state: The previous state of the task. This property is
      not set if the task is in its initial Active state. Possible values
      include: 'active', 'preparing', 'running', 'completed'
-    :type previous_state: str or :class:`TaskState
-     <azure.batch.models.TaskState>`
+    :type previous_state: str or ~azure.batch.models.TaskState
     :param previous_state_transition_time: The time at which the task entered
      its previous state. This property is not set if the task is in its initial
      Active state.
@@ -71,55 +69,44 @@ class CloudTask(Model):
      (the root of Azure Batch directories on the node) are mapped into the
      container, all task environment variables are mapped into the container,
      and the task command line is executed in the container.
-    :type container_settings: :class:`TaskContainerSettings
-     <azure.batch.models.TaskContainerSettings>`
+    :type container_settings: ~azure.batch.models.TaskContainerSettings
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. For
      multi-instance tasks, the resource files will only be downloaded to the
      compute node on which the primary task is executed.
-    :type resource_files: list of :class:`ResourceFile
-     <azure.batch.models.ResourceFile>`
+    :type resource_files: list[~azure.batch.models.ResourceFile]
     :param output_files: A list of files that the Batch service will upload
      from the compute node after running the command line. For multi-instance
      tasks, the files will only be uploaded from the compute node on which the
      primary task is executed.
-    :type output_files: list of :class:`OutputFile
-     <azure.batch.models.OutputFile>`
+    :type output_files: list[~azure.batch.models.OutputFile]
     :param environment_settings: A list of environment variable settings for
      the task.
-    :type environment_settings: list of :class:`EnvironmentSetting
-     <azure.batch.models.EnvironmentSetting>`
+    :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param affinity_info: A locality hint that can be used by the Batch
      service to select a compute node on which to start the new task.
-    :type affinity_info: :class:`AffinityInformation
-     <azure.batch.models.AffinityInformation>`
+    :type affinity_info: ~azure.batch.models.AffinityInformation
     :param constraints: The execution constraints that apply to this task.
-    :type constraints: :class:`TaskConstraints
-     <azure.batch.models.TaskConstraints>`
+    :type constraints: ~azure.batch.models.TaskConstraints
     :param user_identity: The user identity under which the task runs. If
      omitted, the task runs as a non-administrative user unique to the task.
-    :type user_identity: :class:`UserIdentity
-     <azure.batch.models.UserIdentity>`
+    :type user_identity: ~azure.batch.models.UserIdentity
     :param execution_info: Information about the execution of the task.
-    :type execution_info: :class:`TaskExecutionInformation
-     <azure.batch.models.TaskExecutionInformation>`
+    :type execution_info: ~azure.batch.models.TaskExecutionInformation
     :param node_info: Information about the compute node on which the task
      ran.
-    :type node_info: :class:`ComputeNodeInformation
-     <azure.batch.models.ComputeNodeInformation>`
+    :type node_info: ~azure.batch.models.ComputeNodeInformation
     :param multi_instance_settings: An object that indicates that the task is
      a multi-instance task, and contains information about how to run the
      multi-instance task.
-    :type multi_instance_settings: :class:`MultiInstanceSettings
-     <azure.batch.models.MultiInstanceSettings>`
+    :type multi_instance_settings: ~azure.batch.models.MultiInstanceSettings
     :param stats: Resource usage statistics for the task.
-    :type stats: :class:`TaskStatistics <azure.batch.models.TaskStatistics>`
+    :type stats: ~azure.batch.models.TaskStatistics
     :param depends_on: The tasks that this task depends on. This task will not
      be scheduled until all tasks that it depends on have completed
      successfully. If any of those tasks fail and exhaust their retry counts,
      this task will never be scheduled.
-    :type depends_on: :class:`TaskDependencies
-     <azure.batch.models.TaskDependencies>`
+    :type depends_on: ~azure.batch.models.TaskDependencies
     :param application_package_references: A list of application packages that
      the Batch service will deploy to the compute node before running the
      command line. Application packages are downloaded and deployed to a shared
@@ -128,9 +115,8 @@ class CloudTask(Model):
      re-downloaded; the existing copy on the compute node is used. If a
      referenced application package cannot be installed, for example because
      the package has been deleted or because download failed, the task fails.
-    :type application_package_references: list of
-     :class:`ApplicationPackageReference
-     <azure.batch.models.ApplicationPackageReference>`
+    :type application_package_references:
+     list[~azure.batch.models.ApplicationPackageReference]
     :param authentication_token_settings: The settings for an authentication
      token that the task can use to perform Batch service operations. If this
      property is set, the Batch service provides the task with an
@@ -140,8 +126,8 @@ class CloudTask(Model):
      that the task can carry out using the token depend on the settings. For
      example, a task can request job permissions in order to add other tasks to
      the job, or check the status of the job or of other tasks under the job.
-    :type authentication_token_settings: :class:`AuthenticationTokenSettings
-     <azure.batch.models.AuthenticationTokenSettings>`
+    :type authentication_token_settings:
+     ~azure.batch.models.AuthenticationTokenSettings
     """
 
     _attribute_map = {

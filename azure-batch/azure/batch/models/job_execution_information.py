@@ -33,8 +33,7 @@ class JobExecutionInformation(Model):
     :param scheduling_error: Details of any error encountered by the service
      in starting the job. This property is not set if there was no error
      starting the job.
-    :type scheduling_error: :class:`JobSchedulingError
-     <azure.batch.models.JobSchedulingError>`
+    :type scheduling_error: ~azure.batch.models.JobSchedulingError
     :param terminate_reason: A string describing the reason the job ended.
      This property is set only if the job is in the completed state. If the
      Batch service terminates the job, it sets the reason as follows:

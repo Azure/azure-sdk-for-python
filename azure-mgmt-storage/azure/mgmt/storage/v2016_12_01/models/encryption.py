@@ -19,8 +19,7 @@ class Encryption(Model):
     sending a request.
 
     :param services: List of services which support encryption.
-    :type services: :class:`EncryptionServices
-     <azure.mgmt.storage.v2016_12_01.models.EncryptionServices>`
+    :type services: ~azure.mgmt.storage.v2016_12_01.models.EncryptionServices
     :ivar key_source: The encryption keySource (provider). Possible values
      (case-insensitive):  Microsoft.Storage. Default value: "Microsoft.Storage"
      .
@@ -39,4 +38,5 @@ class Encryption(Model):
     key_source = "Microsoft.Storage"
 
     def __init__(self, services=None):
+        super(Encryption, self).__init__()
         self.services = services

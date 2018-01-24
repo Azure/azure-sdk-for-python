@@ -27,7 +27,7 @@ class Resource(Model):
     :ivar type: Specifies the type of the resource.
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -46,6 +46,7 @@ class Resource(Model):
     }
 
     def __init__(self, location, tags=None):
+        super(Resource, self).__init__()
         self.id = None
         self.name = None
         self.location = location

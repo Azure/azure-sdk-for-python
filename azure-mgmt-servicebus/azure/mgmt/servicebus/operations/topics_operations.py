@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -24,6 +24,8 @@ class TopicsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-04-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -48,8 +50,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBTopicPaged
-         <azure.mgmt.servicebus.models.SBTopicPaged>`
+        :return: An iterator like instance of SBTopic
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBTopicPaged[~azure.mgmt.servicebus.models.SBTopic]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -115,16 +118,15 @@ class TopicsOperations(object):
         :param topic_name: The topic name.
         :type topic_name: str
         :param parameters: Parameters supplied to create a topic resource.
-        :type parameters: :class:`SBTopic
-         <azure.mgmt.servicebus.models.SBTopic>`
+        :type parameters: ~azure.mgmt.servicebus.models.SBTopic
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBTopic <azure.mgmt.servicebus.models.SBTopic>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SBTopic or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBTopic or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -133,7 +135,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -190,9 +192,8 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -201,7 +202,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -224,7 +225,7 @@ class TopicsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -247,9 +248,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBTopic <azure.mgmt.servicebus.models.SBTopic>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SBTopic or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBTopic or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -258,7 +259,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -311,8 +312,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBAuthorizationRulePaged
-         <azure.mgmt.servicebus.models.SBAuthorizationRulePaged>`
+        :return: An iterator like instance of SBAuthorizationRule
+        :rtype:
+         ~azure.mgmt.servicebus.models.SBAuthorizationRulePaged[~azure.mgmt.servicebus.models.SBAuthorizationRule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -324,7 +326,7 @@ class TopicsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+                    'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -368,7 +370,7 @@ class TopicsOperations(object):
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, topic_name, authorization_rule_name, rights=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, topic_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
         """Creates an authorizatio rule for the specified topic.
 
         :param resource_group_name: Name of the Resource group within the
@@ -381,17 +383,15 @@ class TopicsOperations(object):
         :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
-        :type rights: list of str or :class:`AccessRights
-         <azure.mgmt.servicebus.models.AccessRights>`
+        :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SBAuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -402,7 +402,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -462,10 +462,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SBAuthorizationRule
-         <azure.mgmt.servicebus.models.SBAuthorizationRule>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SBAuthorizationRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.SBAuthorizationRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -474,7 +473,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -530,9 +529,8 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -541,7 +539,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -565,7 +563,7 @@ class TopicsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
@@ -590,9 +588,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -601,7 +599,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -654,8 +652,7 @@ class TopicsOperations(object):
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
-        :type key_type: str or :class:`KeyType
-         <azure.mgmt.servicebus.models.KeyType>`
+        :type key_type: str or ~azure.mgmt.servicebus.models.KeyType
         :param key: Optional, if the key value provided, is reset for KeyType
          value or autogenerate Key value set for keyType
         :type key: str
@@ -664,9 +661,9 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccessKeys <azure.mgmt.servicebus.models.AccessKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AccessKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.servicebus.models.AccessKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
@@ -677,7 +674,7 @@ class TopicsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

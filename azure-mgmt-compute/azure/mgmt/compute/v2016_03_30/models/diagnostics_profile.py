@@ -13,13 +13,16 @@ from msrest.serialization import Model
 
 
 class DiagnosticsProfile(Model):
-    """Describes a diagnostics profile.
+    """Specifies the boot diagnostic settings state. <br><br>Minimum api-version:
+    2015-06-15.
 
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
-     allows the user to view console output and/or a screenshot of the virtual
-     machine from the hypervisor.
-    :type boot_diagnostics: :class:`BootDiagnostics
-     <azure.mgmt.compute.v2016_03_30.models.BootDiagnostics>`
+     allows you to view Console Output and Screenshot to diagnose VM status.
+     <br><br> For Linux Virtual Machines, you can easily view the output of
+     your console log. <br><br> For both Windows and Linux virtual machines,
+     Azure also enables you to see a screenshot of the VM from the hypervisor.
+    :type boot_diagnostics:
+     ~azure.mgmt.compute.v2016_03_30.models.BootDiagnostics
     """
 
     _attribute_map = {
@@ -27,4 +30,5 @@ class DiagnosticsProfile(Model):
     }
 
     def __init__(self, boot_diagnostics=None):
+        super(DiagnosticsProfile, self).__init__()
         self.boot_diagnostics = boot_diagnostics

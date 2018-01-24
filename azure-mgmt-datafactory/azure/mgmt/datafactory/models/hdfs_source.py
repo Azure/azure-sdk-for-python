@@ -13,8 +13,11 @@ from .copy_source import CopySource
 
 
 class HdfsSource(CopySource):
-    """A copy activity source for HDFS source.
+    """A copy activity HDFS source.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -22,15 +25,14 @@ class HdfsSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
      boolean).
     :type recursive: object
     :param distcp_settings: Specifies Distcp-related settings.
-    :type distcp_settings: :class:`DistcpSettings
-     <azure.mgmt.datafactory.models.DistcpSettings>`
+    :type distcp_settings: ~azure.mgmt.datafactory.models.DistcpSettings
     """
 
     _validation = {
@@ -38,6 +40,7 @@ class HdfsSource(CopySource):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
@@ -45,8 +48,8 @@ class HdfsSource(CopySource):
         'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None, recursive=None, distcp_settings=None):
-        super(HdfsSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, recursive=None, distcp_settings=None):
+        super(HdfsSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.recursive = recursive
         self.distcp_settings = distcp_settings
         self.type = 'HdfsSource'

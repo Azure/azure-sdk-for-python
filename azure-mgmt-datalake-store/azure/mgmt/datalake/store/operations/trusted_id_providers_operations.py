@@ -26,6 +26,8 @@ class TrustedIdProvidersOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-11-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -60,13 +62,9 @@ class TrustedIdProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TrustedIdProvider
-         <azure.mgmt.datalake.store.models.TrustedIdProvider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TrustedIdProvider
-         <azure.mgmt.datalake.store.models.TrustedIdProvider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TrustedIdProvider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.store.models.TrustedIdProvider or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.TrustedIdProvider(name=name, id_provider=id_provider)
@@ -101,7 +99,7 @@ class TrustedIdProvidersOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -140,13 +138,9 @@ class TrustedIdProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TrustedIdProvider
-         <azure.mgmt.datalake.store.models.TrustedIdProvider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TrustedIdProvider
-         <azure.mgmt.datalake.store.models.TrustedIdProvider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TrustedIdProvider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.store.models.TrustedIdProvider or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = None
@@ -186,7 +180,7 @@ class TrustedIdProvidersOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -223,11 +217,8 @@ class TrustedIdProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -256,7 +247,7 @@ class TrustedIdProvidersOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -285,13 +276,9 @@ class TrustedIdProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`TrustedIdProvider
-         <azure.mgmt.datalake.store.models.TrustedIdProvider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`TrustedIdProvider
-         <azure.mgmt.datalake.store.models.TrustedIdProvider>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: TrustedIdProvider or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datalake.store.models.TrustedIdProvider or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -320,7 +307,7 @@ class TrustedIdProvidersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -354,10 +341,9 @@ class TrustedIdProvidersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`TrustedIdProvider
-         <azure.mgmt.datalake.store.models.TrustedIdProvider>`
-        :rtype: :class:`TrustedIdProviderPaged
-         <azure.mgmt.datalake.store.models.TrustedIdProviderPaged>`
+        :return: An iterator like instance of TrustedIdProvider
+        :rtype:
+         ~azure.mgmt.datalake.store.models.TrustedIdProviderPaged[~azure.mgmt.datalake.store.models.TrustedIdProvider]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -393,7 +379,7 @@ class TrustedIdProvidersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

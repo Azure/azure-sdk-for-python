@@ -16,7 +16,7 @@ class TxtRecord(Model):
     """A TXT record.
 
     :param value: The text value of this TXT record.
-    :type value: list of str
+    :type value: list[str]
     """
 
     _attribute_map = {

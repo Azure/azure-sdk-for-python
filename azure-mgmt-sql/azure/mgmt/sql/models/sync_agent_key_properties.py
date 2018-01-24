@@ -31,4 +31,5 @@ class SyncAgentKeyProperties(Model):
     }
 
     def __init__(self):
+        super(SyncAgentKeyProperties, self).__init__()
         self.sync_agent_key = None

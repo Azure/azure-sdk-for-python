@@ -20,8 +20,8 @@ class UpdateSystemServicesResponse(Model):
 
     :ivar update_status: Update status. Possible values include: 'Unknown',
      'Updating', 'Creating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
-    :vartype update_status: str or :class:`OperationStatus
-     <azure.mgmt.machinelearningcompute.models.OperationStatus>`
+    :vartype update_status: str or
+     ~azure.mgmt.machinelearningcompute.models.OperationStatus
     :ivar update_started_on: The date and time when the last system services
      update was started.
     :vartype update_started_on: datetime
@@ -43,6 +43,7 @@ class UpdateSystemServicesResponse(Model):
     }
 
     def __init__(self):
+        super(UpdateSystemServicesResponse, self).__init__()
         self.update_status = None
         self.update_started_on = None
         self.update_completed_on = None

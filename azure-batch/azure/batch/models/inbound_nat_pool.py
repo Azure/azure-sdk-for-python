@@ -24,8 +24,7 @@ class InboundNATPool(Model):
     :type name: str
     :param protocol: The protocol of the endpoint. Possible values include:
      'tcp', 'udp'
-    :type protocol: str or :class:`InboundEndpointProtocol
-     <azure.batch.models.InboundEndpointProtocol>`
+    :type protocol: str or ~azure.batch.models.InboundEndpointProtocol
     :param backend_port: The port number on the compute node. This must be
      unique within a Batch pool. Acceptable values are between 1 and 65535
      except for 22, 3389, 29876 and 29877 as these are reserved. If any
@@ -54,9 +53,8 @@ class InboundNATPool(Model):
      created to allow inbound access to the specified backendPort. If the
      maximum number of network security group rules is exceeded the request
      fails with HTTP status code 400.
-    :type network_security_group_rules: list of
-     :class:`NetworkSecurityGroupRule
-     <azure.batch.models.NetworkSecurityGroupRule>`
+    :type network_security_group_rules:
+     list[~azure.batch.models.NetworkSecurityGroupRule]
     """
 
     _validation = {

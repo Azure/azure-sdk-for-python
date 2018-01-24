@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -56,7 +56,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LabPaged <azure.mgmt.devtestlabs.models.LabPaged>`
+        :return: An iterator like instance of Lab
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.LabPaged[~azure.mgmt.devtestlabs.models.Lab]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -139,7 +141,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LabPaged <azure.mgmt.devtestlabs.models.LabPaged>`
+        :return: An iterator like instance of Lab
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.LabPaged[~azure.mgmt.devtestlabs.models.Lab]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -217,9 +221,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Lab or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Lab or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -277,15 +281,15 @@ class LabsOperations(object):
         :param name: The name of the lab.
         :type name: str
         :param lab: A lab.
-        :type lab: :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
+        :type lab: ~azure.mgmt.devtestlabs.models.Lab
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :return: An instance of AzureOperationPoller that returns Lab or
+         ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.devtestlabs.models.Lab]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -371,11 +375,10 @@ class LabsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -446,16 +449,15 @@ class LabsOperations(object):
         :param name: The name of the lab.
         :type name: str
         :param lab: A lab.
-        :type lab: :class:`LabFragment
-         <azure.mgmt.devtestlabs.models.LabFragment>`
+        :type lab: ~azure.mgmt.devtestlabs.models.LabFragment
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Lab <azure.mgmt.devtestlabs.models.Lab>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Lab or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.Lab or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -517,11 +519,10 @@ class LabsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -595,16 +596,14 @@ class LabsOperations(object):
         :param lab_virtual_machine_creation_parameter: Properties for creating
          a virtual machine.
         :type lab_virtual_machine_creation_parameter:
-         :class:`LabVirtualMachineCreationParameter
-         <azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter>`
+         ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -689,11 +688,10 @@ class LabsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         export_resource_usage_parameters = models.ExportResourceUsageParameters(blob_storage_absolute_sas_uri=blob_storage_absolute_sas_uri, usage_start_date=usage_start_date)
@@ -776,10 +774,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`GenerateUploadUriResponse
-         <azure.mgmt.devtestlabs.models.GenerateUploadUriResponse>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: GenerateUploadUriResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devtestlabs.models.GenerateUploadUriResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         generate_upload_uri_parameter = models.GenerateUploadUriParameter(blob_name=blob_name)
@@ -844,8 +841,9 @@ class LabsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LabVhdPaged
-         <azure.mgmt.devtestlabs.models.LabVhdPaged>`
+        :return: An iterator like instance of LabVhd
+        :rtype:
+         ~azure.mgmt.devtestlabs.models.LabVhdPaged[~azure.mgmt.devtestlabs.models.LabVhd]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

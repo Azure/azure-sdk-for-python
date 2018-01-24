@@ -26,6 +26,8 @@ class Operations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -44,9 +46,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Operation
-         <azure.mgmt.sql.models.Operation>`
-        :rtype: :class:`OperationPaged <azure.mgmt.sql.models.OperationPaged>`
+        :return: An iterator like instance of Operation
+        :rtype:
+         ~azure.mgmt.sql.models.OperationPaged[~azure.mgmt.sql.models.Operation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

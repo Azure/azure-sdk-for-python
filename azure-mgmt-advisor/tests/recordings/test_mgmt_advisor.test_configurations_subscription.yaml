@@ -1,0 +1,108 @@
+interactions:
+- request:
+    body: '{"properties": {"low_cpu_threshold": "20"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['43']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      date: ['Tue, 16 Jan 2018 21:49:43 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['199']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"20","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['751']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 16 Jan 2018 21:49:44 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"low_cpu_threshold": "5"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['42']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      date: ['Tue, 16 Jan 2018 21:49:45 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['199']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.18
+          msrest_azure/0.4.15 azure-mgmt-advisor/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations?api-version=2017-04-19
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000","properties":{"low_cpu_threshold":"5","exclude":false}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_advisor_test_configurations_resourcegroup27471558/providers/Microsoft.Advisor/configurations/00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","type":"Microsoft.Advisor/Configurations","name":"00000000-0000-0000-0000-000000000000-test_mgmt_advisor_test_configurations_resourcegroup27471558","properties":{"exclude":false}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['750']
+      content-type: [application/json; charset=utf-8]
+      date: ['Tue, 16 Jan 2018 21:49:46 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['599']
+    status: {code: 200, message: OK}
+version: 1

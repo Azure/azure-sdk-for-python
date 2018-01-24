@@ -16,19 +16,18 @@ class SecurityRuleAssociations(Model):
     """All security rules associated with the network interface.
 
     :param network_interface_association:
-    :type network_interface_association: :class:`NetworkInterfaceAssociation
-     <azure.mgmt.network.v2017_03_01.models.NetworkInterfaceAssociation>`
+    :type network_interface_association:
+     ~azure.mgmt.network.v2017_03_01.models.NetworkInterfaceAssociation
     :param subnet_association:
-    :type subnet_association: :class:`SubnetAssociation
-     <azure.mgmt.network.v2017_03_01.models.SubnetAssociation>`
+    :type subnet_association:
+     ~azure.mgmt.network.v2017_03_01.models.SubnetAssociation
     :param default_security_rules: Collection of default security rules of the
      network security group.
-    :type default_security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v2017_03_01.models.SecurityRule>`
+    :type default_security_rules:
+     list[~azure.mgmt.network.v2017_03_01.models.SecurityRule]
     :param effective_security_rules: Collection of effective security rules.
-    :type effective_security_rules: list of
-     :class:`EffectiveNetworkSecurityRule
-     <azure.mgmt.network.v2017_03_01.models.EffectiveNetworkSecurityRule>`
+    :type effective_security_rules:
+     list[~azure.mgmt.network.v2017_03_01.models.EffectiveNetworkSecurityRule]
     """
 
     _attribute_map = {
@@ -39,6 +38,7 @@ class SecurityRuleAssociations(Model):
     }
 
     def __init__(self, network_interface_association=None, subnet_association=None, default_security_rules=None, effective_security_rules=None):
+        super(SecurityRuleAssociations, self).__init__()
         self.network_interface_association = network_interface_association
         self.subnet_association = subnet_association
         self.default_security_rules = default_security_rules

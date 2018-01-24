@@ -19,8 +19,7 @@ class SyncFullSchemaTable(Model):
     sending a request.
 
     :ivar columns: List of columns in the table of database full schema.
-    :vartype columns: list of :class:`SyncFullSchemaTableColumn
-     <azure.mgmt.sql.models.SyncFullSchemaTableColumn>`
+    :vartype columns: list[~azure.mgmt.sql.models.SyncFullSchemaTableColumn]
     :ivar error_id: Error id of the table.
     :vartype error_id: str
     :ivar has_error: If there is error in the table.
@@ -48,6 +47,7 @@ class SyncFullSchemaTable(Model):
     }
 
     def __init__(self):
+        super(SyncFullSchemaTable, self).__init__()
         self.columns = None
         self.error_id = None
         self.has_error = None

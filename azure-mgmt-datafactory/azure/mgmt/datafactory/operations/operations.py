@@ -25,6 +25,8 @@ class Operations(object):
     :ivar api_version: The API version. Constant value: "2017-09-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -43,13 +45,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationListResponse
-         <azure.mgmt.datafactory.models.OperationListResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`OperationListResponse
-         <azure.mgmt.datafactory.models.OperationListResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: OperationListResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.OperationListResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

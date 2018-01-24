@@ -37,13 +37,17 @@ class VirtualNetworkPeering(SubResource):
      network. The remote virtual network can be in the same or different region
      (preview). See here to register for the preview and learn more
      (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-peering).
-    :type remote_virtual_network: :class:`SubResource
-     <azure.mgmt.network.v2017_09_01.models.SubResource>`
+    :type remote_virtual_network:
+     ~azure.mgmt.network.v2017_09_01.models.SubResource
+    :param remote_address_space: The reference of the remote virtual network
+     address space.
+    :type remote_address_space:
+     ~azure.mgmt.network.v2017_09_01.models.AddressSpace
     :param peering_state: The status of the virtual network peering. Possible
      values are 'Initiated', 'Connected', and 'Disconnected'. Possible values
      include: 'Initiated', 'Connected', 'Disconnected'
-    :type peering_state: str or :class:`VirtualNetworkPeeringState
-     <azure.mgmt.network.v2017_09_01.models.VirtualNetworkPeeringState>`
+    :type peering_state: str or
+     ~azure.mgmt.network.v2017_09_01.models.VirtualNetworkPeeringState
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource
@@ -61,19 +65,21 @@ class VirtualNetworkPeering(SubResource):
         'allow_gateway_transit': {'key': 'properties.allowGatewayTransit', 'type': 'bool'},
         'use_remote_gateways': {'key': 'properties.useRemoteGateways', 'type': 'bool'},
         'remote_virtual_network': {'key': 'properties.remoteVirtualNetwork', 'type': 'SubResource'},
+        'remote_address_space': {'key': 'properties.remoteAddressSpace', 'type': 'AddressSpace'},
         'peering_state': {'key': 'properties.peeringState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, allow_virtual_network_access=None, allow_forwarded_traffic=None, allow_gateway_transit=None, use_remote_gateways=None, remote_virtual_network=None, peering_state=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, allow_virtual_network_access=None, allow_forwarded_traffic=None, allow_gateway_transit=None, use_remote_gateways=None, remote_virtual_network=None, remote_address_space=None, peering_state=None, provisioning_state=None, name=None, etag=None):
         super(VirtualNetworkPeering, self).__init__(id=id)
         self.allow_virtual_network_access = allow_virtual_network_access
         self.allow_forwarded_traffic = allow_forwarded_traffic
         self.allow_gateway_transit = allow_gateway_transit
         self.use_remote_gateways = use_remote_gateways
         self.remote_virtual_network = remote_virtual_network
+        self.remote_address_space = remote_address_space
         self.peering_state = peering_state
         self.provisioning_state = provisioning_state
         self.name = name

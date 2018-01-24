@@ -25,6 +25,8 @@ class DatasetsOperations(object):
     :ivar api_version: The API version. Constant value: "2017-09-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -47,10 +49,9 @@ class DatasetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`DatasetResource
-         <azure.mgmt.datafactory.models.DatasetResource>`
-        :rtype: :class:`DatasetResourcePaged
-         <azure.mgmt.datafactory.models.DatasetResourcePaged>`
+        :return: An iterator like instance of DatasetResource
+        :rtype:
+         ~azure.mgmt.datafactory.models.DatasetResourcePaged[~azure.mgmt.datafactory.models.DatasetResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -115,8 +116,7 @@ class DatasetsOperations(object):
         :param dataset_name: The dataset name.
         :type dataset_name: str
         :param properties: Dataset properties.
-        :type properties: :class:`Dataset
-         <azure.mgmt.datafactory.models.Dataset>`
+        :type properties: ~azure.mgmt.datafactory.models.Dataset
         :param if_match: ETag of the dataset entity.  Should only be specified
          for update, for which it should match existing entity or can be * for
          unconditional update.
@@ -126,13 +126,9 @@ class DatasetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DatasetResource
-         <azure.mgmt.datafactory.models.DatasetResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DatasetResource
-         <azure.mgmt.datafactory.models.DatasetResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DatasetResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.DatasetResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -201,13 +197,9 @@ class DatasetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DatasetResource
-         <azure.mgmt.datafactory.models.DatasetResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DatasetResource
-         <azure.mgmt.datafactory.models.DatasetResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DatasetResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.DatasetResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -268,11 +260,8 @@ class DatasetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """

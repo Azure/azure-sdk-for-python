@@ -16,8 +16,7 @@ class CloudTaskListSubtasksResult(Model):
     """The result of listing the subtasks of a task.
 
     :param value: The list of subtasks.
-    :type value: list of :class:`SubtaskInformation
-     <azure.batch.models.SubtaskInformation>`
+    :type value: list[~azure.batch.models.SubtaskInformation]
     """
 
     _attribute_map = {

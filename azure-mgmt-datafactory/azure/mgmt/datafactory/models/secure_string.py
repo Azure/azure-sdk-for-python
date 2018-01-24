@@ -9,24 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .secret_base import SecretBase
 
 
-class SecureString(Model):
+class SecureString(SecretBase):
     """Azure Data Factory secure string definition. The string value will be
     masked with asterisks '*' during Get or List API calls.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar type: SecureString type. Default value: "SecureString" .
-    :vartype type: str
+    :param type: Constant filled by server.
+    :type type: str
     :param value: Value of secure string.
     :type value: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'value': {'required': True},
     }
 
@@ -35,7 +32,7 @@ class SecureString(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    type = "SecureString"
-
     def __init__(self, value):
+        super(SecureString, self).__init__()
         self.value = value
+        self.type = 'SecureString'

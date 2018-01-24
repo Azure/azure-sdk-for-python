@@ -24,12 +24,12 @@ class SBNamespace(TrackedResource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: The Geo-location where the resource live
+    :param location: The Geo-location where the resource lives
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: Porperties of Sku
-    :type sku: :class:`SBSku <azure.mgmt.servicebus.models.SBSku>`
+    :type sku: ~azure.mgmt.servicebus.models.SBSku
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the namespace was created.

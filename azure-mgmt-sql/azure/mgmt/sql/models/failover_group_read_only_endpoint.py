@@ -17,8 +17,8 @@ class FailoverGroupReadOnlyEndpoint(Model):
 
     :param failover_policy: Failover policy of the read-only endpoint for the
      failover group. Possible values include: 'Disabled', 'Enabled'
-    :type failover_policy: str or :class:`ReadOnlyEndpointFailoverPolicy
-     <azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy>`
+    :type failover_policy: str or
+     ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
     """
 
     _attribute_map = {
@@ -26,4 +26,5 @@ class FailoverGroupReadOnlyEndpoint(Model):
     }
 
     def __init__(self, failover_policy=None):
+        super(FailoverGroupReadOnlyEndpoint, self).__init__()
         self.failover_policy = failover_policy

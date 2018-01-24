@@ -13,17 +13,25 @@ from msrest.serialization import Model
 
 
 class StorageProfile(Model):
-    """Describes a storage profile.
+    """Specifies the storage settings for the virtual machine disks.
 
-    :param image_reference: The image reference.
-    :type image_reference: :class:`ImageReference
-     <azure.mgmt.compute.v2015_06_15.models.ImageReference>`
-    :param os_disk: The OS disk.
-    :type os_disk: :class:`OSDisk
-     <azure.mgmt.compute.v2015_06_15.models.OSDisk>`
-    :param data_disks: The data disks.
-    :type data_disks: list of :class:`DataDisk
-     <azure.mgmt.compute.v2015_06_15.models.DataDisk>`
+    :param image_reference: Specifies information about the image to use. You
+     can specify information about platform images, marketplace images, or
+     virtual machine images. This element is required when you want to use a
+     platform image, marketplace image, or virtual machine image, but is not
+     used in other creation operations.
+    :type image_reference:
+     ~azure.mgmt.compute.v2015_06_15.models.ImageReference
+    :param os_disk: Specifies information about the operating system disk used
+     by the virtual machine. <br><br> For more information about disks, see
+     [About disks and VHDs for Azure virtual
+     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+    :type os_disk: ~azure.mgmt.compute.v2015_06_15.models.OSDisk
+    :param data_disks: Specifies the parameters that are used to add a data
+     disk to a virtual machine. <br><br> For more information about disks, see
+     [About disks and VHDs for Azure virtual
+     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+    :type data_disks: list[~azure.mgmt.compute.v2015_06_15.models.DataDisk]
     """
 
     _attribute_map = {
@@ -33,6 +41,7 @@ class StorageProfile(Model):
     }
 
     def __init__(self, image_reference=None, os_disk=None, data_disks=None):
+        super(StorageProfile, self).__init__()
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.data_disks = data_disks

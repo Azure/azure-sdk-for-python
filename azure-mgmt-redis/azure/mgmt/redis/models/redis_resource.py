@@ -27,16 +27,16 @@ class RedisResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param redis_configuration: All Redis Settings. Few possible keys:
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
-    :type redis_configuration: dict
+    :type redis_configuration: dict[str, str]
     :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
      port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param tenant_settings: tenantSettings
-    :type tenant_settings: dict
+    :type tenant_settings: dict[str, str]
     :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
     :type shard_count: int
@@ -48,7 +48,7 @@ class RedisResource(Resource):
      inside an existing Azure Virtual Network.
     :type static_ip: str
     :param sku: The SKU of the Redis cache to deploy.
-    :type sku: :class:`Sku <azure.mgmt.redis.models.Sku>`
+    :type sku: ~azure.mgmt.redis.models.Sku
     :ivar redis_version: Redis version.
     :vartype redis_version: str
     :ivar provisioning_state: Redis instance provisioning status.
@@ -61,8 +61,7 @@ class RedisResource(Resource):
     :vartype ssl_port: int
     :ivar access_keys: The keys of the Redis cache - not set if this object is
      not the response to Create or Update redis cache
-    :vartype access_keys: :class:`RedisAccessKeys
-     <azure.mgmt.redis.models.RedisAccessKeys>`
+    :vartype access_keys: ~azure.mgmt.redis.models.RedisAccessKeys
     """
 
     _validation = {

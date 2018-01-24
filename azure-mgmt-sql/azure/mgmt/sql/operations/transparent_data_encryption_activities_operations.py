@@ -27,6 +27,8 @@ class TransparentDataEncryptionActivitiesOperations(object):
     :ivar transparent_data_encryption_name: The name of the transparent data encryption configuration. Constant value: "current".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -56,10 +58,9 @@ class TransparentDataEncryptionActivitiesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of
-         :class:`TransparentDataEncryptionActivity
-         <azure.mgmt.sql.models.TransparentDataEncryptionActivity>`
-        :rtype: :class:`TransparentDataEncryptionActivityPaged
-         <azure.mgmt.sql.models.TransparentDataEncryptionActivityPaged>`
+         TransparentDataEncryptionActivity
+        :rtype:
+         ~azure.mgmt.sql.models.TransparentDataEncryptionActivityPaged[~azure.mgmt.sql.models.TransparentDataEncryptionActivity]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

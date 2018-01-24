@@ -32,8 +32,7 @@ class PoolResizeParameter(Model):
      requeue. Possible values include: 'requeue', 'terminate',
      'taskCompletion', 'retainedData'
     :type node_deallocation_option: str or
-     :class:`ComputeNodeDeallocationOption
-     <azure.batch.models.ComputeNodeDeallocationOption>`
+     ~azure.batch.models.ComputeNodeDeallocationOption
     """
 
     _attribute_map = {

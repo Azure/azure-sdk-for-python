@@ -14,24 +14,31 @@ from msrest.serialization import Model
 
 class ContainerServiceServicePrincipalProfile(Model):
     """Information about a service principal identity for the cluster to use for
-    manipulating Azure APIs.
+    manipulating Azure APIs. Either secret or keyVaultSecretRef must be
+    specified.
 
     :param client_id: The ID for the service principal.
     :type client_id: str
-    :param secret: The secret password associated with the service principal.
+    :param secret: The secret password associated with the service principal
+     in plain text.
     :type secret: str
+    :param key_vault_secret_ref: Reference to a secret stored in Azure Key
+     Vault.
+    :type key_vault_secret_ref:
+     ~azure.mgmt.containerservice.models.KeyVaultSecretRef
     """
 
     _validation = {
         'client_id': {'required': True},
-        'secret': {'required': True},
     }
 
     _attribute_map = {
         'client_id': {'key': 'clientId', 'type': 'str'},
         'secret': {'key': 'secret', 'type': 'str'},
+        'key_vault_secret_ref': {'key': 'keyVaultSecretRef', 'type': 'KeyVaultSecretRef'},
     }
 
-    def __init__(self, client_id, secret):
+    def __init__(self, client_id, secret=None, key_vault_secret_ref=None):
         self.client_id = client_id
         self.secret = secret
+        self.key_vault_secret_ref = key_vault_secret_ref

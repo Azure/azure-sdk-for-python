@@ -27,7 +27,7 @@ class TriggerResource(SubResource):
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
     :param properties: Properties of the trigger.
-    :type properties: :class:`Trigger <azure.mgmt.datafactory.models.Trigger>`
+    :type properties: ~azure.mgmt.datafactory.models.Trigger
     """
 
     _validation = {

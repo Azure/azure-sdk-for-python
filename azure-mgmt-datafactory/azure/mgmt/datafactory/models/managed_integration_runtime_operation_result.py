@@ -27,7 +27,9 @@ class ManagedIntegrationRuntimeOperationResult(Model):
     :ivar error_code: The error code.
     :vartype error_code: str
     :ivar parameters: Managed integration runtime error parameters.
-    :vartype parameters: list of str
+    :vartype parameters: list[str]
+    :ivar activity_id: The activity id for the operation request.
+    :vartype activity_id: str
     """
 
     _validation = {
@@ -36,6 +38,7 @@ class ManagedIntegrationRuntimeOperationResult(Model):
         'result': {'readonly': True},
         'error_code': {'readonly': True},
         'parameters': {'readonly': True},
+        'activity_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -44,6 +47,7 @@ class ManagedIntegrationRuntimeOperationResult(Model):
         'result': {'key': 'result', 'type': 'str'},
         'error_code': {'key': 'errorCode', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '[str]'},
+        'activity_id': {'key': 'activityId', 'type': 'str'},
     }
 
     def __init__(self):
@@ -52,3 +56,4 @@ class ManagedIntegrationRuntimeOperationResult(Model):
         self.result = None
         self.error_code = None
         self.parameters = None
+        self.activity_id = None

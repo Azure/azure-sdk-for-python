@@ -17,8 +17,8 @@ class SshConfiguration(Model):
 
     :param public_keys: The list of SSH public keys used to authenticate with
      linux based VMs.
-    :type public_keys: list of :class:`SshPublicKey
-     <azure.mgmt.compute.v2016_03_30.models.SshPublicKey>`
+    :type public_keys:
+     list[~azure.mgmt.compute.v2016_03_30.models.SshPublicKey]
     """
 
     _attribute_map = {
@@ -26,4 +26,5 @@ class SshConfiguration(Model):
     }
 
     def __init__(self, public_keys=None):
+        super(SshConfiguration, self).__init__()
         self.public_keys = public_keys

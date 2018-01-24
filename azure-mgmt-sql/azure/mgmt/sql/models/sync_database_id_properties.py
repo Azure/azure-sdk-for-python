@@ -31,4 +31,5 @@ class SyncDatabaseIdProperties(Model):
     }
 
     def __init__(self):
+        super(SyncDatabaseIdProperties, self).__init__()
         self.id = None

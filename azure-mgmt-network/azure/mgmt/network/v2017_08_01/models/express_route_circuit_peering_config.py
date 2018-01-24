@@ -17,17 +17,16 @@ class ExpressRouteCircuitPeeringConfig(Model):
 
     :param advertised_public_prefixes: The reference of
      AdvertisedPublicPrefixes.
-    :type advertised_public_prefixes: list of str
+    :type advertised_public_prefixes: list[str]
     :param advertised_communities: The communities of bgp peering. Spepcified
      for microsoft peering
-    :type advertised_communities: list of str
+    :type advertised_communities: list[str]
     :param advertised_public_prefixes_state: AdvertisedPublicPrefixState of
      the Peering resource. Possible values are 'NotConfigured', 'Configuring',
      'Configured', and 'ValidationNeeded'. Possible values include:
      'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
-     :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
-     <azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
+     ~azure.mgmt.network.v2017_08_01.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
     :param legacy_mode: The legacy mode of the peering.
     :type legacy_mode: int
     :param customer_asn: The CustomerASN of the peering.
@@ -47,6 +46,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
     }
 
     def __init__(self, advertised_public_prefixes=None, advertised_communities=None, advertised_public_prefixes_state=None, legacy_mode=None, customer_asn=None, routing_registry_name=None):
+        super(ExpressRouteCircuitPeeringConfig, self).__init__()
         self.advertised_public_prefixes = advertised_public_prefixes
         self.advertised_communities = advertised_communities
         self.advertised_public_prefixes_state = advertised_public_prefixes_state

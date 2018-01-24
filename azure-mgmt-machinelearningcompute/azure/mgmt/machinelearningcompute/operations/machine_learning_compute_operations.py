@@ -26,6 +26,8 @@ class MachineLearningComputeOperations(object):
     :ivar api_version: The version of the Microsoft.MachineLearningCompute resource provider API to use. Constant value: "2017-08-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -44,13 +46,9 @@ class MachineLearningComputeOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AvailableOperations
-         <azure.mgmt.machinelearningcompute.models.AvailableOperations>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AvailableOperations
-         <azure.mgmt.machinelearningcompute.models.AvailableOperations>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AvailableOperations or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.machinelearningcompute.models.AvailableOperations
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

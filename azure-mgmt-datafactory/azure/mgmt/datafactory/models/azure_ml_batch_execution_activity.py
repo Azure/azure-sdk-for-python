@@ -15,37 +15,40 @@ from .execution_activity import ExecutionActivity
 class AzureMLBatchExecutionActivity(ExecutionActivity):
     """Azure ML Batch Execution activity.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param global_parameters: Key,Value pairs to be passed to the Azure ML
      Batch Execution Service endpoint. Keys must match the names of web service
      parameters defined in the published Azure ML web service. Values will be
      passed in the GlobalParameters property of the Azure ML batch execution
      request.
-    :type global_parameters: dict
+    :type global_parameters: dict[str, object]
     :param web_service_outputs: Key,Value pairs, mapping the names of Azure ML
      endpoint's Web Service Outputs to AzureMLWebServiceFile objects specifying
      the output Blob locations. This information will be passed in the
      WebServiceOutputs property of the Azure ML batch execution request.
-    :type web_service_outputs: dict
+    :type web_service_outputs: dict[str,
+     ~azure.mgmt.datafactory.models.AzureMLWebServiceFile]
     :param web_service_inputs: Key,Value pairs, mapping the names of Azure ML
      endpoint's Web Service Inputs to AzureMLWebServiceFile objects specifying
      the input Blob locations.. This information will be passed in the
      WebServiceInputs property of the Azure ML batch execution request.
-    :type web_service_inputs: dict
+    :type web_service_inputs: dict[str,
+     ~azure.mgmt.datafactory.models.AzureMLWebServiceFile]
     """
 
     _validation = {
@@ -54,6 +57,7 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -65,8 +69,8 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):
         'web_service_inputs': {'key': 'typeProperties.webServiceInputs', 'type': '{AzureMLWebServiceFile}'},
     }
 
-    def __init__(self, name, description=None, depends_on=None, linked_service_name=None, policy=None, global_parameters=None, web_service_outputs=None, web_service_inputs=None):
-        super(AzureMLBatchExecutionActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, global_parameters=None, web_service_outputs=None, web_service_inputs=None):
+        super(AzureMLBatchExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.global_parameters = global_parameters
         self.web_service_outputs = web_service_outputs
         self.web_service_inputs = web_service_inputs

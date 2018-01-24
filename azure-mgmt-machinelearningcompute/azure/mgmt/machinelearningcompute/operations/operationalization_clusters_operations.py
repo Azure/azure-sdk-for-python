@@ -27,6 +27,8 @@ class OperationalizationClustersOperations(object):
     :ivar api_version: The version of the Microsoft.MachineLearningCompute resource provider API to use. Constant value: "2017-08-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -47,20 +49,16 @@ class OperationalizationClustersOperations(object):
         :type cluster_name: str
         :param parameters: Parameters supplied to create or update an
          Operationalization cluster.
-        :type parameters: :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
+        :type parameters:
+         ~azure.mgmt.machinelearningcompute.models.OperationalizationCluster
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         OperationalizationCluster or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.machinelearningcompute.models.OperationalizationCluster]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningcompute.models.ErrorResponseWrapperException>`
         """
@@ -149,13 +147,10 @@ class OperationalizationClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: OperationalizationCluster or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.machinelearningcompute.models.OperationalizationCluster or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningcompute.models.ErrorResponseWrapperException>`
         """
@@ -215,19 +210,16 @@ class OperationalizationClustersOperations(object):
          (across resource groups). A maximum of 15 tags can be provided for a
          resource. Each tag must have a key no greater in length than 128
          characters and a value no greater in length than 256 characters.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: OperationalizationCluster or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.machinelearningcompute.models.OperationalizationCluster or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningcompute.models.ErrorResponseWrapperException>`
         """
@@ -279,7 +271,7 @@ class OperationalizationClustersOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, delete_all=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified cluster.
 
         :param resource_group_name: Name of the resource group in which the
@@ -287,17 +279,16 @@ class OperationalizationClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
+        :param delete_all: If true, deletes all resources associated with this
+         cluster.
+        :type delete_all: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseWrapperException<azure.mgmt.machinelearningcompute.models.ErrorResponseWrapperException>`
         """
@@ -313,6 +304,8 @@ class OperationalizationClustersOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if delete_all is not None:
+            query_parameters['deleteAll'] = self._serialize.query("delete_all", delete_all, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -377,13 +370,11 @@ class OperationalizationClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationalizationClusterCredentials
-         <azure.mgmt.machinelearningcompute.models.OperationalizationClusterCredentials>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: OperationalizationClusterCredentials or ClientRawResponse if
          raw=true
-        :rtype: :class:`OperationalizationClusterCredentials
-         <azure.mgmt.machinelearningcompute.models.OperationalizationClusterCredentials>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.machinelearningcompute.models.OperationalizationClusterCredentials
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -443,13 +434,11 @@ class OperationalizationClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckSystemServicesUpdatesAvailableResponse
-         <azure.mgmt.machinelearningcompute.models.CheckSystemServicesUpdatesAvailableResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CheckSystemServicesUpdatesAvailableResponse
-         <azure.mgmt.machinelearningcompute.models.CheckSystemServicesUpdatesAvailableResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CheckSystemServicesUpdatesAvailableResponse or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.machinelearningcompute.models.CheckSystemServicesUpdatesAvailableResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -507,15 +496,11 @@ class OperationalizationClustersOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`UpdateSystemServicesResponse
-         <azure.mgmt.machinelearningcompute.models.UpdateSystemServicesResponse>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         UpdateSystemServicesResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.machinelearningcompute.models.UpdateSystemServicesResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -603,11 +588,9 @@ class OperationalizationClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
-        :rtype: :class:`OperationalizationClusterPaged
-         <azure.mgmt.machinelearningcompute.models.OperationalizationClusterPaged>`
+        :return: An iterator like instance of OperationalizationCluster
+        :rtype:
+         ~azure.mgmt.machinelearningcompute.models.OperationalizationClusterPaged[~azure.mgmt.machinelearningcompute.models.OperationalizationCluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -674,11 +657,9 @@ class OperationalizationClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`OperationalizationCluster
-         <azure.mgmt.machinelearningcompute.models.OperationalizationCluster>`
-        :rtype: :class:`OperationalizationClusterPaged
-         <azure.mgmt.machinelearningcompute.models.OperationalizationClusterPaged>`
+        :return: An iterator like instance of OperationalizationCluster
+        :rtype:
+         ~azure.mgmt.machinelearningcompute.models.OperationalizationClusterPaged[~azure.mgmt.machinelearningcompute.models.OperationalizationCluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

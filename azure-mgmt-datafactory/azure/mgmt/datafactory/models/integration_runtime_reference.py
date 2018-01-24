@@ -24,7 +24,7 @@ class IntegrationRuntimeReference(Model):
     :param reference_name: Reference integration runtime name.
     :type reference_name: str
     :param parameters: Arguments for integration runtime.
-    :type parameters: dict
+    :type parameters: dict[str, object]
     """
 
     _validation = {

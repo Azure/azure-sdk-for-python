@@ -39,6 +39,7 @@ class OptionalSubResource(Model):
     }
 
     def __init__(self, name=None):
+        super(OptionalSubResource, self).__init__()
         self.id = None
         self.name = name
         self.type = None

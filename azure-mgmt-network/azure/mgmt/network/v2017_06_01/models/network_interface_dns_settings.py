@@ -19,12 +19,12 @@ class NetworkInterfaceDnsSettings(Model):
      'AzureProvidedDNS' to switch to azure provided DNS resolution.
      'AzureProvidedDNS' value cannot be combined with other IPs, it must be the
      only value in dnsServers collection.
-    :type dns_servers: list of str
+    :type dns_servers: list[str]
     :param applied_dns_servers: If the VM that uses this NIC is part of an
      Availability Set, then this list will have the union of all DNS servers
      from all NICs that are part of the Availability Set. This property is what
      is configured on each of those VMs.
-    :type applied_dns_servers: list of str
+    :type applied_dns_servers: list[str]
     :param internal_dns_name_label: Relative DNS name for this NIC used for
      internal communications between VMs in the same virtual network.
     :type internal_dns_name_label: str
@@ -47,6 +47,7 @@ class NetworkInterfaceDnsSettings(Model):
     }
 
     def __init__(self, dns_servers=None, applied_dns_servers=None, internal_dns_name_label=None, internal_fqdn=None, internal_domain_name_suffix=None):
+        super(NetworkInterfaceDnsSettings, self).__init__()
         self.dns_servers = dns_servers
         self.applied_dns_servers = applied_dns_servers
         self.internal_dns_name_label = internal_dns_name_label

@@ -15,12 +15,15 @@ from .linked_service import LinkedService
 class DynamicsLinkedService(LinkedService):
     """Dynamics linked service.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param connect_via: The integration runtime reference.
-    :type connect_via: :class:`IntegrationRuntimeReference
-     <azure.mgmt.datafactory.models.IntegrationRuntimeReference>`
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param deployment_type: The deployment type of the Dynamics instance.
      'Online' for Dynamics Online and 'OnPremisesWithIfd' for Dynamics
@@ -47,8 +50,11 @@ class DynamicsLinkedService(LinkedService):
      (or Expression with resultType string).
     :type username: object
     :param password: Password to access the Dynamics instance.
-    :type password: :class:`AzureKeyVaultSecretReference
-     <azure.mgmt.datafactory.models.AzureKeyVaultSecretReference>`
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
     """
 
     _validation = {
@@ -56,10 +62,10 @@ class DynamicsLinkedService(LinkedService):
         'deployment_type': {'required': True},
         'authentication_type': {'required': True},
         'username': {'required': True},
-        'password': {'required': True},
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
@@ -69,11 +75,12 @@ class DynamicsLinkedService(LinkedService):
         'organization_name': {'key': 'typeProperties.organizationName', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, deployment_type, authentication_type, username, password, connect_via=None, description=None, host_name=None, port=None, organization_name=None):
-        super(DynamicsLinkedService, self).__init__(connect_via=connect_via, description=description)
+    def __init__(self, deployment_type, authentication_type, username, additional_properties=None, connect_via=None, description=None, host_name=None, port=None, organization_name=None, password=None, encrypted_credential=None):
+        super(DynamicsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
@@ -81,4 +88,5 @@ class DynamicsLinkedService(LinkedService):
         self.authentication_type = authentication_type
         self.username = username
         self.password = password
+        self.encrypted_credential = encrypted_credential
         self.type = 'Dynamics'

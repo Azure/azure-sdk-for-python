@@ -26,6 +26,8 @@ class RecommendedElasticPoolsOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -53,13 +55,9 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RecommendedElasticPool
-         <azure.mgmt.sql.models.RecommendedElasticPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RecommendedElasticPool
-         <azure.mgmt.sql.models.RecommendedElasticPool>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RecommendedElasticPool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.RecommendedElasticPool or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -121,10 +119,9 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`RecommendedElasticPool
-         <azure.mgmt.sql.models.RecommendedElasticPool>`
-        :rtype: :class:`RecommendedElasticPoolPaged
-         <azure.mgmt.sql.models.RecommendedElasticPoolPaged>`
+        :return: An iterator like instance of RecommendedElasticPool
+        :rtype:
+         ~azure.mgmt.sql.models.RecommendedElasticPoolPaged[~azure.mgmt.sql.models.RecommendedElasticPool]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -197,11 +194,9 @@ class RecommendedElasticPoolsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`RecommendedElasticPoolMetric
-         <azure.mgmt.sql.models.RecommendedElasticPoolMetric>`
-        :rtype: :class:`RecommendedElasticPoolMetricPaged
-         <azure.mgmt.sql.models.RecommendedElasticPoolMetricPaged>`
+        :return: An iterator like instance of RecommendedElasticPoolMetric
+        :rtype:
+         ~azure.mgmt.sql.models.RecommendedElasticPoolMetricPaged[~azure.mgmt.sql.models.RecommendedElasticPoolMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

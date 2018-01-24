@@ -24,8 +24,7 @@ class LogSettings(Model):
     :param enabled: a value indicating whether this log is enabled.
     :type enabled: bool
     :param retention_policy: the retention policy for this log.
-    :type retention_policy: :class:`RetentionPolicy
-     <azure.mgmt.monitor.models.RetentionPolicy>`
+    :type retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
     """
 
     _validation = {

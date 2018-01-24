@@ -17,8 +17,7 @@ class ManagementEventAggregationCondition(Model):
 
     :param operator: the condition operator. Possible values include:
      'GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'
-    :type operator: str or :class:`ConditionOperator
-     <azure.mgmt.monitor.models.ConditionOperator>`
+    :type operator: str or ~azure.mgmt.monitor.models.ConditionOperator
     :param threshold: The threshold value that activates the alert.
     :type threshold: float
     :param window_size: the period of time (in ISO 8601 duration format) that

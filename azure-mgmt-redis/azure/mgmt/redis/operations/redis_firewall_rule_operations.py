@@ -54,13 +54,9 @@ class RedisFirewallRuleOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RedisFirewallRule
-         <azure.mgmt.redis.models.RedisFirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RedisFirewallRule
-         <azure.mgmt.redis.models.RedisFirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RedisFirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.redis.models.RedisFirewallRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RedisFirewallRule(start_ip=start_ip, end_ip=end_ip)
@@ -130,13 +126,9 @@ class RedisFirewallRuleOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RedisFirewallRule
-         <azure.mgmt.redis.models.RedisFirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RedisFirewallRule
-         <azure.mgmt.redis.models.RedisFirewallRule>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RedisFirewallRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.redis.models.RedisFirewallRule or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -198,11 +190,8 @@ class RedisFirewallRuleOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL

@@ -17,18 +17,16 @@ class JobSchedulePatchParameter(Model):
 
     :param schedule: The schedule according to which jobs will be created. If
      you do not specify this element, the existing schedule is left unchanged.
-    :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
+    :type schedule: ~azure.batch.models.Schedule
     :param job_specification: The details of the jobs to be created on this
      schedule. Updates affect only jobs that are started after the update has
      taken place. Any currently active job continues with the older
      specification.
-    :type job_specification: :class:`JobSpecification
-     <azure.batch.models.JobSpecification>`
+    :type job_specification: ~azure.batch.models.JobSpecification
     :param metadata: A list of name-value pairs associated with the job
      schedule as metadata. If you do not specify this element, existing
      metadata is left unchanged.
-    :type metadata: list of :class:`MetadataItem
-     <azure.batch.models.MetadataItem>`
+    :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
     _attribute_map = {

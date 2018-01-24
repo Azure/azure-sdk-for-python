@@ -23,8 +23,8 @@ class TopologyResource(Model):
     :type location: str
     :param associations: Holds the associations the resource has with other
      resources in the resource group.
-    :type associations: list of :class:`TopologyAssociation
-     <azure.mgmt.network.v2016_12_01.models.TopologyAssociation>`
+    :type associations:
+     list[~azure.mgmt.network.v2016_12_01.models.TopologyAssociation]
     """
 
     _attribute_map = {
@@ -35,6 +35,7 @@ class TopologyResource(Model):
     }
 
     def __init__(self, name=None, id=None, location=None, associations=None):
+        super(TopologyResource, self).__init__()
         self.name = name
         self.id = id
         self.location = location

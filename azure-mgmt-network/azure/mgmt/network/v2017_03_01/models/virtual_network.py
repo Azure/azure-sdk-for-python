@@ -27,21 +27,18 @@ class VirtualNetwork(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param address_space: The AddressSpace that contains an array of IP
      address ranges that can be used by subnets.
-    :type address_space: :class:`AddressSpace
-     <azure.mgmt.network.v2017_03_01.models.AddressSpace>`
+    :type address_space: ~azure.mgmt.network.v2017_03_01.models.AddressSpace
     :param dhcp_options: The dhcpOptions that contains an array of DNS servers
      available to VMs deployed in the virtual network.
-    :type dhcp_options: :class:`DhcpOptions
-     <azure.mgmt.network.v2017_03_01.models.DhcpOptions>`
+    :type dhcp_options: ~azure.mgmt.network.v2017_03_01.models.DhcpOptions
     :param subnets: A list of subnets in a Virtual Network.
-    :type subnets: list of :class:`Subnet
-     <azure.mgmt.network.v2017_03_01.models.Subnet>`
+    :type subnets: list[~azure.mgmt.network.v2017_03_01.models.Subnet]
     :param virtual_network_peerings: A list of peerings in a Virtual Network.
-    :type virtual_network_peerings: list of :class:`VirtualNetworkPeering
-     <azure.mgmt.network.v2017_03_01.models.VirtualNetworkPeering>`
+    :type virtual_network_peerings:
+     list[~azure.mgmt.network.v2017_03_01.models.VirtualNetworkPeering]
     :param resource_guid: The resourceGuid property of the Virtual Network
      resource.
     :type resource_guid: str

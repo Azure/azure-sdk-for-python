@@ -18,8 +18,7 @@ class PacketCaptureFilter(Model):
 
     :param protocol: Protocol to be filtered on. Possible values include:
      'TCP', 'UDP', 'Any'. Default value: "Any" .
-    :type protocol: str or :class:`PcProtocol
-     <azure.mgmt.network.v2017_08_01.models.PcProtocol>`
+    :type protocol: str or ~azure.mgmt.network.v2017_08_01.models.PcProtocol
     :param local_ip_address: Local IP Address to be filtered on. Notation:
      "127.0.0.1" for single address entry. "127.0.0.1-127.0.0.255" for range.
      "127.0.0.1;127.0.0.5"? for multiple entries. Multiple ranges not currently
@@ -53,6 +52,7 @@ class PacketCaptureFilter(Model):
     }
 
     def __init__(self, protocol="Any", local_ip_address=None, remote_ip_address=None, local_port=None, remote_port=None):
+        super(PacketCaptureFilter, self).__init__()
         self.protocol = protocol
         self.local_ip_address = local_ip_address
         self.remote_ip_address = remote_ip_address

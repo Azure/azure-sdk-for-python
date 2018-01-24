@@ -39,18 +39,15 @@ class UsersOperations(object):
         """Create a new user.
 
         :param parameters: Parameters to create a user.
-        :type parameters: :class:`UserCreateParameters
-         <azure.graphrbac.models.UserCreateParameters>`
+        :type parameters: ~azure.graphrbac.models.UserCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`User <azure.graphrbac.models.User>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`User <azure.graphrbac.models.User>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: User or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.User or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -108,9 +105,9 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`User
-         <azure.graphrbac.models.User>`
-        :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
+        :return: An iterator like instance of User
+        :rtype:
+         ~azure.graphrbac.models.UserPaged[~azure.graphrbac.models.User]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -182,18 +179,16 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`User <azure.graphrbac.models.User>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`User <azure.graphrbac.models.User>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: User or ClientRawResponse if raw=true
+        :rtype: ~azure.graphrbac.models.User or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
         path_format_arguments = {
-            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str', skip_quote=True),
+            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -238,25 +233,21 @@ class UsersOperations(object):
          to update.
         :type upn_or_object_id: str
         :param parameters: Parameters to update an existing user.
-        :type parameters: :class:`UserUpdateParameters
-         <azure.graphrbac.models.UserUpdateParameters>`
+        :type parameters: ~azure.graphrbac.models.UserUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
         path_format_arguments = {
-            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str', skip_quote=True),
+            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -302,18 +293,15 @@ class UsersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
         path_format_arguments = {
-            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str', skip_quote=True),
+            'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -361,7 +349,7 @@ class UsersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of str
-        :rtype: :class:`StrPaged <azure.graphrbac.models.StrPaged>`
+        :rtype: ~azure.graphrbac.models.StrPaged[str]
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
@@ -373,7 +361,7 @@ class UsersOperations(object):
                 # Construct URL
                 url = '/{tenantID}/users/{objectId}/getMemberGroups'
                 path_format_arguments = {
-                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

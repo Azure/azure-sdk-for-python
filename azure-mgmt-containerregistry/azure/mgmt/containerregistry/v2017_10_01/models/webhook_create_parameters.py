@@ -16,7 +16,7 @@ class WebhookCreateParameters(Model):
     """The parameters for creating a webhook.
 
     :param tags: The tags for the webhook.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: The location of the webhook. This cannot be changed after
      the resource is created.
     :type location: str
@@ -24,11 +24,11 @@ class WebhookCreateParameters(Model):
     :type service_uri: str
     :param custom_headers: Custom headers that will be added to the webhook
      notifications.
-    :type custom_headers: dict
+    :type custom_headers: dict[str, str]
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
-    :type status: str or :class:`WebhookStatus
-     <azure.mgmt.containerregistry.v2017_10_01.models.WebhookStatus>`
+    :type status: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookStatus
     :param scope: The scope of repositories where the event can be triggered.
      For example, 'foo:*' means events for all tags under repository 'foo'.
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
@@ -36,8 +36,8 @@ class WebhookCreateParameters(Model):
     :type scope: str
     :param actions: The list of actions that trigger the webhook to post
      notifications.
-    :type actions: list of str or :class:`WebhookAction
-     <azure.mgmt.containerregistry.v2017_10_01.models.WebhookAction>`
+    :type actions: list[str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookAction]
     """
 
     _validation = {

@@ -19,28 +19,26 @@ class StorageAccountUpdateParameters(Model):
     :param sku: Gets or sets the SKU name. Note that the SKU name cannot be
      updated to Standard_ZRS or Premium_LRS, nor can accounts of those sku
      names be updated to any other value.
-    :type sku: :class:`Sku <azure.mgmt.storage.v2016_01_01.models.Sku>`
+    :type sku: ~azure.mgmt.storage.v2016_01_01.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used in viewing and grouping this resource
      (across resource groups). A maximum of 15 tags can be provided for a
      resource. Each tag must have a key no greater in length than 128
      characters and a value no greater in length than 256 characters.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param custom_domain: Custom domain assigned to the storage account by the
      user. Name is the CNAME source. Only one custom domain is supported per
      storage account at this time. To clear the existing custom domain, use an
      empty string for the custom domain name property.
-    :type custom_domain: :class:`CustomDomain
-     <azure.mgmt.storage.v2016_01_01.models.CustomDomain>`
+    :type custom_domain: ~azure.mgmt.storage.v2016_01_01.models.CustomDomain
     :param encryption: Provides the encryption settings on the account. The
      default setting is unencrypted.
-    :type encryption: :class:`Encryption
-     <azure.mgmt.storage.v2016_01_01.models.Encryption>`
+    :type encryption: ~azure.mgmt.storage.v2016_01_01.models.Encryption
     :param access_tier: Required for storage accounts where kind =
      BlobStorage. The access tier used for billing. Possible values include:
      'Hot', 'Cool'
-    :type access_tier: str or :class:`AccessTier
-     <azure.mgmt.storage.v2016_01_01.models.AccessTier>`
+    :type access_tier: str or
+     ~azure.mgmt.storage.v2016_01_01.models.AccessTier
     """
 
     _attribute_map = {
@@ -52,6 +50,7 @@ class StorageAccountUpdateParameters(Model):
     }
 
     def __init__(self, sku=None, tags=None, custom_domain=None, encryption=None, access_tier=None):
+        super(StorageAccountUpdateParameters, self).__init__()
         self.sku = sku
         self.tags = tags
         self.custom_domain = custom_domain

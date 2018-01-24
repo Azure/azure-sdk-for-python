@@ -6,7 +6,7 @@ This is the Microsoft Azure Consumption Management Client Library.
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
 
-This package has been tested with Python 2.7, 3.3, 3.4, 3.5 and 3.6.
+This package has been tested with Python 2.7, 3.4, 3.5 and 3.6.
 
 For the older Azure Service Management (ASM) libraries, see
 `azure-servicemanagement-legacy <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__ library.
@@ -37,8 +37,8 @@ Usage
 =====
 
 For code examples, see `Consumption Management
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-consumption.html>`__
-on readthedocs.org.
+<https://docs.microsoft.com/python/api/overview/azure/consumption>`__
+on docs.microsoft.com.
 
 
 Provide Feedback

@@ -13,7 +13,17 @@ from .resource import Resource
 
 
 class AvailabilitySet(Resource):
-    """Create or update availability set parameters.
+    """Specifies information about the availability set that the virtual machine
+    should be assigned to. Virtual machines specified in the same availability
+    set are allocated to different nodes to maximize availability. For more
+    information about availability sets, see [Manage the availability of
+    virtual
+    machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
+    <br><br> For more information on Azure planned maintainance, see [Planned
+    maintenance for virtual machines in
+    Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
+    <br><br> Currently, a VM can only be added to availability set at creation
+    time. An existing VM cannot be added to an availability set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,18 +37,18 @@ class AvailabilitySet(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
     :param platform_fault_domain_count: Fault Domain count.
     :type platform_fault_domain_count: int
     :param virtual_machines: A list of references to all virtual machines in
      the availability set.
-    :type virtual_machines: list of :class:`SubResource
-     <azure.mgmt.compute.v2016_03_30.models.SubResource>`
+    :type virtual_machines:
+     list[~azure.mgmt.compute.v2016_03_30.models.SubResource]
     :ivar statuses: The resource status information.
-    :vartype statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus>`
+    :vartype statuses:
+     list[~azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus]
     """
 
     _validation = {

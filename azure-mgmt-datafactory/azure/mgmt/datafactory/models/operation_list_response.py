@@ -17,8 +17,7 @@ class OperationListResponse(Model):
 
     :param value: List of Data Factory operations supported by the Data
      Factory resource provider.
-    :type value: list of :class:`Operation
-     <azure.mgmt.datafactory.models.Operation>`
+    :type value: list[~azure.mgmt.datafactory.models.Operation]
     :param next_link: The link to the next page of results, if any remaining
      results exist.
     :type next_link: str

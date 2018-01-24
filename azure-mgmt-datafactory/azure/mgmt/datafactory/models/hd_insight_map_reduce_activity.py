@@ -15,30 +15,31 @@ from .execution_activity import ExecutionActivity
 class HDInsightMapReduceActivity(ExecutionActivity):
     """HDInsight MapReduce activity type.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
-    :type depends_on: list of :class:`ActivityDependency
-     <azure.mgmt.datafactory.models.ActivityDependency>`
-    :param type: Polymorphic Discriminator
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
-    :type linked_service_name: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
-    :type policy: :class:`ActivityPolicy
-     <azure.mgmt.datafactory.models.ActivityPolicy>`
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
     :param storage_linked_services: Storage linked service references.
-    :type storage_linked_services: list of :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type storage_linked_services:
+     list[~azure.mgmt.datafactory.models.LinkedServiceReference]
     :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list of object
+    :type arguments: list[object]
     :param get_debug_info: Debug info option. Possible values include: 'None',
      'Always', 'Failure'
-    :type get_debug_info: str or :class:`HDInsightActivityDebugInfoOption
-     <azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption>`
+    :type get_debug_info: str or
+     ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
     :param class_name: Class name. Type: string (or Expression with resultType
      string).
     :type class_name: object
@@ -46,13 +47,13 @@ class HDInsightMapReduceActivity(ExecutionActivity):
      resultType string).
     :type jar_file_path: object
     :param jar_linked_service: Jar linked service reference.
-    :type jar_linked_service: :class:`LinkedServiceReference
-     <azure.mgmt.datafactory.models.LinkedServiceReference>`
+    :type jar_linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param jar_libs: Jar libs.
-    :type jar_libs: list of object
+    :type jar_libs: list[object]
     :param defines: Allows user to specify defines for the MapReduce job
      request.
-    :type defines: dict
+    :type defines: dict[str, object]
     """
 
     _validation = {
@@ -63,6 +64,7 @@ class HDInsightMapReduceActivity(ExecutionActivity):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
@@ -79,8 +81,8 @@ class HDInsightMapReduceActivity(ExecutionActivity):
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
     }
 
-    def __init__(self, name, class_name, jar_file_path, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, jar_linked_service=None, jar_libs=None, defines=None):
-        super(HDInsightMapReduceActivity, self).__init__(name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+    def __init__(self, name, class_name, jar_file_path, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, jar_linked_service=None, jar_libs=None, defines=None):
+        super(HDInsightMapReduceActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info

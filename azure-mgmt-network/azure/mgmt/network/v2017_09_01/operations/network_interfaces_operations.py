@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -26,6 +27,8 @@ class NetworkInterfacesOperations(object):
     :param deserializer: An objec model deserializer.
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -34,27 +37,9 @@ class NetworkInterfacesOperations(object):
 
         self.config = config
 
-    def delete(
-            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified network interface.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_interface_name: The name of the network interface.
-        :type network_interface_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _delete_initial(
+            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
         api_version = "2017-09-01"
 
         # Construct URL
@@ -81,22 +66,62 @@ class NetworkInterfacesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete(
+            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified network interface.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_interface_name: The name of the network interface.
+        :type network_interface_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            network_interface_name=network_interface_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 202, 200]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -104,10 +129,6 @@ class NetworkInterfacesOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -131,13 +152,9 @@ class NetworkInterfacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NetworkInterface or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_09_01.models.NetworkInterface or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-09-01"
@@ -169,7 +186,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -187,32 +204,9 @@ class NetworkInterfacesOperations(object):
 
         return deserialized
 
-    def create_or_update(
-            self, resource_group_name, network_interface_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a network interface.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_interface_name: The name of the network interface.
-        :type network_interface_name: str
-        :param parameters: Parameters supplied to the create or update network
-         interface operation.
-        :type parameters: :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, network_interface_name, parameters, custom_headers=None, raw=False, **operation_config):
         api_version = "2017-09-01"
 
         # Construct URL
@@ -242,33 +236,83 @@ class NetworkInterfacesOperations(object):
         body_content = self._serialize.body(parameters, 'NetworkInterface')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NetworkInterface', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('NetworkInterface', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, network_interface_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a network interface.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_interface_name: The name of the network interface.
+        :type network_interface_name: str
+        :param parameters: Parameters supplied to the create or update network
+         interface operation.
+        :type parameters:
+         ~azure.mgmt.network.v2017_09_01.models.NetworkInterface
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         NetworkInterface or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.NetworkInterface]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            network_interface_name=network_interface_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200]:
+            if response.status_code not in [200, 201]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('NetworkInterface', response)
-            if response.status_code == 200:
-                deserialized = self._deserialize('NetworkInterface', response)
+            deserialized = self._deserialize('NetworkInterface', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -276,9 +320,126 @@ class NetworkInterfacesOperations(object):
 
             return deserialized
 
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _update_tags_initial(
+            self, resource_group_name, network_interface_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.TagsObject(tags=tags)
+
+        api_version = "2017-09-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'TagsObject')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NetworkInterface', response)
+
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_tags(
+            self, resource_group_name, network_interface_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Updates a network interface tags.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_interface_name: The name of the network interface.
+        :type network_interface_name: str
+        :param tags: Resource tags.
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         NetworkInterface or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.NetworkInterface]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_tags_initial(
+            resource_group_name=resource_group_name,
+            network_interface_name=network_interface_name,
+            tags=tags,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('NetworkInterface', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -296,10 +457,9 @@ class NetworkInterfacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>`
-        :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged>`
+        :return: An iterator like instance of NetworkInterface
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2017_09_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-09-01"
@@ -335,7 +495,7 @@ class NetworkInterfacesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -365,10 +525,9 @@ class NetworkInterfacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>`
-        :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged>`
+        :return: An iterator like instance of NetworkInterface
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2017_09_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-09-01"
@@ -405,7 +564,7 @@ class NetworkInterfacesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -424,28 +583,9 @@ class NetworkInterfacesOperations(object):
 
         return deserialized
 
-    def get_effective_route_table(
-            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all route tables applied to a network interface.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param network_interface_name: The name of the network interface.
-        :type network_interface_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`EffectiveRouteListResult
-         <azure.mgmt.network.v2017_09_01.models.EffectiveRouteListResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _get_effective_route_table_initial(
+            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
         api_version = "2017-09-01"
 
         # Construct URL
@@ -472,51 +612,28 @@ class NetworkInterfacesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('EffectiveRouteListResult', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code == 200:
+            deserialized = self._deserialize('EffectiveRouteListResult', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
-    def list_effective_network_security_groups(
+    def get_effective_route_table(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all network security groups applied to a network interface.
+        """Gets all route tables applied to a network interface.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -525,17 +642,62 @@ class NetworkInterfacesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`EffectiveNetworkSecurityGroupListResult
-         <azure.mgmt.network.v2017_09_01.models.EffectiveNetworkSecurityGroupListResult>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         EffectiveRouteListResult or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.EffectiveRouteListResult]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._get_effective_route_table_initial(
+            resource_group_name=resource_group_name,
+            network_interface_name=network_interface_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('EffectiveRouteListResult', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+
+    def _list_effective_network_security_groups_initial(
+            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
         api_version = "2017-09-01"
 
         # Construct URL
@@ -562,18 +724,67 @@ class NetworkInterfacesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('EffectiveNetworkSecurityGroupListResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def list_effective_network_security_groups(
+            self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
+        """Gets all network security groups applied to a network interface.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param network_interface_name: The name of the network interface.
+        :type network_interface_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         EffectiveNetworkSecurityGroupListResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2017_09_01.models.EffectiveNetworkSecurityGroupListResult]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._list_effective_network_security_groups_initial(
+            resource_group_name=resource_group_name,
+            network_interface_name=network_interface_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -582,20 +793,13 @@ class NetworkInterfacesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('EffectiveNetworkSecurityGroupListResult', response)
+            deserialized = self._deserialize('EffectiveNetworkSecurityGroupListResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -621,10 +825,9 @@ class NetworkInterfacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>`
-        :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged>`
+        :return: An iterator like instance of NetworkInterface
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2017_09_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-03-30"
@@ -663,7 +866,7 @@ class NetworkInterfacesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -696,10 +899,9 @@ class NetworkInterfacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>`
-        :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged>`
+        :return: An iterator like instance of NetworkInterface
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2017_09_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-03-30"
@@ -737,7 +939,7 @@ class NetworkInterfacesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -776,13 +978,9 @@ class NetworkInterfacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NetworkInterface
-         <azure.mgmt.network.v2017_09_01.models.NetworkInterface>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NetworkInterface or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.network.v2017_09_01.models.NetworkInterface or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2017-03-30"
@@ -816,7 +1014,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -827,6 +1025,170 @@ class NetworkInterfacesOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('NetworkInterface', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def list_virtual_machine_scale_set_ip_configurations(
+            self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Get the specified network interface ip configuration in a virtual
+        machine scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param virtual_machine_scale_set_name: The name of the virtual machine
+         scale set.
+        :type virtual_machine_scale_set_name: str
+        :param virtualmachine_index: The virtual machine index.
+        :type virtualmachine_index: str
+        :param network_interface_name: The name of the network interface.
+        :type network_interface_name: str
+        :param expand: Expands referenced resources.
+        :type expand: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of NetworkInterfaceIPConfiguration
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.NetworkInterfaceIPConfigurationPaged[~azure.mgmt.network.v2017_09_01.models.NetworkInterfaceIPConfiguration]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2017-03-30"
+
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}/ipConfigurations'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'virtualMachineScaleSetName': self._serialize.url("virtual_machine_scale_set_name", virtual_machine_scale_set_name, 'str'),
+                    'virtualmachineIndex': self._serialize.url("virtualmachine_index", virtualmachine_index, 'str'),
+                    'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.NetworkInterfaceIPConfigurationPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.NetworkInterfaceIPConfigurationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def get_virtual_machine_scale_set_ip_configuration(
+            self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, network_interface_name, ip_configuration_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Get the specified network interface ip configuration in a virtual
+        machine scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param virtual_machine_scale_set_name: The name of the virtual machine
+         scale set.
+        :type virtual_machine_scale_set_name: str
+        :param virtualmachine_index: The virtual machine index.
+        :type virtualmachine_index: str
+        :param network_interface_name: The name of the network interface.
+        :type network_interface_name: str
+        :param ip_configuration_name: The name of the ip configuration.
+        :type ip_configuration_name: str
+        :param expand: Expands referenced resources.
+        :type expand: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: NetworkInterfaceIPConfiguration or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.network.v2017_09_01.models.NetworkInterfaceIPConfiguration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2017-03-30"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}/ipConfigurations/{ipConfigurationName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'virtualMachineScaleSetName': self._serialize.url("virtual_machine_scale_set_name", virtual_machine_scale_set_name, 'str'),
+            'virtualmachineIndex': self._serialize.url("virtualmachine_index", virtualmachine_index, 'str'),
+            'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
+            'ipConfigurationName': self._serialize.url("ip_configuration_name", ip_configuration_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NetworkInterfaceIPConfiguration', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -27,8 +27,8 @@ class SubscriptionPolicies(Model):
     :vartype quota_id: str
     :ivar spending_limit: The subscription spending limit. Possible values
      include: 'On', 'Off', 'CurrentPeriodOff'
-    :vartype spending_limit: str or :class:`SpendingLimit
-     <azure.mgmt.resource.subscriptions.v2016_06_01.models.SpendingLimit>`
+    :vartype spending_limit: str or
+     ~azure.mgmt.resource.subscriptions.v2016_06_01.models.SpendingLimit
     """
 
     _validation = {

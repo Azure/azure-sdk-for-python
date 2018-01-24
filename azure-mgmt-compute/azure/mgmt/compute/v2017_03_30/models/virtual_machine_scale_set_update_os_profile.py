@@ -18,14 +18,14 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
     :param custom_data: A base-64 encoded string of custom data.
     :type custom_data: str
     :param windows_configuration: The Windows Configuration of the OS profile.
-    :type windows_configuration: :class:`WindowsConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.WindowsConfiguration>`
+    :type windows_configuration:
+     ~azure.mgmt.compute.v2017_03_30.models.WindowsConfiguration
     :param linux_configuration: The Linux Configuration of the OS profile.
-    :type linux_configuration: :class:`LinuxConfiguration
-     <azure.mgmt.compute.v2017_03_30.models.LinuxConfiguration>`
+    :type linux_configuration:
+     ~azure.mgmt.compute.v2017_03_30.models.LinuxConfiguration
     :param secrets: The List of certificates for addition to the VM.
-    :type secrets: list of :class:`VaultSecretGroup
-     <azure.mgmt.compute.v2017_03_30.models.VaultSecretGroup>`
+    :type secrets:
+     list[~azure.mgmt.compute.v2017_03_30.models.VaultSecretGroup]
     """
 
     _attribute_map = {
@@ -36,6 +36,7 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
     }
 
     def __init__(self, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
+        super(VirtualMachineScaleSetUpdateOSProfile, self).__init__()
         self.custom_data = custom_data
         self.windows_configuration = windows_configuration
         self.linux_configuration = linux_configuration

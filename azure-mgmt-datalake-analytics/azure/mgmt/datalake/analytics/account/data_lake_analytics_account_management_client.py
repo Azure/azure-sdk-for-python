@@ -18,6 +18,8 @@ from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
 from .operations.account_operations import AccountOperations
+from .operations.locations_operations import LocationsOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -43,14 +45,12 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(DataLakeAnalyticsAccountManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('datalakeanalyticsaccountmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-datalake-analytics/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -73,6 +73,10 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :vartype data_lake_store_accounts: azure.mgmt.datalake.analytics.account.operations.DataLakeStoreAccountsOperations
     :ivar account: Account operations
     :vartype account: azure.mgmt.datalake.analytics.account.operations.AccountOperations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.datalake.analytics.account.operations.LocationsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.datalake.analytics.account.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -104,4 +108,8 @@ class DataLakeAnalyticsAccountManagementClient(object):
         self.data_lake_store_accounts = DataLakeStoreAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.account = AccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

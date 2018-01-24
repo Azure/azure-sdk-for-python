@@ -13,6 +13,7 @@ from .sku import Sku
 from .profile import Profile
 from .profile_update_parameters import ProfileUpdateParameters
 from .sso_uri import SsoUri
+from .supported_optimization_types_list_result import SupportedOptimizationTypesListResult
 from .deep_created_origin import DeepCreatedOrigin
 from .endpoint import Endpoint
 from .geo_filter import GeoFilter
@@ -27,6 +28,8 @@ from .validate_custom_domain_input import ValidateCustomDomainInput
 from .validate_custom_domain_output import ValidateCustomDomainOutput
 from .check_name_availability_input import CheckNameAvailabilityInput
 from .check_name_availability_output import CheckNameAvailabilityOutput
+from .validate_probe_input import ValidateProbeInput
+from .validate_probe_output import ValidateProbeOutput
 from .resource_usage import ResourceUsage
 from .operation_display import OperationDisplay
 from .operation import Operation
@@ -45,12 +48,14 @@ from .edge_node_paged import EdgeNodePaged
 from .cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
+    OptimizationType,
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
     OriginResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
+    CustomHttpsProvisioningSubstate,
     ResourceType,
 )
 
@@ -59,6 +64,7 @@ __all__ = [
     'Profile',
     'ProfileUpdateParameters',
     'SsoUri',
+    'SupportedOptimizationTypesListResult',
     'DeepCreatedOrigin',
     'Endpoint',
     'GeoFilter',
@@ -73,6 +79,8 @@ __all__ = [
     'ValidateCustomDomainOutput',
     'CheckNameAvailabilityInput',
     'CheckNameAvailabilityOutput',
+    'ValidateProbeInput',
+    'ValidateProbeOutput',
     'ResourceUsage',
     'OperationDisplay',
     'Operation',
@@ -90,11 +98,13 @@ __all__ = [
     'EdgeNodePaged',
     'SkuName',
     'ProfileResourceState',
+    'OptimizationType',
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',
     'OriginResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
+    'CustomHttpsProvisioningSubstate',
     'ResourceType',
 ]

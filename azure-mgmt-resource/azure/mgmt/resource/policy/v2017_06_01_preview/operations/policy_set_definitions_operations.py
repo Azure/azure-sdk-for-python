@@ -42,20 +42,17 @@ class PolicySetDefinitionsOperations(object):
          definition to create.
         :type policy_set_definition_name: str
         :param parameters: The policy set definition properties.
-        :type parameters: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
+        :type parameters:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PolicySetDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -117,11 +114,8 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -170,13 +164,10 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PolicySetDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -232,13 +223,10 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PolicySetDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -290,10 +278,9 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-        :rtype: :class:`PolicySetDefinitionPaged
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged>`
+        :return: An iterator like instance of PolicySetDefinition
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -354,10 +341,9 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-        :rtype: :class:`PolicySetDefinitionPaged
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged>`
+        :return: An iterator like instance of PolicySetDefinition
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -413,8 +399,8 @@ class PolicySetDefinitionsOperations(object):
          definition to create.
         :type policy_set_definition_name: str
         :param parameters: The policy set definition properties.
-        :type parameters: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
+        :type parameters:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :param management_group_id: The ID of the management group.
         :type management_group_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -422,13 +408,10 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PolicySetDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -492,11 +475,8 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -547,13 +527,10 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PolicySetDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
@@ -609,10 +586,9 @@ class PolicySetDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`PolicySetDefinition
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition>`
-        :rtype: :class:`PolicySetDefinitionPaged
-         <azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged>`
+        :return: An iterator like instance of PolicySetDefinition
+        :rtype:
+         ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinitionPaged[~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """

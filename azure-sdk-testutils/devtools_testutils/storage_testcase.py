@@ -56,7 +56,9 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                 for v in self.client.storage_accounts.list_keys(group.name, name).keys
             }
             self.storage_key = storage_keys['key1']
-
+        else:
+            self.resource = FakeResource(name=name, id=name)
+            self.storage_key = 'ZmFrZV9hY29jdW50X2tleQ=='
         return {
             self.parameter_name: self.resource,
             '{}_key'.format(self.parameter_name): self.storage_key,

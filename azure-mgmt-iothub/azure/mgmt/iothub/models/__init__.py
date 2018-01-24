@@ -9,12 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .certificate_verification_description import CertificateVerificationDescription
+from .certificate_body_description import CertificateBodyDescription
+from .certificate_properties import CertificateProperties
+from .certificate_description import CertificateDescription
+from .certificate_list_description import CertificateListDescription
+from .certificate_properties_with_nonce import CertificatePropertiesWithNonce
+from .certificate_with_nonce_description import CertificateWithNonceDescription
 from .shared_access_signature_authorization_rule import SharedAccessSignatureAuthorizationRule
 from .ip_filter_rule import IpFilterRule
 from .event_hub_properties import EventHubProperties
 from .routing_service_bus_queue_endpoint_properties import RoutingServiceBusQueueEndpointProperties
 from .routing_service_bus_topic_endpoint_properties import RoutingServiceBusTopicEndpointProperties
 from .routing_event_hub_properties import RoutingEventHubProperties
+from .routing_storage_container_properties import RoutingStorageContainerProperties
 from .routing_endpoints import RoutingEndpoints
 from .route_properties import RouteProperties
 from .fallback_route_properties import FallbackRouteProperties
@@ -28,6 +36,8 @@ from .iot_hub_properties import IotHubProperties
 from .iot_hub_sku_info import IotHubSkuInfo
 from .iot_hub_description import IotHubDescription
 from .resource import Resource
+from .operation_display import OperationDisplay
+from .operation import Operation
 from .error_details import ErrorDetails, ErrorDetailsException
 from .iot_hub_quota_metric_info import IotHubQuotaMetricInfo
 from .registry_statistics import RegistryStatistics
@@ -39,6 +49,7 @@ from .operation_inputs import OperationInputs
 from .iot_hub_name_availability_info import IotHubNameAvailabilityInfo
 from .export_devices_request import ExportDevicesRequest
 from .import_devices_request import ImportDevicesRequest
+from .operation_paged import OperationPaged
 from .iot_hub_description_paged import IotHubDescriptionPaged
 from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
 from .str_paged import StrPaged
@@ -60,12 +71,20 @@ from .iot_hub_client_enums import (
 )
 
 __all__ = [
+    'CertificateVerificationDescription',
+    'CertificateBodyDescription',
+    'CertificateProperties',
+    'CertificateDescription',
+    'CertificateListDescription',
+    'CertificatePropertiesWithNonce',
+    'CertificateWithNonceDescription',
     'SharedAccessSignatureAuthorizationRule',
     'IpFilterRule',
     'EventHubProperties',
     'RoutingServiceBusQueueEndpointProperties',
     'RoutingServiceBusTopicEndpointProperties',
     'RoutingEventHubProperties',
+    'RoutingStorageContainerProperties',
     'RoutingEndpoints',
     'RouteProperties',
     'FallbackRouteProperties',
@@ -79,6 +98,8 @@ __all__ = [
     'IotHubSkuInfo',
     'IotHubDescription',
     'Resource',
+    'OperationDisplay',
+    'Operation',
     'ErrorDetails', 'ErrorDetailsException',
     'IotHubQuotaMetricInfo',
     'RegistryStatistics',
@@ -90,6 +111,7 @@ __all__ = [
     'IotHubNameAvailabilityInfo',
     'ExportDevicesRequest',
     'ImportDevicesRequest',
+    'OperationPaged',
     'IotHubDescriptionPaged',
     'IotHubSkuDescriptionPaged',
     'StrPaged',

@@ -24,10 +24,10 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: The Geo-location where the resource live
+    :param location: The Geo-location where the resource lives
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

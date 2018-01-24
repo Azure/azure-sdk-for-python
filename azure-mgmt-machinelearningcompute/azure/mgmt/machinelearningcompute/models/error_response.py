@@ -20,8 +20,7 @@ class ErrorResponse(Model):
     :param message: Error message.
     :type message: str
     :param details: An array of error detail objects.
-    :type details: list of :class:`ErrorDetail
-     <azure.mgmt.machinelearningcompute.models.ErrorDetail>`
+    :type details: list[~azure.mgmt.machinelearningcompute.models.ErrorDetail]
     """
 
     _validation = {
@@ -36,6 +35,7 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, code, message, details=None):
+        super(ErrorResponse, self).__init__()
         self.code = code
         self.message = message
         self.details = details

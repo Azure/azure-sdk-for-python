@@ -17,7 +17,7 @@ class FileSystemApplicationLogsConfig(Model):
 
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'. Default value: "Off" .
-    :type level: str or :class:`LogLevel <azure.mgmt.web.models.LogLevel>`
+    :type level: str or ~azure.mgmt.web.models.LogLevel
     """
 
     _attribute_map = {

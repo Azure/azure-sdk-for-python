@@ -23,8 +23,7 @@ class OSDisk(Model):
      options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: 'none', 'readOnly', 'readWrite'
-    :type caching: str or :class:`CachingType
-     <azure.batch.models.CachingType>`
+    :type caching: str or ~azure.batch.models.CachingType
     """
 
     _attribute_map = {

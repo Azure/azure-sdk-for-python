@@ -20,8 +20,8 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
     sending a request.
 
     :ivar statuses_summary: The extensions information.
-    :vartype statuses_summary: list of :class:`VirtualMachineStatusCodeCount
-     <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineStatusCodeCount>`
+    :vartype statuses_summary:
+     list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineStatusCodeCount]
     """
 
     _validation = {
@@ -33,4 +33,5 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
     }
 
     def __init__(self):
+        super(VirtualMachineScaleSetInstanceViewStatusesSummary, self).__init__()
         self.statuses_summary = None

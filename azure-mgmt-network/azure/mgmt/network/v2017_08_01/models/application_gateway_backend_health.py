@@ -16,9 +16,8 @@ class ApplicationGatewayBackendHealth(Model):
     """List of ApplicationGatewayBackendHealthPool resources.
 
     :param backend_address_pools:
-    :type backend_address_pools: list of
-     :class:`ApplicationGatewayBackendHealthPool
-     <azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendHealthPool>`
+    :type backend_address_pools:
+     list[~azure.mgmt.network.v2017_08_01.models.ApplicationGatewayBackendHealthPool]
     """
 
     _attribute_map = {
@@ -26,4 +25,5 @@ class ApplicationGatewayBackendHealth(Model):
     }
 
     def __init__(self, backend_address_pools=None):
+        super(ApplicationGatewayBackendHealth, self).__init__()
         self.backend_address_pools = backend_address_pools

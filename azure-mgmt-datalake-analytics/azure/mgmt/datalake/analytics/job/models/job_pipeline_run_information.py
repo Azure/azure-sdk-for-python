@@ -36,5 +36,6 @@ class JobPipelineRunInformation(Model):
     }
 
     def __init__(self):
+        super(JobPipelineRunInformation, self).__init__()
         self.run_id = None
         self.last_submit_time = None

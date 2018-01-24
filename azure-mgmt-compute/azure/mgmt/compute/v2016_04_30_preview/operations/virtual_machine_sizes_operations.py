@@ -26,6 +26,8 @@ class VirtualMachineSizesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-04-30-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -48,10 +50,9 @@ class VirtualMachineSizesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VirtualMachineSize
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSize>`
-        :rtype: :class:`VirtualMachineSizePaged
-         <azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSizePaged>`
+        :return: An iterator like instance of VirtualMachineSize
+        :rtype:
+         ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -86,7 +87,7 @@ class VirtualMachineSizesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

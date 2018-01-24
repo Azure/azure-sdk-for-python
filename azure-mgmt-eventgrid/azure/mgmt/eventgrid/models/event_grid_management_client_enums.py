@@ -22,13 +22,6 @@ class EventSubscriptionProvisioningState(Enum):
     failed = "Failed"
 
 
-class OperationOrigin(Enum):
-
-    user = "User"
-    system = "System"
-    user_and_system = "UserAndSystem"
-
-
 class TopicProvisioningState(Enum):
 
     creating = "Creating"

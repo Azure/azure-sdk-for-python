@@ -20,8 +20,8 @@ class CognitiveServicesAccountEnumerateSkusResult(Model):
 
     :ivar value: Gets the list of Cognitive Services accounts and their
      properties.
-    :vartype value: list of :class:`CognitiveServicesResourceAndSku
-     <azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku>`
+    :vartype value:
+     list[~azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku]
     """
 
     _validation = {

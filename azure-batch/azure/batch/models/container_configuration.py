@@ -26,13 +26,12 @@ class ContainerConfiguration(Model):
      This is the full image reference, as would be specified to "docker pull".
      An image will be sourced from the default Docker registry unless the image
      is fully qualified with an alternative registry.
-    :type container_image_names: list of str
+    :type container_image_names: list[str]
     :param container_registries: Additional private registries from which
      containers can be pulled. If any images must be downloaded from a private
      registry which requires credentials, then those credentials must be
      provided here.
-    :type container_registries: list of :class:`ContainerRegistry
-     <azure.batch.models.ContainerRegistry>`
+    :type container_registries: list[~azure.batch.models.ContainerRegistry]
     """
 
     _validation = {

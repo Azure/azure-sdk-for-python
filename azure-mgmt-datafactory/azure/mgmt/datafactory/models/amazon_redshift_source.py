@@ -15,6 +15,9 @@ from .copy_source import CopySource
 class AmazonRedshiftSource(CopySource):
     """A copy activity source for Amazon Redshift Source.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_retry_count: Source retry count. Type: integer (or
      Expression with resultType integer).
     :type source_retry_count: object
@@ -22,7 +25,7 @@ class AmazonRedshiftSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param query: Database query. Type: string (or Expression with resultType
      string).
@@ -31,8 +34,8 @@ class AmazonRedshiftSource(CopySource):
      interim Amazon S3 when copying from Amazon Redshift with unload. With
      this, data from Amazon Redshift source will be unloaded into S3 first and
      then copied into the targeted sink from the interim S3.
-    :type redshift_unload_settings: :class:`RedshiftUnloadSettings
-     <azure.mgmt.datafactory.models.RedshiftUnloadSettings>`
+    :type redshift_unload_settings:
+     ~azure.mgmt.datafactory.models.RedshiftUnloadSettings
     """
 
     _validation = {
@@ -40,6 +43,7 @@ class AmazonRedshiftSource(CopySource):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
@@ -47,8 +51,8 @@ class AmazonRedshiftSource(CopySource):
         'redshift_unload_settings': {'key': 'redshiftUnloadSettings', 'type': 'RedshiftUnloadSettings'},
     }
 
-    def __init__(self, source_retry_count=None, source_retry_wait=None, query=None, redshift_unload_settings=None):
-        super(AmazonRedshiftSource, self).__init__(source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None, redshift_unload_settings=None):
+        super(AmazonRedshiftSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.query = query
         self.redshift_unload_settings = redshift_unload_settings
         self.type = 'AmazonRedshiftSource'

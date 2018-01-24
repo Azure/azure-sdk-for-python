@@ -23,8 +23,8 @@ class JobStatistics(Model):
     :ivar finalizing_time_utc: the job finalizing start time.
     :vartype finalizing_time_utc: datetime
     :ivar stages: the list of stages for the job.
-    :vartype stages: list of :class:`JobStatisticsVertexStage
-     <azure.mgmt.datalake.analytics.job.models.JobStatisticsVertexStage>`
+    :vartype stages:
+     list[~azure.mgmt.datalake.analytics.job.models.JobStatisticsVertexStage]
     """
 
     _validation = {
@@ -40,6 +40,7 @@ class JobStatistics(Model):
     }
 
     def __init__(self):
+        super(JobStatistics, self).__init__()
         self.last_update_time_utc = None
         self.finalizing_time_utc = None
         self.stages = None

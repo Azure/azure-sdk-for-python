@@ -22,8 +22,7 @@ class ElasticPoolPerDatabaseMinDtuCapability(Model):
     :vartype limit: long
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
-    :vartype status: str or :class:`CapabilityStatus
-     <azure.mgmt.sql.models.CapabilityStatus>`
+    :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
     """
 
     _validation = {
@@ -37,5 +36,6 @@ class ElasticPoolPerDatabaseMinDtuCapability(Model):
     }
 
     def __init__(self):
+        super(ElasticPoolPerDatabaseMinDtuCapability, self).__init__()
         self.limit = None
         self.status = None

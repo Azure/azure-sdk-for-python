@@ -20,19 +20,17 @@ class NetworkRuleSet(Model):
      Logging|Metrics|AzureServices (For example, "Logging, Metrics"), or None
      to bypass none of those traffics. Possible values include: 'None',
      'Logging', 'Metrics', 'AzureServices'. Default value: "AzureServices" .
-    :type bypass: str or :class:`Bypass
-     <azure.mgmt.storage.v2017_06_01.models.Bypass>`
+    :type bypass: str or ~azure.mgmt.storage.v2017_06_01.models.Bypass
     :param virtual_network_rules: Sets the virtual network rules
-    :type virtual_network_rules: list of :class:`VirtualNetworkRule
-     <azure.mgmt.storage.v2017_06_01.models.VirtualNetworkRule>`
+    :type virtual_network_rules:
+     list[~azure.mgmt.storage.v2017_06_01.models.VirtualNetworkRule]
     :param ip_rules: Sets the IP ACL rules
-    :type ip_rules: list of :class:`IPRule
-     <azure.mgmt.storage.v2017_06_01.models.IPRule>`
+    :type ip_rules: list[~azure.mgmt.storage.v2017_06_01.models.IPRule]
     :param default_action: Specifies the default action of allow or deny when
      no other rules match. Possible values include: 'Allow', 'Deny'. Default
      value: "Allow" .
-    :type default_action: str or :class:`DefaultAction
-     <azure.mgmt.storage.v2017_06_01.models.DefaultAction>`
+    :type default_action: str or
+     ~azure.mgmt.storage.v2017_06_01.models.DefaultAction
     """
 
     _validation = {
@@ -47,6 +45,7 @@ class NetworkRuleSet(Model):
     }
 
     def __init__(self, bypass="AzureServices", virtual_network_rules=None, ip_rules=None, default_action="Allow"):
+        super(NetworkRuleSet, self).__init__()
         self.bypass = bypass
         self.virtual_network_rules = virtual_network_rules
         self.ip_rules = ip_rules

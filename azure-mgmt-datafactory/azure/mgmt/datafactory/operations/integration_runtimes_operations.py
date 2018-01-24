@@ -26,6 +26,8 @@ class IntegrationRuntimesOperations(object):
     :ivar api_version: The API version. Constant value: "2017-09-01-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -48,11 +50,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>`
-        :rtype: :class:`IntegrationRuntimeResourcePaged
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResourcePaged>`
+        :return: An iterator like instance of IntegrationRuntimeResource
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeResourcePaged[~azure.mgmt.datafactory.models.IntegrationRuntimeResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -117,8 +117,7 @@ class IntegrationRuntimesOperations(object):
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
         :param properties: Integration runtime properties.
-        :type properties: :class:`IntegrationRuntime
-         <azure.mgmt.datafactory.models.IntegrationRuntime>`
+        :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
         :param if_match: ETag of the integration runtime entity. Should only
          be specified for update, for which it should match existing entity or
          can be * for unconditional update.
@@ -128,13 +127,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -146,7 +141,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -203,13 +198,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeResource
-         <azure.mgmt.datafactory.models.IntegrationRuntimeResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -219,7 +210,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -255,6 +246,87 @@ class IntegrationRuntimesOperations(object):
 
         return deserialized
 
+    def update(
+            self, resource_group_name, factory_name, integration_runtime_name, auto_update=None, update_delay_offset=None, custom_headers=None, raw=False, **operation_config):
+        """Updates an integration runtime.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param factory_name: The factory name.
+        :type factory_name: str
+        :param integration_runtime_name: The integration runtime name.
+        :type integration_runtime_name: str
+        :param auto_update: Enables or disables the auto-update feature of the
+         self-hosted integration runtime. See
+         https://go.microsoft.com/fwlink/?linkid=854189. Possible values
+         include: 'On', 'Off'
+        :type auto_update: str or
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
+        :param update_delay_offset: The time offset (in hours) in the day,
+         e.g., PT03H is 3 hours. The integration runtime auto update will
+         happen on that time.
+        :type update_delay_offset: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: IntegrationRuntimeStatusResponse or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
+        """
+        update_integration_runtime_request = models.UpdateIntegrationRuntimeRequest(auto_update=auto_update, update_delay_offset=update_delay_offset)
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(update_integration_runtime_request, 'UpdateIntegrationRuntimeRequest')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('IntegrationRuntimeStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def delete(
             self, resource_group_name, factory_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
         """Deletes an integration runtime.
@@ -270,11 +342,8 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -284,7 +353,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -328,13 +397,11 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeStatusResponse
-         <azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: IntegrationRuntimeStatusResponse or ClientRawResponse if
          raw=true
-        :rtype: :class:`IntegrationRuntimeStatusResponse
-         <azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -344,7 +411,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -396,13 +463,11 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeConnectionInfo
-         <azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: IntegrationRuntimeConnectionInfo or ClientRawResponse if
          raw=true
-        :rtype: :class:`IntegrationRuntimeConnectionInfo
-         <azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeConnectionInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -412,7 +477,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -460,20 +525,16 @@ class IntegrationRuntimesOperations(object):
         :type integration_runtime_name: str
         :param key_name: The name of the authentication key to regenerate.
          Possible values include: 'authKey1', 'authKey2'
-        :type key_name: str or :class:`IntegrationRuntimeAuthKeyName
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName>`
+        :type key_name: str or
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeyName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeAuthKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -485,7 +546,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -540,13 +601,9 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`IntegrationRuntimeAuthKeys
-         <azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: IntegrationRuntimeAuthKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.datafactory.models.IntegrationRuntimeAuthKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -556,7 +613,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -605,15 +662,11 @@ class IntegrationRuntimesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`IntegrationRuntimeStatusResponse
-         <azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
+        :return: An instance of AzureOperationPoller that returns
+         IntegrationRuntimeStatusResponse or ClientRawResponse if raw=true
         :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -623,7 +676,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -695,14 +748,10 @@ class IntegrationRuntimesOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -712,7 +761,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -765,7 +814,7 @@ class IntegrationRuntimesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def remove_node(
-            self, resource_group_name, factory_name, integration_runtime_name, node_name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, integration_runtime_name, additional_properties=None, node_name=None, custom_headers=None, raw=False, **operation_config):
         """Remove a node from integration runtime.
 
         :param resource_group_name: The resource group name.
@@ -774,6 +823,9 @@ class IntegrationRuntimesOperations(object):
         :type factory_name: str
         :param integration_runtime_name: The integration runtime name.
         :type integration_runtime_name: str
+        :param additional_properties: Unmatched properties from the message
+         are deserialized this collection
+        :type additional_properties: dict[str, object]
         :param node_name: The name of the node to be removed.
         :type node_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -781,15 +833,12 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
-        remove_node_parameters = models.IntegrationRuntimeRemoveNodeRequest(node_name=node_name)
+        remove_node_parameters = models.IntegrationRuntimeRemoveNodeRequest(additional_properties=additional_properties, node_name=node_name)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/removeNode'
@@ -797,7 +846,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -832,8 +881,12 @@ class IntegrationRuntimesOperations(object):
 
     def sync_credentials(
             self, resource_group_name, factory_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
-        """Force the integration runtime to synchronize credentials among
-        integration runtime nodes.
+        """Force the integration runtime to synchronize credentials across
+        integration runtime nodes, and this will override the credentials
+        across all worker nodes with those available on the dispatcher node. If
+        you already have the latest credential backup file, you should manually
+        import it (preferred) on any self-hosted integration runtime node than
+        using this API directly.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -846,11 +899,8 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -860,7 +910,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -905,13 +955,11 @@ class IntegrationRuntimesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`IntegrationRuntimeMonitoringData
-         <azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: IntegrationRuntimeMonitoringData or ClientRawResponse if
          raw=true
-        :rtype: :class:`IntegrationRuntimeMonitoringData
-         <azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.datafactory.models.IntegrationRuntimeMonitoringData or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
@@ -921,7 +969,7 @@ class IntegrationRuntimesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str')
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -956,3 +1004,58 @@ class IntegrationRuntimesOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def upgrade(
+            self, resource_group_name, factory_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
+        """Upgrade self-hosted integration runtime to latest version if availably.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param factory_name: The factory name.
+        :type factory_name: str
+        :param integration_runtime_name: The integration runtime name.
+        :type integration_runtime_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/integrationRuntimes/{integrationRuntimeName}/upgrade'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
+            'integrationRuntimeName': self._serialize.url("integration_runtime_name", integration_runtime_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response

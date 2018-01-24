@@ -15,13 +15,20 @@ from msrest.serialization import Model
 class DatasetStorageFormat(Model):
     """The format definition of a storage.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ParquetFormat, OrcFormat, AvroFormat, JsonFormat,
+    TextFormat
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param serializer: Serializer. Type: string (or Expression with resultType
      string).
     :type serializer: object
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -30,6 +37,7 @@ class DatasetStorageFormat(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'serializer': {'key': 'serializer', 'type': 'object'},
         'deserializer': {'key': 'deserializer', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
@@ -39,7 +47,8 @@ class DatasetStorageFormat(Model):
         'type': {'ParquetFormat': 'ParquetFormat', 'OrcFormat': 'OrcFormat', 'AvroFormat': 'AvroFormat', 'JsonFormat': 'JsonFormat', 'TextFormat': 'TextFormat'}
     }
 
-    def __init__(self, serializer=None, deserializer=None):
+    def __init__(self, additional_properties=None, serializer=None, deserializer=None):
+        self.additional_properties = additional_properties
         self.serializer = serializer
         self.deserializer = deserializer
         self.type = None

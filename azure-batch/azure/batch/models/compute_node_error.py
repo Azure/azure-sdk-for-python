@@ -23,8 +23,7 @@ class ComputeNodeError(Model):
     :type message: str
     :param error_details: The list of additional error details related to the
      compute node error.
-    :type error_details: list of :class:`NameValuePair
-     <azure.batch.models.NameValuePair>`
+    :type error_details: list[~azure.batch.models.NameValuePair]
     """
 
     _attribute_map = {

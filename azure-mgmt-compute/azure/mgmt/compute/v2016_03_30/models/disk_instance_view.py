@@ -18,8 +18,8 @@ class DiskInstanceView(Model):
     :param name: The disk name.
     :type name: str
     :param statuses: The resource status information.
-    :type statuses: list of :class:`InstanceViewStatus
-     <azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus>`
+    :type statuses:
+     list[~azure.mgmt.compute.v2016_03_30.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -28,5 +28,6 @@ class DiskInstanceView(Model):
     }
 
     def __init__(self, name=None, statuses=None):
+        super(DiskInstanceView, self).__init__()
         self.name = name
         self.statuses = statuses

@@ -15,12 +15,16 @@ from msrest.serialization import Model
 class CreateJobProperties(Model):
     """The common Data Lake Analytics job properties for job submission.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CreateUSqlJobProperties, CreateScopeJobProperties
+
     :param runtime_version: the runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run
+    :param script: the script to run. Please note that the maximum script size
+     is 3 MB.
     :type script: str
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -36,10 +40,11 @@ class CreateJobProperties(Model):
     }
 
     _subtype_map = {
-        'type': {'USql': 'CreateUSqlJobProperties'}
+        'type': {'USql': 'CreateUSqlJobProperties', 'Scope': 'CreateScopeJobProperties'}
     }
 
     def __init__(self, script, runtime_version=None):
+        super(CreateJobProperties, self).__init__()
         self.runtime_version = runtime_version
         self.script = script
         self.type = None
