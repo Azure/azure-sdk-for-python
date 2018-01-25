@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.paging import Paged
 
 
-class TimeGrainType(Enum):
+class BudgetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Budget <azure.mgmt.consumption.models.Budget>` object
+    """
 
-    monthly = "Monthly"
-    quarterly = "Quarterly"
-    annually = "Annually"
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Budget]'}
+    }
 
+    def __init__(self, *args, **kwargs):
 
-class OperatorType(Enum):
-
-    equal_to = "EqualTo"
-    greater_than = "GreaterThan"
-    greater_than_or_equal_to = "GreaterThanOrEqualTo"
-
-
-class Datagrain(Enum):
-
-    daily_grain = "daily"
-    monthly_grain = "monthly"
+        super(BudgetPaged, self).__init__(*args, **kwargs)
