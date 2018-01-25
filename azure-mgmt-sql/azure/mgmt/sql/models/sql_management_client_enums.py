@@ -201,6 +201,19 @@ class SampleName(Enum):
     adventure_works_lt = "AdventureWorksLT"
 
 
+class TransparentDataEncryptionActivityStatus(Enum):
+
+    encrypting = "Encrypting"
+    decrypting = "Decrypting"
+
+
+class ElasticPoolEdition(Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
 class SecurityAlertPolicyState(Enum):
 
     new = "New"
@@ -247,13 +260,6 @@ class ElasticPoolState(Enum):
     creating = "Creating"
     ready = "Ready"
     disabled = "Disabled"
-
-
-class ElasticPoolEdition(Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
 
 
 class GeoBackupPolicyState(Enum):
@@ -319,12 +325,6 @@ class ReplicationState(Enum):
     seeding = "SEEDING"
     catch_up = "CATCH_UP"
     suspended = "SUSPENDED"
-
-
-class TransparentDataEncryptionActivityStatus(Enum):
-
-    encrypting = "Encrypting"
-    decrypting = "Decrypting"
 
 
 class BlobAuditingPolicyState(Enum):

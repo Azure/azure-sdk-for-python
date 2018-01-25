@@ -36,6 +36,11 @@ from .operation_impact import OperationImpact
 from .recommended_index import RecommendedIndex
 from .database import Database
 from .database_update import DatabaseUpdate
+from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
+from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
+from .elastic_pool_activity import ElasticPoolActivity
+from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
+from .recommended_elastic_pool import RecommendedElasticPool
 from .database_security_alert_policy import DatabaseSecurityAlertPolicy
 from .data_masking_policy import DataMaskingPolicy
 from .data_masking_rule import DataMaskingRule
@@ -56,11 +61,6 @@ from .replication_link import ReplicationLink
 from .server_azure_ad_administrator import ServerAzureADAdministrator
 from .server_communication_link import ServerCommunicationLink
 from .service_objective import ServiceObjective
-from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
-from .recommended_elastic_pool import RecommendedElasticPool
-from .elastic_pool_activity import ElasticPoolActivity
-from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
-from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .server_usage import ServerUsage
 from .database_usage import DatabaseUsage
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
@@ -152,6 +152,8 @@ from .sql_management_client_enums import (
     RecommendedIndexType,
     ReadScale,
     SampleName,
+    TransparentDataEncryptionActivityStatus,
+    ElasticPoolEdition,
     SecurityAlertPolicyState,
     SecurityAlertPolicyEmailAccountAdmins,
     SecurityAlertPolicyUseServerDefault,
@@ -159,7 +161,6 @@ from .sql_management_client_enums import (
     DataMaskingRuleState,
     DataMaskingFunction,
     ElasticPoolState,
-    ElasticPoolEdition,
     GeoBackupPolicyState,
     StorageKeyType,
     AuthenticationType,
@@ -168,7 +169,6 @@ from .sql_management_client_enums import (
     UnitDefinitionType,
     ReplicationRole,
     ReplicationState,
-    TransparentDataEncryptionActivityStatus,
     BlobAuditingPolicyState,
     ServerKeyType,
     ReadWriteEndpointFailoverPolicy,
@@ -215,6 +215,11 @@ __all__ = [
     'RecommendedIndex',
     'Database',
     'DatabaseUpdate',
+    'TransparentDataEncryptionActivity',
+    'ElasticPoolDatabaseActivity',
+    'ElasticPoolActivity',
+    'RecommendedElasticPoolMetric',
+    'RecommendedElasticPool',
     'DatabaseSecurityAlertPolicy',
     'DataMaskingPolicy',
     'DataMaskingRule',
@@ -235,11 +240,6 @@ __all__ = [
     'ServerAzureADAdministrator',
     'ServerCommunicationLink',
     'ServiceObjective',
-    'RecommendedElasticPoolMetric',
-    'RecommendedElasticPool',
-    'ElasticPoolActivity',
-    'ElasticPoolDatabaseActivity',
-    'TransparentDataEncryptionActivity',
     'ServerUsage',
     'DatabaseUsage',
     'DatabaseBlobAuditingPolicy',
@@ -330,6 +330,8 @@ __all__ = [
     'RecommendedIndexType',
     'ReadScale',
     'SampleName',
+    'TransparentDataEncryptionActivityStatus',
+    'ElasticPoolEdition',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
     'SecurityAlertPolicyUseServerDefault',
@@ -337,7 +339,6 @@ __all__ = [
     'DataMaskingRuleState',
     'DataMaskingFunction',
     'ElasticPoolState',
-    'ElasticPoolEdition',
     'GeoBackupPolicyState',
     'StorageKeyType',
     'AuthenticationType',
@@ -346,7 +347,6 @@ __all__ = [
     'UnitDefinitionType',
     'ReplicationRole',
     'ReplicationState',
-    'TransparentDataEncryptionActivityStatus',
     'BlobAuditingPolicyState',
     'ServerKeyType',
     'ReadWriteEndpointFailoverPolicy',
