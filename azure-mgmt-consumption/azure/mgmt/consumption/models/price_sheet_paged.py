@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2018-01-31"
+from msrest.paging import Paged
 
+
+class PriceSheetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PriceSheet <azure.mgmt.consumption.models.PriceSheet>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PriceSheet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PriceSheetPaged, self).__init__(*args, **kwargs)

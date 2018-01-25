@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ReservationsSummariesOperations(object):
-    """ReservationsSummariesOperations operations.
+class PriceSheetOperations(object):
+    """PriceSheetOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,28 +37,32 @@ class ReservationsSummariesOperations(object):
         self.config = config
 
     def list(
-            self, scope, grain, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the reservations summaries for daily or monthly grain.
+            self, scope, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+        """Returns the price sheet associated with subscription guid, for a scope
+        by billing period.
 
-        :param scope: The scope of the reservation summaries. The scope can be
-         'providers/Microsoft.Capacity/reservationorders/{ReservationOrderId}'
-         or
-         'providers/Microsoft.Capacity/reservationorders/{ReservationOrderId}/reservations/{ReservationId}'
+        :param scope: The scope of the price sheet. The scope can be
+         '/subscriptions/{subscriptionId}' for a subscription, or
+         '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodId}'
+         for a billing period.
         :type scope: str
-        :param grain: Can be daily or monthly. Possible values include:
-         'DailyGrain', 'MonthlyGrain'
-        :type grain: str or ~azure.mgmt.consumption.models.Datagrain
-        :param filter: Required only for daily grain. The properties/UsageDate
-         for start date and end date. The filter supports 'le' and  'ge'
-        :type filter: str
+        :param expand: May be used to expand the properties/meterDetails
+         within a price sheet. By default, these fields are not included when
+         returning price sheet.
+        :type expand: str
+        :param skiptoken: Skiptoken is only used if a previous operation
+         returned a partial result. If a previous response contains a nextLink
+         element, the value of the nextLink element will include a skiptoken
+         parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationSummaries
+        :return: An iterator like instance of PriceSheet
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationSummariesPaged[~azure.mgmt.consumption.models.ReservationSummaries]
+         ~azure.mgmt.consumption.models.PriceSheetPaged[~azure.mgmt.consumption.models.PriceSheet]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -66,7 +70,7 @@ class ReservationsSummariesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{scope}/providers/Microsoft.Consumption/reservationSummaries'
+                url = '/{scope}/providers/Microsoft.Consumption/pricesheets/default'
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -74,9 +78,10 @@ class ReservationsSummariesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['grain'] = self._serialize.query("grain", grain, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -104,11 +109,11 @@ class ReservationsSummariesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationSummariesPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PriceSheetPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationSummariesPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PriceSheetPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
