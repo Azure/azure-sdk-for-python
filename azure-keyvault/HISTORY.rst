@@ -2,6 +2,10 @@
 
 Release History
 ===============
+1.0.0a1 (2018-01-25)
+++++++++++++++++++++
+* Added message encryption support for message encryption enabled vaults
+
 0.3.7 (2017-09-22)
 ++++++++++++++++++
 
