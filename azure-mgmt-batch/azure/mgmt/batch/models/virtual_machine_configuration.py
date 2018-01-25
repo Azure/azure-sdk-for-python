@@ -65,6 +65,7 @@ class VirtualMachineConfiguration(Model):
     }
 
     def __init__(self, image_reference, node_agent_sku_id, os_disk=None, windows_configuration=None, data_disks=None, license_type=None):
+        super(VirtualMachineConfiguration, self).__init__()
         self.image_reference = image_reference
         self.os_disk = os_disk
         self.node_agent_sku_id = node_agent_sku_id

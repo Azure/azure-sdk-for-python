@@ -39,6 +39,7 @@ class Application(Model):
     }
 
     def __init__(self, id=None, display_name=None, packages=None, allow_updates=None, default_version=None):
+        super(Application, self).__init__()
         self.id = id
         self.display_name = display_name
         self.packages = packages
