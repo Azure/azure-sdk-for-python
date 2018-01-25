@@ -30,4 +30,5 @@ class ContainerServiceSshPublicKey(Model):
     }
 
     def __init__(self, key_data):
+        super(ContainerServiceSshPublicKey, self).__init__()
         self.key_data = key_data
