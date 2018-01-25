@@ -333,6 +333,38 @@ class BlobAuditingPolicyState(Enum):
     disabled = "Disabled"
 
 
+class AutomaticTuningMode(Enum):
+
+    inherit = "Inherit"
+    custom = "Custom"
+    auto = "Auto"
+    unspecified = "Unspecified"
+
+
+class AutomaticTuningOptionModeDesired(Enum):
+
+    off = "Off"
+    on = "On"
+    default = "Default"
+
+
+class AutomaticTuningOptionModeActual(Enum):
+
+    off = "Off"
+    on = "On"
+
+
+class AutomaticTuningDisabledReason(Enum):
+
+    default = "Default"
+    disabled = "Disabled"
+    auto_configured = "AutoConfigured"
+    inherited_from_server = "InheritedFromServer"
+    query_store_off = "QueryStoreOff"
+    query_store_read_only = "QueryStoreReadOnly"
+    not_supported = "NotSupported"
+
+
 class ServerKeyType(Enum):
 
     service_managed = "ServiceManaged"
@@ -450,3 +482,17 @@ class ManagementOperationState(Enum):
     failed = "Failed"
     cancel_in_progress = "CancelInProgress"
     cancelled = "Cancelled"
+
+
+class AutomaticTuningServerMode(Enum):
+
+    custom = "Custom"
+    auto = "Auto"
+    unspecified = "Unspecified"
+
+
+class AutomaticTuningServerReason(Enum):
+
+    default = "Default"
+    disabled = "Disabled"
+    auto_configured = "AutoConfigured"
