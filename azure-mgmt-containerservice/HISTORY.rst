@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.0.1 (2018-01-25)
+++++++++++++++++++
+
+**Bugfixes**
+
+* Fix incorrect mapping in OrchestratorVersionProfileListResult
+
 3.0.0 (2017-12-13)
 ++++++++++++++++++
 
