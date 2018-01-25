@@ -37,6 +37,7 @@ class ResizeError(Model):
     }
 
     def __init__(self, code, message, details=None):
+        super(ResizeError, self).__init__()
         self.code = code
         self.message = message
         self.details = details

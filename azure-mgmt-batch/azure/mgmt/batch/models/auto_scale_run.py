@@ -38,6 +38,7 @@ class AutoScaleRun(Model):
     }
 
     def __init__(self, evaluation_time, results=None, error=None):
+        super(AutoScaleRun, self).__init__()
         self.evaluation_time = evaluation_time
         self.results = results
         self.error = error

@@ -16,7 +16,8 @@ class FixedScaleSettings(Model):
     """Fixed scale settings for the pool.
 
     :param resize_timeout: The timeout for allocation of compute nodes to the
-     pool. The default value is 15 minutes. The minimum value is 5 minutes. If
+     pool. The default value is 15 minutes. Timeout values use ISO 8601 format.
+     For example, use PT10M for 10 minutes. The minimum value is 5 minutes. If
      you specify a value less than 5 minutes, the Batch service rejects the
      request with an error; if you are calling the REST API directly, the HTTP
      status code is 400 (Bad Request).
@@ -45,6 +46,7 @@ class FixedScaleSettings(Model):
     }
 
     def __init__(self, resize_timeout=None, target_dedicated_nodes=None, target_low_priority_nodes=None, node_deallocation_option=None):
+        super(FixedScaleSettings, self).__init__()
         self.resize_timeout = resize_timeout
         self.target_dedicated_nodes = target_dedicated_nodes
         self.target_low_priority_nodes = target_low_priority_nodes

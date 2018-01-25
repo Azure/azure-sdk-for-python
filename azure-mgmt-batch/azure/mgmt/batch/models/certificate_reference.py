@@ -63,6 +63,7 @@ class CertificateReference(Model):
     }
 
     def __init__(self, id, store_location=None, store_name=None, visibility=None):
+        super(CertificateReference, self).__init__()
         self.id = id
         self.store_location = store_location
         self.store_name = store_name

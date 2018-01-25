@@ -34,6 +34,7 @@ class CertificateBaseProperties(Model):
     }
 
     def __init__(self, thumbprint_algorithm=None, thumbprint=None, format=None):
+        super(CertificateBaseProperties, self).__init__()
         self.thumbprint_algorithm = thumbprint_algorithm
         self.thumbprint = thumbprint
         self.format = format

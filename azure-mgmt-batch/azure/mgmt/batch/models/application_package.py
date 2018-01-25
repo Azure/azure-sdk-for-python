@@ -60,6 +60,7 @@ class ApplicationPackage(Model):
     }
 
     def __init__(self):
+        super(ApplicationPackage, self).__init__()
         self.id = None
         self.version = None
         self.state = None
