@@ -12,23 +12,23 @@
 from msrest.serialization import Model
 
 
-class DataLakeAnalyticsAccountPropertiesBasic(Model):
+class DataLakeStoreAccountPropertiesBasic(Model):
     """The basic account specific properties that are associated with an
-    underlying Data Lake Analytics account.
+    underlying Data Lake Store account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provisioning_state: The provisioning status of the Data Lake
-     Analytics account. Possible values include: 'Failed', 'Creating',
-     'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
-     'Deleted', 'Undeleting', 'Canceled'
+    :ivar provisioning_state: The provisioning status of the Data Lake Store
+     account. Possible values include: 'Failed', 'Creating', 'Running',
+     'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted',
+     'Undeleting', 'Canceled'
     :vartype provisioning_state: str or
-     ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
-    :ivar state: The state of the Data Lake Analytics account. Possible values
+     ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
+    :ivar state: The state of the Data Lake Store account. Possible values
      include: 'Active', 'Suspended'
     :vartype state: str or
-     ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
+     ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
     :ivar creation_time: The account creation time.
     :vartype creation_time: datetime
     :ivar last_modified_time: The account last modified time.
@@ -36,7 +36,7 @@ class DataLakeAnalyticsAccountPropertiesBasic(Model):
     :ivar endpoint: The full CName endpoint for this account.
     :vartype endpoint: str
     :ivar account_id: The unique identifier associated with this Data Lake
-     Analytics account.
+     Store account.
     :vartype account_id: str
     """
 
@@ -50,8 +50,8 @@ class DataLakeAnalyticsAccountPropertiesBasic(Model):
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'DataLakeAnalyticsAccountStatus'},
-        'state': {'key': 'state', 'type': 'DataLakeAnalyticsAccountState'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'DataLakeStoreAccountStatus'},
+        'state': {'key': 'state', 'type': 'DataLakeStoreAccountState'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
         'endpoint': {'key': 'endpoint', 'type': 'str'},
@@ -59,7 +59,7 @@ class DataLakeAnalyticsAccountPropertiesBasic(Model):
     }
 
     def __init__(self):
-        super(DataLakeAnalyticsAccountPropertiesBasic, self).__init__()
+        super(DataLakeStoreAccountPropertiesBasic, self).__init__()
         self.provisioning_state = None
         self.state = None
         self.creation_time = None

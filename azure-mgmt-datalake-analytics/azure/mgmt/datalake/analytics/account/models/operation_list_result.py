@@ -18,10 +18,10 @@ class OperationListResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: the results of the list operation.
+    :ivar value: The results of the list operation.
     :vartype value:
      list[~azure.mgmt.datalake.analytics.account.models.Operation]
-    :ivar next_link: the link (url) to the next page of results.
+    :ivar next_link: The link (url) to the next page of results.
     :vartype next_link: str
     """
 

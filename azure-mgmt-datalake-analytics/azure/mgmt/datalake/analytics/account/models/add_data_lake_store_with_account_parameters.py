@@ -12,34 +12,26 @@
 from msrest.serialization import Model
 
 
-class OptionalSubResource(Model):
-    """The Resource model definition for a nested resource with no required
-    properties.
+class AddDataLakeStoreWithAccountParameters(Model):
+    """The parameters used to add a new Data Lake Store account while creating a
+    new Data Lake Analytics account.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :param name: Resource name
+    :param name: The unique name of the Data Lake Store account to add.
     :type name: str
-    :ivar type: Resource type
-    :vartype type: str
+    :param suffix: The optional suffix for the Data Lake Store account.
+    :type suffix: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(OptionalSubResource, self).__init__()
-        self.id = None
+    def __init__(self, name, suffix=None):
+        super(AddDataLakeStoreWithAccountParameters, self).__init__()
         self.name = name
-        self.type = None
+        self.suffix = suffix

@@ -12,17 +12,21 @@
 from msrest.serialization import Model
 
 
-class UpdateTrustedIdProviderParameters(Model):
-    """The parameters used to update a trusted identity provider.
+class CreateOrUpdateTrustedIdProviderParameters(Model):
+    """The parameters used to create a new trusted identity provider.
 
     :param id_provider: The URL of this trusted identity provider.
     :type id_provider: str
     """
 
+    _validation = {
+        'id_provider': {'required': True},
+    }
+
     _attribute_map = {
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self, id_provider=None):
-        super(UpdateTrustedIdProviderParameters, self).__init__()
+    def __init__(self, id_provider):
+        super(CreateOrUpdateTrustedIdProviderParameters, self).__init__()
         self.id_provider = id_provider

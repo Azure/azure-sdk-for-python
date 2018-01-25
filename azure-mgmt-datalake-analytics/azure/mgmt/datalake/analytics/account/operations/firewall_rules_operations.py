@@ -38,7 +38,7 @@ class FirewallRulesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, account_name, firewall_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, firewall_rule_name, start_ip_address, end_ip_address, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the specified firewall rule. During update, the
         firewall rule with the specified name will be replaced with this new
         firewall rule.
@@ -52,10 +52,14 @@ class FirewallRulesOperations(object):
         :param firewall_rule_name: The name of the firewall rule to create or
          update.
         :type firewall_rule_name: str
-        :param parameters: Parameters supplied to create or update the
-         firewall rule.
-        :type parameters:
-         ~azure.mgmt.datalake.analytics.account.models.FirewallRule
+        :param start_ip_address: The start IP address for the firewall rule.
+         This can be either ipv4 or ipv6. Start and End should be in the same
+         protocol.
+        :type start_ip_address: str
+        :param end_ip_address: The end IP address for the firewall rule. This
+         can be either ipv4 or ipv6. Start and End should be in the same
+         protocol.
+        :type end_ip_address: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,6 +70,8 @@ class FirewallRulesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.CreateOrUpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/firewallRules/{firewallRuleName}'
         path_format_arguments = {
@@ -91,7 +97,7 @@ class FirewallRulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'FirewallRule')
+        body_content = self._serialize.body(parameters, 'CreateOrUpdateFirewallRuleParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -126,11 +132,11 @@ class FirewallRulesOperations(object):
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to update.
         :type firewall_rule_name: str
-        :param start_ip_address: the start IP address for the firewall rule.
+        :param start_ip_address: The start IP address for the firewall rule.
          This can be either ipv4 or ipv6. Start and End should be in the same
          protocol.
         :type start_ip_address: str
-        :param end_ip_address: the end IP address for the firewall rule. This
+        :param end_ip_address: The end IP address for the firewall rule. This
          can be either ipv4 or ipv6. Start and End should be in the same
          protocol.
         :type end_ip_address: str

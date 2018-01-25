@@ -704,9 +704,9 @@ class AccountOperations(object):
             self, location, name, custom_headers=None, raw=False, **operation_config):
         """Checks whether the specified account name is available or taken.
 
-        :param location: The Resource location without whitespace.
+        :param location: The resource location without whitespace.
         :type location: str
-        :param name: the Data Lake Store name to check availability for.
+        :param name: The Data Lake Store name to check availability for.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -18,12 +18,12 @@ class Operation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: the name of the operation.
+    :ivar name: The name of the operation.
     :vartype name: str
-    :param display: the display information for the operation.
+    :param display: The display information for the operation.
     :type display:
      ~azure.mgmt.datalake.analytics.account.models.OperationDisplay
-    :ivar origin: the intended executor of the operation. Possible values
+    :ivar origin: The intended executor of the operation. Possible values
      include: 'user', 'system', 'user,system'
     :vartype origin: str or
      ~azure.mgmt.datalake.analytics.account.models.OperationOrigin

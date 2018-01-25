@@ -51,10 +51,10 @@ class StorageAccountsOperations(object):
         :param storage_account_name: The name of the Azure Storage account to
          add
         :type storage_account_name: str
-        :param access_key: the access key associated with this Azure Storage
+        :param access_key: The access key associated with this Azure Storage
          account that will be used to connect to it.
         :type access_key: str
-        :param suffix: the optional suffix for the storage account.
+        :param suffix: The optional suffix for the storage account.
         :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -121,10 +121,10 @@ class StorageAccountsOperations(object):
         :type account_name: str
         :param storage_account_name: The Azure Storage account to modify
         :type storage_account_name: str
-        :param access_key: the updated access key associated with this Azure
+        :param access_key: The updated access key associated with this Azure
          Storage account that will be used to connect to it.
         :type access_key: str
-        :param suffix: the optional suffix for the storage account.
+        :param suffix: The optional suffix for the storage account.
         :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

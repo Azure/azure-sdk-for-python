@@ -20,14 +20,15 @@ class SubResource(Model):
 
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Resource name
-    :type name: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
     }
 
@@ -37,8 +38,8 @@ class SubResource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self):
         super(SubResource, self).__init__()
         self.id = None
-        self.name = name
+        self.name = None
         self.type = None

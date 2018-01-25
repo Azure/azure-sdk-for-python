@@ -29,21 +29,21 @@ class DataLakeAnalyticsAccountBasic(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar provisioning_state: the provisioning status of the Data Lake
+    :ivar provisioning_state: The provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
      'Deleted', 'Undeleting', 'Canceled'
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
-    :ivar state: the state of the Data Lake Analytics account. Possible values
+    :ivar state: The state of the Data Lake Analytics account. Possible values
      include: 'Active', 'Suspended'
     :vartype state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
-    :ivar creation_time: the account creation time.
+    :ivar creation_time: The account creation time.
     :vartype creation_time: datetime
-    :ivar last_modified_time: the account last modified time.
+    :ivar last_modified_time: The account last modified time.
     :vartype last_modified_time: datetime
-    :ivar endpoint: the full CName endpoint for this account.
+    :ivar endpoint: The full CName endpoint for this account.
     :vartype endpoint: str
     :ivar account_id: The unique identifier associated with this Data Lake
      Analytics account.
