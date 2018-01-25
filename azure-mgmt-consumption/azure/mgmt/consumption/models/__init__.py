@@ -24,13 +24,13 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .resource import Resource
 from .proxy_resource import ProxyResource
-from .price_sheet import PriceSheet
+from .price_sheet_model import PriceSheetModel
 from .usage_detail_paged import UsageDetailPaged
 from .reservation_summaries_paged import ReservationSummariesPaged
 from .reservation_details_paged import ReservationDetailsPaged
 from .budget_paged import BudgetPaged
 from .operation_paged import OperationPaged
-from .price_sheet_paged import PriceSheetPaged
+from .price_sheet_model_paged import PriceSheetModelPaged
 from .consumption_management_client_enums import (
     CategoryType,
     TimeGrainType,
@@ -54,13 +54,13 @@ __all__ = [
     'Operation',
     'Resource',
     'ProxyResource',
-    'PriceSheet',
+    'PriceSheetModel',
     'UsageDetailPaged',
     'ReservationSummariesPaged',
     'ReservationDetailsPaged',
     'BudgetPaged',
     'OperationPaged',
-    'PriceSheetPaged',
+    'PriceSheetModelPaged',
     'CategoryType',
     'TimeGrainType',
     'OperatorType',

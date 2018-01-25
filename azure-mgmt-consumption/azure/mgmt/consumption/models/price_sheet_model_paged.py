@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class PriceSheetPaged(Paged):
+class PriceSheetModelPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PriceSheet <azure.mgmt.consumption.models.PriceSheet>` object
+    A paging container for iterating over a list of :class:`PriceSheetModel <azure.mgmt.consumption.models.PriceSheetModel>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PriceSheet]'}
+        'current_page': {'key': 'value', 'type': '[PriceSheetModel]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(PriceSheetPaged, self).__init__(*args, **kwargs)
+        super(PriceSheetModelPaged, self).__init__(*args, **kwargs)

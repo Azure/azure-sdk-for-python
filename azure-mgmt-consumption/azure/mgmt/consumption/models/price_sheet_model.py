@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class PriceSheet(Resource):
+class PriceSheetModel(Resource):
     """An pricesheet resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -77,7 +77,7 @@ class PriceSheet(Resource):
     }
 
     def __init__(self):
-        super(PriceSheet, self).__init__()
+        super(PriceSheetModel, self).__init__()
         self.billing_period_id = None
         self.meter_id = None
         self.meter_details = None

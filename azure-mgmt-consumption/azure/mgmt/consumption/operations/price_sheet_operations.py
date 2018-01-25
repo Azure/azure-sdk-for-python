@@ -60,9 +60,9 @@ class PriceSheetOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PriceSheet
+        :return: An iterator like instance of PriceSheetModel
         :rtype:
-         ~azure.mgmt.consumption.models.PriceSheetPaged[~azure.mgmt.consumption.models.PriceSheet]
+         ~azure.mgmt.consumption.models.PriceSheetModelPaged[~azure.mgmt.consumption.models.PriceSheetModel]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -109,11 +109,11 @@ class PriceSheetOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PriceSheetPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PriceSheetModelPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PriceSheetPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PriceSheetModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
