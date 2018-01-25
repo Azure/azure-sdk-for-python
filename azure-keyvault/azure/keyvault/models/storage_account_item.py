@@ -23,10 +23,9 @@ class StorageAccountItem(Model):
     :ivar resource_id: Storage account resource Id.
     :vartype resource_id: str
     :ivar attributes: The storage account management attributes.
-    :vartype attributes: :class:`StorageAccountAttributes
-     <azure.keyvault.models.StorageAccountAttributes>`
+    :vartype attributes: ~azure.keyvault.models.StorageAccountAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -44,6 +43,7 @@ class StorageAccountItem(Model):
     }
 
     def __init__(self):
+        super(StorageAccountItem, self).__init__()
         self.id = None
         self.resource_id = None
         self.attributes = None

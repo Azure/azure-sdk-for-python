@@ -44,6 +44,7 @@ class Attributes(Model):
     }
 
     def __init__(self, enabled=None, not_before=None, expires=None):
+        super(Attributes, self).__init__()
         self.enabled = enabled
         self.not_before = not_before
         self.expires = expires

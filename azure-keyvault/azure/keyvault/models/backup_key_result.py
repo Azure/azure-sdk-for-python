@@ -31,4 +31,5 @@ class BackupKeyResult(Model):
     }
 
     def __init__(self):
+        super(BackupKeyResult, self).__init__()
         self.value = None

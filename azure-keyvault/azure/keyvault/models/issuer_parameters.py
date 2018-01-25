@@ -29,5 +29,6 @@ class IssuerParameters(Model):
     }
 
     def __init__(self, name=None, certificate_type=None):
+        super(IssuerParameters, self).__init__()
         self.name = name
         self.certificate_type = certificate_type

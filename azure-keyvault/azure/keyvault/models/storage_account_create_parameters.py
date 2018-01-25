@@ -26,10 +26,10 @@ class StorageAccountCreateParameters(Model):
      in ISO-8601 format.
     :type regeneration_period: str
     :param storage_account_attributes: The attributes of the storage account.
-    :type storage_account_attributes: :class:`StorageAccountAttributes
-     <azure.keyvault.models.StorageAccountAttributes>`
+    :type storage_account_attributes:
+     ~azure.keyvault.models.StorageAccountAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -48,6 +48,7 @@ class StorageAccountCreateParameters(Model):
     }
 
     def __init__(self, resource_id, active_key_name, auto_regenerate_key, regeneration_period=None, storage_account_attributes=None, tags=None):
+        super(StorageAccountCreateParameters, self).__init__()
         self.resource_id = resource_id
         self.active_key_name = active_key_name
         self.auto_regenerate_key = auto_regenerate_key
