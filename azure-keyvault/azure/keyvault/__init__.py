@@ -11,6 +11,7 @@
 
 from .custom import http_bearer_challenge_cache as HttpBearerChallengeCache
 from .custom.http_bearer_challenge import HttpBearerChallenge
+from .custom.http_challenge import HttpChallenge
 from .custom.key_vault_client import CustomKeyVaultClient as KeyVaultClient
 from .custom.key_vault_id import (KeyVaultId,
                                   KeyId,
@@ -20,7 +21,8 @@ from .custom.key_vault_id import (KeyVaultId,
                                   CertificateOperationId,
                                   StorageAccountId,
                                   StorageSasDefinitionId)
-from .custom.key_vault_authentication import KeyVaultAuthentication, KeyVaultAuthBase
+from .custom.key_vault_authentication import KeyVaultAuthentication, KeyVaultAuthBase, AccessToken
+from .custom.http_message_security import generate_pop_key
 from .version import VERSION
 
 __all__ = ['KeyVaultClient',
@@ -34,8 +36,11 @@ __all__ = ['KeyVaultClient',
            'StorageSasDefinitionId',
            'HttpBearerChallengeCache',
            'HttpBearerChallenge',
+           'HttpChallenge',
            'KeyVaultAuthentication',
-           'KeyVaultAuthBase']
+           'KeyVaultAuthBase',
+           'generate_pop_key',
+           'AccessToken']
 
 __version__ = VERSION
 
