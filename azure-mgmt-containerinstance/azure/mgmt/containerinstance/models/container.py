@@ -24,25 +24,23 @@ class Container(Model):
     :type image: str
     :param command: The commands to execute within the container instance in
      exec form.
-    :type command: list of str
+    :type command: list[str]
     :param ports: The exposed ports on the container instance.
-    :type ports: list of :class:`ContainerPort
-     <azure.mgmt.containerinstance.models.ContainerPort>`
+    :type ports: list[~azure.mgmt.containerinstance.models.ContainerPort]
     :param environment_variables: The environment variables to set in the
      container instance.
-    :type environment_variables: list of :class:`EnvironmentVariable
-     <azure.mgmt.containerinstance.models.EnvironmentVariable>`
+    :type environment_variables:
+     list[~azure.mgmt.containerinstance.models.EnvironmentVariable]
     :ivar instance_view: The instance view of the container instance. Only
      valid in response.
-    :vartype instance_view: :class:`ContainerPropertiesInstanceView
-     <azure.mgmt.containerinstance.models.ContainerPropertiesInstanceView>`
+    :vartype instance_view:
+     ~azure.mgmt.containerinstance.models.ContainerPropertiesInstanceView
     :param resources: The resource requirements of the container instance.
-    :type resources: :class:`ResourceRequirements
-     <azure.mgmt.containerinstance.models.ResourceRequirements>`
+    :type resources: ~azure.mgmt.containerinstance.models.ResourceRequirements
     :param volume_mounts: The volume mounts available to the container
      instance.
-    :type volume_mounts: list of :class:`VolumeMount
-     <azure.mgmt.containerinstance.models.VolumeMount>`
+    :type volume_mounts:
+     list[~azure.mgmt.containerinstance.models.VolumeMount]
     """
 
     _validation = {
@@ -64,6 +62,7 @@ class Container(Model):
     }
 
     def __init__(self, name, image, resources, command=None, ports=None, environment_variables=None, volume_mounts=None):
+        super(Container, self).__init__()
         self.name = name
         self.image = image
         self.command = command

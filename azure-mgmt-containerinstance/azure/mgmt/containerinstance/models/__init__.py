@@ -20,6 +20,7 @@ from .resource_requirements import ResourceRequirements
 from .volume_mount import VolumeMount
 from .container import Container
 from .azure_file_volume import AzureFileVolume
+from .git_repo_volume import GitRepoVolume
 from .volume import Volume
 from .image_registry_credential import ImageRegistryCredential
 from .port import Port
@@ -29,6 +30,9 @@ from .container_group import ContainerGroup
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .operation_list_result import OperationListResult
+from .usage_name import UsageName
+from .usage import Usage
+from .usage_list_result import UsageListResult
 from .logs import Logs
 from .resource import Resource
 from .container_group_paged import ContainerGroupPaged
@@ -52,6 +56,7 @@ __all__ = [
     'VolumeMount',
     'Container',
     'AzureFileVolume',
+    'GitRepoVolume',
     'Volume',
     'ImageRegistryCredential',
     'Port',
@@ -61,6 +66,9 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'OperationListResult',
+    'UsageName',
+    'Usage',
+    'UsageListResult',
     'Logs',
     'Resource',
     'ContainerGroupPaged',

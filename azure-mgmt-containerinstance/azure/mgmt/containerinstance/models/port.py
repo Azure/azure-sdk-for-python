@@ -17,8 +17,8 @@ class Port(Model):
 
     :param protocol: The protocol associated with the port. Possible values
      include: 'TCP', 'UDP'
-    :type protocol: str or :class:`ContainerGroupNetworkProtocol
-     <azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol>`
+    :type protocol: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol
     :param port: The port number.
     :type port: int
     """
@@ -33,5 +33,6 @@ class Port(Model):
     }
 
     def __init__(self, port, protocol=None):
+        super(Port, self).__init__()
         self.protocol = protocol
         self.port = port
