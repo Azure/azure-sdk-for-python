@@ -100,9 +100,11 @@ class BudgetsOperations(object):
         return deserialized
 
     def get(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """Gets the budget for a subscription by budget name.
 
+        :param name: Budget name.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -118,7 +120,7 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{name}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'name': self._serialize.url("self.config.name", self.config.name, 'str')
+            'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -155,12 +157,14 @@ class BudgetsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
+            self, name, parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update a budget. Update operation requires
         latest eTag to be set in the request mandatorily. You may obtain the
         latest eTag by performing a get operation. Create operation does not
         require eTag.
 
+        :param name: Budget name.
+        :type name: str
         :param parameters: Parameters supplied to the Create Budget operation.
         :type parameters: ~azure.mgmt.consumption.models.Budget
         :param dict custom_headers: headers that will be added to the request
@@ -180,7 +184,7 @@ class BudgetsOperations(object):
                 url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{name}'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'name': self._serialize.url("self.config.name", self.config.name, 'str')
+                    'name': self._serialize.url("name", name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -226,9 +230,11 @@ class BudgetsOperations(object):
         return deserialized
 
     def delete(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete a budget.
 
+        :param name: Budget name.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -243,7 +249,7 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{name}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'name': self._serialize.url("self.config.name", self.config.name, 'str')
+            'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
