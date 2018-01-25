@@ -7,9 +7,11 @@
 # --------------------------------------------------------------------------
 from contextlib import contextmanager
 
+import time
+
 import azure.mgmt.recoveryservicesbackup
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import AzureMgmtTestCase
+from azure.mgmt.resource import ResourceManagementClient
+from devtools_testutils import AzureMgmtTestCase
 from tests.recoveryservicesbackup_testcase import MgmtRecoveryServicesBackupTestDefinition, MgmtRecoveryServicesBackupTestHelper
 
 
@@ -25,13 +27,19 @@ class MgmtRecoveryServicesBackupTests(AzureMgmtTestCase):
             azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient
         )
 
+        self.rm_client = self.create_mgmt_client(ResourceManagementClient)
+
         # Using pre-existing vault until vault client is available
-        self.resource_group_name = "PythonSDKBackupTestRg"
+        self.resource_group_name = "PythonSdkRg"
         self.group_name = self.resource_group_name
-        self.vault_name = "PySDKBackupTestRsVault"
+        self.vault_name = "PySdkVault"
         self.test_definition = MgmtRecoveryServicesBackupTestDefinition(self.settings.SUBSCRIPTION_ID, self.vault_name, self.resource_group_name)
         self.test_helper = MgmtRecoveryServicesBackupTestHelper(self)
         self.region = "southeastasia"
+
+    def sleep(self, timeout):
+        if self.is_live:
+            time.sleep(timeout)
 
     @contextmanager
     def vault(self):
@@ -41,11 +49,13 @@ class MgmtRecoveryServicesBackupTests(AzureMgmtTestCase):
 
     @contextmanager
     def resource_group(self):
-        self.create_resource_group()
+        resource_group = self.rm_client.resource_groups.create_or_update(
+            self.resource_group_name,
+            {'location': self.region}
+        )
         yield
-        self.delete_resource_group(wait_timeout=None)
+        self.rm_client.resource_groups.delete(resource_group.name)
 
-    @record
     def test_iaasvm_e2e(self):
         with self.resource_group(), self.vault():
             self.test_helper.enable_protection(self.test_definition.container_name, self.test_definition.vm_name, "DefaultPolicy")
@@ -96,8 +106,6 @@ class MgmtRecoveryServicesBackupTests(AzureMgmtTestCase):
             # Disable Protection
             self.test_helper.delete_protection(self.test_definition.container_name, self.test_definition.vm_name)
 
-
-    @record
     def test_operations_api(self):
         operations = self.test_helper.list_operations()
         self.assertIsNotNone(operations)
