@@ -41,6 +41,7 @@ class ManagedClusterPoolUpgradeProfile(Model):
     }
 
     def __init__(self, kubernetes_version, name=None, os_type="Linux", upgrades=None):
+        super(ManagedClusterPoolUpgradeProfile, self).__init__()
         self.kubernetes_version = kubernetes_version
         self.name = name
         self.os_type = os_type

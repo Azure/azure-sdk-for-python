@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -88,7 +89,7 @@ class ContainerServicesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -107,31 +108,9 @@ class ContainerServicesOperations(object):
 
         return deserialized
 
-    def create_or_update(
+
+    def _create_or_update_initial(
             self, resource_group_name, container_service_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a container service.
-
-        Creates or updates a container service with the specified configuration
-        of orchestrator, masters, and agents.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param container_service_name: The name of the container service in
-         the specified subscription and resource group.
-        :type container_service_name: str
-        :param parameters: Parameters supplied to the Create or Update a
-         Container Service operation.
-        :type parameters: ~azure.mgmt.containerservice.models.ContainerService
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         ContainerService or ClientRawResponse if raw=true
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.models.ContainerService]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         api_version = "2017-07-01"
 
         # Construct URL
@@ -161,19 +140,79 @@ class ContainerServicesOperations(object):
         body_content = self._serialize.body(parameters, 'ContainerService')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 201, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ContainerService', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('ContainerService', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('ContainerService', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, container_service_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a container service.
+
+        Creates or updates a container service with the specified configuration
+        of orchestrator, masters, and agents.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param container_service_name: The name of the container service in
+         the specified subscription and resource group.
+        :type container_service_name: str
+        :param parameters: Parameters supplied to the Create or Update a
+         Container Service operation.
+        :type parameters: ~azure.mgmt.containerservice.models.ContainerService
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         ContainerService or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.containerservice.models.ContainerService]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            container_service_name=container_service_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -182,24 +221,13 @@ class ContainerServicesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('ContainerService', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('ContainerService', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('ContainerService', response)
+            deserialized = self._deserialize('ContainerService', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
 
             return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -259,7 +287,7 @@ class ContainerServicesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -277,31 +305,9 @@ class ContainerServicesOperations(object):
 
         return deserialized
 
-    def delete(
+
+    def _delete_initial(
             self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified container service.
-
-        Deletes the specified container service in the specified subscription
-        and resource group. The operation does not delete other resources
-        created as part of creating a container service, including storage
-        accounts, VMs, and availability sets. All the other resources created
-        with the container service are part of the same resource group and can
-        be deleted individually.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param container_service_name: The name of the container service in
-         the specified subscription and resource group.
-        :type container_service_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         api_version = "2017-07-01"
 
         # Construct URL
@@ -328,18 +334,66 @@ class ContainerServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete(
+            self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified container service.
+
+        Deletes the specified container service in the specified subscription
+        and resource group. The operation does not delete other resources
+        created as part of creating a container service, including storage
+        accounts, VMs, and availability sets. All the other resources created
+        with the container service are part of the same resource group and can
+        be deleted individually.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param container_service_name: The name of the container service in
+         the specified subscription and resource group.
+        :type container_service_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            container_service_name=container_service_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -351,10 +405,6 @@ class ContainerServicesOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -418,7 +468,7 @@ class ContainerServicesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -490,7 +540,7 @@ class ContainerServicesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
