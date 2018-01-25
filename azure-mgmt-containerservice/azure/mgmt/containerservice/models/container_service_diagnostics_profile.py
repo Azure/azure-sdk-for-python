@@ -30,4 +30,5 @@ class ContainerServiceDiagnosticsProfile(Model):
     }
 
     def __init__(self, vm_diagnostics):
+        super(ContainerServiceDiagnosticsProfile, self).__init__()
         self.vm_diagnostics = vm_diagnostics

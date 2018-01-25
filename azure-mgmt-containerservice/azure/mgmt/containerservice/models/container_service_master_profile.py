@@ -103,6 +103,7 @@ class ContainerServiceMasterProfile(Model):
     }
 
     def __init__(self, dns_prefix, vm_size, count=1, os_disk_size_gb=None, vnet_subnet_id=None, first_consecutive_static_ip="10.240.255.5", storage_profile=None):
+        super(ContainerServiceMasterProfile, self).__init__()
         self.count = count
         self.dns_prefix = dns_prefix
         self.vm_size = vm_size

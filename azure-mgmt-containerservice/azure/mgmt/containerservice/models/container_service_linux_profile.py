@@ -33,5 +33,6 @@ class ContainerServiceLinuxProfile(Model):
     }
 
     def __init__(self, admin_username, ssh):
+        super(ContainerServiceLinuxProfile, self).__init__()
         self.admin_username = admin_username
         self.ssh = ssh

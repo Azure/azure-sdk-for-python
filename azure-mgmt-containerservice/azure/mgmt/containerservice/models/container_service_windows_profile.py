@@ -32,5 +32,6 @@ class ContainerServiceWindowsProfile(Model):
     }
 
     def __init__(self, admin_username, admin_password):
+        super(ContainerServiceWindowsProfile, self).__init__()
         self.admin_username = admin_username
         self.admin_password = admin_password
