@@ -26,9 +26,9 @@ from .dsc_node import DscNode
 from .content_source import ContentSource
 from .dsc_configuration_parameter import DscConfigurationParameter
 from .dsc_configuration import DscConfiguration
+from .resource import Resource
 from .sku import Sku
 from .automation_account import AutomationAccount
-from .resource import Resource
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .automation_account_create_or_update_parameters import AutomationAccountCreateOrUpdateParameters
@@ -112,6 +112,12 @@ from .software_update_configuration_run_list_result import SoftwareUpdateConfigu
 from .job_navigation import JobNavigation
 from .software_update_configuration_machine_run import SoftwareUpdateConfigurationMachineRun
 from .software_update_configuration_machine_run_list_result import SoftwareUpdateConfigurationMachineRunListResult
+from .source_control import SourceControl
+from .source_control_update_parameters import SourceControlUpdateParameters
+from .source_control_create_or_update_parameters import SourceControlCreateOrUpdateParameters
+from .source_control_sync_job import SourceControlSyncJob
+from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
+from .source_control_sync_job_by_id import SourceControlSyncJobById
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -136,6 +142,8 @@ from .runbook_paged import RunbookPaged
 from .schedule_paged import SchedulePaged
 from .variable_paged import VariablePaged
 from .webhook_paged import WebhookPaged
+from .source_control_paged import SourceControlPaged
+from .source_control_sync_job_paged import SourceControlSyncJobPaged
 from .automation_client_enums import (
     RunbookTypeEnum,
     RunbookState,
@@ -155,6 +163,8 @@ from .automation_client_enums import (
     LinuxUpdateClasses,
     WindowsUpdateClasses,
     OperatingSystemType,
+    SourceType,
+    ProvisioningState,
 )
 
 __all__ = [
@@ -175,9 +185,9 @@ __all__ = [
     'ContentSource',
     'DscConfigurationParameter',
     'DscConfiguration',
+    'Resource',
     'Sku',
     'AutomationAccount',
-    'Resource',
     'OperationDisplay',
     'Operation',
     'AutomationAccountCreateOrUpdateParameters',
@@ -261,6 +271,12 @@ __all__ = [
     'JobNavigation',
     'SoftwareUpdateConfigurationMachineRun',
     'SoftwareUpdateConfigurationMachineRunListResult',
+    'SourceControl',
+    'SourceControlUpdateParameters',
+    'SourceControlCreateOrUpdateParameters',
+    'SourceControlSyncJob',
+    'SourceControlSyncJobByIdErrors',
+    'SourceControlSyncJobById',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
@@ -285,6 +301,8 @@ __all__ = [
     'SchedulePaged',
     'VariablePaged',
     'WebhookPaged',
+    'SourceControlPaged',
+    'SourceControlSyncJobPaged',
     'RunbookTypeEnum',
     'RunbookState',
     'RunbookProvisioningState',
@@ -303,4 +321,6 @@ __all__ = [
     'LinuxUpdateClasses',
     'WindowsUpdateClasses',
     'OperatingSystemType',
+    'SourceType',
+    'ProvisioningState',
 ]

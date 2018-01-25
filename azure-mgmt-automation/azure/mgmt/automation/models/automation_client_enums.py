@@ -215,3 +215,17 @@ class OperatingSystemType(Enum):
 
     windows = "Windows"
     linux = "Linux"
+
+
+class SourceType(Enum):
+
+    vso_git = "VsoGit"
+    vso_tfvc = "VsoTfvc"
+    git_hub = "GitHub"
+
+
+class ProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    running = "Running"
