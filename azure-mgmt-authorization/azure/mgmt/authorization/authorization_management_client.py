@@ -46,7 +46,7 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
 
         super(AuthorizationManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('authorizationmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-authorization/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

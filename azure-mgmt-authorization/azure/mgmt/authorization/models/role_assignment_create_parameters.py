@@ -34,6 +34,7 @@ class RoleAssignmentCreateParameters(Model):
     }
 
     def __init__(self, role_definition_id=None, principal_id=None, can_delegate=None):
+        super(RoleAssignmentCreateParameters, self).__init__()
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id
         self.can_delegate = can_delegate

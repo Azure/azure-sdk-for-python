@@ -54,6 +54,7 @@ class RoleDefinition(Model):
     }
 
     def __init__(self, role_name=None, description=None, role_type=None, permissions=None, assignable_scopes=None):
+        super(RoleDefinition, self).__init__()
         self.id = None
         self.name = None
         self.type = None

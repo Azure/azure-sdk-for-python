@@ -36,6 +36,7 @@ class ClassicAdministrator(Model):
     }
 
     def __init__(self, id=None, name=None, type=None, email_address=None, role=None):
+        super(ClassicAdministrator, self).__init__()
         self.id = id
         self.name = name
         self.type = type
