@@ -12,29 +12,24 @@
 from msrest.serialization import Model
 
 
-class ContainerGroupPropertiesInstanceView(Model):
-    """The instance view of the container group. Only valid in response.
+class UsageListResult(Model):
+    """The response containing the usage data.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar events: The events of this container group.
-    :vartype events: list[~azure.mgmt.containerinstance.models.Event]
-    :ivar state: The state of the container group. Only valid in response.
-    :vartype state: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.containerinstance.models.Usage]
     """
 
     _validation = {
-        'events': {'readonly': True},
-        'state': {'readonly': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'events': {'key': 'events', 'type': '[Event]'},
-        'state': {'key': 'state', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Usage]'},
     }
 
     def __init__(self):
-        super(ContainerGroupPropertiesInstanceView, self).__init__()
-        self.events = None
-        self.state = None
+        super(UsageListResult, self).__init__()
+        self.value = None
