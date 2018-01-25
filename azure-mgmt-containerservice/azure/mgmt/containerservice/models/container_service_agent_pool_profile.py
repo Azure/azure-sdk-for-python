@@ -114,6 +114,7 @@ class ContainerServiceAgentPoolProfile(Model):
     }
 
     def __init__(self, name, vm_size, count=1, os_disk_size_gb=None, dns_prefix=None, ports=None, storage_profile=None, vnet_subnet_id=None, os_type="Linux"):
+        super(ContainerServiceAgentPoolProfile, self).__init__()
         self.name = name
         self.count = count
         self.vm_size = vm_size

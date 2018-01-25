@@ -36,5 +36,6 @@ class ContainerServiceVMDiagnostics(Model):
     }
 
     def __init__(self, enabled):
+        super(ContainerServiceVMDiagnostics, self).__init__()
         self.enabled = enabled
         self.storage_uri = None

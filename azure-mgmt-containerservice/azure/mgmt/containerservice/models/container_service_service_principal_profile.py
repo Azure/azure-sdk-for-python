@@ -39,6 +39,7 @@ class ContainerServiceServicePrincipalProfile(Model):
     }
 
     def __init__(self, client_id, secret=None, key_vault_secret_ref=None):
+        super(ContainerServiceServicePrincipalProfile, self).__init__()
         self.client_id = client_id
         self.secret = secret
         self.key_vault_secret_ref = key_vault_secret_ref
