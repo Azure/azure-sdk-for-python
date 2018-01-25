@@ -25,4 +25,5 @@ class ServerDnsAliasAcquisition(Model):
     }
 
     def __init__(self, old_server_dns_alias_id=None):
+        super(ServerDnsAliasAcquisition, self).__init__()
         self.old_server_dns_alias_id = old_server_dns_alias_id

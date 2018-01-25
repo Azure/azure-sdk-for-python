@@ -64,6 +64,8 @@ from .transparent_data_encryption_activity import TransparentDataEncryptionActiv
 from .server_usage import ServerUsage
 from .database_usage import DatabaseUsage
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
+from .automatic_tuning_options import AutomaticTuningOptions
+from .database_automatic_tuning import DatabaseAutomaticTuning
 from .encryption_protector import EncryptionProtector
 from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
 from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
@@ -92,8 +94,13 @@ from .sync_member import SyncMember
 from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
+from .resource_move_definition import ResourceMoveDefinition
+from .automatic_tuning_server_options import AutomaticTuningServerOptions
+from .server_automatic_tuning import ServerAutomaticTuning
 from .server_dns_alias import ServerDnsAlias
 from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
+from .backup_long_term_retention_policy_paged import BackupLongTermRetentionPolicyPaged
+from .backup_long_term_retention_vault_paged import BackupLongTermRetentionVaultPaged
 from .restore_point_paged import RestorePointPaged
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
@@ -167,6 +174,10 @@ from .sql_management_client_enums import (
     ElasticPoolState,
     TransparentDataEncryptionActivityStatus,
     BlobAuditingPolicyState,
+    AutomaticTuningMode,
+    AutomaticTuningOptionModeDesired,
+    AutomaticTuningOptionModeActual,
+    AutomaticTuningDisabledReason,
     ServerKeyType,
     ReadWriteEndpointFailoverPolicy,
     ReadOnlyEndpointFailoverPolicy,
@@ -182,6 +193,8 @@ from .sql_management_client_enums import (
     SyncMemberState,
     VirtualNetworkRuleState,
     ManagementOperationState,
+    AutomaticTuningServerMode,
+    AutomaticTuningServerReason,
 )
 
 __all__ = [
@@ -240,6 +253,8 @@ __all__ = [
     'ServerUsage',
     'DatabaseUsage',
     'DatabaseBlobAuditingPolicy',
+    'AutomaticTuningOptions',
+    'DatabaseAutomaticTuning',
     'EncryptionProtector',
     'FailoverGroupReadWriteEndpoint',
     'FailoverGroupReadOnlyEndpoint',
@@ -268,8 +283,13 @@ __all__ = [
     'SubscriptionUsage',
     'VirtualNetworkRule',
     'DatabaseOperation',
+    'ResourceMoveDefinition',
+    'AutomaticTuningServerOptions',
+    'ServerAutomaticTuning',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
+    'BackupLongTermRetentionPolicyPaged',
+    'BackupLongTermRetentionVaultPaged',
     'RestorePointPaged',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
@@ -342,6 +362,10 @@ __all__ = [
     'ElasticPoolState',
     'TransparentDataEncryptionActivityStatus',
     'BlobAuditingPolicyState',
+    'AutomaticTuningMode',
+    'AutomaticTuningOptionModeDesired',
+    'AutomaticTuningOptionModeActual',
+    'AutomaticTuningDisabledReason',
     'ServerKeyType',
     'ReadWriteEndpointFailoverPolicy',
     'ReadOnlyEndpointFailoverPolicy',
@@ -357,4 +381,6 @@ __all__ = [
     'SyncMemberState',
     'VirtualNetworkRuleState',
     'ManagementOperationState',
+    'AutomaticTuningServerMode',
+    'AutomaticTuningServerReason',
 ]

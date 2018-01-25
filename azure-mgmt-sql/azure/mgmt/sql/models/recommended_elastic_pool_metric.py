@@ -31,6 +31,7 @@ class RecommendedElasticPoolMetric(Model):
     }
 
     def __init__(self, date_time_property=None, dtu=None, size_gb=None):
+        super(RecommendedElasticPoolMetric, self).__init__()
         self.date_time_property = date_time_property
         self.dtu = dtu
         self.size_gb = size_gb

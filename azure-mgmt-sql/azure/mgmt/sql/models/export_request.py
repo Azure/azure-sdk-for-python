@@ -52,6 +52,7 @@ class ExportRequest(Model):
     }
 
     def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, authentication_type="SQL"):
+        super(ExportRequest, self).__init__()
         self.storage_key_type = storage_key_type
         self.storage_key = storage_key
         self.storage_uri = storage_uri

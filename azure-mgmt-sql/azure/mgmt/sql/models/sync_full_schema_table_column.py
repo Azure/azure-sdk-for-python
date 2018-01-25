@@ -55,6 +55,7 @@ class SyncFullSchemaTableColumn(Model):
     }
 
     def __init__(self):
+        super(SyncFullSchemaTableColumn, self).__init__()
         self.data_size = None
         self.data_type = None
         self.error_id = None

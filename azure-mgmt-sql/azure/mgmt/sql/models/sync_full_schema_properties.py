@@ -35,5 +35,6 @@ class SyncFullSchemaProperties(Model):
     }
 
     def __init__(self):
+        super(SyncFullSchemaProperties, self).__init__()
         self.tables = None
         self.last_update_time = None
