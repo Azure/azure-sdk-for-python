@@ -76,6 +76,7 @@ from .virtual_machine_scale_set_storage_profile import VirtualMachineScaleSetSto
 from .virtual_machine_scale_set_update_storage_profile import VirtualMachineScaleSetUpdateStorageProfile
 from .api_entity_reference import ApiEntityReference
 from .virtual_machine_scale_set_public_ip_address_configuration_dns_settings import VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+from .virtual_machine_scale_set_ip_tag import VirtualMachineScaleSetIpTag
 from .virtual_machine_scale_set_public_ip_address_configuration import VirtualMachineScaleSetPublicIPAddressConfiguration
 from .virtual_machine_scale_set_update_public_ip_address_configuration import VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
 from .virtual_machine_scale_set_ip_configuration import VirtualMachineScaleSetIPConfiguration
@@ -220,6 +221,7 @@ __all__ = [
     'VirtualMachineScaleSetUpdateStorageProfile',
     'ApiEntityReference',
     'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings',
+    'VirtualMachineScaleSetIpTag',
     'VirtualMachineScaleSetPublicIPAddressConfiguration',
     'VirtualMachineScaleSetUpdatePublicIPAddressConfiguration',
     'VirtualMachineScaleSetIPConfiguration',
