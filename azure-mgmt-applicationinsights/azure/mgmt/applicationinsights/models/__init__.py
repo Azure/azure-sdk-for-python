@@ -23,6 +23,10 @@ from .application_insights_component_export_configuration import ApplicationInsi
 from .application_insights_component_data_volume_cap import ApplicationInsightsComponentDataVolumeCap
 from .application_insights_component_billing_features import ApplicationInsightsComponentBillingFeatures
 from .application_insights_component_quota_status import ApplicationInsightsComponentQuotaStatus
+from .application_insights_component_feature_capabilities import ApplicationInsightsComponentFeatureCapabilities
+from .application_insights_component_feature_capability import ApplicationInsightsComponentFeatureCapability
+from .application_insights_component_feature import ApplicationInsightsComponentFeature
+from .application_insights_component_available_features import ApplicationInsightsComponentAvailableFeatures
 from .api_key_request import APIKeyRequest
 from .application_insights_component_api_key import ApplicationInsightsComponentAPIKey
 from .operation_paged import OperationPaged
@@ -51,6 +55,10 @@ __all__ = [
     'ApplicationInsightsComponentDataVolumeCap',
     'ApplicationInsightsComponentBillingFeatures',
     'ApplicationInsightsComponentQuotaStatus',
+    'ApplicationInsightsComponentFeatureCapabilities',
+    'ApplicationInsightsComponentFeatureCapability',
+    'ApplicationInsightsComponentFeature',
+    'ApplicationInsightsComponentAvailableFeatures',
     'APIKeyRequest',
     'ApplicationInsightsComponentAPIKey',
     'OperationPaged',
