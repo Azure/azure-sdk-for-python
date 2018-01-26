@@ -32,7 +32,6 @@ from .partition_usage import PartitionUsage
 from .partition_usages_result import PartitionUsagesResult
 from .metric_availability import MetricAvailability
 from .metric_definition import MetricDefinition
-from .metric_definitions_list_result import MetricDefinitionsListResult
 from .metric_value import MetricValue
 from .metric import Metric
 from .percentile_metric_value import PercentileMetricValue
@@ -40,6 +39,7 @@ from .percentile_metric import PercentileMetric
 from .partition_metric import PartitionMetric
 from .database_account_paged import DatabaseAccountPaged
 from .metric_paged import MetricPaged
+from .metric_definition_paged import MetricDefinitionPaged
 from .operation_paged import OperationPaged
 from .percentile_metric_paged import PercentileMetricPaged
 from .partition_metric_paged import PartitionMetricPaged
@@ -76,7 +76,6 @@ __all__ = [
     'PartitionUsagesResult',
     'MetricAvailability',
     'MetricDefinition',
-    'MetricDefinitionsListResult',
     'MetricValue',
     'Metric',
     'PercentileMetricValue',
@@ -84,6 +83,7 @@ __all__ = [
     'PartitionMetric',
     'DatabaseAccountPaged',
     'MetricPaged',
+    'MetricDefinitionPaged',
     'OperationPaged',
     'PercentileMetricPaged',
     'PartitionMetricPaged',
