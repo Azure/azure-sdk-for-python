@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class DatabaseAccountConnectionString(Model):
-    """Connection string for the Cosmos DB account.
+class MetricName(Model):
+    """A metric name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar connection_string: Value of the connection string
-    :vartype connection_string: str
-    :ivar description: Description of the connection string
-    :vartype description: str
+    :ivar value: The name of the metric.
+    :vartype value: str
+    :ivar localized_value: The friendly name of the metric.
+    :vartype localized_value: str
     """
 
     _validation = {
-        'connection_string': {'readonly': True},
-        'description': {'readonly': True},
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
     def __init__(self):
-        super(DatabaseAccountConnectionString, self).__init__()
-        self.connection_string = None
-        self.description = None
+        super(MetricName, self).__init__()
+        self.value = None
+        self.localized_value = None
