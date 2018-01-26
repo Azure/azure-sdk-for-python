@@ -12,21 +12,25 @@
 from msrest.serialization import Model
 
 
-class FailoverPolicies(Model):
-    """The list of new failover policies for the failover priority change.
+class PartitionUsagesResult(Model):
+    """The response to a list partition level usage request.
 
-    :param failover_policies: List of failover policies.
-    :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of partition-level usages for the database. A usage
+     is a point in time metric
+    :vartype value: list[~azure.mgmt.cosmosdb.models.PartitionUsage]
     """
 
     _validation = {
-        'failover_policies': {'required': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
+        'value': {'key': 'value', 'type': '[PartitionUsage]'},
     }
 
-    def __init__(self, failover_policies):
-        super(FailoverPolicies, self).__init__()
-        self.failover_policies = failover_policies
+    def __init__(self):
+        super(PartitionUsagesResult, self).__init__()
+        self.value = None

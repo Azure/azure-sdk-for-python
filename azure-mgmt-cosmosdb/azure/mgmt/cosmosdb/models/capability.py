@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class FailoverPolicies(Model):
-    """The list of new failover policies for the failover priority change.
+class Capability(Model):
+    """Cosmos DB capability object.
 
-    :param failover_policies: List of failover policies.
-    :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
+    :param name: Name of the Cosmos DB capability
+    :type name: str
     """
 
-    _validation = {
-        'failover_policies': {'required': True},
-    }
-
     _attribute_map = {
-        'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, failover_policies):
-        super(FailoverPolicies, self).__init__()
-        self.failover_policies = failover_policies
+    def __init__(self, name=None):
+        super(Capability, self).__init__()
+        self.name = name

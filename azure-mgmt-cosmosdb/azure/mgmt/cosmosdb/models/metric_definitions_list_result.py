@@ -12,21 +12,24 @@
 from msrest.serialization import Model
 
 
-class FailoverPolicies(Model):
-    """The list of new failover policies for the failover priority change.
+class MetricDefinitionsListResult(Model):
+    """The response to a list metric definitions request.
 
-    :param failover_policies: List of failover policies.
-    :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of metric definitions for the account.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.MetricDefinition]
     """
 
     _validation = {
-        'failover_policies': {'required': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
+        'value': {'key': 'value', 'type': '[MetricDefinition]'},
     }
 
-    def __init__(self, failover_policies):
-        super(FailoverPolicies, self).__init__()
-        self.failover_policies = failover_policies
+    def __init__(self):
+        super(MetricDefinitionsListResult, self).__init__()
+        self.value = None

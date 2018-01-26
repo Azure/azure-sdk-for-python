@@ -39,3 +39,24 @@ class KeyKind(Enum):
     secondary = "secondary"
     primary_readonly = "primaryReadonly"
     secondary_readonly = "secondaryReadonly"
+
+
+class UnitType(Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    percent = "Percent"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+    milliseconds = "Milliseconds"
+
+
+class PrimaryAggregationType(Enum):
+
+    none = "None"
+    average = "Average"
+    total = "Total"
+    minimimum = "Minimimum"
+    maximum = "Maximum"
+    last = "Last"

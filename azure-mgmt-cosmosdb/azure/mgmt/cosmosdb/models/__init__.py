@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .consistency_policy import ConsistencyPolicy
+from .capability import Capability
 from .location import Location
 from .failover_policy import FailoverPolicy
 from .database_account import DatabaseAccount
@@ -24,17 +25,36 @@ from .database_account_list_connection_strings_result import DatabaseAccountList
 from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
 from .operation_display import OperationDisplay
 from .operation import Operation
+from .metric_name import MetricName
+from .usage import Usage
+from .usages_result import UsagesResult
+from .partition_usage import PartitionUsage
+from .partition_usages_result import PartitionUsagesResult
+from .metric_availability import MetricAvailability
+from .metric_definition import MetricDefinition
+from .metric_definitions_list_result import MetricDefinitionsListResult
+from .metric_value import MetricValue
+from .metric import Metric
+from .percentile_metric_value import PercentileMetricValue
+from .percentile_metric import PercentileMetric
+from .partition_metric import PartitionMetric
 from .database_account_paged import DatabaseAccountPaged
+from .metric_paged import MetricPaged
 from .operation_paged import OperationPaged
+from .percentile_metric_paged import PercentileMetricPaged
+from .partition_metric_paged import PartitionMetricPaged
 from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
     KeyKind,
+    UnitType,
+    PrimaryAggregationType,
 )
 
 __all__ = [
     'ConsistencyPolicy',
+    'Capability',
     'Location',
     'FailoverPolicy',
     'DatabaseAccount',
@@ -49,10 +69,28 @@ __all__ = [
     'DatabaseAccountRegenerateKeyParameters',
     'OperationDisplay',
     'Operation',
+    'MetricName',
+    'Usage',
+    'UsagesResult',
+    'PartitionUsage',
+    'PartitionUsagesResult',
+    'MetricAvailability',
+    'MetricDefinition',
+    'MetricDefinitionsListResult',
+    'MetricValue',
+    'Metric',
+    'PercentileMetricValue',
+    'PercentileMetric',
+    'PartitionMetric',
     'DatabaseAccountPaged',
+    'MetricPaged',
     'OperationPaged',
+    'PercentileMetricPaged',
+    'PartitionMetricPaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
     'KeyKind',
+    'UnitType',
+    'PrimaryAggregationType',
 ]

@@ -15,6 +15,17 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.database_accounts_operations import DatabaseAccountsOperations
 from .operations.operations import Operations
+from .operations.database_operations import DatabaseOperations
+from .operations.collection_operations import CollectionOperations
+from .operations.collection_region_operations import CollectionRegionOperations
+from .operations.database_account_region_operations import DatabaseAccountRegionOperations
+from .operations.percentile_source_target_operations import PercentileSourceTargetOperations
+from .operations.percentile_target_operations import PercentileTargetOperations
+from .operations.percentile_operations import PercentileOperations
+from .operations.collection_partition_region_operations import CollectionPartitionRegionOperations
+from .operations.collection_partition_operations import CollectionPartitionOperations
+from .operations.partition_key_range_id_operations import PartitionKeyRangeIdOperations
+from .operations.partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
 from . import models
 
 
@@ -28,26 +39,44 @@ class CosmosDBConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
+    :param source_region: Source region from which data is written. Cosmos DB
+     region, with spaces between words and each word capitalized.
+    :type source_region: str
+    :param target_region: Target region to which data is written. Cosmos DB
+     region, with spaces between words and each word capitalized.
+    :type target_region: str
+    :param partition_key_range_id: Partition Key Range Id for which to get
+     data.
+    :type partition_key_range_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, source_region, target_region, partition_key_range_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if source_region is None:
+            raise ValueError("Parameter 'source_region' must not be None.")
+        if target_region is None:
+            raise ValueError("Parameter 'target_region' must not be None.")
+        if partition_key_range_id is None:
+            raise ValueError("Parameter 'partition_key_range_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(CosmosDBConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('cosmosdb/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-cosmosdb/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.source_region = source_region
+        self.target_region = target_region
+        self.partition_key_range_id = partition_key_range_id
 
 
 class CosmosDB(object):
@@ -60,19 +89,50 @@ class CosmosDB(object):
     :vartype database_accounts: azure.mgmt.cosmosdb.operations.DatabaseAccountsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cosmosdb.operations.Operations
+    :ivar database: Database operations
+    :vartype database: azure.mgmt.cosmosdb.operations.DatabaseOperations
+    :ivar collection: Collection operations
+    :vartype collection: azure.mgmt.cosmosdb.operations.CollectionOperations
+    :ivar collection_region: CollectionRegion operations
+    :vartype collection_region: azure.mgmt.cosmosdb.operations.CollectionRegionOperations
+    :ivar database_account_region: DatabaseAccountRegion operations
+    :vartype database_account_region: azure.mgmt.cosmosdb.operations.DatabaseAccountRegionOperations
+    :ivar percentile_source_target: PercentileSourceTarget operations
+    :vartype percentile_source_target: azure.mgmt.cosmosdb.operations.PercentileSourceTargetOperations
+    :ivar percentile_target: PercentileTarget operations
+    :vartype percentile_target: azure.mgmt.cosmosdb.operations.PercentileTargetOperations
+    :ivar percentile: Percentile operations
+    :vartype percentile: azure.mgmt.cosmosdb.operations.PercentileOperations
+    :ivar collection_partition_region: CollectionPartitionRegion operations
+    :vartype collection_partition_region: azure.mgmt.cosmosdb.operations.CollectionPartitionRegionOperations
+    :ivar collection_partition: CollectionPartition operations
+    :vartype collection_partition: azure.mgmt.cosmosdb.operations.CollectionPartitionOperations
+    :ivar partition_key_range_id: PartitionKeyRangeId operations
+    :vartype partition_key_range_id: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdOperations
+    :ivar partition_key_range_id_region: PartitionKeyRangeIdRegion operations
+    :vartype partition_key_range_id_region: azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdRegionOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
+    :param source_region: Source region from which data is written. Cosmos DB
+     region, with spaces between words and each word capitalized.
+    :type source_region: str
+    :param target_region: Target region to which data is written. Cosmos DB
+     region, with spaces between words and each word capitalized.
+    :type target_region: str
+    :param partition_key_range_id: Partition Key Range Id for which to get
+     data.
+    :type partition_key_range_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, source_region, target_region, partition_key_range_id, base_url=None):
 
-        self.config = CosmosDBConfiguration(credentials, subscription_id, base_url)
+        self.config = CosmosDBConfiguration(credentials, subscription_id, source_region, target_region, partition_key_range_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -83,4 +143,26 @@ class CosmosDB(object):
         self.database_accounts = DatabaseAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database = DatabaseOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.collection = CollectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.collection_region = CollectionRegionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_account_region = DatabaseAccountRegionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.percentile_source_target = PercentileSourceTargetOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.percentile_target = PercentileTargetOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.percentile = PercentileOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.collection_partition_region = CollectionPartitionRegionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.collection_partition = CollectionPartitionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.partition_key_range_id = PartitionKeyRangeIdOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
             self._client, self.config, self._serialize, self._deserialize)
