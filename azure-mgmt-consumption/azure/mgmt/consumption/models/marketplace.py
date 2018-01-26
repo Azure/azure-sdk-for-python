@@ -37,8 +37,8 @@ class Marketplace(Resource):
     :vartype usage_end: datetime
     :ivar resource_rate: The marketplace resource rate.
     :vartype resource_rate: decimal.Decimal
-    :ivar offer_type: The type of offer.
-    :vartype offer_type: str
+    :ivar offer_name: The name of offer.
+    :vartype offer_name: str
     :ivar resource_group: The name of resource group.
     :vartype resource_group: str
     :ivar order_number: The order number.
@@ -93,7 +93,7 @@ class Marketplace(Resource):
         'usage_start': {'readonly': True},
         'usage_end': {'readonly': True},
         'resource_rate': {'readonly': True},
-        'offer_type': {'readonly': True},
+        'offer_name': {'readonly': True},
         'resource_group': {'readonly': True},
         'order_number': {'readonly': True},
         'instance_name': {'readonly': True},
@@ -124,7 +124,7 @@ class Marketplace(Resource):
         'usage_start': {'key': 'properties.usageStart', 'type': 'iso-8601'},
         'usage_end': {'key': 'properties.usageEnd', 'type': 'iso-8601'},
         'resource_rate': {'key': 'properties.resourceRate', 'type': 'decimal'},
-        'offer_type': {'key': 'properties.offerType', 'type': 'str'},
+        'offer_name': {'key': 'properties.offerName', 'type': 'str'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'order_number': {'key': 'properties.orderNumber', 'type': 'str'},
         'instance_name': {'key': 'properties.instanceName', 'type': 'str'},
@@ -152,7 +152,7 @@ class Marketplace(Resource):
         self.usage_start = None
         self.usage_end = None
         self.resource_rate = None
-        self.offer_type = None
+        self.offer_name = None
         self.resource_group = None
         self.order_number = None
         self.instance_name = None
