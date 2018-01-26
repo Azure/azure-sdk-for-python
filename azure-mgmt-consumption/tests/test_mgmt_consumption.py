@@ -65,6 +65,25 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
         self.assertIsNotNone(reservation.instance_id)
         self.assertIsNotNone(reservation.total_reserved_quantity)       
         
+    def _validate_price_sheet(self, pricesheet, includeMeterDetails=false):
+        self.assertIsNotNone(pricesheet)
+        self.assertIsNotNone(pricesheet.id)
+        self.assertIsNotNone(pricesheet.name)
+        self.assertIsNotNone(pricesheet.type)
+        self.assertIsNotNone(pricesheet.billing_period_id)
+        self.assertIsNotNone(pricesheet.meter_id)
+        self.assertIsNotNone(pricesheet.unit_of_measure)
+        self.assertIsNotNone(pricesheet.included_quantity)
+        self.assertIsNotNone(pricesheet.part_number)
+        self.assertIsNotNone(pricesheet.currency_code)
+        self.assertIsNotNone(pricesheet.unit_price)
+        
+        if includeMeterDetails:
+            self.assertIsNotNone(usage.meter_details)
+            self.assertIsNotNone(usage.meter_details.meter_name)
+        else:
+            self.assertIsNone(usage.meter_details)
+
     def setUp(self):
         super(MgmtConsumptionTest, self).setUp()
         self.consumption_client = self.create_mgmt_client(azure.mgmt.consumption.ConsumptionManagementClient)
@@ -84,16 +103,38 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
         output = list(firstPage)
         self.assertEqual(10, len(output))
         self._validate_usage(output[0], includeMeterDetails=True)
-  
+
+    
     def test_consumption_billing_period_usage(self):
         scope = 'subscriptions/{}/providers/Microsoft.Billing/billingPeriods/201710'.format(self.settings.SUBSCRIPTION_ID)
         output = list(self.consumption_client.usage_details.list(scope, expand='properties/additionalProperties'))
         self._validate_usage(output[0], includeAdditionalProperties=True)
 
+
     def test_consumption_billing_period_usage_filter(self):
         scope = 'subscriptions/{}/providers/Microsoft.Billing/billingPeriods/201710'.format(self.settings.SUBSCRIPTION_ID)
         output = list(self.consumption_client.usage_details.list(scope, expand='properties/meterDetails,properties/additionalProperties', filter='usageEnd eq 2017-03-26T23:59:59Z'))
         self._validate_usage(output[0], includeMeterDetails=True, includeAdditionalProperties=True)
+
+    def test_consumption_subscription_price_sheet(self):
+        scope = 'subscriptions/{}'.format(self.setti.SUBSCRIPTION_ID)
+        pages = self.consumption_client.pricesheet.list(scope)
+        firstPage = pages.advance_page()
+        output = list(firstPage)
+        self.assertTrue(len(output) > 2)
+        self._validate_price_sheet(output[0], includeMeterDetails=False)
+
+    def test_consumption_subscription_price_sheet_expand(self):
+        scope = 'subscriptions/{}'.format(self.setti.SUBSCRIPTION_ID)
+        pages = self.consumption_client.pricesheet.list(scope, expand='properties/meterDetails')
+        firstPage = pages.advance_page()
+        output = list(firstPage)
+        self._validate_price_sheet(output[0], includeMeterDetails=True)
+
+    def test_consumption_billing_period_price_sheet(self):
+        scope = 'subscriptions/{}/providers/Microsoft.Billing/billingPeriods/201710'.format(self.setti.SUBSCRIPTION_ID)        
+        output = list(firstPage)output = list(self.consumption_client.usage_details.list(scope, expand='properties/meterDetails'))        
+        self._validate_price_sheet(output[0], includeMeterDetails=True)    
     
     def test_consumption_reservations_summaries_monthly(self):
         scope = 'providers/Microsoft.Capacity/reservationorders/{}'.format(MgmtConsumptionTest.reservationOrderId)                 
