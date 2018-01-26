@@ -27,9 +27,7 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .metric_name import MetricName
 from .usage import Usage
-from .usages_result import UsagesResult
 from .partition_usage import PartitionUsage
-from .partition_usages_result import PartitionUsagesResult
 from .metric_availability import MetricAvailability
 from .metric_definition import MetricDefinition
 from .metric_value import MetricValue
@@ -39,10 +37,12 @@ from .percentile_metric import PercentileMetric
 from .partition_metric import PartitionMetric
 from .database_account_paged import DatabaseAccountPaged
 from .metric_paged import MetricPaged
+from .usage_paged import UsagePaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .operation_paged import OperationPaged
 from .percentile_metric_paged import PercentileMetricPaged
 from .partition_metric_paged import PartitionMetricPaged
+from .partition_usage_paged import PartitionUsagePaged
 from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
@@ -71,9 +71,7 @@ __all__ = [
     'Operation',
     'MetricName',
     'Usage',
-    'UsagesResult',
     'PartitionUsage',
-    'PartitionUsagesResult',
     'MetricAvailability',
     'MetricDefinition',
     'MetricValue',
@@ -83,10 +81,12 @@ __all__ = [
     'PartitionMetric',
     'DatabaseAccountPaged',
     'MetricPaged',
+    'UsagePaged',
     'MetricDefinitionPaged',
     'OperationPaged',
     'PercentileMetricPaged',
     'PartitionMetricPaged',
+    'PartitionUsagePaged',
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
