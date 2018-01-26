@@ -36,6 +36,7 @@ class ImageRegistryCredential(Model):
     }
 
     def __init__(self, server, username, password=None):
+        super(ImageRegistryCredential, self).__init__()
         self.server = server
         self.username = username
         self.password = password
