@@ -31,4 +31,5 @@ class BackupSecretResult(Model):
     }
 
     def __init__(self):
+        super(BackupSecretResult, self).__init__()
         self.value = None

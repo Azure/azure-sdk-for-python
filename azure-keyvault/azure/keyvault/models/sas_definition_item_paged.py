@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class SasDefinitionItemPaged(Paged):
     """
-    A paging container for iterating over a list of SasDefinitionItem object
+    A paging container for iterating over a list of :class:`SasDefinitionItem <azure.keyvault.models.SasDefinitionItem>` object
     """
 
     _attribute_map = {

@@ -23,14 +23,12 @@ class CertificateImportParameters(Model):
      encrypted, the password used for encryption.
     :type password: str
     :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: :class:`CertificatePolicy
-     <azure.keyvault.models.CertificatePolicy>`
+    :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
     :param certificate_attributes: The attributes of the certificate
      (optional).
-    :type certificate_attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type certificate_attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -46,6 +44,7 @@ class CertificateImportParameters(Model):
     }
 
     def __init__(self, base64_encoded_certificate, password=None, certificate_policy=None, certificate_attributes=None, tags=None):
+        super(CertificateImportParameters, self).__init__()
         self.base64_encoded_certificate = base64_encoded_certificate
         self.password = password
         self.certificate_policy = certificate_policy
