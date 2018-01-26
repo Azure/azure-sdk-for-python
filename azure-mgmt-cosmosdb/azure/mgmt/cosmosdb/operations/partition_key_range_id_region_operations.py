@@ -38,7 +38,7 @@ class PartitionKeyRangeIdRegionOperations(object):
         self.config = config
 
     def list_metrics(
-            self, resource_group_name, account_name, region, database_rid, collection_rid, filter, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, region, database_rid, collection_rid, partition_key_range_id, filter, custom_headers=None, raw=False, **operation_config):
         """Retrieves the metrics determined by the given filter for the given
         partition key range id and region.
 
@@ -53,6 +53,9 @@ class PartitionKeyRangeIdRegionOperations(object):
         :type database_rid: str
         :param collection_rid: Cosmos DB collection rid.
         :type collection_rid: str
+        :param partition_key_range_id: Partition Key Range Id for which to get
+         data.
+        :type partition_key_range_id: str
         :param filter: An OData filter expression that describes a subset of
          metrics to return. The parameters that can be filtered are name.value
          (name of the metric, can have an or of multiple names), startTime,
@@ -80,7 +83,7 @@ class PartitionKeyRangeIdRegionOperations(object):
                     'region': self._serialize.url("region", region, 'str'),
                     'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
                     'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str'),
-                    'partitionKeyRangeId': self._serialize.url("self.config.partition_key_range_id", self.config.partition_key_range_id, 'str')
+                    'partitionKeyRangeId': self._serialize.url("partition_key_range_id", partition_key_range_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
