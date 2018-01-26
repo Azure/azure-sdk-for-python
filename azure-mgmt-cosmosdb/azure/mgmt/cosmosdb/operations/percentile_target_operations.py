@@ -38,7 +38,7 @@ class PercentileTargetOperations(object):
         self.config = config
 
     def list_metrics(
-            self, resource_group_name, account_name, filter, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, target_region, filter, custom_headers=None, raw=False, **operation_config):
         """Retrieves the metrics determined by the given filter for the given
         account target region. This url is only for PBS and Replication Latency
         data.
@@ -47,6 +47,9 @@ class PercentileTargetOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
+        :param target_region: Target region to which data is written. Cosmos
+         DB region, with spaces between words and each word capitalized.
+        :type target_region: str
         :param filter: An OData filter expression that describes a subset of
          metrics to return. The parameters that can be filtered are name.value
          (name of the metric, can have an or of multiple names), startTime,
@@ -71,7 +74,7 @@ class PercentileTargetOperations(object):
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-                    'targetRegion': self._serialize.url("self.config.target_region", self.config.target_region, 'str')
+                    'targetRegion': self._serialize.url("target_region", target_region, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

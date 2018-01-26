@@ -39,31 +39,16 @@ class CosmosDBConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :param source_region: Source region from which data is written. Cosmos DB
-     region, with spaces between words and each word capitalized.
-    :type source_region: str
-    :param target_region: Target region to which data is written. Cosmos DB
-     region, with spaces between words and each word capitalized.
-    :type target_region: str
-    :param partition_key_range_id: Partition Key Range Id for which to get
-     data.
-    :type partition_key_range_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, source_region, target_region, partition_key_range_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if source_region is None:
-            raise ValueError("Parameter 'source_region' must not be None.")
-        if target_region is None:
-            raise ValueError("Parameter 'target_region' must not be None.")
-        if partition_key_range_id is None:
-            raise ValueError("Parameter 'partition_key_range_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -74,9 +59,6 @@ class CosmosDBConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.source_region = source_region
-        self.target_region = target_region
-        self.partition_key_range_id = partition_key_range_id
 
 
 class CosmosDB(object):
@@ -117,22 +99,13 @@ class CosmosDB(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :param source_region: Source region from which data is written. Cosmos DB
-     region, with spaces between words and each word capitalized.
-    :type source_region: str
-    :param target_region: Target region to which data is written. Cosmos DB
-     region, with spaces between words and each word capitalized.
-    :type target_region: str
-    :param partition_key_range_id: Partition Key Range Id for which to get
-     data.
-    :type partition_key_range_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, source_region, target_region, partition_key_range_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = CosmosDBConfiguration(credentials, subscription_id, source_region, target_region, partition_key_range_id, base_url)
+        self.config = CosmosDBConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
