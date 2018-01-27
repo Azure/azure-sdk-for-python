@@ -12,17 +12,21 @@
 from msrest.serialization import Model
 
 
-class ClusterManifest(Model):
-    """Information about the cluster manifest.
+class ApplicationTypeImageStoreVersion(Model):
+    """A version description for the application type.
 
-    :param manifest: The contents of the cluster manifest file.
-    :type manifest: str
+    :param application_type_version:
+    :type application_type_version: str
     """
 
-    _attribute_map = {
-        'manifest': {'key': 'Manifest', 'type': 'str'},
+    _validation = {
+        'application_type_version': {'required': True},
     }
 
-    def __init__(self, manifest=None):
-        super(ClusterManifest, self).__init__()
-        self.manifest = manifest
+    _attribute_map = {
+        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
+    }
+
+    def __init__(self, application_type_version):
+        super(ApplicationTypeImageStoreVersion, self).__init__()
+        self.application_type_version = application_type_version
