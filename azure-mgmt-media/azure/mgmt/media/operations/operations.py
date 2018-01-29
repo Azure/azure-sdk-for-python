@@ -26,6 +26,8 @@ class Operations(object):
     :ivar api_version: Version of the API to be used with the client request. The current version is 2015-10-01. Constant value: "2015-10-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -44,13 +46,9 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationListResult
-         <azure.mgmt.media.models.OperationListResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`OperationListResult
-         <azure.mgmt.media.models.OperationListResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: OperationListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.OperationListResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -72,7 +70,7 @@ class Operations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

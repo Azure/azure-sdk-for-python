@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -25,6 +25,8 @@ class MapsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: The API version. Constant value: "2016-06-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -52,8 +54,9 @@ class MapsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IntegrationAccountMapPaged
-         <azure.mgmt.logic.models.IntegrationAccountMapPaged>`
+        :return: An iterator like instance of IntegrationAccountMap
+        :rtype:
+         ~azure.mgmt.logic.models.IntegrationAccountMapPaged[~azure.mgmt.logic.models.IntegrationAccountMap]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -93,7 +96,7 @@ class MapsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -127,10 +130,9 @@ class MapsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IntegrationAccountMap
-         <azure.mgmt.logic.models.IntegrationAccountMap>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IntegrationAccountMap or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.IntegrationAccountMap or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -159,7 +161,7 @@ class MapsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -188,17 +190,15 @@ class MapsOperations(object):
         :param map_name: The integration account map name.
         :type map_name: str
         :param map: The integration account map.
-        :type map: :class:`IntegrationAccountMap
-         <azure.mgmt.logic.models.IntegrationAccountMap>`
+        :type map: ~azure.mgmt.logic.models.IntegrationAccountMap
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IntegrationAccountMap
-         <azure.mgmt.logic.models.IntegrationAccountMap>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IntegrationAccountMap or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.IntegrationAccountMap or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -231,7 +231,7 @@ class MapsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -266,9 +266,8 @@ class MapsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -297,7 +296,7 @@ class MapsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)

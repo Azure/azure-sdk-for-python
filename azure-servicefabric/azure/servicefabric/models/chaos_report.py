@@ -17,8 +17,7 @@ class ChaosReport(Model):
     .
 
     :param chaos_parameters:
-    :type chaos_parameters: :class:`ChaosParameters
-     <azure.servicefabric.models.ChaosParameters>`
+    :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
     :param status: Current status of the Chaos run.
      - Invalid - Indicates an invalid Chaos status. All Service Fabric
      enumerations have the invalid type.
@@ -26,12 +25,11 @@ class ChaosReport(Model):
      - Running - Indicates that Chaos is not stopped.
      - Stopped - Indicates that Chaos is not scheduling futher faults. Possible
      values include: 'Invalid', 'Running', 'Stopped'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param continuation_token:
     :type continuation_token: str
     :param history:
-    :type history: list of :class:`ChaosEventWrapper
-     <azure.servicefabric.models.ChaosEventWrapper>`
+    :type history: list[~azure.servicefabric.models.ChaosEventWrapper]
     """
 
     _attribute_map = {
@@ -42,6 +40,7 @@ class ChaosReport(Model):
     }
 
     def __init__(self, chaos_parameters=None, status=None, continuation_token=None, history=None):
+        super(ChaosReport, self).__init__()
         self.chaos_parameters = chaos_parameters
         self.status = status
         self.continuation_token = continuation_token

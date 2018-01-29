@@ -15,7 +15,14 @@ from msrest.serialization import Model
 class ServicePlacementPolicyDescription(Model):
     """Describes the policy to be used for placement of a Service Fabric service.
 
-    :param type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ServicePlacementInvalidDomainPolicyDescription,
+    ServicePlacementNonPartiallyPlaceServicePolicyDescription,
+    ServicePlacementPreferPrimaryDomainPolicyDescription,
+    ServicePlacementRequiredDomainPolicyDescription,
+    ServicePlacementRequireDomainDistributionPolicyDescription
+
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -32,4 +39,5 @@ class ServicePlacementPolicyDescription(Model):
     }
 
     def __init__(self):
+        super(ServicePlacementPolicyDescription, self).__init__()
         self.type = None

@@ -25,4 +25,5 @@ class RegistryUsageListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(RegistryUsageListResult, self).__init__()
         self.value = value

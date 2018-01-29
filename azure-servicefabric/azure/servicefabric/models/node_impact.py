@@ -22,7 +22,7 @@ class NodeImpact(Model):
     :type node_name: str
     :param impact_level: The level of impact expected. Possible values
      include: 'Invalid', 'None', 'Restart', 'RemoveData', 'RemoveNode'
-    :type impact_level: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type impact_level: str or ~azure.servicefabric.models.enum
     """
 
     _validation = {
@@ -35,5 +35,6 @@ class NodeImpact(Model):
     }
 
     def __init__(self, node_name, impact_level=None):
+        super(NodeImpact, self).__init__()
         self.node_name = node_name
         self.impact_level = impact_level

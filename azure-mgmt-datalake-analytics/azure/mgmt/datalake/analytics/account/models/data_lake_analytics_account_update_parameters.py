@@ -18,16 +18,24 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param max_degree_of_parallelism: the maximum supported degree of
+    :param max_degree_of_parallelism: The maximum supported degree of
      parallelism for this account.
     :type max_degree_of_parallelism: int
-    :param query_store_retention: the number of days that job metadata is
+    :param query_store_retention: The number of days that job metadata is
      retained.
     :type query_store_retention: int
-    :param max_job_count: the maximum supported jobs running under the account
+    :param max_job_count: The maximum supported jobs running under the account
      at the same time.
     :type max_job_count: int
-    :param new_tier: the commitment tier to use for next month. Possible
+    :param data_lake_store_accounts: The list of Data Lake Store accounts
+     associated with this account.
+    :type data_lake_store_accounts:
+     list[~azure.mgmt.datalake.analytics.account.models.UpdateDataLakeStoreWithAccountParameters]
+    :param storage_accounts: The list of Azure Blob storage accounts
+     associated with this account.
+    :type storage_accounts:
+     list[~azure.mgmt.datalake.analytics.account.models.UpdateStorageAccountWithAccountParameters]
+    :param new_tier: The commitment tier to use for next month. Possible
      values include: 'Consumption', 'Commitment_100AUHours',
      'Commitment_500AUHours', 'Commitment_1000AUHours',
      'Commitment_5000AUHours', 'Commitment_10000AUHours',
@@ -49,17 +57,17 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
     :param firewall_rules: The list of firewall rules associated with this
      Data Lake Analytics account.
     :type firewall_rules:
-     list[~azure.mgmt.datalake.analytics.account.models.FirewallRule]
-    :param max_degree_of_parallelism_per_job: the maximum supported degree of
+     list[~azure.mgmt.datalake.analytics.account.models.UpdateFirewallRuleWithAccountParameters]
+    :param max_degree_of_parallelism_per_job: The maximum supported degree of
      parallelism per job for this account.
     :type max_degree_of_parallelism_per_job: int
-    :param min_priority_per_job: the minimum supported priority per job for
+    :param min_priority_per_job: The minimum supported priority per job for
      this account.
     :type min_priority_per_job: int
-    :param compute_policies: the list of existing compute policies to update
-     in this account.
+    :param compute_policies: The list of compute policies associated with this
+     account.
     :type compute_policies:
-     list[~azure.mgmt.datalake.analytics.account.models.ComputePolicy]
+     list[~azure.mgmt.datalake.analytics.account.models.UpdateComputePolicyWithAccountParameters]
     """
 
     _validation = {
@@ -75,21 +83,25 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
         'max_degree_of_parallelism': {'key': 'properties.maxDegreeOfParallelism', 'type': 'int'},
         'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
         'max_job_count': {'key': 'properties.maxJobCount', 'type': 'int'},
+        'data_lake_store_accounts': {'key': 'properties.dataLakeStoreAccounts', 'type': '[UpdateDataLakeStoreWithAccountParameters]'},
+        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[UpdateStorageAccountWithAccountParameters]'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
         'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
+        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[UpdateFirewallRuleWithAccountParameters]'},
         'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
-        'compute_policies': {'key': 'properties.computePolicies', 'type': '[ComputePolicy]'},
+        'compute_policies': {'key': 'properties.computePolicies', 'type': '[UpdateComputePolicyWithAccountParameters]'},
     }
 
-    def __init__(self, tags=None, max_degree_of_parallelism=None, query_store_retention=None, max_job_count=None, new_tier=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None, compute_policies=None):
+    def __init__(self, tags=None, max_degree_of_parallelism=None, query_store_retention=None, max_job_count=None, data_lake_store_accounts=None, storage_accounts=None, new_tier=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None, compute_policies=None):
         super(DataLakeAnalyticsAccountUpdateParameters, self).__init__()
         self.tags = tags
         self.max_degree_of_parallelism = max_degree_of_parallelism
         self.query_store_retention = query_store_retention
         self.max_job_count = max_job_count
+        self.data_lake_store_accounts = data_lake_store_accounts
+        self.storage_accounts = storage_accounts
         self.new_tier = new_tier
         self.firewall_state = firewall_state
         self.firewall_allow_azure_ips = firewall_allow_azure_ips

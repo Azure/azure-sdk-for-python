@@ -25,4 +25,5 @@ class ServiceSpecification(Model):
     }
 
     def __init__(self, metric_specifications=None):
+        super(ServiceSpecification, self).__init__()
         self.metric_specifications = metric_specifications

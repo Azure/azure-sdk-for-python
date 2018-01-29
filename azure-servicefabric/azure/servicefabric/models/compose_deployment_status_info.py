@@ -21,7 +21,7 @@ class ComposeDeploymentStatusInfo(Model):
     :type application_name: str
     :param status: Possible values include: 'Invalid', 'Provisioning',
      'Creating', 'Ready', 'Unprovisioning', 'Deleting', 'Failed', 'Upgrading'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param status_details: The status details of compose deployment including
      failure message.
     :type status_details: str
@@ -35,6 +35,7 @@ class ComposeDeploymentStatusInfo(Model):
     }
 
     def __init__(self, name=None, application_name=None, status=None, status_details=None):
+        super(ComposeDeploymentStatusInfo, self).__init__()
         self.name = name
         self.application_name = application_name
         self.status = status

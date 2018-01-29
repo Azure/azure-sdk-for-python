@@ -27,9 +27,9 @@ class NamespaceResource(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param namespace_resource_name: The name of the namespace.
     :type namespace_resource_name: str
     :param provisioning_state: Provisioning state of the Namespace.
@@ -59,8 +59,8 @@ class NamespaceResource(Resource):
     :type critical: bool
     :param namespace_type: The namespace type. Possible values include:
      'Messaging', 'NotificationHub'
-    :type namespace_type: str or :class:`NamespaceType
-     <azure.mgmt.notificationhubs.models.NamespaceType>`
+    :type namespace_type: str or
+     ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {

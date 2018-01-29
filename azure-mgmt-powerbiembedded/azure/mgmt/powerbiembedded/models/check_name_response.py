@@ -20,8 +20,7 @@ class CheckNameResponse(Model):
     :type name_available: bool
     :param reason: Reason why the workspace collection name cannot be used.
      Possible values include: 'Unavailable', 'Invalid'
-    :type reason: str or :class:`CheckNameReason
-     <azure.mgmt.powerbiembedded.models.CheckNameReason>`
+    :type reason: str or ~azure.mgmt.powerbiembedded.models.CheckNameReason
     :param message: Message indicating an unavailable name due to a conflict,
      or a description of the naming rules that are violated.
     :type message: str
@@ -34,6 +33,7 @@ class CheckNameResponse(Model):
     }
 
     def __init__(self, name_available=None, reason=None, message=None):
+        super(CheckNameResponse, self).__init__()
         self.name_available = name_available
         self.reason = reason
         self.message = message

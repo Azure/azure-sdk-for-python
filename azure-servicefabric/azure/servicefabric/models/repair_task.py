@@ -53,7 +53,7 @@ class RepairTask(Model):
      state changes will occur.
      . Possible values include: 'Invalid', 'Created', 'Claimed', 'Preparing',
      'Approved', 'Executing', 'Restoring', 'Completed'
-    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type state: str or ~azure.servicefabric.models.enum
     :param flags: A bitwise-OR of the following values, which gives additional
      details about the status of the repair task.
      - 1 - Cancellation of the repair has been requested
@@ -64,8 +64,7 @@ class RepairTask(Model):
      repair task is created, and is immutable once set.
     :type action: str
     :param target:
-    :type target: :class:`RepairTargetDescriptionBase
-     <azure.servicefabric.models.RepairTargetDescriptionBase>`
+    :type target: ~azure.servicefabric.models.RepairTargetDescriptionBase
     :param executor: The name of the repair executor. Must be specified in
      Claimed and later states, and is immutable once set.
     :type executor: str
@@ -73,8 +72,7 @@ class RepairTask(Model):
      store its internal state.
     :type executor_data: str
     :param impact:
-    :type impact: :class:`RepairImpactDescriptionBase
-     <azure.servicefabric.models.RepairImpactDescriptionBase>`
+    :type impact: ~azure.servicefabric.models.RepairImpactDescriptionBase
     :param result_status: A value describing the overall result of the repair
      task execution.
      Must be specified in the Restoring and later states, and is immutable once
@@ -94,8 +92,7 @@ class RepairTask(Model):
      because the repair task has not finished executing.
      . Possible values include: 'Invalid', 'Succeeded', 'Cancelled',
      'Interrupted', 'Failed', 'Pending'
-    :type result_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type result_status: str or ~azure.servicefabric.models.enum
     :param result_code: A numeric value providing additional details about the
      result of the repair task execution.
      May be specified in the Restoring and later states, and is immutable once
@@ -107,16 +104,15 @@ class RepairTask(Model):
      set.
     :type result_details: str
     :param history:
-    :type history: :class:`RepairTaskHistory
-     <azure.servicefabric.models.RepairTaskHistory>`
+    :type history: ~azure.servicefabric.models.RepairTaskHistory
     :param preparing_health_check_state: Possible values include:
      'NotStarted', 'InProgress', 'Succeeded', 'Skipped', 'TimedOut'
-    :type preparing_health_check_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type preparing_health_check_state: str or
+     ~azure.servicefabric.models.enum
     :param restoring_health_check_state: Possible values include:
      'NotStarted', 'InProgress', 'Succeeded', 'Skipped', 'TimedOut'
-    :type restoring_health_check_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type restoring_health_check_state: str or
+     ~azure.servicefabric.models.enum
     :param perform_preparing_health_check: A value to determine if health
      checks will be performed when the repair task enters the Preparing state.
     :type perform_preparing_health_check: bool
@@ -153,6 +149,7 @@ class RepairTask(Model):
     }
 
     def __init__(self, task_id, state, action, version=None, description=None, flags=None, target=None, executor=None, executor_data=None, impact=None, result_status=None, result_code=None, result_details=None, history=None, preparing_health_check_state=None, restoring_health_check_state=None, perform_preparing_health_check=None, perform_restoring_health_check=None):
+        super(RepairTask, self).__init__()
         self.task_id = task_id
         self.version = version
         self.description = description

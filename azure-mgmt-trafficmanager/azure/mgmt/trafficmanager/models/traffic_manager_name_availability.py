@@ -38,6 +38,7 @@ class TrafficManagerNameAvailability(Model):
     }
 
     def __init__(self, name=None, type=None, name_available=None, reason=None, message=None):
+        super(TrafficManagerNameAvailability, self).__init__()
         self.name = name
         self.type = type
         self.name_available = name_available

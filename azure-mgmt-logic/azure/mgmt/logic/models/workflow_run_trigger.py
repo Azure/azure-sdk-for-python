@@ -23,13 +23,11 @@ class WorkflowRunTrigger(Model):
     :ivar inputs: Gets the inputs.
     :vartype inputs: object
     :ivar inputs_link: Gets the link to inputs.
-    :vartype inputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs: Gets the outputs.
     :vartype outputs: object
     :ivar outputs_link: Gets the link to outputs.
-    :vartype outputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar start_time: Gets the start time.
     :vartype start_time: datetime
     :ivar end_time: Gets the end time.
@@ -37,15 +35,13 @@ class WorkflowRunTrigger(Model):
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :param correlation: The run correlation.
-    :type correlation: :class:`Correlation
-     <azure.mgmt.logic.models.Correlation>`
+    :type correlation: ~azure.mgmt.logic.models.Correlation
     :ivar code: Gets the code.
     :vartype code: str
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
-    :vartype status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar error: Gets the error.
     :vartype error: object
     :ivar tracked_properties: Gets the tracked properties.
@@ -84,6 +80,7 @@ class WorkflowRunTrigger(Model):
     }
 
     def __init__(self, correlation=None):
+        super(WorkflowRunTrigger, self).__init__()
         self.name = None
         self.inputs = None
         self.inputs_link = None

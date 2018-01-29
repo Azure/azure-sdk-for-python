@@ -16,11 +16,9 @@ class EdifactAgreementContent(Model):
     """The Edifact agreement content.
 
     :param receive_agreement: The EDIFACT one-way receive agreement.
-    :type receive_agreement: :class:`EdifactOneWayAgreement
-     <azure.mgmt.logic.models.EdifactOneWayAgreement>`
+    :type receive_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
     :param send_agreement: The EDIFACT one-way send agreement.
-    :type send_agreement: :class:`EdifactOneWayAgreement
-     <azure.mgmt.logic.models.EdifactOneWayAgreement>`
+    :type send_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
     """
 
     _validation = {
@@ -34,5 +32,6 @@ class EdifactAgreementContent(Model):
     }
 
     def __init__(self, receive_agreement, send_agreement):
+        super(EdifactAgreementContent, self).__init__()
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement

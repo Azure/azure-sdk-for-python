@@ -27,11 +27,10 @@ class IntegrationAccountSchema(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param schema_type: The schema type. Possible values include:
      'NotSpecified', 'Xml'
-    :type schema_type: str or :class:`SchemaType
-     <azure.mgmt.logic.models.SchemaType>`
+    :type schema_type: str or ~azure.mgmt.logic.models.SchemaType
     :param target_namespace: The target namespace of the schema.
     :type target_namespace: str
     :param document_name: The document name.
@@ -49,8 +48,7 @@ class IntegrationAccountSchema(Resource):
     :param content_type: The content type.
     :type content_type: str
     :ivar content_link: The content link.
-    :vartype content_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype content_link: ~azure.mgmt.logic.models.ContentLink
     """
 
     _validation = {

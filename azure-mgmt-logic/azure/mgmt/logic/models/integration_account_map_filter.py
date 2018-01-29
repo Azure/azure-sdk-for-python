@@ -17,7 +17,7 @@ class IntegrationAccountMapFilter(Model):
 
     :param map_type: The map type of integration account map. Possible values
      include: 'NotSpecified', 'Xslt'
-    :type map_type: str or :class:`MapType <azure.mgmt.logic.models.MapType>`
+    :type map_type: str or ~azure.mgmt.logic.models.MapType
     """
 
     _validation = {
@@ -29,4 +29,5 @@ class IntegrationAccountMapFilter(Model):
     }
 
     def __init__(self, map_type):
+        super(IntegrationAccountMapFilter, self).__init__()
         self.map_type = map_type

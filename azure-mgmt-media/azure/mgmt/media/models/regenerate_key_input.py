@@ -17,7 +17,7 @@ class RegenerateKeyInput(Model):
 
     :param key_type: The keyType indicating which key you want to regenerate,
      Primary or Secondary. Possible values include: 'Primary', 'Secondary'
-    :type key_type: str or :class:`KeyType <azure.mgmt.media.models.KeyType>`
+    :type key_type: str or ~azure.mgmt.media.models.KeyType
     """
 
     _validation = {
@@ -29,4 +29,5 @@ class RegenerateKeyInput(Model):
     }
 
     def __init__(self, key_type):
+        super(RegenerateKeyInput, self).__init__()
         self.key_type = key_type

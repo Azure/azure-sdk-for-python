@@ -41,7 +41,7 @@ class ResourceMetricDefinition(ProxyOnlyResource):
     :vartype resource_uri: str
     :ivar resource_metric_definition_id: Resource ID.
     :vartype resource_metric_definition_id: str
-    :ivar properties: Properties.
+    :ivar properties: Resource metric definition properties.
     :vartype properties: dict[str, str]
     """
 

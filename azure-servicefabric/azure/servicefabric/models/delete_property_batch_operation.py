@@ -20,7 +20,7 @@ class DeletePropertyBatchOperation(PropertyBatchOperation):
 
     :param property_name:
     :type property_name: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     """
 

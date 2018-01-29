@@ -51,7 +51,7 @@ class DataLakeStoreAccountsOperations(object):
         :param data_lake_store_account_name: The name of the Data Lake Store
          account to add.
         :type data_lake_store_account_name: str
-        :param suffix: the optional suffix for the Data Lake Store account.
+        :param suffix: The optional suffix for the Data Lake Store account.
         :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

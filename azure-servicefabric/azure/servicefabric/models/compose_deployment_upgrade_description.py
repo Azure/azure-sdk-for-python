@@ -21,26 +21,24 @@ class ComposeDeploymentUpgradeDescription(Model):
      describes the deployment to create.
     :type compose_file_content: str
     :param registry_credential:
-    :type registry_credential: :class:`RegistryCredential
-     <azure.servicefabric.models.RegistryCredential>`
+    :type registry_credential: ~azure.servicefabric.models.RegistryCredential
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
      Default value: "Rolling" .
-    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type upgrade_kind: str or ~azure.servicefabric.models.enum
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
     :param upgrade_replica_set_check_timeout_in_seconds:
     :type upgrade_replica_set_check_timeout_in_seconds: long
     :param force_restart:
     :type force_restart: bool
     :param monitoring_policy:
-    :type monitoring_policy: :class:`MonitoringPolicyDescription
-     <azure.servicefabric.models.MonitoringPolicyDescription>`
+    :type monitoring_policy:
+     ~azure.servicefabric.models.MonitoringPolicyDescription
     :param application_health_policy:
-    :type application_health_policy: :class:`ApplicationHealthPolicy
-     <azure.servicefabric.models.ApplicationHealthPolicy>`
+    :type application_health_policy:
+     ~azure.servicefabric.models.ApplicationHealthPolicy
     """
 
     _validation = {
@@ -62,6 +60,7 @@ class ComposeDeploymentUpgradeDescription(Model):
     }
 
     def __init__(self, deployment_name, compose_file_content, registry_credential=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds=None, force_restart=None, monitoring_policy=None, application_health_policy=None):
+        super(ComposeDeploymentUpgradeDescription, self).__init__()
         self.deployment_name = deployment_name
         self.compose_file_content = compose_file_content
         self.registry_credential = registry_credential

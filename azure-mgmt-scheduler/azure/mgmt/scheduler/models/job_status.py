@@ -50,6 +50,7 @@ class JobStatus(Model):
     }
 
     def __init__(self):
+        super(JobStatus, self).__init__()
         self.execution_count = None
         self.failure_count = None
         self.faulted_count = None

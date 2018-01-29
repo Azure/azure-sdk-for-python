@@ -40,6 +40,7 @@ class StorageEndpointProperties(Model):
     }
 
     def __init__(self, connection_string, container_name, sas_ttl_as_iso8601=None):
+        super(StorageEndpointProperties, self).__init__()
         self.sas_ttl_as_iso8601 = sas_ttl_as_iso8601
         self.connection_string = connection_string
         self.container_name = container_name

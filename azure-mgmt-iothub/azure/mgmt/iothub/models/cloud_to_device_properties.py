@@ -24,8 +24,7 @@ class CloudToDeviceProperties(Model):
      https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type default_ttl_as_iso8601: timedelta
     :param feedback:
-    :type feedback: :class:`FeedbackProperties
-     <azure.mgmt.iothub.models.FeedbackProperties>`
+    :type feedback: ~azure.mgmt.iothub.models.FeedbackProperties
     """
 
     _validation = {
@@ -39,6 +38,7 @@ class CloudToDeviceProperties(Model):
     }
 
     def __init__(self, max_delivery_count=None, default_ttl_as_iso8601=None, feedback=None):
+        super(CloudToDeviceProperties, self).__init__()
         self.max_delivery_count = max_delivery_count
         self.default_ttl_as_iso8601 = default_ttl_as_iso8601
         self.feedback = feedback

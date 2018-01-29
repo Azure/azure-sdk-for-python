@@ -40,6 +40,7 @@ class MSDeployLogEntry(Model):
     }
 
     def __init__(self):
+        super(MSDeployLogEntry, self).__init__()
         self.time = None
         self.type = None
         self.message = None

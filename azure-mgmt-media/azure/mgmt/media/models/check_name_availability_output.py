@@ -19,8 +19,8 @@ class CheckNameAvailabilityOutput(Model):
     :type name_available: bool
     :param reason: Specifies the reason if the name is not available. Possible
      values include: 'None', 'Invalid', 'AlreadyExists'
-    :type reason: str or :class:`EntityNameUnavailabilityReason
-     <azure.mgmt.media.models.EntityNameUnavailabilityReason>`
+    :type reason: str or
+     ~azure.mgmt.media.models.EntityNameUnavailabilityReason
     :param message: Specifies the detailed reason if the name is not
      available.
     :type message: str
@@ -33,6 +33,7 @@ class CheckNameAvailabilityOutput(Model):
     }
 
     def __init__(self, name_available=None, reason=None, message=None):
+        super(CheckNameAvailabilityOutput, self).__init__()
         self.name_available = name_available
         self.reason = reason
         self.message = message

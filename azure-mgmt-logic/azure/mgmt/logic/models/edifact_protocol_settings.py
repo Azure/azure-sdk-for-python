@@ -16,40 +16,36 @@ class EdifactProtocolSettings(Model):
     """The Edifact agreement protocol settings.
 
     :param validation_settings: The EDIFACT validation settings.
-    :type validation_settings: :class:`EdifactValidationSettings
-     <azure.mgmt.logic.models.EdifactValidationSettings>`
+    :type validation_settings:
+     ~azure.mgmt.logic.models.EdifactValidationSettings
     :param framing_settings: The EDIFACT framing settings.
-    :type framing_settings: :class:`EdifactFramingSettings
-     <azure.mgmt.logic.models.EdifactFramingSettings>`
+    :type framing_settings: ~azure.mgmt.logic.models.EdifactFramingSettings
     :param envelope_settings: The EDIFACT envelope settings.
-    :type envelope_settings: :class:`EdifactEnvelopeSettings
-     <azure.mgmt.logic.models.EdifactEnvelopeSettings>`
+    :type envelope_settings: ~azure.mgmt.logic.models.EdifactEnvelopeSettings
     :param acknowledgement_settings: The EDIFACT acknowledgement settings.
-    :type acknowledgement_settings: :class:`EdifactAcknowledgementSettings
-     <azure.mgmt.logic.models.EdifactAcknowledgementSettings>`
+    :type acknowledgement_settings:
+     ~azure.mgmt.logic.models.EdifactAcknowledgementSettings
     :param message_filter: The EDIFACT message filter.
-    :type message_filter: :class:`EdifactMessageFilter
-     <azure.mgmt.logic.models.EdifactMessageFilter>`
+    :type message_filter: ~azure.mgmt.logic.models.EdifactMessageFilter
     :param processing_settings: The EDIFACT processing Settings.
-    :type processing_settings: :class:`EdifactProcessingSettings
-     <azure.mgmt.logic.models.EdifactProcessingSettings>`
+    :type processing_settings:
+     ~azure.mgmt.logic.models.EdifactProcessingSettings
     :param envelope_overrides: The EDIFACT envelope override settings.
-    :type envelope_overrides: list of :class:`EdifactEnvelopeOverride
-     <azure.mgmt.logic.models.EdifactEnvelopeOverride>`
+    :type envelope_overrides:
+     list[~azure.mgmt.logic.models.EdifactEnvelopeOverride]
     :param message_filter_list: The EDIFACT message filter list.
-    :type message_filter_list: list of :class:`EdifactMessageIdentifier
-     <azure.mgmt.logic.models.EdifactMessageIdentifier>`
+    :type message_filter_list:
+     list[~azure.mgmt.logic.models.EdifactMessageIdentifier]
     :param schema_references: The EDIFACT schema references.
-    :type schema_references: list of :class:`EdifactSchemaReference
-     <azure.mgmt.logic.models.EdifactSchemaReference>`
+    :type schema_references:
+     list[~azure.mgmt.logic.models.EdifactSchemaReference]
     :param validation_overrides: The EDIFACT validation override settings.
-    :type validation_overrides: list of :class:`EdifactValidationOverride
-     <azure.mgmt.logic.models.EdifactValidationOverride>`
+    :type validation_overrides:
+     list[~azure.mgmt.logic.models.EdifactValidationOverride]
     :param edifact_delimiter_overrides: The EDIFACT delimiter override
      settings.
-    :type edifact_delimiter_overrides: list of
-     :class:`EdifactDelimiterOverride
-     <azure.mgmt.logic.models.EdifactDelimiterOverride>`
+    :type edifact_delimiter_overrides:
+     list[~azure.mgmt.logic.models.EdifactDelimiterOverride]
     """
 
     _validation = {
@@ -77,6 +73,7 @@ class EdifactProtocolSettings(Model):
     }
 
     def __init__(self, validation_settings, framing_settings, envelope_settings, acknowledgement_settings, message_filter, processing_settings, schema_references, envelope_overrides=None, message_filter_list=None, validation_overrides=None, edifact_delimiter_overrides=None):
+        super(EdifactProtocolSettings, self).__init__()
         self.validation_settings = validation_settings
         self.framing_settings = framing_settings
         self.envelope_settings = envelope_settings

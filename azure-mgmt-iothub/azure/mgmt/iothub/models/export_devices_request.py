@@ -34,5 +34,6 @@ class ExportDevicesRequest(Model):
     }
 
     def __init__(self, export_blob_container_uri, exclude_keys):
+        super(ExportDevicesRequest, self).__init__()
         self.export_blob_container_uri = export_blob_container_uri
         self.exclude_keys = exclude_keys

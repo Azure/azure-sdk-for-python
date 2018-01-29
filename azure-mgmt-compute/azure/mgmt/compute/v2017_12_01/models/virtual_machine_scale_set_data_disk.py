@@ -26,6 +26,9 @@ class VirtualMachineScaleSetDataDisk(Model):
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2017_12_01.models.CachingTypes
+    :param write_accelerator_enabled: Specifies whether writeAccelerator
+     should be enabled or disabled on the disk.
+    :type write_accelerator_enabled: bool
     :param create_option: The create option. Possible values include:
      'FromImage', 'Empty', 'Attach'
     :type create_option: str or
@@ -48,16 +51,18 @@ class VirtualMachineScaleSetDataDisk(Model):
         'name': {'key': 'name', 'type': 'str'},
         'lun': {'key': 'lun', 'type': 'int'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
+        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
         'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, lun, create_option, name=None, caching=None, disk_size_gb=None, managed_disk=None):
+    def __init__(self, lun, create_option, name=None, caching=None, write_accelerator_enabled=None, disk_size_gb=None, managed_disk=None):
         super(VirtualMachineScaleSetDataDisk, self).__init__()
         self.name = name
         self.lun = lun
         self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb
         self.managed_disk = managed_disk

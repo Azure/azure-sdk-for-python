@@ -18,8 +18,7 @@ class IntegrationAccountAgreementFilter(Model):
     :param agreement_type: The agreement type of integration account
      agreement. Possible values include: 'NotSpecified', 'AS2', 'X12',
      'Edifact'
-    :type agreement_type: str or :class:`AgreementType
-     <azure.mgmt.logic.models.AgreementType>`
+    :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     """
 
     _validation = {
@@ -31,4 +30,5 @@ class IntegrationAccountAgreementFilter(Model):
     }
 
     def __init__(self, agreement_type):
+        super(IntegrationAccountAgreementFilter, self).__init__()
         self.agreement_type = agreement_type

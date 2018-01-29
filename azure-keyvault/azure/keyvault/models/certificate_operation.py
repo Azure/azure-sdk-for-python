@@ -22,8 +22,7 @@ class CertificateOperation(Model):
     :vartype id: str
     :param issuer_parameters: Parameters for the issuer of the X509 component
      of a certificate.
-    :type issuer_parameters: :class:`IssuerParameters
-     <azure.keyvault.models.IssuerParameters>`
+    :type issuer_parameters: ~azure.keyvault.models.IssuerParameters
     :param csr: The certificate signing request (CSR) that is being used in
      the certificate operation.
     :type csr: bytearray
@@ -35,7 +34,7 @@ class CertificateOperation(Model):
     :param status_details: The status details of the certificate operation.
     :type status_details: str
     :param error: Error encountered, if any, during the certificate operation.
-    :type error: :class:`Error <azure.keyvault.models.Error>`
+    :type error: ~azure.keyvault.models.Error
     :param target: Location which contains the result of the certificate
      operation.
     :type target: str
@@ -60,6 +59,7 @@ class CertificateOperation(Model):
     }
 
     def __init__(self, issuer_parameters=None, csr=None, cancellation_requested=None, status=None, status_details=None, error=None, target=None, request_id=None):
+        super(CertificateOperation, self).__init__()
         self.id = None
         self.issuer_parameters = issuer_parameters
         self.csr = csr

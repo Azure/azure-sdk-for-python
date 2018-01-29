@@ -20,18 +20,19 @@ class DataLakeStoreAccountInfo(SubResource):
 
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Resource name
-    :type name: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param suffix: the optional suffix for the Data Lake Store account.
-    :type suffix: str
+    :ivar suffix: The optional suffix for the Data Lake Store account.
+    :vartype suffix: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'suffix': {'readonly': True},
     }
 
     _attribute_map = {
@@ -41,6 +42,6 @@ class DataLakeStoreAccountInfo(SubResource):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name, suffix=None):
-        super(DataLakeStoreAccountInfo, self).__init__(name=name)
-        self.suffix = suffix
+    def __init__(self):
+        super(DataLakeStoreAccountInfo, self).__init__()
+        self.suffix = None

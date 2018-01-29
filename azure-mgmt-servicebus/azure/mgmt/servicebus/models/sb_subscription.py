@@ -46,6 +46,10 @@ class SBSubscription(Resource):
      from when the message is sent to Service Bus. This is the default value
      used when TimeToLive is not set on a message itself.
     :type default_message_time_to_live: timedelta
+    :param dead_lettering_on_filter_evaluation_exceptions: Value that
+     indicates whether a subscription has dead letter support on filter
+     evaluation exceptions.
+    :type dead_lettering_on_filter_evaluation_exceptions: bool
     :param dead_lettering_on_message_expiration: Value that indicates whether
      a subscription has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
@@ -96,6 +100,7 @@ class SBSubscription(Resource):
         'lock_duration': {'key': 'properties.lockDuration', 'type': 'duration'},
         'requires_session': {'key': 'properties.requiresSession', 'type': 'bool'},
         'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'duration'},
+        'dead_lettering_on_filter_evaluation_exceptions': {'key': 'properties.deadLetteringOnFilterEvaluationExceptions', 'type': 'bool'},
         'dead_lettering_on_message_expiration': {'key': 'properties.deadLetteringOnMessageExpiration', 'type': 'bool'},
         'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'duration'},
         'max_delivery_count': {'key': 'properties.maxDeliveryCount', 'type': 'int'},
@@ -106,7 +111,7 @@ class SBSubscription(Resource):
         'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
     }
 
-    def __init__(self, lock_duration=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, enable_batched_operations=None, auto_delete_on_idle=None, forward_to=None, forward_dead_lettered_messages_to=None):
+    def __init__(self, lock_duration=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_filter_evaluation_exceptions=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, enable_batched_operations=None, auto_delete_on_idle=None, forward_to=None, forward_dead_lettered_messages_to=None):
         super(SBSubscription, self).__init__()
         self.message_count = None
         self.created_at = None
@@ -116,6 +121,7 @@ class SBSubscription(Resource):
         self.lock_duration = lock_duration
         self.requires_session = requires_session
         self.default_message_time_to_live = default_message_time_to_live
+        self.dead_lettering_on_filter_evaluation_exceptions = dead_lettering_on_filter_evaluation_exceptions
         self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
         self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
         self.max_delivery_count = max_delivery_count

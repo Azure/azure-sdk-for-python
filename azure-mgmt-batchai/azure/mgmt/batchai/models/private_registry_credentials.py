@@ -24,8 +24,8 @@ class PrivateRegistryCredentials(Model):
      which is a Key Vault Secret. Users can store their secrets in Azure
      KeyVault and pass it to the Batch AI Service to integrate with KeyVault.
      One of password or passwordSecretReference must be specified.
-    :type password_secret_reference: :class:`KeyVaultSecretReference
-     <azure.mgmt.batchai.models.KeyVaultSecretReference>`
+    :type password_secret_reference:
+     ~azure.mgmt.batchai.models.KeyVaultSecretReference
     """
 
     _validation = {
@@ -39,6 +39,7 @@ class PrivateRegistryCredentials(Model):
     }
 
     def __init__(self, username, password=None, password_secret_reference=None):
+        super(PrivateRegistryCredentials, self).__init__()
         self.username = username
         self.password = password
         self.password_secret_reference = password_secret_reference

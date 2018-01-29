@@ -39,14 +39,12 @@ class BillingManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(BillingManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('billingmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-billing/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -60,11 +58,11 @@ class BillingManagementClient(object):
     :vartype config: BillingManagementClientConfiguration
 
     :ivar billing_periods: BillingPeriods operations
-    :vartype billing_periods: .operations.BillingPeriodsOperations
+    :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
-    :vartype invoices: .operations.InvoicesOperations
+    :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.billing.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

@@ -34,5 +34,6 @@ class LocalDataVolume(Model):
     }
 
     def __init__(self, host_path, local_path):
+        super(LocalDataVolume, self).__init__()
         self.host_path = host_path
         self.local_path = local_path

@@ -34,5 +34,6 @@ class RedisRebootParameters(Model):
     }
 
     def __init__(self, reboot_type, shard_id=None):
+        super(RedisRebootParameters, self).__init__()
         self.reboot_type = reboot_type
         self.shard_id = shard_id

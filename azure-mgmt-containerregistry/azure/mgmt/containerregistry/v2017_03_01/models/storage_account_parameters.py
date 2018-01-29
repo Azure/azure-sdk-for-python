@@ -32,5 +32,6 @@ class StorageAccountParameters(Model):
     }
 
     def __init__(self, name, access_key):
+        super(StorageAccountParameters, self).__init__()
         self.name = name
         self.access_key = access_key

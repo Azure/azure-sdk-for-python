@@ -20,33 +20,28 @@ class StorageAccountInfo(SubResource):
 
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Resource name
-    :type name: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param access_key: the access key associated with this Azure Storage
-     account that will be used to connect to it.
-    :type access_key: str
-    :param suffix: the optional suffix for the storage account.
-    :type suffix: str
+    :ivar suffix: The optional suffix for the storage account.
+    :vartype suffix: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'access_key': {'required': True},
+        'suffix': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'access_key': {'key': 'properties.accessKey', 'type': 'str'},
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name, access_key, suffix=None):
-        super(StorageAccountInfo, self).__init__(name=name)
-        self.access_key = access_key
-        self.suffix = suffix
+    def __init__(self):
+        super(StorageAccountInfo, self).__init__()
+        self.suffix = None

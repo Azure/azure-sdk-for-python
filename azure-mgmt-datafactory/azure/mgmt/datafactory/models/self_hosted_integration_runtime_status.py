@@ -21,6 +21,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
+    :ivar data_factory_name: The data factory name which the integration
+     runtime belong to.
+    :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
      'NeedRegistration', 'Online', 'Limited', 'Offline'
@@ -64,9 +67,13 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeAutoUpdate
     :ivar version_status: Status of the integration runtime version.
     :vartype version_status: str
+    :param links: The list of linked integration runtimes that are created to
+     share with this integration runtime.
+    :type links: list[~azure.mgmt.datafactory.models.LinkedIntegrationRuntime]
     """
 
     _validation = {
+        'data_factory_name': {'readonly': True},
         'state': {'readonly': True},
         'type': {'required': True},
         'create_time': {'readonly': True},
@@ -84,6 +91,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
+        'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},
@@ -98,9 +106,10 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'service_urls': {'key': 'typeProperties.serviceUrls', 'type': '[str]'},
         'auto_update': {'key': 'typeProperties.autoUpdate', 'type': 'str'},
         'version_status': {'key': 'typeProperties.versionStatus', 'type': 'str'},
+        'links': {'key': 'typeProperties.links', 'type': '[LinkedIntegrationRuntime]'},
     }
 
-    def __init__(self, additional_properties=None, nodes=None):
+    def __init__(self, additional_properties=None, nodes=None, links=None):
         super(SelfHostedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties)
         self.create_time = None
         self.task_queue_id = None
@@ -114,4 +123,5 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.service_urls = None
         self.auto_update = None
         self.version_status = None
+        self.links = links
         self.type = 'SelfHosted'

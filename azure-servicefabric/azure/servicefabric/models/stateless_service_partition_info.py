@@ -17,15 +17,14 @@ class StatelessServicePartitionInfo(ServicePartitionInfo):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param partition_status: Possible values include: 'Invalid', 'Ready',
      'NotReady', 'InQuorumLoss', 'Reconfiguring', 'Deleting'
-    :type partition_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type partition_status: str or ~azure.servicefabric.models.enum
     :param partition_information:
-    :type partition_information: :class:`PartitionInformation
-     <azure.servicefabric.models.PartitionInformation>`
-    :param service_kind: Polymorphic Discriminator
+    :type partition_information:
+     ~azure.servicefabric.models.PartitionInformation
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param instance_count: Number of instances of this partition.
     :type instance_count: long

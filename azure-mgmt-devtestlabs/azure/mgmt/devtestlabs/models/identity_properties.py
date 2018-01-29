@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IdentityProperties(Model):
-    """IdentityProperties.
+    """Properties of a managed identity.
 
     :param type: Managed identity.
     :type type: str
@@ -33,6 +33,7 @@ class IdentityProperties(Model):
     }
 
     def __init__(self, type=None, principal_id=None, tenant_id=None, client_secret_url=None):
+        super(IdentityProperties, self).__init__()
         self.type = type
         self.principal_id = principal_id
         self.tenant_id = tenant_id

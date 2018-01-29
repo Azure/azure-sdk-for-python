@@ -32,6 +32,7 @@ class CertificateCancelDeletionOptions(Model):
     """
 
     def __init__(self, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
+        super(CertificateCancelDeletionOptions, self).__init__()
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id

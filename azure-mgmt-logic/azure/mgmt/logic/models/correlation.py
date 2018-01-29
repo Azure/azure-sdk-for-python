@@ -24,4 +24,5 @@ class Correlation(Model):
     }
 
     def __init__(self, client_tracking_id=None):
+        super(Correlation, self).__init__()
         self.client_tracking_id = client_tracking_id

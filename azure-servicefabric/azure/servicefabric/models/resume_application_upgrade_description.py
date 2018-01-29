@@ -30,4 +30,5 @@ class ResumeApplicationUpgradeDescription(Model):
     }
 
     def __init__(self, upgrade_domain_name):
+        super(ResumeApplicationUpgradeDescription, self).__init__()
         self.upgrade_domain_name = upgrade_domain_name

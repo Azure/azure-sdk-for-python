@@ -27,5 +27,6 @@ class GcmCredential(Model):
     }
 
     def __init__(self, gcm_endpoint=None, google_api_key=None):
+        super(GcmCredential, self).__init__()
         self.gcm_endpoint = gcm_endpoint
         self.google_api_key = google_api_key

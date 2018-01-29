@@ -19,7 +19,7 @@ class MigrateWorkspaceCollectionRequest(Model):
      workspace collections will be migrated to.
     :type target_resource_group: str
     :param resources:
-    :type resources: list of str
+    :type resources: list[str]
     """
 
     _attribute_map = {
@@ -28,5 +28,6 @@ class MigrateWorkspaceCollectionRequest(Model):
     }
 
     def __init__(self, target_resource_group=None, resources=None):
+        super(MigrateWorkspaceCollectionRequest, self).__init__()
         self.target_resource_group = target_resource_group
         self.resources = resources

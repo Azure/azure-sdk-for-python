@@ -18,13 +18,13 @@ class StorageContainer(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: the unique identifier of the blob container.
+    :ivar id: The unique identifier of the blob container.
     :vartype id: str
-    :ivar name: the name of the blob container.
+    :ivar name: The name of the blob container.
     :vartype name: str
-    :ivar type: the type of the blob container.
+    :ivar type: The type of the blob container.
     :vartype type: str
-    :ivar last_modified_time: the last modified time of the blob container.
+    :ivar last_modified_time: The last modified time of the blob container.
     :vartype last_modified_time: datetime
     """
 

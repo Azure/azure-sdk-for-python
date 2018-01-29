@@ -20,46 +20,40 @@ class ClusterUpgradeProgressObject(Model):
     :param config_version:
     :type config_version: str
     :param upgrade_domains:
-    :type upgrade_domains: list of :class:`UpgradeDomainInfo
-     <azure.servicefabric.models.UpgradeDomainInfo>`
+    :type upgrade_domains: list[~azure.servicefabric.models.UpgradeDomainInfo]
     :param upgrade_state: Possible values include: 'Invalid',
      'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
      'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type upgrade_state: str or ~azure.servicefabric.models.enum
     :param next_upgrade_domain:
     :type next_upgrade_domain: str
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
     :param upgrade_description:
-    :type upgrade_description: :class:`ClusterUpgradeDescriptionObject
-     <azure.servicefabric.models.ClusterUpgradeDescriptionObject>`
+    :type upgrade_description:
+     ~azure.servicefabric.models.ClusterUpgradeDescriptionObject
     :param upgrade_duration_in_milliseconds:
     :type upgrade_duration_in_milliseconds: str
     :param upgrade_domain_duration_in_milliseconds:
     :type upgrade_domain_duration_in_milliseconds: str
     :param unhealthy_evaluations:
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
     :param current_upgrade_domain_progress:
     :type current_upgrade_domain_progress:
-     :class:`CurrentUpgradeDomainProgressInfo
-     <azure.servicefabric.models.CurrentUpgradeDomainProgressInfo>`
+     ~azure.servicefabric.models.CurrentUpgradeDomainProgressInfo
     :param start_timestamp_utc:
     :type start_timestamp_utc: str
     :param failure_timestamp_utc:
     :type failure_timestamp_utc: str
     :param failure_reason: Possible values include: 'None', 'Interrupted',
      'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type failure_reason: str or ~azure.servicefabric.models.enum
     :param upgrade_domain_progress_at_failure:
     :type upgrade_domain_progress_at_failure:
-     :class:`FailedUpgradeDomainProgressObject
-     <azure.servicefabric.models.FailedUpgradeDomainProgressObject>`
+     ~azure.servicefabric.models.FailedUpgradeDomainProgressObject
     """
 
     _attribute_map = {
@@ -81,6 +75,7 @@ class ClusterUpgradeProgressObject(Model):
     }
 
     def __init__(self, code_version=None, config_version=None, upgrade_domains=None, upgrade_state=None, next_upgrade_domain=None, rolling_upgrade_mode="UnmonitoredAuto", upgrade_description=None, upgrade_duration_in_milliseconds=None, upgrade_domain_duration_in_milliseconds=None, unhealthy_evaluations=None, current_upgrade_domain_progress=None, start_timestamp_utc=None, failure_timestamp_utc=None, failure_reason=None, upgrade_domain_progress_at_failure=None):
+        super(ClusterUpgradeProgressObject, self).__init__()
         self.code_version = code_version
         self.config_version = config_version
         self.upgrade_domains = upgrade_domains

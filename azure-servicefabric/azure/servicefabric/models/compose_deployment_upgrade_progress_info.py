@@ -24,28 +24,26 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
      'UnprovisioningCurrent', 'RollingForwardCompleted',
      'RollingBackInProgress', 'UnprovisioningTarget', 'RollingBackCompleted',
      'Failed'
-    :type upgrade_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type upgrade_state: str or ~azure.servicefabric.models.enum
     :param upgrade_status_details:
     :type upgrade_status_details: str
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
      Default value: "Rolling" .
-    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type upgrade_kind: str or ~azure.servicefabric.models.enum
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
     :param force_restart:
     :type force_restart: bool
     :param upgrade_replica_set_check_timeout_in_seconds:
     :type upgrade_replica_set_check_timeout_in_seconds: long
     :param monitoring_policy:
-    :type monitoring_policy: :class:`MonitoringPolicyDescription
-     <azure.servicefabric.models.MonitoringPolicyDescription>`
+    :type monitoring_policy:
+     ~azure.servicefabric.models.MonitoringPolicyDescription
     :param application_health_policy:
-    :type application_health_policy: :class:`ApplicationHealthPolicy
-     <azure.servicefabric.models.ApplicationHealthPolicy>`
+    :type application_health_policy:
+     ~azure.servicefabric.models.ApplicationHealthPolicy
     :param target_application_type_version:
     :type target_application_type_version: str
     :param upgrade_duration:
@@ -53,25 +51,21 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
     :param current_upgrade_domain_duration:
     :type current_upgrade_domain_duration: str
     :param application_unhealthy_evaluations:
-    :type application_unhealthy_evaluations: list of
-     :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :type application_unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
     :param current_upgrade_domain_progress:
     :type current_upgrade_domain_progress:
-     :class:`CurrentUpgradeDomainProgressInfo
-     <azure.servicefabric.models.CurrentUpgradeDomainProgressInfo>`
+     ~azure.servicefabric.models.CurrentUpgradeDomainProgressInfo
     :param start_timestamp_utc:
     :type start_timestamp_utc: str
     :param failure_timestamp_utc:
     :type failure_timestamp_utc: str
     :param failure_reason: Possible values include: 'None', 'Interrupted',
      'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type failure_reason: str or ~azure.servicefabric.models.enum
     :param upgrade_domain_progress_at_failure:
     :type upgrade_domain_progress_at_failure:
-     :class:`FailureUpgradeDomainProgressInfo
-     <azure.servicefabric.models.FailureUpgradeDomainProgressInfo>`
+     ~azure.servicefabric.models.FailureUpgradeDomainProgressInfo
     :param application_upgrade_status_details:
     :type application_upgrade_status_details: str
     """
@@ -100,6 +94,7 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
     }
 
     def __init__(self, deployment_name=None, application_name=None, upgrade_state=None, upgrade_status_details=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", force_restart=None, upgrade_replica_set_check_timeout_in_seconds=None, monitoring_policy=None, application_health_policy=None, target_application_type_version=None, upgrade_duration=None, current_upgrade_domain_duration=None, application_unhealthy_evaluations=None, current_upgrade_domain_progress=None, start_timestamp_utc=None, failure_timestamp_utc=None, failure_reason=None, upgrade_domain_progress_at_failure=None, application_upgrade_status_details=None):
+        super(ComposeDeploymentUpgradeProgressInfo, self).__init__()
         self.deployment_name = deployment_name
         self.application_name = application_name
         self.upgrade_state = upgrade_state

@@ -15,11 +15,8 @@ from .http_authentication import HttpAuthentication
 class ClientCertAuthentication(HttpAuthentication):
     """ClientCertAuthentication.
 
-    :param type: Gets or sets the HTTP authentication type. Possible values
-     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
-     'Basic'
-    :type type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
+    :param type: Constant filled by server.
+    :type type: str
     :param password: Gets or sets the certificate password, return value will
      always be empty.
     :type password: str
@@ -36,8 +33,12 @@ class ClientCertAuthentication(HttpAuthentication):
     :type certificate_subject_name: str
     """
 
+    _validation = {
+        'type': {'required': True},
+    }
+
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
+        'type': {'key': 'type', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'pfx': {'key': 'pfx', 'type': 'str'},
         'certificate_thumbprint': {'key': 'certificateThumbprint', 'type': 'str'},
@@ -45,10 +46,11 @@ class ClientCertAuthentication(HttpAuthentication):
         'certificate_subject_name': {'key': 'certificateSubjectName', 'type': 'str'},
     }
 
-    def __init__(self, type=None, password=None, pfx=None, certificate_thumbprint=None, certificate_expiration_date=None, certificate_subject_name=None):
-        super(ClientCertAuthentication, self).__init__(type=type)
+    def __init__(self, password=None, pfx=None, certificate_thumbprint=None, certificate_expiration_date=None, certificate_subject_name=None):
+        super(ClientCertAuthentication, self).__init__()
         self.password = password
         self.pfx = pfx
         self.certificate_thumbprint = certificate_thumbprint
         self.certificate_expiration_date = certificate_expiration_date
         self.certificate_subject_name = certificate_subject_name
+        self.type = 'ClientCertificate'

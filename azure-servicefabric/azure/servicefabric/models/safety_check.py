@@ -17,7 +17,10 @@ class SafetyCheck(Model):
     with the operations. These checks ensure the availability of the service
     and the reliability of the state.
 
-    :param kind: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: PartitionSafetyCheck, SeedNodeSafetyCheck
+
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -34,4 +37,5 @@ class SafetyCheck(Model):
     }
 
     def __init__(self):
+        super(SafetyCheck, self).__init__()
         self.kind = None

@@ -16,11 +16,11 @@ class SecondaryActiveReplicatorStatus(SecondaryReplicatorStatus):
     """Status of the secondary replicator when it is in active mode and is part of
     the replica set.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param replication_queue_status:
-    :type replication_queue_status: :class:`ReplicatorQueueStatus
-     <azure.servicefabric.models.ReplicatorQueueStatus>`
+    :type replication_queue_status:
+     ~azure.servicefabric.models.ReplicatorQueueStatus
     :param last_replication_operation_received_time_utc: The last time-stamp
      (UTC) at which a replication operation was received from the primary.
      UTC 0 represents an invalid value, indicating that a replication operation
@@ -30,8 +30,7 @@ class SecondaryActiveReplicatorStatus(SecondaryReplicatorStatus):
      being built.
     :type is_in_build: bool
     :param copy_queue_status:
-    :type copy_queue_status: :class:`ReplicatorQueueStatus
-     <azure.servicefabric.models.ReplicatorQueueStatus>`
+    :type copy_queue_status: ~azure.servicefabric.models.ReplicatorQueueStatus
     :param last_copy_operation_received_time_utc: The last time-stamp (UTC) at
      which a copy operation was received from the primary.
      UTC 0 represents an invalid value, indicating that a copy operation

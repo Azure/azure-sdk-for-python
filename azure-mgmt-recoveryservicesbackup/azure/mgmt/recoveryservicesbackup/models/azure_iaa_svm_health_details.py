@@ -22,7 +22,7 @@ class AzureIaaSVMHealthDetails(Model):
     :param message: Health Message
     :type message: str
     :param recommendations: Health Recommended Actions
-    :type recommendations: list of str
+    :type recommendations: list[str]
     """
 
     _attribute_map = {
@@ -33,6 +33,7 @@ class AzureIaaSVMHealthDetails(Model):
     }
 
     def __init__(self, code=None, title=None, message=None, recommendations=None):
+        super(AzureIaaSVMHealthDetails, self).__init__()
         self.code = code
         self.title = title
         self.message = message

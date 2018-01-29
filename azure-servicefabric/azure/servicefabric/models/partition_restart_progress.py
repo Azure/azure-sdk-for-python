@@ -17,10 +17,10 @@ class PartitionRestartProgress(Model):
 
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type state: str or ~azure.servicefabric.models.enum
     :param restart_partition_result:
-    :type restart_partition_result: :class:`RestartPartitionResult
-     <azure.servicefabric.models.RestartPartitionResult>`
+    :type restart_partition_result:
+     ~azure.servicefabric.models.RestartPartitionResult
     """
 
     _attribute_map = {
@@ -29,5 +29,6 @@ class PartitionRestartProgress(Model):
     }
 
     def __init__(self, state=None, restart_partition_result=None):
+        super(PartitionRestartProgress, self).__init__()
         self.state = state
         self.restart_partition_result = restart_partition_result

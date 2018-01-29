@@ -27,9 +27,9 @@ class NotificationHubCreateOrUpdateParameters(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param notification_hub_create_or_update_parameters_name: The
      NotificationHub name.
     :type notification_hub_create_or_update_parameters_name: str
@@ -38,28 +38,22 @@ class NotificationHubCreateOrUpdateParameters(Resource):
     :type registration_ttl: str
     :param authorization_rules: The AuthorizationRules of the created
      NotificationHub
-    :type authorization_rules: list of
-     :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+    :type authorization_rules:
+     list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
     :param apns_credential: The ApnsCredential of the created NotificationHub
-    :type apns_credential: :class:`ApnsCredential
-     <azure.mgmt.notificationhubs.models.ApnsCredential>`
+    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
     :param wns_credential: The WnsCredential of the created NotificationHub
-    :type wns_credential: :class:`WnsCredential
-     <azure.mgmt.notificationhubs.models.WnsCredential>`
+    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
     :param gcm_credential: The GcmCredential of the created NotificationHub
-    :type gcm_credential: :class:`GcmCredential
-     <azure.mgmt.notificationhubs.models.GcmCredential>`
+    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
     :param mpns_credential: The MpnsCredential of the created NotificationHub
-    :type mpns_credential: :class:`MpnsCredential
-     <azure.mgmt.notificationhubs.models.MpnsCredential>`
+    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
     :param adm_credential: The AdmCredential of the created NotificationHub
-    :type adm_credential: :class:`AdmCredential
-     <azure.mgmt.notificationhubs.models.AdmCredential>`
+    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
     :param baidu_credential: The BaiduCredential of the created
      NotificationHub
-    :type baidu_credential: :class:`BaiduCredential
-     <azure.mgmt.notificationhubs.models.BaiduCredential>`
+    :type baidu_credential:
+     ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {

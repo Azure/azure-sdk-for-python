@@ -20,8 +20,7 @@ class Operation(Model):
      event service.
     :type name: str
     :param display:
-    :type display: :class:`Display
-     <azure.mgmt.powerbiembedded.models.Display>`
+    :type display: ~azure.mgmt.powerbiembedded.models.Display
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class Operation(Model):
     }
 
     def __init__(self, name=None, display=None):
+        super(Operation, self).__init__()
         self.name = name
         self.display = display

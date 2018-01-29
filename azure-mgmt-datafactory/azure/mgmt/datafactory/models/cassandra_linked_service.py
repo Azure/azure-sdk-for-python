@@ -38,7 +38,7 @@ class CassandraLinkedService(LinkedService):
      with resultType string).
     :type username: object
     :param password: Password for authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -59,7 +59,7 @@ class CassandraLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

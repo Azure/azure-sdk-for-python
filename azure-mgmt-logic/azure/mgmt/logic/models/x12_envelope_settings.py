@@ -73,16 +73,15 @@ class X12EnvelopeSettings(Model):
     :type overwrite_existing_transaction_set_control_number: bool
     :param group_header_date_format: The group header date format. Possible
      values include: 'NotSpecified', 'CCYYMMDD', 'YYMMDD'
-    :type group_header_date_format: str or :class:`X12DateFormat
-     <azure.mgmt.logic.models.X12DateFormat>`
+    :type group_header_date_format: str or
+     ~azure.mgmt.logic.models.X12DateFormat
     :param group_header_time_format: The group header time format. Possible
      values include: 'NotSpecified', 'HHMM', 'HHMMSS', 'HHMMSSdd', 'HHMMSSd'
-    :type group_header_time_format: str or :class:`X12TimeFormat
-     <azure.mgmt.logic.models.X12TimeFormat>`
+    :type group_header_time_format: str or
+     ~azure.mgmt.logic.models.X12TimeFormat
     :param usage_indicator: The usage indicator. Possible values include:
      'NotSpecified', 'Test', 'Information', 'Production'
-    :type usage_indicator: str or :class:`UsageIndicator
-     <azure.mgmt.logic.models.UsageIndicator>`
+    :type usage_indicator: str or ~azure.mgmt.logic.models.UsageIndicator
     """
 
     _validation = {
@@ -137,6 +136,7 @@ class X12EnvelopeSettings(Model):
     }
 
     def __init__(self, control_standards_id, use_control_standards_id_as_repetition_character, sender_application_id, receiver_application_id, control_version_number, interchange_control_number_lower_bound, interchange_control_number_upper_bound, rollover_interchange_control_number, enable_default_group_headers, group_control_number_lower_bound, group_control_number_upper_bound, rollover_group_control_number, group_header_agency_code, group_header_version, transaction_set_control_number_lower_bound, transaction_set_control_number_upper_bound, rollover_transaction_set_control_number, overwrite_existing_transaction_set_control_number, group_header_date_format, group_header_time_format, usage_indicator, functional_group_id=None, transaction_set_control_number_prefix=None, transaction_set_control_number_suffix=None):
+        super(X12EnvelopeSettings, self).__init__()
         self.control_standards_id = control_standards_id
         self.use_control_standards_id_as_repetition_character = use_control_standards_id_as_repetition_character
         self.sender_application_id = sender_application_id

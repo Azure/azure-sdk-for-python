@@ -22,7 +22,7 @@ class TestErrorChaosEvent(ChaosEvent):
 
     :param time_stamp_utc:
     :type time_stamp_utc: datetime
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param reason:
     :type reason: str

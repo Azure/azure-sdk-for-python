@@ -27,12 +27,12 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param properties: Properties of the Namespace AuthorizationRules.
-    :type properties: :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+    :type properties:
+     ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
     """
 
     _validation = {

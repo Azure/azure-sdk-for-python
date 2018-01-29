@@ -66,6 +66,7 @@ class TriggerRun(Model):
     }
 
     def __init__(self, additional_properties=None):
+        super(TriggerRun, self).__init__()
         self.additional_properties = additional_properties
         self.trigger_run_id = None
         self.trigger_name = None

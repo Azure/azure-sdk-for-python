@@ -41,6 +41,7 @@ class Status(Model):
     }
 
     def __init__(self):
+        super(Status, self).__init__()
         self.display_status = None
         self.message = None
         self.timestamp = None

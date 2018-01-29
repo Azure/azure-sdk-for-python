@@ -18,18 +18,16 @@ class NodeDeactivationInfo(Model):
 
     :param node_deactivation_intent: Possible values include: 'Invalid',
      'Pause', 'Restart', 'RemoveData', 'RemoveNode'
-    :type node_deactivation_intent: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type node_deactivation_intent: str or ~azure.servicefabric.models.enum
     :param node_deactivation_status: Possible values include: 'None',
      'SafetyCheckInProgress', 'SafetyCheckComplete', 'Completed'
-    :type node_deactivation_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type node_deactivation_status: str or ~azure.servicefabric.models.enum
     :param node_deactivation_task:
-    :type node_deactivation_task: list of :class:`NodeDeactivationTask
-     <azure.servicefabric.models.NodeDeactivationTask>`
+    :type node_deactivation_task:
+     list[~azure.servicefabric.models.NodeDeactivationTask]
     :param pending_safety_checks:
-    :type pending_safety_checks: list of :class:`SafetyCheckWrapper
-     <azure.servicefabric.models.SafetyCheckWrapper>`
+    :type pending_safety_checks:
+     list[~azure.servicefabric.models.SafetyCheckWrapper]
     """
 
     _attribute_map = {
@@ -40,6 +38,7 @@ class NodeDeactivationInfo(Model):
     }
 
     def __init__(self, node_deactivation_intent=None, node_deactivation_status=None, node_deactivation_task=None, pending_safety_checks=None):
+        super(NodeDeactivationInfo, self).__init__()
         self.node_deactivation_intent = node_deactivation_intent
         self.node_deactivation_status = node_deactivation_status
         self.node_deactivation_task = node_deactivation_task

@@ -27,5 +27,6 @@ class ErrorMessage(Model):
     }
 
     def __init__(self, lang=None, value=None):
+        super(ErrorMessage, self).__init__()
         self.lang = lang
         self.value = value

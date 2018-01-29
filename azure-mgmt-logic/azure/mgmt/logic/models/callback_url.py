@@ -24,4 +24,5 @@ class CallbackUrl(Model):
     }
 
     def __init__(self, value=None):
+        super(CallbackUrl, self).__init__()
         self.value = value

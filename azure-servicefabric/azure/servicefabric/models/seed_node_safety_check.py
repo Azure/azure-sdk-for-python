@@ -16,7 +16,7 @@ class SeedNodeSafetyCheck(SafetyCheck):
     """Represents a safety check for the seed nodes being performed by service
     fabric before continuing with node level operations.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     """
 

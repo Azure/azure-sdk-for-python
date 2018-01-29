@@ -22,11 +22,11 @@ class ApplicationDescription(Model):
     :param type_version:
     :type type_version: str
     :param parameter_list:
-    :type parameter_list: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
+    :type parameter_list:
+     list[~azure.servicefabric.models.ApplicationParameter]
     :param application_capacity:
-    :type application_capacity: :class:`ApplicationCapacityDescription
-     <azure.servicefabric.models.ApplicationCapacityDescription>`
+    :type application_capacity:
+     ~azure.servicefabric.models.ApplicationCapacityDescription
     """
 
     _validation = {
@@ -44,6 +44,7 @@ class ApplicationDescription(Model):
     }
 
     def __init__(self, name, type_name, type_version, parameter_list=None, application_capacity=None):
+        super(ApplicationDescription, self).__init__()
         self.name = name
         self.type_name = type_name
         self.type_version = type_version

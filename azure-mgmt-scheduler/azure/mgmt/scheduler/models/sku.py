@@ -17,8 +17,7 @@ class Sku(Model):
 
     :param name: Gets or set the SKU. Possible values include: 'Standard',
      'Free', 'P10Premium', 'P20Premium'
-    :type name: str or :class:`SkuDefinition
-     <azure.mgmt.scheduler.models.SkuDefinition>`
+    :type name: str or ~azure.mgmt.scheduler.models.SkuDefinition
     """
 
     _attribute_map = {
@@ -26,4 +25,5 @@ class Sku(Model):
     }
 
     def __init__(self, name=None):
+        super(Sku, self).__init__()
         self.name = name

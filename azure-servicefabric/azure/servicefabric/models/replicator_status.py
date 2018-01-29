@@ -19,7 +19,10 @@ class ReplicatorStatus(Model):
     timestamp, etc.
     .
 
-    :param kind: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: PrimaryReplicatorStatus, SecondaryReplicatorStatus
+
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -36,4 +39,5 @@ class ReplicatorStatus(Model):
     }
 
     def __init__(self):
+        super(ReplicatorStatus, self).__init__()
         self.kind = None

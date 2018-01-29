@@ -26,11 +26,10 @@ class CodePackageEntryPoint(Model):
     :type run_as_user_name: str
     :param code_package_entry_point_statistics:
     :type code_package_entry_point_statistics:
-     :class:`CodePackageEntryPointStatistics
-     <azure.servicefabric.models.CodePackageEntryPointStatistics>`
+     ~azure.servicefabric.models.CodePackageEntryPointStatistics
     :param status: Possible values include: 'Invalid', 'Pending', 'Starting',
      'Started', 'Stopping', 'Stopped'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param next_activation_time: The time (in UTC) when the entry point
      executable will be run next.
     :type next_activation_time: datetime
@@ -49,6 +48,7 @@ class CodePackageEntryPoint(Model):
     }
 
     def __init__(self, entry_point_location=None, process_id=None, run_as_user_name=None, code_package_entry_point_statistics=None, status=None, next_activation_time=None, instance_id=None):
+        super(CodePackageEntryPoint, self).__init__()
         self.entry_point_location = entry_point_location
         self.process_id = process_id
         self.run_as_user_name = run_as_user_name

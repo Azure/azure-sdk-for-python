@@ -40,6 +40,7 @@ class DistcpSettings(Model):
     }
 
     def __init__(self, resource_manager_endpoint, temp_script_path, distcp_options=None):
+        super(DistcpSettings, self).__init__()
         self.resource_manager_endpoint = resource_manager_endpoint
         self.temp_script_path = temp_script_path
         self.distcp_options = distcp_options

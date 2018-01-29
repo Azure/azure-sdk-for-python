@@ -35,6 +35,7 @@ class HandlerMapping(Model):
     }
 
     def __init__(self, extension=None, script_processor=None, arguments=None):
+        super(HandlerMapping, self).__init__()
         self.extension = extension
         self.script_processor = script_processor
         self.arguments = arguments

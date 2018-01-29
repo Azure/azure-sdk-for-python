@@ -20,8 +20,7 @@ class FabricError(Model):
     .
 
     :param error:
-    :type error: :class:`FabricErrorError
-     <azure.servicefabric.models.FabricErrorError>`
+    :type error: ~azure.servicefabric.models.FabricErrorError
     """
 
     _validation = {
@@ -33,6 +32,7 @@ class FabricError(Model):
     }
 
     def __init__(self, error):
+        super(FabricError, self).__init__()
         self.error = error
 
 

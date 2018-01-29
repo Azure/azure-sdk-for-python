@@ -27,5 +27,6 @@ class ProvisionFabricDescription(Model):
     }
 
     def __init__(self, code_file_path=None, cluster_manifest_file_path=None):
+        super(ProvisionFabricDescription, self).__init__()
         self.code_file_path = code_file_path
         self.cluster_manifest_file_path = cluster_manifest_file_path

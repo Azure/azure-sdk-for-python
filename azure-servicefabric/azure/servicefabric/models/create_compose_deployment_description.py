@@ -22,8 +22,7 @@ class CreateComposeDeploymentDescription(Model):
      describes the deployment to create.
     :type compose_file_content: str
     :param registry_credential:
-    :type registry_credential: :class:`RegistryCredential
-     <azure.servicefabric.models.RegistryCredential>`
+    :type registry_credential: ~azure.servicefabric.models.RegistryCredential
     """
 
     _validation = {
@@ -38,6 +37,7 @@ class CreateComposeDeploymentDescription(Model):
     }
 
     def __init__(self, deployment_name, compose_file_content, registry_credential=None):
+        super(CreateComposeDeploymentDescription, self).__init__()
         self.deployment_name = deployment_name
         self.compose_file_content = compose_file_content
         self.registry_credential = registry_credential

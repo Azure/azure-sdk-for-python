@@ -28,4 +28,5 @@ class IntegrationAccountSessionFilter(Model):
     }
 
     def __init__(self, changed_time):
+        super(IntegrationAccountSessionFilter, self).__init__()
         self.changed_time = changed_time

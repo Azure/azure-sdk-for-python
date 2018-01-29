@@ -27,5 +27,6 @@ class WorkspaceCollectionAccessKeys(Model):
     }
 
     def __init__(self, key1=None, key2=None):
+        super(WorkspaceCollectionAccessKeys, self).__init__()
         self.key1 = key1
         self.key2 = key2

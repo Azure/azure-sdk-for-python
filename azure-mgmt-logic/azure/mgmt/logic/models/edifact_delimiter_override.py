@@ -31,12 +31,12 @@ class EdifactDelimiterOverride(Model):
     :type repetition_separator: int
     :param segment_terminator_suffix: The segment terminator suffix. Possible
      values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
-    :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
-     <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
+    :type segment_terminator_suffix: str or
+     ~azure.mgmt.logic.models.SegmentTerminatorSuffix
     :param decimal_point_indicator: The decimal point indicator. Possible
      values include: 'NotSpecified', 'Comma', 'Decimal'
-    :type decimal_point_indicator: str or :class:`EdifactDecimalIndicator
-     <azure.mgmt.logic.models.EdifactDecimalIndicator>`
+    :type decimal_point_indicator: str or
+     ~azure.mgmt.logic.models.EdifactDecimalIndicator
     :param release_indicator: The release indicator.
     :type release_indicator: int
     :param message_association_assigned_code: The message association assigned
@@ -73,6 +73,7 @@ class EdifactDelimiterOverride(Model):
     }
 
     def __init__(self, data_element_separator, component_separator, segment_terminator, repetition_separator, segment_terminator_suffix, decimal_point_indicator, release_indicator, message_id=None, message_version=None, message_release=None, message_association_assigned_code=None, target_namespace=None):
+        super(EdifactDelimiterOverride, self).__init__()
         self.message_id = message_id
         self.message_version = message_version
         self.message_release = message_release

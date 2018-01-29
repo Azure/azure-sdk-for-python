@@ -31,5 +31,6 @@ class ExportTemplateRequest(Model):
     }
 
     def __init__(self, resources=None, options=None):
+        super(ExportTemplateRequest, self).__init__()
         self.resources = resources
         self.options = options

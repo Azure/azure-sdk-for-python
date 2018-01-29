@@ -30,4 +30,5 @@ class ApplicationTypeImageStorePath(Model):
     }
 
     def __init__(self, application_type_build_path):
+        super(ApplicationTypeImageStorePath, self).__init__()
         self.application_type_build_path = application_type_build_path

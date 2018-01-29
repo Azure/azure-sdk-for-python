@@ -30,4 +30,5 @@ class RegenerateCredentialParameters(Model):
     }
 
     def __init__(self, name):
+        super(RegenerateCredentialParameters, self).__init__()
         self.name = name

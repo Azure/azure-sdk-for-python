@@ -37,5 +37,6 @@ class Epoch(Model):
     }
 
     def __init__(self, configuration_version=None, data_loss_version=None):
+        super(Epoch, self).__init__()
         self.configuration_version = configuration_version
         self.data_loss_version = data_loss_version

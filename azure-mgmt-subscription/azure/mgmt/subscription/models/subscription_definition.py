@@ -54,6 +54,7 @@ class SubscriptionDefinition(Model):
     }
 
     def __init__(self, subscription_display_name=None, offer_type=None, etag=None):
+        super(SubscriptionDefinition, self).__init__()
         self.id = None
         self.name = None
         self.type = None

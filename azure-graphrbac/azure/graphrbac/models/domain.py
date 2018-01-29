@@ -18,6 +18,9 @@ class Domain(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar authentication_type: the type of the authentication into the domain.
     :vartype authentication_type: str
     :ivar is_default: if this is the default domain in the tenant.
@@ -36,13 +39,16 @@ class Domain(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
         'is_default': {'key': 'isDefault', 'type': 'bool'},
         'is_verified': {'key': 'isVerified', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
+    def __init__(self, name, additional_properties=None):
+        super(Domain, self).__init__()
+        self.additional_properties = additional_properties
         self.authentication_type = None
         self.is_default = None
         self.is_verified = None

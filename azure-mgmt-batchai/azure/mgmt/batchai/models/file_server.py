@@ -27,22 +27,20 @@ class FileServer(Resource):
     :ivar location: The location of the resource
     :vartype location: str
     :ivar tags: The tags of the resource
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     :param vm_size: The size of the virtual machine of the File Server. For
      information about available VM sizes for File Server from the Virtual
      Machines Marketplace, see Sizes for Virtual Machines (Linux).
     :type vm_size: str
     :param ssh_configuration: SSH settings for the File Server.
-    :type ssh_configuration: :class:`SshConfiguration
-     <azure.mgmt.batchai.models.SshConfiguration>`
+    :type ssh_configuration: ~azure.mgmt.batchai.models.SshConfiguration
     :param data_disks: Settings for the data disk which would be created for
      the File Server.
-    :type data_disks: :class:`DataDisks <azure.mgmt.batchai.models.DataDisks>`
+    :type data_disks: ~azure.mgmt.batchai.models.DataDisks
     :param subnet: Specifies the identifier of the subnet.
-    :type subnet: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
+    :type subnet: ~azure.mgmt.batchai.models.ResourceId
     :ivar mount_settings: Details of the File Server.
-    :vartype mount_settings: :class:`MountSettings
-     <azure.mgmt.batchai.models.MountSettings>`
+    :vartype mount_settings: ~azure.mgmt.batchai.models.MountSettings
     :ivar provisioning_state_transition_time: Time when the status was
      changed.
     :vartype provisioning_state_transition_time: datetime
@@ -57,8 +55,8 @@ class FileServer(Resource):
      error code are specified in the message field. succeeded - The File Server
      creation has succeeded. Possible values include: 'creating', 'updating',
      'deleting', 'succeeded', 'failed'
-    :vartype provisioning_state: str or :class:`FileServerProvisioningState
-     <azure.mgmt.batchai.models.FileServerProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.batchai.models.FileServerProvisioningState
     """
 
     _validation = {

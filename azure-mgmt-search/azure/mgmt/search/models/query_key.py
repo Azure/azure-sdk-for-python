@@ -36,5 +36,6 @@ class QueryKey(Model):
     }
 
     def __init__(self):
+        super(QueryKey, self).__init__()
         self.name = None
         self.key = None

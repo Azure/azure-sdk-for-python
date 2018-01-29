@@ -31,5 +31,6 @@ class PolicySku(Model):
     }
 
     def __init__(self, name, tier=None):
+        super(PolicySku, self).__init__()
         self.name = name
         self.tier = tier

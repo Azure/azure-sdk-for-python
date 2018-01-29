@@ -33,6 +33,7 @@ class Workspace(Model):
     }
 
     def __init__(self, id=None, name=None, type=None, properties=None):
+        super(Workspace, self).__init__()
         self.id = id
         self.name = name
         self.type = type

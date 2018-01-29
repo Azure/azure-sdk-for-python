@@ -15,11 +15,8 @@ from .http_authentication import HttpAuthentication
 class BasicAuthentication(HttpAuthentication):
     """BasicAuthentication.
 
-    :param type: Gets or sets the HTTP authentication type. Possible values
-     include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
-     'Basic'
-    :type type: str or :class:`HttpAuthenticationType
-     <azure.mgmt.scheduler.models.HttpAuthenticationType>`
+    :param type: Constant filled by server.
+    :type type: str
     :param username: Gets or sets the username.
     :type username: str
     :param password: Gets or sets the password, return value will always be
@@ -27,13 +24,18 @@ class BasicAuthentication(HttpAuthentication):
     :type password: str
     """
 
+    _validation = {
+        'type': {'required': True},
+    }
+
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
+        'type': {'key': 'type', 'type': 'str'},
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, type=None, username=None, password=None):
-        super(BasicAuthentication, self).__init__(type=type)
+    def __init__(self, username=None, password=None):
+        super(BasicAuthentication, self).__init__()
         self.username = username
         self.password = password
+        self.type = 'Basic'

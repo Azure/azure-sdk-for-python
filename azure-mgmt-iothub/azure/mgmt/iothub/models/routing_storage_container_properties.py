@@ -70,6 +70,7 @@ class RoutingStorageContainerProperties(Model):
     }
 
     def __init__(self, connection_string, name, container_name, subscription_id=None, resource_group=None, file_name_format=None, batch_frequency_in_seconds=None, max_chunk_size_in_bytes=None, encoding=None):
+        super(RoutingStorageContainerProperties, self).__init__()
         self.connection_string = connection_string
         self.name = name
         self.subscription_id = subscription_id

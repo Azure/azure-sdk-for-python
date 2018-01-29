@@ -29,4 +29,5 @@ class LoadParameters(Model):
     }
 
     def __init__(self, content_paths):
+        super(LoadParameters, self).__init__()
         self.content_paths = content_paths

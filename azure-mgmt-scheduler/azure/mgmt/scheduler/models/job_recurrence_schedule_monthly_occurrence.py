@@ -19,8 +19,7 @@ class JobRecurrenceScheduleMonthlyOccurrence(Model):
      wednesday, thursday, friday, saturday, sunday. Possible values include:
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
      'Sunday'
-    :type day: str or :class:`JobScheduleDay
-     <azure.mgmt.scheduler.models.JobScheduleDay>`
+    :type day: str or ~azure.mgmt.scheduler.models.JobScheduleDay
     :param occurrence: Gets or sets the occurrence. Must be between -5 and 5.
     :type occurrence: int
     """
@@ -31,5 +30,6 @@ class JobRecurrenceScheduleMonthlyOccurrence(Model):
     }
 
     def __init__(self, day=None, occurrence=None):
+        super(JobRecurrenceScheduleMonthlyOccurrence, self).__init__()
         self.day = day
         self.occurrence = occurrence

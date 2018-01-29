@@ -36,5 +36,6 @@ class Recurrence(Model):
     }
 
     def __init__(self, frequency, schedule):
+        super(Recurrence, self).__init__()
         self.frequency = frequency
         self.schedule = schedule

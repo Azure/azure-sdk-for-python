@@ -16,17 +16,16 @@ class RecurrenceSchedule(Model):
     """The recurrence schedule.
 
     :param minutes: The minutes.
-    :type minutes: list of int
+    :type minutes: list[int]
     :param hours: The hours.
-    :type hours: list of int
+    :type hours: list[int]
     :param week_days: The days of the week.
-    :type week_days: list of str or :class:`DaysOfWeek
-     <azure.mgmt.logic.models.DaysOfWeek>`
+    :type week_days: list[str or ~azure.mgmt.logic.models.DaysOfWeek]
     :param month_days: The month days.
-    :type month_days: list of int
+    :type month_days: list[int]
     :param monthly_occurrences: The monthly occurrences.
-    :type monthly_occurrences: list of :class:`RecurrenceScheduleOccurrence
-     <azure.mgmt.logic.models.RecurrenceScheduleOccurrence>`
+    :type monthly_occurrences:
+     list[~azure.mgmt.logic.models.RecurrenceScheduleOccurrence]
     """
 
     _attribute_map = {
@@ -38,6 +37,7 @@ class RecurrenceSchedule(Model):
     }
 
     def __init__(self, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
+        super(RecurrenceSchedule, self).__init__()
         self.minutes = minutes
         self.hours = hours
         self.week_days = week_days

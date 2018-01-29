@@ -32,6 +32,7 @@ class JobsListOutputFilesOptions(Model):
     }
 
     def __init__(self, outputdirectoryid, linkexpiryinminutes=60, max_results=1000):
+        super(JobsListOutputFilesOptions, self).__init__()
         self.outputdirectoryid = outputdirectoryid
         self.linkexpiryinminutes = linkexpiryinminutes
         self.max_results = max_results

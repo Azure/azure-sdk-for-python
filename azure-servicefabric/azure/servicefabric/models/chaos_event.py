@@ -15,9 +15,14 @@ from msrest.serialization import Model
 class ChaosEvent(Model):
     """Represents an event generated during a Chaos run.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ExecutingFaultsChaosEvent, StartedChaosEvent,
+    StoppedChaosEvent, TestErrorChaosEvent, ValidationFailedChaosEvent,
+    WaitingChaosEvent
+
     :param time_stamp_utc:
     :type time_stamp_utc: datetime
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -36,5 +41,6 @@ class ChaosEvent(Model):
     }
 
     def __init__(self, time_stamp_utc):
+        super(ChaosEvent, self).__init__()
         self.time_stamp_utc = time_stamp_utc
         self.kind = None

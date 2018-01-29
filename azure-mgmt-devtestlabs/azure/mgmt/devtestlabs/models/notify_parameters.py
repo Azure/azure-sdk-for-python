@@ -29,5 +29,6 @@ class NotifyParameters(Model):
     }
 
     def __init__(self, event_name=None, json_payload=None):
+        super(NotifyParameters, self).__init__()
         self.event_name = event_name
         self.json_payload = json_payload

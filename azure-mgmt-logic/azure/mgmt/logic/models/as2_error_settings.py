@@ -34,5 +34,6 @@ class AS2ErrorSettings(Model):
     }
 
     def __init__(self, suspend_duplicate_message, resend_if_mdn_not_received):
+        super(AS2ErrorSettings, self).__init__()
         self.suspend_duplicate_message = suspend_duplicate_message
         self.resend_if_mdn_not_received = resend_if_mdn_not_received

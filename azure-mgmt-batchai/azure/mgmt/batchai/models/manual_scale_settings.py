@@ -23,8 +23,8 @@ class ManualScaleSettings(Model):
      running on compute node if the Cluster size is decreasing. The default
      value is requeue. Possible values include: 'requeue', 'terminate',
      'waitforjobcompletion', 'unknown'. Default value: "requeue" .
-    :type node_deallocation_option: str or :class:`DeallocationOption
-     <azure.mgmt.batchai.models.DeallocationOption>`
+    :type node_deallocation_option: str or
+     ~azure.mgmt.batchai.models.DeallocationOption
     """
 
     _validation = {
@@ -37,5 +37,6 @@ class ManualScaleSettings(Model):
     }
 
     def __init__(self, target_node_count=0, node_deallocation_option="requeue"):
+        super(ManualScaleSettings, self).__init__()
         self.target_node_count = target_node_count
         self.node_deallocation_option = node_deallocation_option

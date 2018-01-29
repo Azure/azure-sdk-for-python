@@ -29,5 +29,6 @@ class PolicySetResult(Model):
     }
 
     def __init__(self, has_error=None, policy_violations=None):
+        super(PolicySetResult, self).__init__()
         self.has_error = has_error
         self.policy_violations = policy_violations

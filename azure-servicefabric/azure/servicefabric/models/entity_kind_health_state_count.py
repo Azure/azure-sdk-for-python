@@ -18,10 +18,9 @@ class EntityKindHealthStateCount(Model):
     :param entity_kind: Possible values include: 'Invalid', 'Node',
      'Partition', 'Service', 'Application', 'Replica', 'DeployedApplication',
      'DeployedServicePackage', 'Cluster'
-    :type entity_kind: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type entity_kind: str or ~azure.servicefabric.models.enum
     :param health_state_count:
-    :type health_state_count: :class:`HealthStateCount
-     <azure.servicefabric.models.HealthStateCount>`
+    :type health_state_count: ~azure.servicefabric.models.HealthStateCount
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class EntityKindHealthStateCount(Model):
     }
 
     def __init__(self, entity_kind=None, health_state_count=None):
+        super(EntityKindHealthStateCount, self).__init__()
         self.entity_kind = entity_kind
         self.health_state_count = health_state_count

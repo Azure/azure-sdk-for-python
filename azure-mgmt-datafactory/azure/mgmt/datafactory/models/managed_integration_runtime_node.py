@@ -41,6 +41,7 @@ class ManagedIntegrationRuntimeNode(Model):
     }
 
     def __init__(self, errors=None):
+        super(ManagedIntegrationRuntimeNode, self).__init__()
         self.node_id = None
         self.status = None
         self.errors = errors

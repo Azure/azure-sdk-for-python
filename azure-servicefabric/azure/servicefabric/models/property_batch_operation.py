@@ -16,9 +16,15 @@ class PropertyBatchOperation(Model):
     """Represents the base type for property operations that can be put into a
     batch and submitted.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CheckExistsPropertyBatchOperation,
+    CheckSequencePropertyBatchOperation, CheckValuePropertyBatchOperation,
+    DeletePropertyBatchOperation, GetPropertyBatchOperation,
+    PutPropertyBatchOperation
+
     :param property_name:
     :type property_name: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -37,5 +43,6 @@ class PropertyBatchOperation(Model):
     }
 
     def __init__(self, property_name):
+        super(PropertyBatchOperation, self).__init__()
         self.property_name = property_name
         self.kind = None

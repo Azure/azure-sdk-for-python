@@ -39,10 +39,11 @@ class CostThresholdProperties(Model):
         'percentage_threshold': {'key': 'percentageThreshold', 'type': 'PercentageCostThresholdProperties'},
         'display_on_chart': {'key': 'displayOnChart', 'type': 'str'},
         'send_notification_when_exceeded': {'key': 'sendNotificationWhenExceeded', 'type': 'str'},
-        'notification_sent': {'key': 'NotificationSent', 'type': 'str'},
+        'notification_sent': {'key': 'notificationSent', 'type': 'str'},
     }
 
     def __init__(self, threshold_id=None, percentage_threshold=None, display_on_chart=None, send_notification_when_exceeded=None, notification_sent=None):
+        super(CostThresholdProperties, self).__init__()
         self.threshold_id = threshold_id
         self.percentage_threshold = percentage_threshold
         self.display_on_chart = display_on_chart

@@ -36,7 +36,7 @@ class HealthEvent(HealthInformation):
     :type property: str
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param time_to_live_in_milli_seconds: The duration for which this health
      report is valid. This field is using ISO8601 format for specifying the
      duration.

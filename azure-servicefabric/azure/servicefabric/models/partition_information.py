@@ -16,9 +16,13 @@ class PartitionInformation(Model):
     """Information about the partition identity, partitioning scheme and keys
     supported by it.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Int64RangePartitionInformation, NamedPartitionInformation,
+    SingletonPartitionInformation
+
     :param id:
     :type id: str
-    :param service_partition_kind: Polymorphic Discriminator
+    :param service_partition_kind: Constant filled by server.
     :type service_partition_kind: str
     """
 
@@ -36,5 +40,6 @@ class PartitionInformation(Model):
     }
 
     def __init__(self, id=None):
+        super(PartitionInformation, self).__init__()
         self.id = id
         self.service_partition_kind = None

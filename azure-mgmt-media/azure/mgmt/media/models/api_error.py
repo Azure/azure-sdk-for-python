@@ -28,6 +28,7 @@ class ApiError(Model):
     }
 
     def __init__(self, code=None, message=None):
+        super(ApiError, self).__init__()
         self.code = code
         self.message = message
 

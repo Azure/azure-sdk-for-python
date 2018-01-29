@@ -42,6 +42,7 @@ class OperationResult(Model):
     }
 
     def __init__(self, status=None, status_code=None, error=None):
+        super(OperationResult, self).__init__()
         self.status = status
         self.status_code = status_code
         self.error = error

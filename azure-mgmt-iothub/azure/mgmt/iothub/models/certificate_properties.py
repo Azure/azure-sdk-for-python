@@ -51,6 +51,7 @@ class CertificateProperties(Model):
     }
 
     def __init__(self):
+        super(CertificateProperties, self).__init__()
         self.subject = None
         self.expiry = None
         self.thumbprint = None

@@ -80,6 +80,7 @@ class DeployedServicePackageHealthStateFilter(Model):
     }
 
     def __init__(self, service_manifest_name_filter=None, service_package_activation_id_filter=None, health_state_filter=0):
+        super(DeployedServicePackageHealthStateFilter, self).__init__()
         self.service_manifest_name_filter = service_manifest_name_filter
         self.service_package_activation_id_filter = service_package_activation_id_filter
         self.health_state_filter = health_state_filter

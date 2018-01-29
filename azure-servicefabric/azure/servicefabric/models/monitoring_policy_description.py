@@ -17,8 +17,7 @@ class MonitoringPolicyDescription(Model):
 
     :param failure_action: Possible values include: 'Invalid', 'Rollback',
      'Manual'
-    :type failure_action: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type failure_action: str or ~azure.servicefabric.models.enum
     :param health_check_wait_duration_in_milliseconds:
     :type health_check_wait_duration_in_milliseconds: str
     :param health_check_stable_duration_in_milliseconds:
@@ -41,6 +40,7 @@ class MonitoringPolicyDescription(Model):
     }
 
     def __init__(self, failure_action=None, health_check_wait_duration_in_milliseconds=None, health_check_stable_duration_in_milliseconds=None, health_check_retry_timeout_in_milliseconds=None, upgrade_timeout_in_milliseconds=None, upgrade_domain_timeout_in_milliseconds=None):
+        super(MonitoringPolicyDescription, self).__init__()
         self.failure_action = failure_action
         self.health_check_wait_duration_in_milliseconds = health_check_wait_duration_in_milliseconds
         self.health_check_stable_duration_in_milliseconds = health_check_stable_duration_in_milliseconds

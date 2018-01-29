@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class AzureActiveDirectory(Model):
     """The settings to enable AAD authentication on the cluster.
 
-    :param tenant_id: Azure active directory tenant id
+    :param tenant_id: Azure active directory tenant id.
     :type tenant_id: str
-    :param cluster_application: Azure active directory cluster application id
+    :param cluster_application: Azure active directory cluster application id.
     :type cluster_application: str
-    :param client_application: Azure active directory client application id
+    :param client_application: Azure active directory client application id.
     :type client_application: str
     """
 
@@ -30,6 +30,7 @@ class AzureActiveDirectory(Model):
     }
 
     def __init__(self, tenant_id=None, cluster_application=None, client_application=None):
+        super(AzureActiveDirectory, self).__init__()
         self.tenant_id = tenant_id
         self.cluster_application = cluster_application
         self.client_application = client_application

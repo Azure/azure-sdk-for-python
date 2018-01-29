@@ -29,4 +29,5 @@ class EdifactMessageIdentifier(Model):
     }
 
     def __init__(self, message_id):
+        super(EdifactMessageIdentifier, self).__init__()
         self.message_id = message_id

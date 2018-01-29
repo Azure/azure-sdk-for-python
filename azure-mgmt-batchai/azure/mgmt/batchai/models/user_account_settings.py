@@ -37,6 +37,7 @@ class UserAccountSettings(Model):
     }
 
     def __init__(self, admin_user_name, admin_user_ssh_public_key=None, admin_user_password=None):
+        super(UserAccountSettings, self).__init__()
         self.admin_user_name = admin_user_name
         self.admin_user_ssh_public_key = admin_user_ssh_public_key
         self.admin_user_password = admin_user_password

@@ -18,7 +18,7 @@ class SasTokenInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar access_token: the access token for the associated Azure Storage
+    :ivar access_token: The access token for the associated Azure Storage
      Container.
     :vartype access_token: str
     """

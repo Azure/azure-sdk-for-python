@@ -27,5 +27,6 @@ class CertificateIssuerItem(Model):
     }
 
     def __init__(self, id=None, provider=None):
+        super(CertificateIssuerItem, self).__init__()
         self.id = id
         self.provider = provider

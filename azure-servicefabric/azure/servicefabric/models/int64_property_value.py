@@ -15,7 +15,7 @@ from .property_value import PropertyValue
 class Int64PropertyValue(PropertyValue):
     """Describes a Service Fabric property value of type Int64.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param data: The data of the property value.
     :type data: str

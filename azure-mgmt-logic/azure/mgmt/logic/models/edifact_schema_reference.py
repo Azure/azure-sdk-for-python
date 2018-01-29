@@ -49,6 +49,7 @@ class EdifactSchemaReference(Model):
     }
 
     def __init__(self, message_id, message_version, message_release, schema_name, sender_application_id=None, sender_application_qualifier=None, association_assigned_code=None):
+        super(EdifactSchemaReference, self).__init__()
         self.message_id = message_id
         self.message_version = message_version
         self.message_release = message_release

@@ -19,8 +19,7 @@ class ApplicationHealthState(EntityHealthState):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
     :param name:
     :type name: str
     """

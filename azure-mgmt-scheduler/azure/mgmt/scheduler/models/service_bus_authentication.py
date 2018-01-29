@@ -21,8 +21,8 @@ class ServiceBusAuthentication(Model):
     :type sas_key_name: str
     :param type: Gets or sets the authentication type. Possible values
      include: 'NotSpecified', 'SharedAccessKey'
-    :type type: str or :class:`ServiceBusAuthenticationType
-     <azure.mgmt.scheduler.models.ServiceBusAuthenticationType>`
+    :type type: str or
+     ~azure.mgmt.scheduler.models.ServiceBusAuthenticationType
     """
 
     _attribute_map = {
@@ -32,6 +32,7 @@ class ServiceBusAuthentication(Model):
     }
 
     def __init__(self, sas_key=None, sas_key_name=None, type=None):
+        super(ServiceBusAuthentication, self).__init__()
         self.sas_key = sas_key
         self.sas_key_name = sas_key_name
         self.type = type

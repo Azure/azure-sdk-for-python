@@ -26,4 +26,5 @@ class Event(Model):
     }
 
     def __init__(self, event_name=None):
+        super(Event, self).__init__()
         self.event_name = event_name

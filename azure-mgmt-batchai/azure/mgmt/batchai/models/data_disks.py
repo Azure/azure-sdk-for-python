@@ -24,16 +24,15 @@ class DataDisks(Model):
     :ivar caching_type: None, ReadOnly, ReadWrite. Default value is None. This
      property is not patchable. Possible values include: 'none', 'readonly',
      'readwrite'. Default value: "none" .
-    :vartype caching_type: str or :class:`CachingType
-     <azure.mgmt.batchai.models.CachingType>`
+    :vartype caching_type: str or ~azure.mgmt.batchai.models.CachingType
     :param disk_count: Number of data disks to be attached to the VM. RAID
      level 0 will be applied in the case of multiple disks.
     :type disk_count: int
     :param storage_account_type: Specifies the type of storage account to be
      used on the disk. Possible values are: Standard_LRS or Premium_LRS.
      Possible values include: 'Standard_LRS', 'Premium_LRS'
-    :type storage_account_type: str or :class:`StorageAccountType
-     <azure.mgmt.batchai.models.StorageAccountType>`
+    :type storage_account_type: str or
+     ~azure.mgmt.batchai.models.StorageAccountType
     """
 
     _validation = {
@@ -51,6 +50,7 @@ class DataDisks(Model):
     }
 
     def __init__(self, disk_size_in_gb, disk_count, storage_account_type):
+        super(DataDisks, self).__init__()
         self.disk_size_in_gb = disk_size_in_gb
         self.caching_type = None
         self.disk_count = disk_count

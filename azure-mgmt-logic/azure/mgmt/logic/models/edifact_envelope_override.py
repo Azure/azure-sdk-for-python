@@ -71,6 +71,7 @@ class EdifactEnvelopeOverride(Model):
     }
 
     def __init__(self, message_id=None, message_version=None, message_release=None, message_association_assigned_code=None, target_namespace=None, functional_group_id=None, sender_application_qualifier=None, sender_application_id=None, receiver_application_qualifier=None, receiver_application_id=None, controlling_agency_code=None, group_header_message_version=None, group_header_message_release=None, association_assigned_code=None, application_password=None):
+        super(EdifactEnvelopeOverride, self).__init__()
         self.message_id = message_id
         self.message_version = message_version
         self.message_release = message_release

@@ -30,6 +30,7 @@ class SkuInfo(Model):
     }
 
     def __init__(self, resource_type=None, sku=None, capacity=None):
+        super(SkuInfo, self).__init__()
         self.resource_type = resource_type
         self.sku = sku
         self.capacity = capacity

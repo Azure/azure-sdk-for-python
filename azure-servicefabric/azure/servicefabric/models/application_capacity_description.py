@@ -36,8 +36,8 @@ class ApplicationCapacityDescription(Model):
      the services can be placed on any node. Default value: 0 .
     :type maximum_nodes: long
     :param application_metrics:
-    :type application_metrics: list of :class:`ApplicationMetricDescription
-     <azure.servicefabric.models.ApplicationMetricDescription>`
+    :type application_metrics:
+     list[~azure.servicefabric.models.ApplicationMetricDescription]
     """
 
     _validation = {
@@ -52,6 +52,7 @@ class ApplicationCapacityDescription(Model):
     }
 
     def __init__(self, minimum_nodes=None, maximum_nodes=0, application_metrics=None):
+        super(ApplicationCapacityDescription, self).__init__()
         self.minimum_nodes = minimum_nodes
         self.maximum_nodes = maximum_nodes
         self.application_metrics = application_metrics

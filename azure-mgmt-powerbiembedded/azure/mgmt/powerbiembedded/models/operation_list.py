@@ -16,8 +16,7 @@ class OperationList(Model):
     """OperationList.
 
     :param value:
-    :type value: list of :class:`Operation
-     <azure.mgmt.powerbiembedded.models.Operation>`
+    :type value: list[~azure.mgmt.powerbiembedded.models.Operation]
     """
 
     _attribute_map = {
@@ -25,4 +24,5 @@ class OperationList(Model):
     }
 
     def __init__(self, value=None):
+        super(OperationList, self).__init__()
         self.value = value

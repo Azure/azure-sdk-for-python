@@ -27,11 +27,10 @@ class IntegrationAccountPartner(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param partner_type: The partner type. Possible values include:
      'NotSpecified', 'B2B'
-    :type partner_type: str or :class:`PartnerType
-     <azure.mgmt.logic.models.PartnerType>`
+    :type partner_type: str or ~azure.mgmt.logic.models.PartnerType
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
@@ -39,8 +38,7 @@ class IntegrationAccountPartner(Resource):
     :param metadata: The metadata.
     :type metadata: object
     :param content: The partner content.
-    :type content: :class:`PartnerContent
-     <azure.mgmt.logic.models.PartnerContent>`
+    :type content: ~azure.mgmt.logic.models.PartnerContent
     """
 
     _validation = {

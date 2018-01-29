@@ -13,17 +13,16 @@ from msrest.serialization import Model
 
 
 class CertificateDescription(Model):
-    """Certificate details.
+    """Describes the certificate details.
 
-    :param thumbprint: Thumbprint of the primary certificate
+    :param thumbprint: Thumbprint of the primary certificate.
     :type thumbprint: str
-    :param thumbprint_secondary: Thumbprint of the secondary certificate
+    :param thumbprint_secondary: Thumbprint of the secondary certificate.
     :type thumbprint_secondary: str
     :param x509_store_name: The local certificate store location. Possible
      values include: 'AddressBook', 'AuthRoot', 'CertificateAuthority',
      'Disallowed', 'My', 'Root', 'TrustedPeople', 'TrustedPublisher'
-    :type x509_store_name: str or :class:`enum
-     <azure.mgmt.servicefabric.models.enum>`
+    :type x509_store_name: str or ~azure.mgmt.servicefabric.models.enum
     """
 
     _validation = {
@@ -37,6 +36,7 @@ class CertificateDescription(Model):
     }
 
     def __init__(self, thumbprint, thumbprint_secondary=None, x509_store_name=None):
+        super(CertificateDescription, self).__init__()
         self.thumbprint = thumbprint
         self.thumbprint_secondary = thumbprint_secondary
         self.x509_store_name = x509_store_name

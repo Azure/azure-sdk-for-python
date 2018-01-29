@@ -27,5 +27,6 @@ class ResourceGroupFilter(Model):
     }
 
     def __init__(self, tag_name=None, tag_value=None):
+        super(ResourceGroupFilter, self).__init__()
         self.tag_name = tag_name
         self.tag_value = tag_value

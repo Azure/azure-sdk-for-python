@@ -24,4 +24,5 @@ class BMSBackupEngineQueryObject(Model):
     }
 
     def __init__(self, expand=None):
+        super(BMSBackupEngineQueryObject, self).__init__()
         self.expand = expand

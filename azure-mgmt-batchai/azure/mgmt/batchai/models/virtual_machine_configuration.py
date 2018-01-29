@@ -16,8 +16,7 @@ class VirtualMachineConfiguration(Model):
     """Settings for OS image.
 
     :param image_reference: Reference to OS image.
-    :type image_reference: :class:`ImageReference
-     <azure.mgmt.batchai.models.ImageReference>`
+    :type image_reference: ~azure.mgmt.batchai.models.ImageReference
     """
 
     _attribute_map = {
@@ -25,4 +24,5 @@ class VirtualMachineConfiguration(Model):
     }
 
     def __init__(self, image_reference=None):
+        super(VirtualMachineConfiguration, self).__init__()
         self.image_reference = image_reference

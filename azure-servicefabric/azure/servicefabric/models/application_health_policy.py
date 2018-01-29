@@ -34,12 +34,11 @@ class ApplicationHealthPolicy(Model):
      . Default value: 0 .
     :type max_percent_unhealthy_deployed_applications: int
     :param default_service_type_health_policy:
-    :type default_service_type_health_policy: :class:`ServiceTypeHealthPolicy
-     <azure.servicefabric.models.ServiceTypeHealthPolicy>`
+    :type default_service_type_health_policy:
+     ~azure.servicefabric.models.ServiceTypeHealthPolicy
     :param service_type_health_policy_map:
-    :type service_type_health_policy_map: list of
-     :class:`ServiceTypeHealthPolicyMapItem
-     <azure.servicefabric.models.ServiceTypeHealthPolicyMapItem>`
+    :type service_type_health_policy_map:
+     list[~azure.servicefabric.models.ServiceTypeHealthPolicyMapItem]
     """
 
     _attribute_map = {
@@ -50,6 +49,7 @@ class ApplicationHealthPolicy(Model):
     }
 
     def __init__(self, consider_warning_as_error=False, max_percent_unhealthy_deployed_applications=0, default_service_type_health_policy=None, service_type_health_policy_map=None):
+        super(ApplicationHealthPolicy, self).__init__()
         self.consider_warning_as_error = consider_warning_as_error
         self.max_percent_unhealthy_deployed_applications = max_percent_unhealthy_deployed_applications
         self.default_service_type_health_policy = default_service_type_health_policy

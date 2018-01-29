@@ -47,6 +47,7 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
     }
 
     def __init__(self, additional_properties=None, catalog_server_endpoint=None, catalog_admin_user_name=None, catalog_admin_password=None, catalog_pricing_tier=None):
+        super(IntegrationRuntimeSsisCatalogInfo, self).__init__()
         self.additional_properties = additional_properties
         self.catalog_server_endpoint = catalog_server_endpoint
         self.catalog_admin_user_name = catalog_admin_user_name

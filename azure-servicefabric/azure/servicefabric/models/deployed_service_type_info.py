@@ -24,7 +24,7 @@ class DeployedServiceTypeInfo(Model):
     :type code_package_name: str
     :param status: Possible values include: 'Invalid', 'Disabled', 'Enabled',
      'Registered'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param service_package_activation_id:
     :type service_package_activation_id: str
     """
@@ -38,6 +38,7 @@ class DeployedServiceTypeInfo(Model):
     }
 
     def __init__(self, service_type_name=None, service_manifest_name=None, code_package_name=None, status=None, service_package_activation_id=None):
+        super(DeployedServiceTypeInfo, self).__init__()
         self.service_type_name = service_type_name
         self.service_manifest_name = service_manifest_name
         self.code_package_name = code_package_name

@@ -19,7 +19,7 @@ class SingletonPartitionInformation(PartitionInformation):
 
     :param id:
     :type id: str
-    :param service_partition_kind: Polymorphic Discriminator
+    :param service_partition_kind: Constant filled by server.
     :type service_partition_kind: str
     """
 

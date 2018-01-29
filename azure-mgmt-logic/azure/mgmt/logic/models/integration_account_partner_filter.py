@@ -17,8 +17,7 @@ class IntegrationAccountPartnerFilter(Model):
 
     :param partner_type: The partner type of integration account partner.
      Possible values include: 'NotSpecified', 'B2B'
-    :type partner_type: str or :class:`PartnerType
-     <azure.mgmt.logic.models.PartnerType>`
+    :type partner_type: str or ~azure.mgmt.logic.models.PartnerType
     """
 
     _validation = {
@@ -30,4 +29,5 @@ class IntegrationAccountPartnerFilter(Model):
     }
 
     def __init__(self, partner_type):
+        super(IntegrationAccountPartnerFilter, self).__init__()
         self.partner_type = partner_type

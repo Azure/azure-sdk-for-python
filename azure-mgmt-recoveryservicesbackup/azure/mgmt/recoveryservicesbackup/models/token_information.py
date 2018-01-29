@@ -30,6 +30,7 @@ class TokenInformation(Model):
     }
 
     def __init__(self, token=None, expiry_time_in_utc_ticks=None, security_pin=None):
+        super(TokenInformation, self).__init__()
         self.token = token
         self.expiry_time_in_utc_ticks = expiry_time_in_utc_ticks
         self.security_pin = security_pin

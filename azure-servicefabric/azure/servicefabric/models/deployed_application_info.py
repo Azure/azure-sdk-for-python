@@ -23,7 +23,7 @@ class DeployedApplicationInfo(Model):
     :type type_name: str
     :param status: Possible values include: 'Invalid', 'Downloading',
      'Activating', 'Active', 'Upgrading', 'Deactivating'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param work_directory: The work directory of the application on the node.
      The work directory can be used to store application data.
     :type work_directory: str
@@ -47,6 +47,7 @@ class DeployedApplicationInfo(Model):
     }
 
     def __init__(self, id=None, name=None, type_name=None, status=None, work_directory=None, log_directory=None, temp_directory=None):
+        super(DeployedApplicationInfo, self).__init__()
         self.id = id
         self.name = name
         self.type_name = type_name

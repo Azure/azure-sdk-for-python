@@ -27,7 +27,7 @@ class IntegrationAccountAgreement(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
@@ -36,8 +36,7 @@ class IntegrationAccountAgreement(Resource):
     :type metadata: object
     :param agreement_type: The agreement type. Possible values include:
      'NotSpecified', 'AS2', 'X12', 'Edifact'
-    :type agreement_type: str or :class:`AgreementType
-     <azure.mgmt.logic.models.AgreementType>`
+    :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     :param host_partner: The integration account partner that is set as host
      partner for this agreement.
     :type host_partner: str
@@ -45,14 +44,11 @@ class IntegrationAccountAgreement(Resource):
      partner for this agreement.
     :type guest_partner: str
     :param host_identity: The business identity of the host partner.
-    :type host_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
+    :type host_identity: ~azure.mgmt.logic.models.BusinessIdentity
     :param guest_identity: The business identity of the guest partner.
-    :type guest_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
+    :type guest_identity: ~azure.mgmt.logic.models.BusinessIdentity
     :param content: The agreement content.
-    :type content: :class:`AgreementContent
-     <azure.mgmt.logic.models.AgreementContent>`
+    :type content: ~azure.mgmt.logic.models.AgreementContent
     """
 
     _validation = {

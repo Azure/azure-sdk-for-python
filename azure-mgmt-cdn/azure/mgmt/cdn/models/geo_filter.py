@@ -39,6 +39,7 @@ class GeoFilter(Model):
     }
 
     def __init__(self, relative_path, action, country_codes):
+        super(GeoFilter, self).__init__()
         self.relative_path = relative_path
         self.action = action
         self.country_codes = country_codes

@@ -40,6 +40,7 @@ class FeedbackProperties(Model):
     }
 
     def __init__(self, lock_duration_as_iso8601=None, ttl_as_iso8601=None, max_delivery_count=None):
+        super(FeedbackProperties, self).__init__()
         self.lock_duration_as_iso8601 = lock_duration_as_iso8601
         self.ttl_as_iso8601 = ttl_as_iso8601
         self.max_delivery_count = max_delivery_count

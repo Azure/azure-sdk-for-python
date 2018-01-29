@@ -27,5 +27,6 @@ class ValidateResponseError(Model):
     }
 
     def __init__(self, code=None, message=None):
+        super(ValidateResponseError, self).__init__()
         self.code = code
         self.message = message

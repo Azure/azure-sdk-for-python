@@ -28,5 +28,6 @@ class WeekDetails(Model):
     }
 
     def __init__(self, weekdays=None, time=None):
+        super(WeekDetails, self).__init__()
         self.weekdays = weekdays
         self.time = time

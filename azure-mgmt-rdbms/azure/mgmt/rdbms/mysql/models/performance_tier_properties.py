@@ -33,6 +33,7 @@ class PerformanceTierProperties(Model):
     }
 
     def __init__(self, id=None, backup_retention_days=None, service_level_objectives=None):
+        super(PerformanceTierProperties, self).__init__()
         self.id = id
         self.backup_retention_days = backup_retention_days
         self.service_level_objectives = service_level_objectives

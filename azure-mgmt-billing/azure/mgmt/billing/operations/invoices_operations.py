@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -24,6 +24,8 @@ class InvoicesOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Version of the API to be used with the client request. The current version is 2017-04-24-preview. Constant value: "2017-04-24-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -63,7 +65,9 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`InvoicePaged <azure.mgmt.billing.models.InvoicePaged>`
+        :return: An iterator like instance of Invoice
+        :rtype:
+         ~azure.mgmt.billing.models.InvoicePaged[~azure.mgmt.billing.models.Invoice]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -106,7 +110,7 @@ class InvoicesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -135,9 +139,9 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Invoice <azure.mgmt.billing.models.Invoice>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Invoice or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Invoice or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -165,7 +169,7 @@ class InvoicesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -191,9 +195,9 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Invoice <azure.mgmt.billing.models.Invoice>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Invoice or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Invoice or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -220,7 +224,7 @@ class InvoicesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)

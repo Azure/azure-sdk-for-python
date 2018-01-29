@@ -29,7 +29,7 @@ class FallbackRouteProperties(Model):
     :type condition: str
     :param endpoint_names: The list of endpoints to which the messages that
      satisfy the condition are routed to. Currently only 1 endpoint is allowed.
-    :type endpoint_names: list of str
+    :type endpoint_names: list[str]
     :param is_enabled: Used to specify whether the fallback route is enabled.
     :type is_enabled: bool
     """
@@ -50,6 +50,7 @@ class FallbackRouteProperties(Model):
     source = "DeviceMessages"
 
     def __init__(self, endpoint_names, is_enabled, condition=None):
+        super(FallbackRouteProperties, self).__init__()
         self.condition = condition
         self.endpoint_names = endpoint_names
         self.is_enabled = is_enabled
