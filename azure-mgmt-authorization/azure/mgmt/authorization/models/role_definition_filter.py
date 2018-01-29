@@ -24,4 +24,5 @@ class RoleDefinitionFilter(Model):
     }
 
     def __init__(self, role_name=None):
+        super(RoleDefinitionFilter, self).__init__()
         self.role_name = role_name
