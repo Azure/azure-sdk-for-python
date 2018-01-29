@@ -66,6 +66,10 @@ class PriceSheetOperations(object):
             if not next_link:
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -139,6 +143,11 @@ class PriceSheetOperations(object):
             if not next_link:
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'billingPeriodName': self._serialize.url("self.config.billing_period_name", self.config.billing_period_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
