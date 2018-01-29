@@ -13,6 +13,7 @@ from .key_value_pair import KeyValuePair
 from .tag import Tag
 from .frame import Frame
 from .frames import Frames
+from .score import Score
 from .classification import Classification
 from .status import Status
 from .email import Email
@@ -75,6 +76,7 @@ __all__ = [
     'Tag',
     'Frame',
     'Frames',
+    'Score',
     'Classification',
     'Status',
     'Email',
