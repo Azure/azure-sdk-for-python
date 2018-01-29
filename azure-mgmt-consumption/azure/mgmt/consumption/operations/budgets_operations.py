@@ -182,7 +182,7 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'name': self._serialize.url("self.config.name", self.config.name, 'str')
+            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -244,7 +244,7 @@ class BudgetsOperations(object):
                 url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'name': self._serialize.url("self.config.name", self.config.name, 'str')
+                    'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -307,7 +307,7 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'name': self._serialize.url("self.config.name", self.config.name, 'str')
+            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -357,7 +357,7 @@ class BudgetsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-            'name': self._serialize.url("self.config.name", self.config.name, 'str')
+            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -420,7 +420,7 @@ class BudgetsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-                    'name': self._serialize.url("self.config.name", self.config.name, 'str')
+                    'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -484,7 +484,7 @@ class BudgetsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-            'name': self._serialize.url("self.config.name", self.config.name, 'str')
+            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
