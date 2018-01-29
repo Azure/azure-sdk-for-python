@@ -109,7 +109,7 @@ class PriceSheetOperations(object):
 
         return deserialized
 
-    def list_by_billing_period_id(
+    def list_by_billing_period(
             self, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the price sheet for a scope by subscriptionId and billing period.
         Price sheets are available via this API only for May 1, 2014 or later.
@@ -138,7 +138,7 @@ class PriceSheetOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodId}/providers/Microsoft.Consumption/pricesheets/default'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'
 
                 # Construct parameters
                 query_parameters = {}
