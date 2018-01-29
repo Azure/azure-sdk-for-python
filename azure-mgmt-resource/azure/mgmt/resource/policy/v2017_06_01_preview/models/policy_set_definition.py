@@ -64,6 +64,7 @@ class PolicySetDefinition(Model):
     }
 
     def __init__(self, policy_definitions, policy_type=None, display_name=None, description=None, metadata=None, parameters=None):
+        super(PolicySetDefinition, self).__init__()
         self.policy_type = policy_type
         self.display_name = display_name
         self.description = description

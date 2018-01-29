@@ -32,6 +32,7 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, http_status=None, error_code=None, error_message=None):
+        super(ErrorResponse, self).__init__()
         self.http_status = http_status
         self.error_code = error_code
         self.error_message = error_message
