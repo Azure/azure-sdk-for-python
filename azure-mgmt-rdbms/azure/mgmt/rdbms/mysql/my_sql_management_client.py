@@ -52,7 +52,7 @@ class MySQLManagementClientConfiguration(AzureConfiguration):
 
         super(MySQLManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('mysqlmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-rdbms/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

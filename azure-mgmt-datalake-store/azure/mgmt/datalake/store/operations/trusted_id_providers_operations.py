@@ -38,7 +38,7 @@ class TrustedIdProvidersOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, account_name, trusted_id_provider_name, id_provider, name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, trusted_id_provider_name, id_provider, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the specified trusted identity provider. During
         update, the trusted identity provider with the specified name will be
         replaced with this new provider.
@@ -53,10 +53,8 @@ class TrustedIdProvidersOperations(object):
          provider. This is used for differentiation of providers in the
          account.
         :type trusted_id_provider_name: str
-        :param id_provider: The URL of this trusted identity provider
+        :param id_provider: The URL of this trusted identity provider.
         :type id_provider: str
-        :param name: Resource name
-        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -67,7 +65,7 @@ class TrustedIdProvidersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TrustedIdProvider(name=name, id_provider=id_provider)
+        parameters = models.CreateOrUpdateTrustedIdProviderParameters(id_provider=id_provider)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/trustedIdProviders/{trustedIdProviderName}'
@@ -94,7 +92,7 @@ class TrustedIdProvidersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'TrustedIdProvider')
+        body_content = self._serialize.body(parameters, 'CreateOrUpdateTrustedIdProviderParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -131,7 +129,7 @@ class TrustedIdProvidersOperations(object):
          provider. This is used for differentiation of providers in the
          account.
         :type trusted_id_provider_name: str
-        :param id_provider: The URL of this trusted identity provider
+        :param id_provider: The URL of this trusted identity provider.
         :type id_provider: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

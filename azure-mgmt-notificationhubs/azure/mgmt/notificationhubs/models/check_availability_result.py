@@ -27,9 +27,9 @@ class CheckAvailabilityResult(Resource):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param is_availiable: True if the name is available and can be used to
      create new Namespace/NotificationHub. Otherwise false.
     :type is_availiable: bool

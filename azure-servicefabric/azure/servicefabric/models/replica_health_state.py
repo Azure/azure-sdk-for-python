@@ -16,13 +16,16 @@ class ReplicaHealthState(EntityHealthState):
     """Represents a base class for stateful service replica or stateless service
     instance health state.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServiceReplicaHealthState,
+    StatelessServiceInstanceHealthState
+
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
     :param partition_id:
     :type partition_id: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     """
 

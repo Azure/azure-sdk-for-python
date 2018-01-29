@@ -83,6 +83,7 @@ class RecordSet(Model):
     }
 
     def __init__(self, etag=None, metadata=None, ttl=None, arecords=None, aaaa_records=None, mx_records=None, ns_records=None, ptr_records=None, srv_records=None, txt_records=None, cname_record=None, soa_record=None, caa_records=None):
+        super(RecordSet, self).__init__()
         self.id = None
         self.name = None
         self.type = None

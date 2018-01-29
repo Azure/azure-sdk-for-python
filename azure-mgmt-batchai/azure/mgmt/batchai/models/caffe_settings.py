@@ -43,6 +43,7 @@ class CaffeSettings(Model):
     }
 
     def __init__(self, config_file_path=None, python_script_file_path=None, python_interpreter_path=None, command_line_args=None, process_count=None):
+        super(CaffeSettings, self).__init__()
         self.config_file_path = config_file_path
         self.python_script_file_path = python_script_file_path
         self.python_interpreter_path = python_interpreter_path

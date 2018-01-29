@@ -15,11 +15,10 @@ from msrest.serialization import Model
 class OperationResult(Model):
     """Available operation list result.
 
-    :param name: Result name
+    :param name: The name of the operation.
     :type name: str
-    :param display: Dispaly of the result
-    :type display: :class:`AvailableOperationDisplay
-     <azure.mgmt.servicefabric.models.AvailableOperationDisplay>`
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.servicefabric.models.AvailableOperationDisplay
     :param origin: Origin result
     :type origin: str
     :param next_link: The URL to use for getting the next set of results.
@@ -34,6 +33,7 @@ class OperationResult(Model):
     }
 
     def __init__(self, name=None, display=None, origin=None, next_link=None):
+        super(OperationResult, self).__init__()
         self.name = name
         self.display = display
         self.origin = origin

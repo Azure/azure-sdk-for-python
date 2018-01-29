@@ -27,5 +27,6 @@ class ApiEndpoint(Model):
     }
 
     def __init__(self, endpoint=None, major_version=None):
+        super(ApiEndpoint, self).__init__()
         self.endpoint = endpoint
         self.major_version = major_version

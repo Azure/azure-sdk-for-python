@@ -32,8 +32,8 @@ class EdifactValidationOverride(Model):
     :type allow_leading_and_trailing_spaces_and_zeroes: bool
     :param trailing_separator_policy: The trailing separator policy. Possible
      values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
-    :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
-     <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
+    :type trailing_separator_policy: str or
+     ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     :param trim_leading_and_trailing_spaces_and_zeroes: The value indicating
      whether to trim leading and trailing spaces and zeroes.
     :type trim_leading_and_trailing_spaces_and_zeroes: bool
@@ -60,6 +60,7 @@ class EdifactValidationOverride(Model):
     }
 
     def __init__(self, message_id, enforce_character_set, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy, trim_leading_and_trailing_spaces_and_zeroes):
+        super(EdifactValidationOverride, self).__init__()
         self.message_id = message_id
         self.enforce_character_set = enforce_character_set
         self.validate_edi_types = validate_edi_types

@@ -21,8 +21,7 @@ class PagedReplicaInfoList(Model):
     :param continuation_token:
     :type continuation_token: str
     :param items:
-    :type items: list of :class:`ReplicaInfo
-     <azure.servicefabric.models.ReplicaInfo>`
+    :type items: list[~azure.servicefabric.models.ReplicaInfo]
     """
 
     _attribute_map = {
@@ -31,5 +30,6 @@ class PagedReplicaInfoList(Model):
     }
 
     def __init__(self, continuation_token=None, items=None):
+        super(PagedReplicaInfoList, self).__init__()
         self.continuation_token = continuation_token
         self.items = items

@@ -26,6 +26,8 @@ class PerformanceTiersOperations(object):
     :ivar api_version: The API version to use for the request. Constant value: "2017-04-30-preview".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -80,7 +82,7 @@ class PerformanceTiersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

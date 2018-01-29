@@ -10,10 +10,13 @@
 # --------------------------------------------------------------------------
 
 from .app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
+from .certificate_registration_provider_operations import CertificateRegistrationProviderOperations
 from .domains_operations import DomainsOperations
 from .top_level_domains_operations import TopLevelDomainsOperations
+from .domain_registration_provider_operations import DomainRegistrationProviderOperations
 from .certificates_operations import CertificatesOperations
 from .deleted_web_apps_operations import DeletedWebAppsOperations
+from .diagnostics_operations import DiagnosticsOperations
 from .provider_operations import ProviderOperations
 from .recommendations_operations import RecommendationsOperations
 from .web_apps_operations import WebAppsOperations
@@ -22,10 +25,13 @@ from .app_service_plans_operations import AppServicePlansOperations
 
 __all__ = [
     'AppServiceCertificateOrdersOperations',
+    'CertificateRegistrationProviderOperations',
     'DomainsOperations',
     'TopLevelDomainsOperations',
+    'DomainRegistrationProviderOperations',
     'CertificatesOperations',
     'DeletedWebAppsOperations',
+    'DiagnosticsOperations',
     'ProviderOperations',
     'RecommendationsOperations',
     'WebAppsOperations',

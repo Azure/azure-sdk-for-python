@@ -27,7 +27,7 @@ class TrackedResource(Resource):
      Microsoft.Network/trafficmanagerProfiles.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: The Azure Region where the resource lives
     :type location: str
     """

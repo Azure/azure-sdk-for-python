@@ -61,6 +61,7 @@ class ServiceBusBrokeredMessageProperties(Model):
     }
 
     def __init__(self, content_type=None, correlation_id=None, force_persistence=None, label=None, message_id=None, partition_key=None, reply_to=None, reply_to_session_id=None, scheduled_enqueue_time_utc=None, session_id=None, time_to_live=None, to=None, via_partition_key=None):
+        super(ServiceBusBrokeredMessageProperties, self).__init__()
         self.content_type = content_type
         self.correlation_id = correlation_id
         self.force_persistence = force_persistence

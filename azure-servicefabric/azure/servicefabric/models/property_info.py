@@ -18,11 +18,9 @@ class PropertyInfo(Model):
     :param name:
     :type name: str
     :param value:
-    :type value: :class:`PropertyValue
-     <azure.servicefabric.models.PropertyValue>`
+    :type value: ~azure.servicefabric.models.PropertyValue
     :param metadata:
-    :type metadata: :class:`PropertyMetadata
-     <azure.servicefabric.models.PropertyMetadata>`
+    :type metadata: ~azure.servicefabric.models.PropertyMetadata
     """
 
     _validation = {
@@ -37,6 +35,7 @@ class PropertyInfo(Model):
     }
 
     def __init__(self, name, metadata, value=None):
+        super(PropertyInfo, self).__init__()
         self.name = name
         self.value = value
         self.metadata = metadata

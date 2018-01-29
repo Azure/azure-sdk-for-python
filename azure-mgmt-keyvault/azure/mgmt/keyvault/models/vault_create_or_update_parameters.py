@@ -19,10 +19,9 @@ class VaultCreateOrUpdateParameters(Model):
      be created.
     :type location: str
     :param tags: The tags that will be assigned to the key vault.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties: Properties of the vault
-    :type properties: :class:`VaultProperties
-     <azure.mgmt.keyvault.models.VaultProperties>`
+    :type properties: ~azure.mgmt.keyvault.models.VaultProperties
     """
 
     _validation = {
@@ -37,6 +36,7 @@ class VaultCreateOrUpdateParameters(Model):
     }
 
     def __init__(self, location, properties, tags=None):
+        super(VaultCreateOrUpdateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.properties = properties

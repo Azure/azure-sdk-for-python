@@ -26,4 +26,5 @@ class TaskUpdateParameter(Model):
     }
 
     def __init__(self, constraints=None):
+        super(TaskUpdateParameter, self).__init__()
         self.constraints = constraints

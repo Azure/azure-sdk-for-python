@@ -27,5 +27,6 @@ class Permission(Model):
     }
 
     def __init__(self, actions=None, not_actions=None):
+        super(Permission, self).__init__()
         self.actions = actions
         self.not_actions = not_actions

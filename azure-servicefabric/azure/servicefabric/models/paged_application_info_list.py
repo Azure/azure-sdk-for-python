@@ -21,8 +21,7 @@ class PagedApplicationInfoList(Model):
     :param continuation_token:
     :type continuation_token: str
     :param items:
-    :type items: list of :class:`ApplicationInfo
-     <azure.servicefabric.models.ApplicationInfo>`
+    :type items: list[~azure.servicefabric.models.ApplicationInfo]
     """
 
     _attribute_map = {
@@ -31,5 +30,6 @@ class PagedApplicationInfoList(Model):
     }
 
     def __init__(self, continuation_token=None, items=None):
+        super(PagedApplicationInfoList, self).__init__()
         self.continuation_token = continuation_token
         self.items = items

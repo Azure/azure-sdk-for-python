@@ -17,7 +17,7 @@ class RecurrenceScheduleOccurrence(Model):
 
     :param day: The day of the week. Possible values include: 'Sunday',
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-    :type day: str or :class:`DayOfWeek <azure.mgmt.logic.models.DayOfWeek>`
+    :type day: str or ~azure.mgmt.logic.models.DayOfWeek
     :param occurrence: The occurrence.
     :type occurrence: int
     """
@@ -28,5 +28,6 @@ class RecurrenceScheduleOccurrence(Model):
     }
 
     def __init__(self, day=None, occurrence=None):
+        super(RecurrenceScheduleOccurrence, self).__init__()
         self.day = day
         self.occurrence = occurrence

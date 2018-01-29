@@ -25,8 +25,7 @@ class JobDefinition(Model):
     :ivar name: Gets the job resource name.
     :vartype name: str
     :param properties: Gets or sets the job properties.
-    :type properties: :class:`JobProperties
-     <azure.mgmt.scheduler.models.JobProperties>`
+    :type properties: ~azure.mgmt.scheduler.models.JobProperties
     """
 
     _validation = {
@@ -43,6 +42,7 @@ class JobDefinition(Model):
     }
 
     def __init__(self, properties=None):
+        super(JobDefinition, self).__init__()
         self.id = None
         self.type = None
         self.name = None

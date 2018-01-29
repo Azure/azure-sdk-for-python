@@ -24,7 +24,7 @@ class CheckExistsPropertyBatchOperation(PropertyBatchOperation):
 
     :param property_name:
     :type property_name: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param exists: Whether or not the property should exist for the operation
      to pass.

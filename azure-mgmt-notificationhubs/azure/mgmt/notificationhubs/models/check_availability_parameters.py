@@ -28,9 +28,9 @@ class CheckAvailabilityParameters(Model):
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param is_availiable: True if the name is available and can be used to
      create new Namespace/NotificationHub. Otherwise false.
     :type is_availiable: bool
@@ -54,6 +54,7 @@ class CheckAvailabilityParameters(Model):
     }
 
     def __init__(self, name, location, tags=None, sku=None, is_availiable=None):
+        super(CheckAvailabilityParameters, self).__init__()
         self.id = None
         self.name = name
         self.type = None

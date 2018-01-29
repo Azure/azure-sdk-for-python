@@ -17,8 +17,8 @@ class X12MessageFilter(Model):
 
     :param message_filter_type: The message filter type. Possible values
      include: 'NotSpecified', 'Include', 'Exclude'
-    :type message_filter_type: str or :class:`MessageFilterType
-     <azure.mgmt.logic.models.MessageFilterType>`
+    :type message_filter_type: str or
+     ~azure.mgmt.logic.models.MessageFilterType
     """
 
     _validation = {
@@ -30,4 +30,5 @@ class X12MessageFilter(Model):
     }
 
     def __init__(self, message_filter_type):
+        super(X12MessageFilter, self).__init__()
         self.message_filter_type = message_filter_type

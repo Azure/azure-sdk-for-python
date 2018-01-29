@@ -20,12 +20,10 @@ class IotHubProperties(Model):
 
     :param authorization_policies: The shared access policies you can use to
      secure a connection to the IoT hub.
-    :type authorization_policies: list of
-     :class:`SharedAccessSignatureAuthorizationRule
-     <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>`
+    :type authorization_policies:
+     list[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule]
     :param ip_filter_rules: The IP filter rules.
-    :type ip_filter_rules: list of :class:`IpFilterRule
-     <azure.mgmt.iothub.models.IpFilterRule>`
+    :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :ivar host_name: The name of the host.
@@ -34,36 +32,35 @@ class IotHubProperties(Model):
      The possible keys to this dictionary are events and
      operationsMonitoringEvents. Both of these keys have to be present in the
      dictionary while making create or update calls for the IoT hub.
-    :type event_hub_endpoints: dict
+    :type event_hub_endpoints: dict[str,
+     ~azure.mgmt.iothub.models.EventHubProperties]
     :param routing:
-    :type routing: :class:`RoutingProperties
-     <azure.mgmt.iothub.models.RoutingProperties>`
+    :type routing: ~azure.mgmt.iothub.models.RoutingProperties
     :param storage_endpoints: The list of Azure Storage endpoints where you
      can upload files. Currently you can configure only one Azure Storage
      account and that MUST have its key as $default. Specifying more than one
      storage account causes an error to be thrown. Not specifying a value for
      this property when the enableFileUploadNotifications property is set to
      True, causes an error to be thrown.
-    :type storage_endpoints: dict
+    :type storage_endpoints: dict[str,
+     ~azure.mgmt.iothub.models.StorageEndpointProperties]
     :param messaging_endpoints: The messaging endpoint properties for the file
      upload notification queue.
-    :type messaging_endpoints: dict
+    :type messaging_endpoints: dict[str,
+     ~azure.mgmt.iothub.models.MessagingEndpointProperties]
     :param enable_file_upload_notifications: If True, file upload
      notifications are enabled.
     :type enable_file_upload_notifications: bool
     :param cloud_to_device:
-    :type cloud_to_device: :class:`CloudToDeviceProperties
-     <azure.mgmt.iothub.models.CloudToDeviceProperties>`
+    :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
     :param operations_monitoring_properties:
     :type operations_monitoring_properties:
-     :class:`OperationsMonitoringProperties
-     <azure.mgmt.iothub.models.OperationsMonitoringProperties>`
+     ~azure.mgmt.iothub.models.OperationsMonitoringProperties
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
-    :type features: str or :class:`Capabilities
-     <azure.mgmt.iothub.models.Capabilities>`
+    :type features: str or ~azure.mgmt.iothub.models.Capabilities
     """
 
     _validation = {
@@ -88,6 +85,7 @@ class IotHubProperties(Model):
     }
 
     def __init__(self, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications=None, cloud_to_device=None, comments=None, operations_monitoring_properties=None, features=None):
+        super(IotHubProperties, self).__init__()
         self.authorization_policies = authorization_policies
         self.ip_filter_rules = ip_filter_rules
         self.provisioning_state = None

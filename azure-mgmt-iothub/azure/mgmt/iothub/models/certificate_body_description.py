@@ -25,4 +25,5 @@ class CertificateBodyDescription(Model):
     }
 
     def __init__(self, certificate=None):
+        super(CertificateBodyDescription, self).__init__()
         self.certificate = certificate

@@ -34,5 +34,6 @@ class Operation(Model):
     }
 
     def __init__(self, display=None):
+        super(Operation, self).__init__()
         self.name = None
         self.display = display

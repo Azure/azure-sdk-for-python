@@ -20,8 +20,7 @@ class JobCollectionQuota(Model):
     :param max_job_occurrence: Gets or sets the maximum job occurrence.
     :type max_job_occurrence: int
     :param max_recurrence: Gets or set the maximum recurrence.
-    :type max_recurrence: :class:`JobMaxRecurrence
-     <azure.mgmt.scheduler.models.JobMaxRecurrence>`
+    :type max_recurrence: ~azure.mgmt.scheduler.models.JobMaxRecurrence
     """
 
     _attribute_map = {
@@ -31,6 +30,7 @@ class JobCollectionQuota(Model):
     }
 
     def __init__(self, max_job_count=None, max_job_occurrence=None, max_recurrence=None):
+        super(JobCollectionQuota, self).__init__()
         self.max_job_count = max_job_count
         self.max_job_occurrence = max_job_occurrence
         self.max_recurrence = max_recurrence

@@ -9,22 +9,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .create_or_update_compute_policy_parameters import CreateOrUpdateComputePolicyParameters
+from .create_compute_policy_with_account_parameters import CreateComputePolicyWithAccountParameters
+from .update_compute_policy_parameters import UpdateComputePolicyParameters
+from .update_compute_policy_with_account_parameters import UpdateComputePolicyWithAccountParameters
+from .compute_policy import ComputePolicy
+from .create_or_update_firewall_rule_parameters import CreateOrUpdateFirewallRuleParameters
+from .create_firewall_rule_with_account_parameters import CreateFirewallRuleWithAccountParameters
+from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
+from .update_firewall_rule_with_account_parameters import UpdateFirewallRuleWithAccountParameters
+from .firewall_rule import FirewallRule
+from .add_storage_account_parameters import AddStorageAccountParameters
+from .add_storage_account_with_account_parameters import AddStorageAccountWithAccountParameters
+from .update_storage_account_parameters import UpdateStorageAccountParameters
+from .update_storage_account_with_account_parameters import UpdateStorageAccountWithAccountParameters
 from .storage_account_info import StorageAccountInfo
 from .storage_container import StorageContainer
 from .sas_token_info import SasTokenInfo
-from .data_lake_store_account_info import DataLakeStoreAccountInfo
-from .firewall_rule import FirewallRule
-from .compute_policy_account_create_parameters import ComputePolicyAccountCreateParameters
-from .compute_policy import ComputePolicy
 from .add_data_lake_store_parameters import AddDataLakeStoreParameters
-from .add_storage_account_parameters import AddStorageAccountParameters
-from .update_storage_account_parameters import UpdateStorageAccountParameters
-from .compute_policy_create_or_update_parameters import ComputePolicyCreateOrUpdateParameters
-from .data_lake_analytics_account_update_parameters import DataLakeAnalyticsAccountUpdateParameters
+from .add_data_lake_store_with_account_parameters import AddDataLakeStoreWithAccountParameters
+from .update_data_lake_store_with_account_parameters import UpdateDataLakeStoreWithAccountParameters
+from .data_lake_store_account_info import DataLakeStoreAccountInfo
 from .data_lake_analytics_account_properties_basic import DataLakeAnalyticsAccountPropertiesBasic
 from .data_lake_analytics_account_basic import DataLakeAnalyticsAccountBasic
 from .data_lake_analytics_account import DataLakeAnalyticsAccount
-from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
+from .data_lake_analytics_account_update_parameters import DataLakeAnalyticsAccountUpdateParameters
 from .name_availability_information import NameAvailabilityInformation
 from .check_name_availability_parameters import CheckNameAvailabilityParameters
 from .capability_information import CapabilityInformation
@@ -32,7 +41,6 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .operation_list_result import OperationListResult
 from .resource import Resource
-from .optional_sub_resource import OptionalSubResource
 from .sub_resource import SubResource
 from .compute_policy_paged import ComputePolicyPaged
 from .firewall_rule_paged import FirewallRulePaged
@@ -42,33 +50,42 @@ from .storage_account_info_paged import StorageAccountInfoPaged
 from .data_lake_store_account_info_paged import DataLakeStoreAccountInfoPaged
 from .data_lake_analytics_account_basic_paged import DataLakeAnalyticsAccountBasicPaged
 from .data_lake_analytics_account_management_client_enums import (
-    TierType,
-    FirewallState,
-    FirewallAllowAzureIpsState,
     AADObjectType,
     DataLakeAnalyticsAccountStatus,
     DataLakeAnalyticsAccountState,
+    TierType,
+    FirewallState,
+    FirewallAllowAzureIpsState,
     SubscriptionState,
     OperationOrigin,
 )
 
 __all__ = [
+    'CreateOrUpdateComputePolicyParameters',
+    'CreateComputePolicyWithAccountParameters',
+    'UpdateComputePolicyParameters',
+    'UpdateComputePolicyWithAccountParameters',
+    'ComputePolicy',
+    'CreateOrUpdateFirewallRuleParameters',
+    'CreateFirewallRuleWithAccountParameters',
+    'UpdateFirewallRuleParameters',
+    'UpdateFirewallRuleWithAccountParameters',
+    'FirewallRule',
+    'AddStorageAccountParameters',
+    'AddStorageAccountWithAccountParameters',
+    'UpdateStorageAccountParameters',
+    'UpdateStorageAccountWithAccountParameters',
     'StorageAccountInfo',
     'StorageContainer',
     'SasTokenInfo',
-    'DataLakeStoreAccountInfo',
-    'FirewallRule',
-    'ComputePolicyAccountCreateParameters',
-    'ComputePolicy',
     'AddDataLakeStoreParameters',
-    'AddStorageAccountParameters',
-    'UpdateStorageAccountParameters',
-    'ComputePolicyCreateOrUpdateParameters',
-    'DataLakeAnalyticsAccountUpdateParameters',
+    'AddDataLakeStoreWithAccountParameters',
+    'UpdateDataLakeStoreWithAccountParameters',
+    'DataLakeStoreAccountInfo',
     'DataLakeAnalyticsAccountPropertiesBasic',
     'DataLakeAnalyticsAccountBasic',
     'DataLakeAnalyticsAccount',
-    'UpdateFirewallRuleParameters',
+    'DataLakeAnalyticsAccountUpdateParameters',
     'NameAvailabilityInformation',
     'CheckNameAvailabilityParameters',
     'CapabilityInformation',
@@ -76,7 +93,6 @@ __all__ = [
     'Operation',
     'OperationListResult',
     'Resource',
-    'OptionalSubResource',
     'SubResource',
     'ComputePolicyPaged',
     'FirewallRulePaged',
@@ -85,12 +101,12 @@ __all__ = [
     'StorageAccountInfoPaged',
     'DataLakeStoreAccountInfoPaged',
     'DataLakeAnalyticsAccountBasicPaged',
-    'TierType',
-    'FirewallState',
-    'FirewallAllowAzureIpsState',
     'AADObjectType',
     'DataLakeAnalyticsAccountStatus',
     'DataLakeAnalyticsAccountState',
+    'TierType',
+    'FirewallState',
+    'FirewallAllowAzureIpsState',
     'SubscriptionState',
     'OperationOrigin',
 ]

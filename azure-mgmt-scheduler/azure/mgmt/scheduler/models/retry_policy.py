@@ -17,8 +17,7 @@ class RetryPolicy(Model):
 
     :param retry_type: Gets or sets the retry strategy to be used. Possible
      values include: 'None', 'Fixed'
-    :type retry_type: str or :class:`RetryType
-     <azure.mgmt.scheduler.models.RetryType>`
+    :type retry_type: str or ~azure.mgmt.scheduler.models.RetryType
     :param retry_interval: Gets or sets the retry interval between retries,
      specify duration in ISO 8601 format.
     :type retry_interval: timedelta
@@ -34,6 +33,7 @@ class RetryPolicy(Model):
     }
 
     def __init__(self, retry_type=None, retry_interval=None, retry_count=None):
+        super(RetryPolicy, self).__init__()
         self.retry_type = retry_type
         self.retry_interval = retry_interval
         self.retry_count = retry_count

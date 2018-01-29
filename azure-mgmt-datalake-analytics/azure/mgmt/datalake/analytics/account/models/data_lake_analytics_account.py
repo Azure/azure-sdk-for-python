@@ -29,61 +29,61 @@ class DataLakeAnalyticsAccount(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar provisioning_state: the provisioning status of the Data Lake
+    :ivar provisioning_state: The provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
      'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
      'Deleted', 'Undeleting', 'Canceled'
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus
-    :ivar state: the state of the Data Lake Analytics account. Possible values
+    :ivar state: The state of the Data Lake Analytics account. Possible values
      include: 'Active', 'Suspended'
     :vartype state: str or
      ~azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState
-    :ivar creation_time: the account creation time.
+    :ivar creation_time: The account creation time.
     :vartype creation_time: datetime
-    :ivar last_modified_time: the account last modified time.
+    :ivar last_modified_time: The account last modified time.
     :vartype last_modified_time: datetime
-    :ivar endpoint: the full CName endpoint for this account.
+    :ivar endpoint: The full CName endpoint for this account.
     :vartype endpoint: str
     :ivar account_id: The unique identifier associated with this Data Lake
      Analytics account.
     :vartype account_id: str
-    :param default_data_lake_store_account: the default data lake storage
+    :param default_data_lake_store_account: The default data lake storage
      account associated with this Data Lake Analytics account.
     :type default_data_lake_store_account: str
-    :param max_degree_of_parallelism: the maximum supported degree of
+    :param max_degree_of_parallelism: The maximum supported degree of
      parallelism for this account. Default value: 30 .
     :type max_degree_of_parallelism: int
-    :param query_store_retention: the number of days that job metadata is
+    :param query_store_retention: The number of days that job metadata is
      retained. Default value: 30 .
     :type query_store_retention: int
-    :param max_job_count: the maximum supported jobs running under the account
+    :param max_job_count: The maximum supported jobs running under the account
      at the same time. Default value: 3 .
     :type max_job_count: int
-    :ivar system_max_degree_of_parallelism: the system defined maximum
+    :ivar system_max_degree_of_parallelism: The system defined maximum
      supported degree of parallelism for this account, which restricts the
      maximum value of parallelism the user can set for the account.
     :vartype system_max_degree_of_parallelism: int
-    :ivar system_max_job_count: the system defined maximum supported jobs
+    :ivar system_max_job_count: The system defined maximum supported jobs
      running under the account at the same time, which restricts the maximum
      number of running jobs the user can set for the account.
     :vartype system_max_job_count: int
-    :param data_lake_store_accounts: the list of Data Lake storage accounts
+    :param data_lake_store_accounts: The list of Data Lake Store accounts
      associated with this account.
     :type data_lake_store_accounts:
-     list[~azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo]
-    :param storage_accounts: the list of Azure Blob storage accounts
+     list[~azure.mgmt.datalake.analytics.account.models.AddDataLakeStoreWithAccountParameters]
+    :param storage_accounts: The list of Azure Blob storage accounts
      associated with this account.
     :type storage_accounts:
-     list[~azure.mgmt.datalake.analytics.account.models.StorageAccountInfo]
-    :param new_tier: the commitment tier for the next month. Possible values
+     list[~azure.mgmt.datalake.analytics.account.models.AddStorageAccountWithAccountParameters]
+    :param new_tier: The commitment tier for the next month. Possible values
      include: 'Consumption', 'Commitment_100AUHours', 'Commitment_500AUHours',
      'Commitment_1000AUHours', 'Commitment_5000AUHours',
      'Commitment_10000AUHours', 'Commitment_50000AUHours',
      'Commitment_100000AUHours', 'Commitment_500000AUHours'
     :type new_tier: str or
      ~azure.mgmt.datalake.analytics.account.models.TierType
-    :ivar current_tier: the commitment tier in use for the current month.
+    :ivar current_tier: The commitment tier in use for the current month.
      Possible values include: 'Consumption', 'Commitment_100AUHours',
      'Commitment_500AUHours', 'Commitment_1000AUHours',
      'Commitment_5000AUHours', 'Commitment_10000AUHours',
@@ -105,17 +105,17 @@ class DataLakeAnalyticsAccount(Resource):
     :param firewall_rules: The list of firewall rules associated with this
      Data Lake Analytics account.
     :type firewall_rules:
-     list[~azure.mgmt.datalake.analytics.account.models.FirewallRule]
-    :param max_degree_of_parallelism_per_job: the maximum supported degree of
+     list[~azure.mgmt.datalake.analytics.account.models.CreateFirewallRuleWithAccountParameters]
+    :param max_degree_of_parallelism_per_job: The maximum supported degree of
      parallelism per job for this account.
     :type max_degree_of_parallelism_per_job: int
-    :param min_priority_per_job: the minimum supported priority per job for
+    :param min_priority_per_job: The minimum supported priority per job for
      this account.
     :type min_priority_per_job: int
-    :param compute_policies: the list of compute policies to create in this
+    :param compute_policies: The list of compute policies associated with this
      account.
     :type compute_policies:
-     list[~azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters]
+     list[~azure.mgmt.datalake.analytics.account.models.CreateComputePolicyWithAccountParameters]
     """
 
     _validation = {
@@ -159,16 +159,16 @@ class DataLakeAnalyticsAccount(Resource):
         'max_job_count': {'key': 'properties.maxJobCount', 'type': 'int'},
         'system_max_degree_of_parallelism': {'key': 'properties.systemMaxDegreeOfParallelism', 'type': 'int'},
         'system_max_job_count': {'key': 'properties.systemMaxJobCount', 'type': 'int'},
-        'data_lake_store_accounts': {'key': 'properties.dataLakeStoreAccounts', 'type': '[DataLakeStoreAccountInfo]'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccountInfo]'},
+        'data_lake_store_accounts': {'key': 'properties.dataLakeStoreAccounts', 'type': '[AddDataLakeStoreWithAccountParameters]'},
+        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[AddStorageAccountWithAccountParameters]'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
         'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
-        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
+        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[CreateFirewallRuleWithAccountParameters]'},
         'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
-        'compute_policies': {'key': 'properties.computePolicies', 'type': '[ComputePolicyAccountCreateParameters]'},
+        'compute_policies': {'key': 'properties.computePolicies', 'type': '[CreateComputePolicyWithAccountParameters]'},
     }
 
     def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None, new_tier=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None, compute_policies=None):

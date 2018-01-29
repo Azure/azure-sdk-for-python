@@ -30,9 +30,12 @@ class JobPropertiesExecutionInfo(Model):
     :type exit_code: int
     :param errors: Contains details of various errors encountered by the
      service during job execution.
-    :type errors: list of :class:`BatchAIError
-     <azure.mgmt.batchai.models.BatchAIError>`
+    :type errors: list[~azure.mgmt.batchai.models.BatchAIError]
     """
+
+    _validation = {
+        'start_time': {'required': True},
+    }
 
     _attribute_map = {
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -41,7 +44,8 @@ class JobPropertiesExecutionInfo(Model):
         'errors': {'key': 'errors', 'type': '[BatchAIError]'},
     }
 
-    def __init__(self, start_time=None, end_time=None, exit_code=None, errors=None):
+    def __init__(self, start_time, end_time=None, exit_code=None, errors=None):
+        super(JobPropertiesExecutionInfo, self).__init__()
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code

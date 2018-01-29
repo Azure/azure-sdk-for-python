@@ -9,15 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_storage_config import BackupStorageConfig
-from .backup_vault_config import BackupVaultConfig
-from .vault_extended_info_resource import VaultExtendedInfoResource
-from .sku import Sku
-from .upgrade_details import UpgradeDetails
-from .vault_properties import VaultProperties
-from .vault import Vault
-from .tracked_resource import TrackedResource
-from .resource import Resource
 from .raw_certificate_data import RawCertificateData
 from .certificate_request import CertificateRequest
 from .resource_certificate_and_aad_details import ResourceCertificateAndAadDetails
@@ -32,6 +23,15 @@ from .client_discovery_for_log_specification import ClientDiscoveryForLogSpecifi
 from .client_discovery_for_service_specification import ClientDiscoveryForServiceSpecification
 from .client_discovery_for_properties import ClientDiscoveryForProperties
 from .client_discovery_value_for_single_api import ClientDiscoveryValueForSingleApi
+from .resource import Resource
+from .sku import Sku
+from .tracked_resource import TrackedResource
+from .patch_tracked_resource import PatchTrackedResource
+from .upgrade_details import UpgradeDetails
+from .vault_properties import VaultProperties
+from .vault import Vault
+from .patch_vault import PatchVault
+from .vault_extended_info_resource import VaultExtendedInfoResource
 from .name_info import NameInfo
 from .vault_usage import VaultUsage
 from .replication_usage_paged import ReplicationUsagePaged
@@ -39,27 +39,14 @@ from .vault_paged import VaultPaged
 from .client_discovery_value_for_single_api_paged import ClientDiscoveryValueForSingleApiPaged
 from .vault_usage_paged import VaultUsagePaged
 from .recovery_services_client_enums import (
-    StorageModelType,
-    StorageType,
-    StorageTypeState,
-    EnhancedSecurityState,
+    AuthType,
     SkuName,
     VaultUpgradeState,
     TriggerType,
-    AuthType,
     UsagesUnit,
 )
 
 __all__ = [
-    'BackupStorageConfig',
-    'BackupVaultConfig',
-    'VaultExtendedInfoResource',
-    'Sku',
-    'UpgradeDetails',
-    'VaultProperties',
-    'Vault',
-    'TrackedResource',
-    'Resource',
     'RawCertificateData',
     'CertificateRequest',
     'ResourceCertificateAndAadDetails',
@@ -74,19 +61,24 @@ __all__ = [
     'ClientDiscoveryForServiceSpecification',
     'ClientDiscoveryForProperties',
     'ClientDiscoveryValueForSingleApi',
+    'Resource',
+    'Sku',
+    'TrackedResource',
+    'PatchTrackedResource',
+    'UpgradeDetails',
+    'VaultProperties',
+    'Vault',
+    'PatchVault',
+    'VaultExtendedInfoResource',
     'NameInfo',
     'VaultUsage',
     'ReplicationUsagePaged',
     'VaultPaged',
     'ClientDiscoveryValueForSingleApiPaged',
     'VaultUsagePaged',
-    'StorageModelType',
-    'StorageType',
-    'StorageTypeState',
-    'EnhancedSecurityState',
+    'AuthType',
     'SkuName',
     'VaultUpgradeState',
     'TriggerType',
-    'AuthType',
     'UsagesUnit',
 ]

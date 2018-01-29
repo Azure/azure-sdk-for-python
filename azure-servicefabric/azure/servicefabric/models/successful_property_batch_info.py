@@ -16,13 +16,13 @@ class SuccessfulPropertyBatchInfo(PropertyBatchInfo):
     """Derived from PropertyBatchInfo. Represents the property batch succeeding.
     Contains the results of any "Get" operations in the batch.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param properties: A map containing the properties that were requested
      through any "Get" property batch operations. The key represents the index
      of the "Get" operation in the original request, in string form. The value
      is the property. If a property is not found, it will not be in the map.
-    :type properties: dict
+    :type properties: dict[str, ~azure.servicefabric.models.PropertyInfo]
     """
 
     _validation = {

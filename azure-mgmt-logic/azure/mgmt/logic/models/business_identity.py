@@ -33,5 +33,6 @@ class BusinessIdentity(Model):
     }
 
     def __init__(self, qualifier, value):
+        super(BusinessIdentity, self).__init__()
         self.qualifier = qualifier
         self.value = value

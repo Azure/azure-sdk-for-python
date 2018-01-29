@@ -28,4 +28,5 @@ class SyncStorageKeysInput(Model):
     }
 
     def __init__(self, id):
+        super(SyncStorageKeysInput, self).__init__()
         self.id = id

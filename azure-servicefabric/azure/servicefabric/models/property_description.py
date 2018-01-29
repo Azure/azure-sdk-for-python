@@ -20,8 +20,7 @@ class PropertyDescription(Model):
     :param custom_type_id:
     :type custom_type_id: str
     :param value:
-    :type value: :class:`PropertyValue
-     <azure.servicefabric.models.PropertyValue>`
+    :type value: ~azure.servicefabric.models.PropertyValue
     """
 
     _validation = {
@@ -36,6 +35,7 @@ class PropertyDescription(Model):
     }
 
     def __init__(self, property_name, value, custom_type_id=None):
+        super(PropertyDescription, self).__init__()
         self.property_name = property_name
         self.custom_type_id = custom_type_id
         self.value = value

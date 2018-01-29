@@ -16,14 +16,27 @@ class HealthEvaluation(Model):
     """Represents a health evaluation which describes the data and the algorithm
     used by health manager to evaluate the health of an entity.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ApplicationHealthEvaluation, ApplicationsHealthEvaluation,
+    ApplicationTypeApplicationsHealthEvaluation,
+    DeltaNodesCheckHealthEvaluation, DeployedApplicationHealthEvaluation,
+    DeployedApplicationsHealthEvaluation,
+    DeployedServicePackageHealthEvaluation,
+    DeployedServicePackagesHealthEvaluation, EventHealthEvaluation,
+    NodeHealthEvaluation, NodesHealthEvaluation, PartitionHealthEvaluation,
+    PartitionsHealthEvaluation, ReplicaHealthEvaluation,
+    ReplicasHealthEvaluation, ServiceHealthEvaluation,
+    ServicesHealthEvaluation, SystemApplicationHealthEvaluation,
+    UpgradeDomainDeltaNodesCheckHealthEvaluation,
+    UpgradeDomainNodesHealthEvaluation
+
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -42,6 +55,7 @@ class HealthEvaluation(Model):
     }
 
     def __init__(self, aggregated_health_state=None, description=None):
+        super(HealthEvaluation, self).__init__()
         self.aggregated_health_state = aggregated_health_state
         self.description = description
         self.kind = None

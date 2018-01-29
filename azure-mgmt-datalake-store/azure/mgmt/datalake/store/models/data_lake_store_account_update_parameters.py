@@ -17,54 +17,66 @@ class DataLakeStoreAccountUpdateParameters(Model):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :param encryption_config: Used for rotation of user managed Key Vault
+     keys. Can only be used to rotate a user managed encryption Key Vault key.
+    :type encryption_config:
+     ~azure.mgmt.datalake.store.models.UpdateEncryptionConfig
     :param firewall_state: The current state of the IP address firewall for
-     this Data Lake store account. Disabling the firewall does not remove
+     this Data Lake Store account. Disabling the firewall does not remove
      existing rules, they will just be ignored until the firewall is
      re-enabled. Possible values include: 'Enabled', 'Disabled'
     :type firewall_state: str or
      ~azure.mgmt.datalake.store.models.FirewallState
-    :param trusted_id_provider_state: The current state of the trusted
-     identity provider feature for this Data Lake store account. Disabling
-     trusted identity provider functionality does not remove the providers,
-     they will just be ignored until this feature is re-enabled. Possible
-     values include: 'Enabled', 'Disabled'
-    :type trusted_id_provider_state: str or
-     ~azure.mgmt.datalake.store.models.TrustedIdProviderState
-    :param default_group: the default owner group for all new folders and
-     files created in the Data Lake Store account.
-    :type default_group: str
-    :param new_tier: the commitment tier to use for next month. Possible
-     values include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
-     'Commitment_100TB', 'Commitment_500TB', 'Commitment_1PB', 'Commitment_5PB'
-    :type new_tier: str or ~azure.mgmt.datalake.store.models.TierType
     :param firewall_allow_azure_ips: The current state of allowing or
      disallowing IPs originating within Azure through the firewall. If the
      firewall is disabled, this is not enforced. Possible values include:
      'Enabled', 'Disabled'
     :type firewall_allow_azure_ips: str or
      ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
-    :param encryption_config: Used for rotation of user managed Key Vault
-     keys. Can only be used to rotate a user managed encryption Key Vault key.
-    :type encryption_config:
-     ~azure.mgmt.datalake.store.models.UpdateEncryptionConfig
+    :param firewall_rules: The list of firewall rules associated with this
+     Data Lake Store account.
+    :type firewall_rules:
+     list[~azure.mgmt.datalake.store.models.UpdateFirewallRuleWithAccountParameters]
+    :param trusted_id_provider_state: The current state of the trusted
+     identity provider feature for this Data Lake Store account. Disabling
+     trusted identity provider functionality does not remove the providers,
+     they will just be ignored until this feature is re-enabled. Possible
+     values include: 'Enabled', 'Disabled'
+    :type trusted_id_provider_state: str or
+     ~azure.mgmt.datalake.store.models.TrustedIdProviderState
+    :param trusted_id_providers: The list of trusted identity providers
+     associated with this Data Lake Store account.
+    :type trusted_id_providers:
+     list[~azure.mgmt.datalake.store.models.UpdateTrustedIdProviderWithAccountParameters]
+    :param default_group: The default owner group for all new folders and
+     files created in the Data Lake Store account.
+    :type default_group: str
+    :param new_tier: The commitment tier to use for next month. Possible
+     values include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
+     'Commitment_100TB', 'Commitment_500TB', 'Commitment_1PB', 'Commitment_5PB'
+    :type new_tier: str or ~azure.mgmt.datalake.store.models.TierType
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'UpdateEncryptionConfig'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
+        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
+        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[UpdateFirewallRuleWithAccountParameters]'},
         'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'TrustedIdProviderState'},
+        'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[UpdateTrustedIdProviderWithAccountParameters]'},
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
-        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'UpdateEncryptionConfig'},
     }
 
-    def __init__(self, tags=None, firewall_state=None, trusted_id_provider_state=None, default_group=None, new_tier=None, firewall_allow_azure_ips=None, encryption_config=None):
+    def __init__(self, tags=None, encryption_config=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None, new_tier=None):
         super(DataLakeStoreAccountUpdateParameters, self).__init__()
         self.tags = tags
+        self.encryption_config = encryption_config
         self.firewall_state = firewall_state
+        self.firewall_allow_azure_ips = firewall_allow_azure_ips
+        self.firewall_rules = firewall_rules
         self.trusted_id_provider_state = trusted_id_provider_state
+        self.trusted_id_providers = trusted_id_providers
         self.default_group = default_group
         self.new_tier = new_tier
-        self.firewall_allow_azure_ips = firewall_allow_azure_ips
-        self.encryption_config = encryption_config

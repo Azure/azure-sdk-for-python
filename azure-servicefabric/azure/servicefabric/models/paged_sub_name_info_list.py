@@ -25,7 +25,7 @@ class PagedSubNameInfoList(Model):
      property value is false.
     :type is_consistent: bool
     :param sub_names:
-    :type sub_names: list of str
+    :type sub_names: list[str]
     """
 
     _attribute_map = {
@@ -35,6 +35,7 @@ class PagedSubNameInfoList(Model):
     }
 
     def __init__(self, continuation_token=None, is_consistent=None, sub_names=None):
+        super(PagedSubNameInfoList, self).__init__()
         self.continuation_token = continuation_token
         self.is_consistent = is_consistent
         self.sub_names = sub_names

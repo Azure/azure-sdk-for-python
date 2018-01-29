@@ -16,7 +16,7 @@ class EventHubConsumerGroupInfo(Model):
     """The properties of the EventHubConsumerGroupInfo object.
 
     :param tags: The tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param id: The Event Hub-compatible consumer group identifier.
     :type id: str
     :param name: The Event Hub-compatible consumer group name.
@@ -30,6 +30,7 @@ class EventHubConsumerGroupInfo(Model):
     }
 
     def __init__(self, tags=None, id=None, name=None):
+        super(EventHubConsumerGroupInfo, self).__init__()
         self.tags = tags
         self.id = id
         self.name = name

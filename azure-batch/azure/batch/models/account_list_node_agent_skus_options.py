@@ -39,6 +39,7 @@ class AccountListNodeAgentSkusOptions(Model):
     """
 
     def __init__(self, filter=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
+        super(AccountListNodeAgentSkusOptions, self).__init__()
         self.filter = filter
         self.max_results = max_results
         self.timeout = timeout

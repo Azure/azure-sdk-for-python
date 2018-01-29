@@ -35,5 +35,6 @@ class DatabaseAccountConnectionString(Model):
     }
 
     def __init__(self):
+        super(DatabaseAccountConnectionString, self).__init__()
         self.connection_string = None
         self.description = None

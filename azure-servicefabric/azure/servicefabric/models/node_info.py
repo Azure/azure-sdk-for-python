@@ -30,13 +30,13 @@ class NodeInfo(Model):
     :type config_version: str
     :param node_status: Possible values include: 'Invalid', 'Up', 'Down',
      'Enabling', 'Disabling', 'Disabled', 'Unknown', 'Removed'
-    :type node_status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type node_status: str or ~azure.servicefabric.models.enum
     :param node_up_time_in_seconds: Time in seconds since the node has been in
      NodeStatus Up. Value ero indicates that the node is not Up.
     :type node_up_time_in_seconds: str
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param is_seed_node: Indicates if the node is a seed node or not. Returns
      true if the node is a seed node, otherwise false. A quorum of seed nodes
      are required for proper operation of Service Fabric cluster.
@@ -46,14 +46,14 @@ class NodeInfo(Model):
     :param fault_domain: The fault domain of the node.
     :type fault_domain: str
     :param id:
-    :type id: :class:`NodeId <azure.servicefabric.models.NodeId>`
+    :type id: ~azure.servicefabric.models.NodeId
     :param instance_id: The id representing the node instance. While the Id of
      the node is deterministically generated from the node name and remains
      same across restarts, the InstanceId changes every time node restarts.
     :type instance_id: str
     :param node_deactivation_info:
-    :type node_deactivation_info: :class:`NodeDeactivationInfo
-     <azure.servicefabric.models.NodeDeactivationInfo>`
+    :type node_deactivation_info:
+     ~azure.servicefabric.models.NodeDeactivationInfo
     :param is_stopped: Indicates if the node is stopped by calling stop node
      API or not. Returns true if the node is stopped, otherwise false.
     :type is_stopped: bool
@@ -90,6 +90,7 @@ class NodeInfo(Model):
     }
 
     def __init__(self, name=None, ip_address_or_fqdn=None, type=None, code_version=None, config_version=None, node_status=None, node_up_time_in_seconds=None, health_state=None, is_seed_node=None, upgrade_domain=None, fault_domain=None, id=None, instance_id=None, node_deactivation_info=None, is_stopped=None, node_down_time_in_seconds=None, node_up_at=None, node_down_at=None):
+        super(NodeInfo, self).__init__()
         self.name = name
         self.ip_address_or_fqdn = ip_address_or_fqdn
         self.type = type

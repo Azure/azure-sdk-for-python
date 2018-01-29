@@ -56,7 +56,7 @@ class ComputePoliciesOperations(object):
          policy. The max degree of parallelism per job property, min priority
          per job property, or both must be present.
         :type parameters:
-         ~azure.mgmt.datalake.analytics.account.models.ComputePolicyCreateOrUpdateParameters
+         ~azure.mgmt.datalake.analytics.account.models.CreateOrUpdateComputePolicyParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -92,7 +92,7 @@ class ComputePoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ComputePolicyCreateOrUpdateParameters')
+        body_content = self._serialize.body(parameters, 'CreateOrUpdateComputePolicyParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -116,7 +116,7 @@ class ComputePoliciesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, account_name, compute_policy_name, max_degree_of_parallelism_per_job=None, min_priority_per_job=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, compute_policy_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified compute policy.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -127,12 +127,9 @@ class ComputePoliciesOperations(object):
         :type account_name: str
         :param compute_policy_name: The name of the compute policy to update.
         :type compute_policy_name: str
-        :param max_degree_of_parallelism_per_job: The maximum degree of
-         parallelism per job this user can use to submit jobs.
-        :type max_degree_of_parallelism_per_job: int
-        :param min_priority_per_job: The minimum priority per job this user
-         can use to submit jobs.
-        :type min_priority_per_job: int
+        :param parameters: Parameters supplied to update the compute policy.
+        :type parameters:
+         ~azure.mgmt.datalake.analytics.account.models.UpdateComputePolicyParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -143,10 +140,6 @@ class ComputePoliciesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = None
-        if max_degree_of_parallelism_per_job is not None or min_priority_per_job is not None:
-            parameters = models.ComputePolicy(max_degree_of_parallelism_per_job=max_degree_of_parallelism_per_job, min_priority_per_job=min_priority_per_job)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/computePolicies/{computePolicyName}'
         path_format_arguments = {
@@ -173,7 +166,7 @@ class ComputePoliciesOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'ComputePolicy')
+            body_content = self._serialize.body(parameters, 'UpdateComputePolicyParameters')
         else:
             body_content = None
 

@@ -40,9 +40,9 @@ class LocationsOperations(object):
     def get_capability(
             self, location, custom_headers=None, raw=False, **operation_config):
         """Gets subscription-level properties and limits for Data Lake Store
-        specified by Resource location.
+        specified by resource location.
 
-        :param location: The Resource location without whitespace.
+        :param location: The resource location without whitespace.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

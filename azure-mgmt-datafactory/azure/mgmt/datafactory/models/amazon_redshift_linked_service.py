@@ -32,7 +32,7 @@ class AmazonRedshiftLinkedService(LinkedService):
      (or Expression with resultType string).
     :type username: object
     :param password: The password of the Amazon Redshift source.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param database: The database name of the Amazon Redshift source. Type:
      string (or Expression with resultType string).
     :type database: object
@@ -59,7 +59,7 @@ class AmazonRedshiftLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'database': {'key': 'typeProperties.database', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},

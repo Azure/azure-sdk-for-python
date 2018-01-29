@@ -15,7 +15,7 @@ from .schedule_policy import SchedulePolicy
 class LongTermSchedulePolicy(SchedulePolicy):
     """Long term policy schedule.
 
-    :param schedule_policy_type: Polymorphic Discriminator
+    :param schedule_policy_type: Constant filled by server.
     :type schedule_policy_type: str
     """
 

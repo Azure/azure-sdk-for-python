@@ -36,6 +36,7 @@ class ResourceProviderOperationDisplayProperties(Model):
     }
 
     def __init__(self, publisher=None, provider=None, resource=None, operation=None, description=None):
+        super(ResourceProviderOperationDisplayProperties, self).__init__()
         self.publisher = publisher
         self.provider = provider
         self.resource = resource

@@ -27,10 +27,9 @@ class JobCollectionDefinition(Model):
     :param location: Gets or sets the storage account location.
     :type location: str
     :param tags: Gets or sets the tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties: Gets or sets the job collection properties.
-    :type properties: :class:`JobCollectionProperties
-     <azure.mgmt.scheduler.models.JobCollectionProperties>`
+    :type properties: ~azure.mgmt.scheduler.models.JobCollectionProperties
     """
 
     _validation = {
@@ -48,6 +47,7 @@ class JobCollectionDefinition(Model):
     }
 
     def __init__(self, name=None, location=None, tags=None, properties=None):
+        super(JobCollectionDefinition, self).__init__()
         self.id = None
         self.type = None
         self.name = name

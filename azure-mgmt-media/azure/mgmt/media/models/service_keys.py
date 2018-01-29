@@ -36,6 +36,7 @@ class ServiceKeys(Model):
     }
 
     def __init__(self, primary_auth_endpoint=None, secondary_auth_endpoint=None, primary_key=None, secondary_key=None, scope=None):
+        super(ServiceKeys, self).__init__()
         self.primary_auth_endpoint = primary_auth_endpoint
         self.secondary_auth_endpoint = secondary_auth_endpoint
         self.primary_key = primary_key

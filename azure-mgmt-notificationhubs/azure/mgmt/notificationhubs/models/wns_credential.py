@@ -30,6 +30,7 @@ class WnsCredential(Model):
     }
 
     def __init__(self, package_sid=None, secret_key=None, windows_live_endpoint=None):
+        super(WnsCredential, self).__init__()
         self.package_sid = package_sid
         self.secret_key = secret_key
         self.windows_live_endpoint = windows_live_endpoint

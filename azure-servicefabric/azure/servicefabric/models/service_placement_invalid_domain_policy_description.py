@@ -17,7 +17,7 @@ class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescr
     where a particular fault or upgrade domain should not be used for placement
     of the instances or replicas of that service.
 
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param domain_name: The name of the domain that should not be used for
      placement.

@@ -31,4 +31,5 @@ class IntegrationRuntimeNodeIpAddress(Model):
     }
 
     def __init__(self):
+        super(IntegrationRuntimeNodeIpAddress, self).__init__()
         self.ip_address = None

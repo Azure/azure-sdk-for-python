@@ -38,5 +38,6 @@ class StorageAccount(Model):
     }
 
     def __init__(self, id, is_primary):
+        super(StorageAccount, self).__init__()
         self.id = id
         self.is_primary = is_primary

@@ -17,8 +17,7 @@ class WorkflowFilter(Model):
 
     :param state: The state of workflows. Possible values include:
      'NotSpecified', 'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :type state: str or :class:`WorkflowState
-     <azure.mgmt.logic.models.WorkflowState>`
+    :type state: str or ~azure.mgmt.logic.models.WorkflowState
     """
 
     _attribute_map = {
@@ -26,4 +25,5 @@ class WorkflowFilter(Model):
     }
 
     def __init__(self, state=None):
+        super(WorkflowFilter, self).__init__()
         self.state = state

@@ -24,4 +24,5 @@ class RegenerateKeyOutput(Model):
     }
 
     def __init__(self, key=None):
+        super(RegenerateKeyOutput, self).__init__()
         self.key = key

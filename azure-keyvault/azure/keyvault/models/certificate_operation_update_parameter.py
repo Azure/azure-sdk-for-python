@@ -29,4 +29,5 @@ class CertificateOperationUpdateParameter(Model):
     }
 
     def __init__(self, cancellation_requested):
+        super(CertificateOperationUpdateParameter, self).__init__()
         self.cancellation_requested = cancellation_requested

@@ -37,6 +37,7 @@ class EventRequestMessage(Model):
     }
 
     def __init__(self, content=None, headers=None, method=None, request_uri=None, version=None):
+        super(EventRequestMessage, self).__init__()
         self.content = content
         self.headers = headers
         self.method = method

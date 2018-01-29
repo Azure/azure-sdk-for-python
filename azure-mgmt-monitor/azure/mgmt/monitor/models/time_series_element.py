@@ -30,5 +30,6 @@ class TimeSeriesElement(Model):
     }
 
     def __init__(self, metadatavalues=None, data=None):
+        super(TimeSeriesElement, self).__init__()
         self.metadatavalues = metadatavalues
         self.data = data

@@ -17,8 +17,7 @@ class WorkflowParameter(Model):
 
     :param type: The type. Possible values include: 'NotSpecified', 'String',
      'SecureString', 'Int', 'Float', 'Bool', 'Array', 'Object', 'SecureObject'
-    :type type: str or :class:`ParameterType
-     <azure.mgmt.logic.models.ParameterType>`
+    :type type: str or ~azure.mgmt.logic.models.ParameterType
     :param value: The value.
     :type value: object
     :param metadata: The metadata.
@@ -35,6 +34,7 @@ class WorkflowParameter(Model):
     }
 
     def __init__(self, type=None, value=None, metadata=None, description=None):
+        super(WorkflowParameter, self).__init__()
         self.type = type
         self.value = value
         self.metadata = metadata

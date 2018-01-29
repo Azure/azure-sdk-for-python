@@ -20,7 +20,7 @@ class GetPropertyBatchOperation(PropertyBatchOperation):
 
     :param property_name:
     :type property_name: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param include_value: Whether or not to return the property value with the
      metadata.  True if values should be returned with the metadata; False to

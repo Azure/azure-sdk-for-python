@@ -33,6 +33,7 @@ class StorageQueueMessage(Model):
     }
 
     def __init__(self, storage_account=None, queue_name=None, sas_token=None, message=None):
+        super(StorageQueueMessage, self).__init__()
         self.storage_account = storage_account
         self.queue_name = queue_name
         self.sas_token = sas_token

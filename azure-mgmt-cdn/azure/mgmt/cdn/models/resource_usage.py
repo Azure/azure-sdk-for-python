@@ -43,6 +43,7 @@ class ResourceUsage(Model):
     }
 
     def __init__(self):
+        super(ResourceUsage, self).__init__()
         self.resource_type = None
         self.unit = None
         self.current_value = None

@@ -23,22 +23,20 @@ class DeployedStatelessServiceInstanceDetailInfo(DeployedServiceReplicaDetailInf
     :type partition_id: str
     :param current_service_operation: Possible values include: 'Unknown',
      'None', 'Open', 'ChangeRole', 'Close', 'Abort'
-    :type current_service_operation: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type current_service_operation: str or ~azure.servicefabric.models.enum
     :param current_service_operation_start_time_utc: The start time of the
      current service operation in UTC format.
     :type current_service_operation_start_time_utc: datetime
     :param reported_load:
-    :type reported_load: list of :class:`LoadMetricReportInfo
-     <azure.servicefabric.models.LoadMetricReportInfo>`
-    :param service_kind: Polymorphic Discriminator
+    :type reported_load:
+     list[~azure.servicefabric.models.LoadMetricReportInfo]
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param instance_id:
     :type instance_id: str
     :param deployed_service_replica_query_result:
     :type deployed_service_replica_query_result:
-     :class:`DeployedStatelessServiceInstanceInfo
-     <azure.servicefabric.models.DeployedStatelessServiceInstanceInfo>`
+     ~azure.servicefabric.models.DeployedStatelessServiceInstanceInfo
     """
 
     _validation = {

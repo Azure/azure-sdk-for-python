@@ -29,7 +29,7 @@ class EventHubProperties(Model):
     :type partition_count: int
     :ivar partition_ids: The partition ids in the Event Hub-compatible
      endpoint.
-    :vartype partition_ids: list of str
+    :vartype partition_ids: list[str]
     :ivar path: The Event Hub-compatible name.
     :vartype path: str
     :ivar endpoint: The Event Hub-compatible endpoint.
@@ -51,6 +51,7 @@ class EventHubProperties(Model):
     }
 
     def __init__(self, retention_time_in_days=None, partition_count=None):
+        super(EventHubProperties, self).__init__()
         self.retention_time_in_days = retention_time_in_days
         self.partition_count = partition_count
         self.partition_ids = None

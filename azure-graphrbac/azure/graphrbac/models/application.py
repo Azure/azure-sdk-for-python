@@ -9,15 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .directory_object import DirectoryObject
 
 
-class Application(Model):
+class Application(DirectoryObject):
     """Active Directory application information.
 
-    :param object_id: The object ID.
-    :type object_id: str
-    :param object_type: The object type.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar object_id: The object ID.
+    :vartype object_id: str
+    :ivar deletion_timestamp: The time at which the directory object was
+     deleted.
+    :vartype deletion_timestamp: datetime
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param app_id: The application ID.
     :type app_id: str
@@ -39,8 +48,16 @@ class Application(Model):
     :type oauth2_allow_implicit_flow: bool
     """
 
+    _validation = {
+        'object_id': {'readonly': True},
+        'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
+    }
+
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
+        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
@@ -52,9 +69,8 @@ class Application(Model):
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
     }
 
-    def __init__(self, object_id=None, object_type=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
-        self.object_id = object_id
-        self.object_type = object_type
+    def __init__(self, additional_properties=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
+        super(Application, self).__init__(additional_properties=additional_properties)
         self.app_id = app_id
         self.app_permissions = app_permissions
         self.available_to_other_tenants = available_to_other_tenants
@@ -63,3 +79,4 @@ class Application(Model):
         self.reply_urls = reply_urls
         self.homepage = homepage
         self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
+        self.object_type = 'Application'

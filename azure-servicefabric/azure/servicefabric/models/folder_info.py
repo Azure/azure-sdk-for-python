@@ -28,5 +28,6 @@ class FolderInfo(Model):
     }
 
     def __init__(self, store_relative_path=None, file_count=None):
+        super(FolderInfo, self).__init__()
         self.store_relative_path = store_relative_path
         self.file_count = file_count

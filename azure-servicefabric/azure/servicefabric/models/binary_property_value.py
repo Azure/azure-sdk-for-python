@@ -15,10 +15,10 @@ from .property_value import PropertyValue
 class BinaryPropertyValue(PropertyValue):
     """Describes a Service Fabric property value of type Binary.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param data:
-    :type data: list of int
+    :type data: list[int]
     """
 
     _validation = {

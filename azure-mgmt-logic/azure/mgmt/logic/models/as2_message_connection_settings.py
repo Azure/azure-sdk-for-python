@@ -44,6 +44,7 @@ class AS2MessageConnectionSettings(Model):
     }
 
     def __init__(self, ignore_certificate_name_mismatch, support_http_status_code_continue, keep_http_connection_alive, unfold_http_headers):
+        super(AS2MessageConnectionSettings, self).__init__()
         self.ignore_certificate_name_mismatch = ignore_certificate_name_mismatch
         self.support_http_status_code_continue = support_http_status_code_continue
         self.keep_http_connection_alive = keep_http_connection_alive

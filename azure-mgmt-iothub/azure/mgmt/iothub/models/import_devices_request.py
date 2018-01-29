@@ -33,5 +33,6 @@ class ImportDevicesRequest(Model):
     }
 
     def __init__(self, input_blob_container_uri, output_blob_container_uri):
+        super(ImportDevicesRequest, self).__init__()
         self.input_blob_container_uri = input_blob_container_uri
         self.output_blob_container_uri = output_blob_container_uri

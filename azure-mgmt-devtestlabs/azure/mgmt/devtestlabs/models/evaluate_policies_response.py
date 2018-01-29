@@ -24,4 +24,5 @@ class EvaluatePoliciesResponse(Model):
     }
 
     def __init__(self, results=None):
+        super(EvaluatePoliciesResponse, self).__init__()
         self.results = results

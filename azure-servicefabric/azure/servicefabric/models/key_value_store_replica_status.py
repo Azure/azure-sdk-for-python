@@ -15,7 +15,7 @@ from .replica_status_base import ReplicaStatusBase
 class KeyValueStoreReplicaStatus(ReplicaStatusBase):
     """Key value store related information for the replica.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param database_row_count_estimate: Value indicating the estimated number
      of rows in the underlying database.

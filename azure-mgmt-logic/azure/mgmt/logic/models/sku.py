@@ -17,10 +17,9 @@ class Sku(Model):
 
     :param name: The name. Possible values include: 'NotSpecified', 'Free',
      'Shared', 'Basic', 'Standard', 'Premium'
-    :type name: str or :class:`SkuName <azure.mgmt.logic.models.SkuName>`
+    :type name: str or ~azure.mgmt.logic.models.SkuName
     :param plan: The reference to plan.
-    :type plan: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+    :type plan: ~azure.mgmt.logic.models.ResourceReference
     """
 
     _validation = {
@@ -33,5 +32,6 @@ class Sku(Model):
     }
 
     def __init__(self, name, plan=None):
+        super(Sku, self).__init__()
         self.name = name
         self.plan = plan

@@ -20,8 +20,7 @@ class PagedNodeInfoList(Model):
     :param continuation_token:
     :type continuation_token: str
     :param items:
-    :type items: list of :class:`NodeInfo
-     <azure.servicefabric.models.NodeInfo>`
+    :type items: list[~azure.servicefabric.models.NodeInfo]
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class PagedNodeInfoList(Model):
     }
 
     def __init__(self, continuation_token=None, items=None):
+        super(PagedNodeInfoList, self).__init__()
         self.continuation_token = continuation_token
         self.items = items

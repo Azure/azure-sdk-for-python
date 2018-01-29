@@ -28,5 +28,6 @@ class RegistryListCredentialsResult(Model):
     }
 
     def __init__(self, username=None, passwords=None):
+        super(RegistryListCredentialsResult, self).__init__()
         self.username = username
         self.passwords = passwords

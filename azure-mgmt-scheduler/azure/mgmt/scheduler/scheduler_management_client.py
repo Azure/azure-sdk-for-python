@@ -16,7 +16,6 @@ from .version import VERSION
 from .operations.job_collections_operations import JobCollectionsOperations
 from .operations.jobs_operations import JobsOperations
 from . import models
-from .patch import patch_client
 
 
 class SchedulerManagementClientConfiguration(AzureConfiguration):
@@ -39,14 +38,12 @@ class SchedulerManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(SchedulerManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('schedulermanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-scheduler/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -60,9 +57,9 @@ class SchedulerManagementClient(object):
     :vartype config: SchedulerManagementClientConfiguration
 
     :ivar job_collections: JobCollections operations
-    :vartype job_collections: .operations.JobCollectionsOperations
+    :vartype job_collections: azure.mgmt.scheduler.operations.JobCollectionsOperations
     :ivar jobs: Jobs operations
-    :vartype jobs: .operations.JobsOperations
+    :vartype jobs: azure.mgmt.scheduler.operations.JobsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -87,5 +84,3 @@ class SchedulerManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-        patch_client(self)

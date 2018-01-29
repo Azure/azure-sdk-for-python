@@ -20,17 +20,17 @@ class ApplicationTypeInfo(Model):
     :param version:
     :type version: str
     :param default_parameter_list:
-    :type default_parameter_list: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
+    :type default_parameter_list:
+     list[~azure.servicefabric.models.ApplicationParameter]
     :param status: Possible values include: 'Invalid', 'Provisioning',
      'Available', 'Unprovisioning', 'Failed'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param status_details:
     :type status_details: str
     :param application_type_definition_kind: Possible values include:
      'Invalid', 'ServiceFabricApplicationPackage', 'Compose'
-    :type application_type_definition_kind: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type application_type_definition_kind: str or
+     ~azure.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -43,6 +43,7 @@ class ApplicationTypeInfo(Model):
     }
 
     def __init__(self, name=None, version=None, default_parameter_list=None, status=None, status_details=None, application_type_definition_kind=None):
+        super(ApplicationTypeInfo, self).__init__()
         self.name = name
         self.version = version
         self.default_parameter_list = default_parameter_list

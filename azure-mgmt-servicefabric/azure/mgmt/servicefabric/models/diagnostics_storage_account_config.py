@@ -13,17 +13,18 @@ from msrest.serialization import Model
 
 
 class DiagnosticsStorageAccountConfig(Model):
-    """Diagnostics storage account config.
+    """The storage account information for storing Service Fabric diagnostic logs.
 
-    :param storage_account_name: Diagnostics storage account name
+    :param storage_account_name: The Azure storage account name.
     :type storage_account_name: str
-    :param protected_account_key_name: Protected Diagnostics storage key name
+    :param protected_account_key_name: The protected diagnostics storage key
+     name.
     :type protected_account_key_name: str
-    :param blob_endpoint: Diagnostics storage account blob endpoint
+    :param blob_endpoint: The blob endpoint of the azure storage account.
     :type blob_endpoint: str
-    :param queue_endpoint: Diagnostics storage account queue endpoint
+    :param queue_endpoint: The queue endpoint of the azure storage account.
     :type queue_endpoint: str
-    :param table_endpoint: Diagnostics storage account table endpoint
+    :param table_endpoint: The table endpoint of the azure storage account.
     :type table_endpoint: str
     """
 
@@ -44,6 +45,7 @@ class DiagnosticsStorageAccountConfig(Model):
     }
 
     def __init__(self, storage_account_name, protected_account_key_name, blob_endpoint, queue_endpoint, table_endpoint):
+        super(DiagnosticsStorageAccountConfig, self).__init__()
         self.storage_account_name = storage_account_name
         self.protected_account_key_name = protected_account_key_name
         self.blob_endpoint = blob_endpoint

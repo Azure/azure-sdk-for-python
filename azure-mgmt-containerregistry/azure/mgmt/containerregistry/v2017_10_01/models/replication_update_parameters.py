@@ -24,4 +24,5 @@ class ReplicationUpdateParameters(Model):
     }
 
     def __init__(self, tags=None):
+        super(ReplicationUpdateParameters, self).__init__()
         self.tags = tags

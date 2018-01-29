@@ -39,6 +39,7 @@ class Event(Model):
     }
 
     def __init__(self, count=None, first_timestamp=None, last_timestamp=None, name=None, message=None, type=None):
+        super(Event, self).__init__()
         self.count = count
         self.first_timestamp = first_timestamp
         self.last_timestamp = last_timestamp

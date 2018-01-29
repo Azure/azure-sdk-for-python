@@ -41,6 +41,7 @@ class RestartDeployedCodePackageDescription(Model):
     }
 
     def __init__(self, service_manifest_name, code_package_name, code_package_instance_id, service_package_activation_id=None):
+        super(RestartDeployedCodePackageDescription, self).__init__()
         self.service_manifest_name = service_manifest_name
         self.service_package_activation_id = service_package_activation_id
         self.code_package_name = code_package_name

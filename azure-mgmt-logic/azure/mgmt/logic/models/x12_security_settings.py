@@ -38,6 +38,7 @@ class X12SecuritySettings(Model):
     }
 
     def __init__(self, authorization_qualifier, security_qualifier, authorization_value=None, password_value=None):
+        super(X12SecuritySettings, self).__init__()
         self.authorization_qualifier = authorization_qualifier
         self.authorization_value = authorization_value
         self.security_qualifier = security_qualifier

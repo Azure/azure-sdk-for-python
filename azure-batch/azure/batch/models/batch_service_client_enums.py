@@ -27,7 +27,7 @@ class CertificateState(Enum):
 
     active = "active"
     deleting = "deleting"
-    delete_failed = "deleteFailed"
+    delete_failed = "deletefailed"
 
 
 class CertificateFormat(Enum):
@@ -57,15 +57,15 @@ class AutoUserScope(Enum):
 
 class ElevationLevel(Enum):
 
-    non_admin = "nonAdmin"
+    non_admin = "nonadmin"
     admin = "admin"
 
 
 class OutputFileUploadCondition(Enum):
 
-    task_success = "taskSuccess"
-    task_failure = "taskFailure"
-    task_completion = "taskCompletion"
+    task_success = "tasksuccess"
+    task_failure = "taskfailure"
+    task_completion = "taskcompletion"
 
 
 class ComputeNodeFillType(Enum):
@@ -76,28 +76,28 @@ class ComputeNodeFillType(Enum):
 
 class CertificateStoreLocation(Enum):
 
-    current_user = "currentUser"
-    local_machine = "localMachine"
+    current_user = "currentuser"
+    local_machine = "localmachine"
 
 
 class CertificateVisibility(Enum):
 
-    start_task = "startTask"
+    start_task = "starttask"
     task = "task"
-    remote_user = "remoteUser"
+    remote_user = "remoteuser"
 
 
 class CachingType(Enum):
 
     none = "none"
-    read_only = "readOnly"
-    read_write = "readWrite"
+    read_only = "readonly"
+    read_write = "readwrite"
 
 
 class StorageAccountType(Enum):
 
-    standard_lrs = "Standard_LRS"
-    premium_lrs = "Premium_LRS"
+    standard_lrs = "standard_lrs"
+    premium_lrs = "premium_lrs"
 
 
 class InboundEndpointProtocol(Enum):
@@ -114,20 +114,20 @@ class NetworkSecurityGroupRuleAccess(Enum):
 
 class PoolLifetimeOption(Enum):
 
-    job_schedule = "jobSchedule"
+    job_schedule = "jobschedule"
     job = "job"
 
 
 class OnAllTasksComplete(Enum):
 
-    no_action = "noAction"
-    terminate_job = "terminateJob"
+    no_action = "noaction"
+    terminate_job = "terminatejob"
 
 
 class OnTaskFailure(Enum):
 
-    no_action = "noAction"
-    perform_exit_options_job_action = "performExitOptionsJobAction"
+    no_action = "noaction"
+    perform_exit_options_job_action = "performexitoptionsjobaction"
 
 
 class JobScheduleState(Enum):
@@ -141,8 +141,8 @@ class JobScheduleState(Enum):
 
 class ErrorCategory(Enum):
 
-    user_error = "userError"
-    server_error = "serverError"
+    user_error = "usererror"
+    server_error = "servererror"
 
 
 class JobState(Enum):
@@ -205,8 +205,8 @@ class TaskState(Enum):
 class TaskAddStatus(Enum):
 
     success = "success"
-    client_error = "clientError"
-    server_error = "serverError"
+    client_error = "clienterror"
+    server_error = "servererror"
 
 
 class SubtaskState(Enum):
@@ -231,10 +231,10 @@ class ComputeNodeState(Enum):
     unusable = "unusable"
     creating = "creating"
     starting = "starting"
-    waiting_for_start_task = "waitingForStartTask"
-    start_task_failed = "startTaskFailed"
+    waiting_for_start_task = "waitingforstarttask"
+    start_task_failed = "starttaskfailed"
     unknown = "unknown"
-    leaving_pool = "leavingPool"
+    leaving_pool = "leavingpool"
     offline = "offline"
     preempted = "preempted"
 
@@ -256,28 +256,28 @@ class ComputeNodeDeallocationOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    task_completion = "taskCompletion"
-    retained_data = "retainedData"
+    task_completion = "taskcompletion"
+    retained_data = "retaineddata"
 
 
 class ComputeNodeRebootOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    task_completion = "taskCompletion"
-    retained_data = "retainedData"
+    task_completion = "taskcompletion"
+    retained_data = "retaineddata"
 
 
 class ComputeNodeReimageOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    task_completion = "taskCompletion"
-    retained_data = "retainedData"
+    task_completion = "taskcompletion"
+    retained_data = "retaineddata"
 
 
 class DisableComputeNodeSchedulingOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    task_completion = "taskCompletion"
+    task_completion = "taskcompletion"

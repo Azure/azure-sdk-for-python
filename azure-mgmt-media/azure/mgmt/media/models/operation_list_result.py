@@ -20,8 +20,7 @@ class OperationListResult(Model):
 
     :ivar value: List of Media Services operations supported by the
      Microsoft.Media resource provider.
-    :vartype value: list of :class:`Operation
-     <azure.mgmt.media.models.Operation>`
+    :vartype value: list[~azure.mgmt.media.models.Operation]
     :ivar next_link: URL to get the next set of operation list results if
      there are any.
     :vartype next_link: str
@@ -38,5 +37,6 @@ class OperationListResult(Model):
     }
 
     def __init__(self):
+        super(OperationListResult, self).__init__()
         self.value = None
         self.next_link = None

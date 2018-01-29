@@ -9,17 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class ComputePolicy(Model):
-    """The parameters used to create a new compute policy.
+class ComputePolicy(SubResource):
+    """Data Lake Analytics compute policy information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The name of the compute policy
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :ivar object_id: The AAD object identifier for the entity to create a
      policy for.
     :vartype object_id: str
@@ -27,34 +31,37 @@ class ComputePolicy(Model):
      Possible values include: 'User', 'Group', 'ServicePrincipal'
     :vartype object_type: str or
      ~azure.mgmt.datalake.analytics.account.models.AADObjectType
-    :param max_degree_of_parallelism_per_job: The maximum degree of
-     parallelism per job this user can use to submit jobs.
-    :type max_degree_of_parallelism_per_job: int
-    :param min_priority_per_job: The minimum priority per job this user can
-     use to submit jobs.
-    :type min_priority_per_job: int
+    :ivar max_degree_of_parallelism_per_job: The maximum degree of parallelism
+     per job this user can use to submit jobs.
+    :vartype max_degree_of_parallelism_per_job: int
+    :ivar min_priority_per_job: The minimum priority per job this user can use
+     to submit jobs.
+    :vartype min_priority_per_job: int
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'object_id': {'readonly': True},
         'object_type': {'readonly': True},
-        'max_degree_of_parallelism_per_job': {'minimum': 1},
-        'min_priority_per_job': {'minimum': 1},
+        'max_degree_of_parallelism_per_job': {'readonly': True, 'minimum': 1},
+        'min_priority_per_job': {'readonly': True, 'minimum': 1},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'object_id': {'key': 'properties.objectId', 'type': 'str'},
         'object_type': {'key': 'properties.objectType', 'type': 'str'},
         'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
     }
 
-    def __init__(self, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
+    def __init__(self):
         super(ComputePolicy, self).__init__()
-        self.name = None
         self.object_id = None
         self.object_type = None
-        self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
-        self.min_priority_per_job = min_priority_per_job
+        self.max_degree_of_parallelism_per_job = None
+        self.min_priority_per_job = None

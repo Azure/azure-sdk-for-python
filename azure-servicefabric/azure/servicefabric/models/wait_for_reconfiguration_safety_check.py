@@ -16,7 +16,7 @@ class WaitForReconfigurationSafetyCheck(PartitionSafetyCheck):
     """Safety check that waits for the current reconfiguration of the partition to
     be completed before starting an upgrade.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param partition_id:
     :type partition_id: str

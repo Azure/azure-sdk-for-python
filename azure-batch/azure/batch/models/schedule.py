@@ -67,6 +67,7 @@ class Schedule(Model):
     }
 
     def __init__(self, do_not_run_until=None, do_not_run_after=None, start_window=None, recurrence_interval=None):
+        super(Schedule, self).__init__()
         self.do_not_run_until = do_not_run_until
         self.do_not_run_after = do_not_run_after
         self.start_window = start_window

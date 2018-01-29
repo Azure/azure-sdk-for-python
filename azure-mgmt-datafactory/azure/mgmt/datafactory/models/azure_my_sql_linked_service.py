@@ -26,7 +26,7 @@ class AzureMySqlLinkedService(LinkedService):
     :param type: Constant filled by server.
     :type type: str
     :param connection_string: The connection string.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecureString
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -43,7 +43,7 @@ class AzureMySqlLinkedService(LinkedService):
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecureString'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

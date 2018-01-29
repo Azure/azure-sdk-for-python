@@ -39,6 +39,7 @@ class IotHubQuotaMetricInfo(Model):
     }
 
     def __init__(self):
+        super(IotHubQuotaMetricInfo, self).__init__()
         self.name = None
         self.current_value = None
         self.max_value = None

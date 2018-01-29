@@ -66,6 +66,7 @@ class Identity(Model):
     }
 
     def __init__(self, location=None, tags=None):
+        super(Identity, self).__init__()
         self.id = None
         self.name = None
         self.location = location

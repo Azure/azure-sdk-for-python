@@ -28,4 +28,5 @@ class OperationInputs(Model):
     }
 
     def __init__(self, name):
+        super(OperationInputs, self).__init__()
         self.name = name

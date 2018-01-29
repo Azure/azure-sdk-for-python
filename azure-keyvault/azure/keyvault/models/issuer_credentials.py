@@ -27,5 +27,6 @@ class IssuerCredentials(Model):
     }
 
     def __init__(self, account_id=None, password=None):
+        super(IssuerCredentials, self).__init__()
         self.account_id = account_id
         self.password = password

@@ -25,4 +25,5 @@ class CertificateVerificationDescription(Model):
     }
 
     def __init__(self, certificate=None):
+        super(CertificateVerificationDescription, self).__init__()
         self.certificate = certificate

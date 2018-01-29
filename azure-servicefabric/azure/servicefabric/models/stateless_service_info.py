@@ -25,14 +25,13 @@ class StatelessServiceInfo(ServiceInfo):
     :type manifest_version: str
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param service_status: Possible values include: 'Unknown', 'Active',
      'Upgrading', 'Deleting', 'Creating', 'Failed'
-    :type service_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type service_status: str or ~azure.servicefabric.models.enum
     :param is_service_group: Whether the service is in a service group.
     :type is_service_group: bool
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     """
 

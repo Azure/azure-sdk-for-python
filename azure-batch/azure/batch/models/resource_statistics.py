@@ -90,6 +90,7 @@ class ResourceStatistics(Model):
     }
 
     def __init__(self, start_time, last_update_time, avg_cpu_percentage, avg_memory_gi_b, peak_memory_gi_b, avg_disk_gi_b, peak_disk_gi_b, disk_read_iops, disk_write_iops, disk_read_gi_b, disk_write_gi_b, network_read_gi_b, network_write_gi_b):
+        super(ResourceStatistics, self).__init__()
         self.start_time = start_time
         self.last_update_time = last_update_time
         self.avg_cpu_percentage = avg_cpu_percentage

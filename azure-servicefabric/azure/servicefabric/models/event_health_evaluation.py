@@ -21,20 +21,18 @@ class EventHealthEvaluation(HealthEvaluation):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param consider_warning_as_error: Indicates whether warnings are treated
      with the same severity as errors. The field is specified in the health
      policy used to evaluate the entity.
     :type consider_warning_as_error: bool
     :param unhealthy_event:
-    :type unhealthy_event: :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
+    :type unhealthy_event: ~azure.servicefabric.models.HealthEvent
     """
 
     _validation = {

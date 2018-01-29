@@ -25,6 +25,8 @@ class CertificatesOperations(object):
     :ivar api_version: The version of the API. Constant value: "2017-07-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -50,13 +52,9 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CertificateListDescription
-         <azure.mgmt.iothub.models.CertificateListDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CertificateListDescription
-         <azure.mgmt.iothub.models.CertificateListDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CertificateListDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.CertificateListDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -85,7 +83,7 @@ class CertificatesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -119,13 +117,9 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CertificateDescription
-         <azure.mgmt.iothub.models.CertificateDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CertificateDescription
-         <azure.mgmt.iothub.models.CertificateDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CertificateDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.CertificateDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -155,7 +149,7 @@ class CertificatesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -195,13 +189,9 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CertificateDescription
-         <azure.mgmt.iothub.models.CertificateDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CertificateDescription
-         <azure.mgmt.iothub.models.CertificateDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CertificateDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.CertificateDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -239,16 +229,16 @@ class CertificatesOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [201, 200]:
+        if response.status_code not in [200, 201]:
             raise models.ErrorDetailsException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('CertificateDescription', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('CertificateDescription', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('CertificateDescription', response)
 
         if raw:
@@ -278,11 +268,8 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -313,7 +300,7 @@ class CertificatesOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -343,13 +330,10 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CertificateWithNonceDescription
-         <azure.mgmt.iothub.models.CertificateWithNonceDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: CertificateWithNonceDescription or ClientRawResponse if
          raw=true
-        :rtype: :class:`CertificateWithNonceDescription
-         <azure.mgmt.iothub.models.CertificateWithNonceDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.mgmt.iothub.models.CertificateWithNonceDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -380,7 +364,7 @@ class CertificatesOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)
@@ -420,13 +404,9 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CertificateDescription
-         <azure.mgmt.iothub.models.CertificateDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CertificateDescription
-         <azure.mgmt.iothub.models.CertificateDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CertificateDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.CertificateDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
@@ -463,7 +443,7 @@ class CertificatesOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorDetailsException(self._deserialize, response)

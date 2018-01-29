@@ -24,4 +24,5 @@ class ARecord(Model):
     }
 
     def __init__(self, ipv4_address=None):
+        super(ARecord, self).__init__()
         self.ipv4_address = ipv4_address

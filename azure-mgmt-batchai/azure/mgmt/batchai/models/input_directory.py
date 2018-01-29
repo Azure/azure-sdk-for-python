@@ -37,5 +37,6 @@ class InputDirectory(Model):
     }
 
     def __init__(self, id, path):
+        super(InputDirectory, self).__init__()
         self.id = id
         self.path = path

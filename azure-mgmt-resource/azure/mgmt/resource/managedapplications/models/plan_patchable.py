@@ -36,6 +36,7 @@ class PlanPatchable(Model):
     }
 
     def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None):
+        super(PlanPatchable, self).__init__()
         self.name = name
         self.publisher = publisher
         self.product = product

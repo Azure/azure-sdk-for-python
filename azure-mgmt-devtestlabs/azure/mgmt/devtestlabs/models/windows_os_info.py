@@ -27,4 +27,5 @@ class WindowsOsInfo(Model):
     }
 
     def __init__(self, windows_os_state=None):
+        super(WindowsOsInfo, self).__init__()
         self.windows_os_state = windows_os_state

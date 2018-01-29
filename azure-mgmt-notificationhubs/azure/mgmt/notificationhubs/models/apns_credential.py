@@ -48,6 +48,7 @@ class ApnsCredential(Model):
     }
 
     def __init__(self, apns_certificate=None, certificate_key=None, endpoint=None, thumbprint=None, key_id=None, app_name=None, app_id=None, token=None):
+        super(ApnsCredential, self).__init__()
         self.apns_certificate = apns_certificate
         self.certificate_key = certificate_key
         self.endpoint = endpoint

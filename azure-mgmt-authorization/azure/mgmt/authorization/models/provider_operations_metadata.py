@@ -39,6 +39,7 @@ class ProviderOperationsMetadata(Model):
     }
 
     def __init__(self, id=None, name=None, type=None, display_name=None, resource_types=None, operations=None):
+        super(ProviderOperationsMetadata, self).__init__()
         self.id = id
         self.name = name
         self.type = type

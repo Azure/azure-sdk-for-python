@@ -13,13 +13,12 @@ from msrest.serialization import Model
 
 
 class UpdateStorageAccountParameters(Model):
-    """Storage account parameters for a storage account being updated in a Data
-    Lake Analytics account.
+    """The parameters used to update an Azure Storage account.
 
-    :param access_key: the updated access key associated with this Azure
+    :param access_key: The updated access key associated with this Azure
      Storage account that will be used to connect to it.
     :type access_key: str
-    :param suffix: the optional suffix for the storage account.
+    :param suffix: The optional suffix for the storage account.
     :type suffix: str
     """
 

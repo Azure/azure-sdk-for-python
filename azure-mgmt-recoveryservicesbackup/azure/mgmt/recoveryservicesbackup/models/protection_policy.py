@@ -16,9 +16,15 @@ class ProtectionPolicy(Model):
     """Base class for backup policy. Workload-specific backup policies are derived
     from this class.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureFileShareProtectionPolicy,
+    AzureIaaSVMProtectionPolicy, AzureSqlProtectionPolicy,
+    AzureVmWorkloadProtectionPolicy, GenericProtectionPolicy,
+    MabProtectionPolicy
+
     :param protected_items_count: Number of items associated with this policy.
     :type protected_items_count: int
-    :param backup_management_type: Polymorphic Discriminator
+    :param backup_management_type: Constant filled by server.
     :type backup_management_type: str
     """
 
@@ -32,9 +38,10 @@ class ProtectionPolicy(Model):
     }
 
     _subtype_map = {
-        'backup_management_type': {'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
+        'backup_management_type': {'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
     }
 
     def __init__(self, protected_items_count=None):
+        super(ProtectionPolicy, self).__init__()
         self.protected_items_count = protected_items_count
         self.backup_management_type = None

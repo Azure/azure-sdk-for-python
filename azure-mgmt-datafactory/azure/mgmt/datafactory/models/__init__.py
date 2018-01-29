@@ -253,6 +253,8 @@ from .lookup_activity import LookupActivity
 from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
 from .custom_activity_reference_object import CustomActivityReferenceObject
 from .custom_activity import CustomActivity
+from .ssis_package_location import SSISPackageLocation
+from .execute_ssis_package_activity import ExecuteSSISPackageActivity
 from .hd_insight_spark_activity import HDInsightSparkActivity
 from .hd_insight_streaming_activity import HDInsightStreamingActivity
 from .hd_insight_map_reduce_activity import HDInsightMapReduceActivity
@@ -286,13 +288,18 @@ from .for_each_activity import ForEachActivity
 from .if_condition_activity import IfConditionActivity
 from .execute_pipeline_activity import ExecutePipelineActivity
 from .control_activity import ControlActivity
+from .linked_integration_runtime import LinkedIntegrationRuntime
 from .self_hosted_integration_runtime_node import SelfHostedIntegrationRuntimeNode
 from .self_hosted_integration_runtime_status import SelfHostedIntegrationRuntimeStatus
 from .managed_integration_runtime_operation_result import ManagedIntegrationRuntimeOperationResult
 from .managed_integration_runtime_error import ManagedIntegrationRuntimeError
 from .managed_integration_runtime_node import ManagedIntegrationRuntimeNode
 from .managed_integration_runtime_status import ManagedIntegrationRuntimeStatus
+from .linked_integration_runtime_rbac import LinkedIntegrationRuntimeRbac
+from .linked_integration_runtime_key import LinkedIntegrationRuntimeKey
+from .linked_integration_runtime_properties import LinkedIntegrationRuntimeProperties
 from .self_hosted_integration_runtime import SelfHostedIntegrationRuntime
+from .integration_runtime_custom_setup_script_properties import IntegrationRuntimeCustomSetupScriptProperties
 from .integration_runtime_ssis_catalog_info import IntegrationRuntimeSsisCatalogInfo
 from .integration_runtime_ssis_properties import IntegrationRuntimeSsisProperties
 from .integration_runtime_vnet_properties import IntegrationRuntimeVNetProperties
@@ -354,6 +361,8 @@ from .data_factory_management_client_enums import (
     WebActivityMethod,
     CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
+    SalesforceSourceReadBehavior,
+    SSISExecutionRuntime,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
     AzureSearchIndexWriteBehaviorType,
@@ -366,6 +375,8 @@ from .data_factory_management_client_enums import (
     IntegrationRuntimeInternalChannelEncryptionMode,
     ManagedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeSsisCatalogPricingTier,
+    IntegrationRuntimeLicenseType,
+    IntegrationRuntimeEdition,
     IntegrationRuntimeAuthKeyName,
 )
 
@@ -614,6 +625,8 @@ __all__ = [
     'SqlServerStoredProcedureActivity',
     'CustomActivityReferenceObject',
     'CustomActivity',
+    'SSISPackageLocation',
+    'ExecuteSSISPackageActivity',
     'HDInsightSparkActivity',
     'HDInsightStreamingActivity',
     'HDInsightMapReduceActivity',
@@ -647,13 +660,18 @@ __all__ = [
     'IfConditionActivity',
     'ExecutePipelineActivity',
     'ControlActivity',
+    'LinkedIntegrationRuntime',
     'SelfHostedIntegrationRuntimeNode',
     'SelfHostedIntegrationRuntimeStatus',
     'ManagedIntegrationRuntimeOperationResult',
     'ManagedIntegrationRuntimeError',
     'ManagedIntegrationRuntimeNode',
     'ManagedIntegrationRuntimeStatus',
+    'LinkedIntegrationRuntimeRbac',
+    'LinkedIntegrationRuntimeKey',
+    'LinkedIntegrationRuntimeProperties',
     'SelfHostedIntegrationRuntime',
+    'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeSsisCatalogInfo',
     'IntegrationRuntimeSsisProperties',
     'IntegrationRuntimeVNetProperties',
@@ -714,6 +732,8 @@ __all__ = [
     'WebActivityMethod',
     'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',
+    'SalesforceSourceReadBehavior',
+    'SSISExecutionRuntime',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
     'AzureSearchIndexWriteBehaviorType',
@@ -726,5 +746,7 @@ __all__ = [
     'IntegrationRuntimeInternalChannelEncryptionMode',
     'ManagedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeSsisCatalogPricingTier',
+    'IntegrationRuntimeLicenseType',
+    'IntegrationRuntimeEdition',
     'IntegrationRuntimeAuthKeyName',
 ]

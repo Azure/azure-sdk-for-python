@@ -38,4 +38,5 @@ class CheckNameAvailabilityInput(Model):
     type = "mediaservices"
 
     def __init__(self, name):
+        super(CheckNameAvailabilityInput, self).__init__()
         self.name = name

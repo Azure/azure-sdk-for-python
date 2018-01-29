@@ -22,8 +22,7 @@ class Operation(Model):
      delete}
     :vartype name: str
     :param display: The object that represents the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.iothub.models.OperationDisplay>`
+    :type display: ~azure.mgmt.iothub.models.OperationDisplay
     """
 
     _validation = {
@@ -36,5 +35,6 @@ class Operation(Model):
     }
 
     def __init__(self, display=None):
+        super(Operation, self).__init__()
         self.name = None
         self.display = display

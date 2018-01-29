@@ -53,20 +53,18 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
     :param correlation_scheme:
-    :type correlation_scheme: list of :class:`ServiceCorrelationDescription
-     <azure.servicefabric.models.ServiceCorrelationDescription>`
+    :type correlation_scheme:
+     list[~azure.servicefabric.models.ServiceCorrelationDescription]
     :param load_metrics:
-    :type load_metrics: list of :class:`ServiceLoadMetricDescription
-     <azure.servicefabric.models.ServiceLoadMetricDescription>`
+    :type load_metrics:
+     list[~azure.servicefabric.models.ServiceLoadMetricDescription]
     :param service_placement_policies:
-    :type service_placement_policies: list of
-     :class:`ServicePlacementPolicyDescription
-     <azure.servicefabric.models.ServicePlacementPolicyDescription>`
+    :type service_placement_policies:
+     list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: Possible values include: 'Zero', 'Low',
      'Medium', 'High'
-    :type default_move_cost: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param service_kind: Polymorphic Discriminator
+    :type default_move_cost: str or ~azure.servicefabric.models.enum
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
     :type target_replica_set_size: int

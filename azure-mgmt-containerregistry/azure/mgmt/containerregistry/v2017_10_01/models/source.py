@@ -31,5 +31,6 @@ class Source(Model):
     }
 
     def __init__(self, addr=None, instance_id=None):
+        super(Source, self).__init__()
         self.addr = addr
         self.instance_id = instance_id

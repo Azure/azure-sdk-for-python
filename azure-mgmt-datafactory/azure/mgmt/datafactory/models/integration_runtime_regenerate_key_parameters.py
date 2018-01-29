@@ -26,4 +26,5 @@ class IntegrationRuntimeRegenerateKeyParameters(Model):
     }
 
     def __init__(self, key_name=None):
+        super(IntegrationRuntimeRegenerateKeyParameters, self).__init__()
         self.key_name = key_name

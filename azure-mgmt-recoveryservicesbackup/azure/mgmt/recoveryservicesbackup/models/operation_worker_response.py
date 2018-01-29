@@ -29,17 +29,18 @@ class OperationWorkerResponse(Model):
      'ExpectationFailed', 'UpgradeRequired', 'InternalServerError',
      'NotImplemented', 'BadGateway', 'ServiceUnavailable', 'GatewayTimeout',
      'HttpVersionNotSupported'
-    :type status_code: str or :class:`HttpStatusCode
-     <azure.mgmt.recoveryservicesbackup.models.HttpStatusCode>`
+    :type status_code: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HttpStatusCode
     :param headers: HTTP headers associated with this operation.
-    :type headers: dict
+    :type headers: dict[str, list[str]]
     """
 
     _attribute_map = {
         'status_code': {'key': 'statusCode', 'type': 'HttpStatusCode'},
-        'headers': {'key': 'Headers', 'type': '{[str]}'},
+        'headers': {'key': 'headers', 'type': '{[str]}'},
     }
 
     def __init__(self, status_code=None, headers=None):
+        super(OperationWorkerResponse, self).__init__()
         self.status_code = status_code
         self.headers = headers

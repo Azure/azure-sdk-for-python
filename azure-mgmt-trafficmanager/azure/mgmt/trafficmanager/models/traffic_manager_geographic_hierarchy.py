@@ -29,8 +29,7 @@ class TrafficManagerGeographicHierarchy(ProxyResource):
     :vartype type: str
     :param geographic_hierarchy: The region at the root of the hierarchy from
      all the regions in the hierarchy can be retrieved.
-    :type geographic_hierarchy: :class:`Region
-     <azure.mgmt.trafficmanager.models.Region>`
+    :type geographic_hierarchy: ~azure.mgmt.trafficmanager.models.Region
     """
 
     _validation = {

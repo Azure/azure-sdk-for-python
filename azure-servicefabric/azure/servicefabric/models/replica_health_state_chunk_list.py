@@ -19,8 +19,7 @@ class ReplicaHealthStateChunkList(Model):
 
     :param items: The list of replica health state chunks that respect the
      input filters in the chunk query.
-    :type items: list of :class:`ReplicaHealthStateChunk
-     <azure.servicefabric.models.ReplicaHealthStateChunk>`
+    :type items: list[~azure.servicefabric.models.ReplicaHealthStateChunk]
     """
 
     _attribute_map = {
@@ -28,4 +27,5 @@ class ReplicaHealthStateChunkList(Model):
     }
 
     def __init__(self, items=None):
+        super(ReplicaHealthStateChunkList, self).__init__()
         self.items = items

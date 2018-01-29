@@ -38,6 +38,7 @@ class RegistryUpdateParameters(Model):
     }
 
     def __init__(self, tags=None, sku=None, admin_user_enabled=None, storage_account=None):
+        super(RegistryUpdateParameters, self).__init__()
         self.tags = tags
         self.sku = sku
         self.admin_user_enabled = admin_user_enabled

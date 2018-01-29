@@ -47,6 +47,7 @@ class ServerUpdateParameters(Model):
     }
 
     def __init__(self, sku=None, storage_mb=None, administrator_login_password=None, version=None, ssl_enforcement=None, tags=None):
+        super(ServerUpdateParameters, self).__init__()
         self.sku = sku
         self.storage_mb = storage_mb
         self.administrator_login_password = administrator_login_password

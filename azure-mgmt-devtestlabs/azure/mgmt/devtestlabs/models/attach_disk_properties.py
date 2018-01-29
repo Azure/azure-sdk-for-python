@@ -25,4 +25,5 @@ class AttachDiskProperties(Model):
     }
 
     def __init__(self, leased_by_lab_vm_id=None):
+        super(AttachDiskProperties, self).__init__()
         self.leased_by_lab_vm_id = leased_by_lab_vm_id

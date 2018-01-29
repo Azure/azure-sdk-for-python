@@ -9,18 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .create_or_update_firewall_rule_parameters import CreateOrUpdateFirewallRuleParameters
+from .create_firewall_rule_with_account_parameters import CreateFirewallRuleWithAccountParameters
 from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
+from .update_firewall_rule_with_account_parameters import UpdateFirewallRuleWithAccountParameters
 from .firewall_rule import FirewallRule
+from .create_or_update_trusted_id_provider_parameters import CreateOrUpdateTrustedIdProviderParameters
+from .create_trusted_id_provider_with_account_parameters import CreateTrustedIdProviderWithAccountParameters
 from .update_trusted_id_provider_parameters import UpdateTrustedIdProviderParameters
+from .update_trusted_id_provider_with_account_parameters import UpdateTrustedIdProviderWithAccountParameters
 from .trusted_id_provider import TrustedIdProvider
 from .encryption_identity import EncryptionIdentity
 from .key_vault_meta_info import KeyVaultMetaInfo
 from .encryption_config import EncryptionConfig
 from .update_key_vault_meta_info import UpdateKeyVaultMetaInfo
 from .update_encryption_config import UpdateEncryptionConfig
-from .data_lake_store_account_update_parameters import DataLakeStoreAccountUpdateParameters
-from .data_lake_store_account import DataLakeStoreAccount
+from .data_lake_store_account_properties_basic import DataLakeStoreAccountPropertiesBasic
 from .data_lake_store_account_basic import DataLakeStoreAccountBasic
+from .data_lake_store_account import DataLakeStoreAccount
+from .data_lake_store_account_update_parameters import DataLakeStoreAccountUpdateParameters
 from .name_availability_information import NameAvailabilityInformation
 from .check_name_availability_parameters import CheckNameAvailabilityParameters
 from .capability_information import CapabilityInformation
@@ -35,31 +42,38 @@ from .trusted_id_provider_paged import TrustedIdProviderPaged
 from .data_lake_store_account_basic_paged import DataLakeStoreAccountBasicPaged
 from .data_lake_store_account_management_client_enums import (
     EncryptionConfigType,
+    DataLakeStoreAccountStatus,
+    DataLakeStoreAccountState,
     EncryptionState,
     EncryptionProvisioningState,
     FirewallState,
+    FirewallAllowAzureIpsState,
     TrustedIdProviderState,
     TierType,
-    FirewallAllowAzureIpsState,
-    DataLakeStoreAccountStatus,
-    DataLakeStoreAccountState,
     SubscriptionState,
     OperationOrigin,
 )
 
 __all__ = [
+    'CreateOrUpdateFirewallRuleParameters',
+    'CreateFirewallRuleWithAccountParameters',
     'UpdateFirewallRuleParameters',
+    'UpdateFirewallRuleWithAccountParameters',
     'FirewallRule',
+    'CreateOrUpdateTrustedIdProviderParameters',
+    'CreateTrustedIdProviderWithAccountParameters',
     'UpdateTrustedIdProviderParameters',
+    'UpdateTrustedIdProviderWithAccountParameters',
     'TrustedIdProvider',
     'EncryptionIdentity',
     'KeyVaultMetaInfo',
     'EncryptionConfig',
     'UpdateKeyVaultMetaInfo',
     'UpdateEncryptionConfig',
-    'DataLakeStoreAccountUpdateParameters',
-    'DataLakeStoreAccount',
+    'DataLakeStoreAccountPropertiesBasic',
     'DataLakeStoreAccountBasic',
+    'DataLakeStoreAccount',
+    'DataLakeStoreAccountUpdateParameters',
     'NameAvailabilityInformation',
     'CheckNameAvailabilityParameters',
     'CapabilityInformation',
@@ -73,14 +87,14 @@ __all__ = [
     'TrustedIdProviderPaged',
     'DataLakeStoreAccountBasicPaged',
     'EncryptionConfigType',
+    'DataLakeStoreAccountStatus',
+    'DataLakeStoreAccountState',
     'EncryptionState',
     'EncryptionProvisioningState',
     'FirewallState',
+    'FirewallAllowAzureIpsState',
     'TrustedIdProviderState',
     'TierType',
-    'FirewallAllowAzureIpsState',
-    'DataLakeStoreAccountStatus',
-    'DataLakeStoreAccountState',
     'SubscriptionState',
     'OperationOrigin',
 ]

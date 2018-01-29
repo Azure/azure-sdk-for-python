@@ -17,11 +17,10 @@ class StartedChaosEvent(ChaosEvent):
 
     :param time_stamp_utc:
     :type time_stamp_utc: datetime
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param chaos_parameters:
-    :type chaos_parameters: :class:`ChaosParameters
-     <azure.servicefabric.models.ChaosParameters>`
+    :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
     """
 
     _validation = {

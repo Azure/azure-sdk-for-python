@@ -47,6 +47,7 @@ class RegistryCreateParameters(Model):
     }
 
     def __init__(self, location, sku, storage_account, tags=None, admin_user_enabled=False):
+        super(RegistryCreateParameters, self).__init__()
         self.tags = tags
         self.location = location
         self.sku = sku

@@ -28,10 +28,10 @@ class WorkflowTriggerCallbackUrl(Model):
     :vartype relative_path: str
     :param relative_path_parameters: Gets the workflow trigger callback URL
      relative path parameters.
-    :type relative_path_parameters: list of str
+    :type relative_path_parameters: list[str]
     :param queries: Gets the workflow trigger callback URL query parameters.
-    :type queries: :class:`WorkflowTriggerListCallbackUrlQueries
-     <azure.mgmt.logic.models.WorkflowTriggerListCallbackUrlQueries>`
+    :type queries:
+     ~azure.mgmt.logic.models.WorkflowTriggerListCallbackUrlQueries
     """
 
     _validation = {
@@ -51,6 +51,7 @@ class WorkflowTriggerCallbackUrl(Model):
     }
 
     def __init__(self, relative_path_parameters=None, queries=None):
+        super(WorkflowTriggerCallbackUrl, self).__init__()
         self.value = None
         self.method = None
         self.base_path = None

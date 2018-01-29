@@ -20,8 +20,7 @@ class ImageSourceRegistry(Model):
     :param image: The name of the image in image repository.
     :type image: str
     :param credentials: Information to access the private Docker repository.
-    :type credentials: :class:`PrivateRegistryCredentials
-     <azure.mgmt.batchai.models.PrivateRegistryCredentials>`
+    :type credentials: ~azure.mgmt.batchai.models.PrivateRegistryCredentials
     """
 
     _validation = {
@@ -35,6 +34,7 @@ class ImageSourceRegistry(Model):
     }
 
     def __init__(self, image, server_url=None, credentials=None):
+        super(ImageSourceRegistry, self).__init__()
         self.server_url = server_url
         self.image = image
         self.credentials = credentials

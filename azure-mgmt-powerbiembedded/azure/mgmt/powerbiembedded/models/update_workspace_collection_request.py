@@ -20,10 +20,9 @@ class UpdateWorkspaceCollectionRequest(Model):
     sending a request.
 
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar sku:
-    :vartype sku: :class:`AzureSku
-     <azure.mgmt.powerbiembedded.models.AzureSku>`
+    :vartype sku: ~azure.mgmt.powerbiembedded.models.AzureSku
     """
 
     _validation = {
@@ -38,4 +37,5 @@ class UpdateWorkspaceCollectionRequest(Model):
     sku = AzureSku()
 
     def __init__(self, tags=None):
+        super(UpdateWorkspaceCollectionRequest, self).__init__()
         self.tags = tags

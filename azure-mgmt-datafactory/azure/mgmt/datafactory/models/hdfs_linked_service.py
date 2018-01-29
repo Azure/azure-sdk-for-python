@@ -41,7 +41,7 @@ class HdfsLinkedService(LinkedService):
      Expression with resultType string).
     :type user_name: object
     :param password: Password for Windows authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
@@ -58,7 +58,7 @@ class HdfsLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
     }
 
     def __init__(self, url, additional_properties=None, connect_via=None, description=None, authentication_type=None, encrypted_credential=None, user_name=None, password=None):

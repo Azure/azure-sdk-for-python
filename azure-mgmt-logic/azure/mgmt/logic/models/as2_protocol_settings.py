@@ -16,28 +16,22 @@ class AS2ProtocolSettings(Model):
     """The AS2 agreement protocol settings.
 
     :param message_connection_settings: The message connection settings.
-    :type message_connection_settings: :class:`AS2MessageConnectionSettings
-     <azure.mgmt.logic.models.AS2MessageConnectionSettings>`
+    :type message_connection_settings:
+     ~azure.mgmt.logic.models.AS2MessageConnectionSettings
     :param acknowledgement_connection_settings: The acknowledgement connection
      settings.
     :type acknowledgement_connection_settings:
-     :class:`AS2AcknowledgementConnectionSettings
-     <azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings>`
+     ~azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings
     :param mdn_settings: The MDN settings.
-    :type mdn_settings: :class:`AS2MdnSettings
-     <azure.mgmt.logic.models.AS2MdnSettings>`
+    :type mdn_settings: ~azure.mgmt.logic.models.AS2MdnSettings
     :param security_settings: The security settings.
-    :type security_settings: :class:`AS2SecuritySettings
-     <azure.mgmt.logic.models.AS2SecuritySettings>`
+    :type security_settings: ~azure.mgmt.logic.models.AS2SecuritySettings
     :param validation_settings: The validation settings.
-    :type validation_settings: :class:`AS2ValidationSettings
-     <azure.mgmt.logic.models.AS2ValidationSettings>`
+    :type validation_settings: ~azure.mgmt.logic.models.AS2ValidationSettings
     :param envelope_settings: The envelope settings.
-    :type envelope_settings: :class:`AS2EnvelopeSettings
-     <azure.mgmt.logic.models.AS2EnvelopeSettings>`
+    :type envelope_settings: ~azure.mgmt.logic.models.AS2EnvelopeSettings
     :param error_settings: The error settings.
-    :type error_settings: :class:`AS2ErrorSettings
-     <azure.mgmt.logic.models.AS2ErrorSettings>`
+    :type error_settings: ~azure.mgmt.logic.models.AS2ErrorSettings
     """
 
     _validation = {
@@ -61,6 +55,7 @@ class AS2ProtocolSettings(Model):
     }
 
     def __init__(self, message_connection_settings, acknowledgement_connection_settings, mdn_settings, security_settings, validation_settings, envelope_settings, error_settings):
+        super(AS2ProtocolSettings, self).__init__()
         self.message_connection_settings = message_connection_settings
         self.acknowledgement_connection_settings = acknowledgement_connection_settings
         self.mdn_settings = mdn_settings

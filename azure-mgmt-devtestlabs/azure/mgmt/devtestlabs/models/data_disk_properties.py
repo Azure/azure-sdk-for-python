@@ -35,6 +35,7 @@ class DataDiskProperties(Model):
     }
 
     def __init__(self, attach_new_data_disk_options=None, existing_lab_disk_id=None, host_caching=None):
+        super(DataDiskProperties, self).__init__()
         self.attach_new_data_disk_options = attach_new_data_disk_options
         self.existing_lab_disk_id = existing_lab_disk_id
         self.host_caching = host_caching

@@ -28,26 +28,24 @@ class ApplicationUpgradeDescription(Model):
     :param target_application_type_version:
     :type target_application_type_version: str
     :param parameters:
-    :type parameters: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
+    :type parameters: list[~azure.servicefabric.models.ApplicationParameter]
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
      Default value: "Rolling" .
-    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type upgrade_kind: str or ~azure.servicefabric.models.enum
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
     :param upgrade_replica_set_check_timeout_in_seconds:
     :type upgrade_replica_set_check_timeout_in_seconds: long
     :param force_restart:
     :type force_restart: bool
     :param monitoring_policy:
-    :type monitoring_policy: :class:`MonitoringPolicyDescription
-     <azure.servicefabric.models.MonitoringPolicyDescription>`
+    :type monitoring_policy:
+     ~azure.servicefabric.models.MonitoringPolicyDescription
     :param application_health_policy:
-    :type application_health_policy: :class:`ApplicationHealthPolicy
-     <azure.servicefabric.models.ApplicationHealthPolicy>`
+    :type application_health_policy:
+     ~azure.servicefabric.models.ApplicationHealthPolicy
     """
 
     _validation = {
@@ -70,6 +68,7 @@ class ApplicationUpgradeDescription(Model):
     }
 
     def __init__(self, name, target_application_type_version, parameters, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds=None, force_restart=None, monitoring_policy=None, application_health_policy=None):
+        super(ApplicationUpgradeDescription, self).__init__()
         self.name = name
         self.target_application_type_version = target_application_type_version
         self.parameters = parameters

@@ -24,4 +24,5 @@ class GenerateUpgradedDefinitionParameters(Model):
     }
 
     def __init__(self, target_schema_version=None):
+        super(GenerateUpgradedDefinitionParameters, self).__init__()
         self.target_schema_version = target_schema_version

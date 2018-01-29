@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -25,6 +25,8 @@ class QueryKeysOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -52,16 +54,15 @@ class QueryKeysOperations(object):
         :param search_management_request_options: Additional parameters for
          the operation
         :type search_management_request_options:
-         :class:`SearchManagementRequestOptions
-         <azure.mgmt.search.models.SearchManagementRequestOptions>`
+         ~azure.mgmt.search.models.SearchManagementRequestOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`QueryKey <azure.mgmt.search.models.QueryKey>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: QueryKey or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.search.models.QueryKey or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         client_request_id = None
@@ -96,7 +97,7 @@ class QueryKeysOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -128,15 +129,15 @@ class QueryKeysOperations(object):
         :param search_management_request_options: Additional parameters for
          the operation
         :type search_management_request_options:
-         :class:`SearchManagementRequestOptions
-         <azure.mgmt.search.models.SearchManagementRequestOptions>`
+         ~azure.mgmt.search.models.SearchManagementRequestOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`QueryKeyPaged
-         <azure.mgmt.search.models.QueryKeyPaged>`
+        :return: An iterator like instance of QueryKey
+        :rtype:
+         ~azure.mgmt.search.models.QueryKeyPaged[~azure.mgmt.search.models.QueryKey]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         client_request_id = None
@@ -178,7 +179,7 @@ class QueryKeysOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -216,16 +217,14 @@ class QueryKeysOperations(object):
         :param search_management_request_options: Additional parameters for
          the operation
         :type search_management_request_options:
-         :class:`SearchManagementRequestOptions
-         <azure.mgmt.search.models.SearchManagementRequestOptions>`
+         ~azure.mgmt.search.models.SearchManagementRequestOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         client_request_id = None
@@ -260,7 +259,7 @@ class QueryKeysOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204, 404]:
             exp = CloudError(response)

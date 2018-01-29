@@ -27,7 +27,7 @@ class IntegrationAccountCertificate(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
@@ -35,8 +35,7 @@ class IntegrationAccountCertificate(Resource):
     :param metadata: The metadata.
     :type metadata: object
     :param key: The key details in the key vault.
-    :type key: :class:`KeyVaultKeyReference
-     <azure.mgmt.logic.models.KeyVaultKeyReference>`
+    :type key: ~azure.mgmt.logic.models.KeyVaultKeyReference
     :param public_certificate: The public certificate.
     :type public_certificate: str
     """

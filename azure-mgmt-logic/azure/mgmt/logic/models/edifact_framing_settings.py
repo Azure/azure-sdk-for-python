@@ -35,17 +35,16 @@ class EdifactFramingSettings(Model):
     :param character_set: The EDIFACT frame setting characterSet. Possible
      values include: 'NotSpecified', 'UNOB', 'UNOA', 'UNOC', 'UNOD', 'UNOE',
      'UNOF', 'UNOG', 'UNOH', 'UNOI', 'UNOJ', 'UNOK', 'UNOX', 'UNOY', 'KECA'
-    :type character_set: str or :class:`EdifactCharacterSet
-     <azure.mgmt.logic.models.EdifactCharacterSet>`
+    :type character_set: str or ~azure.mgmt.logic.models.EdifactCharacterSet
     :param decimal_point_indicator: The EDIFACT frame setting decimal
      indicator. Possible values include: 'NotSpecified', 'Comma', 'Decimal'
-    :type decimal_point_indicator: str or :class:`EdifactDecimalIndicator
-     <azure.mgmt.logic.models.EdifactDecimalIndicator>`
+    :type decimal_point_indicator: str or
+     ~azure.mgmt.logic.models.EdifactDecimalIndicator
     :param segment_terminator_suffix: The EDIFACT frame setting segment
      terminator suffix. Possible values include: 'NotSpecified', 'None', 'CR',
      'LF', 'CRLF'
-    :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
-     <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
+    :type segment_terminator_suffix: str or
+     ~azure.mgmt.logic.models.SegmentTerminatorSuffix
     """
 
     _validation = {
@@ -75,6 +74,7 @@ class EdifactFramingSettings(Model):
     }
 
     def __init__(self, protocol_version, data_element_separator, component_separator, segment_terminator, release_indicator, repetition_separator, character_set, decimal_point_indicator, segment_terminator_suffix, service_code_list_directory_version=None, character_encoding=None):
+        super(EdifactFramingSettings, self).__init__()
         self.service_code_list_directory_version = service_code_list_directory_version
         self.character_encoding = character_encoding
         self.protocol_version = protocol_version

@@ -27,7 +27,7 @@ class IotHubDescription(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param subscriptionid: The subscription identifier.
     :type subscriptionid: str
     :param resourcegroup: The name of the resource group that contains the IoT
@@ -39,10 +39,9 @@ class IotHubDescription(Resource):
      convention.
     :type etag: str
     :param properties:
-    :type properties: :class:`IotHubProperties
-     <azure.mgmt.iothub.models.IotHubProperties>`
+    :type properties: ~azure.mgmt.iothub.models.IotHubProperties
     :param sku:
-    :type sku: :class:`IotHubSkuInfo <azure.mgmt.iothub.models.IotHubSkuInfo>`
+    :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
     """
 
     _validation = {

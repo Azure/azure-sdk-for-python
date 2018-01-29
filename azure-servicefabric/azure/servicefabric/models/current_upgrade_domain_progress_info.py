@@ -18,8 +18,8 @@ class CurrentUpgradeDomainProgressInfo(Model):
     :param domain_name:
     :type domain_name: str
     :param node_upgrade_progress_list:
-    :type node_upgrade_progress_list: list of :class:`NodeUpgradeProgressInfo
-     <azure.servicefabric.models.NodeUpgradeProgressInfo>`
+    :type node_upgrade_progress_list:
+     list[~azure.servicefabric.models.NodeUpgradeProgressInfo]
     """
 
     _attribute_map = {
@@ -28,5 +28,6 @@ class CurrentUpgradeDomainProgressInfo(Model):
     }
 
     def __init__(self, domain_name=None, node_upgrade_progress_list=None):
+        super(CurrentUpgradeDomainProgressInfo, self).__init__()
         self.domain_name = domain_name
         self.node_upgrade_progress_list = node_upgrade_progress_list

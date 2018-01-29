@@ -22,23 +22,20 @@ class ApplicationUpgradeProgressInfo(Model):
     :param target_application_type_version:
     :type target_application_type_version: str
     :param upgrade_domains:
-    :type upgrade_domains: list of :class:`UpgradeDomainInfo
-     <azure.servicefabric.models.UpgradeDomainInfo>`
+    :type upgrade_domains: list[~azure.servicefabric.models.UpgradeDomainInfo]
     :param upgrade_state: Possible values include: 'Invalid',
      'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
      'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type upgrade_state: str or ~azure.servicefabric.models.enum
     :param next_upgrade_domain:
     :type next_upgrade_domain: str
     :param rolling_upgrade_mode: Possible values include: 'Invalid',
      'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
      "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
     :param upgrade_description:
-    :type upgrade_description: :class:`ApplicationUpgradeDescription
-     <azure.servicefabric.models.ApplicationUpgradeDescription>`
+    :type upgrade_description:
+     ~azure.servicefabric.models.ApplicationUpgradeDescription
     :param upgrade_duration_in_milliseconds: The estimated total amount of
      time spent processing the overall upgrade.
     :type upgrade_duration_in_milliseconds: str
@@ -46,12 +43,11 @@ class ApplicationUpgradeProgressInfo(Model):
      of time spent processing the current upgrade domain.
     :type upgrade_domain_duration_in_milliseconds: str
     :param unhealthy_evaluations:
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
     :param current_upgrade_domain_progress:
     :type current_upgrade_domain_progress:
-     :class:`CurrentUpgradeDomainProgressInfo
-     <azure.servicefabric.models.CurrentUpgradeDomainProgressInfo>`
+     ~azure.servicefabric.models.CurrentUpgradeDomainProgressInfo
     :param start_timestamp_utc: The estimated UTC datetime when the upgrade
      started.
     :type start_timestamp_utc: str
@@ -60,12 +56,10 @@ class ApplicationUpgradeProgressInfo(Model):
     :type failure_timestamp_utc: str
     :param failure_reason: Possible values include: 'None', 'Interrupted',
      'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type failure_reason: str or ~azure.servicefabric.models.enum
     :param upgrade_domain_progress_at_failure:
     :type upgrade_domain_progress_at_failure:
-     :class:`FailureUpgradeDomainProgressInfo
-     <azure.servicefabric.models.FailureUpgradeDomainProgressInfo>`
+     ~azure.servicefabric.models.FailureUpgradeDomainProgressInfo
     :param upgrade_status_details: Additional detailed information about the
      status of the pending upgrade.
     :type upgrade_status_details: str
@@ -92,6 +86,7 @@ class ApplicationUpgradeProgressInfo(Model):
     }
 
     def __init__(self, name=None, type_name=None, target_application_type_version=None, upgrade_domains=None, upgrade_state=None, next_upgrade_domain=None, rolling_upgrade_mode="UnmonitoredAuto", upgrade_description=None, upgrade_duration_in_milliseconds=None, upgrade_domain_duration_in_milliseconds=None, unhealthy_evaluations=None, current_upgrade_domain_progress=None, start_timestamp_utc=None, failure_timestamp_utc=None, failure_reason=None, upgrade_domain_progress_at_failure=None, upgrade_status_details=None):
+        super(ApplicationUpgradeProgressInfo, self).__init__()
         self.name = name
         self.type_name = type_name
         self.target_application_type_version = target_application_type_version

@@ -38,6 +38,7 @@ class KeyVaultKeyReferenceKeyVault(Model):
     }
 
     def __init__(self, id=None):
+        super(KeyVaultKeyReferenceKeyVault, self).__init__()
         self.id = id
         self.name = None
         self.type = None

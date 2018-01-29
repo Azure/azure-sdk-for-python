@@ -46,8 +46,7 @@ class RemoteReplicatorStatus(Model):
     :type last_applied_copy_sequence_number: str
     :param remote_replicator_acknowledgement_status:
     :type remote_replicator_acknowledgement_status:
-     :class:`RemoteReplicatorAcknowledgementStatus
-     <azure.servicefabric.models.RemoteReplicatorAcknowledgementStatus>`
+     ~azure.servicefabric.models.RemoteReplicatorAcknowledgementStatus
     """
 
     _attribute_map = {
@@ -62,6 +61,7 @@ class RemoteReplicatorStatus(Model):
     }
 
     def __init__(self, replica_id=None, last_acknowledgement_processed_time_utc=None, last_received_replication_sequence_number=None, last_applied_replication_sequence_number=None, is_in_build=None, last_received_copy_sequence_number=None, last_applied_copy_sequence_number=None, remote_replicator_acknowledgement_status=None):
+        super(RemoteReplicatorStatus, self).__init__()
         self.replica_id = replica_id
         self.last_acknowledgement_processed_time_utc = last_acknowledgement_processed_time_utc
         self.last_received_replication_sequence_number = last_received_replication_sequence_number

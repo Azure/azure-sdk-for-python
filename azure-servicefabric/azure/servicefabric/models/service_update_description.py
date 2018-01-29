@@ -16,6 +16,10 @@ class ServiceUpdateDescription(Model):
     """A ServiceUpdateDescription contains all of the information necessary to
     update a service.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServiceUpdateDescription,
+    StatelessServiceUpdateDescription
+
     :param flags: Flags indicating whether other properties are set. Each of
      the associated properties corresponds to a flag, specified below, which,
      if set, indicate that the property is specified.
@@ -54,20 +58,18 @@ class ServiceUpdateDescription(Model):
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
     :param correlation_scheme:
-    :type correlation_scheme: list of :class:`ServiceCorrelationDescription
-     <azure.servicefabric.models.ServiceCorrelationDescription>`
+    :type correlation_scheme:
+     list[~azure.servicefabric.models.ServiceCorrelationDescription]
     :param load_metrics:
-    :type load_metrics: list of :class:`ServiceLoadMetricDescription
-     <azure.servicefabric.models.ServiceLoadMetricDescription>`
+    :type load_metrics:
+     list[~azure.servicefabric.models.ServiceLoadMetricDescription]
     :param service_placement_policies:
-    :type service_placement_policies: list of
-     :class:`ServicePlacementPolicyDescription
-     <azure.servicefabric.models.ServicePlacementPolicyDescription>`
+    :type service_placement_policies:
+     list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: Possible values include: 'Zero', 'Low',
      'Medium', 'High'
-    :type default_move_cost: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param service_kind: Polymorphic Discriminator
+    :type default_move_cost: str or ~azure.servicefabric.models.enum
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     """
 
@@ -90,6 +92,7 @@ class ServiceUpdateDescription(Model):
     }
 
     def __init__(self, flags=None, placement_constraints=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None):
+        super(ServiceUpdateDescription, self).__init__()
         self.flags = flags
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme

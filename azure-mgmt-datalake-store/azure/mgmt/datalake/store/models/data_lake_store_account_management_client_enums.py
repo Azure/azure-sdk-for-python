@@ -18,6 +18,27 @@ class EncryptionConfigType(Enum):
     service_managed = "ServiceManaged"
 
 
+class DataLakeStoreAccountStatus(Enum):
+
+    failed = "Failed"
+    creating = "Creating"
+    running = "Running"
+    succeeded = "Succeeded"
+    patching = "Patching"
+    suspending = "Suspending"
+    resuming = "Resuming"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    undeleting = "Undeleting"
+    canceled = "Canceled"
+
+
+class DataLakeStoreAccountState(Enum):
+
+    active = "Active"
+    suspended = "Suspended"
+
+
 class EncryptionState(Enum):
 
     enabled = "Enabled"
@@ -31,6 +52,12 @@ class EncryptionProvisioningState(Enum):
 
 
 class FirewallState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class FirewallAllowAzureIpsState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
@@ -51,33 +78,6 @@ class TierType(Enum):
     commitment_500_tb = "Commitment_500TB"
     commitment_1_pb = "Commitment_1PB"
     commitment_5_pb = "Commitment_5PB"
-
-
-class FirewallAllowAzureIpsState(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class DataLakeStoreAccountStatus(Enum):
-
-    failed = "Failed"
-    creating = "Creating"
-    running = "Running"
-    succeeded = "Succeeded"
-    patching = "Patching"
-    suspending = "Suspending"
-    resuming = "Resuming"
-    deleting = "Deleting"
-    deleted = "Deleted"
-    undeleting = "Undeleting"
-    canceled = "Canceled"
-
-
-class DataLakeStoreAccountState(Enum):
-
-    active = "Active"
-    suspended = "Suspended"
 
 
 class SubscriptionState(Enum):

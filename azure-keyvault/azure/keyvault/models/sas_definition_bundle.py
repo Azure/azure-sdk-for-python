@@ -25,12 +25,11 @@ class SasDefinitionBundle(Model):
     :vartype secret_id: str
     :ivar parameters: The SAS definition metadata in the form of key-value
      pairs.
-    :vartype parameters: dict
+    :vartype parameters: dict[str, str]
     :ivar attributes: The SAS definition attributes.
-    :vartype attributes: :class:`SasDefinitionAttributes
-     <azure.keyvault.models.SasDefinitionAttributes>`
+    :vartype attributes: ~azure.keyvault.models.SasDefinitionAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -50,6 +49,7 @@ class SasDefinitionBundle(Model):
     }
 
     def __init__(self):
+        super(SasDefinitionBundle, self).__init__()
         self.id = None
         self.secret_id = None
         self.parameters = None

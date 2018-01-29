@@ -27,5 +27,6 @@ class ApplicationNameInfo(Model):
     }
 
     def __init__(self, id=None, name=None):
+        super(ApplicationNameInfo, self).__init__()
         self.id = id
         self.name = name

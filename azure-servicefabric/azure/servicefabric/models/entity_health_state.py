@@ -18,8 +18,7 @@ class EntityHealthState(Model):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -27,4 +26,5 @@ class EntityHealthState(Model):
     }
 
     def __init__(self, aggregated_health_state=None):
+        super(EntityHealthState, self).__init__()
         self.aggregated_health_state = aggregated_health_state

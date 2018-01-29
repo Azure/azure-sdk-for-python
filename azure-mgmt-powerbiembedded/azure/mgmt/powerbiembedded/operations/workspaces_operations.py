@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -24,6 +24,8 @@ class WorkspacesOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-01-29".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -49,8 +51,9 @@ class WorkspacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkspacePaged
-         <azure.mgmt.powerbiembedded.models.WorkspacePaged>`
+        :return: An iterator like instance of Workspace
+        :rtype:
+         ~azure.mgmt.powerbiembedded.models.WorkspacePaged[~azure.mgmt.powerbiembedded.models.Workspace]
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
@@ -87,7 +90,7 @@ class WorkspacesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorException(self._deserialize, response)
