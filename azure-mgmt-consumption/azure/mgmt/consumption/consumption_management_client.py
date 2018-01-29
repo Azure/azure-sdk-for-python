@@ -32,18 +32,22 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param resource_group_name: Azure Resource Group Name.
+    :type resource_group_name: str
     :param name: Budget name.
     :type name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, name, base_url=None):
+            self, credentials, subscription_id, resource_group_name, name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
         if name is None:
             raise ValueError("Parameter 'name' must not be None.")
         if not base_url:
@@ -56,6 +60,7 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
         self.name = name
 
 
@@ -83,15 +88,17 @@ class ConsumptionManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param resource_group_name: Azure Resource Group Name.
+    :type resource_group_name: str
     :param name: Budget name.
     :type name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, name, base_url=None):
+            self, credentials, subscription_id, resource_group_name, name, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, name, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, resource_group_name, name, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
