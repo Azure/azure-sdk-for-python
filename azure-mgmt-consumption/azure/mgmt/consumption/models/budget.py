@@ -28,9 +28,9 @@ class Budget(ProxyResource):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
-    :ivar category: The category of the budget, whether the budget tracks cost
-     or something else. Default value: "Cost" .
-    :vartype category: str
+    :param category: The category of the budget, whether the budget tracks
+     cost or usage. Possible values include: 'Cost', 'Usage'
+    :type category: str or ~azure.mgmt.consumption.models.CategoryType
     :param amount: The total amount of cost to track with the budget
     :type amount: decimal.Decimal
     :param time_grain: The time covered by a budget. Tracking of the amount
@@ -43,6 +43,9 @@ class Budget(ProxyResource):
      be more than three months. Past start date should  be selected within the
      timegrain preiod. There are no restrictions on the end date.
     :type time_period: ~azure.mgmt.consumption.models.BudgetTimePeriod
+    :param filters: May be used to filter budgets by resource group, resource,
+     or meter.
+    :type filters: ~azure.mgmt.consumption.models.Filters
     :ivar current_spend: The current amount of cost which is being tracked for
      a budget.
     :vartype current_spend: ~azure.mgmt.consumption.models.CurrentSpend
@@ -56,7 +59,7 @@ class Budget(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'category': {'required': True, 'constant': True},
+        'category': {'required': True},
         'amount': {'required': True},
         'time_grain': {'required': True},
         'time_period': {'required': True},
@@ -72,16 +75,17 @@ class Budget(ProxyResource):
         'amount': {'key': 'properties.amount', 'type': 'decimal'},
         'time_grain': {'key': 'properties.timeGrain', 'type': 'str'},
         'time_period': {'key': 'properties.timePeriod', 'type': 'BudgetTimePeriod'},
+        'filters': {'key': 'properties.filters', 'type': 'Filters'},
         'current_spend': {'key': 'properties.currentSpend', 'type': 'CurrentSpend'},
         'notifications': {'key': 'properties.notifications', 'type': '{Notification}'},
     }
 
-    category = "Cost"
-
-    def __init__(self, amount, time_grain, time_period, e_tag=None, notifications=None):
+    def __init__(self, category, amount, time_grain, time_period, e_tag=None, filters=None, notifications=None):
         super(Budget, self).__init__(e_tag=e_tag)
+        self.category = category
         self.amount = amount
         self.time_grain = time_grain
         self.time_period = time_period
+        self.filters = filters
         self.current_spend = None
         self.notifications = notifications
