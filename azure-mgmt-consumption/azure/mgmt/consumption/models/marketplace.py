@@ -37,7 +37,7 @@ class Marketplace(Resource):
     :vartype usage_end: datetime
     :ivar resource_rate: The marketplace resource rate.
     :vartype resource_rate: decimal.Decimal
-    :ivar offer_name: The name of offer.
+    :ivar offer_name: The type of offer.
     :vartype offer_name: str
     :ivar resource_group: The name of resource group.
     :vartype resource_group: str
