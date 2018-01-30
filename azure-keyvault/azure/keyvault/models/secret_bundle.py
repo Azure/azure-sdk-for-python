@@ -25,10 +25,9 @@ class SecretBundle(Model):
     :param content_type: The content type of the secret.
     :type content_type: str
     :param attributes: The secret management attributes.
-    :type attributes: :class:`SecretAttributes
-     <azure.keyvault.models.SecretAttributes>`
+    :type attributes: ~azure.keyvault.models.SecretAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field
      specifies the corresponding key backing the KV certificate.
     :vartype kid: str
@@ -53,6 +52,7 @@ class SecretBundle(Model):
     }
 
     def __init__(self, value=None, id=None, content_type=None, attributes=None, tags=None):
+        super(SecretBundle, self).__init__()
         self.value = value
         self.id = id
         self.content_type = content_type

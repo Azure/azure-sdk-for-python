@@ -23,10 +23,9 @@ class SasDefinitionItem(Model):
     :ivar secret_id: The storage account SAS definition secret id.
     :vartype secret_id: str
     :ivar attributes: The SAS definition management attributes.
-    :vartype attributes: :class:`SasDefinitionAttributes
-     <azure.keyvault.models.SasDefinitionAttributes>`
+    :vartype attributes: ~azure.keyvault.models.SasDefinitionAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -44,6 +43,7 @@ class SasDefinitionItem(Model):
     }
 
     def __init__(self):
+        super(SasDefinitionItem, self).__init__()
         self.id = None
         self.secret_id = None
         self.attributes = None
