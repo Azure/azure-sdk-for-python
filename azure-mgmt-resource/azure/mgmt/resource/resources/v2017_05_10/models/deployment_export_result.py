@@ -24,4 +24,5 @@ class DeploymentExportResult(Model):
     }
 
     def __init__(self, template=None):
+        super(DeploymentExportResult, self).__init__()
         self.template = template

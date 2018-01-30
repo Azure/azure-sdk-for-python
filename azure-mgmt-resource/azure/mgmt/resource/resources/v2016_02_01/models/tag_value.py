@@ -30,6 +30,7 @@ class TagValue(Model):
     }
 
     def __init__(self, id=None, tag_value=None, count=None):
+        super(TagValue, self).__init__()
         self.id = id
         self.tag_value = tag_value
         self.count = count

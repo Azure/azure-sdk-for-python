@@ -23,6 +23,8 @@ class Plan(Model):
     :type product: str
     :param promotion_code: The promotion code.
     :type promotion_code: str
+    :param version: The plan's version.
+    :type version: str
     """
 
     _attribute_map = {
@@ -30,10 +32,13 @@ class Plan(Model):
         'publisher': {'key': 'publisher', 'type': 'str'},
         'product': {'key': 'product', 'type': 'str'},
         'promotion_code': {'key': 'promotionCode', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, product=None, promotion_code=None):
+    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None):
+        super(Plan, self).__init__()
         self.name = name
         self.publisher = publisher
         self.product = product
         self.promotion_code = promotion_code
+        self.version = version
