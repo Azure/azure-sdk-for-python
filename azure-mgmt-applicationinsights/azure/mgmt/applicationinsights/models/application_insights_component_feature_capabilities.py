@@ -46,7 +46,7 @@ class ApplicationInsightsComponentFeatureCapabilities(Model):
     :vartype api_access_level: str
     :ivar tracking_type: The applciation insights component used tracking
      type.
-    :vartype tracking_type: bool
+    :vartype tracking_type: str
     :ivar daily_cap: Daily data volume cap in GB.
     :vartype daily_cap: float
     :ivar daily_cap_reset_time: Daily data volume cap UTC reset hour.
@@ -87,7 +87,7 @@ class ApplicationInsightsComponentFeatureCapabilities(Model):
         'analytics_integration': {'key': 'AnalyticsIntegration', 'type': 'bool'},
         'multiple_step_web_test': {'key': 'MultipleStepWebTest', 'type': 'bool'},
         'api_access_level': {'key': 'ApiAccessLevel', 'type': 'str'},
-        'tracking_type': {'key': 'TrackingType', 'type': 'bool'},
+        'tracking_type': {'key': 'TrackingType', 'type': 'str'},
         'daily_cap': {'key': 'DailyCap', 'type': 'float'},
         'daily_cap_reset_time': {'key': 'DailyCapResetTime', 'type': 'float'},
         'throttle_rate': {'key': 'ThrottleRate', 'type': 'float'},

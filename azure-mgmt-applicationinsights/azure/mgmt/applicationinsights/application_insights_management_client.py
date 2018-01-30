@@ -17,7 +17,6 @@ from .operations.operations import Operations
 from .operations.components_operations import ComponentsOperations
 from .operations.web_tests_operations import WebTestsOperations
 from .operations.export_configurations_operations import ExportConfigurationsOperations
-from .operations.create_operations import CreateOperations
 from .operations.component_current_billing_features_operations import ComponentCurrentBillingFeaturesOperations
 from .operations.component_quota_status_operations import ComponentQuotaStatusOperations
 from .operations.component_feature_capabilities_operations import ComponentFeatureCapabilitiesOperations
@@ -72,8 +71,6 @@ class ApplicationInsightsManagementClient(object):
     :vartype web_tests: azure.mgmt.applicationinsights.operations.WebTestsOperations
     :ivar export_configurations: ExportConfigurations operations
     :vartype export_configurations: azure.mgmt.applicationinsights.operations.ExportConfigurationsOperations
-    :ivar create: Create operations
-    :vartype create: azure.mgmt.applicationinsights.operations.CreateOperations
     :ivar component_current_billing_features: ComponentCurrentBillingFeatures operations
     :vartype component_current_billing_features: azure.mgmt.applicationinsights.operations.ComponentCurrentBillingFeaturesOperations
     :ivar component_quota_status: ComponentQuotaStatus operations
@@ -111,8 +108,6 @@ class ApplicationInsightsManagementClient(object):
         self.web_tests = WebTestsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.export_configurations = ExportConfigurationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.create = CreateOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.component_current_billing_features = ComponentCurrentBillingFeaturesOperations(
             self._client, self.config, self._serialize, self._deserialize)
