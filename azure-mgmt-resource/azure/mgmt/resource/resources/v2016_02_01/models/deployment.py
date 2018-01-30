@@ -25,4 +25,5 @@ class Deployment(Model):
     }
 
     def __init__(self, properties=None):
+        super(Deployment, self).__init__()
         self.properties = properties

@@ -39,6 +39,7 @@ class PolicyAssignment(Model):
     }
 
     def __init__(self, display_name=None, policy_definition_id=None, scope=None, id=None, type=None, name=None):
+        super(PolicyAssignment, self).__init__()
         self.display_name = display_name
         self.policy_definition_id = policy_definition_id
         self.scope = scope

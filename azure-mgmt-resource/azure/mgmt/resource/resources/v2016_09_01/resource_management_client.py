@@ -47,7 +47,7 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
 
         super(ResourceManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('resourcemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-resource/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
