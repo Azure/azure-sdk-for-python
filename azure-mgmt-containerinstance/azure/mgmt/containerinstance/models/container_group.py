@@ -27,48 +27,46 @@ class ContainerGroup(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the container group.
      This only appears in the response.
     :vartype provisioning_state: str
     :param containers: The containers within the container group.
-    :type containers: list of :class:`Container
-     <azure.mgmt.containerinstance.models.Container>`
+    :type containers: list[~azure.mgmt.containerinstance.models.Container]
     :param image_registry_credentials: The image registry credentials by which
      the container group is created from.
-    :type image_registry_credentials: list of :class:`ImageRegistryCredential
-     <azure.mgmt.containerinstance.models.ImageRegistryCredential>`
+    :type image_registry_credentials:
+     list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
     :param restart_policy: Restart policy for all containers within the
      container group.
      - `Always` Always restart
      - `OnFailure` Restart on failure
      - `Never` Never restart
      . Possible values include: 'Always', 'OnFailure', 'Never'
-    :type restart_policy: str or :class:`ContainerGroupRestartPolicy
-     <azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy>`
+    :type restart_policy: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
     :param ip_address: The IP address type of the container group.
-    :type ip_address: :class:`IpAddress
-     <azure.mgmt.containerinstance.models.IpAddress>`
+    :type ip_address: ~azure.mgmt.containerinstance.models.IpAddress
     :param os_type: The operating system type required by the containers in
      the container group. Possible values include: 'Windows', 'Linux'
-    :type os_type: str or :class:`OperatingSystemTypes
-     <azure.mgmt.containerinstance.models.OperatingSystemTypes>`
+    :type os_type: str or
+     ~azure.mgmt.containerinstance.models.OperatingSystemTypes
     :param volumes: The list of volumes that can be mounted by containers in
      this container group.
-    :type volumes: list of :class:`Volume
-     <azure.mgmt.containerinstance.models.Volume>`
+    :type volumes: list[~azure.mgmt.containerinstance.models.Volume]
     :ivar instance_view: The instance view of the container group. Only valid
      in response.
-    :vartype instance_view: :class:`ContainerGroupPropertiesInstanceView
-     <azure.mgmt.containerinstance.models.ContainerGroupPropertiesInstanceView>`
+    :vartype instance_view:
+     ~azure.mgmt.containerinstance.models.ContainerGroupPropertiesInstanceView
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
+        'containers': {'required': True},
+        'os_type': {'required': True},
         'instance_view': {'readonly': True},
     }
 
@@ -88,7 +86,7 @@ class ContainerGroup(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
     }
 
-    def __init__(self, location, tags=None, containers=None, image_registry_credentials=None, restart_policy=None, ip_address=None, os_type=None, volumes=None):
+    def __init__(self, containers, os_type, location=None, tags=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None):
         super(ContainerGroup, self).__init__(location=location, tags=tags)
         self.provisioning_state = None
         self.containers = containers
