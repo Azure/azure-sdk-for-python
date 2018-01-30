@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.3.0 (2018-01-30)
+++++++++++++++++++
+
+**Features**
+
+- Add capability
+- Add metrics operation groups
+
 0.2.1 (2017-10-18)
 ++++++++++++++++++
 
