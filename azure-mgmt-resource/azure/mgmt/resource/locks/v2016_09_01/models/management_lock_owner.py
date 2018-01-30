@@ -24,4 +24,5 @@ class ManagementLockOwner(Model):
     }
 
     def __init__(self, application_id=None):
+        super(ManagementLockOwner, self).__init__()
         self.application_id = application_id

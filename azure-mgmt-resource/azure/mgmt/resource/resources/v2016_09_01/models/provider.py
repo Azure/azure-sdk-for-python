@@ -43,6 +43,7 @@ class Provider(Model):
     }
 
     def __init__(self, namespace=None):
+        super(Provider, self).__init__()
         self.id = None
         self.namespace = namespace
         self.registration_state = None

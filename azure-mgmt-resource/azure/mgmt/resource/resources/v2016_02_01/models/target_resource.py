@@ -30,6 +30,7 @@ class TargetResource(Model):
     }
 
     def __init__(self, id=None, resource_name=None, resource_type=None):
+        super(TargetResource, self).__init__()
         self.id = id
         self.resource_name = resource_name
         self.resource_type = resource_type
