@@ -32,5 +32,6 @@ class ResourceRequests(Model):
     }
 
     def __init__(self, memory_in_gb, cpu):
+        super(ResourceRequests, self).__init__()
         self.memory_in_gb = memory_in_gb
         self.cpu = cpu

@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class ContainerGroupPropertiesInstanceView(Model):
-    """The instance view of the container group. Only valid in response.
+class UsageName(Model):
+    """The name object of the resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar events: The events of this container group.
-    :vartype events: list[~azure.mgmt.containerinstance.models.Event]
-    :ivar state: The state of the container group. Only valid in response.
-    :vartype state: str
+    :ivar value: The name of the resource
+    :vartype value: str
+    :ivar localized_value: The localized name of the resource
+    :vartype localized_value: str
     """
 
     _validation = {
-        'events': {'readonly': True},
-        'state': {'readonly': True},
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
     }
 
     _attribute_map = {
-        'events': {'key': 'events', 'type': '[Event]'},
-        'state': {'key': 'state', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
     def __init__(self):
-        super(ContainerGroupPropertiesInstanceView, self).__init__()
-        self.events = None
-        self.state = None
+        super(UsageName, self).__init__()
+        self.value = None
+        self.localized_value = None
