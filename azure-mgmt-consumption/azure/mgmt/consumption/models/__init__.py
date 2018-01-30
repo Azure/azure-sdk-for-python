@@ -11,6 +11,7 @@
 
 from .meter_details import MeterDetails
 from .usage_detail import UsageDetail
+from .marketplace import Marketplace
 from .reservation_summaries import ReservationSummaries
 from .reservation_details import ReservationDetails
 from .budget_time_period import BudgetTimePeriod
@@ -24,13 +25,14 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .resource import Resource
 from .proxy_resource import ProxyResource
+from .price_sheet_list_result import PriceSheetListResult
 from .price_sheet_model import PriceSheetModel
 from .usage_detail_paged import UsageDetailPaged
+from .marketplace_paged import MarketplacePaged
 from .reservation_summaries_paged import ReservationSummariesPaged
 from .reservation_details_paged import ReservationDetailsPaged
 from .budget_paged import BudgetPaged
 from .operation_paged import OperationPaged
-from .price_sheet_model_paged import PriceSheetModelPaged
 from .consumption_management_client_enums import (
     CategoryType,
     TimeGrainType,
@@ -41,6 +43,7 @@ from .consumption_management_client_enums import (
 __all__ = [
     'MeterDetails',
     'UsageDetail',
+    'Marketplace',
     'ReservationSummaries',
     'ReservationDetails',
     'BudgetTimePeriod',
@@ -54,13 +57,14 @@ __all__ = [
     'Operation',
     'Resource',
     'ProxyResource',
+    'PriceSheetListResult',
     'PriceSheetModel',
     'UsageDetailPaged',
+    'MarketplacePaged',
     'ReservationSummariesPaged',
     'ReservationDetailsPaged',
     'BudgetPaged',
     'OperationPaged',
-    'PriceSheetModelPaged',
     'CategoryType',
     'TimeGrainType',
     'OperatorType',

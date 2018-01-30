@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.usage_details_operations import UsageDetailsOperations
+from .operations.marketplaces_operations import MarketplacesOperations
 from .operations.reservations_summaries_operations import ReservationsSummariesOperations
 from .operations.reservations_details_operations import ReservationsDetailsOperations
 from .operations.budgets_operations import BudgetsOperations
@@ -36,13 +37,11 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
     :type resource_group_name: str
     :param budget_name: Budget Name.
     :type budget_name: str
-    :param billing_period_name: Billing Period Name.
-    :type billing_period_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, budget_name, billing_period_name, base_url=None):
+            self, credentials, subscription_id, resource_group_name, budget_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -52,8 +51,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'resource_group_name' must not be None.")
         if budget_name is None:
             raise ValueError("Parameter 'budget_name' must not be None.")
-        if billing_period_name is None:
-            raise ValueError("Parameter 'billing_period_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -66,7 +63,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.budget_name = budget_name
-        self.billing_period_name = billing_period_name
 
 
 class ConsumptionManagementClient(object):
@@ -77,6 +73,8 @@ class ConsumptionManagementClient(object):
 
     :ivar usage_details: UsageDetails operations
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :ivar marketplaces: Marketplaces operations
+    :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
     :ivar reservations_summaries: ReservationsSummaries operations
     :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
     :ivar reservations_details: ReservationsDetails operations
@@ -97,15 +95,13 @@ class ConsumptionManagementClient(object):
     :type resource_group_name: str
     :param budget_name: Budget Name.
     :type budget_name: str
-    :param billing_period_name: Billing Period Name.
-    :type billing_period_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, budget_name, billing_period_name, base_url=None):
+            self, credentials, subscription_id, resource_group_name, budget_name, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, resource_group_name, budget_name, billing_period_name, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, resource_group_name, budget_name, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -114,6 +110,8 @@ class ConsumptionManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.usage_details = UsageDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.marketplaces = MarketplacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservations_summaries = ReservationsSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)

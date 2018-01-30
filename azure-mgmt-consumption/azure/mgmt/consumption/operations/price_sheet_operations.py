@@ -55,69 +55,62 @@ class PriceSheetOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PriceSheetModel
-        :rtype:
-         ~azure.mgmt.consumption.models.PriceSheetModelPaged[~azure.mgmt.consumption.models.PriceSheetModel]
+        :return: PriceSheetListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.PriceSheetListResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+        if skiptoken is not None:
+            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.PriceSheetModelPaged(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('PriceSheetListResult', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.PriceSheetModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
 
     def list_by_billing_period(
-            self, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_period_name, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the price sheet for a scope by subscriptionId and billing period.
         Price sheets are available via this API only for May 1, 2014 or later.
 
+        :param billing_period_name: Billing Period Name.
+        :type billing_period_name: str
         :param expand: May be used to expand the properties/meterDetails
          within a price sheet. By default, these fields are not included when
          returning price sheet.
@@ -132,61 +125,52 @@ class PriceSheetOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PriceSheetModel
-        :rtype:
-         ~azure.mgmt.consumption.models.PriceSheetModelPaged[~azure.mgmt.consumption.models.PriceSheetModel]
+        :return: PriceSheetListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.PriceSheetListResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'billingPeriodName': self._serialize.url("self.config.billing_period_name", self.config.billing_period_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+        if skiptoken is not None:
+            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.PriceSheetModelPaged(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('PriceSheetListResult', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.PriceSheetModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
