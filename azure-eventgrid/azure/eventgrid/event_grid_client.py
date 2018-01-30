@@ -22,16 +22,23 @@ class EventGridClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     """
 
     def __init__(
-            self):
+            self, credentials):
 
+        if credentials is None:
+            raise ValueError("Parameter 'credentials' must not be None.")
         base_url = 'https://{topicHostname}'
 
         super(EventGridClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-eventgrid/{}'.format(VERSION))
+
+        self.credentials = credentials
 
 
 class EventGridClient(object):
@@ -40,13 +47,16 @@ class EventGridClient(object):
     :ivar config: Configuration for client.
     :vartype config: EventGridClientConfiguration
 
+    :param credentials: Subscription credentials which uniquely identify
+     client subscription.
+    :type credentials: None
     """
 
     def __init__(
-            self):
+            self, credentials):
 
-        self.config = EventGridClientConfiguration()
-        self._client = ServiceClient(None, self.config)
+        self.config = EventGridClientConfiguration(credentials)
+        self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-01-01'
