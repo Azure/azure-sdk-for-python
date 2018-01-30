@@ -51,6 +51,8 @@ class DatabaseAccountCreateUpdateParameters(Resource):
      Automatic failover will result in a new write region for the account and
      is chosen based on the failover priorities configured for the account.
     :type enable_automatic_failover: bool
+    :param capabilities: List of Cosmos DB capabilities for the account
+    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
     """
 
     _validation = {
@@ -74,14 +76,16 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
         'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, location, locations, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter=None, enable_automatic_failover=None):
+    def __init__(self, location, locations, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter=None, enable_automatic_failover=None, capabilities=None):
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags)
         self.kind = kind
         self.consistency_policy = consistency_policy
         self.locations = locations
         self.ip_range_filter = ip_range_filter
         self.enable_automatic_failover = enable_automatic_failover
+        self.capabilities = capabilities

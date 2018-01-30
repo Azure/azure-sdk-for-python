@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class PercentileSourceTargetOperations(object):
+    """PercentileSourceTargetOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,29 +37,55 @@ class Operations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Cosmos DB Resource Provider operations.
+    def list_metrics(
+            self, resource_group_name, account_name, source_region, target_region, filter, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the metrics determined by the given filter for the given
+        account, source and target region. This url is only for PBS and
+        Replication Latency data.
 
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param source_region: Source region from which data is written. Cosmos
+         DB region, with spaces between words and each word capitalized.
+        :type source_region: str
+        :param target_region: Target region to which data is written. Cosmos
+         DB region, with spaces between words and each word capitalized.
+        :type target_region: str
+        :param filter: An OData filter expression that describes a subset of
+         metrics to return. The parameters that can be filtered are name.value
+         (name of the metric, can have an or of multiple names), startTime,
+         endTime, and timeGrain. The supported operator is eq.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of PercentileMetric
         :rtype:
-         ~azure.mgmt.cosmosdb.models.OperationPaged[~azure.mgmt.cosmosdb.models.Operation]
+         ~azure.mgmt.cosmosdb.models.PercentileMetricPaged[~azure.mgmt.cosmosdb.models.PercentileMetric]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.DocumentDB/operations'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sourceRegion/{sourceRegion}/targetRegion/{targetRegion}/percentile/metrics'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'sourceRegion': self._serialize.url("source_region", source_region, 'str'),
+                    'targetRegion': self._serialize.url("target_region", target_region, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -88,11 +114,11 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PercentileMetricPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PercentileMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

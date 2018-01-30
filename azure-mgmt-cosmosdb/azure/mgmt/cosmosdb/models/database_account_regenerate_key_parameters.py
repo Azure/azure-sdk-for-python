@@ -29,4 +29,5 @@ class DatabaseAccountRegenerateKeyParameters(Model):
     }
 
     def __init__(self, key_kind):
+        super(DatabaseAccountRegenerateKeyParameters, self).__init__()
         self.key_kind = key_kind

@@ -11,8 +11,30 @@
 
 from .database_accounts_operations import DatabaseAccountsOperations
 from .operations import Operations
+from .database_operations import DatabaseOperations
+from .collection_operations import CollectionOperations
+from .collection_region_operations import CollectionRegionOperations
+from .database_account_region_operations import DatabaseAccountRegionOperations
+from .percentile_source_target_operations import PercentileSourceTargetOperations
+from .percentile_target_operations import PercentileTargetOperations
+from .percentile_operations import PercentileOperations
+from .collection_partition_region_operations import CollectionPartitionRegionOperations
+from .collection_partition_operations import CollectionPartitionOperations
+from .partition_key_range_id_operations import PartitionKeyRangeIdOperations
+from .partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
 
 __all__ = [
     'DatabaseAccountsOperations',
     'Operations',
+    'DatabaseOperations',
+    'CollectionOperations',
+    'CollectionRegionOperations',
+    'DatabaseAccountRegionOperations',
+    'PercentileSourceTargetOperations',
+    'PercentileTargetOperations',
+    'PercentileOperations',
+    'CollectionPartitionRegionOperations',
+    'CollectionPartitionOperations',
+    'PartitionKeyRangeIdOperations',
+    'PartitionKeyRangeIdRegionOperations',
 ]
