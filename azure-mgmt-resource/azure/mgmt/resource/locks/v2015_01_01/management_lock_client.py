@@ -44,7 +44,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
 
         super(ManagementLockClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('managementlockclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-resource/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

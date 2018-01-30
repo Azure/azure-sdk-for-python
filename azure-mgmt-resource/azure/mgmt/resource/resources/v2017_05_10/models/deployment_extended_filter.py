@@ -24,4 +24,5 @@ class DeploymentExtendedFilter(Model):
     }
 
     def __init__(self, provisioning_state=None):
+        super(DeploymentExtendedFilter, self).__init__()
         self.provisioning_state = provisioning_state

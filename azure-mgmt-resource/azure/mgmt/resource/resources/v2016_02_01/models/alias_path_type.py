@@ -27,5 +27,6 @@ class AliasPathType(Model):
     }
 
     def __init__(self, path=None, api_versions=None):
+        super(AliasPathType, self).__init__()
         self.path = path
         self.api_versions = api_versions
