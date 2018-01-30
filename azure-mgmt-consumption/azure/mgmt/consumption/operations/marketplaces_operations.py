@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ReservationsDetailsOperations(object):
-    """ReservationsDetailsOperations operations.
+class MarketplacesOperations(object):
+    """MarketplacesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,22 +36,33 @@ class ReservationsDetailsOperations(object):
 
         self.config = config
 
-    def list_by_reservation_order(
-            self, filter, custom_headers=None, raw=False, **operation_config):
-        """Lists the reservations details for provided date range.
+    def list(
+            self, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the marketplaces for a scope by subscriptionId. Marketplaces are
+        available via this API only for May 1, 2014 or later.
 
-        :param filter: Filter reservation details by date range. The
-         properties/UsageDate for start date and end date. The filter supports
-         'le' and  'ge'
+        :param filter: May be used to filter marketplaces by
+         properties/usageEnd (Utc time), properties/usageStart (Utc time),
+         properties/resourceGroup, properties/instanceName or
+         properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
+         'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
         :type filter: str
+        :param top: May be used to limit the number of results to the most
+         recent N marketplaces.
+        :type top: int
+        :param skiptoken: Skiptoken is only used if a previous operation
+         returned a partial result. If a previous response contains a nextLink
+         element, the value of the nextLink element will include a skiptoken
+         parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationDetails
+        :return: An iterator like instance of Marketplace
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationDetailsPaged[~azure.mgmt.consumption.models.ReservationDetails]
+         ~azure.mgmt.consumption.models.MarketplacePaged[~azure.mgmt.consumption.models.Marketplace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -59,15 +70,20 @@ class ReservationsDetailsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/providers/Microsoft.Consumption/reservationDetails'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/marketplaces'
                 path_format_arguments = {
-                    'reservationOrderId': self._serialize.url("self.config.reservation_order_id", self.config.reservation_order_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -95,31 +111,43 @@ class ReservationsDetailsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MarketplacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MarketplacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
-    def list_by_reservation_order_and_reservation(
-            self, filter, custom_headers=None, raw=False, **operation_config):
-        """Lists the reservations details for provided date range.
+    def list_by_billing_period(
+            self, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the marketplaces for a scope by billing period and
+        subscripotionId. Marketplaces are available via this API only for May
+        1, 2014 or later.
 
-        :param filter: Filter reservation details by date range. The
-         properties/UsageDate for start date and end date. The filter supports
-         'le' and  'ge'
+        :param filter: May be used to filter marketplaces by
+         properties/usageEnd (Utc time), properties/usageStart (Utc time),
+         properties/resourceGroup, properties/instanceName or
+         properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
+         'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
         :type filter: str
+        :param top: May be used to limit the number of results to the most
+         recent N marketplaces.
+        :type top: int
+        :param skiptoken: Skiptoken is only used if a previous operation
+         returned a partial result. If a previous response contains a nextLink
+         element, the value of the nextLink element will include a skiptoken
+         parameter that specifies a starting point to use for subsequent calls.
+        :type skiptoken: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReservationDetails
+        :return: An iterator like instance of Marketplace
         :rtype:
-         ~azure.mgmt.consumption.models.ReservationDetailsPaged[~azure.mgmt.consumption.models.ReservationDetails]
+         ~azure.mgmt.consumption.models.MarketplacePaged[~azure.mgmt.consumption.models.Marketplace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
@@ -127,16 +155,21 @@ class ReservationsDetailsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationDetails'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/marketplaces'
                 path_format_arguments = {
-                    'reservationOrderId': self._serialize.url("self.config.reservation_order_id", self.config.reservation_order_id, 'str'),
-                    'reservationId': self._serialize.url("self.config.reservation_id", self.config.reservation_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'billingPeriodName': self._serialize.url("self.config.billing_period_name", self.config.billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -164,11 +197,11 @@ class ReservationsDetailsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MarketplacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ReservationDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MarketplacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
