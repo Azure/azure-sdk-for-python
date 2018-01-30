@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Event Grid
-<https://docs.microsoft.com/python/azure/>`__
+<https://docs.microsoft.com/python/api/overview/azure/event-grid>`__
 on docs.microsoft.com.
 
 
