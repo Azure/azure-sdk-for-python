@@ -37,10 +37,13 @@ class ManagementGroupsOperations(object):
         self.config = config
 
     def list(
-            self, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, cache_control="no-cache", skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """List management groups for the authenticated user.
         .
 
+        :param cache_control: Indicates that the request shouldn't utilize any
+         caches.
+        :type cache_control: str
         :param skiptoken: Page continuation token is only used if a previous
          operation returned a partial result.
          If a previous response contains a nextLink element, the value of the
@@ -81,6 +84,8 @@ class ManagementGroupsOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            if cache_control is not None:
+                header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -105,10 +110,12 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def get(
-            self, expand=None, recurse=None, custom_headers=None, raw=False, **operation_config):
+            self, group_id, expand=None, recurse=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Get the details of the management group.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
         :param expand: The $expand=children query string parameter allows
          clients to request inclusion of children in the response payload.
          Possible values include: 'children'
@@ -117,6 +124,9 @@ class ManagementGroupsOperations(object):
          clients to request inclusion of entire hierarchy in the response
          payload.
         :type recurse: bool
+        :param cache_control: Indicates that the request shouldn't utilize any
+         caches.
+        :type cache_control: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -131,7 +141,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -150,6 +160,8 @@ class ManagementGroupsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if cache_control is not None:
+            header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -172,13 +184,18 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
+            self, group_id, cache_control="no-cache", display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
         """Create or update a management group.
         If a management group is already created and a subsequent create
         request is issued with different properties, the management group
         properties will be updated.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
+        :param cache_control: Indicates that the request shouldn't utilize any
+         caches.
+        :type cache_control: str
         :param display_name: The friendly name of the management group.
         :type display_name: str
         :param parent_id: (Optional) The fully qualified ID for the parent
@@ -201,7 +218,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -216,6 +233,8 @@ class ManagementGroupsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if cache_control is not None:
+            header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -242,10 +261,15 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def update(
-            self, display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
+            self, group_id, cache_control="no-cache", display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
         """Update a management group.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
+        :param cache_control: Indicates that the request shouldn't utilize any
+         caches.
+        :type cache_control: str
         :param display_name: The friendly name of the management group.
         :type display_name: str
         :param parent_id: (Optional) The fully qualified ID for the parent
@@ -268,7 +292,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -283,6 +307,8 @@ class ManagementGroupsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if cache_control is not None:
+            header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -309,11 +335,16 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def delete(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, group_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Delete management group.
         If a management group contains child resources, the request will fail.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
+        :param cache_control: Indicates that the request shouldn't utilize any
+         caches.
+        :type cache_control: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -327,7 +358,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -342,6 +373,8 @@ class ManagementGroupsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if cache_control is not None:
+            header_parameters['Cache-Control'] = self._serialize.header("cache_control", cache_control, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
