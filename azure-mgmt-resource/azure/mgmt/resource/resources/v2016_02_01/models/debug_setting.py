@@ -24,4 +24,5 @@ class DebugSetting(Model):
     }
 
     def __init__(self, detail_level=None):
+        super(DebugSetting, self).__init__()
         self.detail_level = detail_level

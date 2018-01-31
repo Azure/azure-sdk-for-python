@@ -39,6 +39,7 @@ class Identity(Model):
     }
 
     def __init__(self, type=None):
+        super(Identity, self).__init__()
         self.principal_id = None
         self.tenant_id = None
         self.type = type

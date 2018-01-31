@@ -28,5 +28,6 @@ class PolicyDefinitionReference(Model):
     }
 
     def __init__(self, policy_definition_id=None, parameters=None):
+        super(PolicyDefinitionReference, self).__init__()
         self.policy_definition_id = policy_definition_id
         self.parameters = parameters
