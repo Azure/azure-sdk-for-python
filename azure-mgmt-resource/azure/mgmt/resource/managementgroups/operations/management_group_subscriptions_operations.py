@@ -37,12 +37,14 @@ class ManagementGroupSubscriptionsOperations(object):
         self.config = config
 
     def create(
-            self, group_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
+            self, group_id, subscription_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """Associates existing subscription with the management group.
         .
 
         :param group_id: Management Group ID.
         :type group_id: str
+        :param subscription_id: Subscription ID.
+        :type subscription_id: str
         :param cache_control: Indicates that the request shouldn't utilize any
          caches.
         :type cache_control: str
@@ -60,7 +62,7 @@ class ManagementGroupSubscriptionsOperations(object):
         url = '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,12 +94,14 @@ class ManagementGroupSubscriptionsOperations(object):
             return client_raw_response
 
     def delete(
-            self, group_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
+            self, group_id, subscription_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
         """De-associates subscription from the management group.
         .
 
         :param group_id: Management Group ID.
         :type group_id: str
+        :param subscription_id: Subscription ID.
+        :type subscription_id: str
         :param cache_control: Indicates that the request shouldn't utilize any
          caches.
         :type cache_control: str
@@ -115,7 +119,7 @@ class ManagementGroupSubscriptionsOperations(object):
         url = '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
