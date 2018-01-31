@@ -23,6 +23,7 @@ class ProviderOperationsMetadataOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-01-01-preview".
     """
 
     models = models
@@ -32,18 +33,14 @@ class ProviderOperationsMetadataOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2018-01-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_provider_namespace, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
+            self, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
         """Gets provider operations metadata for the specified resource provider.
 
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
-        :param api_version: The API version to use for the operation.
-        :type api_version: str
         :param expand: Specifies whether to expand the values.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -59,13 +56,13 @@ class ProviderOperationsMetadataOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'
         path_format_arguments = {
-            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str')
+            'resourceProviderNamespace': self._serialize.url("self.config.resource_provider_namespace", self.config.resource_provider_namespace, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -100,11 +97,9 @@ class ProviderOperationsMetadataOperations(object):
         return deserialized
 
     def list(
-            self, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
+            self, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
         """Gets provider operations metadata for all resource providers.
 
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
         :param expand: Specifies whether to expand the values.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -125,7 +120,7 @@ class ProviderOperationsMetadataOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 

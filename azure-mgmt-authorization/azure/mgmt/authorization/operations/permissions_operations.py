@@ -38,12 +38,9 @@ class PermissionsOperations(object):
         self.config = config
 
     def list_for_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets all permissions the caller has for a resource group.
 
-        :param resource_group_name: The name of the resource group to get the
-         permissions for. The name is case insensitive.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -60,7 +57,7 @@ class PermissionsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Authorization/permissions'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -106,15 +103,9 @@ class PermissionsOperations(object):
         return deserialized
 
     def list_for_resource(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets all permissions the caller has for a resource.
 
-        :param resource_group_name: The name of the resource group containing
-         the resource. The name is case insensitive.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
         :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
         :param resource_type: The resource type of the resource.
@@ -138,8 +129,8 @@ class PermissionsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/permissions'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+                    'resourceProviderNamespace': self._serialize.url("self.config.resource_provider_namespace", self.config.resource_provider_namespace, 'str'),
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
                     'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
