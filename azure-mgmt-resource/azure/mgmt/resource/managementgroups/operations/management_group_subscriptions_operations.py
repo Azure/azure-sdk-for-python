@@ -37,10 +37,12 @@ class ManagementGroupSubscriptionsOperations(object):
         self.config = config
 
     def create(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, group_id, custom_headers=None, raw=False, **operation_config):
         """Associates existing subscription with the management group.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,7 +56,7 @@ class ManagementGroupSubscriptionsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str'),
+            'groupId': self._serialize.url("group_id", group_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -85,10 +87,12 @@ class ManagementGroupSubscriptionsOperations(object):
             return client_raw_response
 
     def delete(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, group_id, custom_headers=None, raw=False, **operation_config):
         """De-associates subscription from the management group.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -102,7 +106,7 @@ class ManagementGroupSubscriptionsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str'),
+            'groupId': self._serialize.url("group_id", group_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

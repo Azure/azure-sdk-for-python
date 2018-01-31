@@ -105,10 +105,12 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def get(
-            self, expand=None, recurse=None, custom_headers=None, raw=False, **operation_config):
+            self, group_id, expand=None, recurse=None, custom_headers=None, raw=False, **operation_config):
         """Get the details of the management group.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
         :param expand: The $expand=children query string parameter allows
          clients to request inclusion of children in the response payload.
          Possible values include: 'children'
@@ -131,7 +133,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -172,13 +174,15 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
+            self, group_id, display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
         """Create or update a management group.
         If a management group is already created and a subsequent create
         request is issued with different properties, the management group
         properties will be updated.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
         :param display_name: The friendly name of the management group.
         :type display_name: str
         :param parent_id: (Optional) The fully qualified ID for the parent
@@ -201,7 +205,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -242,10 +246,12 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def update(
-            self, display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
+            self, group_id, display_name=None, parent_id=None, custom_headers=None, raw=False, **operation_config):
         """Update a management group.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
         :param display_name: The friendly name of the management group.
         :type display_name: str
         :param parent_id: (Optional) The fully qualified ID for the parent
@@ -268,7 +274,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -309,11 +315,13 @@ class ManagementGroupsOperations(object):
         return deserialized
 
     def delete(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, group_id, custom_headers=None, raw=False, **operation_config):
         """Delete management group.
         If a management group contains child resources, the request will fail.
         .
 
+        :param group_id: Management Group ID.
+        :type group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -327,7 +335,7 @@ class ManagementGroupsOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
         path_format_arguments = {
-            'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str')
+            'groupId': self._serialize.url("group_id", group_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
