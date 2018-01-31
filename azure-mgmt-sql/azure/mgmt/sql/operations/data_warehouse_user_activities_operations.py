@@ -16,14 +16,15 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class CapabilitiesOperations(object):
-    """CapabilitiesOperations operations.
+class DataWarehouseUserActivitiesOperations(object):
+    """DataWarehouseUserActivitiesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
+    :ivar data_warehouse_user_activity_name: The activity name of the data warehouse. . Constant value: "current".
+    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
     """
 
     models = models
@@ -33,31 +34,42 @@ class CapabilitiesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2014-04-01"
+        self.data_warehouse_user_activity_name = "current"
+        self.api_version = "2017-03-01-preview"
 
         self.config = config
 
-    def list_by_location(
-            self, location_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the capabilities available for the specified location.
+    def get(
+            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the user activities of a data warehouse which includes running and
+        suspended queries.
 
-        :param location_id: The location id whose capabilities are retrieved.
-        :type location_id: str
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: LocationCapabilities or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.LocationCapabilities or
+        :return: DataWarehouseUserActivities or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DataWarehouseUserActivities or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationId}/capabilities'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataWarehouseUserActivities/{dataWarehouseUserActivityName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'locationId': self._serialize.url("location_id", location_id, 'str')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'dataWarehouseUserActivityName': self._serialize.url("self.data_warehouse_user_activity_name", self.data_warehouse_user_activity_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -87,7 +99,7 @@ class CapabilitiesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LocationCapabilities', response)
+            deserialized = self._deserialize('DataWarehouseUserActivities', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
