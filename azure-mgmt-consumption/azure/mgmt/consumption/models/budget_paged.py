@@ -8,16 +8,16 @@
 from msrest.paging import Paged
 
 
-class ReservationDetailsPaged(Paged):
+class BudgetPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ReservationDetails <consumption.models.ReservationDetails>` object
+    A paging container for iterating over a list of :class:`Budget <consumption.models.Budget>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ReservationDetails]'}
+        'current_page': {'key': 'value', 'type': '[Budget]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ReservationDetailsPaged, self).__init__(*args, **kwargs)
+        super(BudgetPaged, self).__init__(*args, **kwargs)
