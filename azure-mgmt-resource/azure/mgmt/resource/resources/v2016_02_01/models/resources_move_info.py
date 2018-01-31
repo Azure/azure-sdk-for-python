@@ -27,5 +27,6 @@ class ResourcesMoveInfo(Model):
     }
 
     def __init__(self, resources=None, target_resource_group=None):
+        super(ResourcesMoveInfo, self).__init__()
         self.resources = resources
         self.target_resource_group = target_resource_group
