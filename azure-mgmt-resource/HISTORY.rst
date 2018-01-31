@@ -3,6 +3,15 @@
 Release History
 ===============
 
+1.3.0rc1 (2018-XX-XX)
++++++++++++++++++++++
+
+**Features**
+
+- Add generic resources update
+- Add version to Plan
+- Add new preview client ManagementGroupsClient
+
 1.2.2 (2017-10-17)
 ++++++++++++++++++
 
