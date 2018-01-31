@@ -113,6 +113,9 @@ from .resource import Resource
 from .update_resource import UpdateResource
 from .sub_resource_read_only import SubResourceReadOnly
 from .operation_status_response import OperationStatusResponse
+from .request_rate_by_interval_input import RequestRateByIntervalInput
+from .throttled_requests_input import ThrottledRequestsInput
+from .log_analytics_input_base import LogAnalyticsInputBase
 from .run_command_input_parameter import RunCommandInputParameter
 from .run_command_input import RunCommandInput
 from .run_command_parameter_definition import RunCommandParameterDefinition
@@ -149,6 +152,7 @@ from .compute_management_client_enums import (
     VirtualMachineScaleSetSkuScaleType,
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
+    IntervalInMins,
     InstanceViewTypes,
 )
 
@@ -257,6 +261,9 @@ __all__ = [
     'UpdateResource',
     'SubResourceReadOnly',
     'OperationStatusResponse',
+    'RequestRateByIntervalInput',
+    'ThrottledRequestsInput',
+    'LogAnalyticsInputBase',
     'RunCommandInputParameter',
     'RunCommandInput',
     'RunCommandParameterDefinition',
@@ -292,5 +299,6 @@ __all__ = [
     'VirtualMachineScaleSetSkuScaleType',
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
+    'IntervalInMins',
     'InstanceViewTypes',
 ]
