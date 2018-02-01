@@ -9,22 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class StorageContainer(Model):
+class StorageContainer(SubResource):
     """Azure Storage blob container information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: the unique identifier of the blob container.
+    :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: the name of the blob container.
+    :ivar name: The resource name.
     :vartype name: str
-    :ivar type: the type of the blob container.
+    :ivar type: The resource type.
     :vartype type: str
-    :ivar last_modified_time: the last modified time of the blob container.
+    :ivar last_modified_time: The last modified time of the blob container.
     :vartype last_modified_time: datetime
     """
 
@@ -44,7 +44,4 @@ class StorageContainer(Model):
 
     def __init__(self):
         super(StorageContainer, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
         self.last_modified_time = None

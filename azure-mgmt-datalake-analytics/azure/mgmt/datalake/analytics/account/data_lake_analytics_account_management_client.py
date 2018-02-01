@@ -13,13 +13,13 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.accounts_operations import AccountsOperations
+from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
+from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.compute_policies_operations import ComputePoliciesOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
-from .operations.storage_accounts_operations import StorageAccountsOperations
-from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
-from .operations.account_operations import AccountOperations
-from .operations.locations_operations import LocationsOperations
 from .operations.operations import Operations
+from .operations.locations_operations import LocationsOperations
 from . import models
 
 
@@ -35,16 +35,24 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
+    :param resource_group_name: The name of the Azure resource group.
+    :type resource_group_name: str
+    :param account_name: The name of the Data Lake Analytics account.
+    :type account_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, account_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
+        if account_name is None:
+            raise ValueError("Parameter 'account_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -55,6 +63,8 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.account_name = account_name
 
 
 class DataLakeAnalyticsAccountManagementClient(object):
@@ -63,20 +73,20 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: DataLakeAnalyticsAccountManagementClientConfiguration
 
+    :ivar accounts: Accounts operations
+    :vartype accounts: azure.mgmt.datalake.analytics.account.operations.AccountsOperations
+    :ivar data_lake_store_accounts: DataLakeStoreAccounts operations
+    :vartype data_lake_store_accounts: azure.mgmt.datalake.analytics.account.operations.DataLakeStoreAccountsOperations
+    :ivar storage_accounts: StorageAccounts operations
+    :vartype storage_accounts: azure.mgmt.datalake.analytics.account.operations.StorageAccountsOperations
     :ivar compute_policies: ComputePolicies operations
     :vartype compute_policies: azure.mgmt.datalake.analytics.account.operations.ComputePoliciesOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.datalake.analytics.account.operations.FirewallRulesOperations
-    :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: azure.mgmt.datalake.analytics.account.operations.StorageAccountsOperations
-    :ivar data_lake_store_accounts: DataLakeStoreAccounts operations
-    :vartype data_lake_store_accounts: azure.mgmt.datalake.analytics.account.operations.DataLakeStoreAccountsOperations
-    :ivar account: Account operations
-    :vartype account: azure.mgmt.datalake.analytics.account.operations.AccountOperations
-    :ivar locations: Locations operations
-    :vartype locations: azure.mgmt.datalake.analytics.account.operations.LocationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datalake.analytics.account.operations.Operations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.datalake.analytics.account.operations.LocationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -85,13 +95,17 @@ class DataLakeAnalyticsAccountManagementClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
+    :param resource_group_name: The name of the Azure resource group.
+    :type resource_group_name: str
+    :param account_name: The name of the Data Lake Analytics account.
+    :type account_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, account_name, base_url=None):
 
-        self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, resource_group_name, account_name, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -99,17 +113,17 @@ class DataLakeAnalyticsAccountManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.accounts = AccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_lake_store_accounts = DataLakeStoreAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.storage_accounts = StorageAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.compute_policies = ComputePoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.storage_accounts = StorageAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.data_lake_store_accounts = DataLakeStoreAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.account = AccountOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

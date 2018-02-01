@@ -9,38 +9,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class DataLakeStoreAccountInfo(SubResource):
-    """Data Lake Store account information.
+class AddDataLakeStoreWithAccountParameters(Model):
+    """The parameters used to add a new Data Lake Store account while creating a
+    new Data Lake Analytics account.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :param name: Resource name
+    :param name: The unique name of the Data Lake Store account to add.
     :type name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param suffix: the optional suffix for the Data Lake Store account.
+    :param suffix: The optional suffix for the Data Lake Store account.
     :type suffix: str
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'required': True},
-        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
     def __init__(self, name, suffix=None):
-        super(DataLakeStoreAccountInfo, self).__init__(name=name)
+        super(AddDataLakeStoreWithAccountParameters, self).__init__()
+        self.name = name
         self.suffix = suffix
