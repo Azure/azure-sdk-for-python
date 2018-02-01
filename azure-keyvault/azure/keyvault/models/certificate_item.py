@@ -18,10 +18,9 @@ class CertificateItem(Model):
     :param id: Certificate identifier.
     :type id: str
     :param attributes: The certificate management attributes.
-    :type attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param x509_thumbprint: Thumbprint of the certificate.
     :type x509_thumbprint: bytes
     """
@@ -34,6 +33,7 @@ class CertificateItem(Model):
     }
 
     def __init__(self, id=None, attributes=None, tags=None, x509_thumbprint=None):
+        super(CertificateItem, self).__init__()
         self.id = id
         self.attributes = attributes
         self.tags = tags
