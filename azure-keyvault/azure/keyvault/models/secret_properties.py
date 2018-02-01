@@ -24,4 +24,5 @@ class SecretProperties(Model):
     }
 
     def __init__(self, content_type=None):
+        super(SecretProperties, self).__init__()
         self.content_type = content_type

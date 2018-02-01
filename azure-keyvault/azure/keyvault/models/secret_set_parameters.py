@@ -18,12 +18,11 @@ class SecretSetParameters(Model):
     :param value: The value of the secret.
     :type value: str
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param content_type: Type of the secret value such as a password.
     :type content_type: str
     :param secret_attributes: The secret management attributes.
-    :type secret_attributes: :class:`SecretAttributes
-     <azure.keyvault.models.SecretAttributes>`
+    :type secret_attributes: ~azure.keyvault.models.SecretAttributes
     """
 
     _validation = {
@@ -38,6 +37,7 @@ class SecretSetParameters(Model):
     }
 
     def __init__(self, value, tags=None, content_type=None, secret_attributes=None):
+        super(SecretSetParameters, self).__init__()
         self.value = value
         self.tags = tags
         self.content_type = content_type
