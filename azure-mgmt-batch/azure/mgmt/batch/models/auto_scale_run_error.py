@@ -37,6 +37,7 @@ class AutoScaleRunError(Model):
     }
 
     def __init__(self, code, message, details=None):
+        super(AutoScaleRunError, self).__init__()
         self.code = code
         self.message = message
         self.details = details

@@ -44,6 +44,7 @@ class PolicyDefinition(Model):
     }
 
     def __init__(self, policy_type=None, display_name=None, description=None, policy_rule=None, id=None, name=None):
+        super(PolicyDefinition, self).__init__()
         self.policy_type = policy_type
         self.display_name = display_name
         self.description = description

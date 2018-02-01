@@ -28,4 +28,5 @@ class ActivateApplicationPackageParameters(Model):
     }
 
     def __init__(self, format):
+        super(ActivateApplicationPackageParameters, self).__init__()
         self.format = format

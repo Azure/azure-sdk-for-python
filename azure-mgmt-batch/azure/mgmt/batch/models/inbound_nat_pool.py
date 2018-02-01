@@ -75,6 +75,7 @@ class InboundNatPool(Model):
     }
 
     def __init__(self, name, protocol, backend_port, frontend_port_range_start, frontend_port_range_end, network_security_group_rules=None):
+        super(InboundNatPool, self).__init__()
         self.name = name
         self.protocol = protocol
         self.backend_port = backend_port

@@ -32,5 +32,6 @@ class ParametersLink(Model):
     }
 
     def __init__(self, uri, content_version=None):
+        super(ParametersLink, self).__init__()
         self.uri = uri
         self.content_version = content_version

@@ -55,6 +55,7 @@ class ResizeOperationStatus(Model):
     }
 
     def __init__(self, target_dedicated_nodes=None, target_low_priority_nodes=None, resize_timeout=None, node_deallocation_option=None, start_time=None, errors=None):
+        super(ResizeOperationStatus, self).__init__()
         self.target_dedicated_nodes = target_dedicated_nodes
         self.target_low_priority_nodes = target_low_priority_nodes
         self.resize_timeout = resize_timeout

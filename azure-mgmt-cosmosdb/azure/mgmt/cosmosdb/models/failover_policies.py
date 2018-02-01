@@ -19,9 +19,14 @@ class FailoverPolicies(Model):
     :type failover_policies: list[~azure.mgmt.cosmosdb.models.FailoverPolicy]
     """
 
+    _validation = {
+        'failover_policies': {'required': True},
+    }
+
     _attribute_map = {
         'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
     }
 
-    def __init__(self, failover_policies=None):
+    def __init__(self, failover_policies):
+        super(FailoverPolicies, self).__init__()
         self.failover_policies = failover_policies

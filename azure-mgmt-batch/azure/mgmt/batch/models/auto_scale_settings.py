@@ -34,5 +34,6 @@ class AutoScaleSettings(Model):
     }
 
     def __init__(self, formula, evaluation_interval=None):
+        super(AutoScaleSettings, self).__init__()
         self.formula = formula
         self.evaluation_interval = evaluation_interval

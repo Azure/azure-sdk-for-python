@@ -37,5 +37,6 @@ class ContainerServiceOrchestratorProfile(Model):
     }
 
     def __init__(self, orchestrator_type, orchestrator_version=None):
+        super(ContainerServiceOrchestratorProfile, self).__init__()
         self.orchestrator_type = orchestrator_type
         self.orchestrator_version = orchestrator_version

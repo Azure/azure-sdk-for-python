@@ -25,4 +25,5 @@ class WindowsConfiguration(Model):
     }
 
     def __init__(self, enable_automatic_updates=None):
+        super(WindowsConfiguration, self).__init__()
         self.enable_automatic_updates = enable_automatic_updates

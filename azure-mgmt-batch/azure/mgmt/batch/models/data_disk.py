@@ -56,6 +56,7 @@ class DataDisk(Model):
     }
 
     def __init__(self, lun, disk_size_gb, caching=None, storage_account_type=None):
+        super(DataDisk, self).__init__()
         self.lun = lun
         self.caching = caching
         self.disk_size_gb = disk_size_gb

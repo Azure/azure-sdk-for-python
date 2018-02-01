@@ -28,5 +28,6 @@ class ApplicationCreateParameters(Model):
     }
 
     def __init__(self, allow_updates=None, display_name=None):
+        super(ApplicationCreateParameters, self).__init__()
         self.allow_updates = allow_updates
         self.display_name = display_name

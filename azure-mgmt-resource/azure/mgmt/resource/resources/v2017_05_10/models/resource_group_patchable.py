@@ -35,6 +35,7 @@ class ResourceGroupPatchable(Model):
     }
 
     def __init__(self, name=None, properties=None, managed_by=None, tags=None):
+        super(ResourceGroupPatchable, self).__init__()
         self.name = name
         self.properties = properties
         self.managed_by = managed_by

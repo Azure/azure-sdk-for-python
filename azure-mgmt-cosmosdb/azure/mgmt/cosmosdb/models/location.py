@@ -51,6 +51,7 @@ class Location(Model):
     }
 
     def __init__(self, location_name=None, provisioning_state=None, failover_priority=None):
+        super(Location, self).__init__()
         self.id = None
         self.location_name = location_name
         self.document_endpoint = None

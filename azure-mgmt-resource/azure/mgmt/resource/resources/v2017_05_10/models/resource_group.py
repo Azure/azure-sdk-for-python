@@ -26,7 +26,7 @@ class ResourceGroup(Model):
     :type properties:
      ~azure.mgmt.resource.resources.v2017_05_10.models.ResourceGroupProperties
     :param location: The location of the resource group. It cannot be changed
-     after the resource group has been created. It muct be one of the supported
+     after the resource group has been created. It must be one of the supported
      Azure locations.
     :type location: str
     :param managed_by: The ID of the resource that manages this resource
@@ -51,6 +51,7 @@ class ResourceGroup(Model):
     }
 
     def __init__(self, location, name=None, properties=None, managed_by=None, tags=None):
+        super(ResourceGroup, self).__init__()
         self.id = None
         self.name = name
         self.properties = properties
