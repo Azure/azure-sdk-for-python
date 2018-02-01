@@ -28,5 +28,6 @@ class AliasType(Model):
     }
 
     def __init__(self, name=None, paths=None):
+        super(AliasType, self).__init__()
         self.name = name
         self.paths = paths

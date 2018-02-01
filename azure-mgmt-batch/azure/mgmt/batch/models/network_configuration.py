@@ -54,5 +54,6 @@ class NetworkConfiguration(Model):
     }
 
     def __init__(self, subnet_id=None, endpoint_configuration=None):
+        super(NetworkConfiguration, self).__init__()
         self.subnet_id = subnet_id
         self.endpoint_configuration = endpoint_configuration

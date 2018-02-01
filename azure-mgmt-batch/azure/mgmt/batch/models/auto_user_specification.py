@@ -35,5 +35,6 @@ class AutoUserSpecification(Model):
     }
 
     def __init__(self, scope=None, elevation_level=None):
+        super(AutoUserSpecification, self).__init__()
         self.scope = scope
         self.elevation_level = elevation_level

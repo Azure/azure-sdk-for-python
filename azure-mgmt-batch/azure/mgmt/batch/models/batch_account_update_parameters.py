@@ -27,5 +27,6 @@ class BatchAccountUpdateParameters(Model):
     }
 
     def __init__(self, tags=None, auto_storage=None):
+        super(BatchAccountUpdateParameters, self).__init__()
         self.tags = tags
         self.auto_storage = auto_storage

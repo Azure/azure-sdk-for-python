@@ -30,4 +30,5 @@ class ContainerServiceSshConfiguration(Model):
     }
 
     def __init__(self, public_keys):
+        super(ContainerServiceSshConfiguration, self).__init__()
         self.public_keys = public_keys

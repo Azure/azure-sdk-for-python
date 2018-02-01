@@ -44,6 +44,7 @@ class ResourceManagementErrorWithDetails(Model):
     }
 
     def __init__(self):
+        super(ResourceManagementErrorWithDetails, self).__init__()
         self.code = None
         self.message = None
         self.target = None

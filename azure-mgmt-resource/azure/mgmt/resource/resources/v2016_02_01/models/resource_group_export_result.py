@@ -28,5 +28,6 @@ class ResourceGroupExportResult(Model):
     }
 
     def __init__(self, template=None, error=None):
+        super(ResourceGroupExportResult, self).__init__()
         self.template = template
         self.error = error

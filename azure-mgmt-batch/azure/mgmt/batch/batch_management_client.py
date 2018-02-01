@@ -49,7 +49,7 @@ class BatchManagementClientConfiguration(AzureConfiguration):
 
         super(BatchManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('batchmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-batch/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

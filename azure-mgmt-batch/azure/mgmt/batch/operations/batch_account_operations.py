@@ -27,6 +27,8 @@ class BatchAccountOperations(object):
     :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-09-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client

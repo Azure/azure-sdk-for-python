@@ -9,6 +9,13 @@
   "azure-common": {
     "service_name": "Other"
   },
+  "azure-eventgrid": {
+    "category ": "Client",
+    "namespaces": [
+      "azure.eventgrid"
+    ],
+    "service_name": "Event Grid"
+  },
   "azure-graphrbac": {
     "category ": "Client",
     "namespaces": [
@@ -258,7 +265,8 @@
       "azure.mgmt.network.v2017_06_01",
       "azure.mgmt.network.v2017_08_01",
       "azure.mgmt.network.v2017_09_01",
-      "azure.mgmt.network.v2017_10_01"
+      "azure.mgmt.network.v2017_10_01",
+      "azure.mgmt.network.v2017_11_01"
     ],
     "service_name": "Network"
   },
