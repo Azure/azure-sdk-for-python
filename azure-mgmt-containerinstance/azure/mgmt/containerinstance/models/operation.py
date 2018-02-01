@@ -18,13 +18,17 @@ class Operation(Model):
     :param name: The name of the operation.
     :type name: str
     :param display: The display information of the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.containerinstance.models.OperationDisplay>`
+    :type display: ~azure.mgmt.containerinstance.models.OperationDisplay
     :param origin: The intended executor of the operation. Possible values
      include: 'User', 'System'
-    :type origin: str or :class:`ContainerInstanceOperationsOrigin
-     <azure.mgmt.containerinstance.models.ContainerInstanceOperationsOrigin>`
+    :type origin: str or
+     ~azure.mgmt.containerinstance.models.ContainerInstanceOperationsOrigin
     """
+
+    _validation = {
+        'name': {'required': True},
+        'display': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -32,7 +36,8 @@ class Operation(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display=None, origin=None):
+    def __init__(self, name, display, origin=None):
+        super(Operation, self).__init__()
         self.name = name
         self.display = display
         self.origin = origin

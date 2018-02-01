@@ -43,6 +43,7 @@ class AzureFileVolume(Model):
     }
 
     def __init__(self, share_name, storage_account_name, read_only=None, storage_account_key=None):
+        super(AzureFileVolume, self).__init__()
         self.share_name = share_name
         self.read_only = read_only
         self.storage_account_name = storage_account_name

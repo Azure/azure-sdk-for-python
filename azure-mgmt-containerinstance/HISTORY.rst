@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.3.0 (2018-02-01)
+++++++++++++++++++
+
+* Add dnsnamelabel
+* Add fqdn
+* Add container_group_usage operation groups
+* Add git_repo and secret to volumes
+* Add container_groups.update
+
+API version is now 2018-02-01-preview
+
 0.2.0 (2017-10-20)
 ++++++++++++++++++
 
