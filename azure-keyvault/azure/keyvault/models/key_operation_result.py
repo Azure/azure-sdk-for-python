@@ -35,5 +35,6 @@ class KeyOperationResult(Model):
     }
 
     def __init__(self):
+        super(KeyOperationResult, self).__init__()
         self.kid = None
         self.result = None

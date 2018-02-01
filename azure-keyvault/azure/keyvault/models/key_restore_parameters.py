@@ -28,4 +28,5 @@ class KeyRestoreParameters(Model):
     }
 
     def __init__(self, key_bundle_backup):
+        super(KeyRestoreParameters, self).__init__()
         self.key_bundle_backup = key_bundle_backup

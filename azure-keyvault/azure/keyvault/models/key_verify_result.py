@@ -31,4 +31,5 @@ class KeyVerifyResult(Model):
     }
 
     def __init__(self):
+        super(KeyVerifyResult, self).__init__()
         self.value = None

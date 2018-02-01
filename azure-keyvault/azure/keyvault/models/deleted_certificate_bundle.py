@@ -28,17 +28,15 @@ class DeletedCertificateBundle(CertificateBundle):
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: :class:`CertificatePolicy
-     <azure.keyvault.models.CertificatePolicy>`
+    :vartype policy: ~azure.keyvault.models.CertificatePolicy
     :param cer: CER contents of x509 certificate.
     :type cer: bytearray
     :param content_type: The content type of the secret.
     :type content_type: str
     :param attributes: The certificate attributes.
-    :type attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs
-    :type tags: dict
+    :type tags: dict[str, str]
     :param recovery_id: The url of the recovery object, used to identify and
      recover the deleted certificate.
     :type recovery_id: str
