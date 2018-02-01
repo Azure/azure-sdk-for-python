@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.3.1 (2018-02-01)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix capabilities model definition
+
 0.3.0 (2018-01-30)
 ++++++++++++++++++
 
