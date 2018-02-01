@@ -112,6 +112,7 @@ from .compute_long_running_operation_properties import ComputeLongRunningOperati
 from .resource import Resource
 from .update_resource import UpdateResource
 from .sub_resource_read_only import SubResourceReadOnly
+from .recovery_walk_response import RecoveryWalkResponse
 from .operation_status_response import OperationStatusResponse
 from .run_command_input_parameter import RunCommandInputParameter
 from .run_command_input import RunCommandInput
@@ -256,6 +257,7 @@ __all__ = [
     'Resource',
     'UpdateResource',
     'SubResourceReadOnly',
+    'RecoveryWalkResponse',
     'OperationStatusResponse',
     'RunCommandInputParameter',
     'RunCommandInput',

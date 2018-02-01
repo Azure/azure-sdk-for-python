@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class CategoryType(Enum):
+
+    cost = "Cost"
+    usage = "Usage"
+
+
 class TimeGrainType(Enum):
 
     monthly = "Monthly"

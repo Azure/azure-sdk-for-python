@@ -37,6 +37,7 @@ class VolumeMount(Model):
     }
 
     def __init__(self, name, mount_path, read_only=None):
+        super(VolumeMount, self).__init__()
         self.name = name
         self.mount_path = mount_path
         self.read_only = read_only

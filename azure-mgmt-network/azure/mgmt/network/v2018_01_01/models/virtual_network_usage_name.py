@@ -12,24 +12,29 @@
 from msrest.serialization import Model
 
 
-class AclList(Model):
-    """A Data Lake Analytics catalog access control list (ACL).
+class VirtualNetworkUsageName(Model):
+    """Usage strings container.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: the access control list (ACL).
-    :vartype value: list[~azure.mgmt.datalake.analytics.catalog.models.Acl]
+    :ivar localized_value: Localized subnet size and usage string.
+    :vartype localized_value: str
+    :ivar value: Subnet size and usage string.
+    :vartype value: str
     """
 
     _validation = {
+        'localized_value': {'readonly': True},
         'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Acl]'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self):
-        super(AclList, self).__init__()
+        super(VirtualNetworkUsageName, self).__init__()
+        self.localized_value = None
         self.value = None

@@ -45,6 +45,7 @@ class ConsistencyPolicy(Model):
     }
 
     def __init__(self, default_consistency_level, max_staleness_prefix=None, max_interval_in_seconds=None):
+        super(ConsistencyPolicy, self).__init__()
         self.default_consistency_level = default_consistency_level
         self.max_staleness_prefix = max_staleness_prefix
         self.max_interval_in_seconds = max_interval_in_seconds

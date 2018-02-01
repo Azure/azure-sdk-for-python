@@ -19,28 +19,37 @@ class IpAddress(Model):
     sending a request.
 
     :param ports: The list of ports exposed on the container group.
-    :type ports: list of :class:`Port
-     <azure.mgmt.containerinstance.models.Port>`
+    :type ports: list[~azure.mgmt.containerinstance.models.Port]
     :ivar type: Specifies if the IP is exposed to the public internet. Default
      value: "Public" .
     :vartype type: str
     :param ip: The IP exposed to the public internet.
     :type ip: str
+    :param dnsnamelabel: The Dns name label for the IP.
+    :type dnsnamelabel: str
+    :ivar fqdn: The FQDN for the IP.
+    :vartype fqdn: str
     """
 
     _validation = {
         'ports': {'required': True},
         'type': {'required': True, 'constant': True},
+        'fqdn': {'readonly': True},
     }
 
     _attribute_map = {
         'ports': {'key': 'ports', 'type': '[Port]'},
         'type': {'key': 'type', 'type': 'str'},
         'ip': {'key': 'ip', 'type': 'str'},
+        'dnsnamelabel': {'key': 'dnsnamelabel', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
     type = "Public"
 
-    def __init__(self, ports, ip=None):
+    def __init__(self, ports, ip=None, dnsnamelabel=None):
+        super(IpAddress, self).__init__()
         self.ports = ports
         self.ip = ip
+        self.dnsnamelabel = dnsnamelabel
+        self.fqdn = None
