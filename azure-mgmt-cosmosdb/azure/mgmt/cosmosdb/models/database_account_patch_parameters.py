@@ -23,7 +23,7 @@ class DatabaseAccountPatchParameters(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
     }
 
     def __init__(self, tags=None, capabilities=None):
