@@ -30,6 +30,7 @@ class Contact(Model):
     }
 
     def __init__(self, email_address=None, name=None, phone=None):
+        super(Contact, self).__init__()
         self.email_address = email_address
         self.name = name
         self.phone = phone

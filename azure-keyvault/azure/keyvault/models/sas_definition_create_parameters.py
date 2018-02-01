@@ -15,27 +15,41 @@ from msrest.serialization import Model
 class SasDefinitionCreateParameters(Model):
     """The SAS definition create parameters.
 
-    :param parameters: Sas definition creation metadata in the form of
-     key-value pairs.
-    :type parameters: dict
+    :param template_uri: The SAS definition token template signed with an
+     arbitrary key.  Tokens created according to the SAS definition will have
+     the same properties as the template.
+    :type template_uri: str
+    :param sas_type: The type of SAS token the SAS definition will create.
+     Possible values include: 'account', 'service'
+    :type sas_type: str or ~azure.keyvault.models.SasTokenType
+    :param validity_period: The validity period of SAS tokens created
+     according to the SAS definition.
+    :type validity_period: str
     :param sas_definition_attributes: The attributes of the SAS definition.
-    :type sas_definition_attributes: :class:`SasDefinitionAttributes
-     <azure.keyvault.models.SasDefinitionAttributes>`
+    :type sas_definition_attributes:
+     ~azure.keyvault.models.SasDefinitionAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
-        'parameters': {'required': True},
+        'template_uri': {'required': True},
+        'sas_type': {'required': True},
+        'validity_period': {'required': True},
     }
 
     _attribute_map = {
-        'parameters': {'key': 'parameters', 'type': '{str}'},
+        'template_uri': {'key': 'templateUri', 'type': 'str'},
+        'sas_type': {'key': 'sasType', 'type': 'str'},
+        'validity_period': {'key': 'validityPeriod', 'type': 'str'},
         'sas_definition_attributes': {'key': 'attributes', 'type': 'SasDefinitionAttributes'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, parameters, sas_definition_attributes=None, tags=None):
-        self.parameters = parameters
+    def __init__(self, template_uri, sas_type, validity_period, sas_definition_attributes=None, tags=None):
+        super(SasDefinitionCreateParameters, self).__init__()
+        self.template_uri = template_uri
+        self.sas_type = sas_type
+        self.validity_period = validity_period
         self.sas_definition_attributes = sas_definition_attributes
         self.tags = tags
