@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .operation_status_response import OperationStatusResponse
 
 
-class LogAnalyticsOperationResult(Model):
-    """Operation status response.
+class LogAnalyticsOperationResult(OperationStatusResponse):
+    """LogAnalytics operation status response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -53,9 +53,4 @@ class LogAnalyticsOperationResult(Model):
 
     def __init__(self):
         super(LogAnalyticsOperationResult, self).__init__()
-        self.name = None
-        self.status = None
-        self.start_time = None
-        self.end_time = None
-        self.error = None
         self.properties = None
