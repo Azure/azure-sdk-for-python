@@ -116,6 +116,8 @@ from .operation_status_response import OperationStatusResponse
 from .request_rate_by_interval_input import RequestRateByIntervalInput
 from .throttled_requests_input import ThrottledRequestsInput
 from .log_analytics_input_base import LogAnalyticsInputBase
+from .log_analytics_output import LogAnalyticsOutput
+from .log_analytics_operation_result import LogAnalyticsOperationResult
 from .run_command_input_parameter import RunCommandInputParameter
 from .run_command_input import RunCommandInput
 from .run_command_parameter_definition import RunCommandParameterDefinition
@@ -264,6 +266,8 @@ __all__ = [
     'RequestRateByIntervalInput',
     'ThrottledRequestsInput',
     'LogAnalyticsInputBase',
+    'LogAnalyticsOutput',
+    'LogAnalyticsOperationResult',
     'RunCommandInputParameter',
     'RunCommandInput',
     'RunCommandParameterDefinition',
