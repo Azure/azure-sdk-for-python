@@ -52,6 +52,7 @@ class Location(Model):
     }
 
     def __init__(self):
+        super(Location, self).__init__()
         self.id = None
         self.subscription_id = None
         self.name = None

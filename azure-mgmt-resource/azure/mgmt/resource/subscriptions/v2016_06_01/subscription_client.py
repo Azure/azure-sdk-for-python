@@ -39,7 +39,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
 
         super(SubscriptionClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('subscriptionclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-resource/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

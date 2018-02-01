@@ -35,6 +35,7 @@ class KeyVaultSecretRef(Model):
     }
 
     def __init__(self, vault_id, secret_name, version=None):
+        super(KeyVaultSecretRef, self).__init__()
         self.vault_id = vault_id
         self.secret_name = secret_name
         self.version = version

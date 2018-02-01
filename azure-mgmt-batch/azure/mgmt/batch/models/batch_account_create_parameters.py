@@ -48,6 +48,7 @@ class BatchAccountCreateParameters(Model):
     }
 
     def __init__(self, location, tags=None, auto_storage=None, pool_allocation_mode=None, key_vault_reference=None):
+        super(BatchAccountCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.auto_storage = auto_storage

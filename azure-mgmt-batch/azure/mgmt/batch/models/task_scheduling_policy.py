@@ -29,4 +29,5 @@ class TaskSchedulingPolicy(Model):
     }
 
     def __init__(self, node_fill_type):
+        super(TaskSchedulingPolicy, self).__init__()
         self.node_fill_type = node_fill_type

@@ -31,4 +31,5 @@ class ResourceGroupProperties(Model):
     }
 
     def __init__(self):
+        super(ResourceGroupProperties, self).__init__()
         self.provisioning_state = None

@@ -41,6 +41,7 @@ class OrchestratorVersionProfile(Model):
     }
 
     def __init__(self, orchestrator_type, orchestrator_version, default, upgrades):
+        super(OrchestratorVersionProfile, self).__init__()
         self.orchestrator_type = orchestrator_type
         self.orchestrator_version = orchestrator_version
         self.default = default

@@ -51,6 +51,7 @@ class ManagedClusterUpgradeProfile(Model):
     }
 
     def __init__(self, control_plane_profile, agent_pool_profiles):
+        super(ManagedClusterUpgradeProfile, self).__init__()
         self.id = None
         self.name = None
         self.type = None

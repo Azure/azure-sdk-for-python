@@ -28,4 +28,5 @@ class OSDisk(Model):
     }
 
     def __init__(self, caching=None):
+        super(OSDisk, self).__init__()
         self.caching = caching

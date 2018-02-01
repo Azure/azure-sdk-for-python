@@ -28,4 +28,5 @@ class ContainerServiceCustomProfile(Model):
     }
 
     def __init__(self, orchestrator):
+        super(ContainerServiceCustomProfile, self).__init__()
         self.orchestrator = orchestrator

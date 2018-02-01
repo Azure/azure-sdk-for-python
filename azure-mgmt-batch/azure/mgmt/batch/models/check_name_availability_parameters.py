@@ -39,4 +39,5 @@ class CheckNameAvailabilityParameters(Model):
     type = "Microsoft.Batch/batchAccounts"
 
     def __init__(self, name):
+        super(CheckNameAvailabilityParameters, self).__init__()
         self.name = name

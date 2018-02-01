@@ -37,5 +37,6 @@ class ApplicationPackageReference(Model):
     }
 
     def __init__(self, id, version=None):
+        super(ApplicationPackageReference, self).__init__()
         self.id = id
         self.version = version

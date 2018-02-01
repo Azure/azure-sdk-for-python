@@ -34,6 +34,7 @@ class Provider(Model):
     }
 
     def __init__(self, id=None, namespace=None, registration_state=None, resource_types=None):
+        super(Provider, self).__init__()
         self.id = id
         self.namespace = namespace
         self.registration_state = registration_state
