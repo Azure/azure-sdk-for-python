@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class ResourceReference(Model):
-    """The resource reference.
+class IsolatedEnvironment(Resource):
+    """The isolated environment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,6 +24,12 @@ class ResourceReference(Model):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
+    :param location: The resource location.
+    :type location: str
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
+    :param properties: The isolated environment properties.
+    :type properties: object
     """
 
     _validation = {
@@ -36,10 +42,11 @@ class ResourceReference(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self):
-        super(ResourceReference, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, location=None, tags=None, properties=None):
+        super(IsolatedEnvironment, self).__init__(location=location, tags=tags)
+        self.properties = properties

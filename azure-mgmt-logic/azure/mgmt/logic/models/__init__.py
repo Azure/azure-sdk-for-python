@@ -103,6 +103,7 @@ from .integration_account_session_filter import IntegrationAccountSessionFilter
 from .integration_account_session import IntegrationAccountSession
 from .operation_display import OperationDisplay
 from .operation import Operation
+from .isolated_environment import IsolatedEnvironment
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
@@ -117,6 +118,7 @@ from .integration_account_agreement_paged import IntegrationAccountAgreementPage
 from .integration_account_certificate_paged import IntegrationAccountCertificatePaged
 from .integration_account_session_paged import IntegrationAccountSessionPaged
 from .operation_paged import OperationPaged
+from .isolated_environment_paged import IsolatedEnvironmentPaged
 from .logic_management_client_enums import (
     WorkflowProvisioningState,
     WorkflowState,
@@ -242,6 +244,7 @@ __all__ = [
     'IntegrationAccountSession',
     'OperationDisplay',
     'Operation',
+    'IsolatedEnvironment',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
@@ -256,6 +259,7 @@ __all__ = [
     'IntegrationAccountCertificatePaged',
     'IntegrationAccountSessionPaged',
     'OperationPaged',
+    'IsolatedEnvironmentPaged',
     'WorkflowProvisioningState',
     'WorkflowState',
     'SkuName',

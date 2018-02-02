@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -25,6 +25,8 @@ class WorkflowRunActionsOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: The API version. Constant value: "2016-06-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -54,8 +56,9 @@ class WorkflowRunActionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowRunActionPaged
-         <azure.mgmt.logic.models.WorkflowRunActionPaged>`
+        :return: An iterator like instance of WorkflowRunAction
+        :rtype:
+         ~azure.mgmt.logic.models.WorkflowRunActionPaged[~azure.mgmt.logic.models.WorkflowRunAction]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -96,7 +99,7 @@ class WorkflowRunActionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -132,10 +135,9 @@ class WorkflowRunActionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkflowRunAction
-         <azure.mgmt.logic.models.WorkflowRunAction>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: WorkflowRunAction or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.WorkflowRunAction or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -165,7 +167,7 @@ class WorkflowRunActionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

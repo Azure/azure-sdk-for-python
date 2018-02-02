@@ -44,8 +44,8 @@ class EdifactValidationSettings(Model):
     :type trim_leading_and_trailing_spaces_and_zeroes: bool
     :param trailing_separator_policy: The trailing separator policy. Possible
      values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
-    :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
-     <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
+    :type trailing_separator_policy: str or
+     ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     """
 
     _validation = {
@@ -75,6 +75,7 @@ class EdifactValidationSettings(Model):
     }
 
     def __init__(self, validate_character_set, check_duplicate_interchange_control_number, interchange_control_number_validity_days, check_duplicate_group_control_number, check_duplicate_transaction_set_control_number, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, trim_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy):
+        super(EdifactValidationSettings, self).__init__()
         self.validate_character_set = validate_character_set
         self.check_duplicate_interchange_control_number = check_duplicate_interchange_control_number
         self.interchange_control_number_validity_days = interchange_control_number_validity_days

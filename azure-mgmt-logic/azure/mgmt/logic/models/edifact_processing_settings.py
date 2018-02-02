@@ -49,6 +49,7 @@ class EdifactProcessingSettings(Model):
     }
 
     def __init__(self, mask_security_info, preserve_interchange, suspend_interchange_on_error, create_empty_xml_tags_for_trailing_separators, use_dot_as_decimal_separator):
+        super(EdifactProcessingSettings, self).__init__()
         self.mask_security_info = mask_security_info
         self.preserve_interchange = preserve_interchange
         self.suspend_interchange_on_error = suspend_interchange_on_error

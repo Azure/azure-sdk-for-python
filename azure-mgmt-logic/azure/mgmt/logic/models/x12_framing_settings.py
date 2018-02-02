@@ -28,12 +28,11 @@ class X12FramingSettings(Model):
     :type segment_terminator: int
     :param character_set: The X12 character set. Possible values include:
      'NotSpecified', 'Basic', 'Extended', 'UTF8'
-    :type character_set: str or :class:`X12CharacterSet
-     <azure.mgmt.logic.models.X12CharacterSet>`
+    :type character_set: str or ~azure.mgmt.logic.models.X12CharacterSet
     :param segment_terminator_suffix: The segment terminator suffix. Possible
      values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
-    :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
-     <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
+    :type segment_terminator_suffix: str or
+     ~azure.mgmt.logic.models.SegmentTerminatorSuffix
     """
 
     _validation = {
@@ -57,6 +56,7 @@ class X12FramingSettings(Model):
     }
 
     def __init__(self, data_element_separator, component_separator, replace_separators_in_payload, replace_character, segment_terminator, character_set, segment_terminator_suffix):
+        super(X12FramingSettings, self).__init__()
         self.data_element_separator = data_element_separator
         self.component_separator = component_separator
         self.replace_separators_in_payload = replace_separators_in_payload

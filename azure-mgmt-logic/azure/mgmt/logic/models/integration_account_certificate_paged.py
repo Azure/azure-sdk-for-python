@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class IntegrationAccountCertificatePaged(Paged):
     """
-    A paging container for iterating over a list of IntegrationAccountCertificate object
+    A paging container for iterating over a list of :class:`IntegrationAccountCertificate <azure.mgmt.logic.models.IntegrationAccountCertificate>` object
     """
 
     _attribute_map = {

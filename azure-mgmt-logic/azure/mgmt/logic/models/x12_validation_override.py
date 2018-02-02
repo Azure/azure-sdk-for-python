@@ -35,8 +35,8 @@ class X12ValidationOverride(Model):
     :type trim_leading_and_trailing_spaces_and_zeroes: bool
     :param trailing_separator_policy: The trailing separator policy. Possible
      values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
-    :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
-     <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
+    :type trailing_separator_policy: str or
+     ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     """
 
     _validation = {
@@ -60,6 +60,7 @@ class X12ValidationOverride(Model):
     }
 
     def __init__(self, message_id, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, validate_character_set, trim_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy):
+        super(X12ValidationOverride, self).__init__()
         self.message_id = message_id
         self.validate_edi_types = validate_edi_types
         self.validate_xsd_types = validate_xsd_types

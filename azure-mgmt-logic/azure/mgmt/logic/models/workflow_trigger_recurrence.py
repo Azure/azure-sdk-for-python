@@ -17,8 +17,7 @@ class WorkflowTriggerRecurrence(Model):
 
     :param frequency: The frequency. Possible values include: 'NotSpecified',
      'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
-    :type frequency: str or :class:`RecurrenceFrequency
-     <azure.mgmt.logic.models.RecurrenceFrequency>`
+    :type frequency: str or ~azure.mgmt.logic.models.RecurrenceFrequency
     :param interval: The interval.
     :type interval: int
     :param start_time: The start time.
@@ -28,8 +27,7 @@ class WorkflowTriggerRecurrence(Model):
     :param time_zone: The time zone.
     :type time_zone: str
     :param schedule: The recurrence schedule.
-    :type schedule: :class:`RecurrenceSchedule
-     <azure.mgmt.logic.models.RecurrenceSchedule>`
+    :type schedule: ~azure.mgmt.logic.models.RecurrenceSchedule
     """
 
     _attribute_map = {
@@ -42,6 +40,7 @@ class WorkflowTriggerRecurrence(Model):
     }
 
     def __init__(self, frequency=None, interval=None, start_time=None, end_time=None, time_zone=None, schedule=None):
+        super(WorkflowTriggerRecurrence, self).__init__()
         self.frequency = frequency
         self.interval = interval
         self.start_time = start_time

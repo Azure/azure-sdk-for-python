@@ -54,6 +54,7 @@ class X12ProcessingSettings(Model):
     }
 
     def __init__(self, mask_security_info, convert_implied_decimal, preserve_interchange, suspend_interchange_on_error, create_empty_xml_tags_for_trailing_separators, use_dot_as_decimal_separator):
+        super(X12ProcessingSettings, self).__init__()
         self.mask_security_info = mask_security_info
         self.convert_implied_decimal = convert_implied_decimal
         self.preserve_interchange = preserve_interchange

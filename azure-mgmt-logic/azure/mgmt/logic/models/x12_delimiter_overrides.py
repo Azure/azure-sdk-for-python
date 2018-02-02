@@ -27,8 +27,8 @@ class X12DelimiterOverrides(Model):
     :type segment_terminator: int
     :param segment_terminator_suffix: The segment terminator suffix. Possible
      values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
-    :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
-     <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
+    :type segment_terminator_suffix: str or
+     ~azure.mgmt.logic.models.SegmentTerminatorSuffix
     :param replace_character: The replacement character.
     :type replace_character: int
     :param replace_separators_in_payload: The value indicating whether to
@@ -61,6 +61,7 @@ class X12DelimiterOverrides(Model):
     }
 
     def __init__(self, data_element_separator, component_separator, segment_terminator, segment_terminator_suffix, replace_character, replace_separators_in_payload, protocol_version=None, message_id=None, target_namespace=None):
+        super(X12DelimiterOverrides, self).__init__()
         self.protocol_version = protocol_version
         self.message_id = message_id
         self.data_element_separator = data_element_separator

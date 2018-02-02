@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class WorkflowVersionPaged(Paged):
+class IsolatedEnvironmentPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`WorkflowVersion <azure.mgmt.logic.models.WorkflowVersion>` object
+    A paging container for iterating over a list of :class:`IsolatedEnvironment <azure.mgmt.logic.models.IsolatedEnvironment>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[WorkflowVersion]'}
+        'current_page': {'key': 'value', 'type': '[IsolatedEnvironment]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(WorkflowVersionPaged, self).__init__(*args, **kwargs)
+        super(IsolatedEnvironmentPaged, self).__init__(*args, **kwargs)

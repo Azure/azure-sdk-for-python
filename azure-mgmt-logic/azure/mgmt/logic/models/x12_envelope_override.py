@@ -36,12 +36,10 @@ class X12EnvelopeOverride(Model):
     :type functional_identifier_code: str
     :param date_format: The date format. Possible values include:
      'NotSpecified', 'CCYYMMDD', 'YYMMDD'
-    :type date_format: str or :class:`X12DateFormat
-     <azure.mgmt.logic.models.X12DateFormat>`
+    :type date_format: str or ~azure.mgmt.logic.models.X12DateFormat
     :param time_format: The time format. Possible values include:
      'NotSpecified', 'HHMM', 'HHMMSS', 'HHMMSSdd', 'HHMMSSd'
-    :type time_format: str or :class:`X12TimeFormat
-     <azure.mgmt.logic.models.X12TimeFormat>`
+    :type time_format: str or ~azure.mgmt.logic.models.X12TimeFormat
     """
 
     _validation = {
@@ -70,6 +68,7 @@ class X12EnvelopeOverride(Model):
     }
 
     def __init__(self, target_namespace, protocol_version, message_id, responsible_agency_code, header_version, sender_application_id, receiver_application_id, date_format, time_format, functional_identifier_code=None):
+        super(X12EnvelopeOverride, self).__init__()
         self.target_namespace = target_namespace
         self.protocol_version = protocol_version
         self.message_id = message_id

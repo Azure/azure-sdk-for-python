@@ -42,12 +42,11 @@ class AS2ValidationSettings(Model):
     :param encryption_algorithm: The encryption algorithm. Possible values
      include: 'NotSpecified', 'None', 'DES3', 'RC2', 'AES128', 'AES192',
      'AES256'
-    :type encryption_algorithm: str or :class:`EncryptionAlgorithm
-     <azure.mgmt.logic.models.EncryptionAlgorithm>`
+    :type encryption_algorithm: str or
+     ~azure.mgmt.logic.models.EncryptionAlgorithm
     :param signing_algorithm: The signing algorithm. Possible values include:
      'NotSpecified', 'Default', 'SHA1', 'SHA2256', 'SHA2384', 'SHA2512'
-    :type signing_algorithm: str or :class:`SigningAlgorithm
-     <azure.mgmt.logic.models.SigningAlgorithm>`
+    :type signing_algorithm: str or ~azure.mgmt.logic.models.SigningAlgorithm
     """
 
     _validation = {
@@ -76,6 +75,7 @@ class AS2ValidationSettings(Model):
     }
 
     def __init__(self, override_message_properties, encrypt_message, sign_message, compress_message, check_duplicate_message, interchange_duplicates_validity_days, check_certificate_revocation_list_on_send, check_certificate_revocation_list_on_receive, encryption_algorithm, signing_algorithm=None):
+        super(AS2ValidationSettings, self).__init__()
         self.override_message_properties = override_message_properties
         self.encrypt_message = encrypt_message
         self.sign_message = sign_message

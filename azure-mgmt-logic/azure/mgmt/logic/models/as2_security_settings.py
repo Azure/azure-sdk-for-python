@@ -70,6 +70,7 @@ class AS2SecuritySettings(Model):
     }
 
     def __init__(self, override_group_signing_certificate, enable_nrr_for_inbound_encoded_messages, enable_nrr_for_inbound_decoded_messages, enable_nrr_for_outbound_mdn, enable_nrr_for_outbound_encoded_messages, enable_nrr_for_outbound_decoded_messages, enable_nrr_for_inbound_mdn, signing_certificate_name=None, encryption_certificate_name=None, sha2_algorithm_format=None):
+        super(AS2SecuritySettings, self).__init__()
         self.override_group_signing_certificate = override_group_signing_certificate
         self.signing_certificate_name = signing_certificate_name
         self.encryption_certificate_name = encryption_certificate_name

@@ -18,8 +18,7 @@ class ErrorResponse(Model):
     request. The error property contains the error details.
 
     :param error: The error properties.
-    :type error: :class:`ErrorProperties
-     <azure.mgmt.logic.models.ErrorProperties>`
+    :type error: ~azure.mgmt.logic.models.ErrorProperties
     """
 
     _attribute_map = {
@@ -27,6 +26,7 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, error=None):
+        super(ErrorResponse, self).__init__()
         self.error = error
 
 
