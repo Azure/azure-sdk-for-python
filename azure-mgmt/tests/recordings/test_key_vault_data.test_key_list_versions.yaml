@@ -43,7 +43,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [b4ad6b06-4ad6-11e7-ae7f-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/key75b61176/create?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/key75b61176/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/3570ac5e8fdf449580abdc81e3b56934","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"s_mQSLY4A7ja-WN6zuCaOoRHe1U5030vcBDGnb9eI2bujC1SYwje79nJ0y20yAR83ZEsWcRaGcuS0NYu3TKvIMhaYHhk5L7r9jO7YQeYpv63WAbn1_vzOv_j-t_kJKVBuZk-vuZzZtBFqcxHSzaVup66c6cTN_nboEtBJeW8lQYV8bUpchxVZnvwLoZVFLlVOSz-N89o55l37C5Y269iV9B2Mh_Im_981G0-FWiNLrmROO_mI4DR6BtX0R2CEKALI5SkXJ0qqyJtje-GmQQKKlEzAfmYqLOyFzpzN1UiAfa0_ZL770qrES4m6SwbZKLrDt0ZJ6MizM6TeXkRirJo_w","e":"AQAB"},"attributes":{"enabled":true,"created":1496767167,"updated":1496767167,"recoverylevel":"Purgeable"}}'}
     headers:
@@ -75,7 +75,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [b57d3166-4ad6-11e7-a877-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/key75b61176/create?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/key75b61176/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/9b909e13cd084c0f8ee73114fc353d71","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"sIfdVuAP1hAiw__McVw8HM5ViZrP8pDF0fKMCOJwsPN6_bm8n61RtXrclOetM-5oKdEof9eLwaQi4qeoAkaSLnUttI931i28iwlCAkaTrhLWxDPAsENhTe1xlXM7QHRMMJCd7_JKlm4UxpS-mmJpBg48gwy1Cdkrd200OEZjgvugaF2efGS2kIURbNLhWWREyNghxYgPHYCY9YDLhDAjZ_QRlKjSGQs66jEg0hssiZWagI5SKVBRfyDs5LTgXXphllp9AoZbvhznwZp1K3ZBc8O8zzqkWOHKx6wHe9kW_jZsnDf1yylf_0lH048hybMinE1MfTKVe7mXZ43QoK43hQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767169,"updated":1496767169,"recoverylevel":"Purgeable"}}'}
     headers:
@@ -106,7 +106,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [b625f608-4ad6-11e7-8163-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/keys/key75b61176/versions?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/key75b61176/versions?api-version=7.0-preview
   response:
     body: {string: '{"value":[{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/1e337e593a3b4db29da8d374137f5237","attributes":{"enabled":true,"created":1496705539,"updated":1496705539,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/2e554d6137d94b60be2251bb672b7867","attributes":{"enabled":true,"created":1496765348,"updated":1496765348,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/3570ac5e8fdf449580abdc81e3b56934","attributes":{"enabled":true,"created":1496767167,"updated":1496767167,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/53a59559672d4510a7f3245bdee89709","attributes":{"enabled":true,"created":1496704767,"updated":1496704767,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/82d4a31548174a5c91a82d35ff4cb143","attributes":{"enabled":true,"created":1496766333,"updated":1496766333,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/926f432c84b44e59b122b0dd6299e849","attributes":{"enabled":true,"created":1496704767,"updated":1496704767,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/9b909e13cd084c0f8ee73114fc353d71","attributes":{"enabled":true,"created":1496767169,"updated":1496767169,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/a01e5bfca7b240c79e88ce66d9738432","attributes":{"enabled":true,"created":1496765346,"updated":1496765346,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/c4a13dd0b1f14ff582f49e36f3a6e2a1","attributes":{"enabled":true,"created":1496705540,"updated":1496705540,"recoverylevel":"Purgeable"}},{"kid":"https://pytest-shared-vault.vault.azure.net/keys/key75b61176/d2a17a3b7efa400d88b0efbe1fcee0f5","attributes":{"enabled":true,"created":1496766333,"updated":1496766333,"recoverylevel":"Purgeable"}}],"nextLink":null}'}
     headers:

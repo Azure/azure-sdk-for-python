@@ -45,7 +45,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5dd5b014-4ad6-11e7-9ac2-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/cert062c210d8/import?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/cert062c210d8/import?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert062c210d8/0c4b38c619bf4e5d9ad3c500084b1131","kid":"https://pytest-shared-vault.vault.azure.net/keys/cert062c210d8/0c4b38c619bf4e5d9ad3c500084b1131","sid":"https://pytest-shared-vault.vault.azure.net/secrets/cert062c210d8/0c4b38c619bf4e5d9ad3c500084b1131","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767023,"updated":1496767023,"recoverylevel":"Purgeable"},"policy":{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert062c210d8/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496765217,"updated":1496767023}}}'}
     headers:
@@ -79,7 +79,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5f1a842c-4ad6-11e7-8249-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/cert162c210d8/import?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/cert162c210d8/import?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert162c210d8/36b7ef1e30cc420ea3546a0dbdf457c7","kid":"https://pytest-shared-vault.vault.azure.net/keys/cert162c210d8/36b7ef1e30cc420ea3546a0dbdf457c7","sid":"https://pytest-shared-vault.vault.azure.net/secrets/cert162c210d8/36b7ef1e30cc420ea3546a0dbdf457c7","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767025,"updated":1496767025,"recoverylevel":"Purgeable"},"policy":{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert162c210d8/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496765219,"updated":1496767025}}}'}
     headers:
@@ -110,9 +110,9 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [6016ccec-4ad6-11e7-a22b-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/certificates?maxresults=2&api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates?maxresults=2&api-version=7.0-preview
   response:
-    body: {string: '{"value":[{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert062c210d8","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767023,"updated":1496767023}},{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert162c210d8","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767025,"updated":1496767025}}],"nextLink":"https://pytest-shared-vault.vault.azure.net:443/certificates?api-version=2016-10-01&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5MiFNREF3TURJMElXTmxjblJwWm1sallYUmxMME5GVWxRek5rUTFNVFUyUkNFd01EQXdNamdoTWpBeE55MHdOaTB3TmxReE5qb3dOam96T1M0ME1EZ3lOalF4V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&maxresults=2"}'}
+    body: {string: '{"value":[{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert062c210d8","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767023,"updated":1496767023}},{"id":"https://pytest-shared-vault.vault.azure.net/certificates/cert162c210d8","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767025,"updated":1496767025}}],"nextLink":"https://pytest-shared-vault.vault.azure.net:443/certificates?api-version=7.0-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5MiFNREF3TURJMElXTmxjblJwWm1sallYUmxMME5GVWxRek5rUTFNVFUyUkNFd01EQXdNamdoTWpBeE55MHdOaTB3TmxReE5qb3dOam96T1M0ME1EZ3lOalF4V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&maxresults=2"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['755']
@@ -141,9 +141,9 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [60b30e64-4ad6-11e7-8432-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/certificates?api-version=2016-10-01&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5MiFNREF3TURJMElXTmxjblJwWm1sallYUmxMME5GVWxRek5rUTFNVFUyUkNFd01EQXdNamdoTWpBeE55MHdOaTB3TmxReE5qb3dOam96T1M0ME1EZ3lOalF4V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&maxresults=2
+    uri: https://pytest-shared-vault.vault.azure.net/certificates?api-version=7.0-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE5MiFNREF3TURJMElXTmxjblJwWm1sallYUmxMME5GVWxRek5rUTFNVFUyUkNFd01EQXdNamdoTWpBeE55MHdOaTB3TmxReE5qb3dOam96T1M0ME1EZ3lOalF4V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&maxresults=2
   response:
-    body: {string: '{"value":[{"id":"https://pytest-shared-vault.vault.azure.net/certificates/certimp85b111b7","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767016,"updated":1496767016}},{"id":"https://pytest-shared-vault.vault.azure.net/certificates/certverd5e14b0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496766221,"updated":1496766221}}],"nextLink":"https://pytest-shared-vault.vault.azure.net:443/certificates?api-version=2016-10-01&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXTmxjblJwWm1sallYUmxMME5QVGxSQlExUlRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&maxresults=2"}'}
+    body: {string: '{"value":[{"id":"https://pytest-shared-vault.vault.azure.net/certificates/certimp85b111b7","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496767016,"updated":1496767016}},{"id":"https://pytest-shared-vault.vault.azure.net/certificates/certverd5e14b0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496766221,"updated":1496766221}}],"nextLink":"https://pytest-shared-vault.vault.azure.net:443/certificates?api-version=7.0-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXTmxjblJwWm1sallYUmxMME5QVGxSQlExUlRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&maxresults=2"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['752']
@@ -172,7 +172,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [616bfb36-4ad6-11e7-b556-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/certificates?api-version=2016-10-01&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXTmxjblJwWm1sallYUmxMME5QVGxSQlExUlRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&maxresults=2
+    uri: https://pytest-shared-vault.vault.azure.net/certificates?api-version=7.0-preview&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXTmxjblJwWm1sallYUmxMME5QVGxSQlExUlRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&maxresults=2
   response:
     body: {string: '{"value":[{"id":"https://pytest-shared-vault.vault.azure.net/certificates/policyCertificate","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496766238,"updated":1496766238}}],"nextLink":null}'}
     headers:
