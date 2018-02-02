@@ -18,8 +18,7 @@ class FileInfo(Model):
     :param file_size: The size of file in bytes.
     :type file_size: str
     :param file_version:
-    :type file_version: :class:`FileVersion
-     <azure.servicefabric.models.FileVersion>`
+    :type file_version: ~azure.servicefabric.models.FileVersion
     :param modified_date: The date and time when the image store file was last
      modified.
     :type modified_date: datetime
@@ -36,6 +35,7 @@ class FileInfo(Model):
     }
 
     def __init__(self, file_size=None, file_version=None, modified_date=None, store_relative_path=None):
+        super(FileInfo, self).__init__()
         self.file_size = file_size
         self.file_version = file_version
         self.modified_date = modified_date

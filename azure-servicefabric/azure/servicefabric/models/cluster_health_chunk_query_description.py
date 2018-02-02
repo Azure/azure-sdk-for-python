@@ -26,8 +26,8 @@ class ClusterHealthChunkQueryDescription(Model):
      For example, it can specify a filter to return all nodes with health state
      Error and another filter to always include a node identified by its
      NodeName.
-    :type node_filters: list of :class:`NodeHealthStateFilter
-     <azure.servicefabric.models.NodeHealthStateFilter>`
+    :type node_filters:
+     list[~azure.servicefabric.models.NodeHealthStateFilter]
     :param application_filters: Defines a list of filters that specify which
      applications to be included in the returned cluster health chunk.
      If no filters are specified, no applications are returned. All the
@@ -37,14 +37,14 @@ class ClusterHealthChunkQueryDescription(Model):
      For example, it can specify a filter to return all applications with
      health state Error and another filter to always include applications of a
      specified application type.
-    :type application_filters: list of :class:`ApplicationHealthStateFilter
-     <azure.servicefabric.models.ApplicationHealthStateFilter>`
+    :type application_filters:
+     list[~azure.servicefabric.models.ApplicationHealthStateFilter]
     :param cluster_health_policy:
-    :type cluster_health_policy: :class:`ClusterHealthPolicy
-     <azure.servicefabric.models.ClusterHealthPolicy>`
+    :type cluster_health_policy:
+     ~azure.servicefabric.models.ClusterHealthPolicy
     :param application_health_policies:
-    :type application_health_policies: :class:`ApplicationHealthPolicies
-     <azure.servicefabric.models.ApplicationHealthPolicies>`
+    :type application_health_policies:
+     ~azure.servicefabric.models.ApplicationHealthPolicies
     """
 
     _attribute_map = {
@@ -55,6 +55,7 @@ class ClusterHealthChunkQueryDescription(Model):
     }
 
     def __init__(self, node_filters=None, application_filters=None, cluster_health_policy=None, application_health_policies=None):
+        super(ClusterHealthChunkQueryDescription, self).__init__()
         self.node_filters = node_filters
         self.application_filters = application_filters
         self.cluster_health_policy = cluster_health_policy

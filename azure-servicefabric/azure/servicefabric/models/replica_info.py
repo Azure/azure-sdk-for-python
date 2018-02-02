@@ -16,13 +16,15 @@ class ReplicaInfo(Model):
     """Information about the identity, status, health, node name, uptime, and
     other details about the replica.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServiceReplicaInfo, StatelessServiceInstanceInfo
+
     :param replica_status: Possible values include: 'Invalid', 'InBuild',
      'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type replica_status: str or ~azure.servicefabric.models.enum
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param node_name:
     :type node_name: str
     :param address: The address the replica is listening on.
@@ -30,7 +32,7 @@ class ReplicaInfo(Model):
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     """
 
@@ -52,6 +54,7 @@ class ReplicaInfo(Model):
     }
 
     def __init__(self, replica_status=None, health_state=None, node_name=None, address=None, last_in_build_duration_in_seconds=None):
+        super(ReplicaInfo, self).__init__()
         self.replica_status = replica_status
         self.health_state = health_state
         self.node_name = node_name

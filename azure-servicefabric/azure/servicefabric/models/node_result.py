@@ -28,5 +28,6 @@ class NodeResult(Model):
     }
 
     def __init__(self, node_name=None, node_instance_id=None):
+        super(NodeResult, self).__init__()
         self.node_name = node_name
         self.node_instance_id = node_instance_id

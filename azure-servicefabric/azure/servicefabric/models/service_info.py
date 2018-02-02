@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class ServiceInfo(Model):
     """Information about a Service Fabric service.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServiceInfo, StatelessServiceInfo
+
     :param id:
     :type id: str
     :param name:
@@ -25,14 +28,13 @@ class ServiceInfo(Model):
     :type manifest_version: str
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param service_status: Possible values include: 'Unknown', 'Active',
      'Upgrading', 'Deleting', 'Creating', 'Failed'
-    :type service_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type service_status: str or ~azure.servicefabric.models.enum
     :param is_service_group: Whether the service is in a service group.
     :type is_service_group: bool
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     """
 
@@ -56,6 +58,7 @@ class ServiceInfo(Model):
     }
 
     def __init__(self, id=None, name=None, type_name=None, manifest_version=None, health_state=None, service_status=None, is_service_group=None):
+        super(ServiceInfo, self).__init__()
         self.id = id
         self.name = name
         self.type_name = type_name

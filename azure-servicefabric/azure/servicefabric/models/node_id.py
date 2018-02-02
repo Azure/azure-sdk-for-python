@@ -25,4 +25,5 @@ class NodeId(Model):
     }
 
     def __init__(self, id=None):
+        super(NodeId, self).__init__()
         self.id = id

@@ -16,8 +16,7 @@ class ChaosEventWrapper(Model):
     """Wrapper object for Chaos event.
 
     :param chaos_event:
-    :type chaos_event: :class:`ChaosEvent
-     <azure.servicefabric.models.ChaosEvent>`
+    :type chaos_event: ~azure.servicefabric.models.ChaosEvent
     """
 
     _attribute_map = {
@@ -25,4 +24,5 @@ class ChaosEventWrapper(Model):
     }
 
     def __init__(self, chaos_event=None):
+        super(ChaosEventWrapper, self).__init__()
         self.chaos_event = chaos_event

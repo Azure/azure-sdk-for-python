@@ -16,7 +16,7 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
     """Describes the partition scheme of a singleton-partitioned, or
     non-partitioned service.
 
-    :param partition_scheme: Polymorphic Discriminator
+    :param partition_scheme: Constant filled by server.
     :type partition_scheme: str
     """
 

@@ -39,6 +39,7 @@ class RemoteReplicatorAcknowledgementDetail(Model):
     }
 
     def __init__(self, average_receive_duration=None, average_apply_duration=None, not_received_count=None, received_and_not_applied_count=None):
+        super(RemoteReplicatorAcknowledgementDetail, self).__init__()
         self.average_receive_duration = average_receive_duration
         self.average_apply_duration = average_apply_duration
         self.not_received_count = not_received_count

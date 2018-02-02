@@ -16,12 +16,11 @@ class ClusterHealthPolicies(Model):
     """Health policies to evaluate cluster health.
 
     :param application_health_policy_map:
-    :type application_health_policy_map: list of
-     :class:`ApplicationHealthPolicyMapItem
-     <azure.servicefabric.models.ApplicationHealthPolicyMapItem>`
+    :type application_health_policy_map:
+     list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
     :param cluster_health_policy:
-    :type cluster_health_policy: :class:`ClusterHealthPolicy
-     <azure.servicefabric.models.ClusterHealthPolicy>`
+    :type cluster_health_policy:
+     ~azure.servicefabric.models.ClusterHealthPolicy
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class ClusterHealthPolicies(Model):
     }
 
     def __init__(self, application_health_policy_map=None, cluster_health_policy=None):
+        super(ClusterHealthPolicies, self).__init__()
         self.application_health_policy_map = application_health_policy_map
         self.cluster_health_policy = cluster_health_policy

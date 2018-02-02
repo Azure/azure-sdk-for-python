@@ -28,4 +28,5 @@ class ApplicationTypeImageStoreVersion(Model):
     }
 
     def __init__(self, application_type_version):
+        super(ApplicationTypeImageStoreVersion, self).__init__()
         self.application_type_version = application_type_version

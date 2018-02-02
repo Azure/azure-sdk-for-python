@@ -19,11 +19,10 @@ class StatefulServiceReplicaInfo(ReplicaInfo):
 
     :param replica_status: Possible values include: 'Invalid', 'InBuild',
      'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type replica_status: str or ~azure.servicefabric.models.enum
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param node_name:
     :type node_name: str
     :param address: The address the replica is listening on.
@@ -31,11 +30,11 @@ class StatefulServiceReplicaInfo(ReplicaInfo):
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param replica_role: Possible values include: 'Unknown', 'None',
      'Primary', 'IdleSecondary', 'ActiveSecondary'
-    :type replica_role: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type replica_role: str or ~azure.servicefabric.models.enum
     :param replica_id:
     :type replica_id: str
     """

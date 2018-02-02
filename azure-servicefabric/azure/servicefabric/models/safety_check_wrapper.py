@@ -18,8 +18,7 @@ class SafetyCheckWrapper(Model):
     the availability of the service and the reliability of the state.
 
     :param safety_check:
-    :type safety_check: :class:`SafetyCheck
-     <azure.servicefabric.models.SafetyCheck>`
+    :type safety_check: ~azure.servicefabric.models.SafetyCheck
     """
 
     _attribute_map = {
@@ -27,4 +26,5 @@ class SafetyCheckWrapper(Model):
     }
 
     def __init__(self, safety_check=None):
+        super(SafetyCheckWrapper, self).__init__()
         self.safety_check = safety_check

@@ -62,6 +62,7 @@ class ReplicatorQueueStatus(Model):
     }
 
     def __init__(self, queue_utilization_percentage=None, queue_memory_size=None, first_sequence_number=None, completed_sequence_number=None, committed_sequence_number=None, last_sequence_number=None):
+        super(ReplicatorQueueStatus, self).__init__()
         self.queue_utilization_percentage = queue_utilization_percentage
         self.queue_memory_size = queue_memory_size
         self.first_sequence_number = first_sequence_number

@@ -20,8 +20,7 @@ class NodeTransitionResult(Model):
      OperationState is Faulted, this is an error code indicating the reason.
     :type error_code: int
     :param node_result:
-    :type node_result: :class:`NodeResult
-     <azure.servicefabric.models.NodeResult>`
+    :type node_result: ~azure.servicefabric.models.NodeResult
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class NodeTransitionResult(Model):
     }
 
     def __init__(self, error_code=None, node_result=None):
+        super(NodeTransitionResult, self).__init__()
         self.error_code = error_code
         self.node_result = node_result

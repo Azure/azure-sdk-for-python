@@ -16,12 +16,11 @@ class NodeDeactivationTask(Model):
     """The task representing the deactivation operation on the node.
 
     :param node_deactivation_task_id:
-    :type node_deactivation_task_id: :class:`NodeDeactivationTaskId
-     <azure.servicefabric.models.NodeDeactivationTaskId>`
+    :type node_deactivation_task_id:
+     ~azure.servicefabric.models.NodeDeactivationTaskId
     :param node_deactivation_intent: Possible values include: 'Invalid',
      'Pause', 'Restart', 'RemoveData', 'RemoveNode'
-    :type node_deactivation_intent: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type node_deactivation_intent: str or ~azure.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class NodeDeactivationTask(Model):
     }
 
     def __init__(self, node_deactivation_task_id=None, node_deactivation_intent=None):
+        super(NodeDeactivationTask, self).__init__()
         self.node_deactivation_task_id = node_deactivation_task_id
         self.node_deactivation_intent = node_deactivation_intent

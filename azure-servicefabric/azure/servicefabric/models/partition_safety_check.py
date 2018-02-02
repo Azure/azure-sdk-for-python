@@ -16,7 +16,13 @@ class PartitionSafetyCheck(SafetyCheck):
     """Represents a safety check for the service partition being performed by
     service fabric before continuing with operations.
 
-    :param kind: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: EnsureAvailabilitySafetyCheck,
+    EnsurePartitionQurumSafetyCheck, WaitForInbuildReplicaSafetyCheck,
+    WaitForPrimaryPlacementSafetyCheck, WaitForPrimarySwapSafetyCheck,
+    WaitForReconfigurationSafetyCheck
+
+    :param kind: Constant filled by server.
     :type kind: str
     :param partition_id:
     :type partition_id: str

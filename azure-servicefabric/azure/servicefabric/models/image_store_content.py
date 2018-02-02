@@ -17,12 +17,10 @@ class ImageStoreContent(Model):
 
     :param store_files: The list of image store file info objects represents
      files found under the given image store relative path.
-    :type store_files: list of :class:`FileInfo
-     <azure.servicefabric.models.FileInfo>`
+    :type store_files: list[~azure.servicefabric.models.FileInfo]
     :param store_folders: The list of image store folder info objectes
      represents subfolders found under the given image store relative path.
-    :type store_folders: list of :class:`FolderInfo
-     <azure.servicefabric.models.FolderInfo>`
+    :type store_folders: list[~azure.servicefabric.models.FolderInfo]
     """
 
     _attribute_map = {
@@ -31,5 +29,6 @@ class ImageStoreContent(Model):
     }
 
     def __init__(self, store_files=None, store_folders=None):
+        super(ImageStoreContent, self).__init__()
         self.store_files = store_files
         self.store_folders = store_folders

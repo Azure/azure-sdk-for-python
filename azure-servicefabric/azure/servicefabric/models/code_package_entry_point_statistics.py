@@ -63,6 +63,7 @@ class CodePackageEntryPointStatistics(Model):
     }
 
     def __init__(self, last_exit_code=None, last_activation_time=None, last_exit_time=None, last_successful_activation_time=None, last_successful_exit_time=None, activation_count=None, activation_failure_count=None, continuous_activation_failure_count=None, exit_count=None, exit_failure_count=None, continuous_exit_failure_count=None):
+        super(CodePackageEntryPointStatistics, self).__init__()
         self.last_exit_code = last_exit_code
         self.last_activation_time = last_activation_time
         self.last_exit_time = last_exit_time

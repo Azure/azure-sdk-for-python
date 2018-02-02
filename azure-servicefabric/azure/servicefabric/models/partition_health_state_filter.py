@@ -69,8 +69,8 @@ class PartitionHealthStateFilter(Model):
      For example, it can specify a filter to return all replicas with health
      state Error and another filter to always include a replica identified by
      its replica id.
-    :type replica_filters: list of :class:`ReplicaHealthStateFilter
-     <azure.servicefabric.models.ReplicaHealthStateFilter>`
+    :type replica_filters:
+     list[~azure.servicefabric.models.ReplicaHealthStateFilter]
     """
 
     _attribute_map = {
@@ -80,6 +80,7 @@ class PartitionHealthStateFilter(Model):
     }
 
     def __init__(self, partition_id_filter=None, health_state_filter=0, replica_filters=None):
+        super(PartitionHealthStateFilter, self).__init__()
         self.partition_id_filter = partition_id_filter
         self.health_state_filter = health_state_filter
         self.replica_filters = replica_filters

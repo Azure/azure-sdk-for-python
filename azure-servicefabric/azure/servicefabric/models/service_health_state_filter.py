@@ -68,8 +68,8 @@ class ServiceHealthStateFilter(Model):
      For example, it can specify a filter to return all partitions with health
      state Error and another filter to always include a partition identified by
      its partition id.
-    :type partition_filters: list of :class:`PartitionHealthStateFilter
-     <azure.servicefabric.models.PartitionHealthStateFilter>`
+    :type partition_filters:
+     list[~azure.servicefabric.models.PartitionHealthStateFilter]
     """
 
     _attribute_map = {
@@ -79,6 +79,7 @@ class ServiceHealthStateFilter(Model):
     }
 
     def __init__(self, service_name_filter=None, health_state_filter=0, partition_filters=None):
+        super(ServiceHealthStateFilter, self).__init__()
         self.service_name_filter = service_name_filter
         self.health_state_filter = health_state_filter
         self.partition_filters = partition_filters

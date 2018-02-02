@@ -59,7 +59,7 @@ class FabricErrorError(Model):
      'FABRIC_E_RECONFIGURATION_PENDING', 'FABRIC_E_SERVICE_OFFLINE', 'E_ABORT',
      'FABRIC_E_COMMUNICATION_ERROR', 'FABRIC_E_OPERATION_NOT_COMPLETE',
      'FABRIC_E_TIMEOUT', 'FABRIC_E_NODE_IS_UP'
-    :type code: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type code: str or ~azure.servicefabric.models.enum
     :param message: Error message.
     :type message: str
     """
@@ -74,5 +74,6 @@ class FabricErrorError(Model):
     }
 
     def __init__(self, code, message=None):
+        super(FabricErrorError, self).__init__()
         self.code = code
         self.message = message

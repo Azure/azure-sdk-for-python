@@ -27,8 +27,7 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
     :type partition_id: str
     :param replica_status: Possible values include: 'Invalid', 'InBuild',
      'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type replica_status: str or ~azure.servicefabric.models.enum
     :param address: The last address returned by the replica in Open or
      ChangeRole.
     :type address: str
@@ -38,16 +37,16 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
      replica. This will be zero if the replica is down. In hyper-v containers
      this host process id will be from different kernel.
     :type host_process_id: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param replica_id:
     :type replica_id: str
     :param replica_role: Possible values include: 'Unknown', 'None',
      'Primary', 'IdleSecondary', 'ActiveSecondary'
-    :type replica_role: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type replica_role: str or ~azure.servicefabric.models.enum
     :param reconfiguration_information:
-    :type reconfiguration_information: :class:`ReconfigurationInformation
-     <azure.servicefabric.models.ReconfigurationInformation>`
+    :type reconfiguration_information:
+     ~azure.servicefabric.models.ReconfigurationInformation
     """
 
     _validation = {

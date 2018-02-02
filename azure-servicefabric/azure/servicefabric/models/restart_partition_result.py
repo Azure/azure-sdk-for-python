@@ -20,8 +20,7 @@ class RestartPartitionResult(Model):
      OperationState is Faulted, this is an error code indicating the reason.
     :type error_code: int
     :param selected_partition:
-    :type selected_partition: :class:`SelectedPartition
-     <azure.servicefabric.models.SelectedPartition>`
+    :type selected_partition: ~azure.servicefabric.models.SelectedPartition
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class RestartPartitionResult(Model):
     }
 
     def __init__(self, error_code=None, selected_partition=None):
+        super(RestartPartitionResult, self).__init__()
         self.error_code = error_code
         self.selected_partition = selected_partition

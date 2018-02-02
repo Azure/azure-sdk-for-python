@@ -17,7 +17,7 @@ class PropertyMetadata(Model):
 
     :param type_id: Possible values include: 'Invalid', 'Binary', 'Int64',
      'Double', 'String', 'Guid'
-    :type type_id: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type type_id: str or ~azure.servicefabric.models.enum
     :param custom_type_id:
     :type custom_type_id: str
     :param parent:
@@ -42,6 +42,7 @@ class PropertyMetadata(Model):
     }
 
     def __init__(self, type_id=None, custom_type_id=None, parent=None, size_in_bytes=None, last_modified_utc_timestamp=None, sequence_number=None):
+        super(PropertyMetadata, self).__init__()
         self.type_id = type_id
         self.custom_type_id = custom_type_id
         self.parent = parent

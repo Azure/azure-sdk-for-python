@@ -18,7 +18,10 @@ class RepairTargetDescriptionBase(Model):
     directly from your code.
     .
 
-    :param kind: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: NodeRepairTargetDescription
+
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -35,4 +38,5 @@ class RepairTargetDescriptionBase(Model):
     }
 
     def __init__(self):
+        super(RepairTargetDescriptionBase, self).__init__()
         self.kind = None

@@ -18,12 +18,11 @@ class NodeRepairImpactDescription(RepairImpactDescriptionBase):
     directly from your code.
     .
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param node_impact_list: The list of nodes impacted by a repair action and
      their respective expected impact.
-    :type node_impact_list: list of :class:`NodeImpact
-     <azure.servicefabric.models.NodeImpact>`
+    :type node_impact_list: list[~azure.servicefabric.models.NodeImpact]
     """
 
     _validation = {

@@ -18,17 +18,14 @@ class DeployedServicePackageHealth(EntityHealth):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
     :param health_events: The list of health events reported on the entity.
-    :type health_events: list of :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
+    :type health_events: list[~azure.servicefabric.models.HealthEvent]
     :param unhealthy_evaluations:
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
     :param health_statistics:
-    :type health_statistics: :class:`HealthStatistics
-     <azure.servicefabric.models.HealthStatistics>`
+    :type health_statistics: ~azure.servicefabric.models.HealthStatistics
     :param application_name:
     :type application_name: str
     :param service_manifest_name:

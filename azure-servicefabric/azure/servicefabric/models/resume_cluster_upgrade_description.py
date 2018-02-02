@@ -28,4 +28,5 @@ class ResumeClusterUpgradeDescription(Model):
     }
 
     def __init__(self, upgrade_domain):
+        super(ResumeClusterUpgradeDescription, self).__init__()
         self.upgrade_domain = upgrade_domain

@@ -18,9 +18,8 @@ class ApplicationHealthPolicies(Model):
     .
 
     :param application_health_policy_map:
-    :type application_health_policy_map: list of
-     :class:`ApplicationHealthPolicyMapItem
-     <azure.servicefabric.models.ApplicationHealthPolicyMapItem>`
+    :type application_health_policy_map:
+     list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
     """
 
     _attribute_map = {
@@ -28,4 +27,5 @@ class ApplicationHealthPolicies(Model):
     }
 
     def __init__(self, application_health_policy_map=None):
+        super(ApplicationHealthPolicies, self).__init__()
         self.application_health_policy_map = application_health_policy_map

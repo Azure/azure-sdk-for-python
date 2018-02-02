@@ -17,15 +17,14 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param partition_status: Possible values include: 'Invalid', 'Ready',
      'NotReady', 'InQuorumLoss', 'Reconfiguring', 'Deleting'
-    :type partition_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type partition_status: str or ~azure.servicefabric.models.enum
     :param partition_information:
-    :type partition_information: :class:`PartitionInformation
-     <azure.servicefabric.models.PartitionInformation>`
-    :param service_kind: Polymorphic Discriminator
+    :type partition_information:
+     ~azure.servicefabric.models.PartitionInformation
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
     :type target_replica_set_size: long
@@ -37,8 +36,7 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
      ISO8601 format for specifying the duration.
     :type last_quorum_loss_duration: timedelta
     :param current_configuration_epoch:
-    :type current_configuration_epoch: :class:`Epoch
-     <azure.servicefabric.models.Epoch>`
+    :type current_configuration_epoch: ~azure.servicefabric.models.Epoch
     """
 
     _validation = {

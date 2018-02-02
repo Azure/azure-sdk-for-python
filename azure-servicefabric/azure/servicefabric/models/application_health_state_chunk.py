@@ -21,18 +21,17 @@ class ApplicationHealthStateChunk(EntityHealthStateChunk):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param application_name:
     :type application_name: str
     :param application_type_name:
     :type application_type_name: str
     :param service_health_state_chunks:
-    :type service_health_state_chunks: :class:`ServiceHealthStateChunkList
-     <azure.servicefabric.models.ServiceHealthStateChunkList>`
+    :type service_health_state_chunks:
+     ~azure.servicefabric.models.ServiceHealthStateChunkList
     :param deployed_application_health_state_chunks:
     :type deployed_application_health_state_chunks:
-     :class:`DeployedApplicationHealthStateChunkList
-     <azure.servicefabric.models.DeployedApplicationHealthStateChunkList>`
+     ~azure.servicefabric.models.DeployedApplicationHealthStateChunkList
     """
 
     _attribute_map = {

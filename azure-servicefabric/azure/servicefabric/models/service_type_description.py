@@ -17,6 +17,10 @@ class ServiceTypeDescription(Model):
     application type. The properties the the ones defined in the service
     manifest.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: StatefulServiceTypeDescription,
+    StatelessServiceTypeDescription
+
     :param is_stateful: Indicates whether the service type is a stateful
      service type or a stateless service type. This property is true if the
      service type is a stateful service type, false otherwise.
@@ -27,13 +31,12 @@ class ServiceTypeDescription(Model):
      instantiating this service in a Service Fabric cluster.
     :type placement_constraints: str
     :param service_placement_policies:
-    :type service_placement_policies: list of
-     :class:`ServicePlacementPolicyDescription
-     <azure.servicefabric.models.ServicePlacementPolicyDescription>`
+    :type service_placement_policies:
+     list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param extensions:
-    :type extensions: list of :class:`ServiceTypeExtensionDescription
-     <azure.servicefabric.models.ServiceTypeExtensionDescription>`
-    :param kind: Polymorphic Discriminator
+    :type extensions:
+     list[~azure.servicefabric.models.ServiceTypeExtensionDescription]
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -55,6 +58,7 @@ class ServiceTypeDescription(Model):
     }
 
     def __init__(self, is_stateful=None, service_type_name=None, placement_constraints=None, service_placement_policies=None, extensions=None):
+        super(ServiceTypeDescription, self).__init__()
         self.is_stateful = is_stateful
         self.service_type_name = service_type_name
         self.placement_constraints = placement_constraints

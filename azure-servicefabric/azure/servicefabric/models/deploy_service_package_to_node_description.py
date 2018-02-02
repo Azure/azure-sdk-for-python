@@ -26,8 +26,8 @@ class DeployServicePackageToNodeDescription(Model):
     :param node_name:
     :type node_name: str
     :param package_sharing_policy:
-    :type package_sharing_policy: list of :class:`PackageSharingPolicyInfo
-     <azure.servicefabric.models.PackageSharingPolicyInfo>`
+    :type package_sharing_policy:
+     list[~azure.servicefabric.models.PackageSharingPolicyInfo]
     """
 
     _validation = {
@@ -46,6 +46,7 @@ class DeployServicePackageToNodeDescription(Model):
     }
 
     def __init__(self, service_manifest_name, application_type_name, application_type_version, node_name, package_sharing_policy=None):
+        super(DeployServicePackageToNodeDescription, self).__init__()
         self.service_manifest_name = service_manifest_name
         self.application_type_name = application_type_name
         self.application_type_version = application_type_version

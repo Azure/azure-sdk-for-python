@@ -22,12 +22,11 @@ class ApplicationTypeApplicationsHealthEvaluation(HealthEvaluation):
 
     :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
      'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param application_type_name:
     :type application_type_name: str
@@ -39,8 +38,8 @@ class ApplicationTypeApplicationsHealthEvaluation(HealthEvaluation):
      found in the health store.
     :type total_count: long
     :param unhealthy_evaluations:
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
     """
 
     _validation = {

@@ -20,7 +20,7 @@ class ServiceLoadMetricDescription(Model):
      specified in Name exactly. Note that metric names are case sensitive.
     :type name: str
     :param weight: Possible values include: 'Zero', 'Low', 'Medium', 'High'
-    :type weight: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type weight: str or ~azure.servicefabric.models.enum
     :param primary_default_load: Used only for Stateful services. The default
      amount of load, as a number, that this service creates for this metric
      when it is a Primary replica.
@@ -47,6 +47,7 @@ class ServiceLoadMetricDescription(Model):
     }
 
     def __init__(self, name, weight=None, primary_default_load=None, secondary_default_load=None, default_load=None):
+        super(ServiceLoadMetricDescription, self).__init__()
         self.name = name
         self.weight = weight
         self.primary_default_load = primary_default_load

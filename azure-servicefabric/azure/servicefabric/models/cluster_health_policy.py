@@ -51,9 +51,8 @@ class ClusterHealthPolicy(Model):
      . Default value: 0 .
     :type max_percent_unhealthy_applications: int
     :param application_type_health_policy_map:
-    :type application_type_health_policy_map: list of
-     :class:`ApplicationTypeHealthPolicyMapItem
-     <azure.servicefabric.models.ApplicationTypeHealthPolicyMapItem>`
+    :type application_type_health_policy_map:
+     list[~azure.servicefabric.models.ApplicationTypeHealthPolicyMapItem]
     """
 
     _attribute_map = {
@@ -64,6 +63,7 @@ class ClusterHealthPolicy(Model):
     }
 
     def __init__(self, consider_warning_as_error=False, max_percent_unhealthy_nodes=0, max_percent_unhealthy_applications=0, application_type_health_policy_map=None):
+        super(ClusterHealthPolicy, self).__init__()
         self.consider_warning_as_error = consider_warning_as_error
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
         self.max_percent_unhealthy_applications = max_percent_unhealthy_applications

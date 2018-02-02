@@ -25,17 +25,15 @@ class ApplicationInfo(Model):
     :type type_version: str
     :param status: Possible values include: 'Invalid', 'Ready', 'Upgrading',
      'Creating', 'Deleting', 'Failed'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param parameters:
-    :type parameters: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
+    :type parameters: list[~azure.servicefabric.models.ApplicationParameter]
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param application_definition_kind: Possible values include: 'Invalid',
      'ServiceFabricApplicationDescription', 'Compose'
-    :type application_definition_kind: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type application_definition_kind: str or ~azure.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -50,6 +48,7 @@ class ApplicationInfo(Model):
     }
 
     def __init__(self, id=None, name=None, type_name=None, type_version=None, status=None, parameters=None, health_state=None, application_definition_kind=None):
+        super(ApplicationInfo, self).__init__()
         self.id = id
         self.name = name
         self.type_name = type_name

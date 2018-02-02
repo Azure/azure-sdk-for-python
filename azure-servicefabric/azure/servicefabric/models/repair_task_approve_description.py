@@ -37,5 +37,6 @@ class RepairTaskApproveDescription(Model):
     }
 
     def __init__(self, task_id, version=None):
+        super(RepairTaskApproveDescription, self).__init__()
         self.task_id = task_id
         self.version = version

@@ -19,7 +19,7 @@ class WaitForInbuildReplicaSafetyCheck(PartitionSafetyCheck):
     this copy operation which are typoically expensive involving data
     movements.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param partition_id:
     :type partition_id: str

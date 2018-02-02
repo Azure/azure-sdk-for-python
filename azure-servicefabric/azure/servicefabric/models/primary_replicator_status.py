@@ -15,14 +15,14 @@ from .replicator_status import ReplicatorStatus
 class PrimaryReplicatorStatus(ReplicatorStatus):
     """PrimaryReplicatorStatus.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param replication_queue_status:
-    :type replication_queue_status: :class:`ReplicatorQueueStatus
-     <azure.servicefabric.models.ReplicatorQueueStatus>`
+    :type replication_queue_status:
+     ~azure.servicefabric.models.ReplicatorQueueStatus
     :param remote_replicators:
-    :type remote_replicators: list of :class:`RemoteReplicatorStatus
-     <azure.servicefabric.models.RemoteReplicatorStatus>`
+    :type remote_replicators:
+     list[~azure.servicefabric.models.RemoteReplicatorStatus]
     """
 
     _validation = {

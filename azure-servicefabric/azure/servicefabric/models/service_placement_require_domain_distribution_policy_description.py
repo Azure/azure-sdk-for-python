@@ -26,7 +26,7 @@ class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacemen
     be set.
     .
 
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     :param domain_name: The name of the domain that should used for placement
      as per this policy.
