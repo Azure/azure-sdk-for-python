@@ -22,6 +22,9 @@ class VirtualMachineScaleSetOSDisk(Model):
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2017_12_01.models.CachingTypes
+    :param write_accelerator_enabled: Specifies whether writeAccelerator
+     should be enabled or disabled on the disk.
+    :type write_accelerator_enabled: bool
     :param create_option: Specifies how the virtual machines in the scale set
      should be created.<br><br> The only allowed value is: **FromImage**
      \\u2013 This value is used when you are using an image to create the
@@ -55,6 +58,7 @@ class VirtualMachineScaleSetOSDisk(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
+        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
         'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
         'os_type': {'key': 'osType', 'type': 'OperatingSystemTypes'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
@@ -62,10 +66,11 @@ class VirtualMachineScaleSetOSDisk(Model):
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, create_option, name=None, caching=None, os_type=None, image=None, vhd_containers=None, managed_disk=None):
+    def __init__(self, create_option, name=None, caching=None, write_accelerator_enabled=None, os_type=None, image=None, vhd_containers=None, managed_disk=None):
         super(VirtualMachineScaleSetOSDisk, self).__init__()
         self.name = name
         self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
         self.create_option = create_option
         self.os_type = os_type
         self.image = image
