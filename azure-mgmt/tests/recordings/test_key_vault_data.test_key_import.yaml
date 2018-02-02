@@ -51,7 +51,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a7f14e00-4ad6-11e7-ba76-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keyimp4ae0e7d?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keyimp4ae0e7d?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keyimp4ae0e7d/55dea28756a04361a9d0cc529cb0851c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1496767146,"updated":1496767146,"recoverylevel":"Purgeable"}}'}
     headers:
@@ -91,7 +91,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a87e7b1a-4ad6-11e7-b282-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keyimp4ae0e7d?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keyimp4ae0e7d?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keyimp4ae0e7d/f8c2d5201ec541dfbe60631a48828d63","kty":"RSA-HSM","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1496767147,"updated":1496767147,"recoverylevel":"Purgeable"}}'}
     headers:

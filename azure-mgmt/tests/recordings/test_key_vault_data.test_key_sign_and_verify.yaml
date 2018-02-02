@@ -51,7 +51,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e030d44a-4ad6-11e7-b112-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/071f815b35a14aaa81ef2555106a4d6c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1496767240,"updated":1496767240,"recoverylevel":"Purgeable"}}'}
     headers:
@@ -83,7 +83,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e0bd95a4-4ad6-11e7-88c7-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/sign?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/sign?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/071f815b35a14aaa81ef2555106a4d6c","value":"aX9kVFVSMxsJuxvkoQCIsdz_a-JhMawg3NyuUTXJJBWZy_xiTKSS7cUufSjyTDlY-0Xp8yqehys1f-tiE5RmHY5-uxcHDB4OwWB8YhOzLTZfrhWzTj1L4o4cxhUIli8F6DQuQw7ICHR_GIwBJhOCr7L44h-504ECVDo5Af8b2lot9k7OE-IMA0R_0eCI7HAb8jpJplAPOqhWgpipozSc4YJURoQq-jDBgjIwgMZDaCxBDF0hm-2aX5-1sbDuRv_rltfVKESyb1jfFTa-EAm08VfBKlm3Et7PnyW4cQSVnMdZD6PusXmVTCeYJ86IAIh5qG5DMf18RmIofGgY19y7Xg"}'}
     headers:
@@ -116,7 +116,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e1373e40-4ad6-11e7-9165-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/verify?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/verify?api-version=7.0-preview
   response:
     body: {string: '{"value":true}'}
     headers:
@@ -148,7 +148,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e1b9296c-4ad6-11e7-900b-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/sign?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/sign?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/071f815b35a14aaa81ef2555106a4d6c","value":"aX9kVFVSMxsJuxvkoQCIsdz_a-JhMawg3NyuUTXJJBWZy_xiTKSS7cUufSjyTDlY-0Xp8yqehys1f-tiE5RmHY5-uxcHDB4OwWB8YhOzLTZfrhWzTj1L4o4cxhUIli8F6DQuQw7ICHR_GIwBJhOCr7L44h-504ECVDo5Af8b2lot9k7OE-IMA0R_0eCI7HAb8jpJplAPOqhWgpipozSc4YJURoQq-jDBgjIwgMZDaCxBDF0hm-2aX5-1sbDuRv_rltfVKESyb1jfFTa-EAm08VfBKlm3Et7PnyW4cQSVnMdZD6PusXmVTCeYJ86IAIh5qG5DMf18RmIofGgY19y7Xg"}'}
     headers:
@@ -181,7 +181,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e238abe4-4ad6-11e7-a45d-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/071f815b35a14aaa81ef2555106a4d6c/verify?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keysign97fd1219/071f815b35a14aaa81ef2555106a4d6c/verify?api-version=7.0-preview
   response:
     body: {string: '{"value":true}'}
     headers:
