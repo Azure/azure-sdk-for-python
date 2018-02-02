@@ -21,8 +21,7 @@ class PagedServicePartitionInfoList(Model):
     :param continuation_token:
     :type continuation_token: str
     :param items:
-    :type items: list of :class:`ServicePartitionInfo
-     <azure.servicefabric.models.ServicePartitionInfo>`
+    :type items: list[~azure.servicefabric.models.ServicePartitionInfo]
     """
 
     _attribute_map = {
@@ -31,5 +30,6 @@ class PagedServicePartitionInfoList(Model):
     }
 
     def __init__(self, continuation_token=None, items=None):
+        super(PagedServicePartitionInfoList, self).__init__()
         self.continuation_token = continuation_token
         self.items = items

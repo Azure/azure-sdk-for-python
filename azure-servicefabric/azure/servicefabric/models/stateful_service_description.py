@@ -22,10 +22,10 @@ class StatefulServiceDescription(ServiceDescription):
     :param service_type_name:
     :type service_type_name: str
     :param initialization_data:
-    :type initialization_data: list of int
+    :type initialization_data: list[int]
     :param partition_description:
-    :type partition_description: :class:`PartitionSchemeDescription
-     <azure.servicefabric.models.PartitionSchemeDescription>`
+    :type partition_description:
+     ~azure.servicefabric.models.PartitionSchemeDescription
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
      for restricting a service to particular nodes based on the service
@@ -33,30 +33,28 @@ class StatefulServiceDescription(ServiceDescription):
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
     :param correlation_scheme:
-    :type correlation_scheme: list of :class:`ServiceCorrelationDescription
-     <azure.servicefabric.models.ServiceCorrelationDescription>`
+    :type correlation_scheme:
+     list[~azure.servicefabric.models.ServiceCorrelationDescription]
     :param service_load_metrics:
-    :type service_load_metrics: list of :class:`ServiceLoadMetricDescription
-     <azure.servicefabric.models.ServiceLoadMetricDescription>`
+    :type service_load_metrics:
+     list[~azure.servicefabric.models.ServiceLoadMetricDescription]
     :param service_placement_policies:
-    :type service_placement_policies: list of
-     :class:`ServicePlacementPolicyDescription
-     <azure.servicefabric.models.ServicePlacementPolicyDescription>`
+    :type service_placement_policies:
+     list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param default_move_cost: Possible values include: 'Zero', 'Low',
      'Medium', 'High'
-    :type default_move_cost: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type default_move_cost: str or ~azure.servicefabric.models.enum
     :param is_default_move_cost_specified: Indicates if the DefaultMoveCost
      property is specified.
     :type is_default_move_cost_specified: bool
     :param service_package_activation_mode: Possible values include:
      'SharedProcess', 'ExclusiveProcess'
-    :type service_package_activation_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type service_package_activation_mode: str or
+     ~azure.servicefabric.models.enum
     :param service_dns_name: The DNS name of the service. It requires the DNS
      system service to be enabled in Service Fabric cluster.
     :type service_dns_name: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
     :type target_replica_set_size: int

@@ -23,8 +23,7 @@ class RestartNodeDescription(Model):
     :param create_fabric_dump: Specify True to create a dump of the fabric
      node process. This is case sensitive. Possible values include: 'False',
      'True'. Default value: "False" .
-    :type create_fabric_dump: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type create_fabric_dump: str or ~azure.servicefabric.models.enum
     """
 
     _validation = {
@@ -37,5 +36,6 @@ class RestartNodeDescription(Model):
     }
 
     def __init__(self, node_instance_id="0", create_fabric_dump="False"):
+        super(RestartNodeDescription, self).__init__()
         self.node_instance_id = node_instance_id
         self.create_fabric_dump = create_fabric_dump

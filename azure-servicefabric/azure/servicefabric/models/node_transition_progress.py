@@ -21,10 +21,10 @@ class NodeTransitionProgress(Model):
 
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type state: str or ~azure.servicefabric.models.enum
     :param node_transition_result:
-    :type node_transition_result: :class:`NodeTransitionResult
-     <azure.servicefabric.models.NodeTransitionResult>`
+    :type node_transition_result:
+     ~azure.servicefabric.models.NodeTransitionResult
     """
 
     _attribute_map = {
@@ -33,5 +33,6 @@ class NodeTransitionProgress(Model):
     }
 
     def __init__(self, state=None, node_transition_result=None):
+        super(NodeTransitionProgress, self).__init__()
         self.state = state
         self.node_transition_result = node_transition_result

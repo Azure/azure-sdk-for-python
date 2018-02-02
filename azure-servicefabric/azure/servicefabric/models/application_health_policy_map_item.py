@@ -19,8 +19,7 @@ class ApplicationHealthPolicyMapItem(Model):
     :param key:
     :type key: str
     :param value:
-    :type value: :class:`ApplicationHealthPolicy
-     <azure.servicefabric.models.ApplicationHealthPolicy>`
+    :type value: ~azure.servicefabric.models.ApplicationHealthPolicy
     """
 
     _validation = {
@@ -34,5 +33,6 @@ class ApplicationHealthPolicyMapItem(Model):
     }
 
     def __init__(self, key, value):
+        super(ApplicationHealthPolicyMapItem, self).__init__()
         self.key = key
         self.value = value

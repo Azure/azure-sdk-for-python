@@ -20,8 +20,7 @@ class PackageSharingPolicyInfo(Model):
     :type shared_package_name: str
     :param package_sharing_scope: Possible values include: 'None', 'All',
      'Code', 'Config', 'Data'
-    :type package_sharing_scope: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type package_sharing_scope: str or ~azure.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -30,5 +29,6 @@ class PackageSharingPolicyInfo(Model):
     }
 
     def __init__(self, shared_package_name=None, package_sharing_scope=None):
+        super(PackageSharingPolicyInfo, self).__init__()
         self.shared_package_name = shared_package_name
         self.package_sharing_scope = package_sharing_scope

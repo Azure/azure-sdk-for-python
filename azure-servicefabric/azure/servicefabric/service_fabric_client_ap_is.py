@@ -37,7 +37,7 @@ class ServiceFabricClientAPIsConfiguration(Configuration):
 
         super(ServiceFabricClientAPIsConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('servicefabricclientapis/{}'.format(VERSION))
+        self.add_user_agent('azure-servicefabric/{}'.format(VERSION))
 
         self.credentials = credentials
 
@@ -94,13 +94,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterManifest
-         <azure.servicefabric.models.ClusterManifest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ClusterManifest
-         <azure.servicefabric.models.ClusterManifest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ClusterManifest or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterManifest or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -123,7 +119,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -254,13 +250,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ClusterHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -293,7 +285,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -422,24 +414,19 @@ class ServiceFabricClientAPIs(object):
          this parameter is 60 seconds.
         :type timeout: long
         :param application_health_policy_map:
-        :type application_health_policy_map: list of
-         :class:`ApplicationHealthPolicyMapItem
-         <azure.servicefabric.models.ApplicationHealthPolicyMapItem>`
+        :type application_health_policy_map:
+         list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
         :param cluster_health_policy:
-        :type cluster_health_policy: :class:`ClusterHealthPolicy
-         <azure.servicefabric.models.ClusterHealthPolicy>`
+        :type cluster_health_policy:
+         ~azure.servicefabric.models.ClusterHealthPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ClusterHealth
-         <azure.servicefabric.models.ClusterHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ClusterHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -483,7 +470,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -521,13 +508,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ClusterHealthChunk or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealthChunk or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -550,7 +533,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -607,8 +590,7 @@ class ServiceFabricClientAPIs(object):
          only services that are in Error or Warning, and all partitions and
          replicas for one of these services.
         :type cluster_health_chunk_query_description:
-         :class:`ClusterHealthChunkQueryDescription
-         <azure.servicefabric.models.ClusterHealthChunkQueryDescription>`
+         ~azure.servicefabric.models.ClusterHealthChunkQueryDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -619,13 +601,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ClusterHealthChunk
-         <azure.servicefabric.models.ClusterHealthChunk>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ClusterHealthChunk or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterHealthChunk or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -655,7 +633,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -692,8 +670,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -724,11 +702,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -757,7 +732,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -787,13 +762,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`FabricCodeVersionInfo
-         <azure.servicefabric.models.FabricCodeVersionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`FabricCodeVersionInfo
-         <azure.servicefabric.models.FabricCodeVersionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.FabricCodeVersionInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -818,7 +789,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -855,13 +826,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`FabricConfigVersionInfo
-         <azure.servicefabric.models.FabricConfigVersionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`FabricConfigVersionInfo
-         <azure.servicefabric.models.FabricConfigVersionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.FabricConfigVersionInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -886,7 +853,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -920,13 +887,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterUpgradeProgressObject
-         <azure.servicefabric.models.ClusterUpgradeProgressObject>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ClusterUpgradeProgressObject
-         <azure.servicefabric.models.ClusterUpgradeProgressObject>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ClusterUpgradeProgressObject or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterUpgradeProgressObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -949,7 +912,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -988,13 +951,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterConfiguration
-         <azure.servicefabric.models.ClusterConfiguration>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ClusterConfiguration
-         <azure.servicefabric.models.ClusterConfiguration>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ClusterConfiguration or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ClusterConfiguration or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1018,7 +977,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1053,13 +1012,11 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ClusterConfigurationUpgradeStatusInfo
-         <azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: ClusterConfigurationUpgradeStatusInfo or ClientRawResponse if
          raw=true
-        :rtype: :class:`ClusterConfigurationUpgradeStatusInfo
-         <azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.servicefabric.models.ClusterConfigurationUpgradeStatusInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1082,7 +1039,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1120,11 +1077,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1153,7 +1107,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1184,11 +1138,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1217,7 +1168,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1242,11 +1193,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1269,7 +1217,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1297,11 +1245,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1330,7 +1275,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1351,8 +1296,7 @@ class ServiceFabricClientAPIs(object):
         :param start_cluster_upgrade_description: Describes the parameters for
          starting a cluster upgrade.
         :type start_cluster_upgrade_description:
-         :class:`StartClusterUpgradeDescription
-         <azure.servicefabric.models.StartClusterUpgradeDescription>`
+         ~azure.servicefabric.models.StartClusterUpgradeDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -1363,11 +1307,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1394,7 +1335,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1414,8 +1355,7 @@ class ServiceFabricClientAPIs(object):
         :param cluster_configuration_upgrade_description: Parameters for a
          standalone cluster configuration upgrade.
         :type cluster_configuration_upgrade_description:
-         :class:`ClusterConfigurationUpgradeDescription
-         <azure.servicefabric.models.ClusterConfigurationUpgradeDescription>`
+         ~azure.servicefabric.models.ClusterConfigurationUpgradeDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -1426,11 +1366,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1457,7 +1394,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1475,8 +1412,7 @@ class ServiceFabricClientAPIs(object):
         :param update_cluster_upgrade_description: Parameters for updating a
          cluster upgrade.
         :type update_cluster_upgrade_description:
-         :class:`UpdateClusterUpgradeDescription
-         <azure.servicefabric.models.UpdateClusterUpgradeDescription>`
+         ~azure.servicefabric.models.UpdateClusterUpgradeDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -1487,11 +1423,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1518,7 +1451,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1549,13 +1482,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`AadMetadataObject
-         <azure.servicefabric.models.AadMetadataObject>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`AadMetadataObject
-         <azure.servicefabric.models.AadMetadataObject>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: AadMetadataObject or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.AadMetadataObject or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1578,7 +1507,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1643,13 +1572,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedNodeInfoList
-         <azure.servicefabric.models.PagedNodeInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedNodeInfoList
-         <azure.servicefabric.models.PagedNodeInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedNodeInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedNodeInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1676,7 +1601,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1712,11 +1637,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NodeInfo <azure.servicefabric.models.NodeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NodeInfo <azure.servicefabric.models.NodeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NodeInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1743,7 +1666,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1804,11 +1727,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NodeHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1837,7 +1758,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1895,8 +1816,8 @@ class ServiceFabricClientAPIs(object):
          evaluate the health of a cluster or node. If not present, the health
          evaluation uses the health policy from cluster manifest or the default
          health policy.
-        :type cluster_health_policy: :class:`ClusterHealthPolicy
-         <azure.servicefabric.models.ClusterHealthPolicy>`
+        :type cluster_health_policy:
+         ~azure.servicefabric.models.ClusterHealthPolicy
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -1907,11 +1828,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NodeHealth <azure.servicefabric.models.NodeHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NodeHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -1947,7 +1866,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -1986,8 +1905,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -2018,11 +1937,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2055,7 +1971,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2082,13 +1998,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NodeLoadInfo
-         <azure.servicefabric.models.NodeLoadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NodeLoadInfo
-         <azure.servicefabric.models.NodeLoadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NodeLoadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeLoadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2115,7 +2027,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2168,11 +2080,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2205,7 +2114,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2235,11 +2144,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2266,7 +2172,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2302,11 +2208,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2333,7 +2236,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2369,11 +2272,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2406,7 +2306,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2474,13 +2374,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedApplicationTypeInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedApplicationTypeInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2511,7 +2407,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2582,13 +2478,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedApplicationTypeInfoList
-         <azure.servicefabric.models.PagedApplicationTypeInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedApplicationTypeInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedApplicationTypeInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2623,7 +2515,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2661,11 +2553,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2694,7 +2583,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2728,11 +2617,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2765,7 +2651,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2801,13 +2687,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`ServiceTypeInfo
-         <azure.servicefabric.models.ServiceTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`ServiceTypeInfo
-         <azure.servicefabric.models.ServiceTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ServiceTypeInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2835,7 +2717,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2875,13 +2757,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceTypeManifest
-         <azure.servicefabric.models.ServiceTypeManifest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceTypeManifest
-         <azure.servicefabric.models.ServiceTypeManifest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceTypeManifest or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceTypeManifest or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2910,7 +2788,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -2961,13 +2839,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServiceTypeInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -2997,7 +2871,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3052,13 +2926,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`DeployedServiceTypeInfo
-         <azure.servicefabric.models.DeployedServiceTypeInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServiceTypeInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3089,7 +2959,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3113,8 +2983,8 @@ class ServiceFabricClientAPIs(object):
 
         :param application_description: Description for creating an
          application.
-        :type application_description: :class:`ApplicationDescription
-         <azure.servicefabric.models.ApplicationDescription>`
+        :type application_description:
+         ~azure.servicefabric.models.ApplicationDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -3125,11 +2995,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3156,7 +3023,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3202,11 +3069,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3235,7 +3099,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3272,13 +3136,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationLoadInfo
-         <azure.servicefabric.models.ApplicationLoadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationLoadInfo
-         <azure.servicefabric.models.ApplicationLoadInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationLoadInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationLoadInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3305,7 +3165,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3372,13 +3232,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedApplicationInfoList
-         <azure.servicefabric.models.PagedApplicationInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedApplicationInfoList
-         <azure.servicefabric.models.PagedApplicationInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedApplicationInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedApplicationInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3409,7 +3265,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3455,13 +3311,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationInfo
-         <azure.servicefabric.models.ApplicationInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationInfo
-         <azure.servicefabric.models.ApplicationInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3490,7 +3342,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3612,13 +3464,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3653,7 +3501,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3772,8 +3620,8 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -3784,13 +3632,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationHealth
-         <azure.servicefabric.models.ApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3832,7 +3676,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3876,8 +3720,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -3908,11 +3752,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -3945,7 +3786,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -3971,8 +3812,7 @@ class ServiceFabricClientAPIs(object):
         :param application_upgrade_description: Parameters for an application
          upgrade.
         :type application_upgrade_description:
-         :class:`ApplicationUpgradeDescription
-         <azure.servicefabric.models.ApplicationUpgradeDescription>`
+         ~azure.servicefabric.models.ApplicationUpgradeDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -3983,11 +3823,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4018,7 +3855,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4051,13 +3888,10 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationUpgradeProgressInfo
-         <azure.servicefabric.models.ApplicationUpgradeProgressInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: ApplicationUpgradeProgressInfo or ClientRawResponse if
          raw=true
-        :rtype: :class:`ApplicationUpgradeProgressInfo
-         <azure.servicefabric.models.ApplicationUpgradeProgressInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.servicefabric.models.ApplicationUpgradeProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4084,7 +3918,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4119,8 +3953,7 @@ class ServiceFabricClientAPIs(object):
         :param application_upgrade_update_description: Parameters for updating
          an existing application upgrade.
         :type application_upgrade_update_description:
-         :class:`ApplicationUpgradeUpdateDescription
-         <azure.servicefabric.models.ApplicationUpgradeUpdateDescription>`
+         ~azure.servicefabric.models.ApplicationUpgradeUpdateDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -4131,11 +3964,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4166,7 +3996,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4205,11 +4035,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4242,7 +4069,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4279,11 +4106,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4310,7 +4134,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4337,13 +4161,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedApplicationInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4370,7 +4190,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4413,13 +4233,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DeployedApplicationInfo
-         <azure.servicefabric.models.DeployedApplicationInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DeployedApplicationInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedApplicationInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4447,7 +4263,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4552,13 +4368,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DeployedApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4592,7 +4404,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4691,8 +4503,8 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param exclude_health_statistics: Indicates whether the health
          statistics should be returned as part of the query result. False by
          default.
@@ -4709,13 +4521,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DeployedApplicationHealth
-         <azure.servicefabric.models.DeployedApplicationHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DeployedApplicationHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedApplicationHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4756,7 +4564,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4803,8 +4611,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -4835,11 +4643,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4873,7 +4678,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4903,13 +4708,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationTypeManifest
-         <azure.servicefabric.models.ApplicationTypeManifest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationTypeManifest
-         <azure.servicefabric.models.ApplicationTypeManifest>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationTypeManifest or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationTypeManifest or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -4937,7 +4738,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -4989,13 +4790,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedServiceInfoList
-         <azure.servicefabric.models.PagedServiceInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedServiceInfoList
-         <azure.servicefabric.models.PagedServiceInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedServiceInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedServiceInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5026,7 +4823,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5074,11 +4871,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceInfo <azure.servicefabric.models.ServiceInfo>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceInfo <azure.servicefabric.models.ServiceInfo>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5106,7 +4901,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5146,13 +4941,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ApplicationNameInfo
-         <azure.servicefabric.models.ApplicationNameInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ApplicationNameInfo
-         <azure.servicefabric.models.ApplicationNameInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ApplicationNameInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ApplicationNameInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5179,7 +4970,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5210,8 +5001,8 @@ class ServiceFabricClientAPIs(object):
         :type application_id: str
         :param service_description: The information necessary to create a
          service.
-        :type service_description: :class:`ServiceDescription
-         <azure.servicefabric.models.ServiceDescription>`
+        :type service_description:
+         ~azure.servicefabric.models.ServiceDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -5222,11 +5013,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5257,7 +5045,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5285,8 +5073,7 @@ class ServiceFabricClientAPIs(object):
          needs to be created from the template defined in the application
          manifest.
         :type service_from_template_description:
-         :class:`ServiceFromTemplateDescription
-         <azure.servicefabric.models.ServiceFromTemplateDescription>`
+         ~azure.servicefabric.models.ServiceFromTemplateDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -5297,11 +5084,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5332,7 +5116,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5376,11 +5160,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5409,7 +5190,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5433,8 +5214,8 @@ class ServiceFabricClientAPIs(object):
         :type service_id: str
         :param service_update_description: The information necessary to update
          a service.
-        :type service_update_description: :class:`ServiceUpdateDescription
-         <azure.servicefabric.models.ServiceUpdateDescription>`
+        :type service_update_description:
+         ~azure.servicefabric.models.ServiceUpdateDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -5445,11 +5226,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5480,7 +5258,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5513,13 +5291,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceDescription
-         <azure.servicefabric.models.ServiceDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceDescription
-         <azure.servicefabric.models.ServiceDescription>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceDescription or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5546,7 +5320,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5647,13 +5421,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5686,7 +5456,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5781,8 +5551,8 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param exclude_health_statistics: Indicates whether the health
          statistics should be returned as part of the query result. False by
          default.
@@ -5799,13 +5569,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceHealth
-         <azure.servicefabric.models.ServiceHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5845,7 +5611,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -5889,8 +5655,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -5921,11 +5687,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -5958,7 +5721,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6011,13 +5774,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ResolvedServicePartition
-         <azure.servicefabric.models.ResolvedServicePartition>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ResolvedServicePartition
-         <azure.servicefabric.models.ResolvedServicePartition>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ResolvedServicePartition or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ResolvedServicePartition or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6050,7 +5809,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6100,13 +5859,10 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedServicePartitionInfoList
-         <azure.servicefabric.models.PagedServicePartitionInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: PagedServicePartitionInfoList or ClientRawResponse if
          raw=true
-        :rtype: :class:`PagedServicePartitionInfoList
-         <azure.servicefabric.models.PagedServicePartitionInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.servicefabric.models.PagedServicePartitionInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6135,7 +5891,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6172,13 +5928,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServicePartitionInfo
-         <azure.servicefabric.models.ServicePartitionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServicePartitionInfo
-         <azure.servicefabric.models.ServicePartitionInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServicePartitionInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServicePartitionInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6205,7 +5957,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6240,13 +5992,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceNameInfo
-         <azure.servicefabric.models.ServiceNameInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceNameInfo
-         <azure.servicefabric.models.ServiceNameInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceNameInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceNameInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6273,7 +6021,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6368,13 +6116,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PartitionHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6407,7 +6151,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6498,8 +6242,8 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param exclude_health_statistics: Indicates whether the health
          statistics should be returned as part of the query result. False by
          default.
@@ -6516,13 +6260,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PartitionHealth
-         <azure.servicefabric.models.PartitionHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PartitionHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6562,7 +6302,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6601,8 +6341,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -6633,11 +6373,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6670,7 +6407,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6701,13 +6438,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PartitionLoadInformation
-         <azure.servicefabric.models.PartitionLoadInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PartitionLoadInformation
-         <azure.servicefabric.models.PartitionLoadInformation>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PartitionLoadInformation or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionLoadInformation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6734,7 +6467,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6769,11 +6502,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6800,7 +6530,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6832,11 +6562,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6863,7 +6590,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6900,11 +6627,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6931,7 +6655,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -6961,11 +6685,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -6988,7 +6709,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7019,11 +6740,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7046,7 +6764,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7077,20 +6795,15 @@ class ServiceFabricClientAPIs(object):
 
         :param repair_task: Describes the repair task to be created or
          updated.
-        :type repair_task: :class:`RepairTask
-         <azure.servicefabric.models.RepairTask>`
+        :type repair_task: ~azure.servicefabric.models.RepairTask
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7115,7 +6828,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7142,20 +6855,15 @@ class ServiceFabricClientAPIs(object):
         :param repair_task_cancel_description: Describes the repair task to be
          cancelled.
         :type repair_task_cancel_description:
-         :class:`RepairTaskCancelDescription
-         <azure.servicefabric.models.RepairTaskCancelDescription>`
+         ~azure.servicefabric.models.RepairTaskCancelDescription
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7180,7 +6888,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7216,11 +6924,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7247,7 +6952,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7284,13 +6989,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`RepairTask
-         <azure.servicefabric.models.RepairTask>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`RepairTask
-         <azure.servicefabric.models.RepairTask>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.RepairTask] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7317,7 +7018,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7353,13 +7054,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7386,7 +7083,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7413,20 +7110,15 @@ class ServiceFabricClientAPIs(object):
         :param repair_task_update_health_policy_description: Describes the
          repair task healthy policy to be updated.
         :type repair_task_update_health_policy_description:
-         :class:`RepairTaskUpdateHealthPolicyDescription
-         <azure.servicefabric.models.RepairTaskUpdateHealthPolicyDescription>`
+         ~azure.servicefabric.models.RepairTaskUpdateHealthPolicyDescription
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7451,7 +7143,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7477,20 +7169,15 @@ class ServiceFabricClientAPIs(object):
 
         :param repair_task: Describes the repair task to be created or
          updated.
-        :type repair_task: :class:`RepairTask
-         <azure.servicefabric.models.RepairTask>`
+        :type repair_task: ~azure.servicefabric.models.RepairTask
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RepairTaskUpdateInfo
-         <azure.servicefabric.models.RepairTaskUpdateInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RepairTaskUpdateInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RepairTaskUpdateInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7515,7 +7202,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7560,13 +7247,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedReplicaInfoList
-         <azure.servicefabric.models.PagedReplicaInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedReplicaInfoList
-         <azure.servicefabric.models.PagedReplicaInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedReplicaInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedReplicaInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7595,7 +7278,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7640,11 +7323,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ReplicaInfo <azure.servicefabric.models.ReplicaInfo>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ReplicaInfo <azure.servicefabric.models.ReplicaInfo>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ReplicaInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ReplicaInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7674,7 +7355,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7738,13 +7419,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ReplicaHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ReplicaHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7774,7 +7451,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7837,8 +7514,8 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -7849,13 +7526,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ReplicaHealth
-         <azure.servicefabric.models.ReplicaHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ReplicaHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ReplicaHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -7892,7 +7565,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -7942,8 +7615,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -7974,11 +7647,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8013,7 +7683,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8057,13 +7727,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`DeployedServiceReplicaInfo
-         <azure.servicefabric.models.DeployedServiceReplicaInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`DeployedServiceReplicaInfo
-         <azure.servicefabric.models.DeployedServiceReplicaInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServiceReplicaInfo]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8095,7 +7761,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8136,13 +7802,10 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DeployedServiceReplicaDetailInfo
-         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: DeployedServiceReplicaDetailInfo or ClientRawResponse if
          raw=true
-        :rtype: :class:`DeployedServiceReplicaDetailInfo
-         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.servicefabric.models.DeployedServiceReplicaDetailInfo
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8171,7 +7834,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8210,13 +7873,10 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DeployedServiceReplicaDetailInfo
-         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: DeployedServiceReplicaDetailInfo or ClientRawResponse if
          raw=true
-        :rtype: :class:`DeployedServiceReplicaDetailInfo
-         <azure.servicefabric.models.DeployedServiceReplicaDetailInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype: ~azure.servicefabric.models.DeployedServiceReplicaDetailInfo
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8244,7 +7904,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8285,11 +7945,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8318,7 +7975,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8363,11 +8020,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8398,7 +8052,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8433,13 +8087,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServicePackageInfo]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8467,7 +8117,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8514,13 +8164,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`DeployedServicePackageInfo
-         <azure.servicefabric.models.DeployedServicePackageInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedServicePackageInfo]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8549,7 +8195,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8621,13 +8267,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DeployedServicePackageHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedServicePackageHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8658,7 +8300,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8730,8 +8372,8 @@ class ServiceFabricClientAPIs(object):
          to evaluate the health of an application or one of its children.
          If not present, the health evaluation uses the health policy from
          application manifest or the default health policy.
-        :type application_health_policy: :class:`ApplicationHealthPolicy
-         <azure.servicefabric.models.ApplicationHealthPolicy>`
+        :type application_health_policy:
+         ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -8742,13 +8384,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DeployedServicePackageHealth
-         <azure.servicefabric.models.DeployedServicePackageHealth>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: DeployedServicePackageHealth or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.DeployedServicePackageHealth or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8786,7 +8424,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8834,8 +8472,8 @@ class ServiceFabricClientAPIs(object):
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
-        :type health_information: :class:`HealthInformation
-         <azure.servicefabric.models.HealthInformation>`
+        :type health_information:
+         ~azure.servicefabric.models.HealthInformation
         :param immediate: A flag which indicates whether the report should be
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
@@ -8866,11 +8504,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8905,7 +8540,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -8928,8 +8563,7 @@ class ServiceFabricClientAPIs(object):
         :param deploy_service_package_to_node_description: Describes
          information for deploying a service package to a Service Fabric node.
         :type deploy_service_package_to_node_description:
-         :class:`DeployServicePackageToNodeDescription
-         <azure.servicefabric.models.DeployServicePackageToNodeDescription>`
+         ~azure.servicefabric.models.DeployServicePackageToNodeDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -8940,11 +8574,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -8975,7 +8606,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9017,13 +8648,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`DeployedCodePackageInfo
-         <azure.servicefabric.models.DeployedCodePackageInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`DeployedCodePackageInfo
-         <azure.servicefabric.models.DeployedCodePackageInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.DeployedCodePackageInfo] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9055,7 +8682,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9091,8 +8718,7 @@ class ServiceFabricClientAPIs(object):
         :param restart_deployed_code_package_description: Describes the
          deployed code package on Service Fabric node to restart.
         :type restart_deployed_code_package_description:
-         :class:`RestartDeployedCodePackageDescription
-         <azure.servicefabric.models.RestartDeployedCodePackageDescription>`
+         ~azure.servicefabric.models.RestartDeployedCodePackageDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -9103,11 +8729,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9139,7 +8762,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9157,8 +8780,7 @@ class ServiceFabricClientAPIs(object):
         :param create_compose_deployment_description: Describes the compose
          deployment that needs to be created.
         :type create_compose_deployment_description:
-         :class:`CreateComposeDeploymentDescription
-         <azure.servicefabric.models.CreateComposeDeploymentDescription>`
+         ~azure.servicefabric.models.CreateComposeDeploymentDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -9169,11 +8791,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9200,7 +8819,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9230,13 +8849,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ComposeDeploymentStatusInfo
-         <azure.servicefabric.models.ComposeDeploymentStatusInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ComposeDeploymentStatusInfo
-         <azure.servicefabric.models.ComposeDeploymentStatusInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ComposeDeploymentStatusInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ComposeDeploymentStatusInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9263,7 +8878,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9317,13 +8932,11 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedComposeDeploymentStatusInfoList
-         <azure.servicefabric.models.PagedComposeDeploymentStatusInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: PagedComposeDeploymentStatusInfoList or ClientRawResponse if
          raw=true
-        :rtype: :class:`PagedComposeDeploymentStatusInfoList
-         <azure.servicefabric.models.PagedComposeDeploymentStatusInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.servicefabric.models.PagedComposeDeploymentStatusInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9350,7 +8963,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9386,13 +8999,11 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ComposeDeploymentUpgradeProgressInfo
-         <azure.servicefabric.models.ComposeDeploymentUpgradeProgressInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: ComposeDeploymentUpgradeProgressInfo or ClientRawResponse if
          raw=true
-        :rtype: :class:`ComposeDeploymentUpgradeProgressInfo
-         <azure.servicefabric.models.ComposeDeploymentUpgradeProgressInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.servicefabric.models.ComposeDeploymentUpgradeProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9419,7 +9030,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9453,11 +9064,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9484,7 +9092,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9505,8 +9113,7 @@ class ServiceFabricClientAPIs(object):
         :param compose_deployment_upgrade_description: Parameters for
          upgrading compose deployment.
         :type compose_deployment_upgrade_description:
-         :class:`ComposeDeploymentUpgradeDescription
-         <azure.servicefabric.models.ComposeDeploymentUpgradeDescription>`
+         ~azure.servicefabric.models.ComposeDeploymentUpgradeDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -9517,11 +9124,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9552,7 +9156,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9576,8 +9180,7 @@ class ServiceFabricClientAPIs(object):
 
         :param chaos_parameters: Describes all the parameters to configure a
          Chaos run.
-        :type chaos_parameters: :class:`ChaosParameters
-         <azure.servicefabric.models.ChaosParameters>`
+        :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -9588,11 +9191,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9619,7 +9219,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9646,11 +9246,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9673,7 +9270,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9725,11 +9322,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ChaosReport <azure.servicefabric.models.ChaosReport>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ChaosReport <azure.servicefabric.models.ChaosReport>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ChaosReport or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ChaosReport or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9758,7 +9353,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9786,7 +9381,7 @@ class ServiceFabricClientAPIs(object):
         named "_.dir". The mark file is generated by the image store service
         when all files in a folder are uploaded. When using File-by-File
         approach to upload application package in REST, the image store service
-        isn�t aware of the file hierarchy of the application package; you need
+        isn't aware of the file hierarchy of the application package; you need
         to create a mark file per folder and upload it last, to let the image
         store service know that the folder is complete.
         .
@@ -9804,11 +9399,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9835,7 +9427,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9864,13 +9456,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ImageStoreContent or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ImageStoreContent or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9897,7 +9485,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9934,11 +9522,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -9965,7 +9550,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -9991,13 +9576,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ImageStoreContent
-         <azure.servicefabric.models.ImageStoreContent>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ImageStoreContent or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ImageStoreContent or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10020,7 +9601,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10045,8 +9626,8 @@ class ServiceFabricClientAPIs(object):
 
         :param image_store_copy_description: Describes the copy description
          for the image store.
-        :type image_store_copy_description: :class:`ImageStoreCopyDescription
-         <azure.servicefabric.models.ImageStoreCopyDescription>`
+        :type image_store_copy_description:
+         ~azure.servicefabric.models.ImageStoreCopyDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -10057,11 +9638,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10088,7 +9666,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10132,11 +9710,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10162,7 +9737,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10212,11 +9787,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: str or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10242,7 +9814,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10315,11 +9887,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10349,7 +9918,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10389,13 +9958,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PartitionDataLossProgress
-         <azure.servicefabric.models.PartitionDataLossProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PartitionDataLossProgress
-         <azure.servicefabric.models.PartitionDataLossProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PartitionDataLossProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionDataLossProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10424,7 +9989,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10488,11 +10053,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10523,7 +10085,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10563,13 +10125,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PartitionQuorumLossProgress
-         <azure.servicefabric.models.PartitionQuorumLossProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PartitionQuorumLossProgress
-         <azure.servicefabric.models.PartitionQuorumLossProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PartitionQuorumLossProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionQuorumLossProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10598,7 +10156,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10656,11 +10214,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10690,7 +10245,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10730,13 +10285,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PartitionRestartProgress
-         <azure.servicefabric.models.PartitionRestartProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PartitionRestartProgress
-         <azure.servicefabric.models.PartitionRestartProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PartitionRestartProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PartitionRestartProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10765,7 +10316,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10825,11 +10376,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10860,7 +10408,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10892,13 +10440,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`NodeTransitionProgress
-         <azure.servicefabric.models.NodeTransitionProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`NodeTransitionProgress
-         <azure.servicefabric.models.NodeTransitionProgress>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: NodeTransitionProgress or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.NodeTransitionProgress or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -10926,7 +10470,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -10978,13 +10522,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list of :class:`OperationStatus
-         <azure.servicefabric.models.OperationStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: list of :class:`OperationStatus
-         <azure.servicefabric.models.OperationStatus>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.OperationStatus] or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11009,7 +10549,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11073,11 +10613,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11102,7 +10639,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11129,11 +10666,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11162,7 +10696,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11190,11 +10724,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11221,7 +10752,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11251,11 +10782,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11282,7 +10810,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11324,13 +10852,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedSubNameInfoList
-         <azure.servicefabric.models.PagedSubNameInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedSubNameInfoList
-         <azure.servicefabric.models.PagedSubNameInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedSubNameInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedSubNameInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11361,7 +10885,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11408,13 +10932,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PagedPropertyInfoList
-         <azure.servicefabric.models.PagedPropertyInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PagedPropertyInfoList
-         <azure.servicefabric.models.PagedPropertyInfoList>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PagedPropertyInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedPropertyInfoList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11445,7 +10965,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11473,8 +10993,8 @@ class ServiceFabricClientAPIs(object):
         :type name_id: str
         :param property_description: Describes the Service Fabric property to
          be created.
-        :type property_description: :class:`PropertyDescription
-         <azure.servicefabric.models.PropertyDescription>`
+        :type property_description:
+         ~azure.servicefabric.models.PropertyDescription
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -11485,11 +11005,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11520,7 +11037,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11551,13 +11068,9 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PropertyInfo
-         <azure.servicefabric.models.PropertyInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PropertyInfo
-         <azure.servicefabric.models.PropertyInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PropertyInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PropertyInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11585,7 +11098,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11623,11 +11136,8 @@ class ServiceFabricClientAPIs(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11655,7 +11165,7 @@ class ServiceFabricClientAPIs(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
@@ -11681,20 +11191,16 @@ class ServiceFabricClientAPIs(object):
         :type timeout: long
         :param operations: A list of the property batch operations to be
          executed.
-        :type operations: list of :class:`PropertyBatchOperation
-         <azure.servicefabric.models.PropertyBatchOperation>`
+        :type operations:
+         list[~azure.servicefabric.models.PropertyBatchOperation]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`PropertyBatchInfo
-         <azure.servicefabric.models.PropertyBatchInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`PropertyBatchInfo
-         <azure.servicefabric.models.PropertyBatchInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: PropertyBatchInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PropertyBatchInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
@@ -11727,7 +11233,7 @@ class ServiceFabricClientAPIs(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 409]:
             raise models.FabricErrorException(self._deserialize, response)

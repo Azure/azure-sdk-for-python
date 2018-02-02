@@ -25,8 +25,7 @@ class PagedPropertyInfoList(Model):
      this property value is false.
     :type is_consistent: bool
     :param properties:
-    :type properties: list of :class:`PropertyInfo
-     <azure.servicefabric.models.PropertyInfo>`
+    :type properties: list[~azure.servicefabric.models.PropertyInfo]
     """
 
     _attribute_map = {
@@ -36,6 +35,7 @@ class PagedPropertyInfoList(Model):
     }
 
     def __init__(self, continuation_token=None, is_consistent=None, properties=None):
+        super(PagedPropertyInfoList, self).__init__()
         self.continuation_token = continuation_token
         self.is_consistent = is_consistent
         self.properties = properties

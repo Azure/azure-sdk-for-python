@@ -18,7 +18,7 @@ class EntityHealthStateChunk(Model):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -26,4 +26,5 @@ class EntityHealthStateChunk(Model):
     }
 
     def __init__(self, health_state=None):
+        super(EntityHealthStateChunk, self).__init__()
         self.health_state = health_state

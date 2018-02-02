@@ -15,13 +15,13 @@ from .partition_scheme_description import PartitionSchemeDescription
 class NamedPartitionSchemeDescription(PartitionSchemeDescription):
     """Describes the named partition scheme of the service.
 
-    :param partition_scheme: Polymorphic Discriminator
+    :param partition_scheme: Constant filled by server.
     :type partition_scheme: str
     :param count: The number of partitions.
     :type count: int
     :param names: Array of size specified by the ‘Count’ parameter, for the
      names of the partitions.
-    :type names: list of str
+    :type names: list[str]
     """
 
     _validation = {

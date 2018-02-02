@@ -25,4 +25,5 @@ class ApplicationTypeManifest(Model):
     }
 
     def __init__(self, manifest=None):
+        super(ApplicationTypeManifest, self).__init__()
         self.manifest = manifest

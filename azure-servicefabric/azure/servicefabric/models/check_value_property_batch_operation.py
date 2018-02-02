@@ -22,11 +22,10 @@ class CheckValuePropertyBatchOperation(PropertyBatchOperation):
 
     :param property_name:
     :type property_name: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param value:
-    :type value: :class:`PropertyValue
-     <azure.servicefabric.models.PropertyValue>`
+    :type value: ~azure.servicefabric.models.PropertyValue
     """
 
     _validation = {

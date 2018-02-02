@@ -26,23 +26,20 @@ class DeployedCodePackageInfo(Model):
     :type service_package_activation_id: str
     :param host_type: Possible values include: 'Invalid', 'ExeHost',
      'ContainerHost'
-    :type host_type: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type host_type: str or ~azure.servicefabric.models.enum
     :param host_isolation_mode: Possible values include: 'None', 'Process',
      'HyperV'
-    :type host_isolation_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type host_isolation_mode: str or ~azure.servicefabric.models.enum
     :param status: Possible values include: 'Invalid', 'Downloading',
      'Activating', 'Active', 'Upgrading', 'Deactivating'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type status: str or ~azure.servicefabric.models.enum
     :param run_frequency_interval: The interval at which code package is run.
      This is used for periodic code package.
     :type run_frequency_interval: str
     :param setup_entry_point:
-    :type setup_entry_point: :class:`CodePackageEntryPoint
-     <azure.servicefabric.models.CodePackageEntryPoint>`
+    :type setup_entry_point: ~azure.servicefabric.models.CodePackageEntryPoint
     :param main_entry_point:
-    :type main_entry_point: :class:`CodePackageEntryPoint
-     <azure.servicefabric.models.CodePackageEntryPoint>`
+    :type main_entry_point: ~azure.servicefabric.models.CodePackageEntryPoint
     """
 
     _attribute_map = {
@@ -59,6 +56,7 @@ class DeployedCodePackageInfo(Model):
     }
 
     def __init__(self, name=None, version=None, service_manifest_name=None, service_package_activation_id=None, host_type=None, host_isolation_mode=None, status=None, run_frequency_interval=None, setup_entry_point=None, main_entry_point=None):
+        super(DeployedCodePackageInfo, self).__init__()
         self.name = name
         self.version = version
         self.service_manifest_name = service_manifest_name

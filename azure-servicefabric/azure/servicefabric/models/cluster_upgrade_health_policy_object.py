@@ -46,5 +46,6 @@ class ClusterUpgradeHealthPolicyObject(Model):
     }
 
     def __init__(self, max_percent_delta_unhealthy_nodes=None, max_percent_upgrade_domain_delta_unhealthy_nodes=None):
+        super(ClusterUpgradeHealthPolicyObject, self).__init__()
         self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
         self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes

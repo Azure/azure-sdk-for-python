@@ -28,4 +28,5 @@ class NameDescription(Model):
     }
 
     def __init__(self, name):
+        super(NameDescription, self).__init__()
         self.name = name

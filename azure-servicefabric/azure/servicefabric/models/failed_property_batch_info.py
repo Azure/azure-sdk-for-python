@@ -16,7 +16,7 @@ class FailedPropertyBatchInfo(PropertyBatchInfo):
     """Derived from PropertyBatchInfo. Represents the property batch failing.
     Contains information about the specific batch failure.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param error_message: The error message of the failed operation. Describes
      the exception thrown due to the first unsuccessful operation in the

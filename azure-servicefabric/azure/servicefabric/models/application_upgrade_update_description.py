@@ -19,13 +19,13 @@ class ApplicationUpgradeUpdateDescription(Model):
     :type name: str
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
      Default value: "Rolling" .
-    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type upgrade_kind: str or ~azure.servicefabric.models.enum
     :param application_health_policy:
-    :type application_health_policy: :class:`ApplicationHealthPolicy
-     <azure.servicefabric.models.ApplicationHealthPolicy>`
+    :type application_health_policy:
+     ~azure.servicefabric.models.ApplicationHealthPolicy
     :param update_description:
-    :type update_description: :class:`RollingUpgradeUpdateDescription
-     <azure.servicefabric.models.RollingUpgradeUpdateDescription>`
+    :type update_description:
+     ~azure.servicefabric.models.RollingUpgradeUpdateDescription
     """
 
     _validation = {
@@ -41,6 +41,7 @@ class ApplicationUpgradeUpdateDescription(Model):
     }
 
     def __init__(self, name, upgrade_kind="Rolling", application_health_policy=None, update_description=None):
+        super(ApplicationUpgradeUpdateDescription, self).__init__()
         self.name = name
         self.upgrade_kind = upgrade_kind
         self.application_health_policy = application_health_policy

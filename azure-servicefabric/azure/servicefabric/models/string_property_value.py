@@ -15,7 +15,7 @@ from .property_value import PropertyValue
 class StringPropertyValue(PropertyValue):
     """Describes a Service Fabric property value of type String.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param data: The data of the property value.
     :type data: str

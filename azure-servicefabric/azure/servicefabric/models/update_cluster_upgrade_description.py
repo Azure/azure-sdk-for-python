@@ -17,22 +17,21 @@ class UpdateClusterUpgradeDescription(Model):
 
     :param upgrade_kind: Possible values include: 'Invalid', 'Rolling',
      'Rolling_ForceRestart'. Default value: "Rolling" .
-    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type upgrade_kind: str or ~azure.servicefabric.models.enum
     :param update_description:
-    :type update_description: :class:`RollingUpgradeUpdateDescription
-     <azure.servicefabric.models.RollingUpgradeUpdateDescription>`
+    :type update_description:
+     ~azure.servicefabric.models.RollingUpgradeUpdateDescription
     :param cluster_health_policy:
-    :type cluster_health_policy: :class:`ClusterHealthPolicy
-     <azure.servicefabric.models.ClusterHealthPolicy>`
+    :type cluster_health_policy:
+     ~azure.servicefabric.models.ClusterHealthPolicy
     :param enable_delta_health_evaluation:
     :type enable_delta_health_evaluation: bool
     :param cluster_upgrade_health_policy:
     :type cluster_upgrade_health_policy:
-     :class:`ClusterUpgradeHealthPolicyObject
-     <azure.servicefabric.models.ClusterUpgradeHealthPolicyObject>`
+     ~azure.servicefabric.models.ClusterUpgradeHealthPolicyObject
     :param application_health_policy_map:
-    :type application_health_policy_map: :class:`ApplicationHealthPolicies
-     <azure.servicefabric.models.ApplicationHealthPolicies>`
+    :type application_health_policy_map:
+     ~azure.servicefabric.models.ApplicationHealthPolicies
     """
 
     _attribute_map = {
@@ -45,6 +44,7 @@ class UpdateClusterUpgradeDescription(Model):
     }
 
     def __init__(self, upgrade_kind="Rolling", update_description=None, cluster_health_policy=None, enable_delta_health_evaluation=None, cluster_upgrade_health_policy=None, application_health_policy_map=None):
+        super(UpdateClusterUpgradeDescription, self).__init__()
         self.upgrade_kind = upgrade_kind
         self.update_description = update_description
         self.cluster_health_policy = cluster_health_policy

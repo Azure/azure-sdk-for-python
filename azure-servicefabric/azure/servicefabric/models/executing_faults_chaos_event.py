@@ -19,10 +19,10 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
 
     :param time_stamp_utc:
     :type time_stamp_utc: datetime
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param faults:
-    :type faults: list of str
+    :type faults: list[str]
     """
 
     _validation = {

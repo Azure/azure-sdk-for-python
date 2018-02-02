@@ -26,4 +26,5 @@ class EntityHealthStateChunkList(Model):
     }
 
     def __init__(self, total_count=None):
+        super(EntityHealthStateChunkList, self).__init__()
         self.total_count = total_count

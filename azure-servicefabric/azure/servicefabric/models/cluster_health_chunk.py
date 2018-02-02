@@ -20,14 +20,13 @@ class ClusterHealthChunk(Model):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param node_health_state_chunks:
-    :type node_health_state_chunks: :class:`NodeHealthStateChunkList
-     <azure.servicefabric.models.NodeHealthStateChunkList>`
+    :type node_health_state_chunks:
+     ~azure.servicefabric.models.NodeHealthStateChunkList
     :param application_health_state_chunks:
     :type application_health_state_chunks:
-     :class:`ApplicationHealthStateChunkList
-     <azure.servicefabric.models.ApplicationHealthStateChunkList>`
+     ~azure.servicefabric.models.ApplicationHealthStateChunkList
     """
 
     _attribute_map = {
@@ -37,6 +36,7 @@ class ClusterHealthChunk(Model):
     }
 
     def __init__(self, health_state=None, node_health_state_chunks=None, application_health_state_chunks=None):
+        super(ClusterHealthChunk, self).__init__()
         self.health_state = health_state
         self.node_health_state_chunks = node_health_state_chunks
         self.application_health_state_chunks = application_health_state_chunks

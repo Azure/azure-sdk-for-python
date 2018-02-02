@@ -24,13 +24,13 @@ class PartitionLoadInformation(Model):
     :type partition_id: str
     :param primary_load_metric_reports: Array of load reports from the primary
      replica for this partition.
-    :type primary_load_metric_reports: list of :class:`LoadMetricReport
-     <azure.servicefabric.models.LoadMetricReport>`
+    :type primary_load_metric_reports:
+     list[~azure.servicefabric.models.LoadMetricReport]
     :param secondary_load_metric_reports: Array of aggregated load reports
      from all secondary replicas for this partition.
      Array only contains the latest reported load for each metric.
-    :type secondary_load_metric_reports: list of :class:`LoadMetricReport
-     <azure.servicefabric.models.LoadMetricReport>`
+    :type secondary_load_metric_reports:
+     list[~azure.servicefabric.models.LoadMetricReport]
     """
 
     _attribute_map = {
@@ -40,6 +40,7 @@ class PartitionLoadInformation(Model):
     }
 
     def __init__(self, partition_id=None, primary_load_metric_reports=None, secondary_load_metric_reports=None):
+        super(PartitionLoadInformation, self).__init__()
         self.partition_id = partition_id
         self.primary_load_metric_reports = primary_load_metric_reports
         self.secondary_load_metric_reports = secondary_load_metric_reports

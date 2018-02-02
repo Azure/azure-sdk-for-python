@@ -20,9 +20,8 @@ class NodeLoadInfo(Model):
     :type node_name: str
     :param node_load_metric_information: List that contains metrics and their
      load information on this node.
-    :type node_load_metric_information: list of
-     :class:`NodeLoadMetricInformation
-     <azure.servicefabric.models.NodeLoadMetricInformation>`
+    :type node_load_metric_information:
+     list[~azure.servicefabric.models.NodeLoadMetricInformation]
     """
 
     _attribute_map = {
@@ -31,5 +30,6 @@ class NodeLoadInfo(Model):
     }
 
     def __init__(self, node_name=None, node_load_metric_information=None):
+        super(NodeLoadInfo, self).__init__()
         self.node_name = node_name
         self.node_load_metric_information = node_load_metric_information

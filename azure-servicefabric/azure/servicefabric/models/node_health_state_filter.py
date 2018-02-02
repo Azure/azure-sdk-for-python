@@ -63,5 +63,6 @@ class NodeHealthStateFilter(Model):
     }
 
     def __init__(self, node_name_filter=None, health_state_filter=0):
+        super(NodeHealthStateFilter, self).__init__()
         self.node_name_filter = node_name_filter
         self.health_state_filter = health_state_filter

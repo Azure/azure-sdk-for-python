@@ -18,16 +18,13 @@ class ReconfigurationInformation(Model):
 
     :param previous_configuration_role: Possible values include: 'Unknown',
      'None', 'Primary', 'IdleSecondary', 'ActiveSecondary'
-    :type previous_configuration_role: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type previous_configuration_role: str or ~azure.servicefabric.models.enum
     :param reconfiguration_phase: Possible values include: 'Unknown', 'None',
      'Phase0', 'Phase1', 'Phase2', 'Phase3', 'Phase4', 'AbortPhaseZero'
-    :type reconfiguration_phase: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type reconfiguration_phase: str or ~azure.servicefabric.models.enum
     :param reconfiguration_type: Possible values include: 'Unknown',
      'SwapPrimary', 'Failover', 'Other'
-    :type reconfiguration_type: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type reconfiguration_type: str or ~azure.servicefabric.models.enum
     :param reconfiguration_start_time_utc: Start time (in UTC) of the ongoing
      reconfiguration. If no reconfiguration is taking place then this value
      will be zero date-time.
@@ -42,6 +39,7 @@ class ReconfigurationInformation(Model):
     }
 
     def __init__(self, previous_configuration_role=None, reconfiguration_phase=None, reconfiguration_type=None, reconfiguration_start_time_utc=None):
+        super(ReconfigurationInformation, self).__init__()
         self.previous_configuration_role = previous_configuration_role
         self.reconfiguration_phase = reconfiguration_phase
         self.reconfiguration_type = reconfiguration_type

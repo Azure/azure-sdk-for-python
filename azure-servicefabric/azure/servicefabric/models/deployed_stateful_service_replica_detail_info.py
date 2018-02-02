@@ -23,39 +23,36 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
     :type partition_id: str
     :param current_service_operation: Possible values include: 'Unknown',
      'None', 'Open', 'ChangeRole', 'Close', 'Abort'
-    :type current_service_operation: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type current_service_operation: str or ~azure.servicefabric.models.enum
     :param current_service_operation_start_time_utc: The start time of the
      current service operation in UTC format.
     :type current_service_operation_start_time_utc: datetime
     :param reported_load:
-    :type reported_load: list of :class:`LoadMetricReportInfo
-     <azure.servicefabric.models.LoadMetricReportInfo>`
-    :param service_kind: Polymorphic Discriminator
+    :type reported_load:
+     list[~azure.servicefabric.models.LoadMetricReportInfo]
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param replica_id:
     :type replica_id: str
     :param current_replicator_operation: Possible values include: 'Invalid',
      'None', 'Open', 'ChangeRole', 'UpdateEpoch', 'Close', 'Abort',
      'OnDataLoss', 'WaitForCatchup', 'Build'
-    :type current_replicator_operation: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type current_replicator_operation: str or
+     ~azure.servicefabric.models.enum
     :param read_status: Possible values include: 'Invalid', 'Granted',
      'ReconfigurationPending', 'NotPrimary', 'NoWriteQuorum'
-    :type read_status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type read_status: str or ~azure.servicefabric.models.enum
     :param write_status: Possible values include: 'Invalid', 'Granted',
      'ReconfigurationPending', 'NotPrimary', 'NoWriteQuorum'
-    :type write_status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type write_status: str or ~azure.servicefabric.models.enum
     :param replicator_status:
-    :type replicator_status: :class:`ReplicatorStatus
-     <azure.servicefabric.models.ReplicatorStatus>`
+    :type replicator_status: ~azure.servicefabric.models.ReplicatorStatus
     :param replica_status:
-    :type replica_status: :class:`KeyValueStoreReplicaStatus
-     <azure.servicefabric.models.KeyValueStoreReplicaStatus>`
+    :type replica_status:
+     ~azure.servicefabric.models.KeyValueStoreReplicaStatus
     :param deployed_service_replica_query_result:
     :type deployed_service_replica_query_result:
-     :class:`DeployedStatefulServiceReplicaInfo
-     <azure.servicefabric.models.DeployedStatefulServiceReplicaInfo>`
+     ~azure.servicefabric.models.DeployedStatefulServiceReplicaInfo
     """
 
     _validation = {

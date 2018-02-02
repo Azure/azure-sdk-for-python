@@ -26,13 +26,12 @@ class StatelessServiceTypeDescription(ServiceTypeDescription):
      instantiating this service in a Service Fabric cluster.
     :type placement_constraints: str
     :param service_placement_policies:
-    :type service_placement_policies: list of
-     :class:`ServicePlacementPolicyDescription
-     <azure.servicefabric.models.ServicePlacementPolicyDescription>`
+    :type service_placement_policies:
+     list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
     :param extensions:
-    :type extensions: list of :class:`ServiceTypeExtensionDescription
-     <azure.servicefabric.models.ServiceTypeExtensionDescription>`
-    :param kind: Polymorphic Discriminator
+    :type extensions:
+     list[~azure.servicefabric.models.ServiceTypeExtensionDescription]
+    :param kind: Constant filled by server.
     :type kind: str
     :param use_implicit_host: A flag indicating if this type is not
      implemented and hosted by a user service process, but is implicitly hosted

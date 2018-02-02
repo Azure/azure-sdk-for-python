@@ -3,6 +3,20 @@
 Release History
 ===============
 
+6.1.1.9 (2018-01-23)
+++++++++++++++++++++
+
+**Bugfixes**
+
+- Numerous fixes to descriptions and help text of entities
+
+**Features**
+
+- Chaos service now supports a target filter
+- Application types can now be provisioned and created in external stores
+- Added Orchestration Service internal support APIs
+- Added container deployment management APIs
+
 6.0.2 (2017-10-26)
 ++++++++++++++++++
 

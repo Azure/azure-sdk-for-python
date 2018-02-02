@@ -42,6 +42,7 @@ class RepairTaskCancelDescription(Model):
     }
 
     def __init__(self, task_id, version=None, request_abort=None):
+        super(RepairTaskCancelDescription, self).__init__()
         self.task_id = task_id
         self.version = version
         self.request_abort = request_abort

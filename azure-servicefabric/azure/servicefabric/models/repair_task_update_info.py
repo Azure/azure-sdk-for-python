@@ -31,4 +31,5 @@ class RepairTaskUpdateInfo(Model):
     }
 
     def __init__(self, version):
+        super(RepairTaskUpdateInfo, self).__init__()
         self.version = version

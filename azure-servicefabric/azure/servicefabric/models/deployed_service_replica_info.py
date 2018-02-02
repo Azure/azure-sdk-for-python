@@ -15,6 +15,10 @@ from msrest.serialization import Model
 class DeployedServiceReplicaInfo(Model):
     """Information about a Service Fabric service replica deployed on a node.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: DeployedStatefulServiceReplicaInfo,
+    DeployedStatelessServiceInstanceInfo
+
     :param service_name:
     :type service_name: str
     :param service_type_name:
@@ -27,8 +31,7 @@ class DeployedServiceReplicaInfo(Model):
     :type partition_id: str
     :param replica_status: Possible values include: 'Invalid', 'InBuild',
      'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type replica_status: str or ~azure.servicefabric.models.enum
     :param address: The last address returned by the replica in Open or
      ChangeRole.
     :type address: str
@@ -38,7 +41,7 @@ class DeployedServiceReplicaInfo(Model):
      replica. This will be zero if the replica is down. In hyper-v containers
      this host process id will be from different kernel.
     :type host_process_id: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     """
 
@@ -64,6 +67,7 @@ class DeployedServiceReplicaInfo(Model):
     }
 
     def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, host_process_id=None):
+        super(DeployedServiceReplicaInfo, self).__init__()
         self.service_name = service_name
         self.service_type_name = service_type_name
         self.service_manifest_name = service_manifest_name

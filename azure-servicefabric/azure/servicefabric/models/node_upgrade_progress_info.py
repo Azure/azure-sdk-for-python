@@ -19,11 +19,10 @@ class NodeUpgradeProgressInfo(Model):
     :type node_name: str
     :param upgrade_phase: Possible values include: 'Invalid',
      'PreUpgradeSafetyCheck', 'Upgrading', 'PostUpgradeSafetyCheck'
-    :type upgrade_phase: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type upgrade_phase: str or ~azure.servicefabric.models.enum
     :param pending_safety_checks:
-    :type pending_safety_checks: list of :class:`SafetyCheckWrapper
-     <azure.servicefabric.models.SafetyCheckWrapper>`
+    :type pending_safety_checks:
+     list[~azure.servicefabric.models.SafetyCheckWrapper]
     """
 
     _attribute_map = {
@@ -33,6 +32,7 @@ class NodeUpgradeProgressInfo(Model):
     }
 
     def __init__(self, node_name=None, upgrade_phase=None, pending_safety_checks=None):
+        super(NodeUpgradeProgressInfo, self).__init__()
         self.node_name = node_name
         self.upgrade_phase = upgrade_phase
         self.pending_safety_checks = pending_safety_checks

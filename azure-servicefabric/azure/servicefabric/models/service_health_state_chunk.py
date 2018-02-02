@@ -20,12 +20,12 @@ class ServiceHealthStateChunk(EntityHealthStateChunk):
 
     :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
      'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type health_state: str or ~azure.servicefabric.models.enum
     :param service_name:
     :type service_name: str
     :param partition_health_state_chunks:
-    :type partition_health_state_chunks: :class:`PartitionHealthStateChunkList
-     <azure.servicefabric.models.PartitionHealthStateChunkList>`
+    :type partition_health_state_chunks:
+     ~azure.servicefabric.models.PartitionHealthStateChunkList
     """
 
     _attribute_map = {

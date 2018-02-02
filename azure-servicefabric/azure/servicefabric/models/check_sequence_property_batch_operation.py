@@ -26,7 +26,7 @@ class CheckSequencePropertyBatchOperation(PropertyBatchOperation):
 
     :param property_name:
     :type property_name: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param sequence_number: The expected sequence number.
     :type sequence_number: str

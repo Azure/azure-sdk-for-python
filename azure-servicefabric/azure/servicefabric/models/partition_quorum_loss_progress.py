@@ -17,10 +17,10 @@ class PartitionQuorumLossProgress(Model):
 
     :param state: Possible values include: 'Invalid', 'Running',
      'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :type state: str or ~azure.servicefabric.models.enum
     :param invoke_quorum_loss_result:
-    :type invoke_quorum_loss_result: :class:`InvokeQuorumLossResult
-     <azure.servicefabric.models.InvokeQuorumLossResult>`
+    :type invoke_quorum_loss_result:
+     ~azure.servicefabric.models.InvokeQuorumLossResult
     """
 
     _attribute_map = {
@@ -29,5 +29,6 @@ class PartitionQuorumLossProgress(Model):
     }
 
     def __init__(self, state=None, invoke_quorum_loss_result=None):
+        super(PartitionQuorumLossProgress, self).__init__()
         self.state = state
         self.invoke_quorum_loss_result = invoke_quorum_loss_result
