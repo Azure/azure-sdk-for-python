@@ -295,16 +295,16 @@ class RoleDefinitionsOperations(object):
         return deserialized
 
     def get_by_id(
-            self, role_definition_id, custom_headers=None, raw=False, **operation_config):
+            self, role_id, custom_headers=None, raw=False, **operation_config):
         """Gets a role definition by ID.
 
-        :param role_definition_id: The fully qualified role definition ID. Use
-         the format,
+        :param role_id: The fully qualified role definition ID. Use the
+         format,
          /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
          for subscription level role definitions, or
          /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
          for tenant level role definitions.
-        :type role_definition_id: str
+        :type role_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -316,9 +316,9 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleDefinitionId}'
+        url = '/{roleId}'
         path_format_arguments = {
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str', skip_quote=True)
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 

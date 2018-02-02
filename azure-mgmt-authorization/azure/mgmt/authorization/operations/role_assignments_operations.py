@@ -388,11 +388,11 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def delete_by_id(
-            self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
+            self, role_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a role assignment.
 
-        :param role_assignment_id: The ID of the role assignment to delete.
-        :type role_assignment_id: str
+        :param role_id: The ID of the role assignment to delete.
+        :type role_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -404,9 +404,9 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleAssignmentId}'
+        url = '/{roleId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -445,11 +445,11 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def create_by_id(
-            self, role_assignment_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, role_id, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a role assignment by ID.
 
-        :param role_assignment_id: The ID of the role assignment to create.
-        :type role_assignment_id: str
+        :param role_id: The ID of the role assignment to create.
+        :type role_id: str
         :param parameters: Parameters for the role assignment.
         :type parameters:
          ~azure.mgmt.authorization.models.RoleAssignmentCreateParameters
@@ -464,9 +464,9 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleAssignmentId}'
+        url = '/{roleId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -509,11 +509,11 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def get_by_id(
-            self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
+            self, role_id, custom_headers=None, raw=False, **operation_config):
         """Gets a role assignment by ID.
 
-        :param role_assignment_id: The ID of the role assignment to get.
-        :type role_assignment_id: str
+        :param role_id: The ID of the role assignment to get.
+        :type role_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -525,9 +525,9 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleAssignmentId}'
+        url = '/{roleId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
