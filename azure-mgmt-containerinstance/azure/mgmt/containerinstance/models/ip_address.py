@@ -25,8 +25,8 @@ class IpAddress(Model):
     :vartype type: str
     :param ip: The IP exposed to the public internet.
     :type ip: str
-    :param dnsnamelabel: The Dns name label for the IP.
-    :type dnsnamelabel: str
+    :param dns_name_label: The Dns name label for the IP.
+    :type dns_name_label: str
     :ivar fqdn: The FQDN for the IP.
     :vartype fqdn: str
     """
@@ -41,15 +41,15 @@ class IpAddress(Model):
         'ports': {'key': 'ports', 'type': '[Port]'},
         'type': {'key': 'type', 'type': 'str'},
         'ip': {'key': 'ip', 'type': 'str'},
-        'dnsnamelabel': {'key': 'dnsnamelabel', 'type': 'str'},
+        'dns_name_label': {'key': 'dnsNameLabel', 'type': 'str'},
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
     type = "Public"
 
-    def __init__(self, ports, ip=None, dnsnamelabel=None):
+    def __init__(self, ports, ip=None, dns_name_label=None):
         super(IpAddress, self).__init__()
         self.ports = ports
         self.ip = ip
-        self.dnsnamelabel = dnsnamelabel
+        self.dns_name_label = dns_name_label
         self.fqdn = None
