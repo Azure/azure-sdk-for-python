@@ -19,6 +19,9 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2017_12_01.models.CachingTypes
+    :param write_accelerator_enabled: Specifies whether writeAccelerator
+     should be enabled or disabled on the disk.
+    :type write_accelerator_enabled: bool
     :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk
      will be copied before using it to attach to the Virtual Machine. If
      SourceImage is provided, the destination VirtualHardDisk should not exist.
@@ -32,14 +35,16 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
 
     _attribute_map = {
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
+        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, caching=None, image=None, vhd_containers=None, managed_disk=None):
+    def __init__(self, caching=None, write_accelerator_enabled=None, image=None, vhd_containers=None, managed_disk=None):
         super(VirtualMachineScaleSetUpdateOSDisk, self).__init__()
         self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
         self.image = image
         self.vhd_containers = vhd_containers
         self.managed_disk = managed_disk
