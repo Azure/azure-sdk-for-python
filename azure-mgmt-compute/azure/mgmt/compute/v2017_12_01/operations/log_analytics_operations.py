@@ -77,9 +77,16 @@ class LogAnalyticsOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('LogAnalyticsOperationResult', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
 
     def export_request_rate_by_interval(
             self, parameters, location, custom_headers=None, raw=False, **operation_config):
@@ -96,10 +103,11 @@ class LogAnalyticsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An instance of AzureOperationPoller that returns
+         LogAnalyticsOperationResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.LogAnalyticsOperationResult]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._export_request_rate_by_interval_initial(
@@ -133,9 +141,13 @@ class LogAnalyticsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = self._deserialize('LogAnalyticsOperationResult', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -182,9 +194,16 @@ class LogAnalyticsOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('LogAnalyticsOperationResult', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
 
     def export_throttled_requests(
             self, parameters, location, custom_headers=None, raw=False, **operation_config):
@@ -201,10 +220,11 @@ class LogAnalyticsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An instance of AzureOperationPoller that returns
+         LogAnalyticsOperationResult or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.LogAnalyticsOperationResult]
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._export_throttled_requests_initial(
@@ -238,9 +258,13 @@ class LogAnalyticsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = self._deserialize('LogAnalyticsOperationResult', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
