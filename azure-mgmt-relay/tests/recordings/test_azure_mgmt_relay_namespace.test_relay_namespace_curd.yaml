@@ -1,0 +1,594 @@
+interactions:
+- request:
+    body: '{"location": "westus", "tags": {"tag1": "value1", "tag2": "value2"}, "sku":
+      {"name": "Standard", "tier": "Standard"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['117']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Created","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-02-02T10:32:59.077Z","updatedAt":"2018-02-02T10:32:59.077Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Activating"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['707']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:33:00 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-02-02T10:32:59.077Z","updatedAt":"2018-02-02T10:33:25.417Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['705']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:33:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: '{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-02-02T10:32:59.077Z","updatedAt":"2018-02-02T10:33:25.417Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['705']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:33:33 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-02-02T10:32:59.077Z","updatedAt":"2018-02-02T10:33:25.417Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['717']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:33:32 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Relay/namespaces?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk5162/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8937","name":"Relay-Namespace-onesdk8937","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8937","createdAt":"2017-04-26T17:53:09.897Z","updatedAt":"2017-08-25T02:09:36.86Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8937.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9128/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr4056","name":"Relay-Namespace-pwr4056","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr4056","createdAt":"2017-04-05T02:14:55.927Z","updatedAt":"2017-08-25T02:01:52.22Z","serviceBusEndpoint":"https://Relay-Namespace-pwr4056.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk4600/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3381","name":"Relay-Namespace-onesdk3381","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3381","createdAt":"2017-04-25T22:35:35.627Z","updatedAt":"2017-08-25T02:08:19.85Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3381.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk2915/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1432","name":"Relay-Namespace-onesdk1432","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1432","createdAt":"2017-04-24T19:34:08Z","updatedAt":"2017-08-25T02:16:06.533Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1432.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk4274/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1742","name":"Relay-Namespace-onesdk1742","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1742","createdAt":"2017-04-26T02:48:50.597Z","updatedAt":"2017-08-25T02:16:20.397Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1742.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8910/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr5533","name":"Relay-Namespace-pwr5533","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr5533","createdAt":"2017-04-05T22:09:14.36Z","updatedAt":"2017-08-25T02:12:03.343Z","serviceBusEndpoint":"https://Relay-Namespace-pwr5533.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk188/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1970","name":"Relay-Namespace-onesdk1970","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1970","createdAt":"2017-07-27T07:25:41.493Z","updatedAt":"2017-07-27T07:26:06.78Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1970.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr947/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr624","name":"Relay-Namespace-pwr624","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr624","createdAt":"2017-04-05T01:07:15.777Z","updatedAt":"2017-08-25T02:11:26.147Z","serviceBusEndpoint":"https://Relay-Namespace-pwr624.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk8396/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3582","name":"Relay-Namespace-onesdk3582","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3582","createdAt":"2017-04-13T22:44:05.633Z","updatedAt":"2017-08-25T02:06:58.387Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3582.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk8188/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk2554","name":"Relay-Namespace-onesdk2554","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk2554","createdAt":"2017-07-27T05:52:21.57Z","updatedAt":"2017-07-27T05:52:47.43Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk2554.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk8518/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk4932","name":"Relay-Namespace-onesdk4932","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk4932","createdAt":"2017-04-24T19:55:15.703Z","updatedAt":"2017-08-25T02:09:13.373Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk4932.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8097/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr1514","name":"Relay-Namespace-pwr1514","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr1514","createdAt":"2017-04-05T02:20:41.163Z","updatedAt":"2017-08-25T02:03:05.953Z","serviceBusEndpoint":"https://Relay-Namespace-pwr1514.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr4786/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr1958","name":"Relay-Namespace-pwr1958","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr1958","createdAt":"2017-04-05T00:36:55.72Z","updatedAt":"2017-08-25T02:11:25.85Z","serviceBusEndpoint":"https://Relay-Namespace-pwr1958.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk7420/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk2896","name":"Relay-Namespace-onesdk2896","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk2896","createdAt":"2017-08-01T22:16:42.067Z","updatedAt":"2017-08-01T22:17:12.097Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk2896.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9536/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr8822","name":"Relay-Namespace-pwr8822","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr8822","createdAt":"2017-04-05T17:43:16.04Z","updatedAt":"2017-08-25T02:03:13.467Z","serviceBusEndpoint":"https://Relay-Namespace-pwr8822.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk2533/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk2891","name":"Relay-Namespace-onesdk2891","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk2891","createdAt":"2017-04-25T04:11:35.397Z","updatedAt":"2017-08-25T02:16:11.68Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk2891.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/relayrg/providers/Microsoft.Relay/namespaces/onemorerelay","name":"onemorerelay","type":"Microsoft.Relay/Namespaces","location":"North
+        Central US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:onemorerelay","createdAt":"2016-10-18T20:55:59.42Z","updatedAt":"2016-10-18T20:56:22.5Z","serviceBusEndpoint":"https://onemorerelay.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk7593/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3261","name":"Relay-Namespace-onesdk3261","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3261","createdAt":"2017-04-25T04:17:55.45Z","updatedAt":"2017-08-25T02:08:14.417Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3261.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9726/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr4015","name":"Relay-Namespace-pwr4015","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr4015","createdAt":"2017-04-05T21:45:57.567Z","updatedAt":"2017-08-25T02:03:17.617Z","serviceBusEndpoint":"https://Relay-Namespace-pwr4015.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr1081/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr1855","name":"Relay-Namespace-pwr1855","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr1855","createdAt":"2017-04-05T01:54:47.513Z","updatedAt":"2017-08-25T02:03:06.07Z","serviceBusEndpoint":"https://Relay-Namespace-pwr1855.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk9995/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk106","name":"Relay-Namespace-onesdk106","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk106","createdAt":"2017-04-26T23:42:21.317Z","updatedAt":"2017-08-25T02:10:44.023Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk106.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8470/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr5463","name":"Relay-Namespace-pwr5463","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr5463","createdAt":"2017-04-05T00:27:44.11Z","updatedAt":"2017-08-25T02:01:48.44Z","serviceBusEndpoint":"https://Relay-Namespace-pwr5463.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ARM-ManagementClient-Testing-RG/providers/Microsoft.Relay/namespaces/relay-brazil","name":"relay-brazil","type":"Microsoft.Relay/Namespaces","location":"Brazil
+        South","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-brazil","createdAt":"2017-07-13T02:28:53.723Z","updatedAt":"2017-08-15T23:49:19.28Z","serviceBusEndpoint":"https://relay-brazil.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr7980/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr5473","name":"Relay-Namespace-pwr5473","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr5473","createdAt":"2017-04-05T00:32:54.393Z","updatedAt":"2017-08-25T02:03:01.477Z","serviceBusEndpoint":"https://Relay-Namespace-pwr5473.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk8043/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk830","name":"Relay-Namespace-onesdk830","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk830","createdAt":"2017-04-26T00:47:29.47Z","updatedAt":"2017-08-25T02:16:19.41Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk830.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk9702/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3133","name":"Relay-Namespace-onesdk3133","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3133","createdAt":"2017-07-27T04:44:46.003Z","updatedAt":"2017-07-27T04:45:12.23Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3133.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr3622/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9749","name":"Relay-Namespace-pwr9749","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9749","createdAt":"2017-04-05T08:04:16.437Z","updatedAt":"2017-08-25T02:12:02.47Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9749.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr6478/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr504","name":"Relay-Namespace-pwr504","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr504","createdAt":"2017-04-05T07:41:04.787Z","updatedAt":"2017-08-25T02:03:11.907Z","serviceBusEndpoint":"https://Relay-Namespace-pwr504.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1975/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8449","name":"Relay-Namespace-onesdk8449","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8449","createdAt":"2017-04-24T19:47:30.323Z","updatedAt":"2017-08-25T02:08:07.6Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8449.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk3034/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3971","name":"Relay-Namespace-onesdk3971","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3971","createdAt":"2017-07-27T05:59:00.113Z","updatedAt":"2017-07-27T05:59:27.41Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3971.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk6394/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8505","name":"Relay-Namespace-onesdk8505","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8505","createdAt":"2017-07-27T17:09:15.827Z","updatedAt":"2017-07-27T17:09:42.47Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8505.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk3246/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3825","name":"Relay-Namespace-onesdk3825","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3825","createdAt":"2017-04-25T04:00:37.873Z","updatedAt":"2017-08-25T02:09:21.457Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3825.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr649/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr515","name":"Relay-Namespace-pwr515","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr515","createdAt":"2017-04-05T07:56:55.417Z","updatedAt":"2017-08-25T02:01:57.043Z","serviceBusEndpoint":"https://Relay-Namespace-pwr515.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr7876/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr15","name":"Relay-Namespace-pwr15","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr15","createdAt":"2017-04-05T20:13:22.3Z","updatedAt":"2017-08-25T02:03:16.867Z","serviceBusEndpoint":"https://Relay-Namespace-pwr15.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk6628/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk5141","name":"Relay-Namespace-onesdk5141","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk5141","createdAt":"2017-07-27T06:03:51.957Z","updatedAt":"2017-07-27T06:04:16.707Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk5141.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk5456/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3941","name":"Relay-Namespace-onesdk3941","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3941","createdAt":"2017-04-27T00:04:10.53Z","updatedAt":"2017-08-25T02:16:32.503Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3941.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr7442/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr6074","name":"Relay-Namespace-pwr6074","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr6074","createdAt":"2017-04-05T04:12:18.55Z","updatedAt":"2017-08-25T02:03:07.663Z","serviceBusEndpoint":"https://Relay-Namespace-pwr6074.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk3564/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8684","name":"Relay-Namespace-onesdk8684","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8684","createdAt":"2017-04-12T01:19:47.887Z","updatedAt":"2017-08-25T02:12:21.403Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8684.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk8305/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk2988","name":"Relay-Namespace-onesdk2988","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk2988","createdAt":"2017-04-24T19:40:05.287Z","updatedAt":"2017-08-25T02:09:12.753Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk2988.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk4300/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk2981","name":"Relay-Namespace-onesdk2981","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk2981","createdAt":"2017-04-12T23:05:46.187Z","updatedAt":"2017-08-25T02:12:23.903Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk2981.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr311/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2936","name":"Relay-Namespace-pwr2936","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2936","createdAt":"2017-04-05T00:57:59.883Z","updatedAt":"2017-08-25T02:01:49.91Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2936.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8116/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9555","name":"Relay-Namespace-pwr9555","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9555","createdAt":"2017-04-05T17:32:46.937Z","updatedAt":"2017-08-25T02:12:02.64Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9555.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr3413/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9092","name":"Relay-Namespace-pwr9092","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9092","createdAt":"2017-04-05T07:45:05.037Z","updatedAt":"2017-08-25T02:12:02.25Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9092.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr3049/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9733","name":"Relay-Namespace-pwr9733","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9733","createdAt":"2017-04-05T21:58:55.747Z","updatedAt":"2017-08-25T02:03:18Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9733.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk4302/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8485","name":"Relay-Namespace-onesdk8485","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8485","createdAt":"2017-07-27T16:55:43.807Z","updatedAt":"2017-07-27T16:56:10.427Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8485.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk2961/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk6844","name":"Relay-Namespace-onesdk6844","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk6844","createdAt":"2017-04-26T17:49:25.783Z","updatedAt":"2017-08-25T02:08:28.583Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk6844.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr5473/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9506","name":"Relay-Namespace-pwr9506","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9506","createdAt":"2017-04-05T07:50:47.947Z","updatedAt":"2017-08-25T02:12:03.383Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9506.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9708/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr3705","name":"Relay-Namespace-pwr3705","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr3705","createdAt":"2017-04-05T02:44:15.83Z","updatedAt":"2017-08-25T02:03:06.883Z","serviceBusEndpoint":"https://Relay-Namespace-pwr3705.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk908/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk4666","name":"Relay-Namespace-onesdk4666","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk4666","createdAt":"2017-04-26T21:49:23.96Z","updatedAt":"2017-08-25T02:16:31.037Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk4666.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1955/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk921","name":"Relay-Namespace-onesdk921","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk921","createdAt":"2017-04-25T01:16:13.413Z","updatedAt":"2017-08-25T02:09:18.953Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk921.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1940/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk7762","name":"Relay-Namespace-onesdk7762","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk7762","createdAt":"2017-04-26T19:21:44.71Z","updatedAt":"2017-08-25T02:10:19.547Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk7762.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk535/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk7414","name":"Relay-Namespace-onesdk7414","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk7414","createdAt":"2017-07-27T07:30:17.73Z","updatedAt":"2017-07-27T07:30:43.667Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk7414.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr250/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9614","name":"Relay-Namespace-pwr9614","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9614","createdAt":"2017-04-05T07:45:51.71Z","updatedAt":"2017-08-25T02:01:55.993Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9614.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8024/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr289","name":"Relay-Namespace-pwr289","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr289","createdAt":"2017-04-05T07:57:45.2Z","updatedAt":"2017-08-25T02:03:12.163Z","serviceBusEndpoint":"https://Relay-Namespace-pwr289.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr2397/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr3725","name":"Relay-Namespace-pwr3725","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr3725","createdAt":"2017-04-05T01:17:05.17Z","updatedAt":"2017-08-25T02:03:02.213Z","serviceBusEndpoint":"https://Relay-Namespace-pwr3725.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr6332/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr285","name":"Relay-Namespace-pwr285","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr285","createdAt":"2017-04-05T21:55:23.683Z","updatedAt":"2017-08-25T02:02:01.07Z","serviceBusEndpoint":"https://Relay-Namespace-pwr285.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk229/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk9177","name":"Relay-Namespace-onesdk9177","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk9177","createdAt":"2017-04-26T00:55:50.743Z","updatedAt":"2017-08-25T02:09:29.473Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk9177.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dstucki-test-rg-usw/providers/Microsoft.Relay/namespaces/dstucki-relay-usw","name":"dstucki-relay-usw","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:dstucki-relay-usw","createdAt":"2017-06-27T01:28:36.94Z","updatedAt":"2018-01-30T21:06:22.98Z","serviceBusEndpoint":"https://dstucki-relay-usw.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1244/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk5861","name":"Relay-Namespace-onesdk5861","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk5861","createdAt":"2017-05-01T21:40:39.81Z","updatedAt":"2017-08-25T02:17:04.62Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk5861.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8286/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr7458","name":"Relay-Namespace-pwr7458","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr7458","createdAt":"2017-04-05T17:36:08.763Z","updatedAt":"2017-08-25T02:01:58.493Z","serviceBusEndpoint":"https://Relay-Namespace-pwr7458.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr2934/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9109","name":"Relay-Namespace-pwr9109","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9109","createdAt":"2017-04-05T02:47:48.69Z","updatedAt":"2017-08-25T02:01:53.7Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9109.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr2323/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr8180","name":"Relay-Namespace-pwr8180","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr8180","createdAt":"2017-04-05T01:44:24.493Z","updatedAt":"2017-08-25T02:01:51.487Z","serviceBusEndpoint":"https://Relay-Namespace-pwr8180.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1933/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk3746","name":"Relay-Namespace-onesdk3746","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk3746","createdAt":"2017-07-27T05:22:25.757Z","updatedAt":"2017-07-27T05:22:53.677Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk3746.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr850/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr8672","name":"Relay-Namespace-pwr8672","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr8672","createdAt":"2017-04-05T08:36:04.073Z","updatedAt":"2017-08-25T02:01:57.933Z","serviceBusEndpoint":"https://Relay-Namespace-pwr8672.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ardsouza-resourcemovetest-group2/providers/Microsoft.Relay/namespaces/ardsouza-5-11-movetest-relay","name":"ardsouza-5-11-movetest-relay","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:ardsouza-5-11-movetest-relay","createdAt":"2017-05-11T23:06:38.667Z","updatedAt":"2017-08-25T02:20:54.203Z","serviceBusEndpoint":"https://ardsouza-5-11-movetest-relay.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8714/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr8656","name":"Relay-Namespace-pwr8656","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr8656","createdAt":"2017-04-05T17:47:56.917Z","updatedAt":"2017-08-25T02:12:03.803Z","serviceBusEndpoint":"https://Relay-Namespace-pwr8656.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr4171/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr3010","name":"Relay-Namespace-pwr3010","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr3010","createdAt":"2017-04-05T20:21:37.263Z","updatedAt":"2017-08-25T02:02:00.763Z","serviceBusEndpoint":"https://Relay-Namespace-pwr3010.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1751/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk9712","name":"Relay-Namespace-onesdk9712","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk9712","createdAt":"2017-04-24T22:10:57.74Z","updatedAt":"2017-08-25T02:08:09.513Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk9712.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr583/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr396","name":"Relay-Namespace-pwr396","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr396","createdAt":"2017-04-05T02:11:25.923Z","updatedAt":"2017-08-25T02:11:26.443Z","serviceBusEndpoint":"https://Relay-Namespace-pwr396.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk4928/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk9137","name":"Relay-Namespace-onesdk9137","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk9137","createdAt":"2017-07-27T07:35:21.983Z","updatedAt":"2017-07-27T07:35:49.19Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk9137.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8102/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr8082","name":"Relay-Namespace-pwr8082","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr8082","createdAt":"2017-04-05T07:23:33.17Z","updatedAt":"2017-08-25T02:03:11.077Z","serviceBusEndpoint":"https://Relay-Namespace-pwr8082.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace","name":"testingpythontestcasenamespace","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{"tag1":"value1","tag2":"value2"},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:testingpythontestcasenamespace","createdAt":"2018-02-02T10:32:59.077Z","updatedAt":"2018-02-02T10:33:25.417Z","serviceBusEndpoint":"https://testingpythontestcasenamespace.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr1248/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2656","name":"Relay-Namespace-pwr2656","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2656","createdAt":"2017-04-05T21:49:53.35Z","updatedAt":"2017-08-25T02:12:04.303Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2656.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr4520/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2127","name":"Relay-Namespace-pwr2127","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2127","createdAt":"2017-04-05T02:40:31.5Z","updatedAt":"2017-08-25T02:01:52.98Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2127.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8578/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2126","name":"Relay-Namespace-pwr2126","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2126","createdAt":"2017-04-05T17:19:25.91Z","updatedAt":"2017-08-25T02:03:12.913Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2126.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1802/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk6986","name":"Relay-Namespace-onesdk6986","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk6986","createdAt":"2017-04-26T17:41:24.34Z","updatedAt":"2017-08-25T02:09:37.42Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk6986.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk9131/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk293","name":"Relay-Namespace-onesdk293","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk293","createdAt":"2017-04-26T23:40:01.333Z","updatedAt":"2017-08-25T02:08:35.487Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk293.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr3313/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr3220","name":"Relay-Namespace-pwr3220","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr3220","createdAt":"2017-04-05T01:04:50.463Z","updatedAt":"2017-08-25T02:03:02.307Z","serviceBusEndpoint":"https://Relay-Namespace-pwr3220.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr6386","name":"Relay-Namespace-pwr6386","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr6386","createdAt":"2017-04-05T07:40:18.69Z","updatedAt":"2017-08-25T02:02:54.963Z","serviceBusEndpoint":"https://Relay-Namespace-pwr6386.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk9694/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk7264","name":"Relay-Namespace-onesdk7264","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk7264","createdAt":"2017-04-25T01:28:37.643Z","updatedAt":"2017-08-25T02:08:13.21Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk7264.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk115/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1780","name":"Relay-Namespace-onesdk1780","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1780","createdAt":"2017-04-26T23:59:26.107Z","updatedAt":"2017-08-25T02:10:44.197Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1780.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1271/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk7346","name":"Relay-Namespace-onesdk7346","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk7346","createdAt":"2017-04-26T21:05:11.227Z","updatedAt":"2017-08-25T02:08:33.817Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk7346.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk4326/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8847","name":"Relay-Namespace-onesdk8847","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8847","createdAt":"2017-04-27T00:10:55.657Z","updatedAt":"2017-08-25T02:10:44.337Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8847.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk7002/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8846","name":"Relay-Namespace-onesdk8846","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8846","createdAt":"2017-04-26T19:07:57.543Z","updatedAt":"2017-08-25T02:08:28.923Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8846.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr7480/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr4885","name":"Relay-Namespace-pwr4885","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr4885","createdAt":"2017-04-05T02:54:03.113Z","updatedAt":"2017-08-25T02:11:27.303Z","serviceBusEndpoint":"https://Relay-Namespace-pwr4885.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8556/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr3791","name":"Relay-Namespace-pwr3791","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr3791","createdAt":"2017-04-05T06:51:25.923Z","updatedAt":"2017-08-25T02:03:08.417Z","serviceBusEndpoint":"https://Relay-Namespace-pwr3791.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9572/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr8228","name":"Relay-Namespace-pwr8228","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr8228","createdAt":"2017-04-05T00:50:41.38Z","updatedAt":"2017-08-25T02:03:01.337Z","serviceBusEndpoint":"https://Relay-Namespace-pwr8228.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr1091/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr6082","name":"Relay-Namespace-pwr6082","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr6082","createdAt":"2017-04-05T07:49:56.257Z","updatedAt":"2017-08-25T02:03:11.297Z","serviceBusEndpoint":"https://Relay-Namespace-pwr6082.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8471/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr5040","name":"Relay-Namespace-pwr5040","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr5040","createdAt":"2017-04-05T00:44:49.1Z","updatedAt":"2017-08-25T02:01:49.16Z","serviceBusEndpoint":"https://Relay-Namespace-pwr5040.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk9894/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1056","name":"Relay-Namespace-onesdk1056","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1056","createdAt":"2017-07-27T17:23:02.923Z","updatedAt":"2017-07-27T17:23:27.99Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1056.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk5629/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk4539","name":"Relay-Namespace-onesdk4539","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk4539","createdAt":"2017-04-26T01:01:08.28Z","updatedAt":"2017-08-25T02:16:19.643Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk4539.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk7476/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk2860","name":"Relay-Namespace-onesdk2860","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk2860","createdAt":"2017-04-25T01:11:35.503Z","updatedAt":"2017-08-25T02:08:13.7Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk2860.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk3646/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk7875","name":"Relay-Namespace-onesdk7875","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk7875","createdAt":"2017-04-26T02:18:44.103Z","updatedAt":"2017-08-25T02:09:31.623Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk7875.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr5962/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2323","name":"Relay-Namespace-pwr2323","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2323","createdAt":"2017-04-05T08:05:06.34Z","updatedAt":"2017-08-25T02:01:56.807Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2323.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9531/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2633","name":"Relay-Namespace-pwr2633","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2633","createdAt":"2017-04-05T01:11:35.56Z","updatedAt":"2017-08-25T02:01:50.673Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2633.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk1089/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk6465","name":"Relay-Namespace-onesdk6465","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk6465","createdAt":"2017-04-25T04:30:05.63Z","updatedAt":"2017-08-25T02:09:22.177Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk6465.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr6738/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9945","name":"Relay-Namespace-pwr9945","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9945","createdAt":"2017-04-05T21:38:03.513Z","updatedAt":"2017-08-25T02:12:04.18Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9945.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/relayrg/providers/Microsoft.Relay/namespaces/cesarmeuswestcentral","name":"cesarmeuswestcentral","type":"Microsoft.Relay/Namespaces","location":"West
+        Central US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:cesarmeuswestcentral","createdAt":"2016-09-28T00:27:30.343Z","updatedAt":"2017-06-28T01:02:52.997Z","serviceBusEndpoint":"https://cesarmeuswestcentral.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk8552/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk2782","name":"Relay-Namespace-onesdk2782","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk2782","createdAt":"2017-07-27T04:48:01.793Z","updatedAt":"2017-07-27T04:48:29.007Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk2782.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr5907/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2581","name":"Relay-Namespace-pwr2581","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2581","createdAt":"2017-04-05T07:00:18.66Z","updatedAt":"2017-08-25T02:03:10.17Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2581.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk2975/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1307","name":"Relay-Namespace-onesdk1307","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1307","createdAt":"2017-04-26T01:56:27.853Z","updatedAt":"2017-08-25T02:08:20.207Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1307.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr2778/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr2005","name":"Relay-Namespace-pwr2005","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr2005","createdAt":"2017-04-05T02:49:54.253Z","updatedAt":"2017-08-25T02:03:06.72Z","serviceBusEndpoint":"https://Relay-Namespace-pwr2005.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr7950/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr7868","name":"Relay-Namespace-pwr7868","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr7868","createdAt":"2017-04-05T08:29:39.82Z","updatedAt":"2017-08-25T02:12:03.493Z","serviceBusEndpoint":"https://Relay-Namespace-pwr7868.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk328/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1604","name":"Relay-Namespace-onesdk1604","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1604","createdAt":"2017-04-26T02:34:46.49Z","updatedAt":"2017-08-25T02:09:30.973Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1604.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9402/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr9962","name":"Relay-Namespace-pwr9962","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr9962","createdAt":"2017-04-05T07:14:53.15Z","updatedAt":"2017-08-25T02:12:03.053Z","serviceBusEndpoint":"https://Relay-Namespace-pwr9962.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk8253/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk1846","name":"Relay-Namespace-onesdk1846","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk1846","createdAt":"2017-07-27T17:16:08.713Z","updatedAt":"2017-07-27T17:16:33.333Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk1846.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk3058/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk6284","name":"Relay-Namespace-onesdk6284","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk6284","createdAt":"2017-04-24T23:40:56.133Z","updatedAt":"2017-08-25T02:08:12.38Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk6284.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk7090/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk222","name":"Relay-Namespace-onesdk222","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk222","createdAt":"2017-04-26T21:08:39.463Z","updatedAt":"2017-08-25T02:16:29.54Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk222.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk9064/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk8379","name":"Relay-Namespace-onesdk8379","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk8379","createdAt":"2017-04-26T19:37:08.66Z","updatedAt":"2017-08-25T02:10:19.64Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk8379.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr9883/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr1652","name":"Relay-Namespace-pwr1652","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr1652","createdAt":"2017-04-05T20:07:12.793Z","updatedAt":"2017-08-25T02:01:59.337Z","serviceBusEndpoint":"https://Relay-Namespace-pwr1652.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk5536/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk4152","name":"Relay-Namespace-onesdk4152","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk4152","createdAt":"2017-07-27T04:59:58.69Z","updatedAt":"2017-07-27T05:00:25.85Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk4152.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-onesdk3928/providers/Microsoft.Relay/namespaces/Relay-Namespace-onesdk6186","name":"Relay-Namespace-onesdk6186","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-onesdk6186","createdAt":"2017-04-26T19:31:54.25Z","updatedAt":"2017-08-25T02:08:29.473Z","serviceBusEndpoint":"https://Relay-Namespace-onesdk6186.servicebus.windows.net:443/","status":"Active"}},{"sku":{"name":"Standard","tier":"Standard"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/RGName-pwr8458/providers/Microsoft.Relay/namespaces/Relay-Namespace-pwr8041","name":"Relay-Namespace-pwr8041","type":"Microsoft.Relay/Namespaces","location":"West
+        US","tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:relay-namespace-pwr8041","createdAt":"2017-04-05T07:29:35.03Z","updatedAt":"2017-08-25T02:12:02.157Z","serviceBusEndpoint":"https://Relay-Namespace-pwr8041.servicebus.windows.net:443/","status":"Active"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['68075']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:33:34 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/RootManageSharedAccessKey?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"Microsoft.Relay/Namespaces/AuthorizationRules","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['416']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:33:51 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"rights": ["Send", "Listen"]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['46']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"Microsoft.Relay/Namespaces/AuthorizationRules","location":"West
+        US","properties":{"rights":["Send","Listen"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['391']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:34:09 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"Microsoft.Relay/Namespaces/AuthorizationRules","location":"West
+        US","properties":{"rights":["Send","Listen"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['391']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:34:11 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"rights": ["Send", "Listen", "Manage"]}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['56']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"Microsoft.Relay/Namespaces/AuthorizationRules","location":"West
+        US","properties":{"rights":["Send","Listen","Manage"]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['400']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:34:27 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"Microsoft.Relay/Namespaces/AuthorizationRules","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy","name":"testingauthrulepy","type":"Microsoft.Relay/Namespaces/AuthorizationRules","location":"West
+        US","properties":{"rights":["Send","Listen","Manage"]}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['829']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:34:28 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy/listKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=vhzWUQcBhAQjwozKccaKYaP8zH4HZSjP0gy87fZ0pVQ=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=LsD20eeijmq/CBT8putTnvP/WAHPZsq/TrIJK80k68M=","primaryKey":"vhzWUQcBhAQjwozKccaKYaP8zH4HZSjP0gy87fZ0pVQ=","secondaryKey":"LsD20eeijmq/CBT8putTnvP/WAHPZsq/TrIJK80k68M=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['547']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:34:29 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"keyType": "PrimaryKey"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=Ju38swGvUo4jgU1d08vsRCy8eTXeAM3gKdWFSv7fCgE=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=LsD20eeijmq/CBT8putTnvP/WAHPZsq/TrIJK80k68M=","primaryKey":"Ju38swGvUo4jgU1d08vsRCy8eTXeAM3gKdWFSv7fCgE=","secondaryKey":"LsD20eeijmq/CBT8putTnvP/WAHPZsq/TrIJK80k68M=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['547']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:34:46 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1194']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"keyType": "SecondaryKey"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['27']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy/regenerateKeys?api-version=2017-04-01
+  response:
+    body: {string: '{"primaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=Ju38swGvUo4jgU1d08vsRCy8eTXeAM3gKdWFSv7fCgE=","secondaryConnectionString":"Endpoint=sb://testingpythontestcasenamespace.servicebus.windows.net/;SharedAccessKeyName=testingauthrulepy;SharedAccessKey=O3+NBse4I8qMTUlOwLNwrjqaoB7wi/xoezH+Mvu/ohY=","primaryKey":"Ju38swGvUo4jgU1d08vsRCy8eTXeAM3gKdWFSv7fCgE=","secondaryKey":"O3+NBse4I8qMTUlOwLNwrjqaoB7wi/xoezH+Mvu/ohY=","keyName":"testingauthrulepy"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['547']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:35:03 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-ms-ratelimit-remaining-subscription-writes: ['1193']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/testingauthrulepy?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 02 Feb 2018 10:35:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules?api-version=2017-04-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/authorizationRules/RootManageSharedAccessKey","name":"RootManageSharedAccessKey","type":"Microsoft.Relay/Namespaces/AuthorizationRules","location":"West
+        US","properties":{"rights":["Listen","Manage","Send"]}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['428']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 10:35:21 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 02 Feb 2018 10:35:22 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/operationresults/testingpythontestcasenamespace?api-version=2017-04-01']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-relay/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_azure_mgmt_relay_namespace_test_relay_namespace_curdaba01766/providers/Microsoft.Relay/namespaces/testingpythontestcasenamespace/operationresults/testingpythontestcasenamespace?api-version=2017-04-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 02 Feb 2018 10:35:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      server-sb: [Service-Bus-Resource-Provider/SN1]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+    status: {code: 200, message: OK}
+version: 1
