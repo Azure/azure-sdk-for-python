@@ -18,6 +18,9 @@ class AADObject(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param object_id: The ID of the object.
     :type object_id: str
     :param object_type: The type of AAD object.
@@ -73,6 +76,7 @@ class AADObject(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
         'object_type': {'key': 'objectType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
@@ -93,7 +97,9 @@ class AADObject(Model):
         'homepage': {'key': 'homepage', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, user_principal_name=None, mail=None, mail_enabled=None, security_enabled=None, sign_in_name=None, service_principal_names=None, user_type=None):
+    def __init__(self, additional_properties=None, object_id=None, object_type=None, display_name=None, user_principal_name=None, mail=None, mail_enabled=None, security_enabled=None, sign_in_name=None, service_principal_names=None, user_type=None):
+        super(AADObject, self).__init__()
+        self.additional_properties = additional_properties
         self.object_id = object_id
         self.object_type = object_type
         self.display_name = display_name

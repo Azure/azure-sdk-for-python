@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class KeyCredentialsUpdateParameters(Model):
-    """Request parameters for a KeyCredentials update operation.
-
-    :param value: A collection of KeyCredentials.
-    :type value: list[~azure.graphrbac.models.KeyCredential]
+class DirectoryObjectPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DirectoryObject <azure.graphrbac.models.DirectoryObject>` object
     """
 
-    _validation = {
-        'value': {'required': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[KeyCredential]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DirectoryObject]'}
     }
 
-    def __init__(self, value):
-        super(KeyCredentialsUpdateParameters, self).__init__()
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(DirectoryObjectPaged, self).__init__(*args, **kwargs)

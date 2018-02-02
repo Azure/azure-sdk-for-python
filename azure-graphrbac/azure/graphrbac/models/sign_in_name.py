@@ -16,6 +16,9 @@ class SignInName(Model):
     """Contains information about a sign-in name of a local account user in an
     Azure Active Directory B2C tenant.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param type: A string value that can be used to classify user sign-in
      types in your directory, such as 'emailAddress' or 'userName'.
     :type type: str
@@ -25,10 +28,13 @@ class SignInName(Model):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, type=None, value=None):
+    def __init__(self, additional_properties=None, type=None, value=None):
+        super(SignInName, self).__init__()
+        self.additional_properties = additional_properties
         self.type = type
         self.value = value
