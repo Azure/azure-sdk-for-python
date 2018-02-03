@@ -14,7 +14,7 @@ class OperationResponse(Model):
     :param name: this is the operation response name
     :type name: str
     :param display: this is the operation display
-    :type display: ~partner.models.OperationDisplay
+    :type display: ~managementpartner.models.OperationDisplay
     :param origin: the is operation response origin information
     :type origin: str
     """

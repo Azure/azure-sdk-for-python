@@ -34,7 +34,7 @@ class PartnerResponse(Model):
     :type created_time: datetime
     :param state: This is the partner state. Possible values include:
      'Active', 'Deleted'
-    :type state: str or ~partner.models.enum
+    :type state: str or ~managementpartner.models.enum
     :ivar type: Type of resource. "Microsoft.ManagementPartner/partners"
     :vartype type: str
     """

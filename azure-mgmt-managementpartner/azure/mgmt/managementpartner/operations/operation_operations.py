@@ -45,8 +45,9 @@ class OperationOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of OperationResponse
         :rtype:
-         ~partner.models.OperationResponsePaged[~partner.models.OperationResponse]
-        :raises: :class:`ErrorException<partner.models.ErrorException>`
+         ~managementpartner.models.OperationResponsePaged[~managementpartner.models.OperationResponse]
+        :raises:
+         :class:`ErrorException<managementpartner.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
