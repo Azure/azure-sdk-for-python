@@ -36,5 +36,6 @@ class AzureMLWebServiceFile(Model):
     }
 
     def __init__(self, file_path, linked_service_name):
+        super(AzureMLWebServiceFile, self).__init__()
         self.file_path = file_path
         self.linked_service_name = linked_service_name

@@ -41,5 +41,6 @@ class RedshiftUnloadSettings(Model):
     }
 
     def __init__(self, s3_linked_service_name, bucket_name):
+        super(RedshiftUnloadSettings, self).__init__()
         self.s3_linked_service_name = s3_linked_service_name
         self.bucket_name = bucket_name

@@ -36,7 +36,7 @@ class SapHanaLinkedService(LinkedService):
      Expression with resultType string).
     :type user_name: object
     :param password: Password to access the SAP HANA server.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -56,7 +56,7 @@ class SapHanaLinkedService(LinkedService):
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

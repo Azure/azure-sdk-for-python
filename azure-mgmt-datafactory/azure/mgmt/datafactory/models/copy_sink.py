@@ -60,6 +60,7 @@ class CopySink(Model):
     }
 
     def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None):
+        super(CopySink, self).__init__()
         self.additional_properties = additional_properties
         self.write_batch_size = write_batch_size
         self.write_batch_timeout = write_batch_timeout

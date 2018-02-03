@@ -58,6 +58,7 @@ class CopySource(Model):
     }
 
     def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None):
+        super(CopySource, self).__init__()
         self.additional_properties = additional_properties
         self.source_retry_count = source_retry_count
         self.source_retry_wait = source_retry_wait

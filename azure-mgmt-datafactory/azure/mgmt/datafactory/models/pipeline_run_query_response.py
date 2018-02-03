@@ -32,5 +32,6 @@ class PipelineRunQueryResponse(Model):
     }
 
     def __init__(self, value, continuation_token=None):
+        super(PipelineRunQueryResponse, self).__init__()
         self.value = value
         self.continuation_token = continuation_token

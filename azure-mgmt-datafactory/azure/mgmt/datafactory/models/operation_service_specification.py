@@ -29,5 +29,6 @@ class OperationServiceSpecification(Model):
     }
 
     def __init__(self, log_specifications=None, metric_specifications=None):
+        super(OperationServiceSpecification, self).__init__()
         self.log_specifications = log_specifications
         self.metric_specifications = metric_specifications

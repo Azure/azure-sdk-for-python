@@ -113,6 +113,7 @@ class SelfHostedIntegrationRuntimeNode(Model):
     }
 
     def __init__(self):
+        super(SelfHostedIntegrationRuntimeNode, self).__init__()
         self.node_name = None
         self.machine_name = None
         self.host_service_uri = None
