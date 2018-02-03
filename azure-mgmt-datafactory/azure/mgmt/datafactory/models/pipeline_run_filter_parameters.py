@@ -45,6 +45,7 @@ class PipelineRunFilterParameters(Model):
     }
 
     def __init__(self, last_updated_after, last_updated_before, continuation_token=None, filters=None, order_by=None):
+        super(PipelineRunFilterParameters, self).__init__()
         self.continuation_token = continuation_token
         self.last_updated_after = last_updated_after
         self.last_updated_before = last_updated_before

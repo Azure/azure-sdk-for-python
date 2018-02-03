@@ -39,5 +39,6 @@ class CopyTranslator(Model):
     }
 
     def __init__(self, additional_properties=None):
+        super(CopyTranslator, self).__init__()
         self.additional_properties = additional_properties
         self.type = None

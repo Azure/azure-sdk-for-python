@@ -32,6 +32,7 @@ class RecurrenceScheduleOccurrence(Model):
     }
 
     def __init__(self, additional_properties=None, day=None, occurrence=None):
+        super(RecurrenceScheduleOccurrence, self).__init__()
         self.additional_properties = additional_properties
         self.day = day
         self.occurrence = occurrence

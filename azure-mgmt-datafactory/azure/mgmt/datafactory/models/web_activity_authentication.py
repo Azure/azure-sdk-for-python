@@ -38,6 +38,7 @@ class WebActivityAuthentication(Model):
     }
 
     def __init__(self, type, pfx=None, username=None, password=None):
+        super(WebActivityAuthentication, self).__init__()
         self.type = type
         self.pfx = pfx
         self.username = username

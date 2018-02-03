@@ -27,5 +27,6 @@ class FactoryUpdateParameters(Model):
     }
 
     def __init__(self, tags=None, identity=None):
+        super(FactoryUpdateParameters, self).__init__()
         self.tags = tags
         self.identity = identity

@@ -50,6 +50,7 @@ class IntegrationRuntimeStatus(Model):
     }
 
     def __init__(self, additional_properties=None):
+        super(IntegrationRuntimeStatus, self).__init__()
         self.additional_properties = additional_properties
         self.state = None
         self.type = None

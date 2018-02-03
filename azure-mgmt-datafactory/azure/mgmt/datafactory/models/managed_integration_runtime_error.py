@@ -43,6 +43,7 @@ class ManagedIntegrationRuntimeError(Model):
     }
 
     def __init__(self):
+        super(ManagedIntegrationRuntimeError, self).__init__()
         self.time = None
         self.code = None
         self.parameters = None

@@ -30,6 +30,10 @@ class SalesforceSource(CopySource):
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
+    :param read_behavior: The read behavior for the operation. Default is
+     Query. Possible values include: 'Query', 'QueryAll'
+    :type read_behavior: str or
+     ~azure.mgmt.datafactory.models.SalesforceSourceReadBehavior
     """
 
     _validation = {
@@ -42,9 +46,11 @@ class SalesforceSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
+        'read_behavior': {'key': 'readBehavior', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None):
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None, read_behavior=None):
         super(SalesforceSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
         self.query = query
+        self.read_behavior = read_behavior
         self.type = 'SalesforceSource'

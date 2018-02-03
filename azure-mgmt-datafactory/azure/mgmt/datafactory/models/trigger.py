@@ -53,6 +53,7 @@ class Trigger(Model):
     }
 
     def __init__(self, additional_properties=None, description=None):
+        super(Trigger, self).__init__()
         self.additional_properties = additional_properties
         self.description = description
         self.runtime_state = None

@@ -37,4 +37,5 @@ class Expression(Model):
     type = "Expression"
 
     def __init__(self, value):
+        super(Expression, self).__init__()
         self.value = value
