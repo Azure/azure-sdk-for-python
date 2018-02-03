@@ -21,7 +21,8 @@ class ChaosContext(Model):
     context about the specific run.
     .
 
-    :param map:
+    :param map: Describes a map that contains a collection of
+     ChaosContextMapItem's.
     :type map: object
     """
 

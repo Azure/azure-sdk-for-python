@@ -17,11 +17,13 @@ class ExecutingFaultsChaosEvent(ChaosEvent):
     faults for an iteration. This Chaos event contains the details of the
     faults as a list of strings.
 
-    :param time_stamp_utc:
+    :param time_stamp_utc: The UTC timestamp when this Chaos event was
+     generated.
     :type time_stamp_utc: datetime
     :param kind: Constant filled by server.
     :type kind: str
-    :param faults:
+    :param faults: List of string description of the faults that Chaos decided
+     to execute in an iteration.
     :type faults: list[str]
     """
 

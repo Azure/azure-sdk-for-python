@@ -15,25 +15,38 @@ from msrest.serialization import Model
 class ApplicationUpgradeProgressInfo(Model):
     """Describes the parameters for an application upgrade.
 
-    :param name:
+    :param name: The name of the target application, including the 'fabric:'
+     URI scheme.
     :type name: str
-    :param type_name:
+    :param type_name: The application type name as defined in the application
+     manifest.
     :type type_name: str
-    :param target_application_type_version:
+    :param target_application_type_version: The target application type
+     version (found in the application manifest) for the application upgrade.
     :type target_application_type_version: str
-    :param upgrade_domains:
+    :param upgrade_domains: List of upgrade domains and their statuses.
     :type upgrade_domains: list[~azure.servicefabric.models.UpgradeDomainInfo]
-    :param upgrade_state: Possible values include: 'Invalid',
-     'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
-     'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str or ~azure.servicefabric.models.enum
-    :param next_upgrade_domain:
+    :param upgrade_state: The state of the upgrade domain. Possible values
+     include: 'Invalid', 'RollingBackInProgress', 'RollingBackCompleted',
+     'RollingForwardPending', 'RollingForwardInProgress',
+     'RollingForwardCompleted', 'Failed'
+    :type upgrade_state: str or ~azure.servicefabric.models.UpgradeState
+    :param next_upgrade_domain: The name of the next upgrade domain to be
+     processed.
     :type next_upgrade_domain: str
-    :param rolling_upgrade_mode: Possible values include: 'Invalid',
-     'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
-     "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
-    :param upgrade_description:
+    :param rolling_upgrade_mode: The mode used to monitor health during a
+     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
+    :param upgrade_description: Describes the parameters for an application
+     upgrade. Please note that upgrade description replaces the existing
+     application description. This means that if the parameters are not
+     specified, the existing parameters on the applications will be overwritten
+     with the empty parameters list. This would results in application using
+     the default value of the parameters from the application manifest. If you
+     do not want to change any existing parameter values, please get the
+     application parameters first using the GetApplicationInfo query and then
+     supply those values as Parameters in this ApplicationUpgradeDescription.
     :type upgrade_description:
      ~azure.servicefabric.models.ApplicationUpgradeDescription
     :param upgrade_duration_in_milliseconds: The estimated total amount of
@@ -42,10 +55,12 @@ class ApplicationUpgradeProgressInfo(Model):
     :param upgrade_domain_duration_in_milliseconds: The estimated total amount
      of time spent processing the current upgrade domain.
     :type upgrade_domain_duration_in_milliseconds: str
-    :param unhealthy_evaluations:
+    :param unhealthy_evaluations: List of health evaluations that resulted in
+     the current aggregated health state.
     :type unhealthy_evaluations:
      list[~azure.servicefabric.models.HealthEvaluationWrapper]
-    :param current_upgrade_domain_progress:
+    :param current_upgrade_domain_progress: Information about the current
+     in-progress upgrade domain.
     :type current_upgrade_domain_progress:
      ~azure.servicefabric.models.CurrentUpgradeDomainProgressInfo
     :param start_timestamp_utc: The estimated UTC datetime when the upgrade
@@ -54,10 +69,13 @@ class ApplicationUpgradeProgressInfo(Model):
     :param failure_timestamp_utc: The estimated UTC datetime when the upgrade
      failed and FailureAction was executed.
     :type failure_timestamp_utc: str
-    :param failure_reason: Possible values include: 'None', 'Interrupted',
-     'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str or ~azure.servicefabric.models.enum
-    :param upgrade_domain_progress_at_failure:
+    :param failure_reason: The cause of an upgrade failure that resulted in
+     FailureAction being executed. Possible values include: 'None',
+     'Interrupted', 'HealthCheck', 'UpgradeDomainTimeout',
+     'OverallUpgradeTimeout'
+    :type failure_reason: str or ~azure.servicefabric.models.FailureReason
+    :param upgrade_domain_progress_at_failure: Information about the upgrade
+     domain progress at the time of upgrade failure.
     :type upgrade_domain_progress_at_failure:
      ~azure.servicefabric.models.FailureUpgradeDomainProgressInfo
     :param upgrade_status_details: Additional detailed information about the

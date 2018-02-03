@@ -20,7 +20,8 @@ class ChaosEvent(Model):
     StoppedChaosEvent, TestErrorChaosEvent, ValidationFailedChaosEvent,
     WaitingChaosEvent
 
-    :param time_stamp_utc:
+    :param time_stamp_utc: The UTC timestamp when this Chaos event was
+     generated.
     :type time_stamp_utc: datetime
     :param kind: Constant filled by server.
     :type kind: str

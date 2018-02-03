@@ -22,7 +22,7 @@ class NodeImpact(Model):
     :type node_name: str
     :param impact_level: The level of impact expected. Possible values
      include: 'Invalid', 'None', 'Restart', 'RemoveData', 'RemoveNode'
-    :type impact_level: str or ~azure.servicefabric.models.enum
+    :type impact_level: str or ~azure.servicefabric.models.ImpactLevel
     """
 
     _validation = {

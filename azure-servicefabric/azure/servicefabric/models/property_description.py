@@ -15,11 +15,12 @@ from msrest.serialization import Model
 class PropertyDescription(Model):
     """Description of a Service Fabric property.
 
-    :param property_name:
+    :param property_name: The name of the Service Fabric property.
     :type property_name: str
-    :param custom_type_id:
+    :param custom_type_id: The property's custom type id. Using this property,
+     the user is able to tag the type of the value of the property.
     :type custom_type_id: str
-    :param value:
+    :param value: Describes a Service Fabric property value.
     :type value: ~azure.servicefabric.models.PropertyValue
     """
 

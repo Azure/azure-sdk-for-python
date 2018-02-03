@@ -18,7 +18,7 @@ class ImageStoreContent(Model):
     :param store_files: The list of image store file info objects represents
      files found under the given image store relative path.
     :type store_files: list[~azure.servicefabric.models.FileInfo]
-    :param store_folders: The list of image store folder info objectes
+    :param store_folders: The list of image store folder info objects
      represents subfolders found under the given image store relative path.
     :type store_folders: list[~azure.servicefabric.models.FolderInfo]
     """

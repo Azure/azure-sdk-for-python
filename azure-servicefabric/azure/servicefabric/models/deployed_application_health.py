@@ -16,21 +16,31 @@ class DeployedApplicationHealth(EntityHealth):
     """Information about the health of an application deployed on a Service Fabric
     node.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
+    :param aggregated_health_state: The HealthState representing the
+     aggregated health state of the entity computed by Health Manager.
+     The health evaluation of the entity reflects all events reported on the
+     entity and its children (if any).
+     The aggregation is done by applying the desired health policy.
+     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.
     :type health_events: list[~azure.servicefabric.models.HealthEvent]
-    :param unhealthy_evaluations:
+    :param unhealthy_evaluations: The unhealthy evaluations that show why the
+     current aggregated health state was returned by Health Manager.
     :type unhealthy_evaluations:
      list[~azure.servicefabric.models.HealthEvaluationWrapper]
-    :param health_statistics:
+    :param health_statistics: Shows the health statistics for all children
+     types of the queried entity.
     :type health_statistics: ~azure.servicefabric.models.HealthStatistics
-    :param name:
+    :param name: Name of the application deployed on the node whose health
+     information is described by this object.
     :type name: str
-    :param node_name:
+    :param node_name: Name of the node where this application is deployed.
     :type node_name: str
-    :param deployed_service_package_health_states:
+    :param deployed_service_package_health_states: Deployed service package
+     health states for the current deployed application as found in the health
+     store.
     :type deployed_service_package_health_states:
      list[~azure.servicefabric.models.DeployedServicePackageHealthState]
     """

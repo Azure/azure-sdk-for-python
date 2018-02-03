@@ -17,9 +17,11 @@ class NodeDeactivationTaskId(Model):
 
     :param id: Value of the task id.
     :type id: str
-    :param node_deactivation_task_type: Possible values include: 'Invalid',
-     'Infrastructure', 'Repair', 'Client'
-    :type node_deactivation_task_type: str or ~azure.servicefabric.models.enum
+    :param node_deactivation_task_type: The type of the task that performed
+     the node deactivation. Following are the possible values. Possible values
+     include: 'Invalid', 'Infrastructure', 'Repair', 'Client'
+    :type node_deactivation_task_type: str or
+     ~azure.servicefabric.models.NodeDeactivationTaskType
     """
 
     _attribute_map = {

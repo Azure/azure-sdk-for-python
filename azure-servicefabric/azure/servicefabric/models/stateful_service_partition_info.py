@@ -15,13 +15,17 @@ from .service_partition_info import ServicePartitionInfo
 class StatefulServicePartitionInfo(ServicePartitionInfo):
     """Information about a partition of a stateful Service Fabric service..
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or ~azure.servicefabric.models.enum
-    :param partition_status: Possible values include: 'Invalid', 'Ready',
-     'NotReady', 'InQuorumLoss', 'Reconfiguring', 'Deleting'
-    :type partition_status: str or ~azure.servicefabric.models.enum
-    :param partition_information:
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param partition_status: The status of the service fabric service
+     partition. Possible values include: 'Invalid', 'Ready', 'NotReady',
+     'InQuorumLoss', 'Reconfiguring', 'Deleting'
+    :type partition_status: str or
+     ~azure.servicefabric.models.ServicePartitionStatus
+    :param partition_information: Information about the partition identity,
+     partitioning scheme and keys supported by it.
     :type partition_information:
      ~azure.servicefabric.models.PartitionInformation
     :param service_kind: Constant filled by server.
@@ -35,7 +39,11 @@ class StatefulServicePartitionInfo(ServicePartitionInfo):
      returns the duration since it has been in that state. This field is using
      ISO8601 format for specifying the duration.
     :type last_quorum_loss_duration: timedelta
-    :param current_configuration_epoch:
+    :param current_configuration_epoch: An Epoch is a configuration number for
+     the partition as a whole. When the configuration of the replica set
+     changes, for example when the Primary replica changes, the operations that
+     are replicated from the new Primary replica are said to be a new Epoch
+     from the ones which were sent by the old Primary replica.
     :type current_configuration_epoch: ~azure.servicefabric.models.Epoch
     """
 

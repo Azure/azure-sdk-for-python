@@ -19,8 +19,10 @@ class ServiceLoadMetricDescription(Model):
      during runtime, the load metric name should match the name that is
      specified in Name exactly. Note that metric names are case sensitive.
     :type name: str
-    :param weight: Possible values include: 'Zero', 'Low', 'Medium', 'High'
-    :type weight: str or ~azure.servicefabric.models.enum
+    :param weight: The service load metric relative weight, compared to other
+     metrics configured for this service, as a number. Possible values include:
+     'Zero', 'Low', 'Medium', 'High'
+    :type weight: str or ~azure.servicefabric.models.ServiceLoadMetricWeight
     :param primary_default_load: Used only for Stateful services. The default
      amount of load, as a number, that this service creates for this metric
      when it is a Primary replica.

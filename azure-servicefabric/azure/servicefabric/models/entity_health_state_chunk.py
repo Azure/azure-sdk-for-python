@@ -16,9 +16,10 @@ class EntityHealthStateChunk(Model):
     """A base type for the health state chunk of various entities in the cluster.
     It contains the aggregated health state.
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or ~azure.servicefabric.models.enum
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
     """
 
     _attribute_map = {

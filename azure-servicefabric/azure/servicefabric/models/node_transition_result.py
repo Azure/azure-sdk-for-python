@@ -19,7 +19,8 @@ class NodeTransitionResult(Model):
     :param error_code: If OperationState is Completed, this is 0.  If
      OperationState is Faulted, this is an error code indicating the reason.
     :type error_code: int
-    :param node_result:
+    :param node_result: Contains information about a node that was targeted by
+     a user-induced operation.
     :type node_result: ~azure.servicefabric.models.NodeResult
     """
 

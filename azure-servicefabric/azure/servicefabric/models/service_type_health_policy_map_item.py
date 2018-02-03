@@ -19,7 +19,8 @@ class ServiceTypeHealthPolicyMapItem(Model):
     :param key: The key of the service type health policy map item. This is
      the name of the service type.
     :type key: str
-    :param value:
+    :param value: The value of the service type health policy map item. This
+     is the ServiceTypeHealthPolicy for this service type.
     :type value: ~azure.servicefabric.models.ServiceTypeHealthPolicy
     """
 

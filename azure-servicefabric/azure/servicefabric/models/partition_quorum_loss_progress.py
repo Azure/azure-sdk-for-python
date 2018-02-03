@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class PartitionQuorumLossProgress(Model):
     """Information about a partition quorum loss user-induced operation.
 
-    :param state: Possible values include: 'Invalid', 'Running',
-     'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or ~azure.servicefabric.models.enum
-    :param invoke_quorum_loss_result:
+    :param state: The state of the operation. Possible values include:
+     'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',
+     'ForceCancelled'
+    :type state: str or ~azure.servicefabric.models.OperationState
+    :param invoke_quorum_loss_result: Represents information about an
+     operation in a terminal state (Completed or Faulted).
     :type invoke_quorum_loss_result:
      ~azure.servicefabric.models.InvokeQuorumLossResult
     """

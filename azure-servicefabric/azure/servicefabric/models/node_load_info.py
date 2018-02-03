@@ -16,7 +16,8 @@ class NodeLoadInfo(Model):
     """Information about load on a Service Fabric node. It holds a summary of all
     metrics and their load on a node.
 
-    :param node_name:
+    :param node_name: Name of the node for which the load information is
+     provided by this object.
     :type node_name: str
     :param node_load_metric_information: List that contains metrics and their
      load information on this node.

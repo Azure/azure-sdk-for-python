@@ -16,19 +16,20 @@ class ChaosReport(Model):
     """Contains detailed Chaos report.
     .
 
-    :param chaos_parameters:
+    :param chaos_parameters: Defines all the parameters to configure a Chaos
+     run.
     :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
     :param status: Current status of the Chaos run.
-     - Invalid - Indicates an invalid Chaos status. All Service Fabric
-     enumerations have the invalid type.
-     The valus is zero.
-     - Running - Indicates that Chaos is not stopped.
-     - Stopped - Indicates that Chaos is not scheduling futher faults. Possible
-     values include: 'Invalid', 'Running', 'Stopped'
-    :type status: str or ~azure.servicefabric.models.enum
-    :param continuation_token:
+     . Possible values include: 'Invalid', 'Running', 'Stopped'
+    :type status: str or ~azure.servicefabric.models.Status
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results then the
+     continuation token is not included in the response.
     :type continuation_token: str
-    :param history:
+    :param history: List of ChaosEvent's that meet the user-supplied criteria.
     :type history: list[~azure.servicefabric.models.ChaosEventWrapper]
     """
 

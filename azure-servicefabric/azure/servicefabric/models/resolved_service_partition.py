@@ -15,12 +15,13 @@ from msrest.serialization import Model
 class ResolvedServicePartition(Model):
     """Information about a service partition and its associated endpoints.
 
-    :param name:
+    :param name: The full name of the service with 'fabric:' URI scheme.
     :type name: str
-    :param partition_information:
+    :param partition_information: A representation of the resolved partition.
     :type partition_information:
      ~azure.servicefabric.models.PartitionInformation
-    :param endpoints:
+    :param endpoints: List of resolved service endpoints of a service
+     partition.
     :type endpoints: list[~azure.servicefabric.models.ResolvedServiceEndpoint]
     :param version: The version of this resolved service partition result.
      This version should be passed in the next time the ResolveService call is
