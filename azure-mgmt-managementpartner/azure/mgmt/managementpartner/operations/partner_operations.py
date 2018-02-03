@@ -46,9 +46,10 @@ class PartnerOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PartnerResponse or ClientRawResponse if raw=true
-        :rtype: ~partner.models.PartnerResponse or
+        :rtype: ~managementpartner.models.PartnerResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`ErrorException<partner.models.ErrorException>`
+        :raises:
+         :class:`ErrorException<managementpartner.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
@@ -103,9 +104,10 @@ class PartnerOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PartnerResponse or ClientRawResponse if raw=true
-        :rtype: ~partner.models.PartnerResponse or
+        :rtype: ~managementpartner.models.PartnerResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`ErrorException<partner.models.ErrorException>`
+        :raises:
+         :class:`ErrorException<managementpartner.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
@@ -160,9 +162,10 @@ class PartnerOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: PartnerResponse or ClientRawResponse if raw=true
-        :rtype: ~partner.models.PartnerResponse or
+        :rtype: ~managementpartner.models.PartnerResponse or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`ErrorException<partner.models.ErrorException>`
+        :raises:
+         :class:`ErrorException<managementpartner.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
@@ -218,7 +221,8 @@ class PartnerOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`ErrorException<partner.models.ErrorException>`
+        :raises:
+         :class:`ErrorException<managementpartner.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'

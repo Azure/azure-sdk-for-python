@@ -1,0 +1,100 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Charset: [utf-8]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+      return-client-request-id: ['true']
+      x-client-CPU: [x86]
+      x-client-OS: [win32]
+      x-client-SKU: [Python]
+      x-client-Ver: [0.5.0]
+    method: GET
+    uri: https://login.windows.net/common/discovery/instance?authorization_endpoint=https%3A%2F%2Flogin.windows-ppe.net%2F%2Foauth2%2Fauthorize&api-version=1.0
+  response:
+    body: {string: '{"tenant_discovery_endpoint":"https://login.windows-ppe.net/common/.well-known/openid-configuration"}'}
+    headers:
+      access-control-allow-methods: ['GET, OPTIONS']
+      access-control-allow-origin: ['*']
+      cache-control: [private]
+      content-length: ['101']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 23:20:00 GMT']
+      p3p: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      server: [Microsoft-IIS/8.5]
+      set-cookie: [esctx=AQABAAAAAABHh4kmS_aKT5XrjzxRAtHz8DCHmKUA4EDwikw8CU70nY2bqycVqyZzP_SRoxcBXuxbYyYnBFAHZo5CEHBnO6Ii8Ie7NuENV2dLRSzNCdRSf2rhlHPUfBN1spyXJ7uxIr3vshtrLN-5Dw4rygCRfxGO67xqdBMn3fdcRywbKX_esF34nLiOJbiqQtHeRfbbDnQgAA;
+          domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=corp;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: grant_type=client_credentials&client_id=93edd3eb-d36e-4286-b435-a1eaab2ac1ac&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_secret=7jXpHc%2FztQTDP3K9Ygk1Zsj7gpfPcvAy%2F%2Fu0OEds2Qw%3D
+    headers:
+      Accept: ['*/*']
+      Accept-Charset: [utf-8]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['197']
+      User-Agent: [python-requests/2.18.4]
+      content-type: [application/x-www-form-urlencoded]
+      return-client-request-id: ['true']
+      x-client-CPU: [x86]
+      x-client-OS: [win32]
+      x-client-SKU: [Python]
+      x-client-Ver: [0.5.0]
+    method: POST
+    uri: https://login.windows-ppe.net//00000000-0000-0000-0000-000000000000/oauth2/token?api-version=1.0
+  response:
+    body: {string: '{"token_type":"Bearer","expires_in":"3599","ext_expires_in":"262800","expires_on":"1517617201","not_before":"1517613301","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImFGSTdlVlZwVl8yOFNZblJsMWRiTmI4UVZMQSIsImtpZCI6ImFGSTdlVlZwVl8yOFNZblJsMWRiTmI4UVZMQSJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLXBwZS5uZXQvMzQyZmIyNTctYzlhMS00ZTkzLWJmNGYtYWYyMDYwZTMxNzU0LyIsImlhdCI6MTUxNzYxMzMwMSwibmJmIjoxNTE3NjEzMzAxLCJleHAiOjE1MTc2MTcyMDEsImFpbyI6IjQyUmdZQWorcnJCTXgxY2lzdEZ4VWJTRzhidGFBQT09IiwiYXBwaWQiOiI5M2VkZDNlYi1kMzZlLTQyODYtYjQzNS1hMWVhYWIyYWMxYWMiLCJhcHBpZGFjciI6IjEiLCJlX2V4cCI6MjYyODAwLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLXBwZS5uZXQvMzQyZmIyNTctYzlhMS00ZTkzLWJmNGYtYWYyMDYwZTMxNzU0LyIsIm9pZCI6Ijk3NWYyOTYxLWY3ODAtNDM3NS1iNmM4LWNlMGI5ZDExNjc5MiIsInN1YiI6Ijk3NWYyOTYxLWY3ODAtNDM3NS1iNmM4LWNlMGI5ZDExNjc5MiIsInRpZCI6IjM0MmZiMjU3LWM5YTEtNGU5My1iZjRmLWFmMjA2MGUzMTc1NCIsInV0aSI6IllSZEFFdFhURzBPaHRrZ1lVNThBQUEiLCJ2ZXIiOiIxLjAifQ.Y2uUb5BgeRpZsT0RPQaSusuxZRrpJOlhDirmNIJRj6_Ads3KwQo52fpKLqgA-3ta5yMX2x31HYOuhNcNgJPru52Nmmr058J8iyzXE83gh1FRsECF192Vn8joRQ5FMxfTfPo0I0e8q3UqDNXAXg3iGfRsI9Idq2AqGTzzl31O-x6UHUfhHc2oiv0vEThE-EF4HC2CUlnKV_2qjGa44mcPOIIioBVFHIO4V_U7n-ifoK5Y6qYLhOKuva7_PwHPuou_2EJrER43BaQpPHp_qa6VDv2d_BejccAoZmsZ1Out2IV7hQ0ct1RjQYVpgGYBuQp6oJdfRnVyO-0OUDqUvaH9FA"}'}
+    headers:
+      cache-control: ['no-cache, no-store']
+      content-length: ['1387']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 23:20:00 GMT']
+      expires: ['-1']
+      p3p: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      set-cookie: [stsservicecookie=estsppe; path=/; secure; HttpOnly]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-clitelem: ['1,0,0,,']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
+          msrest_azure/0.4.21 aceprovisioningmanagementpartnerapi/2018-02-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/providers/Microsoft.ManagementPartner/partners/123456?api-version=2018-02-01
+  response:
+    body: {string: '{"id":"/providers/microsoft.managementpartner/partners/123456","type":"Microsoft.ManagementPartner/partners","name":"123456","etag":5,"properties":{"partnerId":"123456","tenantId":"00000000-0000-0000-0000-000000000000","objectId":"975f2961-f780-4375-b6c8-ce0b9d116792","version":5,"updatedTime":"2018-02-02T23:20:02.1989414Z","createdTime":"2018-02-02T23:06:21.0990825Z","state":"Active"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['389']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 23:20:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [a4440a29-2cc8-4db0-a786-89f7881deb07]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-content-type-options: [nosniff]
+      x-gsm: ['8.1.0.43 (AD-CAB-Provisioning:dev.cec5c54e2.180201-1306)']
+      x-ms-ratelimit-remaining-tenant-writes: ['1199']
+    status: {code: 200, message: OK}
+version: 1

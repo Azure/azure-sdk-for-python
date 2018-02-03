@@ -5,10 +5,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .ace_provisioning_gsmapi import ACEProvisioningGSMAPI
+from .ace_provisioning_management_partner_api import ACEProvisioningManagementPartnerAPI
 from .version import VERSION
 
-__all__ = ['ACEProvisioningGSMAPI']
+__all__ = ['ACEProvisioningManagementPartnerAPI']
 
 __version__ = VERSION
 

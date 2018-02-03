@@ -13,7 +13,7 @@ class Error(Model):
     """this is the management partner operations error.
 
     :param error: this is the ExtendedErrorInfo property
-    :type error: ~partner.models.ExtendedErrorInfo
+    :type error: ~managementpartner.models.ExtendedErrorInfo
     """
 
     _attribute_map = {

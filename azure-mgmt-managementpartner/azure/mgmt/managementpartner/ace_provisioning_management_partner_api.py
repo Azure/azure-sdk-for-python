@@ -14,8 +14,8 @@ from .operations.operation_operations import OperationOperations
 from . import models
 
 
-class ACEProvisioningGSMAPIConfiguration(AzureConfiguration):
-    """Configuration for ACEProvisioningGSMAPI
+class ACEProvisioningManagementPartnerAPIConfiguration(AzureConfiguration):
+    """Configuration for ACEProvisioningManagementPartnerAPI
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -31,26 +31,26 @@ class ACEProvisioningGSMAPIConfiguration(AzureConfiguration):
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
-            base_url = 'https://api-dogfood.resources.windows-int.net'
+            base_url = 'https://management.azure.com'
 
-        super(ACEProvisioningGSMAPIConfiguration, self).__init__(base_url)
+        super(ACEProvisioningManagementPartnerAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('aceprovisioninggsmapi/{}'.format(VERSION))
+        self.add_user_agent('aceprovisioningmanagementpartnerapi/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
 
 
-class ACEProvisioningGSMAPI(object):
-    """This API describe ACE Provisioning GSM
+class ACEProvisioningManagementPartnerAPI(object):
+    """This API describe ACE Provisioning ManagementPartner
 
     :ivar config: Configuration for client.
-    :vartype config: ACEProvisioningGSMAPIConfiguration
+    :vartype config: ACEProvisioningManagementPartnerAPIConfiguration
 
     :ivar partner: Partner operations
-    :vartype partner: partner.operations.PartnerOperations
+    :vartype partner: managementpartner.operations.PartnerOperations
     :ivar operation: Operation operations
-    :vartype operation: partner.operations.OperationOperations
+    :vartype operation: managementpartner.operations.OperationOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -61,7 +61,7 @@ class ACEProvisioningGSMAPI(object):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = ACEProvisioningGSMAPIConfiguration(credentials, base_url)
+        self.config = ACEProvisioningManagementPartnerAPIConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

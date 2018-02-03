@@ -18,7 +18,7 @@ except ImportError:
     cmdclass = {}
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-mgmt-partner"
+PACKAGE_NAME = "azure-mgmt-managementpartner"
 PACKAGE_PPRINT_NAME = "ManagementPartner Management"
 
 # a-b-c => a/b/c
