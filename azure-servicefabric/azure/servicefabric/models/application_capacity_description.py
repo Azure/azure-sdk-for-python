@@ -35,7 +35,8 @@ class ApplicationCapacityDescription(Model):
      nodes. By default, the value of this property is zero and it means that
      the services can be placed on any node. Default value: 0 .
     :type maximum_nodes: long
-    :param application_metrics:
+    :param application_metrics: List of application capacity metric
+     description.
     :type application_metrics:
      list[~azure.servicefabric.models.ApplicationMetricDescription]
     """

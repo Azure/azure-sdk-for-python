@@ -19,7 +19,8 @@ class InvokeDataLossResult(Model):
     :param error_code: If OperationState is Completed, this is 0.  If
      OperationState is Faulted, this is an error code indicating the reason.
     :type error_code: int
-    :param selected_partition:
+    :param selected_partition: This class returns information about the
+     partition that the user-induced operation acted upon.
     :type selected_partition: ~azure.servicefabric.models.SelectedPartition
     """
 

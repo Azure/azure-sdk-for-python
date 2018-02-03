@@ -15,25 +15,40 @@ from msrest.serialization import Model
 class ApplicationInfo(Model):
     """Information about a Service Fabric application.
 
-    :param id:
+    :param id: The identity of the application. This is an encoded
+     representation of the application name. This is used in the REST APIs to
+     identify the application resource.
+     Starting in version 6.0, hierarchical names are delimited with the "\\~"
+     character. For example, if the application name is "fabric:/myapp/app1",
+     the application identity would be "myapp\\~app1" in 6.0+ and "myapp/app1"
+     in previous versions.
     :type id: str
-    :param name:
+    :param name: The name of the application, including the 'fabric:' URI
+     scheme.
     :type name: str
-    :param type_name:
+    :param type_name: The application type name as defined in the application
+     manifest.
     :type type_name: str
-    :param type_version:
+    :param type_version: The version of the application type as defined in the
+     application manifest.
     :type type_version: str
-    :param status: Possible values include: 'Invalid', 'Ready', 'Upgrading',
-     'Creating', 'Deleting', 'Failed'
-    :type status: str or ~azure.servicefabric.models.enum
-    :param parameters:
+    :param status: The status of the application.
+     . Possible values include: 'Invalid', 'Ready', 'Upgrading', 'Creating',
+     'Deleting', 'Failed'
+    :type status: str or ~azure.servicefabric.models.ApplicationStatus
+    :param parameters: List of application parameters with overridden values
+     from their default values specified in the application manifest.
     :type parameters: list[~azure.servicefabric.models.ApplicationParameter]
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or ~azure.servicefabric.models.enum
-    :param application_definition_kind: Possible values include: 'Invalid',
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param application_definition_kind: The mechanism used to define a Service
+     Fabric application.
+     . Possible values include: 'Invalid',
      'ServiceFabricApplicationDescription', 'Compose'
-    :type application_definition_kind: str or ~azure.servicefabric.models.enum
+    :type application_definition_kind: str or
+     ~azure.servicefabric.models.ApplicationDefinitionKind
     """
 
     _attribute_map = {

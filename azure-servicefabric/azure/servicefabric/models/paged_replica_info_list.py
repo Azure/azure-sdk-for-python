@@ -18,9 +18,14 @@ class PagedReplicaInfoList(Model):
     of results can be obtained by executing the same query with the
     continuation token provided in this list.
 
-    :param continuation_token:
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results then the
+     continuation token is not included in the response.
     :type continuation_token: str
-    :param items:
+    :param items: List of replica information.
     :type items: list[~azure.servicefabric.models.ReplicaInfo]
     """
 

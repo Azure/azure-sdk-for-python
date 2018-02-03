@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class UpgradeDomainInfo(Model):
     """Information about an upgrade domain.
 
-    :param name:
+    :param name: The name of the upgrade domain
     :type name: str
-    :param state: Possible values include: 'Invalid', 'Pending', 'InProgress',
-     'Completed'
-    :type state: str or ~azure.servicefabric.models.enum
+    :param state: The state of the upgrade domain. Possible values include:
+     'Invalid', 'Pending', 'InProgress', 'Completed'
+    :type state: str or ~azure.servicefabric.models.UpgradeDomainState
     """
 
     _attribute_map = {

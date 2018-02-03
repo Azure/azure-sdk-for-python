@@ -16,7 +16,11 @@ class NamedPartitionInformation(PartitionInformation):
     """Describes the partition information for the name as a string that is based
     on partition schemes.
 
-    :param id:
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     partition. This is a randomly generated GUID when the service was created.
+     The partition id is unique and does not change for the lifetime of the
+     service. If the same service was deleted and recreated the ids of its
+     partitions would be different.
     :type id: str
     :param service_partition_kind: Constant filled by server.
     :type service_partition_kind: str

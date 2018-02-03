@@ -17,18 +17,23 @@ class ServiceFromTemplateDescription(Model):
     defined in the application manifest.
     .
 
-    :param application_name:
+    :param application_name: The name of the application, including the
+     'fabric:' URI scheme.
     :type application_name: str
-    :param service_name:
+    :param service_name: The full name of the service with 'fabric:' URI
+     scheme.
     :type service_name: str
-    :param service_type_name:
+    :param service_type_name: Name of the service type as specified in the
+     service manifest.
     :type service_type_name: str
-    :param initialization_data:
+    :param initialization_data: The initialization data for the newly created
+     service instance.
     :type initialization_data: list[int]
-    :param service_package_activation_mode: Possible values include:
+    :param service_package_activation_mode: The activation mode of service
+     package to be used for a service. Possible values include:
      'SharedProcess', 'ExclusiveProcess'
     :type service_package_activation_mode: str or
-     ~azure.servicefabric.models.enum
+     ~azure.servicefabric.models.ServicePackageActivationMode
     :param service_dns_name: The DNS name of the service. It requires the DNS
      system service to be enabled in Service Fabric cluster.
     :type service_dns_name: str

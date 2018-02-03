@@ -16,9 +16,11 @@ class ApplicationHealthPolicyMapItem(Model):
     """Defines an item in ApplicationHealthPolicyMap.
     .
 
-    :param key:
+    :param key: The key of the application health policy map item. This is the
+     name of the application.
     :type key: str
-    :param value:
+    :param value: The value of the application health policy map item. This is
+     the ApplicationHealthPolicy for this application.
     :type value: ~azure.servicefabric.models.ApplicationHealthPolicy
     """
 

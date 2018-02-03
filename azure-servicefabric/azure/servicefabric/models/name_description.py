@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class NameDescription(Model):
     """Describes a Service Fabric name.
 
-    :param name:
+    :param name: The Service Fabric name, including the 'fabric:' URI scheme.
     :type name: str
     """
 

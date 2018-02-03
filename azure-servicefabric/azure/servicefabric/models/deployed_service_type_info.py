@@ -16,16 +16,25 @@ class DeployedServiceTypeInfo(Model):
     """Information about service type deployed on a node, information such as the
     status of the service type registration on a node.
 
-    :param service_type_name:
+    :param service_type_name: Name of the service type as specified in the
+     service manifest.
     :type service_type_name: str
-    :param service_manifest_name:
+    :param service_manifest_name: The name of the service manifest in which
+     this service type is defined.
     :type service_manifest_name: str
-    :param code_package_name:
+    :param code_package_name: The name of the code package that registered the
+     service type.
     :type code_package_name: str
-    :param status: Possible values include: 'Invalid', 'Disabled', 'Enabled',
-     'Registered'
-    :type status: str or ~azure.servicefabric.models.enum
-    :param service_package_activation_id:
+    :param status: The status of the service type registration on the node.
+     Possible values include: 'Invalid', 'Disabled', 'Enabled', 'Registered'
+    :type status: str or
+     ~azure.servicefabric.models.ServiceTypeRegistrationStatus
+    :param service_package_activation_id: The ActivationId of a deployed
+     service package. If ServicePackageActivationMode specified at the time of
+     creating the service
+     is 'SharedProcess' (or if it is not specified, in which case it defaults
+     to 'SharedProcess'), then value of ServicePackageActivationId
+     is always an empty string.
     :type service_package_activation_id: str
     """
 

@@ -23,7 +23,8 @@ class RestartNodeDescription(Model):
     :param create_fabric_dump: Specify True to create a dump of the fabric
      node process. This is case sensitive. Possible values include: 'False',
      'True'. Default value: "False" .
-    :type create_fabric_dump: str or ~azure.servicefabric.models.enum
+    :type create_fabric_dump: str or
+     ~azure.servicefabric.models.CreateFabricDump
     """
 
     _validation = {

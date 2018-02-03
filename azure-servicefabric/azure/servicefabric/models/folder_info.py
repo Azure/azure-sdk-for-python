@@ -13,10 +13,11 @@ from msrest.serialization import Model
 
 
 class FolderInfo(Model):
-    """Information about a image store folder. It inclues how many files this
+    """Information about a image store folder. It includes how many files this
     folder contains and its image store relative path.
 
-    :param store_relative_path:
+    :param store_relative_path: The remote location within image store. This
+     path is relative to the image store root.
     :type store_relative_path: str
     :param file_count: The number of files from within the image store folder.
     :type file_count: str

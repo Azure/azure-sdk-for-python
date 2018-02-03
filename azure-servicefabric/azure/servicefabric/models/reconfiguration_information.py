@@ -16,15 +16,22 @@ class ReconfigurationInformation(Model):
     """Information about current reconfiguration like phase, type, previous
     configuration role of replica and reconfiguration start date time.
 
-    :param previous_configuration_role: Possible values include: 'Unknown',
-     'None', 'Primary', 'IdleSecondary', 'ActiveSecondary'
-    :type previous_configuration_role: str or ~azure.servicefabric.models.enum
-    :param reconfiguration_phase: Possible values include: 'Unknown', 'None',
-     'Phase0', 'Phase1', 'Phase2', 'Phase3', 'Phase4', 'AbortPhaseZero'
-    :type reconfiguration_phase: str or ~azure.servicefabric.models.enum
-    :param reconfiguration_type: Possible values include: 'Unknown',
-     'SwapPrimary', 'Failover', 'Other'
-    :type reconfiguration_type: str or ~azure.servicefabric.models.enum
+    :param previous_configuration_role: Replica role before reconfiguration
+     started. Possible values include: 'Unknown', 'None', 'Primary',
+     'IdleSecondary', 'ActiveSecondary'
+    :type previous_configuration_role: str or
+     ~azure.servicefabric.models.ReplicaRole
+    :param reconfiguration_phase: Current phase of ongoing reconfiguration. If
+     no reconfiguration is taking place then this value will be "None".
+     Possible values include: 'Unknown', 'None', 'Phase0', 'Phase1', 'Phase2',
+     'Phase3', 'Phase4', 'AbortPhaseZero'
+    :type reconfiguration_phase: str or
+     ~azure.servicefabric.models.ReconfigurationPhase
+    :param reconfiguration_type: Type of current ongoing reconfiguration. If
+     no reconfiguration is taking place then this value will be "None".
+     Possible values include: 'Unknown', 'SwapPrimary', 'Failover', 'Other'
+    :type reconfiguration_type: str or
+     ~azure.servicefabric.models.ReconfigurationType
     :param reconfiguration_start_time_utc: Start time (in UTC) of the ongoing
      reconfiguration. If no reconfiguration is taking place then this value
      will be zero date-time.

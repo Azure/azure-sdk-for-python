@@ -23,27 +23,41 @@ class ApplicationUpgradeDescription(Model):
     GetApplicationInfo query and then supply those values as Parameters in this
     ApplicationUpgradeDescription.
 
-    :param name:
+    :param name: The name of the target application, including the 'fabric:'
+     URI scheme.
     :type name: str
-    :param target_application_type_version:
+    :param target_application_type_version: The target application type
+     version (found in the application manifest) for the application upgrade.
     :type target_application_type_version: str
-    :param parameters:
+    :param parameters: List of application parameters with overridden values
+     from their default values specified in the application manifest.
     :type parameters: list[~azure.servicefabric.models.ApplicationParameter]
-    :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
-     Default value: "Rolling" .
-    :type upgrade_kind: str or ~azure.servicefabric.models.enum
-    :param rolling_upgrade_mode: Possible values include: 'Invalid',
-     'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
-     "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
-    :param upgrade_replica_set_check_timeout_in_seconds:
+    :param upgrade_kind: The kind of upgrade out of the following possible
+     values. Possible values include: 'Invalid', 'Rolling'. Default value:
+     "Rolling" .
+    :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
+    :param rolling_upgrade_mode: The mode used to monitor health during a
+     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
+    :param upgrade_replica_set_check_timeout_in_seconds: The maximum amount of
+     time to block processing of an upgrade domain and prevent loss of
+     availability when there are unexpected issues. When this timeout expires,
+     processing of the upgrade domain will proceed regardless of availability
+     loss issues. The timeout is reset at the start of each upgrade domain.
+     Valid values are between 0 and 42949672925 inclusive. (unsigned 32-bit
+     integer).
     :type upgrade_replica_set_check_timeout_in_seconds: long
-    :param force_restart:
+    :param force_restart: If true, then processes are forcefully restarted
+     during upgrade even when the code version has not changed (the upgrade
+     only changes configuration or data).
     :type force_restart: bool
-    :param monitoring_policy:
+    :param monitoring_policy: Describes the parameters for monitoring an
+     upgrade in Monitored mode.
     :type monitoring_policy:
      ~azure.servicefabric.models.MonitoringPolicyDescription
-    :param application_health_policy:
+    :param application_health_policy: Defines a health policy used to evaluate
+     the health of an application or one of its children entities.
     :type application_health_policy:
      ~azure.servicefabric.models.ApplicationHealthPolicy
     """

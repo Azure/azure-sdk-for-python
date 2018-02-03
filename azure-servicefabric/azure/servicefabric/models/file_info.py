@@ -17,7 +17,7 @@ class FileInfo(Model):
 
     :param file_size: The size of file in bytes.
     :type file_size: str
-    :param file_version:
+    :param file_version: Information about the version of image store file.
     :type file_version: ~azure.servicefabric.models.FileVersion
     :param modified_date: The date and time when the image store file was last
      modified.

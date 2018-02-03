@@ -20,9 +20,12 @@ class UpgradeDomainDeltaNodesCheckHealthEvaluation(HealthEvaluation):
     is Warning or Error.
     .
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
@@ -44,7 +47,9 @@ class UpgradeDomainDeltaNodesCheckHealthEvaluation(HealthEvaluation):
     :param total_count: Total number of upgrade domain nodes in the health
      store.
     :type total_count: long
-    :param unhealthy_evaluations:
+    :param unhealthy_evaluations: List of unhealthy evaluations that led to
+     the aggregated health state. Includes all the unhealthy
+     NodeHealthEvaluation that impacted the aggregated health.
     :type unhealthy_evaluations:
      list[~azure.servicefabric.models.HealthEvaluationWrapper]
     """

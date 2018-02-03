@@ -18,13 +18,18 @@ class PagedPropertyInfoList(Model):
     of results can be obtained by executing the same query with the
     continuation token provided in this list.
 
-    :param continuation_token:
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results then the
+     continuation token is not included in the response.
     :type continuation_token: str
     :param is_consistent: Indicates whether any property under the given name
      has been modified during the enumeration. If there was a modification,
      this property value is false.
     :type is_consistent: bool
-    :param properties:
+    :param properties: List of property information.
     :type properties: list[~azure.servicefabric.models.PropertyInfo]
     """
 
