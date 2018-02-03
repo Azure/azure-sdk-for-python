@@ -67,6 +67,7 @@ class IntegrationRuntimeNodeMonitoringData(Model):
     }
 
     def __init__(self, additional_properties=None):
+        super(IntegrationRuntimeNodeMonitoringData, self).__init__()
         self.additional_properties = additional_properties
         self.node_name = None
         self.available_memory_in_mb = None

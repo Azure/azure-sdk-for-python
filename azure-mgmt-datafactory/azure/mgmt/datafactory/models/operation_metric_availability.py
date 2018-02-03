@@ -28,5 +28,6 @@ class OperationMetricAvailability(Model):
     }
 
     def __init__(self, time_grain=None, blob_duration=None):
+        super(OperationMetricAvailability, self).__init__()
         self.time_grain = time_grain
         self.blob_duration = blob_duration

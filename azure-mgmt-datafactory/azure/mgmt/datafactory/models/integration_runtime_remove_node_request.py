@@ -28,5 +28,6 @@ class IntegrationRuntimeRemoveNodeRequest(Model):
     }
 
     def __init__(self, additional_properties=None, node_name=None):
+        super(IntegrationRuntimeRemoveNodeRequest, self).__init__()
         self.additional_properties = additional_properties
         self.node_name = node_name

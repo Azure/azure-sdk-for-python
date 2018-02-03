@@ -39,7 +39,7 @@ class HttpLinkedService(LinkedService):
     :type user_name: object
     :param password: Password for Basic, Digest, Windows, or ClientCertificate
      with EmbeddedCertData authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param embedded_cert_data: Base64 encoded certificate data for
      ClientCertificate authentication. For on-premises copy with
      ClientCertificate authentication, either CertThumbprint or
@@ -75,7 +75,7 @@ class HttpLinkedService(LinkedService):
         'url': {'key': 'typeProperties.url', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'embedded_cert_data': {'key': 'typeProperties.embeddedCertData', 'type': 'object'},
         'cert_thumbprint': {'key': 'typeProperties.certThumbprint', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},

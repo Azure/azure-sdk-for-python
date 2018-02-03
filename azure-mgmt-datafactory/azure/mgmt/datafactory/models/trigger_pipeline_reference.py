@@ -27,5 +27,6 @@ class TriggerPipelineReference(Model):
     }
 
     def __init__(self, pipeline_reference=None, parameters=None):
+        super(TriggerPipelineReference, self).__init__()
         self.pipeline_reference = pipeline_reference
         self.parameters = parameters

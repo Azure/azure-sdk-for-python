@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class CreateRunResponse(Model):
-    """Response body with a run identifier.
+class SSISPackageLocation(Model):
+    """SSIS package location.
 
-    :param run_id: Identifier of a run.
-    :type run_id: str
+    :param package_path: The SSIS package path.
+    :type package_path: str
     """
 
     _validation = {
-        'run_id': {'required': True},
+        'package_path': {'required': True},
     }
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
+        'package_path': {'key': 'packagePath', 'type': 'str'},
     }
 
-    def __init__(self, run_id):
-        super(CreateRunResponse, self).__init__()
-        self.run_id = run_id
+    def __init__(self, package_path):
+        super(SSISPackageLocation, self).__init__()
+        self.package_path = package_path

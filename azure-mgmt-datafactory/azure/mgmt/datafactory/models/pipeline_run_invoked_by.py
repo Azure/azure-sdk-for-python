@@ -35,5 +35,6 @@ class PipelineRunInvokedBy(Model):
     }
 
     def __init__(self):
+        super(PipelineRunInvokedBy, self).__init__()
         self.name = None
         self.id = None

@@ -33,5 +33,6 @@ class RetryPolicy(Model):
     }
 
     def __init__(self, count=None, interval_in_seconds=None):
+        super(RetryPolicy, self).__init__()
         self.count = count
         self.interval_in_seconds = interval_in_seconds

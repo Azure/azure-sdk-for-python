@@ -40,5 +40,6 @@ class DatasetReference(Model):
     type = "DatasetReference"
 
     def __init__(self, reference_name, parameters=None):
+        super(DatasetReference, self).__init__()
         self.reference_name = reference_name
         self.parameters = parameters

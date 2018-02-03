@@ -35,4 +35,5 @@ class SecretBase(Model):
     }
 
     def __init__(self):
+        super(SecretBase, self).__init__()
         self.type = None

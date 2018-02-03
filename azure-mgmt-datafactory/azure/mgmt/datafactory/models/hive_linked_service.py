@@ -56,7 +56,7 @@ class HiveLinkedService(LinkedService):
     :type username: object
     :param password: The password corresponding to the user name that you
      provided in the Username field
-    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :type password: ~azure.mgmt.datafactory.models.SecureString
     :param http_path: The partial URL corresponding to the Hive server.
     :type http_path: object
     :param enable_ssl: Specifies whether the connections to the server are
@@ -104,7 +104,7 @@ class HiveLinkedService(LinkedService):
         'zoo_keeper_name_space': {'key': 'typeProperties.zooKeeperNameSpace', 'type': 'object'},
         'use_native_query': {'key': 'typeProperties.useNativeQuery', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
         'http_path': {'key': 'typeProperties.httpPath', 'type': 'object'},
         'enable_ssl': {'key': 'typeProperties.enableSsl', 'type': 'object'},
         'trusted_cert_path': {'key': 'typeProperties.trustedCertPath', 'type': 'object'},
