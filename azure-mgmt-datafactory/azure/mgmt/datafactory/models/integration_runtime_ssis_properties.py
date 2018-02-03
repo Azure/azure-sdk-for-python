@@ -22,13 +22,20 @@ class IntegrationRuntimeSsisProperties(Model):
      runtime.
     :type catalog_info:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeSsisCatalogInfo
+    :param license_type: License type for bringing your own license scenario.
+     Possible values include: 'BasePrice', 'LicenseIncluded'
+    :type license_type: str or
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeLicenseType
     """
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'catalog_info': {'key': 'catalogInfo', 'type': 'IntegrationRuntimeSsisCatalogInfo'},
+        'license_type': {'key': 'licenseType', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, catalog_info=None):
+    def __init__(self, additional_properties=None, catalog_info=None, license_type=None):
+        super(IntegrationRuntimeSsisProperties, self).__init__()
         self.additional_properties = additional_properties
         self.catalog_info = catalog_info
+        self.license_type = license_type

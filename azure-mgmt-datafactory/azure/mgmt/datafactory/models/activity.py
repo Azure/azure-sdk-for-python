@@ -49,6 +49,7 @@ class Activity(Model):
     }
 
     def __init__(self, name, additional_properties=None, description=None, depends_on=None):
+        super(Activity, self).__init__()
         self.additional_properties = additional_properties
         self.name = name
         self.description = description

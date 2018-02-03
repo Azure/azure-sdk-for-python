@@ -34,5 +34,6 @@ class StoredProcedureParameter(Model):
     }
 
     def __init__(self, value, type=None):
+        super(StoredProcedureParameter, self).__init__()
         self.value = value
         self.type = type

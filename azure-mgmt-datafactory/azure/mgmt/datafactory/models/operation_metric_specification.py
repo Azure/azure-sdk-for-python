@@ -51,6 +51,7 @@ class OperationMetricSpecification(Model):
     }
 
     def __init__(self, name=None, display_name=None, display_description=None, unit=None, aggregation_type=None, enable_regional_mdm_account=None, source_mdm_account=None, source_mdm_namespace=None, availabilities=None):
+        super(OperationMetricSpecification, self).__init__()
         self.name = name
         self.display_name = display_name
         self.display_description = display_description

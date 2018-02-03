@@ -48,6 +48,7 @@ class DatasetStorageFormat(Model):
     }
 
     def __init__(self, additional_properties=None, serializer=None, deserializer=None):
+        super(DatasetStorageFormat, self).__init__()
         self.additional_properties = additional_properties
         self.serializer = serializer
         self.deserializer = deserializer

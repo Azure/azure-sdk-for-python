@@ -30,4 +30,5 @@ class UpdateIntegrationRuntimeNodeRequest(Model):
     }
 
     def __init__(self, concurrent_jobs_limit=None):
+        super(UpdateIntegrationRuntimeNodeRequest, self).__init__()
         self.concurrent_jobs_limit = concurrent_jobs_limit
