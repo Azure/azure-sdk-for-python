@@ -95,9 +95,11 @@ class BudgetsOperations(object):
         return deserialized
 
     def list_by_resource_group_name(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists all budgets for a resource group under a subscription.
 
+        :param resource_group_name: Azure Resource Group Name.
+        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -115,7 +117,7 @@ class BudgetsOperations(object):
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -158,9 +160,11 @@ class BudgetsOperations(object):
         return deserialized
 
     def get(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, budget_name, custom_headers=None, raw=False, **operation_config):
         """Gets the budget for a subscription by budget name.
 
+        :param budget_name: Budget Name.
+        :type budget_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -176,7 +180,7 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
+            'budgetName': self._serialize.url("budget_name", budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -213,12 +217,14 @@ class BudgetsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
+            self, budget_name, parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update a budget. Update operation requires
         latest eTag to be set in the request mandatorily. You may obtain the
         latest eTag by performing a get operation. Create operation does not
         require eTag.
 
+        :param budget_name: Budget Name.
+        :type budget_name: str
         :param parameters: Parameters supplied to the Create Budget operation.
         :type parameters: ~consumption.models.Budget
         :param dict custom_headers: headers that will be added to the request
@@ -226,67 +232,64 @@ class BudgetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of None
-        :rtype: ~consumption.models.Budget[None]
+        :return: Budget or ClientRawResponse if raw=true
+        :rtype: ~consumption.models.Budget or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<consumption.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'budgetName': self._serialize.url("budget_name", budget_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct body
+        body_content = self._serialize.body(parameters, 'Budget')
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            # Construct body
-            body_content = self._serialize.body(parameters, 'Budget')
+        if response.status_code not in [200, 201]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-            # Construct and send request
-            request = self._client.put(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, body_content, stream=False, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200, 201]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.Budget(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Budget', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('Budget', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.Budget(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
 
     def delete(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, budget_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete a budget.
 
+        :param budget_name: Budget Name.
+        :type budget_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -301,7 +304,7 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
+            'budgetName': self._serialize.url("budget_name", budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -331,10 +334,14 @@ class BudgetsOperations(object):
             return client_raw_response
 
     def get_by_resource_group_name(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, budget_name, custom_headers=None, raw=False, **operation_config):
         """Gets the budget for a resource group under a subscription by budget
         name.
 
+        :param resource_group_name: Azure Resource Group Name.
+        :type resource_group_name: str
+        :param budget_name: Budget Name.
+        :type budget_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -350,8 +357,8 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'budgetName': self._serialize.url("budget_name", budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -388,12 +395,16 @@ class BudgetsOperations(object):
         return deserialized
 
     def create_or_update_by_resource_group_name(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, budget_name, parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update a budget. Update operation requires
         latest eTag to be set in the request mandatorily. You may obtain the
         latest eTag by performing a get operation. Create operation does not
         require eTag.
 
+        :param resource_group_name: Azure Resource Group Name.
+        :type resource_group_name: str
+        :param budget_name: Budget Name.
+        :type budget_name: str
         :param parameters: Parameters supplied to the Create Budget operation.
         :type parameters: ~consumption.models.Budget
         :param dict custom_headers: headers that will be added to the request
@@ -401,68 +412,67 @@ class BudgetsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of None
-        :rtype: ~consumption.models.Budget[None]
+        :return: Budget or ClientRawResponse if raw=true
+        :rtype: ~consumption.models.Budget or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<consumption.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'budgetName': self._serialize.url("budget_name", budget_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-                    'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct body
+        body_content = self._serialize.body(parameters, 'Budget')
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            # Construct body
-            body_content = self._serialize.body(parameters, 'Budget')
+        if response.status_code not in [200, 201]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-            # Construct and send request
-            request = self._client.put(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, body_content, stream=False, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200, 201]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.Budget(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Budget', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('Budget', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.Budget(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
 
     def delete_by_resource_group_name(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, budget_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete a budget.
 
+        :param resource_group_name: Azure Resource Group Name.
+        :type resource_group_name: str
+        :param budget_name: Budget Name.
+        :type budget_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -477,8 +487,8 @@ class BudgetsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-            'budgetName': self._serialize.url("self.config.budget_name", self.config.budget_name, 'str')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'budgetName': self._serialize.url("budget_name", budget_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

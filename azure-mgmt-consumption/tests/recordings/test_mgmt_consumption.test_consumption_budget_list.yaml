@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: '{"properties": {"category": "Cost", "amount": 60.0, "timeGrain": "Monthly",
+      "timePeriod": {"startDate": "2018-02-01T20:37:38.9911519999999999Z", "endDate":
+      "2018-02-03T20:37:38.9911519999999999Z"}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['198']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
+          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCostCreateAndDelete?api-version=2018-01-31
+  response:
+    body: {string: '{"id":"subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCostCreateAndDelete","name":"PythonSDKTestBudgetCostCreateAndDelete","type":"Microsoft.Consumption/budgets","eTag":"\"1d39c65d2c87f79\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-03T00:00:00Z"},"timeGrain":"Monthly","amount":60.0,"currentSpend":null,"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['504']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 20:38:46 GMT']
+      expires: ['-1']
+      location: ['https://consumption.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCostCreateAndDelete?api-version=2018-01-31']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      session-id: [18edf4eb-d82f-4db0-8328-1e1119294341]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
+          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCostCreateAndDelete?api-version=2018-01-31
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Fri, 02 Feb 2018 20:38:48 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      session-id: [08fa03a6-930d-4539-964f-42c37a120c81]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

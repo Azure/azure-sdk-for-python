@@ -8,14 +8,19 @@
 import unittest
 
 import azure.mgmt.consumption
+import azure.mgmt.consumption.models
 from testutils.common_recordingtestcase import record
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+import datetime
 
 class MgmtConsumptionTest(AzureMgmtTestCase):    
 
     reservationOrderId = 'ca69259e-bd4f-45c3-bf28-3f353f9cce9b'
     reservationId = 'f37f4b70-52ba-4344-a8bd-28abfd21d640'
-    billingPeriodName='201801'
+    billingPeriodName='201710'
+    startDate=datetime.datetime.utcnow().replace(day=1)
+    endDate=datetime.datetime.utcnow()+datetime.timedelta(days=1)
+    models = azure.mgmt.consumption.models
 
     def _validate_usage(self, usage, includeMeterDetails=False, includeAdditionalProperties=False):
         self.assertIsNotNone(usage)
@@ -43,13 +48,13 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
         self.assertIsNotNone(marketplace.name)
         self.assertIsNotNone(marketplace.type)
         self.assertIsNotNone(marketplace.billing_period_id)
-        self.assertTrue(marketplace.usage_start <= usage.usage_end)
+        self.assertTrue(marketplace.usage_start <= marketplace.usage_end)
         self.assertIsNotNone(marketplace.instance_name)
         self.assertIsNotNone(marketplace.instance_id)
         self.assertIsNotNone(marketplace.currency)
         self.assertIsNotNone(marketplace.pretax_cost)
         self.assertIsNotNone(marketplace.is_estimated)
-        self.assertIsNotNone(marketplace.order_number)		
+        self.assertIsNotNone(marketplace.order_number)        
 
     def _validate_reservations_summaries(self, reservation):
         self.assertIsNotNone(reservation)
@@ -78,29 +83,36 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
         self.assertIsNotNone(reservation.usage_date)
         self.assertIsNotNone(reservation.used_hours)
         self.assertIsNotNone(reservation.instance_id)
-        self.assertIsNotNone(reservation.total_reserved_quantity)       
+        self.assertIsNotNone(reservation.total_reserved_quantity) 
+        
+    def _validate_budget(self, budget):
+        self.assertIsNotNone(budget)
+        self.assertIsNotNone(budget.id)
+        self.assertIsNotNone(budget.name)
+        self.assertIsNotNone(budget.type)
+        self.assertIsNotNone(budget.time_period.start_date)        
+        self.assertIsNotNone(budget.time_period.end_date)
+        self.assertIsNotNone(budget.time_grain)
+        self.assertIsNotNone(budget.amount)
 
-    def _validate_price_sheet(self, pricesheet, includeMeterDetails=False):
+    def _validate_price_sheet(self, pricesheet, includedPaging=False):
         self.assertIsNotNone(pricesheet)
         self.assertIsNotNone(pricesheet.id)
         self.assertIsNotNone(pricesheet.name)
-        self.assertIsNotNone(pricesheet.type)
-        self.assertIsNotNone(pricesheet.billing_period_id)
-        self.assertIsNotNone(pricesheet.meter_id)
-        self.assertIsNotNone(pricesheet.unit_of_measure)
-        self.assertIsNotNone(pricesheet.included_quantity)
-        self.assertIsNotNone(pricesheet.part_number)
-        self.assertIsNotNone(pricesheet.currency_code)
-        self.assertIsNotNone(pricesheet.unit_price)        
-        if includeMeterDetails:
-            self.assertIsNotNone(usage.meter_details)
-            self.assertIsNotNone(usage.meter_details.meter_name)
-        else:
-            self.assertIsNone(usage.meter_details)
-			        
+        self.assertIsNotNone(pricesheet.type)        
+        self.assertIsNotNone(pricesheet.pricesheets[0].billing_period_id)
+        self.assertIsNotNone(pricesheet.pricesheets[0].unit_of_measure)
+        self.assertIsNotNone(pricesheet.pricesheets[0].included_quantity)
+        self.assertIsNotNone(pricesheet.pricesheets[0].part_number)
+        self.assertIsNotNone(pricesheet.pricesheets[0].currency_code)
+        self.assertIsNotNone(pricesheet.pricesheets[0].unit_price)
+        self.assertIsNotNone(pricesheet.pricesheets[0].meter_id)        
+        if includedPaging:
+            self.assertIsNotNone(pricesheet.next_link)    
+                    
     def setUp(self):
         super(MgmtConsumptionTest, self).setUp()
-        self.consumption_client = self.create_mgmt_client(azure.mgmt.consumption.ConsumptionManagementClient)
+        self.consumption_client = self.create_mgmt_client(azure.mgmt.consumption.ConsumptionManagementClient)    
     
     def test_consumption_subscription_usage(self):        
         pages = self.consumption_client.usage_details.list(top=10)
@@ -108,85 +120,133 @@ class MgmtConsumptionTest(AzureMgmtTestCase):
         output = list(firstPage)
         self.assertEqual(10, len(output))
         self._validate_usage(output[0])
-
+	
     def test_consumption_subscription_usage_filter(self):        
-        pages = self.consumption_client.usage_details.list(expand='meterDetails', filter='usageEnd le 2017-11-01', top=10)
+        dateFilter ='usageEnd le '+ str(MgmtConsumptionTest.endDate)
+        pages = self.consumption_client.usage_details.list(expand='meterDetails', filter=dateFilter, top=10)
         firstPage = pages.advance_page()
         output = list(firstPage)
         self.assertEqual(10, len(output))
         self._validate_usage(output[0], includeMeterDetails=True)
-  
+  	
     def test_consumption_billing_period_usage(self):
         output = list(self.consumption_client.usage_details.list(expand='properties/additionalProperties'))
         self._validate_usage(output[0], includeAdditionalProperties=True)
-
+	
     def test_consumption_billing_period_usage_filter(self):        
-        output = list(self.consumption_client.usage_details.list_by_billing_period(billing_period_name=billingPeriodName, expand='properties/meterDetails,properties/additionalProperties', filter='usageEnd eq 2017-03-26T23:59:59Z'))
-        self._validate_usage(output[0], includeMeterDetails=True, includeAdditionalProperties=True)		    
-    
+        output = list(self.consumption_client.usage_details.list_by_billing_period(billing_period_name=MgmtConsumptionTest.billingPeriodName, expand='properties/meterDetails,properties/additionalProperties', filter='usageEnd eq 2017-10-26T23:59:59Z'))
+        self._validate_usage(output[0], includeMeterDetails=True, includeAdditionalProperties=True)		
+	
     def test_consumption_reservations_summaries_monthly(self):        
-        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order(reservation_order_id=reservationOrderId, grain="monthly"))
+        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order(reservation_order_id=MgmtConsumptionTest.reservationOrderId, grain="monthly"))
         self._validate_reservations_summaries(output[0])
     
     def test_consumption_reservations_summaries_monthly_withreservationid(self):
-        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order_and_reservation(reservation_order_id=reservationOrderId, reservation_id=reservationId, grain="monthly"))
+        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order_and_reservation(reservation_order_id=MgmtConsumptionTest.reservationOrderId, reservation_id=MgmtConsumptionTest.reservationId, grain="monthly"))
         self._validate_reservations_summaries(output[0])
-   
+   	
     def test_consumption_reservations_summaries_daily(self):        
-        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order(reservation_order_id=reservationOrderId, grain="daily", filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-07'))
+        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order(reservation_order_id=MgmtConsumptionTest.reservationOrderId, grain="daily", filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-07'))
         self._validate_reservations_summaries(output[0])
         
     def test_consumption_reservation_summaries_daily_withreservationid(self):
-        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order_and_reservation(reservation_order_id=reservationOrderId, reservation_id=reservationId, grain="daily", filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-07'))
+        output = list(self.consumption_client.reservations_summaries.list_by_reservation_order_and_reservation(reservation_order_id=MgmtConsumptionTest.reservationOrderId, reservation_id=MgmtConsumptionTest.reservationId, grain="daily", filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-07'))
         self._validate_reservations_summaries(output[0])
-
+	
     def test_consumption_reservations_details(self):
-        output = list(self.consumption_client.reservations_details.list_by_reservation_order(reservation_order_id=reservationOrderId, filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-08'))
+        output = list(self.consumption_client.reservations_details.list_by_reservation_order(reservation_order_id=MgmtConsumptionTest.reservationOrderId, filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-08'))
         self._validate_reservations_details(output[0])
-
+	
     def test_consumption_reservations_details_withreservationid(self):
-        output = list(self.consumption_client.reservations_details.list_by_reservation_order_and_reservation(reservation_order_id=reservationOrderId, reservation_id=reservationId, filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-08'))
+        output = list(self.consumption_client.reservations_details.list_by_reservation_order_and_reservation(reservation_order_id=MgmtConsumptionTest.reservationOrderId, reservation_id=MgmtConsumptionTest.reservationId, filter='properties/UsageDate ge 2017-10-01 AND properties/UsageDate le 2017-12-08'))
         self._validate_reservations_details(output[0])
-
+	
+    def test_consumption_budget_get_by_resource_group(self):
+        budget= self.consumption_client.budgets.get(resource_groups='testscaleset', budget_name='PythonSDKTestBudgetCost_testResourceGroup1')
+        self._validate_budget(budget)
+	
+	
+    def test_consumption_budget_update_By_resourceGroup(self):
+        budget= self.consumption_client.budgets.get(resource_groups='testscaleset', budget_name='PythonSDKTestBudgetCost_testResourceGroup1')
+        budget.amount=90.0
+        budget.time_period=self.models.BudgetTimePeriod(start_date=budget.time_period.start_date, end_date=MgmtConsumptionTest.endDate)
+        output = self.consumption_client.budgets.create_or_update_by_resource_group_name(resource_group_name='testscaleset', budget_name='PythonSDKTestBudgetCost_testResourceGroup1', parameters=budget)
+        self.assertEqual('PythonSDKTestBudgetCost_testResourceGroup1', output.name)
+        self.assertEqual(90.0, output.amount)
+	
+    def test_consumption_budget_delete_by_budgetname(self):
+        budget= self.consumption_client.budgets.get(resource_groups='testscaleset', budget_name='PythonSDKTestBudgetCost_testResourceGroup1')
+        self._validate_budget(budget)
+        self.consumption_client.budgets.delete_by_resource_group_name(resource_group_name='testscaleset', budget_name= budget.name) 
+   	
+    def test_consumption_budget_create(self):	    
+        print(MgmtConsumptionTest.endDate)
+        budget = self.models.Budget(category=self.models.CategoryType.cost, amount=60.0, time_grain=self.models.TimeGrainType.monthly, time_period=self.models.BudgetTimePeriod(start_date=MgmtConsumptionTest.startDate, end_date=MgmtConsumptionTest.endDate))        
+        output = self.consumption_client.budgets.create_or_update(resource_group_name='testResource1',budget_name='PythonSDKTestBudgetCost', parameters=budget)
+        self.assertEqual('PythonSDKTestBudgetCost', output.name)    
+    
+    def test_consumption_budget_get_by_budget_name(self):
+        budget= self.consumption_client.budgets.get(budget_name='PythonSDKTestBudgetCost_testResourceGroup1')
+        self._validate_budget(budget)
+	
+    def test_consumption_budget_update_and_get(self):
+        budget = self.consumption_client.budgets.get(budget_name='PythonSDKTestBudgetCost1')  
+        budget.amount = 80.0      
+        budget.time_period=self.models.BudgetTimePeriod(start_date=budget.time_period.start_date, end_date=MgmtConsumptionTest.endDate)
+        self.consumption_client.budgets.create_or_update(budget_name='PythonSDKTestBudgetCost1', parameters=budget)
+        budget = self.consumption_client.budgets.get(budget_name='PythonSDKTestBudgetCost1')              
+        self._validate_budget(budget)
+	
+    def test_consumption_budget_delete_by_budgetname(self):
+        budget = self.consumption_client.budgets.get(budget_name='PythonSDKTestBudgetCost')
+        self._validate_budget(budget)
+        self.consumption_client.budgets.delete(budget_name= budget.name)     
+		
+    def test_consumption_budget_list(self):
+        budget = self.models.Budget(category=self.models.CategoryType.cost, amount=60.0, time_grain=self.models.TimeGrainType.monthly, time_period=self.models.BudgetTimePeriod(start_date=MgmtConsumptionTest.startDate, end_date=MgmtConsumptionTest.endDate))		
+        output = self.consumption_client.budgets.create_or_update(budget_name='PythonSDKTestBudgetCostCreateAndDelete', parameters=budget)
+        self.assertEqual('PythonSDKTestBudgetCostCreateAndDelete', output.name)
+        self.consumption_client.budgets.delete(budget_name= output.name)
+		
     def test_consumption_subscription_marketplace(self):        
-        pages = self.consumption_client.marketplaces.list(top=10)
+        pages = self.consumption_client.marketplaces.list(top=1)
         firstPage = pages.advance_page()
         output = list(firstPage)
-        self.assertEqual(10, len(output))
+        self.assertEqual(1, len(output))
         self._validate_marketplace(output[0])
-
+	
     def test_consumption_subscription_marketplace_filter(self):        
-        pages = self.consumption_client.marketplaces.list(filter='usageEnd le 2017-11-01', top=10)
+        dateFilter ='usageEnd le '+ str(MgmtConsumptionTest.endDate)
+        pages = self.consumption_client.marketplaces.list(filter=dateFilter, top=1)
         firstPage = pages.advance_page()
         output = list(firstPage)
-        self.assertEqual(10, len(output))
+        self.assertEqual(1, len(output))
         self._validate_marketplace(output[0])
-  
+  	
     def test_consumption_billing_period_marketplace(self):        
-        output = self.consumption_client.marketplaces.list_by_billing_period(billing_period_name=billingPeriodName)
+        pages = self.consumption_client.marketplaces.list_by_billing_period(billing_period_name=MgmtConsumptionTest.billingPeriodName)
+        firstPage = pages.advance_page()
+        output = list(firstPage)
         self._validate_marketplace(output[0])
-
+	
     def test_consumption_billing_period_marketplace_filter(self):        
-        output = list(self.consumption_client.marketplaces.list_by_billing_period(billing_period_name=billingPeriodName, filter='usageEnd eq 2017-03-26T23:59:59Z'))
-        self._validate_marketplace(output[0])
-
-    def test_consumption_subscription_price_sheet(self):
-        pages = self.consumption_client.pricesheet.list()
+        pages = self.consumption_client.marketplaces.list_by_billing_period(billing_period_name='201804-1', filter='usageEnd ge 2018-01-26T23:59:59Z')
         firstPage = pages.advance_page()
         output = list(firstPage)
-        self.assertTrue(len(output) > 2)
-        self._validate_price_sheet(output[0], includeMeterDetails=False)
-
-    def test_consumption_subscription_price_sheet_expand(self):
-        pages = self.consumption_client.pricesheet.list(expand='properties/meterDetails')
-        firstPage = pages.advance_page()
-        output = list(firstPage)
-        self._validate_price_sheet(output[0], includeMeterDetails=True)
-
+        self._validate_marketplace(output[0])            
+	
     def test_consumption_billing_period_price_sheet(self):
-        output = self.consumption_client.pricesheet.list_by_billing_period(billing_period_name=billingPeriodName, expand='properties/meterDetails')
-        self._validate_price_sheet(output[0], includeMeterDetails=True)  
-
+        output = self.consumption_client.pricesheet.get_by_billing_period(billing_period_name=MgmtConsumptionTest.billingPeriodName, expand='properties/meterDetails')
+        self._validate_price_sheet(output)
+        
+    def test_consumption_subscription_price_sheet_expand(self):
+        output = self.consumption_client.pricesheet.get(expand='properties/meterDetails')       
+        self._validate_price_sheet(output)
+	
+    def test_consumption_subscription_price_sheet(self):
+        output = self.consumption_client.pricesheet.get(top=1)      
+        self._validate_price_sheet(output, includedPaging=True)
+	            
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

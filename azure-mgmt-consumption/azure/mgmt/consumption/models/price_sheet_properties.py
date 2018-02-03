@@ -5,23 +5,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class PriceSheetModel(Resource):
-    """An pricesheet resource.
+class PriceSheetProperties(Model):
+    """The properties of the price sheet.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar billing_period_id: The id of the billing period resource that the
      usage belongs to.
     :vartype billing_period_id: str
@@ -43,10 +35,6 @@ class PriceSheetModel(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
         'billing_period_id': {'readonly': True},
         'meter_id': {'readonly': True},
         'meter_details': {'readonly': True},
@@ -58,22 +46,18 @@ class PriceSheetModel(Resource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'billing_period_id': {'key': 'properties.billingPeriodId', 'type': 'str'},
-        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
-        'meter_details': {'key': 'properties.meterDetails', 'type': 'MeterDetails'},
-        'unit_of_measure': {'key': 'properties.unitOfMeasure', 'type': 'str'},
-        'included_quantity': {'key': 'properties.includedQuantity', 'type': 'decimal'},
-        'part_number': {'key': 'properties.partNumber', 'type': 'str'},
-        'unit_price': {'key': 'properties.unitPrice', 'type': 'decimal'},
-        'currency_code': {'key': 'properties.currencyCode', 'type': 'str'},
+        'billing_period_id': {'key': 'billingPeriodId', 'type': 'str'},
+        'meter_id': {'key': 'meterId', 'type': 'str'},
+        'meter_details': {'key': 'meterDetails', 'type': 'MeterDetails'},
+        'unit_of_measure': {'key': 'unitOfMeasure', 'type': 'str'},
+        'included_quantity': {'key': 'includedQuantity', 'type': 'decimal'},
+        'part_number': {'key': 'partNumber', 'type': 'str'},
+        'unit_price': {'key': 'unitPrice', 'type': 'decimal'},
+        'currency_code': {'key': 'currencyCode', 'type': 'str'},
     }
 
     def __init__(self):
-        super(PriceSheetModel, self).__init__()
+        super(PriceSheetProperties, self).__init__()
         self.billing_period_id = None
         self.meter_id = None
         self.meter_details = None

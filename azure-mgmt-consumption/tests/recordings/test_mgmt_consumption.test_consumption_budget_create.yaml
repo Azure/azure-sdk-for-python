@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: '{"properties": {"category": "Cost", "amount": 60.0, "timeGrain": "Monthly",
+      "timePeriod": {"startDate": "2018-02-01T20:37:38.9911519999999999Z", "endDate":
+      "2018-02-03T20:37:38.9911519999999999Z"}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['198']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
+          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost?api-version=2018-01-31
+  response:
+    body: {string: '{"id":"subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost","name":"PythonSDKTestBudgetCost","type":"Microsoft.Consumption/budgets","eTag":"\"1d39c65cdd1735c\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-03T00:00:00Z"},"timeGrain":"Monthly","amount":60.0,"currentSpend":null,"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['474']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 02 Feb 2018 20:38:38 GMT']
+      expires: ['-1']
+      location: ['https://consumption.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost?api-version=2018-01-31']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/8.5]
+      session-id: [06897113-8c48-4f1d-82d0-d492e60761a7]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+version: 1
