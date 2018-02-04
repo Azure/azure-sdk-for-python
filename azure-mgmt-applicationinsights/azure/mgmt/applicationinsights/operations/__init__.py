@@ -10,19 +10,31 @@
 # --------------------------------------------------------------------------
 
 from .operations import Operations
-from .components_operations import ComponentsOperations
-from .web_tests_operations import WebTestsOperations
+from .api_keys_operations import APIKeysOperations
 from .export_configurations_operations import ExportConfigurationsOperations
+from .proactive_detection_configurations_operations import ProactiveDetectionConfigurationsOperations
 from .component_current_billing_features_operations import ComponentCurrentBillingFeaturesOperations
 from .component_quota_status_operations import ComponentQuotaStatusOperations
-from .api_keys_operations import APIKeysOperations
+from .component_feature_capabilities_operations import ComponentFeatureCapabilitiesOperations
+from .component_available_features_operations import ComponentAvailableFeaturesOperations
+from .components_operations import ComponentsOperations
+from .favorites_operations import FavoritesOperations
+from .favorite_operations import FavoriteOperations
+from .web_test_locations_operations import WebTestLocationsOperations
+from .web_tests_operations import WebTestsOperations
 
 __all__ = [
     'Operations',
-    'ComponentsOperations',
-    'WebTestsOperations',
+    'APIKeysOperations',
     'ExportConfigurationsOperations',
+    'ProactiveDetectionConfigurationsOperations',
     'ComponentCurrentBillingFeaturesOperations',
     'ComponentQuotaStatusOperations',
-    'APIKeysOperations',
+    'ComponentFeatureCapabilitiesOperations',
+    'ComponentAvailableFeaturesOperations',
+    'ComponentsOperations',
+    'FavoritesOperations',
+    'FavoriteOperations',
+    'WebTestLocationsOperations',
+    'WebTestsOperations',
 ]
