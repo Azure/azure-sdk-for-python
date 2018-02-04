@@ -12,9 +12,12 @@
 from msrest.serialization import Model
 
 
-class UpdateFirewallRuleParameters(Model):
-    """The parameters used to update a firewall rule.
+class CreateFirewallRuleWithAccountParameters(Model):
+    """The parameters used to create a new firewall rule while creating a new Data
+    Lake Analytics account.
 
+    :param name: The unique name of the firewall rule to create.
+    :type name: str
     :param start_ip_address: The start IP address for the firewall rule. This
      can be either ipv4 or ipv6. Start and End should be in the same protocol.
     :type start_ip_address: str
@@ -23,12 +26,20 @@ class UpdateFirewallRuleParameters(Model):
     :type end_ip_address: str
     """
 
+    _validation = {
+        'name': {'required': True},
+        'start_ip_address': {'required': True},
+        'end_ip_address': {'required': True},
+    }
+
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, start_ip_address=None, end_ip_address=None):
-        super(UpdateFirewallRuleParameters, self).__init__()
+    def __init__(self, name, start_ip_address, end_ip_address):
+        super(CreateFirewallRuleWithAccountParameters, self).__init__()
+        self.name = name
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address

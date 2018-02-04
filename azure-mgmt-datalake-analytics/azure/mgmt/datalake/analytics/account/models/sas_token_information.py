@@ -12,34 +12,25 @@
 from msrest.serialization import Model
 
 
-class SubResource(Model):
-    """The resource model definition for a nested resource.
+class SasTokenInformation(Model):
+    """SAS token information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The resource identifier.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
+    :ivar access_token: The access token for the associated Azure Storage
+     Container.
+    :vartype access_token: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'access_token': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'access_token': {'key': 'accessToken', 'type': 'str'},
     }
 
     def __init__(self):
-        super(SubResource, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
+        super(SasTokenInformation, self).__init__()
+        self.access_token = None

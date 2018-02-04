@@ -12,17 +12,27 @@
 from msrest.serialization import Model
 
 
-class UpdateTrustedIdProviderParameters(Model):
-    """The parameters used to update a trusted identity provider.
+class CreateTrustedIdProviderWithAccountParameters(Model):
+    """The parameters used to create a new trusted identity provider while
+    creating a new Data Lake Store account.
 
+    :param name: The unique name of the trusted identity provider to create.
+    :type name: str
     :param id_provider: The URL of this trusted identity provider.
     :type id_provider: str
     """
 
+    _validation = {
+        'name': {'required': True},
+        'id_provider': {'required': True},
+    }
+
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self, id_provider=None):
-        super(UpdateTrustedIdProviderParameters, self).__init__()
+    def __init__(self, name, id_provider):
+        super(CreateTrustedIdProviderWithAccountParameters, self).__init__()
+        self.name = name
         self.id_provider = id_provider

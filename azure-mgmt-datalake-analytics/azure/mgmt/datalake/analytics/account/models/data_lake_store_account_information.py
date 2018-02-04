@@ -9,37 +9,39 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class OptionalSubResource(Model):
-    """The Resource model definition for a nested resource with no required
-    properties.
+class DataLakeStoreAccountInformation(SubResource):
+    """Data Lake Store account information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The resource identifier.
     :vartype id: str
-    :param name: Resource name
-    :type name: str
-    :ivar type: Resource type
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
     :vartype type: str
+    :ivar suffix: The optional suffix for the Data Lake Store account.
+    :vartype suffix: str
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'suffix': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(OptionalSubResource, self).__init__()
-        self.id = None
-        self.name = name
-        self.type = None
+    def __init__(self):
+        super(DataLakeStoreAccountInformation, self).__init__()
+        self.suffix = None

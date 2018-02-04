@@ -18,9 +18,9 @@ class CheckNameAvailabilityParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: the Data Lake Store name to check availability for.
+    :param name: The Data Lake Store name to check availability for.
     :type name: str
-    :ivar type: the Resource type. Note: This should not be set by the user,
+    :ivar type: The resource type. Note: This should not be set by the user,
      as the constant value is Microsoft.DataLakeStore/accounts. Default value:
      "Microsoft.DataLakeStore/accounts" .
     :vartype type: str

@@ -18,98 +18,110 @@ class DataLakeStoreAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The resource type.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param identity: The Key Vault encryption identity, if any.
-    :type identity: ~azure.mgmt.datalake.store.models.EncryptionIdentity
-    :ivar provisioning_state: the provisioning status of the Data Lake Store
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The Key Vault encryption identity, if any.
+    :vartype identity: ~azure.mgmt.datalake.store.models.EncryptionIdentity
+    :ivar account_id: The unique identifier associated with this Data Lake
+     Store account.
+    :vartype account_id: str
+    :ivar provisioning_state: The provisioning status of the Data Lake Store
      account. Possible values include: 'Failed', 'Creating', 'Running',
      'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting', 'Deleted',
      'Undeleting', 'Canceled'
     :vartype provisioning_state: str or
      ~azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus
-    :ivar state: the state of the Data Lake Store account. Possible values
+    :ivar state: The state of the Data Lake Store account. Possible values
      include: 'Active', 'Suspended'
     :vartype state: str or
      ~azure.mgmt.datalake.store.models.DataLakeStoreAccountState
-    :ivar creation_time: the account creation time.
+    :ivar creation_time: The account creation time.
     :vartype creation_time: datetime
-    :ivar last_modified_time: the account last modified time.
+    :ivar last_modified_time: The account last modified time.
     :vartype last_modified_time: datetime
-    :ivar endpoint: the full CName endpoint for this account.
+    :ivar endpoint: The full CName endpoint for this account.
     :vartype endpoint: str
-    :ivar account_id: The unique identifier associated with this Data Lake
-     Store account.
-    :vartype account_id: str
-    :param encryption_state: The current state of encryption for this Data
-     Lake store account. Possible values include: 'Enabled', 'Disabled'
-    :type encryption_state: str or
+    :ivar default_group: The default owner group for all new folders and files
+     created in the Data Lake Store account.
+    :vartype default_group: str
+    :ivar encryption_config: The Key Vault encryption configuration.
+    :vartype encryption_config:
+     ~azure.mgmt.datalake.store.models.EncryptionConfig
+    :ivar encryption_state: The current state of encryption for this Data Lake
+     Store account. Possible values include: 'Enabled', 'Disabled'
+    :vartype encryption_state: str or
      ~azure.mgmt.datalake.store.models.EncryptionState
     :ivar encryption_provisioning_state: The current state of encryption
-     provisioning for this Data Lake store account. Possible values include:
+     provisioning for this Data Lake Store account. Possible values include:
      'Creating', 'Succeeded'
     :vartype encryption_provisioning_state: str or
      ~azure.mgmt.datalake.store.models.EncryptionProvisioningState
-    :param encryption_config: The Key Vault encryption configuration.
-    :type encryption_config:
-     ~azure.mgmt.datalake.store.models.EncryptionConfig
-    :param firewall_state: The current state of the IP address firewall for
-     this Data Lake store account. Possible values include: 'Enabled',
+    :ivar firewall_rules: The list of firewall rules associated with this Data
+     Lake Store account.
+    :vartype firewall_rules:
+     list[~azure.mgmt.datalake.store.models.FirewallRule]
+    :ivar firewall_state: The current state of the IP address firewall for
+     this Data Lake Store account. Possible values include: 'Enabled',
      'Disabled'
-    :type firewall_state: str or
+    :vartype firewall_state: str or
      ~azure.mgmt.datalake.store.models.FirewallState
-    :param firewall_rules: The list of firewall rules associated with this
-     Data Lake store account.
-    :type firewall_rules: list[~azure.mgmt.datalake.store.models.FirewallRule]
-    :param trusted_id_provider_state: The current state of the trusted
-     identity provider feature for this Data Lake store account. Possible
-     values include: 'Enabled', 'Disabled'
-    :type trusted_id_provider_state: str or
-     ~azure.mgmt.datalake.store.models.TrustedIdProviderState
-    :param trusted_id_providers: The list of trusted identity providers
-     associated with this Data Lake store account.
-    :type trusted_id_providers:
+    :ivar firewall_allow_azure_ips: The current state of allowing or
+     disallowing IPs originating within Azure through the firewall. If the
+     firewall is disabled, this is not enforced. Possible values include:
+     'Enabled', 'Disabled'
+    :vartype firewall_allow_azure_ips: str or
+     ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
+    :ivar trusted_id_providers: The list of trusted identity providers
+     associated with this Data Lake Store account.
+    :vartype trusted_id_providers:
      list[~azure.mgmt.datalake.store.models.TrustedIdProvider]
-    :param default_group: the default owner group for all new folders and
-     files created in the Data Lake Store account.
-    :type default_group: str
-    :param new_tier: the commitment tier to use for next month. Possible
-     values include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
+    :ivar trusted_id_provider_state: The current state of the trusted identity
+     provider feature for this Data Lake Store account. Possible values
+     include: 'Enabled', 'Disabled'
+    :vartype trusted_id_provider_state: str or
+     ~azure.mgmt.datalake.store.models.TrustedIdProviderState
+    :ivar new_tier: The commitment tier to use for next month. Possible values
+     include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
      'Commitment_100TB', 'Commitment_500TB', 'Commitment_1PB', 'Commitment_5PB'
-    :type new_tier: str or ~azure.mgmt.datalake.store.models.TierType
-    :ivar current_tier: the commitment tier in use for the current month.
+    :vartype new_tier: str or ~azure.mgmt.datalake.store.models.TierType
+    :ivar current_tier: The commitment tier in use for the current month.
      Possible values include: 'Consumption', 'Commitment_1TB',
      'Commitment_10TB', 'Commitment_100TB', 'Commitment_500TB',
      'Commitment_1PB', 'Commitment_5PB'
     :vartype current_tier: str or ~azure.mgmt.datalake.store.models.TierType
-    :param firewall_allow_azure_ips: The current state of allowing or
-     disallowing IPs originating within Azure through the firewall. If the
-     firewall is disabled, this is not enforced. Possible values include:
-     'Enabled', 'Disabled'
-    :type firewall_allow_azure_ips: str or
-     ~azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'location': {'readonly': True},
+        'tags': {'readonly': True},
+        'identity': {'readonly': True},
+        'account_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'state': {'readonly': True},
         'creation_time': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'endpoint': {'readonly': True},
-        'account_id': {'readonly': True},
+        'default_group': {'readonly': True},
+        'encryption_config': {'readonly': True},
+        'encryption_state': {'readonly': True},
         'encryption_provisioning_state': {'readonly': True},
+        'firewall_rules': {'readonly': True},
+        'firewall_state': {'readonly': True},
+        'firewall_allow_azure_ips': {'readonly': True},
+        'trusted_id_providers': {'readonly': True},
+        'trusted_id_provider_state': {'readonly': True},
+        'new_tier': {'readonly': True},
         'current_tier': {'readonly': True},
     }
 
@@ -120,42 +132,42 @@ class DataLakeStoreAccount(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'EncryptionIdentity'},
+        'account_id': {'key': 'properties.accountId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'DataLakeStoreAccountStatus'},
         'state': {'key': 'properties.state', 'type': 'DataLakeStoreAccountState'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
+        'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
+        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'EncryptionConfig'},
         'encryption_state': {'key': 'properties.encryptionState', 'type': 'EncryptionState'},
         'encryption_provisioning_state': {'key': 'properties.encryptionProvisioningState', 'type': 'EncryptionProvisioningState'},
-        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'EncryptionConfig'},
-        'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
         'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
-        'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'TrustedIdProviderState'},
+        'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
+        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
         'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[TrustedIdProvider]'},
-        'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
+        'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'TrustedIdProviderState'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
-        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
     }
 
-    def __init__(self, location, tags=None, identity=None, encryption_state=None, encryption_config=None, firewall_state=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None, new_tier=None, firewall_allow_azure_ips=None):
-        super(DataLakeStoreAccount, self).__init__(location=location, tags=tags)
-        self.identity = identity
+    def __init__(self):
+        super(DataLakeStoreAccount, self).__init__()
+        self.identity = None
+        self.account_id = None
         self.provisioning_state = None
         self.state = None
         self.creation_time = None
         self.last_modified_time = None
         self.endpoint = None
-        self.account_id = None
-        self.encryption_state = encryption_state
+        self.default_group = None
+        self.encryption_config = None
+        self.encryption_state = None
         self.encryption_provisioning_state = None
-        self.encryption_config = encryption_config
-        self.firewall_state = firewall_state
-        self.firewall_rules = firewall_rules
-        self.trusted_id_provider_state = trusted_id_provider_state
-        self.trusted_id_providers = trusted_id_providers
-        self.default_group = default_group
-        self.new_tier = new_tier
+        self.firewall_rules = None
+        self.firewall_state = None
+        self.firewall_allow_azure_ips = None
+        self.trusted_id_providers = None
+        self.trusted_id_provider_state = None
+        self.new_tier = None
         self.current_tier = None
-        self.firewall_allow_azure_ips = firewall_allow_azure_ips

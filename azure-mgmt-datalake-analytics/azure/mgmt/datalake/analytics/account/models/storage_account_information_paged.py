@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SasTokenInfoPaged(Paged):
+class StorageAccountInformationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`SasTokenInfo <azure.mgmt.datalake.analytics.account.models.SasTokenInfo>` object
+    A paging container for iterating over a list of :class:`StorageAccountInformation <azure.mgmt.datalake.analytics.account.models.StorageAccountInformation>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SasTokenInfo]'}
+        'current_page': {'key': 'value', 'type': '[StorageAccountInformation]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SasTokenInfoPaged, self).__init__(*args, **kwargs)
+        super(StorageAccountInformationPaged, self).__init__(*args, **kwargs)
