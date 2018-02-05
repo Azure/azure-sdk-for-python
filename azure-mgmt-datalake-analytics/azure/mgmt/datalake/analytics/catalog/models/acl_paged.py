@@ -9,12 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_operations import JobOperations
-from .pipeline_operations import PipelineOperations
-from .recurrence_operations import RecurrenceOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'JobOperations',
-    'PipelineOperations',
-    'RecurrenceOperations',
-]
+
+class AclPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Acl <azure.mgmt.datalake.analytics.catalog.models.Acl>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Acl]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AclPaged, self).__init__(*args, **kwargs)
