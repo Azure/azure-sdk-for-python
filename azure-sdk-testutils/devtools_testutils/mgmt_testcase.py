@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+﻿﻿#-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -14,7 +14,7 @@ from azure_devtools.scenario_tests import (
     OAuthRequestResponsesFilter, DeploymentNameReplacer,
 )
 from .config import TEST_SETTING_FILENAME
-from . import mgmt_settings_real as fake_settings
+from . import mgmt_settings_fake as fake_settings
 
 
 should_log = os.getenv('SDK_TESTS_LOG', '0')
@@ -106,7 +106,7 @@ class AzureMgmtTestCase(ReplayableTest):
         return not self.is_live
 
     def _setup_scrubber(self):
-        constants_to_scrub = ['SUBSCRIPTION_ID', 'BILLING_PERIOD_NAME', 'RESOURCE_GROUP_NAME', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID']
+        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID']
         for key in constants_to_scrub:
             if hasattr(self.settings, key) and hasattr(self._fake_settings, key):
                 self.scrubber.register_name_pair(getattr(self.settings, key),
@@ -157,16 +157,12 @@ class AzureMgmtTestCase(ReplayableTest):
             self.create_basic_client(
                 client_class,
                 subscription_id=None,
-                resource_group_name=None,
-                budget_name=None,
                 **kwargs
             )
 
         return self.create_basic_client(
             client_class,
             subscription_id=self.settings.SUBSCRIPTION_ID,
-            resource_group_name=self.settings.RESOURCE_GROUP_NAME,
-            budget_name=self.settings.BUDGET_NAME,
             **kwargs
         )
 
@@ -223,7 +219,5 @@ class AzureMgmtPreparer(AbstractPreparer):
         return client_class(
             credentials=self.test_class_instance.settings.get_credentials(),
             subscription_id=self.test_class_instance.settings.SUBSCRIPTION_ID,
-            resource_group_name=self.test_class_instance.settings.RESOURCE_GROUP_NAME,
-            budget_name=self.test_class_instance.settings.BUDGET_NAME,
             **self.client_kwargs
         )
