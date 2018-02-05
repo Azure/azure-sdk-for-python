@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object import DirectoryObject
+from msrest.serialization import Model
 
 
-class ServicePrincipal(DirectoryObject):
-    """Active Directory service principal information.
+class DirectoryObject(Model):
+    """Represents an Azure Active Directory object.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Application, ADGroup, ServicePrincipal, User
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,12 +31,6 @@ class ServicePrincipal(DirectoryObject):
     :vartype deletion_timestamp: datetime
     :param object_type: Constant filled by server.
     :type object_type: str
-    :param display_name: The display name of the service principal.
-    :type display_name: str
-    :param app_id: The application ID.
-    :type app_id: str
-    :param service_principal_names: A collection of service principal names.
-    :type service_principal_names: list[str]
     """
 
     _validation = {
@@ -47,14 +44,15 @@ class ServicePrincipal(DirectoryObject):
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'service_principal_names': {'key': 'servicePrincipalNames', 'type': '[str]'},
     }
 
-    def __init__(self, additional_properties=None, display_name=None, app_id=None, service_principal_names=None):
-        super(ServicePrincipal, self).__init__(additional_properties=additional_properties)
-        self.display_name = display_name
-        self.app_id = app_id
-        self.service_principal_names = service_principal_names
-        self.object_type = 'ServicePrincipal'
+    _subtype_map = {
+        'object_type': {'Application': 'Application', 'Group': 'ADGroup', 'ServicePrincipal': 'ServicePrincipal', 'User': 'User'}
+    }
+
+    def __init__(self, additional_properties=None):
+        super(DirectoryObject, self).__init__()
+        self.additional_properties = additional_properties
+        self.object_id = None
+        self.deletion_timestamp = None
+        self.object_type = None

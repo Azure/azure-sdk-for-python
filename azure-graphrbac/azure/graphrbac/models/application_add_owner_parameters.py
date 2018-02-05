@@ -12,28 +12,30 @@
 from msrest.serialization import Model
 
 
-class GroupGetMemberGroupsParameters(Model):
-    """Request parameters for GetMemberGroups API call.
+class ApplicationAddOwnerParameters(Model):
+    """Request parameters for adding a owner to an application.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param security_enabled_only: If true, only membership in security-enabled
-     groups should be checked. Otherwise, membership in all groups should be
-     checked.
-    :type security_enabled_only: bool
+    :param url: A owner object URL, such as
+     "https://graph.windows.net/0b1f9851-1bf0-433f-aec3-cb9272f093dc/directoryObjects/f260bbc4-c254-447b-94cf-293b5ec434dd",
+     where "0b1f9851-1bf0-433f-aec3-cb9272f093dc" is the tenantId and
+     "f260bbc4-c254-447b-94cf-293b5ec434dd" is the objectId of the owner (user,
+     application, servicePrincipal, group) to be added.
+    :type url: str
     """
 
     _validation = {
-        'security_enabled_only': {'required': True},
+        'url': {'required': True},
     }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'security_enabled_only': {'key': 'securityEnabledOnly', 'type': 'bool'},
+        'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, security_enabled_only, additional_properties=None):
-        super(GroupGetMemberGroupsParameters, self).__init__()
+    def __init__(self, url, additional_properties=None):
+        super(ApplicationAddOwnerParameters, self).__init__()
         self.additional_properties = additional_properties
-        self.security_enabled_only = security_enabled_only
+        self.url = url
