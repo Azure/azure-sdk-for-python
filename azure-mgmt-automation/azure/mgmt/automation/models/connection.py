@@ -22,6 +22,8 @@ class Connection(Model):
     :vartype id: str
     :ivar name: Gets the name of the connection.
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param connection_type: Gets or sets the connectionType of the connection.
     :type connection_type:
      ~azure.mgmt.automation.models.ConnectionTypeAssociationProperty
@@ -39,6 +41,7 @@ class Connection(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'field_definition_values': {'readonly': True},
         'creation_time': {'readonly': True},
         'last_modified_time': {'readonly': True},
@@ -47,6 +50,7 @@ class Connection(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'connection_type': {'key': 'properties.connectionType', 'type': 'ConnectionTypeAssociationProperty'},
         'field_definition_values': {'key': 'properties.fieldDefinitionValues', 'type': '{str}'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
@@ -58,6 +62,7 @@ class Connection(Model):
         super(Connection, self).__init__()
         self.id = None
         self.name = None
+        self.type = None
         self.connection_type = connection_type
         self.field_definition_values = None
         self.creation_time = None

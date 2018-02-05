@@ -223,7 +223,7 @@ class CertificateOperations(object):
         return deserialized
 
     def update(
-            self, automation_account_name, certificate_name, name, description=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, certificate_name, name=None, description=None, custom_headers=None, raw=False, **operation_config):
         """Update a certificate.
 
         :param automation_account_name: The automation account name.
