@@ -20,9 +20,9 @@ import config as cfg
 # 2. Create Collection
 #    2.1 - Basic Create
 #    2.2 - Create collection with custom IndexPolicy
-#    2.3 - Create collection with offerType set
+#    2.3 - Create collection with offer throughput set
 #
-# 3. Manage Collection OfferType
+# 3. Manage Collection Offer Throughput
 #    3.1 - Get Collection performance tier
 #    3.2 - Change performance tier
 #
@@ -83,7 +83,7 @@ class CollectionManagement:
     @staticmethod
     def create_collection(client, id):
         """ Execute the most basic Create of collection. 
-        This will create a collection with OfferType = S1 and default indexing policy """
+        This will create a collection with 400 RUs throughput and default indexing policy """
 
         print("\n2.1 Create Collection - Basic")
         
@@ -120,12 +120,12 @@ class CollectionManagement:
                 raise errors.HTTPFailure(e.status_code) 
 
             
-        print("\n2.3 Create Collection - With custom offerType")
+        print("\n2.3 Create Collection - With custom offer throughput")
         
         try:
-            coll = {"id": "collection_custom_offertype"}
-
-            collection = client.CreateCollection(database_link, coll, {'offerType': 'S2'} )
+            coll = {"id": "collection_custom_throughput"}
+            collection_options = { 'offerThroughput': 400 }
+            collection = client.CreateCollection(database_link, coll, collection_options )
             print('Collection with id \'{0}\' created'.format(collection['id']))
             
         except errors.DocumentDBError as e:
@@ -135,11 +135,10 @@ class CollectionManagement:
                 raise errors.HTTPFailure(e.status_code) 
 
     @staticmethod
-    def manage_offertype(client, id):
+    def manage_offer_throughput(client, id):
         print("\n3.1 Get Collection Performance tier")
         
-        #Collections have offers which are of type S1, S2, or S3. 
-        #Each of these determine the performance throughput of a collection. 
+        #A Collection's Offer Throughput determines the performance throughput of a collection. 
         #A Collection is loosely coupled to Offer through the Offer's offerResourceId
         #Offer.offerResourceId == Collection._rid
         #Offer.resource == Collection._self
@@ -152,7 +151,7 @@ class CollectionManagement:
             # now use its _self to query for Offers
             offer = list(client.QueryOffers('SELECT * FROM c WHERE c.resource = \'{0}\''.format(collection['_self'])))[0]
             
-            print('Found Offer \'{0}\' for Collection \'{1}\' and its offerType is \'{2}\''.format(offer['id'], collection['_self'], offer['offerType']))
+            print('Found Offer \'{0}\' for Collection \'{1}\' and its throughput is \'{2}\''.format(offer['id'], collection['_self'], offer['content']['offerThroughput']))
 
         except errors.DocumentDBError as e:
             if e.status_code == 404:
@@ -160,19 +159,17 @@ class CollectionManagement:
             else: 
                 raise errors.HTTPFailure(e.status_code)
 
-        print("\n3.2 Change OfferType of Collection")
+        print("\n3.2 Change Offer Throughput of Collection")
                            
-        #The OfferType of a collection controls the throughput allocated to the Collection
-        #To increase (or decrease) the throughput of any Collection you need to adjust the Offer.offerType
+        #The Offer Throughput of a collection controls the throughput allocated to the Collection
+        #To increase (or decrease) the throughput of any Collection you need to adjust the Offer.content.offerThroughput
         #of the Offer record linked to the Collection
         
-        #setting it S1, doesn't do anything because by default Collections are created with S1 Offer.offerType
-        #just doing it in the sample to demonstrate how to do it and not create resources (and incur costs) we don't need
-        #valid values for offerType are (currently) S1, S2 or S3
-        offer['offerType'] = 'S2'
+        #The following code shows how you can change Collection's throughput
+        offer['content']['offerThroughput'] += 100
         offer = client.ReplaceOffer(offer['_self'], offer)
 
-        print('Replaced Offer. OfferType is now \'{0}\''.format(offer['offerType']))
+        print('Replaced Offer. Offer Throughput is now \'{0}\''.format(offer['content']['offerThroughput']))
                                 
     @staticmethod
     def read_collection(client, id):
@@ -244,8 +241,8 @@ def run_sample():
             # create a collection
             CollectionManagement.create_collection(client, COLLECTION_ID)
             
-            # get & change OfferType of collection
-            CollectionManagement.manage_offertype(client, COLLECTION_ID)
+            # get & change Offer Throughput of collection
+            CollectionManagement.manage_offer_throughput(client, COLLECTION_ID)
 
             # get a collection using its id
             CollectionManagement.read_collection(client, COLLECTION_ID)
