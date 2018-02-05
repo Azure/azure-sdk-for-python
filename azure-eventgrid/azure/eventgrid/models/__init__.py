@@ -19,6 +19,22 @@ from .resource_delete_success_data import ResourceDeleteSuccessData
 from .resource_delete_failure_data import ResourceDeleteFailureData
 from .resource_delete_cancel_data import ResourceDeleteCancelData
 from .event_grid_event import EventGridEvent
+from .iot_hub_device_created_event_data_twin_properties_desired_metadata import IotHubDeviceCreatedEventDataTwinPropertiesDesiredMetadata
+from .iot_hub_device_created_event_data_twin_properties_desired import IotHubDeviceCreatedEventDataTwinPropertiesDesired
+from .iot_hub_device_created_event_data_twin_properties_reported_metadata import IotHubDeviceCreatedEventDataTwinPropertiesReportedMetadata
+from .iot_hub_device_created_event_data_twin_properties_reported import IotHubDeviceCreatedEventDataTwinPropertiesReported
+from .iot_hub_device_created_event_data_twin_properties import IotHubDeviceCreatedEventDataTwinProperties
+from .iot_hub_device_created_event_data_twin_x509_thumbprint import IotHubDeviceCreatedEventDataTwinX509Thumbprint
+from .iot_hub_device_created_event_data_twin import IotHubDeviceCreatedEventDataTwin
+from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
+from .iot_hub_device_deleted_event_data_twin_properties_desired_metadata import IotHubDeviceDeletedEventDataTwinPropertiesDesiredMetadata
+from .iot_hub_device_deleted_event_data_twin_properties_desired import IotHubDeviceDeletedEventDataTwinPropertiesDesired
+from .iot_hub_device_deleted_event_data_twin_properties_reported_metadata import IotHubDeviceDeletedEventDataTwinPropertiesReportedMetadata
+from .iot_hub_device_deleted_event_data_twin_properties_reported import IotHubDeviceDeletedEventDataTwinPropertiesReported
+from .iot_hub_device_deleted_event_data_twin_properties import IotHubDeviceDeletedEventDataTwinProperties
+from .iot_hub_device_deleted_event_data_twin_x509_thumbprint import IotHubDeviceDeletedEventDataTwinX509Thumbprint
+from .iot_hub_device_deleted_event_data_twin import IotHubDeviceDeletedEventDataTwin
+from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
 
 __all__ = [
     'StorageBlobCreatedEventData',
@@ -31,4 +47,20 @@ __all__ = [
     'ResourceDeleteFailureData',
     'ResourceDeleteCancelData',
     'EventGridEvent',
+    'IotHubDeviceCreatedEventDataTwinPropertiesDesiredMetadata',
+    'IotHubDeviceCreatedEventDataTwinPropertiesDesired',
+    'IotHubDeviceCreatedEventDataTwinPropertiesReportedMetadata',
+    'IotHubDeviceCreatedEventDataTwinPropertiesReported',
+    'IotHubDeviceCreatedEventDataTwinProperties',
+    'IotHubDeviceCreatedEventDataTwinX509Thumbprint',
+    'IotHubDeviceCreatedEventDataTwin',
+    'IotHubDeviceCreatedEventData',
+    'IotHubDeviceDeletedEventDataTwinPropertiesDesiredMetadata',
+    'IotHubDeviceDeletedEventDataTwinPropertiesDesired',
+    'IotHubDeviceDeletedEventDataTwinPropertiesReportedMetadata',
+    'IotHubDeviceDeletedEventDataTwinPropertiesReported',
+    'IotHubDeviceDeletedEventDataTwinProperties',
+    'IotHubDeviceDeletedEventDataTwinX509Thumbprint',
+    'IotHubDeviceDeletedEventDataTwin',
+    'IotHubDeviceDeletedEventData',
 ]
