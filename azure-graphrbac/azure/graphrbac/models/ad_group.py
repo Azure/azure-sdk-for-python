@@ -9,15 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .directory_object import DirectoryObject
 
 
-class ADGroup(Model):
+class ADGroup(DirectoryObject):
     """Active Directory group information.
 
-    :param object_id: The object ID.
-    :type object_id: str
-    :param object_type: The object type.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar object_id: The object ID.
+    :vartype object_id: str
+    :ivar deletion_timestamp: The time at which the directory object was
+     deleted.
+    :vartype deletion_timestamp: datetime
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param display_name: The display name of the group.
     :type display_name: str
@@ -27,17 +36,25 @@ class ADGroup(Model):
     :type mail: str
     """
 
+    _validation = {
+        'object_id': {'readonly': True},
+        'deletion_timestamp': {'readonly': True},
+        'object_type': {'required': True},
+    }
+
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_id': {'key': 'objectId', 'type': 'str'},
+        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'security_enabled': {'key': 'securityEnabled', 'type': 'bool'},
         'mail': {'key': 'mail', 'type': 'str'},
     }
 
-    def __init__(self, object_id=None, object_type=None, display_name=None, security_enabled=None, mail=None):
-        self.object_id = object_id
-        self.object_type = object_type
+    def __init__(self, additional_properties=None, display_name=None, security_enabled=None, mail=None):
+        super(ADGroup, self).__init__(additional_properties=additional_properties)
         self.display_name = display_name
         self.security_enabled = security_enabled
         self.mail = mail
+        self.object_type = 'Group'
