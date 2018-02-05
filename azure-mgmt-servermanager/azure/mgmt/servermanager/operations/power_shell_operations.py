@@ -573,7 +573,7 @@ class PowerShellOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
-        power_shell_tab_completion_paramters = models.PowerShellTabCompletionParameters(command=command)
+        power_shell_tab_completion_parameters = models.PowerShellTabCompletionParameters(command=command)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}/tab'
@@ -601,7 +601,7 @@ class PowerShellOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(power_shell_tab_completion_paramters, 'PowerShellTabCompletionParameters')
+        body_content = self._serialize.body(power_shell_tab_completion_parameters, 'PowerShellTabCompletionParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
