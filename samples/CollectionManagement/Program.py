@@ -124,7 +124,7 @@ class CollectionManagement:
         
         try:
             coll = {"id": "collection_custom_throughput"}
-            collection_options = { 'offerThroughput': 10100 }
+            collection_options = { 'offerThroughput': 400 }
             collection = client.CreateCollection(database_link, coll, collection_options )
             print('Collection with id \'{0}\' created'.format(collection['id']))
             
