@@ -56,7 +56,7 @@ class ListManagementTermOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
             'term': self._serialize.url("term", term, 'str')
         }
@@ -113,7 +113,7 @@ class ListManagementTermOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
             'term': self._serialize.url("term", term, 'str')
         }
@@ -173,7 +173,7 @@ class ListManagementTermOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -232,7 +232,7 @@ class ListManagementTermOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
