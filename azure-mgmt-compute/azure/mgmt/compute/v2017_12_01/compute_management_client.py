@@ -25,6 +25,7 @@ from .operations.virtual_machine_scale_sets_operations import VirtualMachineScal
 from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .operations.virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
+from .operations.log_analytics_operations import LogAnalyticsOperations
 from .operations.virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 from . import models
 
@@ -93,6 +94,8 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_scale_set_rolling_upgrades: azure.mgmt.compute.v2017_12_01.operations.VirtualMachineScaleSetRollingUpgradesOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
     :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.v2017_12_01.operations.VirtualMachineScaleSetVMsOperations
+    :ivar log_analytics: LogAnalytics operations
+    :vartype log_analytics: azure.mgmt.compute.v2017_12_01.operations.LogAnalyticsOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommands operations
     :vartype virtual_machine_run_commands: azure.mgmt.compute.v2017_12_01.operations.VirtualMachineRunCommandsOperations
 
@@ -140,6 +143,8 @@ class ComputeManagementClient(object):
         self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.log_analytics = LogAnalyticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
             self._client, self.config, self._serialize, self._deserialize)
