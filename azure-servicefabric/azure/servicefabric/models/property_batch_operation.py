@@ -22,7 +22,7 @@ class PropertyBatchOperation(Model):
     DeletePropertyBatchOperation, GetPropertyBatchOperation,
     PutPropertyBatchOperation
 
-    :param property_name:
+    :param property_name: The name of the Service Fabric property.
     :type property_name: str
     :param kind: Constant filled by server.
     :type kind: str

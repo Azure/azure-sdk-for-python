@@ -15,15 +15,19 @@ from msrest.serialization import Model
 class ApplicationUpgradeUpdateDescription(Model):
     """Describes the parameters for updating an ongoing application upgrade.
 
-    :param name:
+    :param name: The name of the application, including the 'fabric:' URI
+     scheme.
     :type name: str
-    :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
-     Default value: "Rolling" .
-    :type upgrade_kind: str or ~azure.servicefabric.models.enum
-    :param application_health_policy:
+    :param upgrade_kind: The kind of upgrade out of the following possible
+     values. Possible values include: 'Invalid', 'Rolling'. Default value:
+     "Rolling" .
+    :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
+    :param application_health_policy: Defines a health policy used to evaluate
+     the health of an application or one of its children entities.
     :type application_health_policy:
      ~azure.servicefabric.models.ApplicationHealthPolicy
-    :param update_description:
+    :param update_description: Describes the parameters for updating a rolling
+     upgrade of application or cluster.
     :type update_description:
      ~azure.servicefabric.models.RollingUpgradeUpdateDescription
     """

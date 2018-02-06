@@ -17,7 +17,8 @@ class BinaryPropertyValue(PropertyValue):
 
     :param kind: Constant filled by server.
     :type kind: str
-    :param data:
+    :param data: Array of bytes to be sent as an integer array. Each element
+     of array is a number between 0 and 255.
     :type data: list[int]
     """
 

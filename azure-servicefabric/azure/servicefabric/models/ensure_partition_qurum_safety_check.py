@@ -18,7 +18,8 @@ class EnsurePartitionQurumSafetyCheck(PartitionSafetyCheck):
 
     :param kind: Constant filled by server.
     :type kind: str
-    :param partition_id:
+    :param partition_id: Id of the partition which is undergoing the safety
+     check.
     :type partition_id: str
     """
 

@@ -61,7 +61,7 @@ class ServiceFabricClientAPIs(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '6.0.0.1'
+        self.api_version = '6.1.2'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -78,7 +78,7 @@ class ServiceFabricClientAPIs(object):
         while deploying a stand alone cluster. However, most of the information
         in the cluster manifest
         is generated internally by service fabric during cluster deployment in
-        other deployment scenarios (for e.g when using azuer portal).
+        other deployment scenarios (for e.g when using azure portal).
         The contents of the cluster manifest are for informational purposes
         only and users are not expected to take a dependency on the format of
         the file contents or its interpretation.
@@ -413,10 +413,19 @@ class ServiceFabricClientAPIs(object):
          to wait for the requested operation to complete. The default value for
          this parameter is 60 seconds.
         :type timeout: long
-        :param application_health_policy_map:
+        :param application_health_policy_map: Defines a map that contains
+         specific application health policies for different applications.
+         Each entry specifies as key the application name and as value an
+         ApplicationHealthPolicy used to evaluate the application health.
+         If an application is not specified in the map, the application health
+         evaluation uses the ApplicationHealthPolicy found in its application
+         manifest or the default application health policy (if no health policy
+         is defined in the manifest).
+         The map is empty by default.
         :type application_health_policy_map:
          list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
-        :param cluster_health_policy:
+        :param cluster_health_policy: Defines a health policy used to evaluate
+         the health of the cluster or of a cluster node.
         :type cluster_health_policy:
          ~azure.servicefabric.models.ClusterHealthPolicy
         :param dict custom_headers: headers that will be added to the request
@@ -998,8 +1007,8 @@ class ServiceFabricClientAPIs(object):
         """Get the cluster configuration upgrade status of a Service Fabric
         standalone cluster.
 
-        Get the cluster configuration upgrade status of a Service Fabric
-        standalone cluster.
+        Get the cluster configuration upgrade status details of a Service
+        Fabric standalone cluster.
         .
 
         :param timeout: The server timeout for performing the operation in
@@ -1048,6 +1057,135 @@ class ServiceFabricClientAPIs(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('ClusterConfigurationUpgradeStatusInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_upgrade_orchestration_service_state(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the service state of Service Fabric Upgrade Orchestration Service.
+
+        Get the service state of Service Fabric Upgrade Orchestration Service.
+        This API is internally used for support purposes.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UpgradeOrchestrationServiceState or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.UpgradeOrchestrationServiceState
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/GetUpgradeOrchestrationServiceState'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UpgradeOrchestrationServiceState', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def set_upgrade_orchestration_service_state(
+            self, timeout=60, service_state=None, custom_headers=None, raw=False, **operation_config):
+        """Update the service state of Service Fabric Upgrade Orchestration
+        Service.
+
+        Update the service state of Service Fabric Upgrade Orchestration
+        Service. This API is internally used for support purposes.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param service_state: The state of Service Fabric Upgrade
+         Orchestration Service.
+        :type service_state: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UpgradeOrchestrationServiceStateSummary or ClientRawResponse
+         if raw=true
+        :rtype:
+         ~azure.servicefabric.models.UpgradeOrchestrationServiceStateSummary or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        upgrade_orchestration_service_state = models.UpgradeOrchestrationServiceState(service_state=service_state)
+
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/$/SetUpgradeOrchestrationServiceState'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(upgrade_orchestration_service_state, 'UpgradeOrchestrationServiceState')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UpgradeOrchestrationServiceStateSummary', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1122,7 +1260,8 @@ class ServiceFabricClientAPIs(object):
         cluster.
 
         Unprovision the code or configuration packages of a Service Fabric
-        cluster.
+        cluster. It is supported to unprovision code and configuration
+        separately.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -1181,7 +1320,7 @@ class ServiceFabricClientAPIs(object):
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Rollback the upgrade of a Service Fabric cluster.
 
-        Rollback the upgrade of a Service Fabric cluster.
+        Rollback the code or configuration upgrade of a Service Fabric cluster.
 
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -1230,7 +1369,8 @@ class ServiceFabricClientAPIs(object):
             self, upgrade_domain, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Make the cluster upgrade move on to the next upgrade domain.
 
-        Make the cluster upgrade move on to the next upgrade domain.
+        Make the cluster code or configuration upgrade move on to the next
+        upgrade domain if appropriate.
 
         :param upgrade_domain: The next upgrade domain for this cluster
          upgrade.
@@ -1407,7 +1547,8 @@ class ServiceFabricClientAPIs(object):
             self, update_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Update the upgrade parameters of a Service Fabric cluster upgrade.
 
-        Update the upgrade parameters of a Service Fabric cluster upgrade.
+        Update the upgrade parameters used during a Service Fabric cluster
+        upgrade.
 
         :param update_cluster_upgrade_description: Parameters for updating a
          cluster upgrade.
@@ -1527,9 +1668,9 @@ class ServiceFabricClientAPIs(object):
             self, continuation_token=None, node_status_filter="default", timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of nodes in the Service Fabric cluster.
 
-        The Nodes endpoint returns information about the nodes in the Service
-        Fabric Cluster. The respons include the name, status, id, health,
-        uptime and other details about the node.
+        Gets the list of nodes in the Service Fabric cluster. The response
+        include the name, status, id, health, uptime and other details about
+        the node.
 
         :param continuation_token: The continuation token parameter is used to
          obtain next set of results. A continuation token with a non empty
@@ -1542,26 +1683,10 @@ class ServiceFabricClientAPIs(object):
         :param node_status_filter: Allows filtering the nodes based on the
          NodeStatus. Only the nodes that are matching the specified filter
          value will be returned. The filter value can be one of the following.
-         - default - This filter value will match all of the nodes excepts the
-         ones with with status as Unknown or Removed.
-         - all - This filter value will match all of the nodes.
-         - up - This filter value will match nodes that are Up.
-         - down - This filter value will match nodes that are Down.
-         - enabling - This filter value will match nodes that are in the
-         process of being enabled with status as Enabling.
-         - disabling - This filter value will match nodes that are in the
-         process of being disabled with status as Disabling.
-         - disabled - This filter value will match nodes that are Disabled.
-         - unknown - This filter value will match nodes whose status is
-         Unknown. A node would be in Unknown state if Service Fabric does not
-         have authoritative information about that node. This can happen if the
-         system learns about a node at runtime.
-         - removed - This filter value will match nodes whose status is
-         Removed. These are the nodes that are removed from the cluster using
-         the RemoveNodeState API.
-         . Possible values include: 'default', 'all', 'up', 'down', 'enabling',
+         Possible values include: 'default', 'all', 'up', 'down', 'enabling',
          'disabling', 'disabled', 'unknown', 'removed'
-        :type node_status_filter: str
+        :type node_status_filter: str or
+         ~azure.servicefabric.models.NodeStatusFilterOptionalQueryParam
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -1619,10 +1744,11 @@ class ServiceFabricClientAPIs(object):
 
     def get_node_info(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of nodes in the Service Fabric cluster.
+        """Gets the information about a specific node in the Service Fabric
+        cluster.
 
         Gets the information about a specific node in the Service Fabric
-        Cluster.The respons include the name, status, id, health, uptime and
+        Cluster.The response include the name, status, id, health, uptime and
         other details about the node.
 
         :param node_name: The name of the node.
@@ -1984,7 +2110,8 @@ class ServiceFabricClientAPIs(object):
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the load information of a Service Fabric node.
 
-        Gets the load information of a Service Fabric node.
+        Retrieves the load information of a Service Fabric node for all the
+        metrics that have load or capacity defined.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -2068,13 +2195,9 @@ class ServiceFabricClientAPIs(object):
         :type timeout: long
         :param deactivation_intent: Describes the intent or reason for
          deactivating the node. The possible values are following.
-         - Pause - Indicates that the node should be paused. The value is 1.
-         - Restart - Indicates that the intent is for the node to be restarted
-         after a short period of time. The value is 2.
-         - RemoveData - Indicates the intent is for the node to remove data.
-         The value is 3.
          . Possible values include: 'Pause', 'Restart', 'RemoveData'
-        :type deactivation_intent: str
+        :type deactivation_intent: str or
+         ~azure.servicefabric.models.DeactivationIntent
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2266,7 +2389,8 @@ class ServiceFabricClientAPIs(object):
         :param create_fabric_dump: Specify True to create a dump of the fabric
          node process. This is case sensitive. Possible values include:
          'False', 'True'
-        :type create_fabric_dump: str
+        :type create_fabric_dump: str or
+         ~azure.servicefabric.models.CreateFabricDump
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2334,7 +2458,8 @@ class ServiceFabricClientAPIs(object):
         there are no subsequent pages.
 
         :param application_type_definition_kind_filter: Used to filter on
-         ApplicationTypeDefinitionKind for application type query operations.
+         ApplicationTypeDefinitionKind which is the mechanism used to define a
+         Service Fabric application type.
          - Default - Default value, which performs the same function as
          selecting "All". The value is 0.
          - All - Filter that matches input with any
@@ -2532,17 +2657,24 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def provision_application_type(
-            self, application_type_build_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, provision_application_type_description_base_required_body_param, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Provisions or registers a Service Fabric application type with the
-        cluster.
+        cluster using the .sfpkg package in the external store or using the
+        application package in the image store.
 
-        Provisions or registers a Service Fabric application type with the
-        cluster. This is required before any new applications can be
-        instantiated.
+        Provisions a Service Fabric application type with the cluster. This is
+        required before any new applications can be instantiated.
+        The provision operation can be performed either on the application
+        package specified by the relativePathInImageStore, or by using the URI
+        of the external .sfpkg.
+        .
 
-        :param application_type_build_path: The relative image store path to
-         the application package.
-        :type application_type_build_path: str
+        :param
+         provision_application_type_description_base_required_body_param: The
+         base type of provision application type description which supports
+         either image store based provision or external store based provision.
+        :type provision_application_type_description_base_required_body_param:
+         ~azure.servicefabric.models.ProvisionApplicationTypeDescriptionBase
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -2558,9 +2690,7 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        application_type_image_store_path = models.ApplicationTypeImageStorePath(application_type_build_path=application_type_build_path)
-
-        api_version = "6.0"
+        api_version = "6.1"
 
         # Construct URL
         url = '/ApplicationTypes/$/Provision'
@@ -2578,14 +2708,14 @@ class ServiceFabricClientAPIs(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_type_image_store_path, 'ApplicationTypeImageStorePath')
+        body_content = self._serialize.body(provision_application_type_description_base_required_body_param, 'ProvisionApplicationTypeDescriptionBase')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -2593,25 +2723,33 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
     def unprovision_application_type(
-            self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_type_name, application_type_version, timeout=60, async_parameter=None, custom_headers=None, raw=False, **operation_config):
         """Removes or unregisters a Service Fabric application type from the
         cluster.
 
         Removes or unregisters a Service Fabric application type from the
         cluster. This operation can only be performed if all application
-        instance of the application type has been deleted. Once the application
-        type is unregistered, no new application instance can be created for
-        this particular application type.
+        instances of the application type has been deleted. Once the
+        application type is unregistered, no new application instances can be
+        created for this particular application type.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
-        :param application_type_version:
+        :param application_type_version: The version of the application type
+         as defined in the application manifest.
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
          this parameter is 60 seconds.
         :type timeout: long
+        :param async_parameter: The flag indicating whether or not unprovision
+         should occur asynchronously. When set to true, the unprovision
+         operation returns when the request is accepted by the system, and the
+         unprovision operation continues without any timeout limit. The default
+         value is false. However, we recommend to set it to true for large
+         application packages that were provisioned.
+        :type async_parameter: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2622,7 +2760,7 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        application_type_image_store_version = models.ApplicationTypeImageStoreVersion(application_type_version=application_type_version)
+        unprovision_application_type_description_info = models.UnprovisionApplicationTypeDescriptionInfo(application_type_version=application_type_version)
 
         api_version = "6.0"
 
@@ -2646,14 +2784,14 @@ class ServiceFabricClientAPIs(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(application_type_image_store_version, 'ApplicationTypeImageStoreVersion')
+        body_content = self._serialize.body(unprovision_application_type_description_info, 'UnprovisionApplicationTypeDescriptionInfo')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -2819,10 +2957,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_manifest_name: The name of the service manifest to
          filter the list of deployed service type information. If specified,
@@ -2903,10 +3043,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_type_name: Specifies the name of a Service Fabric
          service type.
@@ -3048,10 +3190,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param force_remove: Remove a Service Fabric application or service
          forcefully without going through the graceful shutdown sequence. This
@@ -3121,10 +3265,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -3182,7 +3328,7 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_application_info_list(
-            self, application_definition_kind_filter=0, application_type_name=None, exclude_application_parameters=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, application_definition_kind_filter=0, application_type_name=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of applications created in the Service Fabric cluster
         that match filters specified as the parameter.
 
@@ -3196,7 +3342,8 @@ class ServiceFabricClientAPIs(object):
         be specified at the same time.
 
         :param application_definition_kind_filter: Used to filter on
-         ApplicationDefinitionKind for application query operations.
+         ApplicationDefinitionKind which is the mechanism used to define a
+         Service Fabric application.
          - Default - Default value, which performs the same function as
          selecting "All". The value is 0.
          - All - Filter that matches input with any ApplicationDefinitionKind
@@ -3222,6 +3369,14 @@ class ServiceFabricClientAPIs(object):
          no further results then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         much results as possible that fit in the return message.
+        :type max_results: long
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -3238,7 +3393,7 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.0"
+        api_version = "6.1"
 
         # Construct URL
         url = '/Applications'
@@ -3254,6 +3409,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['ExcludeApplicationParameters'] = self._serialize.query("exclude_application_parameters", exclude_application_parameters, 'bool')
         if continuation_token is not None:
             query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -3293,10 +3450,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param exclude_application_parameters: The flag that specifies whether
          application parameters will be excluded from the result.
@@ -3364,14 +3523,16 @@ class ServiceFabricClientAPIs(object):
 
         Returns the heath state of the service fabric application. The response
         reports either Ok, Error or Warning health state. If the entity is not
-        found in the helath store, it will return Error.
+        found in the health store, it will return Error.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
@@ -3402,7 +3563,7 @@ class ServiceFabricClientAPIs(object):
          of application health query based on their health state.
          The possible values for this parameter include integer value of one of
          the following health states. Only deployed applications that match the
-         filter will be returned.\\
+         filter will be returned.
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
          The state values are flag based enumeration, so the value could be a
@@ -3530,10 +3691,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
@@ -3564,7 +3727,7 @@ class ServiceFabricClientAPIs(object):
          of application health query based on their health state.
          The possible values for this parameter include integer value of one of
          the following health states. Only deployed applications that match the
-         filter will be returned.\\
+         filter will be returned.
          All deployed applications are used to evaluate the aggregated health
          state. If not specified, all entries are returned.
          The state values are flag based enumeration, so the value could be a
@@ -3712,10 +3875,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -3804,10 +3969,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param application_upgrade_description: Parameters for an application
          upgrade.
@@ -3873,10 +4040,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -3945,10 +4114,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param application_upgrade_update_description: Parameters for updating
          an existing application upgrade.
@@ -4017,10 +4188,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param upgrade_domain_name: The name of the upgrade domain in which to
          resume the upgrade.
@@ -4091,10 +4264,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -4144,10 +4319,17 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
     def get_deployed_application_info_list(
-            self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, timeout=60, include_health_state=False, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
         """Gets the list of applications deployed on a Service Fabric node.
 
-        Gets the list of applications deployed on a Service Fabric node.
+        Gets the list of applications deployed on a Service Fabric node. The
+        results do not include information about deployed system applications
+        unless explicitly queried for by ID. Results encompass deployed
+        applications in active, activating, and downloading states. This query
+        requires that the node name corresponds to a node on the cluster. The
+        query fails if the provided node name does not point to any active
+        Service Fabric nodes on the cluster.
+        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4156,18 +4338,42 @@ class ServiceFabricClientAPIs(object):
          to wait for the requested operation to complete. The default value for
          this parameter is 60 seconds.
         :type timeout: long
+        :param include_health_state: Include the health state of an entity.
+         If this parameter is false or not specified, then the health state
+         returned is "Unknown".
+         When set to true, the query goes in parallel to the node and the
+         health system service before the results are merged.
+         As a result, the query is more expensive and may take a longer time.
+        :type include_health_state: bool
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         much results as possible that fit in the return message.
+        :type max_results: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.servicefabric.models.DeployedApplicationInfo] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: PagedDeployedApplicationInfoList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedDeployedApplicationInfoList
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.0"
+        api_version = "6.1"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications'
@@ -4181,6 +4387,12 @@ class ServiceFabricClientAPIs(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if include_health_state is not None:
+            query_parameters['IncludeHealthState'] = self._serialize.query("include_health_state", include_health_state, 'bool')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
 
         # Construct headers
         header_parameters = {}
@@ -4198,7 +4410,7 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[DeployedApplicationInfo]', response)
+            deserialized = self._deserialize('PagedDeployedApplicationInfoList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -4207,27 +4419,42 @@ class ServiceFabricClientAPIs(object):
         return deserialized
 
     def get_deployed_application_info(
-            self, node_name, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, timeout=60, include_health_state=False, custom_headers=None, raw=False, **operation_config):
         """Gets the information about an application deployed on a Service Fabric
         node.
 
         Gets the information about an application deployed on a Service Fabric
-        node.
+        node.  This query returns system application information if the
+        application ID provided is for system application. Results encompass
+        deployed applications in active, activating, and downloading states.
+        This query requires that the node name corresponds to a node on the
+        cluster. The query fails if the provided node name does not point to
+        any active Service Fabric nodes on the cluster.
+        .
 
         :param node_name: The name of the node.
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
          this parameter is 60 seconds.
         :type timeout: long
+        :param include_health_state: Include the health state of an entity.
+         If this parameter is false or not specified, then the health state
+         returned is "Unknown".
+         When set to true, the query goes in parallel to the node and the
+         health system service before the results are merged.
+         As a result, the query is more expensive and may take a longer time.
+        :type include_health_state: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -4239,7 +4466,7 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.0"
+        api_version = "6.1"
 
         # Construct URL
         url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}'
@@ -4254,6 +4481,8 @@ class ServiceFabricClientAPIs(object):
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if include_health_state is not None:
+            query_parameters['IncludeHealthState'] = self._serialize.query("include_health_state", include_health_state, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -4295,10 +4524,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
@@ -4442,10 +4673,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
@@ -4603,10 +4836,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -4764,10 +4999,12 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_type_name: The service type name used to filter the
          services to query for.
@@ -4849,17 +5086,20 @@ class ServiceFabricClientAPIs(object):
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -4925,11 +5165,12 @@ class ServiceFabricClientAPIs(object):
         the specified service.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -4988,16 +5229,22 @@ class ServiceFabricClientAPIs(object):
 
     def create_service(
             self, application_id, service_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Creates the specified service.
+        """Creates the specified Service Fabric service.
 
-        Creates the specified service.
+        This api allows creating a new Service Fabric stateless or stateful
+        service under a specified Service Fabric application. The description
+        for creating the service includes partitioning information and optional
+        properties for placement and load balancing. Some of the properties can
+        later be modified using `UpdateService` API.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_description: The information necessary to create a
          service.
@@ -5056,18 +5303,22 @@ class ServiceFabricClientAPIs(object):
 
     def create_service_from_template(
             self, application_id, service_from_template_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Creates a Service Fabric service from the service template defined in
-        the application manifest.
+        """Creates a Service Fabric service from the service template.
 
         Creates a Service Fabric service from the service template defined in
-        the application manifest.
+        the application manifest. A service template contains the properties
+        that will be same for the service instance of the same type. The API
+        allows overriding the properties that are usually different for
+        different services of the same service type.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_from_template_description: Describes the service that
          needs to be created from the template defined in the application
@@ -5138,11 +5389,12 @@ class ServiceFabricClientAPIs(object):
         delete the service.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param force_remove: Remove a Service Fabric application or service
          forcefully without going through the graceful shutdown sequence. This
@@ -5201,16 +5453,27 @@ class ServiceFabricClientAPIs(object):
 
     def update_service(
             self, service_id, service_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Updates the specified service using the given update description.
+        """Updates a Service Fabric service using the specified update
+        description.
 
-        Updates the specified service using the given update description.
+        This API allows updating properties of a running Service Fabric
+        service. The set of properties that can be updated are a subset of the
+        properties that were specified at the time of creating the service. The
+        current set of properties can be obtained using `GetServiceDescription`
+        API. Please note that updating the properties of a running service is
+        different than upgrading your application using
+        `StartApplicationUpgrade` API. The upgrade is a long running background
+        operation that involves moving the application from one version to
+        another, one upgrade domain at a time, whereas update applies the new
+        properties immediately to the service.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param service_update_description: The information necessary to update
          a service.
@@ -5275,11 +5538,12 @@ class ServiceFabricClientAPIs(object):
         must be created before its description can be obtained.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -5350,11 +5614,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
@@ -5492,11 +5757,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param events_health_state_filter: Allows filtering the collection of
          HealthEvent objects returned based on health state.
@@ -5646,11 +5912,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -5738,11 +6005,12 @@ class ServiceFabricClientAPIs(object):
         service replicas.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_key_type: Key type for the partition. This parameter
          is required if the partition scheme for the service is Int64Range or
@@ -5835,11 +6103,12 @@ class ServiceFabricClientAPIs(object):
         partition.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param continuation_token: The continuation token parameter is used to
          obtain next set of results. A continuation token with a non empty
@@ -6611,11 +6880,12 @@ class ServiceFabricClientAPIs(object):
         can cause potential data loss.
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -7047,7 +7317,7 @@ class ServiceFabricClientAPIs(object):
         :param version: The current version number of the repair task. If
          non-zero, then the request will only succeed if this value matches the
          actual current version of the repair task. If zero, then no version
-         check is performed.</para>
+         check is performed.
         :type version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -7298,7 +7568,7 @@ class ServiceFabricClientAPIs(object):
             self, partition_id, replica_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a replica of a Service Fabric partition.
 
-        The respons include the id, role, status, health, node name, uptime,
+        The response include the id, role, status, health, node name, uptime,
         and other details about the replica.
 
         :param partition_id: The identity of the partition.
@@ -7605,13 +7875,9 @@ class ServiceFabricClientAPIs(object):
         :type replica_id: str
         :param service_kind: The kind of service replica (Stateless or
          Stateful) for which the health is being reported. Following are the
-         possible values.
-         - Stateless - Does not use Service Fabric to make its state highly
-         available or reliable. The value is 1
-         - Stateful - Uses Service Fabric to make its state or part of its
-         state highly available and reliable. The value is 2.
-         . Possible values include: 'Stateless', 'Stateful'
-        :type service_kind: str
+         possible values. Possible values include: 'Stateless', 'Stateful'
+        :type service_kind: str or
+         ~azure.servicefabric.models.ReplicaHealthReportServiceKindRequiredQueryParam
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
@@ -7707,10 +7973,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -8072,10 +8340,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -8147,10 +8417,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
@@ -8226,10 +8498,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
@@ -8337,10 +8611,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
@@ -8462,10 +8738,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_package_name: The name of the service package.
         :type service_package_name: str
@@ -8551,11 +8829,15 @@ class ServiceFabricClientAPIs(object):
 
     def deployed_service_package_to_node(
             self, node_name, deploy_service_package_to_node_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Downloads packages associated with specified service manifest to image
-        cache on specified node.
+        """Downloads all of the code packagesassociated with specified service
+        manifest on the specified node.
 
-        Downloads packages associated with specified service manifest to image
-        cache on specified node.
+        This API provides a way to download code packages including the
+        container images on a specific node outside of the normal application
+        deployment and upgrade path. This is useful for the large code packages
+        and container iamges to be present on the node before the actual
+        application deployment and upgrade, thus significantly reducing the
+        total time required for the deployment or upgrade.
         .
 
         :param node_name: The name of the node.
@@ -8626,10 +8908,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param service_manifest_name: The name of a service manifest
          registered as part of an application type in a Service Fabric cluster.
@@ -8710,10 +8994,12 @@ class ServiceFabricClientAPIs(object):
         :type node_name: str
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
-         scheme. Starting from version 6.0, hierarchical names are delimited
-         with the "~" character. For example, if the application name is
-         "fabric://myapp/app1", the application identity would be "myapp~app1"
-         in 6.0+ and "myapp/app1" in previous versions.
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
         :type application_id: str
         :param restart_deployed_code_package_description: Describes the
          deployed code package on Service Fabric node to restart.
@@ -8771,11 +9057,103 @@ class ServiceFabricClientAPIs(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def get_container_logs_deployed_on_node(
+            self, node_name, application_id, service_manifest_name, code_package_name, tail=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the container logs for container deployed on a Service Fabric
+        node.
+
+        Gets the container logs for container deployed on a Service Fabric node
+        for the given code package.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param service_manifest_name: The name of a service manifest
+         registered as part of an application type in a Service Fabric cluster.
+        :type service_manifest_name: str
+        :param code_package_name: The name of code package specified in
+         service manifest registered as part of an application type in a
+         Service Fabric cluster.
+        :type code_package_name: str
+        :param tail: Number of lines to fetch from tail end.
+        :type tail: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ContainerLogs or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ContainerLogs or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.1"
+
+        # Construct URL
+        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerLogs'
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+        query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
+        if tail is not None:
+            query_parameters['Tail'] = self._serialize.query("tail", tail, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ContainerLogs', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def create_compose_deployment(
             self, create_compose_deployment_description, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Creates a Service Fabric compose deployment.
 
-        Creates a Service Fabric compose deployment.
+        Compose is a file format that describes multi-container applications.
+        This API allows deploying container based applications defined in
+        compose format in a Service Fabric cluster. Once the deployment is
+        created it's status can be tracked via `GetComposeDeploymentStatus`
+        API.
 
         :param create_compose_deployment_description: Describes the compose
          deployment that needs to be created.
@@ -9300,17 +9678,17 @@ class ServiceFabricClientAPIs(object):
          no further results then the continuation token does not contain a
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
-        :param start_time_utc: The count of ticks representing the start time
-         of the time range for which a Chaos report is to be generated. Please
-         consult [DateTime.Ticks
-         Property](https://msdn.microsoft.com/en-us/library/system.datetime.ticks%28v=vs.110%29)
-         for details about tick.
+        :param start_time_utc: The Windows file time representing the start
+         time of the time range for which a Chaos report is to be generated.
+         Please consult [DateTime.ToFileTimeUtc
+         Method](https://msdn.microsoft.com/en-us/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
+         for details.
         :type start_time_utc: str
-        :param end_time_utc: The count of ticks representing the end time of
-         the time range for which a Chaos report is to be generated. Please
-         consult [DateTime.Ticks
-         Property](https://msdn.microsoft.com/en-us/library/system.datetime.ticks%28v=vs.110%29)
-         for details about tick.
+        :param end_time_utc: The Windows file time representing the end time
+         of the time range for which a Chaos report is to be generated. Please
+         consult [DateTime.ToFileTimeUtc
+         Method](https://msdn.microsoft.com/en-us/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
+         for details.
         :type end_time_utc: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -9675,6 +10053,331 @@ class ServiceFabricClientAPIs(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def delete_image_store_upload_session(
+            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Cancels an image store upload session.
+
+        The DELETE request will cause the existing upload session to expire and
+        remove any previously uploaded file chunks.
+        .
+
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/ImageStore/$/DeleteUploadSession'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def commit_image_store_upload_session(
+            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Commit an image store upload session.
+
+        When all file chunks have been uploaded, the upload session needs to be
+        committed explicitly to complete the upload. Image store preserves the
+        upload session until the expiration time, which is 30 minutes after the
+        last chunk received.
+        .
+
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/ImageStore/$/CommitUploadSession'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def get_image_store_upload_session_by_id(
+            self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the image store upload session by ID.
+
+        Gets the image store upload session identified by the given ID. User
+        can query the upload session at any time during uploading.
+        .
+
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UploadSession or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.UploadSession or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/ImageStore/$/GetUploadSession'
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UploadSession', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_image_store_upload_session_by_path(
+            self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the image store upload session by relative path.
+
+        Gets the image store upload session associated with the given image
+        store relative path. User can query the upload session at any time
+        during uploading.
+        .
+
+        :param content_path: Relative path to file or folder in the image
+         store from its root.
+        :type content_path: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: UploadSession or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.UploadSession or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/ImageStore/{contentPath}/$/GetUploadSession'
+        path_format_arguments = {
+            'contentPath': self._serialize.url("content_path", content_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('UploadSession', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def upload_file_chunk(
+            self, content_path, session_id, content_range, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Uploads a file chunk to the image store relative path.
+
+        Uploads a file chunk to the image store with the specified upload
+        session ID and image store relative path. This API allows user to
+        resume the file upload operation. user doesn't have to restart the file
+        upload from scratch whenever there is a network interruption. Use this
+        option if the file size is large.
+        To perform a resumable file upload, user need to break the file into
+        multiple chunks and upload these chunks to the image store one-by-one.
+        Chunks don't have to be uploaded in order. If the file represented by
+        the image store relative path already exists, it will be overwritten
+        when the upload session commits.
+        .
+
+        :param content_path: Relative path to file or folder in the image
+         store from its root.
+        :type content_path: str
+        :param session_id: A GUID generated by the user for a file uploading.
+         It identifies an image store upload session which keeps track of all
+         file chunks until it is committed.
+        :type session_id: str
+        :param content_range: When uploading file chunks to the image store,
+         the Content-Range header field need to be configured and sent with a
+         request. The format should looks like "bytes
+         {First-Byte-Position}-{Last-Byte-Position}/{File-Length}". For
+         example, Content-Range:bytes 300-5000/20000 indicates that user is
+         sending bytes 300 through 5,000 and the total file length is 20,000
+         bytes.
+        :type content_range: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This specifies the time duration that the client is willing
+         to wait for the requested operation to complete. The default value for
+         this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = '/ImageStore/{contentPath}/$/UploadChunk'
+        path_format_arguments = {
+            'contentPath': self._serialize.url("content_path", content_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['session-id'] = self._serialize.query("session_id", session_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Content-Range'] = self._serialize.header("content_range", content_range, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
     def invoke_infrastructure_command(
             self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Invokes an administrative command on the given Infrastructure Service
@@ -9855,11 +10558,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -9867,16 +10571,10 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param data_loss_mode: This enum is passed to the StartDataLoss API to
-         indicate what type of data loss to induce.
-         - Invalid - Reserved.  Do not pass into API.
-         - PartialDataLoss - PartialDataLoss option will cause a quorum of
-         replicas to go down, triggering an OnDataLoss event in the system for
-         the given partition.
-         - FullDataLoss - FullDataLoss option will drop all the replicas which
-         means that all the data will be lost.
-         . Possible values include: 'Invalid', 'PartialDataLoss',
-         'FullDataLoss'
-        :type data_loss_mode: str
+         indicate what type of data loss to induce. Possible values include:
+         'Invalid', 'PartialDataLoss', 'FullDataLoss'
+        :type data_loss_mode: str or
+         ~azure.servicefabric.models.DataLossModeRequiredQueryParam
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -9937,11 +10635,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -10019,11 +10718,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -10031,14 +10731,10 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param quorum_loss_mode: This enum is passed to the StartQuorumLoss
-         API to indicate what type of quorum loss to induce.
-         - Invalid - Reserved.  Do not pass into API.
-         - QuorumReplicas - Partial Quorum loss mode : Minimum number of
-         replicas for a partition will be down that will cause a quorum loss.
-         - AllReplicas- Full Quorum loss mode : All replicas for a partition
-         will be down that will cause a quorum loss.
-         . Possible values include: 'Invalid', 'QuorumReplicas', 'AllReplicas'
-        :type quorum_loss_mode: str
+         API to indicate what type of quorum loss to induce. Possible values
+         include: 'Invalid', 'QuorumReplicas', 'AllReplicas'
+        :type quorum_loss_mode: str or
+         ~azure.servicefabric.models.QuorumLossModeRequiredQueryParam
         :param quorum_loss_duration: The amount of time for which the
          partition will be kept in quorum loss.  This must be specified in
          seconds.
@@ -10104,11 +10800,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -10185,25 +10882,23 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
         :type operation_id: str
-        :param restart_partition_mode: - Invalid - Reserved.  Do not pass into
-         API.
-         - AllReplicasOrInstances - All replicas or instances in the partition
-         are restarted at once.
-         - OnlyActiveSecondaries - Only the secondary replicas are restarted.
-         . Possible values include: 'Invalid', 'AllReplicasOrInstances',
+        :param restart_partition_mode: Describe which partitions to restart.
+         Possible values include: 'Invalid', 'AllReplicasOrInstances',
          'OnlyActiveSecondaries'
-        :type restart_partition_mode: str
+        :type restart_partition_mode: str or
+         ~azure.servicefabric.models.RestartPartitionModeRequiredQueryParam
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
          to wait for the requested operation to complete. The default value for
@@ -10264,11 +10959,12 @@ class ServiceFabricClientAPIs(object):
         .
 
         :param service_id: The identity of the service. This is typically the
-         full name of the service without the 'fabric:' URI scheme. Starting
-         from version 6.0, hierarchical names are delimited with the "~"
-         character. For example, if the service name is
-         "fabric://myapp/app1/svc1", the service identity would be
-         "myapp~app1~svc1" in 6.0+ and "myapp/app1/svc1" in previous versions.
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -10353,12 +11049,10 @@ class ServiceFabricClientAPIs(object):
         :type operation_id: str
         :param node_transition_type: Indicates the type of transition to
          perform.  NodeTransitionType.Start will start a stopped node.
-         NodeTransitionType.Stop will stop a node that is up.
-         - Invalid - Reserved.  Do not pass into API.
-         - Start - Transition a stopped node to up.
-         - Stop - Transition an up node to stopped.
-         . Possible values include: 'Invalid', 'Start', 'Stop'
-        :type node_transition_type: str
+         NodeTransitionType.Stop will stop a node that is up. Possible values
+         include: 'Invalid', 'Start', 'Stop'
+        :type node_transition_type: str or
+         ~azure.servicefabric.models.NodeTransitionTypeRequiredQueryParam
         :param node_instance_id: The node instance ID of the target node.
          This can be determined through GetNodeInfo API.
         :type node_instance_id: str
@@ -10654,7 +11348,8 @@ class ServiceFabricClientAPIs(object):
 
         Creates the specified Service Fabric name.
 
-        :param name:
+        :param name: The Service Fabric name, including the 'fabric:' URI
+         scheme.
         :type name: str
         :param timeout: The server timeout for performing the operation in
          seconds. This specifies the time duration that the client is willing
@@ -10905,7 +11600,10 @@ class ServiceFabricClientAPIs(object):
             self, name_id, include_values=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets information on all Service Fabric properties under a given name.
 
-        Gets information on all Service Fabric properties under a given name.
+        A Service Fabric name can have one or more named properties that stores
+        custom information. This operation gets the information about these
+        properties in a paged list. The information include name, value and
+        metadata about each of the properties.
 
         :param name_id: The Service Fabric name, without the 'fabric:' URI
          scheme.

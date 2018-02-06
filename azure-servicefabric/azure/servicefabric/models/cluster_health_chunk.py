@@ -18,13 +18,22 @@ class ClusterHealthChunk(Model):
     respect the input filter.
     .
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or ~azure.servicefabric.models.enum
-    :param node_health_state_chunks:
+    :param health_state: The HealthState representing the aggregated health
+     state of the cluster computed by Health Manager.
+     The health evaluation of the entity reflects all events reported on the
+     entity and its children (if any).
+     The aggregation is done by applying the desired cluster health policy and
+     the application health policies.
+     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_health_state_chunks: The list of node health state chunks in
+     the cluster that respect the filters in the cluster health chunk query
+     description.
     :type node_health_state_chunks:
      ~azure.servicefabric.models.NodeHealthStateChunkList
-    :param application_health_state_chunks:
+    :param application_health_state_chunks: The list of application health
+     state chunks in the cluster that respect the filters in the cluster health
+     chunk query description.
     :type application_health_state_chunks:
      ~azure.servicefabric.models.ApplicationHealthStateChunkList
     """

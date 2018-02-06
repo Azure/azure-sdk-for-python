@@ -17,7 +17,9 @@ class ApplicationHealthPolicies(Model):
     application or one of its children entities.
     .
 
-    :param application_health_policy_map:
+    :param application_health_policy_map: The wrapper that contains the map
+     with application health policies used to evaluate specific applications in
+     the cluster.
     :type application_health_policy_map:
      list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
     """

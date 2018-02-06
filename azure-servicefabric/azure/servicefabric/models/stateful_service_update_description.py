@@ -52,18 +52,18 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme:
+    :param correlation_scheme: The correlation scheme.
     :type correlation_scheme:
      list[~azure.servicefabric.models.ServiceCorrelationDescription]
-    :param load_metrics:
+    :param load_metrics: The service load metrics.
     :type load_metrics:
      list[~azure.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies:
+    :param service_placement_policies: The service placement policies.
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Possible values include: 'Zero', 'Low',
-     'Medium', 'High'
-    :type default_move_cost: str or ~azure.servicefabric.models.enum
+    :param default_move_cost: The move cost for the service. Possible values
+     include: 'Zero', 'Low', 'Medium', 'High'
+    :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param service_kind: Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.

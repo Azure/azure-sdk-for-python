@@ -15,11 +15,13 @@ from .chaos_event import ChaosEvent
 class StartedChaosEvent(ChaosEvent):
     """Describes a Chaos event that gets generated when Chaos is started.
 
-    :param time_stamp_utc:
+    :param time_stamp_utc: The UTC timestamp when this Chaos event was
+     generated.
     :type time_stamp_utc: datetime
     :param kind: Constant filled by server.
     :type kind: str
-    :param chaos_parameters:
+    :param chaos_parameters: Defines all the parameters to configure a Chaos
+     run.
     :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
     """
 

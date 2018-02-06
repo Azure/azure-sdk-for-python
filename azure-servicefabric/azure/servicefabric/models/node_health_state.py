@@ -16,12 +16,16 @@ class NodeHealthState(EntityHealthState):
     """Represents the health state of a node, which contains the node identifier
     and its aggregated health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
-    :param name:
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param name: The name of a Service Fabric node.
     :type name: str
-    :param id:
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     node. Node Id is deterministically generated from node name.
     :type id: ~azure.servicefabric.models.NodeId
     """
 

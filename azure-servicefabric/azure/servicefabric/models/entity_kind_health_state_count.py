@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class EntityKindHealthStateCount(Model):
     """Represents health state count for entities of the specified entity kind.
 
-    :param entity_kind: Possible values include: 'Invalid', 'Node',
-     'Partition', 'Service', 'Application', 'Replica', 'DeployedApplication',
-     'DeployedServicePackage', 'Cluster'
-    :type entity_kind: str or ~azure.servicefabric.models.enum
-    :param health_state_count:
+    :param entity_kind: The entity kind for which health states are evaluated.
+     Possible values include: 'Invalid', 'Node', 'Partition', 'Service',
+     'Application', 'Replica', 'DeployedApplication', 'DeployedServicePackage',
+     'Cluster'
+    :type entity_kind: str or ~azure.servicefabric.models.EntityKind
+    :param health_state_count: The health state count for the entities of the
+     specified kind.
     :type health_state_count: ~azure.servicefabric.models.HealthStateCount
     """
 

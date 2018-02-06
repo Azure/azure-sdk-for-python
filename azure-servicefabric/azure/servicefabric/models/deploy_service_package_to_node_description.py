@@ -17,15 +17,18 @@ class DeployServicePackageToNodeDescription(Model):
     manifest to image cache on a Service Fabric node.
     .
 
-    :param service_manifest_name:
+    :param service_manifest_name: The name of service manifest whose packages
+     need to be downloaded.
     :type service_manifest_name: str
-    :param application_type_name:
+    :param application_type_name: The application type name as defined in the
+     application manifest.
     :type application_type_name: str
-    :param application_type_version:
+    :param application_type_version: The version of the application type as
+     defined in the application manifest.
     :type application_type_version: str
-    :param node_name:
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
-    :param package_sharing_policy:
+    :param package_sharing_policy: List of package sharing policy information.
     :type package_sharing_policy:
      list[~azure.servicefabric.models.PackageSharingPolicyInfo]
     """

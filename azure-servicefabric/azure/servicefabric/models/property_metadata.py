@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class PropertyMetadata(Model):
     """The metadata associated with a property, including the property's name.
 
-    :param type_id: Possible values include: 'Invalid', 'Binary', 'Int64',
-     'Double', 'String', 'Guid'
-    :type type_id: str or ~azure.servicefabric.models.enum
-    :param custom_type_id:
+    :param type_id: The kind of property, determined by the type of data.
+     Following are the possible values. Possible values include: 'Invalid',
+     'Binary', 'Int64', 'Double', 'String', 'Guid'
+    :type type_id: str or ~azure.servicefabric.models.PropertyValueKind
+    :param custom_type_id: The property's custom type id.
     :type custom_type_id: str
-    :param parent:
+    :param parent: The name of the parent Service Fabric Name for the
+     property. It could be thought of as the namespace/table under which the
+     property exists.
     :type parent: str
     :param size_in_bytes: The length of the serialized property value.
     :type size_in_bytes: int

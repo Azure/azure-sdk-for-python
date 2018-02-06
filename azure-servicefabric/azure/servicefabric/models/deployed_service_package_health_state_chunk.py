@@ -18,12 +18,18 @@ class DeployedServicePackageHealthStateChunk(EntityHealthStateChunk):
     health state.
     .
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or ~azure.servicefabric.models.enum
-    :param service_manifest_name:
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param service_manifest_name: The name of the service manifest.
     :type service_manifest_name: str
-    :param service_package_activation_id:
+    :param service_package_activation_id: The ActivationId of a deployed
+     service package. If ServicePackageActivationMode specified at the time of
+     creating the service
+     is 'SharedProcess' (or if it is not specified, in which case it defaults
+     to 'SharedProcess'), then value of ServicePackageActivationId
+     is always an empty string.
     :type service_package_activation_id: str
     """
 

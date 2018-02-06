@@ -16,16 +16,21 @@ class NodeDeactivationInfo(Model):
     """Information about the node deactivation. This information is valid for a
     node that is undergoing deactivation or has already been deactivated.
 
-    :param node_deactivation_intent: Possible values include: 'Invalid',
-     'Pause', 'Restart', 'RemoveData', 'RemoveNode'
-    :type node_deactivation_intent: str or ~azure.servicefabric.models.enum
-    :param node_deactivation_status: Possible values include: 'None',
-     'SafetyCheckInProgress', 'SafetyCheckComplete', 'Completed'
-    :type node_deactivation_status: str or ~azure.servicefabric.models.enum
-    :param node_deactivation_task:
+    :param node_deactivation_intent: The intent or the reason for deactivating
+     the node. Following are the possible values for it. Possible values
+     include: 'Invalid', 'Pause', 'Restart', 'RemoveData', 'RemoveNode'
+    :type node_deactivation_intent: str or
+     ~azure.servicefabric.models.NodeDeactivationIntent
+    :param node_deactivation_status: The status of node deactivation
+     operation. Following are the possible values. Possible values include:
+     'None', 'SafetyCheckInProgress', 'SafetyCheckComplete', 'Completed'
+    :type node_deactivation_status: str or
+     ~azure.servicefabric.models.NodeDeactivationStatus
+    :param node_deactivation_task: List of tasks representing the deactivation
+     operation on the node.
     :type node_deactivation_task:
      list[~azure.servicefabric.models.NodeDeactivationTask]
-    :param pending_safety_checks:
+    :param pending_safety_checks: List of pending safety checks
     :type pending_safety_checks:
      list[~azure.servicefabric.models.SafetyCheckWrapper]
     """

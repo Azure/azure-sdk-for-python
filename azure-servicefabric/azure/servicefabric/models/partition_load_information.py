@@ -20,7 +20,7 @@ class PartitionLoadInformation(Model):
     For default loads, LoadMetricReport's LastReportedUtc is set to 0.
     .
 
-    :param partition_id:
+    :param partition_id: Id of the partition.
     :type partition_id: str
     :param primary_load_metric_reports: Array of load reports from the primary
      replica for this partition.
