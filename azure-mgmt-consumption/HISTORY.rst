@@ -2,6 +2,16 @@
 
 Release History
 ===============
+2.0.0
+++++++++++++++++++
+
+*Features**
+- Marketplace data with and without billing period
+- Price sheets data with and without billing period
+- Budget CRUD operations support
+
+**Breaking changes**
+- Removing scope from usage_details, reservation summaries and details operations.
 
 1.1.0 (2017-12-12)
 ++++++++++++++++++
