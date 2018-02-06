@@ -38,9 +38,12 @@ class ProviderOperationsMetadataOperations(object):
         self.config = config
 
     def get(
-            self, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
+            self, resource_provider_namespace, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
         """Gets provider operations metadata for the specified resource provider.
 
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
+        :type resource_provider_namespace: str
         :param expand: Specifies whether to expand the values.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -56,7 +59,7 @@ class ProviderOperationsMetadataOperations(object):
         # Construct URL
         url = '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'
         path_format_arguments = {
-            'resourceProviderNamespace': self._serialize.url("self.config.resource_provider_namespace", self.config.resource_provider_namespace, 'str')
+            'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
