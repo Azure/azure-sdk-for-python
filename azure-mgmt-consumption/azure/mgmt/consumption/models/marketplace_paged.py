@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0"
+from msrest.paging import Paged
 
+
+class MarketplacePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Marketplace <azure.mgmt.consumption.models.Marketplace>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Marketplace]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(MarketplacePaged, self).__init__(*args, **kwargs)
