@@ -23,7 +23,7 @@ class PerformanceTierProperties(Model):
     :param service_level_objectives: Service level objectives associated with
      the performance tier
     :type service_level_objectives:
-     list[~azure.mgmt.rdbms.mysql.models.PerformanceTierServiceLevelObjectives]
+     list[~azure.mgmt.rdbms.postgres.models.PerformanceTierServiceLevelObjectives]
     """
 
     _attribute_map = {

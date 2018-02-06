@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-04-30-preview"
+from msrest.paging import Paged
 
+
+class ServerPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Server <azure.mgmt.rdbms.postgres.models.Server>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Server]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerPaged, self).__init__(*args, **kwargs)

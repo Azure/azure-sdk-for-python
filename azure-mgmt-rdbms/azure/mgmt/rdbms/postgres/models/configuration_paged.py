@@ -9,36 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.paging import Paged
 
 
-class ServerVersion(Enum):
+class ConfigurationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Configuration <azure.mgmt.rdbms.postgres.models.Configuration>` object
+    """
 
-    five_full_stop_six = "5.6"
-    five_full_stop_seven = "5.7"
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Configuration]'}
+    }
 
+    def __init__(self, *args, **kwargs):
 
-class SslEnforcementEnum(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class ServerState(Enum):
-
-    ready = "Ready"
-    dropping = "Dropping"
-    disabled = "Disabled"
-
-
-class SkuTier(Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-
-
-class OperationOrigin(Enum):
-
-    not_specified = "NotSpecified"
-    user = "user"
-    system = "system"
+        super(ConfigurationPaged, self).__init__(*args, **kwargs)

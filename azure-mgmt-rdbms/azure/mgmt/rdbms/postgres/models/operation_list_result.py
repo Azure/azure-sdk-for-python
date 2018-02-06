@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-04-30-preview"
+from msrest.serialization import Model
 
+
+class OperationListResult(Model):
+    """A list of resource provider operations.
+
+    :param value: The list of resource provider operations.
+    :type value: list[~azure.mgmt.rdbms.postgres.models.Operation]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+    }
+
+    def __init__(self, value=None):
+        super(OperationListResult, self).__init__()
+        self.value = value

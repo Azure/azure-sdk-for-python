@@ -47,12 +47,12 @@ class Operations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: OperationListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.rdbms.mysql.models.OperationListResult or
+        :rtype: ~azure.mgmt.rdbms.postgres.models.OperationListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.DBforMySQL/operations'
+        url = '/providers/Microsoft.DBforPostgreSQL/operations'
 
         # Construct parameters
         query_parameters = {}

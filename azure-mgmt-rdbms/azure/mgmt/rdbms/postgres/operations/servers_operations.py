@@ -40,10 +40,10 @@ class ServersOperations(object):
         self.config = config
 
 
-    def _create_or_update_initial(
+    def _create_initial(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -91,10 +91,9 @@ class ServersOperations(object):
 
         return deserialized
 
-    def create_or_update(
+    def create(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new server or updates an existing server. The update action
-        will overwrite the existing server.
+        """Creates a new server, or will overwrite an existing server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -104,18 +103,18 @@ class ServersOperations(object):
         :type server_name: str
         :param parameters: The required parameters for creating or updating a
          server.
-        :type parameters: ~azure.mgmt.rdbms.mysql.models.ServerForCreate
+        :type parameters: ~azure.mgmt.rdbms.postgres.models.ServerForCreate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return: An instance of AzureOperationPoller that returns Server or
          ClientRawResponse if raw=true
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.mysql.models.Server]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.postgres.models.Server]
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_or_update_initial(
+        raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             server_name=server_name,
             parameters=parameters,
@@ -166,7 +165,7 @@ class ServersOperations(object):
     def _update_initial(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -225,14 +224,14 @@ class ServersOperations(object):
         :type server_name: str
         :param parameters: The required parameters for updating a server.
         :type parameters:
-         ~azure.mgmt.rdbms.mysql.models.ServerUpdateParameters
+         ~azure.mgmt.rdbms.postgres.models.ServerUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return: An instance of AzureOperationPoller that returns Server or
          ClientRawResponse if raw=true
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.mysql.models.Server]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.rdbms.postgres.models.Server]
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -287,7 +286,7 @@ class ServersOperations(object):
     def _delete_initial(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -399,12 +398,12 @@ class ServersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Server or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.rdbms.mysql.models.Server or
+        :rtype: ~azure.mgmt.rdbms.postgres.models.Server or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -461,14 +460,14 @@ class ServersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Server
         :rtype:
-         ~azure.mgmt.rdbms.mysql.models.ServerPaged[~azure.mgmt.rdbms.mysql.models.Server]
+         ~azure.mgmt.rdbms.postgres.models.ServerPaged[~azure.mgmt.rdbms.postgres.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -526,14 +525,14 @@ class ServersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Server
         :rtype:
-         ~azure.mgmt.rdbms.mysql.models.ServerPaged[~azure.mgmt.rdbms.mysql.models.Server]
+         ~azure.mgmt.rdbms.postgres.models.ServerPaged[~azure.mgmt.rdbms.postgres.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/servers'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/servers'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

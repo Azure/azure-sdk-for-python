@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PerformanceTiersOperations(object):
-    """PerformanceTiersOperations operations.
+class LogFilesOperations(object):
+    """LogFilesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,27 +37,35 @@ class PerformanceTiersOperations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """List all the performance tiers in a given subscription.
+    def list_by_server(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        """List all the log files in a given server.
 
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PerformanceTierProperties
+        :return: An iterator like instance of LogFile
         :rtype:
-         ~azure.mgmt.rdbms.mysql.models.PerformanceTierPropertiesPaged[~azure.mgmt.rdbms.mysql.models.PerformanceTierProperties]
+         ~azure.mgmt.rdbms.postgres.models.LogFilePaged[~azure.mgmt.rdbms.postgres.models.LogFile]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/performanceTiers'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}/logFiles'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serverName': self._serialize.url("server_name", server_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,11 +100,11 @@ class PerformanceTiersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PerformanceTierPropertiesPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.LogFilePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PerformanceTierPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.LogFilePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

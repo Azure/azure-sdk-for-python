@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class VirtualNetworkRulePaged(Paged):
+class FirewallRulePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`VirtualNetworkRule <azure.mgmt.rdbms.mysql.models.VirtualNetworkRule>` object
+    A paging container for iterating over a list of :class:`FirewallRule <azure.mgmt.rdbms.postgres.models.FirewallRule>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[VirtualNetworkRule]'}
+        'current_page': {'key': 'value', 'type': '[FirewallRule]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(VirtualNetworkRulePaged, self).__init__(*args, **kwargs)
+        super(FirewallRulePaged, self).__init__(*args, **kwargs)

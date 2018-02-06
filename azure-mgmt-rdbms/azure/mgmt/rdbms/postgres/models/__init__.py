@@ -35,7 +35,7 @@ from .database_paged import DatabasePaged
 from .configuration_paged import ConfigurationPaged
 from .log_file_paged import LogFilePaged
 from .performance_tier_properties_paged import PerformanceTierPropertiesPaged
-from .my_sql_management_client_enums import (
+from .postgre_sql_management_client_enums import (
     ServerVersion,
     SslEnforcementEnum,
     ServerState,

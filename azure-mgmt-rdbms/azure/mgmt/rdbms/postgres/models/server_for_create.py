@@ -16,9 +16,10 @@ class ServerForCreate(Model):
     """Represents a server to be created.
 
     :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.mysql.models.Sku
+    :type sku: ~azure.mgmt.rdbms.postgres.models.Sku
     :param properties: Properties of the server.
-    :type properties: ~azure.mgmt.rdbms.mysql.models.ServerPropertiesForCreate
+    :type properties:
+     ~azure.mgmt.rdbms.postgres.models.ServerPropertiesForCreate
     :param location: The location the resource resides in.
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.

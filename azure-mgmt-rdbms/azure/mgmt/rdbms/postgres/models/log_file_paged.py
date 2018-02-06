@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-04-30-preview"
+from msrest.paging import Paged
 
+
+class LogFilePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`LogFile <azure.mgmt.rdbms.postgres.models.LogFile>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LogFile]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LogFilePaged, self).__init__(*args, **kwargs)

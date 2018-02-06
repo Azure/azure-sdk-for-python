@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class OperationListResult(Model):
-    """A list of resource provider operations.
-
-    :param value: The list of resource provider operations.
-    :type value: list[~azure.mgmt.rdbms.mysql.models.Operation]
+class PerformanceTierPropertiesPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PerformanceTierProperties <azure.mgmt.rdbms.postgres.models.PerformanceTierProperties>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PerformanceTierProperties]'}
     }
 
-    def __init__(self, value=None):
-        super(OperationListResult, self).__init__()
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(PerformanceTierPropertiesPaged, self).__init__(*args, **kwargs)

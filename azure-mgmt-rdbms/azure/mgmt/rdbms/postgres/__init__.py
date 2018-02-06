@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-04-30-preview"
+from .postgre_sql_management_client import PostgreSQLManagementClient
+from .version import VERSION
+
+__all__ = ['PostgreSQLManagementClient']
+
+__version__ = VERSION
 

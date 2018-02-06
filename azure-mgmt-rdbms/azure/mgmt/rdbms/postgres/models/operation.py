@@ -23,10 +23,10 @@ class Operation(Model):
     :vartype name: str
     :ivar display: The localized display information for this particular
      operation or action.
-    :vartype display: ~azure.mgmt.rdbms.mysql.models.OperationDisplay
+    :vartype display: ~azure.mgmt.rdbms.postgres.models.OperationDisplay
     :ivar origin: The intended executor of the operation. Possible values
      include: 'NotSpecified', 'user', 'system'
-    :vartype origin: str or ~azure.mgmt.rdbms.mysql.models.OperationOrigin
+    :vartype origin: str or ~azure.mgmt.rdbms.postgres.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
     :vartype properties: dict[str, object]
     """

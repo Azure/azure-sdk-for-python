@@ -48,14 +48,14 @@ class PerformanceTiersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PerformanceTierProperties
         :rtype:
-         ~azure.mgmt.rdbms.mysql.models.PerformanceTierPropertiesPaged[~azure.mgmt.rdbms.mysql.models.PerformanceTierProperties]
+         ~azure.mgmt.rdbms.postgres.models.PerformanceTierPropertiesPaged[~azure.mgmt.rdbms.postgres.models.PerformanceTierProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/performanceTiers'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/performanceTiers'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

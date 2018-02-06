@@ -14,8 +14,8 @@ from enum import Enum
 
 class ServerVersion(Enum):
 
-    five_full_stop_six = "5.6"
-    five_full_stop_seven = "5.7"
+    nine_full_stop_five = "9.5"
+    nine_full_stop_six = "9.6"
 
 
 class SslEnforcementEnum(Enum):

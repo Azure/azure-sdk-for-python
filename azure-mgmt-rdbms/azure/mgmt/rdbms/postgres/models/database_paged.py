@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-04-30-preview"
+from msrest.paging import Paged
 
+
+class DatabasePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Database <azure.mgmt.rdbms.postgres.models.Database>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Database]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatabasePaged, self).__init__(*args, **kwargs)

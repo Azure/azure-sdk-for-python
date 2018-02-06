@@ -25,8 +25,8 @@ from .operations.operations import Operations
 from . import models
 
 
-class MySQLManagementClientConfiguration(AzureConfiguration):
-    """Configuration for MySQLManagementClient
+class PostgreSQLManagementClientConfiguration(AzureConfiguration):
+    """Configuration for PostgreSQLManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -49,7 +49,7 @@ class MySQLManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(MySQLManagementClientConfiguration, self).__init__(base_url)
+        super(PostgreSQLManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-rdbms/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -58,30 +58,30 @@ class MySQLManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class MySQLManagementClient(object):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, log files and configurations.
+class PostgreSQLManagementClient(object):
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, log files and configurations.
 
     :ivar config: Configuration for client.
-    :vartype config: MySQLManagementClientConfiguration
+    :vartype config: PostgreSQLManagementClientConfiguration
 
     :ivar servers: Servers operations
-    :vartype servers: azure.mgmt.rdbms.mysql.operations.ServersOperations
+    :vartype servers: azure.mgmt.rdbms.postgres.operations.ServersOperations
     :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: azure.mgmt.rdbms.mysql.operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.rdbms.postgres.operations.FirewallRulesOperations
     :ivar databases: Databases operations
-    :vartype databases: azure.mgmt.rdbms.mysql.operations.DatabasesOperations
+    :vartype databases: azure.mgmt.rdbms.postgres.operations.DatabasesOperations
     :ivar configurations: Configurations operations
-    :vartype configurations: azure.mgmt.rdbms.mysql.operations.ConfigurationsOperations
+    :vartype configurations: azure.mgmt.rdbms.postgres.operations.ConfigurationsOperations
     :ivar log_files: LogFiles operations
-    :vartype log_files: azure.mgmt.rdbms.mysql.operations.LogFilesOperations
+    :vartype log_files: azure.mgmt.rdbms.postgres.operations.LogFilesOperations
     :ivar performance_tiers: PerformanceTiers operations
-    :vartype performance_tiers: azure.mgmt.rdbms.mysql.operations.PerformanceTiersOperations
+    :vartype performance_tiers: azure.mgmt.rdbms.postgres.operations.PerformanceTiersOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTier operations
-    :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
+    :vartype location_based_performance_tier: azure.mgmt.rdbms.postgres.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
-    :vartype check_name_availability: azure.mgmt.rdbms.mysql.operations.CheckNameAvailabilityOperations
+    :vartype check_name_availability: azure.mgmt.rdbms.postgres.operations.CheckNameAvailabilityOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.rdbms.mysql.operations.Operations
+    :vartype operations: azure.mgmt.rdbms.postgres.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -95,7 +95,7 @@ class MySQLManagementClient(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = MySQLManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = PostgreSQLManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

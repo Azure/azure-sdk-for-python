@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class PerformanceTiersOperations(object):
-    """PerformanceTiersOperations operations.
+class LocationBasedPerformanceTierOperations(object):
+    """LocationBasedPerformanceTierOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,9 +38,12 @@ class PerformanceTiersOperations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """List all the performance tiers in a given subscription.
+            self, location_name, custom_headers=None, raw=False, **operation_config):
+        """List all the performance tiers at specified location in a given
+        subscription.
 
+        :param location_name: The name of the location.
+        :type location_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -48,16 +51,17 @@ class PerformanceTiersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of PerformanceTierProperties
         :rtype:
-         ~azure.mgmt.rdbms.mysql.models.PerformanceTierPropertiesPaged[~azure.mgmt.rdbms.mysql.models.PerformanceTierProperties]
+         ~azure.mgmt.rdbms.postgres.models.PerformanceTierPropertiesPaged[~azure.mgmt.rdbms.postgres.models.PerformanceTierProperties]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/performanceTiers'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/locations/{locationName}/performanceTiers'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'locationName': self._serialize.url("location_name", location_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
