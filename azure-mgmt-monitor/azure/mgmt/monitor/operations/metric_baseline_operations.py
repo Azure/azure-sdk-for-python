@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class DiagnosticSettingsCategoryOperations(object):
-    """DiagnosticSettingsCategoryOperations operations.
+class MetricBaselineOperations(object):
+    """MetricBaselineOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2017-11-01-preview".
     """
 
     models = models
@@ -32,40 +32,69 @@ class DiagnosticSettingsCategoryOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01-preview"
+        self.api_version = "2017-11-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_uri, name, custom_headers=None, raw=False, **operation_config):
-        """Gets the diagnostic settings category for the specified resource.
+            self, resource_uri, metric_name, timespan=None, interval=None, aggregation=None, sensitivities=None, result_type=None, custom_headers=None, raw=False, **operation_config):
+        """**Gets the baseline values for a specific metric**.
 
-        :param resource_uri: The identifier of the resource.
+        :param resource_uri: The identifier of the resource. It has the
+         following structure:
+         subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceName}.
+         For example:
+         subscriptions/b368ca2f-e298-46b7-b0ab-012281956afa/resourceGroups/vms/providers/Microsoft.Compute/virtualMachines/vm1
         :type resource_uri: str
-        :param name: The name of the diagnostic setting.
-        :type name: str
+        :param metric_name: The name of the metric to retrieve the baseline
+         for.
+        :type metric_name: str
+        :param timespan: The timespan of the query. It is a string with the
+         following format 'startDateTime_ISO/endDateTime_ISO'.
+        :type timespan: str
+        :param interval: The interval (i.e. timegrain) of the query.
+        :type interval: timedelta
+        :param aggregation: The aggregation type of the metric to retrieve the
+         baseline for.
+        :type aggregation: str
+        :param sensitivities: The list of sensitivities (comma separated) to
+         retrieve.
+        :type sensitivities: str
+        :param result_type: Allows retrieving only metadata of the baseline.
+         On data request all information is retrieved. Possible values include:
+         'Data', 'Metadata'
+        :type result_type: str or ~azure.mgmt.monitor.models.ResultType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DiagnosticSettingsCategoryResource or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsCategoryResource
-         or ~msrest.pipeline.ClientRawResponse
+        :return: BaselineResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.BaselineResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories/{name}'
+        url = '/{resourceUri}/providers/microsoft.insights/baseline/{metricName}'
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-            'name': self._serialize.url("name", name, 'str')
+            'metricName': self._serialize.url("metric_name", metric_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if timespan is not None:
+            query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
+        if interval is not None:
+            query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
+        if aggregation is not None:
+            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
+        if sensitivities is not None:
+            query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
+        if result_type is not None:
+            query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'ResultType')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -88,7 +117,7 @@ class DiagnosticSettingsCategoryOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DiagnosticSettingsCategoryResource', response)
+            deserialized = self._deserialize('BaselineResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -96,27 +125,33 @@ class DiagnosticSettingsCategoryOperations(object):
 
         return deserialized
 
-    def list(
-            self, resource_uri, custom_headers=None, raw=False, **operation_config):
-        """Lists the diagnostic settings categories for the specified resource.
+    def calculate_baseline(
+            self, resource_uri, time_series_information, custom_headers=None, raw=False, **operation_config):
+        """**Lists the baseline values for a resource**.
 
-        :param resource_uri: The identifier of the resource.
+        :param resource_uri: The identifier of the resource. It has the
+         following structure:
+         subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceName}.
+         For example:
+         subscriptions/b368ca2f-e298-46b7-b0ab-012281956afa/resourceGroups/vms/providers/Microsoft.Compute/virtualMachines/vm1
         :type resource_uri: str
+        :param time_series_information: Information that need to be specified
+         to calculate a baseline on a time series.
+        :type time_series_information:
+         ~azure.mgmt.monitor.models.TimeSeriesInformation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DiagnosticSettingsCategoryResourceCollection or
-         ClientRawResponse if raw=true
-        :rtype:
-         ~azure.mgmt.monitor.models.DiagnosticSettingsCategoryResourceCollection
-         or ~msrest.pipeline.ClientRawResponse
+        :return: CalculateBaselineResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.CalculateBaselineResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories'
+        url = '/{resourceUri}/providers/microsoft.insights/calculatebaseline'
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
         }
@@ -136,9 +171,13 @@ class DiagnosticSettingsCategoryOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(time_series_information, 'TimeSeriesInformation')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -146,7 +185,7 @@ class DiagnosticSettingsCategoryOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DiagnosticSettingsCategoryResourceCollection', response)
+            deserialized = self._deserialize('CalculateBaselineResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

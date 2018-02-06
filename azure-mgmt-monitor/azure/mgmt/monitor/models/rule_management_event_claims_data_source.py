@@ -24,4 +24,5 @@ class RuleManagementEventClaimsDataSource(Model):
     }
 
     def __init__(self, email_address=None):
+        super(RuleManagementEventClaimsDataSource, self).__init__()
         self.email_address = email_address

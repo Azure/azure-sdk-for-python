@@ -12,36 +12,28 @@
 from msrest.serialization import Model
 
 
-class EmailReceiver(Model):
-    """An email receiver.
+class AzureAppPushReceiver(Model):
+    """The Azure mobile App push notification receiver.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param name: The name of the email receiver. Names must be unique across
-     all receivers within an action group.
+    :param name: The name of the Azure mobile app push receiver. Names must be
+     unique across all receivers within an action group.
     :type name: str
-    :param email_address: The email address of this receiver.
+    :param email_address: The email address registered for the Azure mobile
+     app.
     :type email_address: str
-    :ivar status: The receiver status of the e-mail. Possible values include:
-     'NotSpecified', 'Enabled', 'Disabled'
-    :vartype status: str or ~azure.mgmt.monitor.models.ReceiverStatus
     """
 
     _validation = {
         'name': {'required': True},
         'email_address': {'required': True},
-        'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'ReceiverStatus'},
     }
 
     def __init__(self, name, email_address):
-        super(EmailReceiver, self).__init__()
+        super(AzureAppPushReceiver, self).__init__()
         self.name = name
         self.email_address = email_address
-        self.status = None
