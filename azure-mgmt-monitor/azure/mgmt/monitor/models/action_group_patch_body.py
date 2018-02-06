@@ -12,14 +12,14 @@
 from msrest.serialization import Model
 
 
-class ActivityLogAlertPatchBody(Model):
-    """An activity log alert object for the body of patch operations.
+class ActionGroupPatchBody(Model):
+    """An action group object for the body of patch operations.
 
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param enabled: Indicates whether this activity log alert is enabled. If
-     an activity log alert is not enabled, then none of its actions will be
-     activated. Default value: True .
+    :param enabled: Indicates whether this action group is enabled. If an
+     action group is not enabled, then none of its actions will be activated.
+     Default value: True .
     :type enabled: bool
     """
 
@@ -29,6 +29,6 @@ class ActivityLogAlertPatchBody(Model):
     }
 
     def __init__(self, tags=None, enabled=True):
-        super(ActivityLogAlertPatchBody, self).__init__()
+        super(ActionGroupPatchBody, self).__init__()
         self.tags = tags
         self.enabled = enabled

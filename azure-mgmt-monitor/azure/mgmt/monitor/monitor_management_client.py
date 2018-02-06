@@ -27,6 +27,7 @@ from .operations.event_categories_operations import EventCategoriesOperations
 from .operations.tenant_activity_logs_operations import TenantActivityLogsOperations
 from .operations.metric_definitions_operations import MetricDefinitionsOperations
 from .operations.metrics_operations import MetricsOperations
+from .operations.metric_baseline_operations import MetricBaselineOperations
 from . import models
 
 
@@ -40,11 +41,13 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
+    :param metricnamespace: Metric namespace to query metric definitions for.
+    :type metricnamespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, metricnamespace=None, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -55,11 +58,12 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
 
         super(MonitorManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('monitormanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-monitor/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.metricnamespace = metricnamespace
 
 
 class MonitorManagementClient(object):
@@ -96,19 +100,23 @@ class MonitorManagementClient(object):
     :vartype metric_definitions: azure.mgmt.monitor.operations.MetricDefinitionsOperations
     :ivar metrics: Metrics operations
     :vartype metrics: azure.mgmt.monitor.operations.MetricsOperations
+    :ivar metric_baseline: MetricBaseline operations
+    :vartype metric_baseline: azure.mgmt.monitor.operations.MetricBaselineOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
+    :param metricnamespace: Metric namespace to query metric definitions for.
+    :type metricnamespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, metricnamespace=None, base_url=None):
 
-        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, metricnamespace, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -142,4 +150,6 @@ class MonitorManagementClient(object):
         self.metric_definitions = MetricDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metrics = MetricsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_baseline = MetricBaselineOperations(
             self._client, self.config, self._serialize, self._deserialize)

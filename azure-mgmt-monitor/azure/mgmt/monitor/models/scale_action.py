@@ -47,6 +47,7 @@ class ScaleAction(Model):
     }
 
     def __init__(self, direction, type, cooldown, value="1"):
+        super(ScaleAction, self).__init__()
         self.direction = direction
         self.type = type
         self.value = value

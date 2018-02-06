@@ -33,6 +33,7 @@ class SenderAuthorization(Model):
     }
 
     def __init__(self, action=None, role=None, scope=None):
+        super(SenderAuthorization, self).__init__()
         self.action = action
         self.role = role
         self.scope = scope
