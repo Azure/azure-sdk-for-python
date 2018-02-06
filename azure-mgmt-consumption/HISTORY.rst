@@ -2,10 +2,12 @@
 
 Release History
 ===============
-2.0.0
+
+2.0.0 (2018-02-06)
 ++++++++++++++++++
 
-*Features**
+**Features**
+
 - Marketplace data with and without billing period
 - Price sheets data with and without billing period
 - Budget CRUD operations support
