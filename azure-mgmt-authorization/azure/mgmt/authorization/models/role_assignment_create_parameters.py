@@ -15,14 +15,26 @@ from msrest.serialization import Model
 class RoleAssignmentCreateParameters(Model):
     """Role assignment create parameters.
 
-    :param properties: Role assignment properties.
-    :type properties:
-     ~azure.mgmt.authorization.models.RoleAssignmentProperties
+    :param role_definition_id: The role definition ID used in the role
+     assignment.
+    :type role_definition_id: str
+    :param principal_id: The principal ID assigned to the role. This maps to
+     the ID inside the Active Directory. It can point to a user, service
+     principal, or security group.
+    :type principal_id: str
+    :param can_delegate: The delgation flag used for creating a role
+     assignment
+    :type can_delegate: bool
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'RoleAssignmentProperties'},
+        'role_definition_id': {'key': 'properties.roleDefinitionId', 'type': 'str'},
+        'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'can_delegate': {'key': 'properties.canDelegate', 'type': 'bool'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, role_definition_id=None, principal_id=None, can_delegate=None):
+        super(RoleAssignmentCreateParameters, self).__init__()
+        self.role_definition_id = role_definition_id
+        self.principal_id = principal_id
+        self.can_delegate = can_delegate

@@ -12,13 +12,13 @@
 from .classic_administrators_operations import ClassicAdministratorsOperations
 from .permissions_operations import PermissionsOperations
 from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
 from .role_definitions_operations import RoleDefinitionsOperations
+from .role_assignments_operations import RoleAssignmentsOperations
 
 __all__ = [
     'ClassicAdministratorsOperations',
     'PermissionsOperations',
     'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
     'RoleDefinitionsOperations',
+    'RoleAssignmentsOperations',
 ]
