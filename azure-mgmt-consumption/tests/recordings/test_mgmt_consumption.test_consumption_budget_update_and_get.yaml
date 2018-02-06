@@ -10,9 +10,9 @@ interactions:
           msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eec337b8f5b\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":50.254680527413996,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eec337b8f5b\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":50.254680527413996,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['514']
@@ -43,9 +43,9 @@ interactions:
           msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eed56562e43\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":null,"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eed56562e43\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":null,"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['476']
@@ -73,9 +73,9 @@ interactions:
           msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eed56562e43\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":50.254680527413996,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eed56562e43\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":50.254680527413996,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['514']
