@@ -15,26 +15,29 @@ from msrest.serialization import Model
 class Classification(Model):
     """The classification details of the text.
 
-    :param adult_score: The adult score.
-    :type adult_score: float
-    :param racy_score: The racy score.
-    :type racy_score: float
-    :param offensive_score: The offensive score.
-    :type offensive_score: float
+    :param category1:
+    :type category1:
+     ~azure.cognitiveservices.vision.contentmoderator.models.Score
+    :param category2:
+    :type category2:
+     ~azure.cognitiveservices.vision.contentmoderator.models.Score
+    :param category3:
+    :type category3:
+     ~azure.cognitiveservices.vision.contentmoderator.models.Score
     :param review_recommended: The review recommended flag.
     :type review_recommended: bool
     """
 
     _attribute_map = {
-        'adult_score': {'key': 'AdultScore', 'type': 'float'},
-        'racy_score': {'key': 'RacyScore', 'type': 'float'},
-        'offensive_score': {'key': 'OffensiveScore', 'type': 'float'},
+        'category1': {'key': 'Category1', 'type': 'Score'},
+        'category2': {'key': 'Category2', 'type': 'Score'},
+        'category3': {'key': 'Category3', 'type': 'Score'},
         'review_recommended': {'key': 'ReviewRecommended', 'type': 'bool'},
     }
 
-    def __init__(self, adult_score=None, racy_score=None, offensive_score=None, review_recommended=None):
+    def __init__(self, category1=None, category2=None, category3=None, review_recommended=None):
         super(Classification, self).__init__()
-        self.adult_score = adult_score
-        self.racy_score = racy_score
-        self.offensive_score = offensive_score
+        self.category1 = category1
+        self.category2 = category2
+        self.category3 = category3
         self.review_recommended = review_recommended
