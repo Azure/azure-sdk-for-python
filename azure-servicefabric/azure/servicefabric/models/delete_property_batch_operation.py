@@ -14,11 +14,12 @@ from .property_batch_operation import PropertyBatchOperation
 
 class DeletePropertyBatchOperation(PropertyBatchOperation):
     """Represents a PropertyBatchOperation that deletes a specified property if it
-    exists.  Note that if one PropertyBatchOperation in a PropertyBatch fails,
+    exists.
+    Note that if one PropertyBatchOperation in a PropertyBatch fails,
     the entire batch fails and cannot be committed in a transactional manner.
     .
 
-    :param property_name:
+    :param property_name: The name of the Service Fabric property.
     :type property_name: str
     :param kind: Constant filled by server.
     :type kind: str

@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class ApplicationTypeImageStoreVersion(Model):
-    """A version description for the application type.
+class UpgradeOrchestrationServiceState(Model):
+    """Service state of Service Fabric Upgrade Orchestration Service.
 
-    :param application_type_version:
-    :type application_type_version: str
+    :param service_state: The state of Service Fabric Upgrade Orchestration
+     Service.
+    :type service_state: str
     """
 
-    _validation = {
-        'application_type_version': {'required': True},
-    }
-
     _attribute_map = {
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
+        'service_state': {'key': 'ServiceState', 'type': 'str'},
     }
 
-    def __init__(self, application_type_version):
-        super(ApplicationTypeImageStoreVersion, self).__init__()
-        self.application_type_version = application_type_version
+    def __init__(self, service_state=None):
+        super(UpgradeOrchestrationServiceState, self).__init__()
+        self.service_state = service_state

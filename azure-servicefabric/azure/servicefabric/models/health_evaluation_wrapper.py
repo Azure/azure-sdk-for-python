@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class HealthEvaluationWrapper(Model):
     """Wrapper object for health evaluation.
 
-    :param health_evaluation:
+    :param health_evaluation: Represents a health evaluation which describes
+     the data and the algorithm used by health manager to evaluate the health
+     of an entity.
     :type health_evaluation: ~azure.servicefabric.models.HealthEvaluation
     """
 

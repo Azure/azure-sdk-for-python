@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ChaosEventWrapper(Model):
     """Wrapper object for Chaos event.
 
-    :param chaos_event:
+    :param chaos_event: Represents an event generated during a Chaos run.
     :type chaos_event: ~azure.servicefabric.models.ChaosEvent
     """
 

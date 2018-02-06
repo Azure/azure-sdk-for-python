@@ -15,43 +15,53 @@ from msrest.serialization import Model
 class ClusterUpgradeProgressObject(Model):
     """Information about a cluster upgrade.
 
-    :param code_version:
+    :param code_version: The ServiceFabric code version of the cluster.
     :type code_version: str
-    :param config_version:
+    :param config_version: The cluster configuration version (specified in the
+     cluster manifest).
     :type config_version: str
-    :param upgrade_domains:
+    :param upgrade_domains: List of upgrade domains and their statuses.
     :type upgrade_domains: list[~azure.servicefabric.models.UpgradeDomainInfo]
-    :param upgrade_state: Possible values include: 'Invalid',
-     'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
-     'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str or ~azure.servicefabric.models.enum
-    :param next_upgrade_domain:
+    :param upgrade_state: The state of the upgrade domain. Possible values
+     include: 'Invalid', 'RollingBackInProgress', 'RollingBackCompleted',
+     'RollingForwardPending', 'RollingForwardInProgress',
+     'RollingForwardCompleted', 'Failed'
+    :type upgrade_state: str or ~azure.servicefabric.models.UpgradeState
+    :param next_upgrade_domain: The name of the next upgrade domain to be
+     processed.
     :type next_upgrade_domain: str
-    :param rolling_upgrade_mode: Possible values include: 'Invalid',
-     'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
-     "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.enum
-    :param upgrade_description:
+    :param rolling_upgrade_mode: The mode used to monitor health during a
+     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
+    :param upgrade_description: Represents a ServiceFabric cluster upgrade
     :type upgrade_description:
      ~azure.servicefabric.models.ClusterUpgradeDescriptionObject
-    :param upgrade_duration_in_milliseconds:
+    :param upgrade_duration_in_milliseconds: The estimated elapsed time spent
+     processing the current overall upgrade.
     :type upgrade_duration_in_milliseconds: str
-    :param upgrade_domain_duration_in_milliseconds:
+    :param upgrade_domain_duration_in_milliseconds: The estimated elapsed time
+     spent processing the current upgrade domain.
     :type upgrade_domain_duration_in_milliseconds: str
-    :param unhealthy_evaluations:
+    :param unhealthy_evaluations: List of health evaluations that resulted in
+     the current aggregated health state.
     :type unhealthy_evaluations:
      list[~azure.servicefabric.models.HealthEvaluationWrapper]
-    :param current_upgrade_domain_progress:
+    :param current_upgrade_domain_progress: Information about the current
+     in-progress upgrade domain.
     :type current_upgrade_domain_progress:
      ~azure.servicefabric.models.CurrentUpgradeDomainProgressInfo
-    :param start_timestamp_utc:
+    :param start_timestamp_utc: The start time of the upgrade in UTC.
     :type start_timestamp_utc: str
-    :param failure_timestamp_utc:
+    :param failure_timestamp_utc: The failure time of the upgrade in UTC.
     :type failure_timestamp_utc: str
-    :param failure_reason: Possible values include: 'None', 'Interrupted',
-     'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str or ~azure.servicefabric.models.enum
-    :param upgrade_domain_progress_at_failure:
+    :param failure_reason: The cause of an upgrade failure that resulted in
+     FailureAction being executed. Possible values include: 'None',
+     'Interrupted', 'HealthCheck', 'UpgradeDomainTimeout',
+     'OverallUpgradeTimeout'
+    :type failure_reason: str or ~azure.servicefabric.models.FailureReason
+    :param upgrade_domain_progress_at_failure: The detailed upgrade progress
+     for nodes in the current upgrade domain at the point of failure.
     :type upgrade_domain_progress_at_failure:
      ~azure.servicefabric.models.FailedUpgradeDomainProgressObject
     """

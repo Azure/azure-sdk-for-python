@@ -19,7 +19,7 @@ class FabricError(Model):
     Service Fabric API operations that are not successful.
     .
 
-    :param error:
+    :param error: Error object containing error code and error message.
     :type error: ~azure.servicefabric.models.FabricErrorError
     """
 

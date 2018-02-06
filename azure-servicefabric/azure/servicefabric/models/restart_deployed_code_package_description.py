@@ -13,17 +13,33 @@ from msrest.serialization import Model
 
 
 class RestartDeployedCodePackageDescription(Model):
-    """Defines description for restarting a deloyed code package on Service Fabric
-    node.
+    """Defines description for restarting a deployed code package on Service
+    Fabric node.
     .
 
-    :param service_manifest_name:
+    :param service_manifest_name: The name of service manifest that specified
+     this code package.
     :type service_manifest_name: str
-    :param service_package_activation_id:
+    :param service_package_activation_id: The ActivationId of a deployed
+     service package. If ServicePackageActivationMode specified at the time of
+     creating the service
+     is 'SharedProcess' (or if it is not specified, in which case it defaults
+     to 'SharedProcess'), then value of ServicePackageActivationId
+     is always an empty string.
     :type service_package_activation_id: str
-    :param code_package_name:
+    :param code_package_name: The name of the code package defined in the
+     service manifest.
     :type code_package_name: str
-    :param code_package_instance_id:
+    :param code_package_instance_id: The instance ID for currently running
+     entry point. For a code package setup entry point (if specified) runs
+     first and after it finishes main entry point is started.
+     Each time entry point executable is run, its instance id will change. If 0
+     is passed in as the code package instance ID, the API will restart the
+     code package with whatever instance ID it is currently running.
+     If an instance ID other than 0 is passed in, the API will restart the code
+     package only if the current Instance ID matches the passed in instance ID.
+     Note, passing in the exact instance ID (not 0) in the API is safer,
+     because if ensures at most one restart of the code package.
     :type code_package_instance_id: str
     """
 

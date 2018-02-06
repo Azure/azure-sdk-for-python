@@ -15,12 +15,13 @@ from msrest.serialization import Model
 class NodeUpgradeProgressInfo(Model):
     """Information about the upgrading node and its status.
 
-    :param node_name:
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
-    :param upgrade_phase: Possible values include: 'Invalid',
-     'PreUpgradeSafetyCheck', 'Upgrading', 'PostUpgradeSafetyCheck'
-    :type upgrade_phase: str or ~azure.servicefabric.models.enum
-    :param pending_safety_checks:
+    :param upgrade_phase: The state of the upgrading node. Possible values
+     include: 'Invalid', 'PreUpgradeSafetyCheck', 'Upgrading',
+     'PostUpgradeSafetyCheck'
+    :type upgrade_phase: str or ~azure.servicefabric.models.NodeUpgradePhase
+    :param pending_safety_checks: List of pending safety checks
     :type pending_safety_checks:
      list[~azure.servicefabric.models.SafetyCheckWrapper]
     """

@@ -20,15 +20,17 @@ class StatelessServiceTypeDescription(ServiceTypeDescription):
      service type or a stateless service type. This property is true if the
      service type is a stateful service type, false otherwise.
     :type is_stateful: bool
-    :param service_type_name:
+    :param service_type_name: Name of the service type as specified in the
+     service manifest.
     :type service_type_name: str
     :param placement_constraints: The placement constraint to be used when
      instantiating this service in a Service Fabric cluster.
     :type placement_constraints: str
-    :param service_placement_policies:
+    :param service_placement_policies: List of service placement policy
+     descriptions.
     :type service_placement_policies:
      list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
-    :param extensions:
+    :param extensions: List of service type extensions.
     :type extensions:
      list[~azure.servicefabric.models.ServiceTypeExtensionDescription]
     :param kind: Constant filled by server.

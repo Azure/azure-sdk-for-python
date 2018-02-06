@@ -17,9 +17,12 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
     evaluations for each unhealthy application that impacted current aggregated
     health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or ~azure.servicefabric.models.enum
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
@@ -30,7 +33,9 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
     :type max_percent_unhealthy_applications: int
     :param total_count: Total number of applications from the health store.
     :type total_count: long
-    :param unhealthy_evaluations:
+    :param unhealthy_evaluations: List of unhealthy evaluations that led to
+     the aggregated health state. Includes all the unhealthy
+     ApplicationHealthEvaluation that impacted the aggregated health.
     :type unhealthy_evaluations:
      list[~azure.servicefabric.models.HealthEvaluationWrapper]
     """

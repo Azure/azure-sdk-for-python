@@ -19,17 +19,25 @@ class DeployedServiceReplicaDetailInfo(Model):
     sub-classes are: DeployedStatefulServiceReplicaDetailInfo,
     DeployedStatelessServiceInstanceDetailInfo
 
-    :param service_name:
+    :param service_name: Full hierarchical name of the service in URI format
+     starting with `fabric:`.
     :type service_name: str
-    :param partition_id:
+    :param partition_id: An internal ID used by Service Fabric to uniquely
+     identify a partition. This is a randomly generated GUID when the service
+     was created. The partition id is unique and does not change for the
+     lifetime of the service. If the same service was deleted and recreated the
+     ids of its partitions would be different.
     :type partition_id: str
-    :param current_service_operation: Possible values include: 'Unknown',
-     'None', 'Open', 'ChangeRole', 'Close', 'Abort'
-    :type current_service_operation: str or ~azure.servicefabric.models.enum
+    :param current_service_operation: Specifies the current active life-cycle
+     operation on a stateful service replica or stateless service instance.
+     Possible values include: 'Unknown', 'None', 'Open', 'ChangeRole', 'Close',
+     'Abort'
+    :type current_service_operation: str or
+     ~azure.servicefabric.models.ServiceOperationName
     :param current_service_operation_start_time_utc: The start time of the
      current service operation in UTC format.
     :type current_service_operation_start_time_utc: datetime
-    :param reported_load:
+    :param reported_load: List of load reported by replica.
     :type reported_load:
      list[~azure.servicefabric.models.LoadMetricReportInfo]
     :param service_kind: Constant filled by server.

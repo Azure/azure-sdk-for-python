@@ -13,7 +13,8 @@ from .replicator_status import ReplicatorStatus
 
 
 class SecondaryReplicatorStatus(ReplicatorStatus):
-    """SecondaryReplicatorStatus.
+    """Provides statistics about the Service Fabric Replicator, when it is
+    functioning in a ActiveSecondary role.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SecondaryActiveReplicatorStatus,
@@ -21,7 +22,8 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
 
     :param kind: Constant filled by server.
     :type kind: str
-    :param replication_queue_status:
+    :param replication_queue_status: Details about the replication queue on
+     the secondary replicator.
     :type replication_queue_status:
      ~azure.servicefabric.models.ReplicatorQueueStatus
     :param last_replication_operation_received_time_utc: The last time-stamp
@@ -32,7 +34,8 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
     :param is_in_build: Value that indicates whether the replica is currently
      being built.
     :type is_in_build: bool
-    :param copy_queue_status:
+    :param copy_queue_status: Details about the copy queue on the secondary
+     replicator.
     :type copy_queue_status: ~azure.servicefabric.models.ReplicatorQueueStatus
     :param last_copy_operation_received_time_utc: The last time-stamp (UTC) at
      which a copy operation was received from the primary.

@@ -24,7 +24,7 @@ class ReplicaHealthStateFilter(Model):
     .
 
     :param replica_or_instance_id_filter: Id of the stateful service replica
-     or stateles service instance that matches the filter. The filter is
+     or stateless service instance that matches the filter. The filter is
      applied only to the specified replica, if it exists.
      If the replica doesn't exist, no replica is returned in the cluster health
      chunk based on this filter.

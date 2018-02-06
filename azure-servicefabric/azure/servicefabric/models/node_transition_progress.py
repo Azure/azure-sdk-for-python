@@ -19,10 +19,12 @@ class NodeTransitionProgress(Model):
     is Completed or Faulted.
     .
 
-    :param state: Possible values include: 'Invalid', 'Running',
-     'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or ~azure.servicefabric.models.enum
-    :param node_transition_result:
+    :param state: The state of the operation. Possible values include:
+     'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',
+     'ForceCancelled'
+    :type state: str or ~azure.servicefabric.models.OperationState
+    :param node_transition_result: Represents information about an operation
+     in a terminal state (Completed or Faulted).
     :type node_transition_result:
      ~azure.servicefabric.models.NodeTransitionResult
     """

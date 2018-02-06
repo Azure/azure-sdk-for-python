@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class NodeInfo(Model):
     """Information about a node in Service Fabric cluster.
 
-    :param name:
+    :param name: The name of a Service Fabric node.
     :type name: str
     :param ip_address_or_fqdn: The IP address or fully qualified domain name
      of the node.
@@ -28,15 +28,17 @@ class NodeInfo(Model):
     :param config_version: The version of Service Fabric cluster manifest that
      the node is using.
     :type config_version: str
-    :param node_status: Possible values include: 'Invalid', 'Up', 'Down',
-     'Enabling', 'Disabling', 'Disabled', 'Unknown', 'Removed'
-    :type node_status: str or ~azure.servicefabric.models.enum
+    :param node_status: The status of the node. Possible values include:
+     'Invalid', 'Up', 'Down', 'Enabling', 'Disabling', 'Disabled', 'Unknown',
+     'Removed'
+    :type node_status: str or ~azure.servicefabric.models.NodeStatus
     :param node_up_time_in_seconds: Time in seconds since the node has been in
-     NodeStatus Up. Value ero indicates that the node is not Up.
+     NodeStatus Up. Value zero indicates that the node is not Up.
     :type node_up_time_in_seconds: str
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or ~azure.servicefabric.models.enum
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
     :param is_seed_node: Indicates if the node is a seed node or not. Returns
      true if the node is a seed node, otherwise false. A quorum of seed nodes
      are required for proper operation of Service Fabric cluster.
@@ -45,13 +47,16 @@ class NodeInfo(Model):
     :type upgrade_domain: str
     :param fault_domain: The fault domain of the node.
     :type fault_domain: str
-    :param id:
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     node. Node Id is deterministically generated from node name.
     :type id: ~azure.servicefabric.models.NodeId
     :param instance_id: The id representing the node instance. While the Id of
      the node is deterministically generated from the node name and remains
      same across restarts, the InstanceId changes every time node restarts.
     :type instance_id: str
-    :param node_deactivation_info:
+    :param node_deactivation_info: Information about the node deactivation.
+     This information is valid for a node that is undergoing deactivation or
+     has already been deactivated.
     :type node_deactivation_info:
      ~azure.servicefabric.models.NodeDeactivationInfo
     :param is_stopped: Indicates if the node is stopped by calling stop node

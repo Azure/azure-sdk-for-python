@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class PartitionRestartProgress(Model):
     """Information about a partition restart user-induced operation.
 
-    :param state: Possible values include: 'Invalid', 'Running',
-     'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or ~azure.servicefabric.models.enum
-    :param restart_partition_result:
+    :param state: The state of the operation. Possible values include:
+     'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',
+     'ForceCancelled'
+    :type state: str or ~azure.servicefabric.models.OperationState
+    :param restart_partition_result: Represents information about an operation
+     in a terminal state (Completed or Faulted).
     :type restart_partition_result:
      ~azure.servicefabric.models.RestartPartitionResult
     """

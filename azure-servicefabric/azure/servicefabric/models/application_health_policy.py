@@ -33,10 +33,12 @@ class ApplicationHealthPolicy(Model):
      nodes. Default percentage is zero.
      . Default value: 0 .
     :type max_percent_unhealthy_deployed_applications: int
-    :param default_service_type_health_policy:
+    :param default_service_type_health_policy: The health policy used by
+     default to evaluate the health of a service type.
     :type default_service_type_health_policy:
      ~azure.servicefabric.models.ServiceTypeHealthPolicy
-    :param service_type_health_policy_map:
+    :param service_type_health_policy_map: The map with service type health
+     policy per service type name. The map is empty be default.
     :type service_type_health_policy_map:
      list[~azure.servicefabric.models.ServiceTypeHealthPolicyMapItem]
     """

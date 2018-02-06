@@ -19,13 +19,26 @@ class ReplicaInfo(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: StatefulServiceReplicaInfo, StatelessServiceInstanceInfo
 
-    :param replica_status: Possible values include: 'Invalid', 'InBuild',
-     'Standby', 'Ready', 'Down', 'Dropped'
+    :param replica_status: The status of a replica of a service. Possible
+     values are following.
+     -Invalid - Indicates the replica status is invalid. All Service Fabric
+     enumerations have the invalid type. The value is zero.
+     -InBuild - The replica is being built. This means that a primary replica
+     is seeding this replica. The value is 1.
+     -Standby - The replica is in standby. The value is 2.
+     -Ready - The replica is ready. The value is 3.
+     -Down - The replica is down. The value is 4.
+     -Dropped - Replica is dropped. This means that the replica has been
+     removed from the replica set. If it is persisted, its state has been
+     deleted. The value is 5.
+     . Possible values include: 'Invalid', 'InBuild', 'Standby', 'Ready',
+     'Down', 'Dropped'
     :type replica_status: str or ~azure.servicefabric.models.enum
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or ~azure.servicefabric.models.enum
-    :param node_name:
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str

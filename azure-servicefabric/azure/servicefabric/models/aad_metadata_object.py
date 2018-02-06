@@ -18,7 +18,8 @@ class AadMetadataObject(Model):
 
     :param type: The client authentication method.
     :type type: str
-    :param metadata:
+    :param metadata: Azure Active Directory metadata used for secured
+     connection to cluster.
     :type metadata: ~azure.servicefabric.models.AadMetadata
     """
 

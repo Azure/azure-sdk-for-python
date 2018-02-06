@@ -17,7 +17,9 @@ class SafetyCheckWrapper(Model):
     service fabric before continuing with the operations. These checks ensure
     the availability of the service and the reliability of the state.
 
-    :param safety_check:
+    :param safety_check: Represents a safety check performed by service fabric
+     before continuing with the operations. These checks ensure the
+     availability of the service and the reliability of the state.
     :type safety_check: ~azure.servicefabric.models.SafetyCheck
     """
 
