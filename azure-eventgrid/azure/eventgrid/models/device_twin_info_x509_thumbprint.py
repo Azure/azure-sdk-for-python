@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class IotHubDeviceDeletedEventDataTwinX509Thumbprint(Model):
+class DeviceTwinInfoX509Thumbprint(Model):
     """The thumbprint is a unique value for the x509 certificate, commonly used to
     find a particular certificate in a certificate store. The thumbprint is
     dynamically generated using the SHA1 algorithm, and does not physically
@@ -31,6 +31,6 @@ class IotHubDeviceDeletedEventDataTwinX509Thumbprint(Model):
     }
 
     def __init__(self, primary_thumbprint=None, secondary_thumbprint=None):
-        super(IotHubDeviceDeletedEventDataTwinX509Thumbprint, self).__init__()
+        super(DeviceTwinInfoX509Thumbprint, self).__init__()
         self.primary_thumbprint = primary_thumbprint
         self.secondary_thumbprint = secondary_thumbprint

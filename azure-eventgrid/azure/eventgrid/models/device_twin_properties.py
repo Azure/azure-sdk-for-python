@@ -12,23 +12,22 @@
 from msrest.serialization import Model
 
 
-class IotHubDeviceCreatedEventDataTwinPropertiesReported(Model):
-    """A portion of the properties that can be written only by the device, and
-    read by the application back-end.
+class DeviceTwinProperties(Model):
+    """A portion of the properties that can be written only by the application
+    back-end, and read by the device.
 
     :param metadata: Metadata information for the properties JSON document.
-    :type metadata:
-     ~azure.eventgrid.models.IotHubDeviceCreatedEventDataTwinPropertiesReportedMetadata
+    :type metadata: ~azure.eventgrid.models.DeviceTwinMetadata
     :param version: Version of device twin properties.
     :type version: float
     """
 
     _attribute_map = {
-        'metadata': {'key': '$metadata', 'type': 'IotHubDeviceCreatedEventDataTwinPropertiesReportedMetadata'},
+        'metadata': {'key': '$metadata', 'type': 'DeviceTwinMetadata'},
         'version': {'key': '$version', 'type': 'float'},
     }
 
     def __init__(self, metadata=None, version=None):
-        super(IotHubDeviceCreatedEventDataTwinPropertiesReported, self).__init__()
+        super(DeviceTwinProperties, self).__init__()
         self.metadata = metadata
         self.version = version

@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class IotHubDeviceDeletedEventDataTwinPropertiesReportedMetadata(Model):
+class DeviceTwinMetadata(Model):
     """Metadata information for the properties JSON document.
 
     :param last_updated: The ISO8601 timestamp of the last time the properties
@@ -25,5 +25,5 @@ class IotHubDeviceDeletedEventDataTwinPropertiesReportedMetadata(Model):
     }
 
     def __init__(self, last_updated=None):
-        super(IotHubDeviceDeletedEventDataTwinPropertiesReportedMetadata, self).__init__()
+        super(DeviceTwinMetadata, self).__init__()
         self.last_updated = last_updated

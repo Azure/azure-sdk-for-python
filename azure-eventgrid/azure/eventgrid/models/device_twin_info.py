@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class IotHubDeviceCreatedEventDataTwin(Model):
+class DeviceTwinInfo(Model):
     """Information about the device twin, which is the cloud represenation of
     application device metadata.
 
@@ -32,8 +32,7 @@ class IotHubDeviceCreatedEventDataTwin(Model):
     :param last_activity_time: The ISO8601 timestamp of the last activity.
     :type last_activity_time: str
     :param properties: Properties JSON element.
-    :type properties:
-     ~azure.eventgrid.models.IotHubDeviceCreatedEventDataTwinProperties
+    :type properties: ~azure.eventgrid.models.DeviceTwinInfoProperties
     :param status: Whether the device twin is enabled or disabled.
     :type status: str
     :param status_update_time: The ISO8601 timestamp of the last device twin
@@ -47,7 +46,7 @@ class IotHubDeviceCreatedEventDataTwin(Model):
      certificate store. The thumbprint is dynamically generated using the SHA1
      algorithm, and does not physically exist in the certificate.
     :type x509_thumbprint:
-     ~azure.eventgrid.models.IotHubDeviceCreatedEventDataTwinX509Thumbprint
+     ~azure.eventgrid.models.DeviceTwinInfoX509Thumbprint
     """
 
     _attribute_map = {
@@ -57,15 +56,15 @@ class IotHubDeviceCreatedEventDataTwin(Model):
         'device_id': {'key': 'deviceId', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'last_activity_time': {'key': 'lastActivityTime', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'IotHubDeviceCreatedEventDataTwinProperties'},
+        'properties': {'key': 'properties', 'type': 'DeviceTwinInfoProperties'},
         'status': {'key': 'status', 'type': 'str'},
         'status_update_time': {'key': 'statusUpdateTime', 'type': 'str'},
         'version': {'key': 'version', 'type': 'float'},
-        'x509_thumbprint': {'key': 'x509Thumbprint', 'type': 'IotHubDeviceCreatedEventDataTwinX509Thumbprint'},
+        'x509_thumbprint': {'key': 'x509Thumbprint', 'type': 'DeviceTwinInfoX509Thumbprint'},
     }
 
     def __init__(self, authentication_type=None, cloud_to_device_message_count=None, connection_state=None, device_id=None, etag=None, last_activity_time=None, properties=None, status=None, status_update_time=None, version=None, x509_thumbprint=None):
-        super(IotHubDeviceCreatedEventDataTwin, self).__init__()
+        super(DeviceTwinInfo, self).__init__()
         self.authentication_type = authentication_type
         self.cloud_to_device_message_count = cloud_to_device_message_count
         self.connection_state = connection_state

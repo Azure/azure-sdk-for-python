@@ -12,25 +12,23 @@
 from msrest.serialization import Model
 
 
-class IotHubDeviceCreatedEventDataTwinProperties(Model):
+class DeviceTwinInfoProperties(Model):
     """Properties JSON element.
 
     :param desired: A portion of the properties that can be written only by
      the application back-end, and read by the device.
-    :type desired:
-     ~azure.eventgrid.models.IotHubDeviceCreatedEventDataTwinPropertiesDesired
+    :type desired: ~azure.eventgrid.models.DeviceTwinProperties
     :param reported: A portion of the properties that can be written only by
      the device, and read by the application back-end.
-    :type reported:
-     ~azure.eventgrid.models.IotHubDeviceCreatedEventDataTwinPropertiesReported
+    :type reported: ~azure.eventgrid.models.DeviceTwinProperties
     """
 
     _attribute_map = {
-        'desired': {'key': 'desired', 'type': 'IotHubDeviceCreatedEventDataTwinPropertiesDesired'},
-        'reported': {'key': 'reported', 'type': 'IotHubDeviceCreatedEventDataTwinPropertiesReported'},
+        'desired': {'key': 'desired', 'type': 'DeviceTwinProperties'},
+        'reported': {'key': 'reported', 'type': 'DeviceTwinProperties'},
     }
 
     def __init__(self, desired=None, reported=None):
-        super(IotHubDeviceCreatedEventDataTwinProperties, self).__init__()
+        super(DeviceTwinInfoProperties, self).__init__()
         self.desired = desired
         self.reported = reported

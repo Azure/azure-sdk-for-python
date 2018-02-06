@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class IotHubDeviceCreatedEventData(Model):
-    """Schema of the Data property of an EventGridEvent for an
-    Microsoft.Devices.DeviceCreated event.
+    """Schema of the Data property of an EventGridEvent for a device life cycle
+    event (DeviceCreated, DeviceDeleted).
 
     :param device_id: The unique identifier of the device. This case-sensitive
      string can be up to 128 characters long, and supports ASCII 7-bit
@@ -31,7 +31,7 @@ class IotHubDeviceCreatedEventData(Model):
     :type operation_timestamp: str
     :param twin: Information about the device twin, which is the cloud
      represenation of application device metadata.
-    :type twin: ~azure.eventgrid.models.IotHubDeviceCreatedEventDataTwin
+    :type twin: ~azure.eventgrid.models.DeviceTwinInfo
     """
 
     _attribute_map = {
@@ -39,7 +39,7 @@ class IotHubDeviceCreatedEventData(Model):
         'hub_name': {'key': 'hubName', 'type': 'str'},
         'op_type': {'key': 'opType', 'type': 'str'},
         'operation_timestamp': {'key': 'operationTimestamp', 'type': 'str'},
-        'twin': {'key': 'twin', 'type': 'IotHubDeviceCreatedEventDataTwin'},
+        'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
     }
 
     def __init__(self, device_id=None, hub_name=None, op_type=None, operation_timestamp=None, twin=None):
