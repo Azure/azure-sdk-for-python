@@ -75,8 +75,8 @@ class AnnotationsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                query_parameters['Start'] = self._serialize.query("start", start, 'str')
-                query_parameters['End'] = self._serialize.query("end", end, 'str')
+                query_parameters['start'] = self._serialize.query("start", start, 'str')
+                query_parameters['end'] = self._serialize.query("end", end, 'str')
 
             else:
                 url = next_link
@@ -202,8 +202,8 @@ class AnnotationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Annotation or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.applicationinsights.models.Annotation or
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.applicationinsights.models.Annotation] or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -243,7 +243,7 @@ class AnnotationsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Annotation', response)
+            deserialized = self._deserialize('[Annotation]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -308,7 +308,7 @@ class AnnotationsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Annotation', response)
+            deserialized = self._deserialize('[Annotation]', response)
         if response.status_code == 404:
             deserialized = self._deserialize('InnerError', response)
 
