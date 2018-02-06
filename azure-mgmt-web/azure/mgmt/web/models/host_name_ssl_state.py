@@ -42,6 +42,7 @@ class HostNameSslState(Model):
     }
 
     def __init__(self, name=None, ssl_state=None, virtual_ip=None, thumbprint=None, to_update=None, host_type=None):
+        super(HostNameSslState, self).__init__()
         self.name = name
         self.ssl_state = ssl_state
         self.virtual_ip = virtual_ip

@@ -24,4 +24,5 @@ class CsmOperationDescriptionProperties(Model):
     }
 
     def __init__(self, service_specification=None):
+        super(CsmOperationDescriptionProperties, self).__init__()
         self.service_specification = service_specification

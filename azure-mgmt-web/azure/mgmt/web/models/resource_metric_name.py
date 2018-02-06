@@ -35,5 +35,6 @@ class ResourceMetricName(Model):
     }
 
     def __init__(self):
+        super(ResourceMetricName, self).__init__()
         self.value = None
         self.localized_value = None

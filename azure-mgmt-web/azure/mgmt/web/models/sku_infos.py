@@ -27,5 +27,6 @@ class SkuInfos(Model):
     }
 
     def __init__(self, resource_type=None, skus=None):
+        super(SkuInfos, self).__init__()
         self.resource_type = resource_type
         self.skus = skus

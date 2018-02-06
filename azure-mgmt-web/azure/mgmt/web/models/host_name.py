@@ -47,6 +47,7 @@ class HostName(Model):
     }
 
     def __init__(self, name=None, site_names=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None):
+        super(HostName, self).__init__()
         self.name = name
         self.site_names = site_names
         self.azure_resource_name = azure_resource_name

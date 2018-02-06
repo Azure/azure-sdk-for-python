@@ -38,6 +38,7 @@ class ManagedServiceIdentity(Model):
     }
 
     def __init__(self, type=None):
+        super(ManagedServiceIdentity, self).__init__()
         self.type = type
         self.tenant_id = None
         self.principal_id = None

@@ -99,6 +99,7 @@ class Recommendation(Model):
     }
 
     def __init__(self, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
+        super(Recommendation, self).__init__()
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id
