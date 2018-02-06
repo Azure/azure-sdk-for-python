@@ -31,25 +31,16 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param resource_group_name: The name of the resource group.
-    :type resource_group_name: str
-    :param resource_provider_namespace: The namespace of the resource
-     provider.
-    :type resource_provider_namespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, resource_provider_namespace, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if resource_group_name is None:
-            raise ValueError("Parameter 'resource_group_name' must not be None.")
-        if resource_provider_namespace is None:
-            raise ValueError("Parameter 'resource_provider_namespace' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -60,8 +51,6 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
-        self.resource_provider_namespace = resource_provider_namespace
 
 
 class AuthorizationManagementClient(object):
@@ -86,18 +75,13 @@ class AuthorizationManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param resource_group_name: The name of the resource group.
-    :type resource_group_name: str
-    :param resource_provider_namespace: The namespace of the resource
-     provider.
-    :type resource_provider_namespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, resource_provider_namespace, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = AuthorizationManagementClientConfiguration(credentials, subscription_id, resource_group_name, resource_provider_namespace, base_url)
+        self.config = AuthorizationManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
