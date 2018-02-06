@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.2.0"
+from msrest.paging import Paged
 
+
+class BudgetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Budget <azure.mgmt.consumption.models.Budget>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Budget]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BudgetPaged, self).__init__(*args, **kwargs)
