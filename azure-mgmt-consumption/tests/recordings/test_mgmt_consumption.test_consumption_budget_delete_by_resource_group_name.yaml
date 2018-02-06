@@ -17,11 +17,11 @@ interactions:
       cache-control: [no-cache]
       content-length: ['514']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 06 Feb 2018 19:04:29 GMT']
+      date: ['Tue, 06 Feb 2018 18:36:02 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
-      session-id: [eaef293d-0bfa-4ea5-adf5-47fe7b91b49b]
+      session-id: [60e7273a-bb68-4290-ae07-17aa7abe7ce7]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
@@ -29,36 +29,31 @@ interactions:
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
-    body: '{"eTag": "\"1d39baf085c589a\"", "properties": {"category": "Cost", "amount":
-      90.0, "timeGrain": "Monthly", "timePeriod": {"startDate": "2018-02-01T00:00:00.000Z",
-      "endDate": "2018-02-28T00:00:00.000Z"}, "filters": {"resourceGroups": [], "resources":
-      [], "meters": []}, "notifications": {}}}'
+    body: null
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['290']
+      Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
           msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-    method: PUT
+    method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testscaleset/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost8?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testscaleset/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost8","name":"PythonSDKTestBudgetCost8","type":"Microsoft.Consumption/budgets","eTag":"\"1d39f7d519ce106\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":90.0,"currentSpend":null,"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: ''}
     headers:
       cache-control: [no-cache]
-      content-length: ['504']
-      content-type: [application/json; charset=utf-8]
-      date: ['Tue, 06 Feb 2018 19:04:31 GMT']
+      content-length: ['0']
+      date: ['Tue, 06 Feb 2018 18:36:03 GMT']
       expires: ['-1']
-      location: ['https://consumption.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testscaleset/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost8?api-version=2018-01-31']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
-      session-id: [b37e432f-a301-43aa-84ee-31d991942050]
+      session-id: [98ecbb4b-a8e3-47e4-911e-8a5cdeac17e0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
       x-powered-by: [ASP.NET]
-    status: {code: 201, message: Created}
+    status: {code: 200, message: OK}
 version: 1
