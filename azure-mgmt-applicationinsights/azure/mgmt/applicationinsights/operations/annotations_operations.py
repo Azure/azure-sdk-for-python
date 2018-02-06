@@ -175,7 +175,7 @@ class AnnotationsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Annotation', response)
+            deserialized = self._deserialize('[Annotation]', response)
         if response.status_code == 409:
             deserialized = self._deserialize('AnnotationCreateError', response)
 
@@ -202,9 +202,8 @@ class AnnotationsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.applicationinsights.models.Annotation] or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -243,7 +242,7 @@ class AnnotationsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[Annotation]', response)
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

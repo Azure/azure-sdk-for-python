@@ -25,7 +25,7 @@ class AnnotationCreateError(Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'Code', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'inner_error': {'key': 'innerError', 'type': 'InnerError'},
     }
