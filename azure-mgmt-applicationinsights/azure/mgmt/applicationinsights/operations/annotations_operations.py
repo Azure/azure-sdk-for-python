@@ -57,7 +57,7 @@ class AnnotationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of None
-        :rtype: list[~azure.mgmt.applicationinsights.models.Annotation][None]
+        :rtype: object[None]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -105,11 +105,11 @@ class AnnotationsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.list(internal_paging, self._deserialize.dependencies)
+        deserialized = models.object(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.list(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.object(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
