@@ -12,25 +12,21 @@
 from msrest.serialization import Model
 
 
-class SasTokenInfo(Model):
-    """SAS token information.
+class CreateOrUpdateTrustedIdProviderParameters(Model):
+    """The parameters used to create a new trusted identity provider.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar access_token: the access token for the associated Azure Storage
-     Container.
-    :vartype access_token: str
+    :param id_provider: The URL of this trusted identity provider.
+    :type id_provider: str
     """
 
     _validation = {
-        'access_token': {'readonly': True},
+        'id_provider': {'required': True},
     }
 
     _attribute_map = {
-        'access_token': {'key': 'accessToken', 'type': 'str'},
+        'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SasTokenInfo, self).__init__()
-        self.access_token = None
+    def __init__(self, id_provider):
+        super(CreateOrUpdateTrustedIdProviderParameters, self).__init__()
+        self.id_provider = id_provider

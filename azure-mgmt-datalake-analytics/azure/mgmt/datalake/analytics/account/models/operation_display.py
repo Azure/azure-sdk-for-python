@@ -18,13 +18,13 @@ class OperationDisplay(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provider: the Resource provider of the operation.
+    :ivar provider: The resource provider of the operation.
     :vartype provider: str
-    :ivar resource: the Resource type of the operation.
+    :ivar resource: The resource type of the operation.
     :vartype resource: str
-    :ivar operation: a friendly name of the operation.
+    :ivar operation: A friendly name of the operation.
     :vartype operation: str
-    :ivar description: a friendly description of the operation.
+    :ivar description: A friendly description of the operation.
     :vartype description: str
     """
 

@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class SubResource(Model):
-    """The resource model definition for a nested resource.
+class StorageAccountInformation(SubResource):
+    """Azure Storage account information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,22 +24,24 @@ class SubResource(Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
+    :ivar suffix: The optional suffix for the storage account.
+    :vartype suffix: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'suffix': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
     def __init__(self):
-        super(SubResource, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
+        super(StorageAccountInformation, self).__init__()
+        self.suffix = None

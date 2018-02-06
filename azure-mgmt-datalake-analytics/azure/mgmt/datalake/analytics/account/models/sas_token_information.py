@@ -12,24 +12,25 @@
 from msrest.serialization import Model
 
 
-class AclList(Model):
-    """A Data Lake Analytics catalog access control list (ACL).
+class SasTokenInformation(Model):
+    """SAS token information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: the access control list (ACL).
-    :vartype value: list[~azure.mgmt.datalake.analytics.catalog.models.Acl]
+    :ivar access_token: The access token for the associated Azure Storage
+     Container.
+    :vartype access_token: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'access_token': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Acl]'},
+        'access_token': {'key': 'accessToken', 'type': 'str'},
     }
 
     def __init__(self):
-        super(AclList, self).__init__()
-        self.value = None
+        super(SasTokenInformation, self).__init__()
+        self.access_token = None

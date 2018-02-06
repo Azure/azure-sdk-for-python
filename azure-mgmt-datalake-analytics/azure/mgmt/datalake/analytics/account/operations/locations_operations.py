@@ -40,9 +40,9 @@ class LocationsOperations(object):
     def get_capability(
             self, location, custom_headers=None, raw=False, **operation_config):
         """Gets subscription-level properties and limits for Data Lake Analytics
-        specified by Resource location.
+        specified by resource location.
 
-        :param location: The Resource location without whitespace.
+        :param location: The resource location without whitespace.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -58,8 +58,8 @@ class LocationsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeAnalytics/locations/{location}/capability'
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
