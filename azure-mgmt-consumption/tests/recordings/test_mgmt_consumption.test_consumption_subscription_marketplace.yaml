@@ -7,7 +7,7 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
-          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+          msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/marketplaces?$top=1&api-version=2018-01-31
@@ -17,12 +17,12 @@ interactions:
       cache-control: [no-cache]
       content-length: ['1095']
       content-type: [application/json; odata.metadata=none]
-      date: ['Sat, 03 Feb 2018 00:33:22 GMT']
+      date: ['Tue, 06 Feb 2018 02:05:38 GMT']
       expires: ['-1']
       odata-version: ['4.0']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
-      session-id: [01ee9eaa-1d8d-48a5-8d52-cba59c584820]
+      session-id: [b2db7d10-96a4-4819-a3a8-8e2b1fa2e03a]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]

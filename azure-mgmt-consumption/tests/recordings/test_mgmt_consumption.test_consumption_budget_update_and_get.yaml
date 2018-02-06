@@ -7,21 +7,21 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
-          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+          msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
+    uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39c65624bfff5\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-03T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":0.0,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: '{"id":"subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eec337b8f5b\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":50.254680527413996,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['499']
+      content-length: ['514']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Feb 2018 20:38:53 GMT']
+      date: ['Tue, 06 Feb 2018 01:53:49 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
-      session-id: [cb4fca16-2f77-4eb1-9986-d6d989917aff]
+      session-id: [cf5a1de7-7298-4d80-8189-c111fb0c01d7]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
@@ -29,32 +29,32 @@ interactions:
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
-    body: '{"eTag": "\"1d39c65624bfff5\"", "properties": {"category": "Cost", "amount":
+    body: '{"eTag": "\"1d39eec337b8f5b\"", "properties": {"category": "Cost", "amount":
       80.0, "timeGrain": "Monthly", "timePeriod": {"startDate": "2018-02-01T00:00:00.000Z",
-      "endDate": "2018-02-03T20:37:38.9911519999999999Z"}, "filters": {"resourceGroups":
-      [], "resources": [], "meters": []}, "notifications": {}}}'
+      "endDate": "2018-02-28T00:00:00.000Z"}, "filters": {"resourceGroups": [], "resources":
+      [], "meters": []}, "notifications": {}}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['303']
+      Content-Length: ['290']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
-          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+          msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
+    uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39c65d79c2842\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-03T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":null,"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: '{"id":"subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eed56562e43\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":null,"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['476']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Feb 2018 20:38:55 GMT']
+      date: ['Tue, 06 Feb 2018 01:53:51 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
-      session-id: [ad9136d2-8f6a-47f0-861c-a1e95c5596e9]
+      session-id: [84c11c3f-1a91-418a-a730-0603097ee63d]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
@@ -70,21 +70,21 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
-          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+          msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
+    uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39c65d79c2842\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-03T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":0.0,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: '{"id":"subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost1","name":"PythonSDKTestBudgetCost1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39eed56562e43\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-28T00:00:00Z"},"timeGrain":"Monthly","amount":80.0,"currentSpend":{"amount":50.254680527413996,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['499']
+      content-length: ['514']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Feb 2018 20:38:56 GMT']
+      date: ['Tue, 06 Feb 2018 01:53:52 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
-      session-id: [af251592-fae7-4146-b2e9-1e0e0abf24f4]
+      session-id: [ae81899d-5f51-4376-8482-8827cfd9aeef]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]

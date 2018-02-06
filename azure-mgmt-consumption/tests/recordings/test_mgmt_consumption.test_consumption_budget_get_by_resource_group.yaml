@@ -7,21 +7,21 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.25
-          msrest_azure/0.4.20 consumptionmanagementclient/2018-01-31 Azure-SDK-For-Python]
+          msrest_azure/0.4.20 azure-mgmt-consumption/1.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost_testResourceGroup1?api-version=2018-01-31
+    uri: https://management.azure.com/subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost8?api-version=2018-01-31
   response:
-    body: {string: '{"id":"subscriptions/a98d6dc5-eb8f-46cf-8938-f1fb08f03706/resourceGroups/testscaleset/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost_testResourceGroup1","name":"PythonSDKTestBudgetCost_testResourceGroup1","type":"Microsoft.Consumption/budgets","eTag":"\"1d39c65606c552e\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-03T00:00:00Z"},"timeGrain":"Monthly","amount":90.0,"currentSpend":{"amount":0.0,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
+    body: {string: '{"id":"subscriptions/6b74c45b-9597-4939-a202-36b2ee8fbb3d/providers/Microsoft.Consumption/budgets/PythonSDKTestBudgetCost8","name":"PythonSDKTestBudgetCost8","type":"Microsoft.Consumption/budgets","eTag":"\"1d39baf085c589a\"","properties":{"timePeriod":{"startDate":"2018-02-01T00:00:00Z","endDate":"2018-02-02T00:00:00Z"},"timeGrain":"Monthly","amount":60.0,"currentSpend":{"amount":50.254680527413996,"unit":"USD"},"category":"Cost","notifications":{},"filters":{"resourceGroups":[],"resources":[],"meters":[]}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['563']
+      content-length: ['514']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 02 Feb 2018 20:38:45 GMT']
+      date: ['Tue, 06 Feb 2018 01:53:39 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/8.5]
-      session-id: [f13dcf85-aa57-4a12-b23d-2cc0986831ed]
+      session-id: [7185d9d3-15ff-4761-a688-bbcfe00d51db]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
