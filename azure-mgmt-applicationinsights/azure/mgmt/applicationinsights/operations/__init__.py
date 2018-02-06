@@ -13,16 +13,24 @@ from .operations import Operations
 from .components_operations import ComponentsOperations
 from .web_tests_operations import WebTestsOperations
 from .export_configurations_operations import ExportConfigurationsOperations
+from .proactive_detection_configurations_operations import ProactiveDetectionConfigurationsOperations
 from .component_current_billing_features_operations import ComponentCurrentBillingFeaturesOperations
 from .component_quota_status_operations import ComponentQuotaStatusOperations
+from .component_feature_capabilities_operations import ComponentFeatureCapabilitiesOperations
+from .component_available_features_operations import ComponentAvailableFeaturesOperations
 from .api_keys_operations import APIKeysOperations
+from .annotations_operations import AnnotationsOperations
 
 __all__ = [
     'Operations',
     'ComponentsOperations',
     'WebTestsOperations',
     'ExportConfigurationsOperations',
+    'ProactiveDetectionConfigurationsOperations',
     'ComponentCurrentBillingFeaturesOperations',
     'ComponentQuotaStatusOperations',
+    'ComponentFeatureCapabilitiesOperations',
+    'ComponentAvailableFeaturesOperations',
     'APIKeysOperations',
+    'AnnotationsOperations',
 ]
