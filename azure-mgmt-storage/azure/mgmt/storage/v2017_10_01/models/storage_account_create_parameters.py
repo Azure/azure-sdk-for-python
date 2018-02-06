@@ -42,7 +42,8 @@ class StorageAccountCreateParameters(Model):
     :param encryption: Provides the encryption settings on the account. If
      left unspecified the account encryption settings will remain the same. The
      default setting is unencrypted.
-    :type encryption: ~azure.mgmt.storage.v2017_10_01.models.Encryption
+    :type encryption:
+     ~azure.mgmt.storage.v2017_10_01.models.EncryptionKeySource
     :param network_rule_set: Network rule set
     :type network_rule_set:
      ~azure.mgmt.storage.v2017_10_01.models.NetworkRuleSet
@@ -69,7 +70,7 @@ class StorageAccountCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionKeySource'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
