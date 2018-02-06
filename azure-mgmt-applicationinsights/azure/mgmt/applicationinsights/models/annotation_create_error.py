@@ -20,18 +20,18 @@ class AnnotationCreateError(Model):
     :type code: str
     :param message: Error message
     :type message: str
-    :param inner_error:
-    :type inner_error: ~azure.mgmt.applicationinsights.models.InnerError
+    :param innererror:
+    :type innererror: ~azure.mgmt.applicationinsights.models.InnerError
     """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
+        'innererror': {'key': 'innererror', 'type': 'InnerError'},
     }
 
-    def __init__(self, code=None, message=None, inner_error=None):
+    def __init__(self, code=None, message=None, innererror=None):
         super(AnnotationCreateError, self).__init__()
         self.code = code
         self.message = message
-        self.inner_error = inner_error
+        self.innererror = innererror

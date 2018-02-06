@@ -176,6 +176,8 @@ class AnnotationsOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('[Annotation]', response)
+        if response.status_code == 400:
+            deserialized = self._deserialize('AnnotationCreateError', response)
         if response.status_code == 409:
             deserialized = self._deserialize('AnnotationCreateError', response)
 
@@ -309,7 +311,7 @@ class AnnotationsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('[Annotation]', response)
         if response.status_code == 404:
-            deserialized = self._deserialize('InnerError', response)
+            deserialized = self._deserialize('AnnotationCreateError', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
