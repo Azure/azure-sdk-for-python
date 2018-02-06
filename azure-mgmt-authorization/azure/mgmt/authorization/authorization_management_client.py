@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.classic_administrators_operations import ClassicAdministratorsOperations
-from .operations.permissions_operations import PermissionsOperations
 from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
+from .operations.permissions_operations import PermissionsOperations
 from .operations.role_assignments_operations import RoleAssignmentsOperations
 from .operations.role_definitions_operations import RoleDefinitionsOperations
 from . import models
@@ -31,26 +31,37 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :param resource_group_name: The name of the resource group.
+    :type resource_group_name: str
+    :param resource_provider_namespace: The namespace of the resource
+     provider.
+    :type resource_provider_namespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, resource_provider_namespace, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
+        if resource_provider_namespace is None:
+            raise ValueError("Parameter 'resource_provider_namespace' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(AuthorizationManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('authorizationmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-authorization/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.resource_provider_namespace = resource_provider_namespace
 
 
 class AuthorizationManagementClient(object):
@@ -61,10 +72,10 @@ class AuthorizationManagementClient(object):
 
     :ivar classic_administrators: ClassicAdministrators operations
     :vartype classic_administrators: azure.mgmt.authorization.operations.ClassicAdministratorsOperations
-    :ivar permissions: Permissions operations
-    :vartype permissions: azure.mgmt.authorization.operations.PermissionsOperations
     :ivar provider_operations_metadata: ProviderOperationsMetadata operations
     :vartype provider_operations_metadata: azure.mgmt.authorization.operations.ProviderOperationsMetadataOperations
+    :ivar permissions: Permissions operations
+    :vartype permissions: azure.mgmt.authorization.operations.PermissionsOperations
     :ivar role_assignments: RoleAssignments operations
     :vartype role_assignments: azure.mgmt.authorization.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitions operations
@@ -75,25 +86,29 @@ class AuthorizationManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :param resource_group_name: The name of the resource group.
+    :type resource_group_name: str
+    :param resource_provider_namespace: The namespace of the resource
+     provider.
+    :type resource_provider_namespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, resource_group_name, resource_provider_namespace, base_url=None):
 
-        self.config = AuthorizationManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = AuthorizationManagementClientConfiguration(credentials, subscription_id, resource_group_name, resource_provider_namespace, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-07-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.classic_administrators = ClassicAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.permissions = PermissionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.provider_operations_metadata = ProviderOperationsMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.permissions = PermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.role_assignments = RoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

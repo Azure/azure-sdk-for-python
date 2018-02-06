@@ -23,27 +23,24 @@ class RoleAssignmentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2015-07-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-01-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-07-01"
+        self.api_version = "2018-01-01-preview"
 
         self.config = config
 
     def list_for_resource(
-            self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets role assignments for a resource.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource
-         provider.
-        :type resource_provider_namespace: str
         :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
         :param resource_type: The resource type of the resource.
@@ -72,8 +69,8 @@ class RoleAssignmentsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/roleAssignments'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+                    'resourceProviderNamespace': self._serialize.url("self.config.resource_provider_namespace", self.config.resource_provider_namespace, 'str'),
                     'parentResourcePath': self._serialize.url("parent_resource_path", parent_resource_path, 'str', skip_quote=True),
                     'resourceType': self._serialize.url("resource_type", resource_type, 'str', skip_quote=True),
                     'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
@@ -104,7 +101,7 @@ class RoleAssignmentsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -124,11 +121,9 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def list_for_resource_group(
-            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets role assignments for a resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param filter: The filter to apply on the operation. Use
          $filter=atScope() to return all role assignments at or above the
          scope. Use $filter=principalId eq {id} to return all role assignments
@@ -150,7 +145,7 @@ class RoleAssignmentsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleAssignments'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -178,7 +173,7 @@ class RoleAssignmentsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -240,7 +235,7 @@ class RoleAssignmentsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -259,7 +254,7 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def create(
-            self, scope, role_assignment_name, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, role_assignment_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a role assignment.
 
         :param scope: The scope of the role assignment to create. The scope
@@ -273,9 +268,9 @@ class RoleAssignmentsOperations(object):
         :param role_assignment_name: The name of the role assignment to
          create. It can be any valid GUID.
         :type role_assignment_name: str
-        :param properties: Role assignment properties.
-        :type properties:
-         ~azure.mgmt.authorization.models.RoleAssignmentProperties
+        :param parameters: Parameters for the role assignment.
+        :type parameters:
+         ~azure.mgmt.authorization.models.RoleAssignmentCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -286,8 +281,6 @@ class RoleAssignmentsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.RoleAssignmentCreateParameters(properties=properties)
-
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
         path_format_arguments = {
@@ -316,7 +309,7 @@ class RoleAssignmentsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             exp = CloudError(response)
@@ -376,7 +369,7 @@ class RoleAssignmentsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -395,16 +388,11 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def delete_by_id(
-            self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
+            self, role_id, custom_headers=None, raw=False, **operation_config):
         """Deletes a role assignment.
 
-        :param role_assignment_id: The fully qualified ID of the role
-         assignment, including the scope, resource name and resource type. Use
-         the format,
-         /{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
-         Example:
-         /subscriptions/{subId}/resourcegroups/{rgname}//providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
-        :type role_assignment_id: str
+        :param role_id: The ID of the role assignment to delete.
+        :type role_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -416,9 +404,9 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleAssignmentId}'
+        url = '/{roleId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -438,7 +426,7 @@ class RoleAssignmentsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -457,19 +445,14 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def create_by_id(
-            self, role_assignment_id, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, role_id, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a role assignment by ID.
 
-        :param role_assignment_id: The fully qualified ID of the role
-         assignment, including the scope, resource name and resource type. Use
-         the format,
-         /{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
-         Example:
-         /subscriptions/{subId}/resourcegroups/{rgname}//providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
-        :type role_assignment_id: str
-        :param properties: Role assignment properties.
-        :type properties:
-         ~azure.mgmt.authorization.models.RoleAssignmentProperties
+        :param role_id: The ID of the role assignment to create.
+        :type role_id: str
+        :param parameters: Parameters for the role assignment.
+        :type parameters:
+         ~azure.mgmt.authorization.models.RoleAssignmentCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -480,12 +463,10 @@ class RoleAssignmentsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.RoleAssignmentCreateParameters(properties=properties)
-
         # Construct URL
-        url = '/{roleAssignmentId}'
+        url = '/{roleId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -509,7 +490,7 @@ class RoleAssignmentsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             exp = CloudError(response)
@@ -528,16 +509,11 @@ class RoleAssignmentsOperations(object):
         return deserialized
 
     def get_by_id(
-            self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
+            self, role_id, custom_headers=None, raw=False, **operation_config):
         """Gets a role assignment by ID.
 
-        :param role_assignment_id: The fully qualified ID of the role
-         assignment, including the scope, resource name and resource type. Use
-         the format,
-         /{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
-         Example:
-         /subscriptions/{subId}/resourcegroups/{rgname}//providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
-        :type role_assignment_id: str
+        :param role_id: The ID of the role assignment to get.
+        :type role_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -549,9 +525,9 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleAssignmentId}'
+        url = '/{roleId}'
         path_format_arguments = {
-            'roleAssignmentId': self._serialize.url("role_assignment_id", role_assignment_id, 'str', skip_quote=True)
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -571,7 +547,7 @@ class RoleAssignmentsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -641,7 +617,7 @@ class RoleAssignmentsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -714,7 +690,7 @@ class RoleAssignmentsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
