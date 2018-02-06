@@ -27,7 +27,7 @@ class RedisForceRebootResponse(Model):
     }
 
     _attribute_map = {
-        'message': {'key': 'Message', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self):
