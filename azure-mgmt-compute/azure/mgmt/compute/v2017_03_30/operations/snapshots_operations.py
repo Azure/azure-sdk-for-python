@@ -97,8 +97,10 @@ class SnapshotsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param snapshot_name: The name of the snapshot within the given
-         subscription and resource group.
+        :param snapshot_name: The name of the snapshot that is being created.
+         The name can't be changed after the snapshot is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The max name length
+         is 80 characters.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk
          operation.
@@ -218,8 +220,10 @@ class SnapshotsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param snapshot_name: The name of the snapshot within the given
-         subscription and resource group.
+        :param snapshot_name: The name of the snapshot that is being created.
+         The name can't be changed after the snapshot is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The max name length
+         is 80 characters.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Patch
          snapshot operation.
@@ -287,8 +291,10 @@ class SnapshotsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param snapshot_name: The name of the snapshot within the given
-         subscription and resource group.
+        :param snapshot_name: The name of the snapshot that is being created.
+         The name can't be changed after the snapshot is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The max name length
+         is 80 characters.
         :type snapshot_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -395,8 +401,10 @@ class SnapshotsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param snapshot_name: The name of the snapshot within the given
-         subscription and resource group.
+        :param snapshot_name: The name of the snapshot that is being created.
+         The name can't be changed after the snapshot is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The max name length
+         is 80 characters.
         :type snapshot_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -643,8 +651,10 @@ class SnapshotsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param snapshot_name: The name of the snapshot within the given
-         subscription and resource group.
+        :param snapshot_name: The name of the snapshot that is being created.
+         The name can't be changed after the snapshot is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The max name length
+         is 80 characters.
         :type snapshot_name: str
         :param access: Possible values include: 'None', 'Read'
         :type access: str or
@@ -762,8 +772,10 @@ class SnapshotsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param snapshot_name: The name of the snapshot within the given
-         subscription and resource group.
+        :param snapshot_name: The name of the snapshot that is being created.
+         The name can't be changed after the snapshot is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The max name length
+         is 80 characters.
         :type snapshot_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
