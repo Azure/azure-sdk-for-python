@@ -40,8 +40,7 @@ class StorageAccountCreateParameters(Model):
      the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2017_10_01.models.CustomDomain
     :param encryption: Provides the encryption settings on the account. If
-     left unspecified the account encryption settings will remain the same. The
-     default setting is unencrypted.
+     left unspecified the account encryption settings will remain the same.
     :type encryption:
      ~azure.mgmt.storage.v2017_10_01.models.EncryptionKeySource
     :param network_rule_set: Network rule set

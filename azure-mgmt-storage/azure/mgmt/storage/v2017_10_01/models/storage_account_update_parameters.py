@@ -33,9 +33,9 @@ class StorageAccountUpdateParameters(Model):
      storage account at this time. To clear the existing custom domain, use an
      empty string for the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2017_10_01.models.CustomDomain
-    :param encryption: Provides the encryption settings on the account. The
-     default setting is unencrypted.
-    :type encryption: ~azure.mgmt.storage.v2017_10_01.models.Encryption
+    :param encryption: Provides the encryption settings on the account.
+    :type encryption:
+     ~azure.mgmt.storage.v2017_10_01.models.EncryptionKeySource
     :param access_tier: Required for storage accounts where kind =
      BlobStorage. The access tier used for billing. Possible values include:
      'Hot', 'Cool'
@@ -58,7 +58,7 @@ class StorageAccountUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'Identity'},
         'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionKeySource'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
