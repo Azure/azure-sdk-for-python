@@ -20,7 +20,7 @@ class AnnotationCreateError(Model):
     :type code: str
     :param message: Error message
     :type message: str
-    :param inner_error: hello. world
+    :param inner_error:
     :type inner_error: ~azure.mgmt.applicationinsights.models.InnerError
     """
 
