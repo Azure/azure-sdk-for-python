@@ -15,23 +15,22 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
-from .operations.restore_points_operations import RestorePointsOperations
 from .operations.recoverable_databases_operations import RecoverableDatabasesOperations
 from .operations.restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
+from .operations.servers_operations import ServersOperations
 from .operations.server_connection_policies_operations import ServerConnectionPoliciesOperations
+from .operations.databases_operations import DatabasesOperations
 from .operations.database_threat_detection_policies_operations import DatabaseThreatDetectionPoliciesOperations
 from .operations.data_masking_policies_operations import DataMaskingPoliciesOperations
 from .operations.data_masking_rules_operations import DataMaskingRulesOperations
+from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.geo_backup_policies_operations import GeoBackupPoliciesOperations
-from .operations.databases_operations import DatabasesOperations
-from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.replication_links_operations import ReplicationLinksOperations
 from .operations.server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .operations.server_communication_links_operations import ServerCommunicationLinksOperations
 from .operations.service_objectives_operations import ServiceObjectivesOperations
-from .operations.servers_operations import ServersOperations
 from .operations.elastic_pool_activities_operations import ElasticPoolActivitiesOperations
 from .operations.elastic_pool_database_activities_operations import ElasticPoolDatabaseActivitiesOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
@@ -41,6 +40,7 @@ from .operations.transparent_data_encryption_activities_operations import Transp
 from .operations.server_usages_operations import ServerUsagesOperations
 from .operations.database_usages_operations import DatabaseUsagesOperations
 from .operations.database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
+from .operations.database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .operations.encryption_protectors_operations import EncryptionProtectorsOperations
 from .operations.failover_groups_operations import FailoverGroupsOperations
 from .operations.operations import Operations
@@ -51,7 +51,9 @@ from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.database_operations import DatabaseOperations
+from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
+from .operations.database_restore_points_operations import DatabaseRestorePointsOperations
 from . import models
 
 
@@ -98,30 +100,30 @@ class SqlManagementClient(object):
     :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
     :ivar backup_long_term_retention_vaults: BackupLongTermRetentionVaults operations
     :vartype backup_long_term_retention_vaults: azure.mgmt.sql.operations.BackupLongTermRetentionVaultsOperations
-    :ivar restore_points: RestorePoints operations
-    :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
     :ivar recoverable_databases: RecoverableDatabases operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
     :vartype restorable_dropped_databases: azure.mgmt.sql.operations.RestorableDroppedDatabasesOperations
     :ivar capabilities: Capabilities operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
+    :ivar servers: Servers operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar server_connection_policies: ServerConnectionPolicies operations
     :vartype server_connection_policies: azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
+    :ivar databases: Databases operations
+    :vartype databases: azure.mgmt.sql.operations.DatabasesOperations
     :ivar database_threat_detection_policies: DatabaseThreatDetectionPolicies operations
     :vartype database_threat_detection_policies: azure.mgmt.sql.operations.DatabaseThreatDetectionPoliciesOperations
     :ivar data_masking_policies: DataMaskingPolicies operations
     :vartype data_masking_policies: azure.mgmt.sql.operations.DataMaskingPoliciesOperations
     :ivar data_masking_rules: DataMaskingRules operations
     :vartype data_masking_rules: azure.mgmt.sql.operations.DataMaskingRulesOperations
+    :ivar elastic_pools: ElasticPools operations
+    :vartype elastic_pools: azure.mgmt.sql.operations.ElasticPoolsOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
     :ivar geo_backup_policies: GeoBackupPolicies operations
     :vartype geo_backup_policies: azure.mgmt.sql.operations.GeoBackupPoliciesOperations
-    :ivar databases: Databases operations
-    :vartype databases: azure.mgmt.sql.operations.DatabasesOperations
-    :ivar elastic_pools: ElasticPools operations
-    :vartype elastic_pools: azure.mgmt.sql.operations.ElasticPoolsOperations
     :ivar replication_links: ReplicationLinks operations
     :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
@@ -130,8 +132,6 @@ class SqlManagementClient(object):
     :vartype server_communication_links: azure.mgmt.sql.operations.ServerCommunicationLinksOperations
     :ivar service_objectives: ServiceObjectives operations
     :vartype service_objectives: azure.mgmt.sql.operations.ServiceObjectivesOperations
-    :ivar servers: Servers operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar elastic_pool_activities: ElasticPoolActivities operations
     :vartype elastic_pool_activities: azure.mgmt.sql.operations.ElasticPoolActivitiesOperations
     :ivar elastic_pool_database_activities: ElasticPoolDatabaseActivities operations
@@ -150,6 +150,8 @@ class SqlManagementClient(object):
     :vartype database_usages: azure.mgmt.sql.operations.DatabaseUsagesOperations
     :ivar database_blob_auditing_policies: DatabaseBlobAuditingPolicies operations
     :vartype database_blob_auditing_policies: azure.mgmt.sql.operations.DatabaseBlobAuditingPoliciesOperations
+    :ivar database_automatic_tuning: DatabaseAutomaticTuning operations
+    :vartype database_automatic_tuning: azure.mgmt.sql.operations.DatabaseAutomaticTuningOperations
     :ivar encryption_protectors: EncryptionProtectors operations
     :vartype encryption_protectors: azure.mgmt.sql.operations.EncryptionProtectorsOperations
     :ivar failover_groups: FailoverGroups operations
@@ -170,8 +172,12 @@ class SqlManagementClient(object):
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
+    :ivar server_automatic_tuning: ServerAutomaticTuning operations
+    :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
+    :ivar database_restore_points: DatabaseRestorePoints operations
+    :vartype database_restore_points: azure.mgmt.sql.operations.DatabaseRestorePointsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -196,15 +202,17 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_long_term_retention_vaults = BackupLongTermRetentionVaultsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.restore_points = RestorePointsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.server_connection_policies = ServerConnectionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_threat_detection_policies = DatabaseThreatDetectionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -212,13 +220,11 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.data_masking_rules = DataMaskingRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.elastic_pools = ElasticPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.geo_backup_policies = GeoBackupPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.databases = DatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.replication_links = ReplicationLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -227,8 +233,6 @@ class SqlManagementClient(object):
         self.server_communication_links = ServerCommunicationLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_objectives = ServiceObjectivesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pool_activities = ElasticPoolActivitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -247,6 +251,8 @@ class SqlManagementClient(object):
         self.database_usages = DatabaseUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_automatic_tuning = DatabaseAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.encryption_protectors = EncryptionProtectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -268,5 +274,9 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.server_automatic_tuning = ServerAutomaticTuningOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_restore_points = DatabaseRestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)

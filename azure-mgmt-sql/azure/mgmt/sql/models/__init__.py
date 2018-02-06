@@ -14,7 +14,6 @@ from .proxy_resource import ProxyResource
 from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
 from .backup_long_term_retention_vault import BackupLongTermRetentionVault
 from .tracked_resource import TrackedResource
-from .restore_point import RestorePoint
 from .recoverable_database import RecoverableDatabase
 from .restorable_dropped_database import RestorableDroppedDatabase
 from .max_size_capability import MaxSizeCapability
@@ -26,10 +25,26 @@ from .elastic_pool_dtu_capability import ElasticPoolDtuCapability
 from .elastic_pool_edition_capability import ElasticPoolEditionCapability
 from .server_version_capability import ServerVersionCapability
 from .location_capabilities import LocationCapabilities
+from .check_name_availability_request import CheckNameAvailabilityRequest
+from .check_name_availability_response import CheckNameAvailabilityResponse
 from .server_connection_policy import ServerConnectionPolicy
+from .slo_usage_metric import SloUsageMetric
+from .service_tier_advisor import ServiceTierAdvisor
+from .transparent_data_encryption import TransparentDataEncryption
+from .operation_impact import OperationImpact
+from .recommended_index import RecommendedIndex
+from .database import Database
+from .database_update import DatabaseUpdate
+from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
+from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
+from .elastic_pool_activity import ElasticPoolActivity
+from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
+from .recommended_elastic_pool import RecommendedElasticPool
 from .database_security_alert_policy import DatabaseSecurityAlertPolicy
 from .data_masking_policy import DataMaskingPolicy
 from .data_masking_rule import DataMaskingRule
+from .elastic_pool import ElasticPool
+from .elastic_pool_update import ElasticPoolUpdate
 from .firewall_rule import FirewallRule
 from .geo_backup_policy import GeoBackupPolicy
 from .import_extension_request import ImportExtensionRequest
@@ -45,25 +60,11 @@ from .replication_link import ReplicationLink
 from .server_azure_ad_administrator import ServerAzureADAdministrator
 from .server_communication_link import ServerCommunicationLink
 from .service_objective import ServiceObjective
-from .check_name_availability_request import CheckNameAvailabilityRequest
-from .check_name_availability_response import CheckNameAvailabilityResponse
-from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
-from .slo_usage_metric import SloUsageMetric
-from .service_tier_advisor import ServiceTierAdvisor
-from .transparent_data_encryption import TransparentDataEncryption
-from .operation_impact import OperationImpact
-from .recommended_index import RecommendedIndex
-from .database import Database
-from .recommended_elastic_pool import RecommendedElasticPool
-from .elastic_pool import ElasticPool
-from .elastic_pool_update import ElasticPoolUpdate
-from .elastic_pool_activity import ElasticPoolActivity
-from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
-from .database_update import DatabaseUpdate
-from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .server_usage import ServerUsage
 from .database_usage import DatabaseUsage
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
+from .automatic_tuning_options import AutomaticTuningOptions
+from .database_automatic_tuning import DatabaseAutomaticTuning
 from .encryption_protector import EncryptionProtector
 from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
 from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
@@ -93,25 +94,28 @@ from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
 from .resource_move_definition import ResourceMoveDefinition
+from .automatic_tuning_server_options import AutomaticTuningServerOptions
+from .server_automatic_tuning import ServerAutomaticTuning
 from .server_dns_alias import ServerDnsAlias
 from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
+from .database_restore_point import DatabaseRestorePoint
+from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
 from .backup_long_term_retention_policy_paged import BackupLongTermRetentionPolicyPaged
 from .backup_long_term_retention_vault_paged import BackupLongTermRetentionVaultPaged
-from .restore_point_paged import RestorePointPaged
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
-from .data_masking_rule_paged import DataMaskingRulePaged
-from .firewall_rule_paged import FirewallRulePaged
-from .geo_backup_policy_paged import GeoBackupPolicyPaged
+from .server_paged import ServerPaged
+from .database_paged import DatabasePaged
 from .metric_paged import MetricPaged
 from .metric_definition_paged import MetricDefinitionPaged
-from .database_paged import DatabasePaged
+from .data_masking_rule_paged import DataMaskingRulePaged
 from .elastic_pool_paged import ElasticPoolPaged
+from .firewall_rule_paged import FirewallRulePaged
+from .geo_backup_policy_paged import GeoBackupPolicyPaged
 from .replication_link_paged import ReplicationLinkPaged
 from .server_azure_ad_administrator_paged import ServerAzureADAdministratorPaged
 from .server_communication_link_paged import ServerCommunicationLinkPaged
 from .service_objective_paged import ServiceObjectivePaged
-from .server_paged import ServerPaged
 from .elastic_pool_activity_paged import ElasticPoolActivityPaged
 from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
@@ -135,22 +139,33 @@ from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_operation_paged import DatabaseOperationPaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
+from .database_restore_point_paged import DatabaseRestorePointPaged
 from .sql_management_client_enums import (
     BackupLongTermRetentionPolicyState,
-    RestorePointType,
     CapabilityStatus,
     MaxSizeUnits,
     PerformanceLevelUnit,
+    CheckNameAvailabilityReason,
     ServerConnectionType,
+    CreateMode,
+    DatabaseEdition,
+    ServiceObjectiveName,
+    TransparentDataEncryptionStatus,
+    RecommendedIndexAction,
+    RecommendedIndexState,
+    RecommendedIndexType,
+    ReadScale,
+    SampleName,
+    TransparentDataEncryptionActivityStatus,
+    ElasticPoolEdition,
     SecurityAlertPolicyState,
     SecurityAlertPolicyEmailAccountAdmins,
     SecurityAlertPolicyUseServerDefault,
     DataMaskingState,
     DataMaskingRuleState,
     DataMaskingFunction,
+    ElasticPoolState,
     GeoBackupPolicyState,
-    DatabaseEdition,
-    ServiceObjectiveName,
     StorageKeyType,
     AuthenticationType,
     UnitType,
@@ -158,18 +173,11 @@ from .sql_management_client_enums import (
     UnitDefinitionType,
     ReplicationRole,
     ReplicationState,
-    CheckNameAvailabilityReason,
-    ElasticPoolEdition,
-    CreateMode,
-    TransparentDataEncryptionStatus,
-    RecommendedIndexAction,
-    RecommendedIndexState,
-    RecommendedIndexType,
-    ReadScale,
-    SampleName,
-    ElasticPoolState,
-    TransparentDataEncryptionActivityStatus,
     BlobAuditingPolicyState,
+    AutomaticTuningMode,
+    AutomaticTuningOptionModeDesired,
+    AutomaticTuningOptionModeActual,
+    AutomaticTuningDisabledReason,
     ServerKeyType,
     ReadWriteEndpointFailoverPolicy,
     ReadOnlyEndpointFailoverPolicy,
@@ -185,6 +193,9 @@ from .sql_management_client_enums import (
     SyncMemberState,
     VirtualNetworkRuleState,
     ManagementOperationState,
+    AutomaticTuningServerMode,
+    AutomaticTuningServerReason,
+    RestorePointType,
 )
 
 __all__ = [
@@ -193,7 +204,6 @@ __all__ = [
     'BackupLongTermRetentionPolicy',
     'BackupLongTermRetentionVault',
     'TrackedResource',
-    'RestorePoint',
     'RecoverableDatabase',
     'RestorableDroppedDatabase',
     'MaxSizeCapability',
@@ -205,10 +215,26 @@ __all__ = [
     'ElasticPoolEditionCapability',
     'ServerVersionCapability',
     'LocationCapabilities',
+    'CheckNameAvailabilityRequest',
+    'CheckNameAvailabilityResponse',
     'ServerConnectionPolicy',
+    'SloUsageMetric',
+    'ServiceTierAdvisor',
+    'TransparentDataEncryption',
+    'OperationImpact',
+    'RecommendedIndex',
+    'Database',
+    'DatabaseUpdate',
+    'TransparentDataEncryptionActivity',
+    'ElasticPoolDatabaseActivity',
+    'ElasticPoolActivity',
+    'RecommendedElasticPoolMetric',
+    'RecommendedElasticPool',
     'DatabaseSecurityAlertPolicy',
     'DataMaskingPolicy',
     'DataMaskingRule',
+    'ElasticPool',
+    'ElasticPoolUpdate',
     'FirewallRule',
     'GeoBackupPolicy',
     'ImportExtensionRequest',
@@ -224,25 +250,11 @@ __all__ = [
     'ServerAzureADAdministrator',
     'ServerCommunicationLink',
     'ServiceObjective',
-    'CheckNameAvailabilityRequest',
-    'CheckNameAvailabilityResponse',
-    'RecommendedElasticPoolMetric',
-    'SloUsageMetric',
-    'ServiceTierAdvisor',
-    'TransparentDataEncryption',
-    'OperationImpact',
-    'RecommendedIndex',
-    'Database',
-    'RecommendedElasticPool',
-    'ElasticPool',
-    'ElasticPoolUpdate',
-    'ElasticPoolActivity',
-    'ElasticPoolDatabaseActivity',
-    'DatabaseUpdate',
-    'TransparentDataEncryptionActivity',
     'ServerUsage',
     'DatabaseUsage',
     'DatabaseBlobAuditingPolicy',
+    'AutomaticTuningOptions',
+    'DatabaseAutomaticTuning',
     'EncryptionProtector',
     'FailoverGroupReadWriteEndpoint',
     'FailoverGroupReadOnlyEndpoint',
@@ -272,25 +284,28 @@ __all__ = [
     'VirtualNetworkRule',
     'DatabaseOperation',
     'ResourceMoveDefinition',
+    'AutomaticTuningServerOptions',
+    'ServerAutomaticTuning',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
+    'DatabaseRestorePoint',
+    'CreateDatabaseRestorePointDefinition',
     'BackupLongTermRetentionPolicyPaged',
     'BackupLongTermRetentionVaultPaged',
-    'RestorePointPaged',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
-    'DataMaskingRulePaged',
-    'FirewallRulePaged',
-    'GeoBackupPolicyPaged',
+    'ServerPaged',
+    'DatabasePaged',
     'MetricPaged',
     'MetricDefinitionPaged',
-    'DatabasePaged',
+    'DataMaskingRulePaged',
     'ElasticPoolPaged',
+    'FirewallRulePaged',
+    'GeoBackupPolicyPaged',
     'ReplicationLinkPaged',
     'ServerAzureADAdministratorPaged',
     'ServerCommunicationLinkPaged',
     'ServiceObjectivePaged',
-    'ServerPaged',
     'ElasticPoolActivityPaged',
     'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
@@ -314,21 +329,32 @@ __all__ = [
     'VirtualNetworkRulePaged',
     'DatabaseOperationPaged',
     'ServerDnsAliasPaged',
+    'DatabaseRestorePointPaged',
     'BackupLongTermRetentionPolicyState',
-    'RestorePointType',
     'CapabilityStatus',
     'MaxSizeUnits',
     'PerformanceLevelUnit',
+    'CheckNameAvailabilityReason',
     'ServerConnectionType',
+    'CreateMode',
+    'DatabaseEdition',
+    'ServiceObjectiveName',
+    'TransparentDataEncryptionStatus',
+    'RecommendedIndexAction',
+    'RecommendedIndexState',
+    'RecommendedIndexType',
+    'ReadScale',
+    'SampleName',
+    'TransparentDataEncryptionActivityStatus',
+    'ElasticPoolEdition',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
     'SecurityAlertPolicyUseServerDefault',
     'DataMaskingState',
     'DataMaskingRuleState',
     'DataMaskingFunction',
+    'ElasticPoolState',
     'GeoBackupPolicyState',
-    'DatabaseEdition',
-    'ServiceObjectiveName',
     'StorageKeyType',
     'AuthenticationType',
     'UnitType',
@@ -336,18 +362,11 @@ __all__ = [
     'UnitDefinitionType',
     'ReplicationRole',
     'ReplicationState',
-    'CheckNameAvailabilityReason',
-    'ElasticPoolEdition',
-    'CreateMode',
-    'TransparentDataEncryptionStatus',
-    'RecommendedIndexAction',
-    'RecommendedIndexState',
-    'RecommendedIndexType',
-    'ReadScale',
-    'SampleName',
-    'ElasticPoolState',
-    'TransparentDataEncryptionActivityStatus',
     'BlobAuditingPolicyState',
+    'AutomaticTuningMode',
+    'AutomaticTuningOptionModeDesired',
+    'AutomaticTuningOptionModeActual',
+    'AutomaticTuningDisabledReason',
     'ServerKeyType',
     'ReadWriteEndpointFailoverPolicy',
     'ReadOnlyEndpointFailoverPolicy',
@@ -363,4 +382,7 @@ __all__ = [
     'SyncMemberState',
     'VirtualNetworkRuleState',
     'ManagementOperationState',
+    'AutomaticTuningServerMode',
+    'AutomaticTuningServerReason',
+    'RestorePointType',
 ]

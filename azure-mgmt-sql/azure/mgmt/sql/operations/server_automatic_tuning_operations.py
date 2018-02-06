@@ -16,15 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class DatabaseThreatDetectionPoliciesOperations(object):
-    """DatabaseThreatDetectionPoliciesOperations operations.
+class ServerAutomaticTuningOperations(object):
+    """ServerAutomaticTuningOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar security_alert_policy_name: The name of the security alert policy. Constant value: "default".
-    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
     """
 
     models = models
@@ -34,14 +33,13 @@ class DatabaseThreatDetectionPoliciesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.security_alert_policy_name = "default"
-        self.api_version = "2014-04-01"
+        self.api_version = "2017-03-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a database's threat detection policy.
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves server automatic tuning options.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -49,27 +47,22 @@ class DatabaseThreatDetectionPoliciesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database for which database
-         Threat Detection policy is defined.
-        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DatabaseSecurityAlertPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy or
+        :return: ServerAutomaticTuning or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/securityAlertPolicies/{securityAlertPolicyName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/automaticTuning/current'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'securityAlertPolicyName': self._serialize.url("self.security_alert_policy_name", self.security_alert_policy_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -99,7 +92,7 @@ class DatabaseThreatDetectionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
+            deserialized = self._deserialize('ServerAutomaticTuning', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -107,9 +100,9 @@ class DatabaseThreatDetectionPoliciesOperations(object):
 
         return deserialized
 
-    def create_or_update(
-            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a database's threat detection policy.
+    def update(
+            self, resource_group_name, server_name, desired_state=None, options=None, custom_headers=None, raw=False, **operation_config):
+        """Update automatic tuning options on server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -117,29 +110,31 @@ class DatabaseThreatDetectionPoliciesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database for which database
-         Threat Detection policy is defined.
-        :type database_name: str
-        :param parameters: The database Threat Detection policy.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy
+        :param desired_state: Automatic tuning desired state. Possible values
+         include: 'Custom', 'Auto', 'Unspecified'
+        :type desired_state: str or
+         ~azure.mgmt.sql.models.AutomaticTuningServerMode
+        :param options: Automatic tuning options definition.
+        :type options: dict[str,
+         ~azure.mgmt.sql.models.AutomaticTuningServerOptions]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DatabaseSecurityAlertPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.DatabaseSecurityAlertPolicy or
+        :return: ServerAutomaticTuning or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.ServerAutomaticTuning or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.ServerAutomaticTuning(desired_state=desired_state, options=options)
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/securityAlertPolicies/{securityAlertPolicyName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/automaticTuning/current'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'securityAlertPolicyName': self._serialize.url("self.security_alert_policy_name", self.security_alert_policy_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -158,14 +153,14 @@ class DatabaseThreatDetectionPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DatabaseSecurityAlertPolicy')
+        body_content = self._serialize.body(parameters, 'ServerAutomaticTuning')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
+        request = self._client.patch(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -173,9 +168,7 @@ class DatabaseThreatDetectionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('DatabaseSecurityAlertPolicy', response)
+            deserialized = self._deserialize('ServerAutomaticTuning', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
