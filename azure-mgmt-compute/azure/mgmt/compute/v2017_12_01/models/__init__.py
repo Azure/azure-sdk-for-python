@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .compute_operation_value import ComputeOperationValue
+from .compute_operation_list_result import ComputeOperationListResult
 from .instance_view_status import InstanceViewStatus
 from .sub_resource import SubResource
 from .sku import Sku
@@ -112,7 +114,13 @@ from .compute_long_running_operation_properties import ComputeLongRunningOperati
 from .resource import Resource
 from .update_resource import UpdateResource
 from .sub_resource_read_only import SubResourceReadOnly
+from .recovery_walk_response import RecoveryWalkResponse
 from .operation_status_response import OperationStatusResponse
+from .request_rate_by_interval_input import RequestRateByIntervalInput
+from .throttled_requests_input import ThrottledRequestsInput
+from .log_analytics_input_base import LogAnalyticsInputBase
+from .log_analytics_output import LogAnalyticsOutput
+from .log_analytics_operation_result import LogAnalyticsOperationResult
 from .run_command_input_parameter import RunCommandInputParameter
 from .run_command_input import RunCommandInput
 from .run_command_parameter_definition import RunCommandParameterDefinition
@@ -149,10 +157,13 @@ from .compute_management_client_enums import (
     VirtualMachineScaleSetSkuScaleType,
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
+    IntervalInMins,
     InstanceViewTypes,
 )
 
 __all__ = [
+    'ComputeOperationValue',
+    'ComputeOperationListResult',
     'InstanceViewStatus',
     'SubResource',
     'Sku',
@@ -256,7 +267,13 @@ __all__ = [
     'Resource',
     'UpdateResource',
     'SubResourceReadOnly',
+    'RecoveryWalkResponse',
     'OperationStatusResponse',
+    'RequestRateByIntervalInput',
+    'ThrottledRequestsInput',
+    'LogAnalyticsInputBase',
+    'LogAnalyticsOutput',
+    'LogAnalyticsOperationResult',
     'RunCommandInputParameter',
     'RunCommandInput',
     'RunCommandParameterDefinition',
@@ -292,5 +309,6 @@ __all__ = [
     'VirtualMachineScaleSetSkuScaleType',
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
+    'IntervalInMins',
     'InstanceViewTypes',
 ]
