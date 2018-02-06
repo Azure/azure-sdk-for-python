@@ -42,6 +42,9 @@ class OSDisk(Model):
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2017_12_01.models.CachingTypes
+    :param write_accelerator_enabled: Specifies whether writeAccelerator
+     should be enabled or disabled on the disk.
+    :type write_accelerator_enabled: bool
     :param create_option: Specifies how the virtual machine should be
      created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
      value is used when you are using a specialized disk to create the virtual
@@ -72,12 +75,13 @@ class OSDisk(Model):
         'vhd': {'key': 'vhd', 'type': 'VirtualHardDisk'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
+        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
         'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
     }
 
-    def __init__(self, create_option, os_type=None, encryption_settings=None, name=None, vhd=None, image=None, caching=None, disk_size_gb=None, managed_disk=None):
+    def __init__(self, create_option, os_type=None, encryption_settings=None, name=None, vhd=None, image=None, caching=None, write_accelerator_enabled=None, disk_size_gb=None, managed_disk=None):
         super(OSDisk, self).__init__()
         self.os_type = os_type
         self.encryption_settings = encryption_settings
@@ -85,6 +89,7 @@ class OSDisk(Model):
         self.vhd = vhd
         self.image = image
         self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb
         self.managed_disk = managed_disk
