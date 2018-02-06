@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.classic_administrators_operations import ClassicAdministratorsOperations
-from .operations.permissions_operations import PermissionsOperations
 from .operations.provider_operations_metadata_operations import ProviderOperationsMetadataOperations
+from .operations.permissions_operations import PermissionsOperations
 from .operations.role_assignments_operations import RoleAssignmentsOperations
 from .operations.role_definitions_operations import RoleDefinitionsOperations
 from . import models
@@ -46,7 +46,7 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
 
         super(AuthorizationManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('authorizationmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-authorization/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -61,10 +61,10 @@ class AuthorizationManagementClient(object):
 
     :ivar classic_administrators: ClassicAdministrators operations
     :vartype classic_administrators: azure.mgmt.authorization.operations.ClassicAdministratorsOperations
-    :ivar permissions: Permissions operations
-    :vartype permissions: azure.mgmt.authorization.operations.PermissionsOperations
     :ivar provider_operations_metadata: ProviderOperationsMetadata operations
     :vartype provider_operations_metadata: azure.mgmt.authorization.operations.ProviderOperationsMetadataOperations
+    :ivar permissions: Permissions operations
+    :vartype permissions: azure.mgmt.authorization.operations.PermissionsOperations
     :ivar role_assignments: RoleAssignments operations
     :vartype role_assignments: azure.mgmt.authorization.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitions operations
@@ -85,15 +85,14 @@ class AuthorizationManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-07-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.classic_administrators = ClassicAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.permissions = PermissionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.provider_operations_metadata = ProviderOperationsMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.permissions = PermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.role_assignments = RoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
