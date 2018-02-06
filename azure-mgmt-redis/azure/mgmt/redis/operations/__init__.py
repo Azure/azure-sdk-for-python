@@ -12,13 +12,13 @@
 from .operations import Operations
 from .redis_operations import RedisOperations
 from .firewall_rules_operations import FirewallRulesOperations
-from .redis_firewall_rule_operations import RedisFirewallRuleOperations
 from .patch_schedules_operations import PatchSchedulesOperations
+from .linked_server_operations import LinkedServerOperations
 
 __all__ = [
     'Operations',
     'RedisOperations',
     'FirewallRulesOperations',
-    'RedisFirewallRuleOperations',
     'PatchSchedulesOperations',
+    'LinkedServerOperations',
 ]
