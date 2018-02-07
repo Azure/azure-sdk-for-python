@@ -1,19 +1,21 @@
-This is the README of the Python driver for Microsoft Azure DocumentDB database service.
+# Microsoft Azure Cosmos DB Python SDK
 
-Welcome to DocumentDB.
-
-
-0) Pre-requirements:
-
-    Python 2.7, Python 3.3, Python 3.4, or Python 3.5
-    https://www.python.org/downloads/
-
-    If you use Microsoft Visual Studio as IDE (we use 2015), please install the
-    following extension for Python.
-    http://microsoft.github.io/PTVS/
+Welcome to the repo containing all things Python for the Azure Cosmos DB API which is published with name [pydocumentdb](https://pypi.python.org/pypi/pydocumentdb/). For documentation please see the Microsoft Azure [link](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-api-sdk-python).
 
 
-1) Installation:
+## Pre-requirements
+
+Python 2.7, Python 3.3, Python 3.4, or Python 3.5
+https://www.python.org/downloads/
+
+If you use Microsoft Visual Studio as IDE (we use 2015), please install the
+following extension for Python.
+http://microsoft.github.io/PTVS/
+
+Install Cosmos DB emulator
+Follow instruction at https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator 
+
+## Installation:
 
     $ python setup.py install
 
@@ -22,7 +24,12 @@ Welcome to DocumentDB.
     $ pip install pydocumentdb
 
 
-2) Testing:
+## Running Testing
+Clone the repo 
+```bash
+git clone https://github.com/Azure/azure-documentdb-python.git
+cd azure-documentdb-python
+```
 
 Most of the test files under test sub-folder require you to enter your Azure DocumentDB master key and host endpoint: 
     
@@ -40,7 +47,7 @@ To run the tests:
 Most of the test cases create collections in your DocumentDB account. Collections are billing entities. By running these test cases, you may incur monetary costs on your account.
   
 
-3) To generate documentations:
+## Documentation generation
 
     Install Sphinx: http://sphinx-doc.org/install.html
 
