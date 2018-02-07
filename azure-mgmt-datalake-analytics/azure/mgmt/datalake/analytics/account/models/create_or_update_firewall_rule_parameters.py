@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class UpdateFirewallRuleParameters(Model):
-    """The parameters used to update a firewall rule.
+class CreateOrUpdateFirewallRuleParameters(Model):
+    """The parameters used to create a new firewall rule.
 
     :param start_ip_address: The start IP address for the firewall rule. This
      can be either ipv4 or ipv6. Start and End should be in the same protocol.
@@ -23,12 +23,17 @@ class UpdateFirewallRuleParameters(Model):
     :type end_ip_address: str
     """
 
+    _validation = {
+        'start_ip_address': {'required': True},
+        'end_ip_address': {'required': True},
+    }
+
     _attribute_map = {
         'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, start_ip_address=None, end_ip_address=None):
-        super(UpdateFirewallRuleParameters, self).__init__()
+    def __init__(self, start_ip_address, end_ip_address):
+        super(CreateOrUpdateFirewallRuleParameters, self).__init__()
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address

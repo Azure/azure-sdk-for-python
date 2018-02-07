@@ -12,22 +12,32 @@
 from msrest.serialization import Model
 
 
-class UpdateStorageAccountParameters(Model):
-    """The parameters used to update an Azure Storage account.
+class AddStorageAccountWithAccountParameters(Model):
+    """The parameters used to add a new Azure Storage account while creating a new
+    Data Lake Analytics account.
 
-    :param access_key: The updated access key associated with this Azure
-     Storage account that will be used to connect to it.
+    :param name: The unique name of the Azure Storage account to add.
+    :type name: str
+    :param access_key: The access key associated with this Azure Storage
+     account that will be used to connect to it.
     :type access_key: str
     :param suffix: The optional suffix for the storage account.
     :type suffix: str
     """
 
+    _validation = {
+        'name': {'required': True},
+        'access_key': {'required': True},
+    }
+
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'access_key': {'key': 'properties.accessKey', 'type': 'str'},
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, access_key=None, suffix=None):
-        super(UpdateStorageAccountParameters, self).__init__()
+    def __init__(self, name, access_key, suffix=None):
+        super(AddStorageAccountWithAccountParameters, self).__init__()
+        self.name = name
         self.access_key = access_key
         self.suffix = suffix

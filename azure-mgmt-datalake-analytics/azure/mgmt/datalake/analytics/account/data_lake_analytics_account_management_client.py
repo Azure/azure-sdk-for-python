@@ -13,13 +13,13 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.accounts_operations import AccountsOperations
+from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
+from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.compute_policies_operations import ComputePoliciesOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
-from .operations.storage_accounts_operations import StorageAccountsOperations
-from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
-from .operations.account_operations import AccountOperations
-from .operations.locations_operations import LocationsOperations
 from .operations.operations import Operations
+from .operations.locations_operations import LocationsOperations
 from . import models
 
 
@@ -63,20 +63,20 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: DataLakeAnalyticsAccountManagementClientConfiguration
 
+    :ivar accounts: Accounts operations
+    :vartype accounts: azure.mgmt.datalake.analytics.account.operations.AccountsOperations
+    :ivar data_lake_store_accounts: DataLakeStoreAccounts operations
+    :vartype data_lake_store_accounts: azure.mgmt.datalake.analytics.account.operations.DataLakeStoreAccountsOperations
+    :ivar storage_accounts: StorageAccounts operations
+    :vartype storage_accounts: azure.mgmt.datalake.analytics.account.operations.StorageAccountsOperations
     :ivar compute_policies: ComputePolicies operations
     :vartype compute_policies: azure.mgmt.datalake.analytics.account.operations.ComputePoliciesOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.datalake.analytics.account.operations.FirewallRulesOperations
-    :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: azure.mgmt.datalake.analytics.account.operations.StorageAccountsOperations
-    :ivar data_lake_store_accounts: DataLakeStoreAccounts operations
-    :vartype data_lake_store_accounts: azure.mgmt.datalake.analytics.account.operations.DataLakeStoreAccountsOperations
-    :ivar account: Account operations
-    :vartype account: azure.mgmt.datalake.analytics.account.operations.AccountOperations
-    :ivar locations: Locations operations
-    :vartype locations: azure.mgmt.datalake.analytics.account.operations.LocationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datalake.analytics.account.operations.Operations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.datalake.analytics.account.operations.LocationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -99,17 +99,17 @@ class DataLakeAnalyticsAccountManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.accounts = AccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_lake_store_accounts = DataLakeStoreAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.storage_accounts = StorageAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.compute_policies = ComputePoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.storage_accounts = StorageAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.data_lake_store_accounts = DataLakeStoreAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.account = AccountOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
