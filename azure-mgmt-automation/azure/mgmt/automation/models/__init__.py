@@ -20,14 +20,6 @@ from .runbook_draft import RunbookDraft
 from .runbook import Runbook
 from .module_error_info import ModuleErrorInfo
 from .module import Module
-from .dsc_configuration_association_property import DscConfigurationAssociationProperty
-from .dsc_node_configuration import DscNodeConfiguration
-from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
-from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
-from .dsc_node import DscNode
-from .content_source import ContentSource
-from .dsc_configuration_parameter import DscConfigurationParameter
-from .dsc_configuration import DscConfiguration
 from .resource import Resource
 from .sku import Sku
 from .automation_account import AutomationAccount
@@ -57,11 +49,19 @@ from .advanced_schedule import AdvancedSchedule
 from .agent_registration_keys import AgentRegistrationKeys
 from .agent_registration import AgentRegistration
 from .agent_registration_regenerate_key_parameter import AgentRegistrationRegenerateKeyParameter
+from .content_source import ContentSource
+from .dsc_configuration_association_property import DscConfigurationAssociationProperty
 from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
 from .dsc_compilation_job import DscCompilationJob
+from .dsc_configuration_parameter import DscConfigurationParameter
+from .dsc_configuration import DscConfiguration
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
+from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
+from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
+from .dsc_node import DscNode
 from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
+from .dsc_node_configuration import DscNodeConfiguration
 from .dsc_node_update_parameters import DscNodeUpdateParameters
 from .dsc_report_error import DscReportError
 from .dsc_report_resource_navigation import DscReportResourceNavigation
@@ -150,14 +150,14 @@ from .automation_client_enums import (
     RunbookState,
     RunbookProvisioningState,
     ModuleProvisioningState,
-    ContentSourceType,
-    DscConfigurationProvisioningState,
-    DscConfigurationState,
     SkuNameEnum,
     AutomationAccountState,
     ScheduleDay,
     AgentRegistrationKeyName,
+    ContentSourceType,
     JobStatus,
+    DscConfigurationProvisioningState,
+    DscConfigurationState,
     JobStreamType,
     HttpStatusCode,
     ScheduleFrequency,
@@ -180,14 +180,6 @@ __all__ = [
     'Runbook',
     'ModuleErrorInfo',
     'Module',
-    'DscConfigurationAssociationProperty',
-    'DscNodeConfiguration',
-    'DscNodeExtensionHandlerAssociationProperty',
-    'DscNodeConfigurationAssociationProperty',
-    'DscNode',
-    'ContentSource',
-    'DscConfigurationParameter',
-    'DscConfiguration',
     'Resource',
     'Sku',
     'AutomationAccount',
@@ -217,11 +209,19 @@ __all__ = [
     'AgentRegistrationKeys',
     'AgentRegistration',
     'AgentRegistrationRegenerateKeyParameter',
+    'ContentSource',
+    'DscConfigurationAssociationProperty',
     'DscCompilationJobCreateParameters',
     'DscCompilationJob',
+    'DscConfigurationParameter',
+    'DscConfiguration',
     'DscConfigurationCreateOrUpdateParameters',
     'DscMetaConfiguration',
+    'DscNodeConfigurationAssociationProperty',
+    'DscNodeExtensionHandlerAssociationProperty',
+    'DscNode',
     'DscNodeConfigurationCreateOrUpdateParameters',
+    'DscNodeConfiguration',
     'DscNodeUpdateParameters',
     'DscReportError',
     'DscReportResourceNavigation',
@@ -309,14 +309,14 @@ __all__ = [
     'RunbookState',
     'RunbookProvisioningState',
     'ModuleProvisioningState',
-    'ContentSourceType',
-    'DscConfigurationProvisioningState',
-    'DscConfigurationState',
     'SkuNameEnum',
     'AutomationAccountState',
     'ScheduleDay',
     'AgentRegistrationKeyName',
+    'ContentSourceType',
     'JobStatus',
+    'DscConfigurationProvisioningState',
+    'DscConfigurationState',
     'JobStreamType',
     'HttpStatusCode',
     'ScheduleFrequency',

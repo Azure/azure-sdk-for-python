@@ -54,24 +54,6 @@ class ModuleProvisioningState(Enum):
     updating = "Updating"
 
 
-class ContentSourceType(Enum):
-
-    embedded_content = "embeddedContent"
-    uri = "uri"
-
-
-class DscConfigurationProvisioningState(Enum):
-
-    succeeded = "Succeeded"
-
-
-class DscConfigurationState(Enum):
-
-    new = "New"
-    edit = "Edit"
-    published = "Published"
-
-
 class SkuNameEnum(Enum):
 
     free = "Free"
@@ -98,8 +80,14 @@ class ScheduleDay(Enum):
 
 class AgentRegistrationKeyName(Enum):
 
-    primary = "Primary"
-    secondary = "Secondary"
+    primary = "primary"
+    secondary = "secondary"
+
+
+class ContentSourceType(Enum):
+
+    embedded_content = "embeddedContent"
+    uri = "uri"
 
 
 class JobStatus(Enum):
@@ -117,6 +105,18 @@ class JobStatus(Enum):
     stopping = "Stopping"
     resuming = "Resuming"
     removing = "Removing"
+
+
+class DscConfigurationProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+
+
+class DscConfigurationState(Enum):
+
+    new = "New"
+    edit = "Edit"
+    published = "Published"
 
 
 class JobStreamType(Enum):

@@ -9,25 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class DscNodeConfiguration(Resource):
+class DscNodeConfiguration(Model):
     """Definition of the dsc node configuration.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
+    :param name: Gets or sets the node configuration name.
+    :type name: str
     :param last_modified_time: Gets or sets the last modified time.
     :type last_modified_time: datetime
     :param creation_time: Gets or sets creation time.
@@ -35,28 +24,22 @@ class DscNodeConfiguration(Resource):
     :param configuration: Gets or sets the configuration of the node.
     :type configuration:
      ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
+    :param id: Gets or sets the id of the resource.
+    :type id: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'configuration': {'key': 'configuration', 'type': 'DscConfigurationAssociationProperty'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, last_modified_time=None, creation_time=None, configuration=None):
-        super(DscNodeConfiguration, self).__init__(location=location, tags=tags)
+    def __init__(self, name=None, last_modified_time=None, creation_time=None, configuration=None, id=None):
+        super(DscNodeConfiguration, self).__init__()
+        self.name = name
         self.last_modified_time = last_modified_time
         self.creation_time = creation_time
         self.configuration = configuration
+        self.id = id

@@ -9,25 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class DscNode(Resource):
+class DscNode(Model):
     """Definition of the dsc node type.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     :param last_seen: Gets or sets the last seen time of the node.
     :type last_seen: datetime
     :param registration_time: Gets or sets the registration time of the node.
@@ -51,19 +38,7 @@ class DscNode(Resource):
      list[~azure.mgmt.automation.models.DscNodeExtensionHandlerAssociationProperty]
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'last_seen': {'key': 'lastSeen', 'type': 'iso-8601'},
         'registration_time': {'key': 'registrationTime', 'type': 'iso-8601'},
         'ip': {'key': 'ip', 'type': 'str'},
@@ -75,8 +50,8 @@ class DscNode(Resource):
         'extension_handler': {'key': 'extensionHandler', 'type': '[DscNodeExtensionHandlerAssociationProperty]'},
     }
 
-    def __init__(self, location, tags=None, last_seen=None, registration_time=None, ip=None, account_id=None, node_configuration=None, status=None, node_id=None, etag=None, extension_handler=None):
-        super(DscNode, self).__init__(location=location, tags=tags)
+    def __init__(self, last_seen=None, registration_time=None, ip=None, account_id=None, node_configuration=None, status=None, node_id=None, etag=None, extension_handler=None):
+        super(DscNode, self).__init__()
         self.last_seen = last_seen
         self.registration_time = registration_time
         self.ip = ip
