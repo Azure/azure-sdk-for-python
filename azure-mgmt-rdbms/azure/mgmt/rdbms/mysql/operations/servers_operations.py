@@ -25,7 +25,7 @@ class ServersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2017-04-30-preview".
+    :ivar api_version: The API version to use for the request. Constant value: "2017-12-01-preview".
     """
 
     models = models
@@ -35,12 +35,12 @@ class ServersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-30-preview"
+        self.api_version = "2017-12-01-preview"
 
         self.config = config
 
 
-    def _create_or_update_initial(
+    def _create_initial(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}'
@@ -91,7 +91,7 @@ class ServersOperations(object):
 
         return deserialized
 
-    def create_or_update(
+    def create(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a new server or updates an existing server. The update action
         will overwrite the existing server.
@@ -115,7 +115,7 @@ class ServersOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_or_update_initial(
+        raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             server_name=server_name,
             parameters=parameters,

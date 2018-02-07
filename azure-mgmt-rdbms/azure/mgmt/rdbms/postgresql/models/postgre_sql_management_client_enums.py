@@ -31,6 +31,12 @@ class ServerState(Enum):
     disabled = "Disabled"
 
 
+class GeoRedundantBackup(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class SkuTier(Enum):
 
     basic = "Basic"

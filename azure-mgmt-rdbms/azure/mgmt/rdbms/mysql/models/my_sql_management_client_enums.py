@@ -31,10 +31,17 @@ class ServerState(Enum):
     disabled = "Disabled"
 
 
+class GeoRedundantBackup(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class SkuTier(Enum):
 
     basic = "Basic"
-    standard = "Standard"
+    general_purpose = "GeneralPurpose"
+    memory_optimized = "MemoryOptimized"
 
 
 class OperationOrigin(Enum):

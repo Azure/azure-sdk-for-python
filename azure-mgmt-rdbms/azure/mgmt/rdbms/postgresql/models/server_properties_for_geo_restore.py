@@ -12,8 +12,8 @@
 from .server_properties_for_create import ServerPropertiesForCreate
 
 
-class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
-    """The properties used to create a new server.
+class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
+    """The properties to a new server by restoring from a geo replicated backup.
 
     :param version: Server version. Possible values include: '9.5', '9.6'
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
@@ -25,19 +25,13 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
     :param create_mode: Constant filled by server.
     :type create_mode: str
-    :param administrator_login: The administrator's login name of a server.
-     Can only be specified when the server is being created (and is required
-     for creation).
-    :type administrator_login: str
-    :param administrator_login_password: The password of the administrator
-     login.
-    :type administrator_login_password: str
+    :param source_server_id: The source server id to restore from.
+    :type source_server_id: str
     """
 
     _validation = {
         'create_mode': {'required': True},
-        'administrator_login': {'required': True},
-        'administrator_login_password': {'required': True},
+        'source_server_id': {'required': True},
     }
 
     _attribute_map = {
@@ -45,12 +39,10 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
-        'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
+        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
     }
 
-    def __init__(self, administrator_login, administrator_login_password, version=None, ssl_enforcement=None, storage_profile=None):
-        super(ServerPropertiesForDefaultCreate, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile)
-        self.administrator_login = administrator_login
-        self.administrator_login_password = administrator_login_password
-        self.create_mode = 'Default'
+    def __init__(self, source_server_id, version=None, ssl_enforcement=None, storage_profile=None):
+        super(ServerPropertiesForGeoRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile)
+        self.source_server_id = source_server_id
+        self.create_mode = 'GeoRestore'

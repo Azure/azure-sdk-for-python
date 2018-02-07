@@ -18,7 +18,6 @@ from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
-from .operations.performance_tiers_operations import PerformanceTiersOperations
 from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
 from .operations.operations import Operations
@@ -59,7 +58,7 @@ class MySQLManagementClientConfiguration(AzureConfiguration):
 
 
 class MySQLManagementClient(object):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, log files and configurations.
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, log files and configurations with new business model.
 
     :ivar config: Configuration for client.
     :vartype config: MySQLManagementClientConfiguration
@@ -74,8 +73,6 @@ class MySQLManagementClient(object):
     :vartype configurations: azure.mgmt.rdbms.mysql.operations.ConfigurationsOperations
     :ivar log_files: LogFiles operations
     :vartype log_files: azure.mgmt.rdbms.mysql.operations.LogFilesOperations
-    :ivar performance_tiers: PerformanceTiers operations
-    :vartype performance_tiers: azure.mgmt.rdbms.mysql.operations.PerformanceTiersOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTier operations
     :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
@@ -99,7 +96,7 @@ class MySQLManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-30-preview'
+        self.api_version = '2017-12-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -112,8 +109,6 @@ class MySQLManagementClient(object):
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.performance_tiers = PerformanceTiersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
             self._client, self.config, self._serialize, self._deserialize)
