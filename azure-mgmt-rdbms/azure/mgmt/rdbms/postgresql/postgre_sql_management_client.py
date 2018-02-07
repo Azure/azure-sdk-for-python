@@ -15,7 +15,6 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.servers_operations import ServersOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
-from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
@@ -52,7 +51,7 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
 
         super(PostgreSQLManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('postgresqlmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-rdbms/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -60,7 +59,7 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
 
 
 class PostgreSQLManagementClient(object):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, log files and configurations.
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, log files and configurations.
 
     :ivar config: Configuration for client.
     :vartype config: PostgreSQLManagementClientConfiguration
@@ -69,8 +68,6 @@ class PostgreSQLManagementClient(object):
     :vartype servers: azure.mgmt.rdbms.postgresql.operations.ServersOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.rdbms.postgresql.operations.FirewallRulesOperations
-    :ivar virtual_network_rules: VirtualNetworkRules operations
-    :vartype virtual_network_rules: azure.mgmt.rdbms.postgresql.operations.VirtualNetworkRulesOperations
     :ivar databases: Databases operations
     :vartype databases: azure.mgmt.rdbms.postgresql.operations.DatabasesOperations
     :ivar configurations: Configurations operations
@@ -109,8 +106,6 @@ class PostgreSQLManagementClient(object):
         self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -31,5 +31,6 @@ class NameAvailabilityRequest(Model):
     }
 
     def __init__(self, name, type=None):
+        super(NameAvailabilityRequest, self).__init__()
         self.name = name
         self.type = type

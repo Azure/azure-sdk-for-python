@@ -35,6 +35,7 @@ class PerformanceTierServiceLevelObjectives(Model):
     }
 
     def __init__(self, id=None, edition=None, dtu=None, storage_mb=None):
+        super(PerformanceTierServiceLevelObjectives, self).__init__()
         self.id = id
         self.edition = edition
         self.dtu = dtu

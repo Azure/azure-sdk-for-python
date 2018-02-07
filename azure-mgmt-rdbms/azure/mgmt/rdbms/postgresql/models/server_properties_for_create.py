@@ -48,6 +48,7 @@ class ServerPropertiesForCreate(Model):
     }
 
     def __init__(self, storage_mb=None, version=None, ssl_enforcement=None):
+        super(ServerPropertiesForCreate, self).__init__()
         self.storage_mb = storage_mb
         self.version = version
         self.ssl_enforcement = ssl_enforcement

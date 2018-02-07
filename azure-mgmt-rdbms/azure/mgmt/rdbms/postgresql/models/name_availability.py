@@ -30,6 +30,7 @@ class NameAvailability(Model):
     }
 
     def __init__(self, message=None, name_available=None, reason=None):
+        super(NameAvailability, self).__init__()
         self.message = message
         self.name_available = name_available
         self.reason = reason
