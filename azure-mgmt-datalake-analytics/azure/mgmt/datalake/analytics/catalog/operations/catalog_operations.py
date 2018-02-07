@@ -3389,62 +3389,71 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AclList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.AclList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of Acl
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.AclPaged[~azure.mgmt.datalake.analytics.catalog.models.Acl]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/acl'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-        if skip is not None:
-            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if orderby is not None:
-            query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-        if count is not None:
-            query_parameters['$count'] = self._serialize.query("count", count, 'bool')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/acl'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('AclList', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.AclPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.AclPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -3482,61 +3491,70 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AclList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.datalake.analytics.catalog.models.AclList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of Acl
+        :rtype:
+         ~azure.mgmt.datalake.analytics.catalog.models.AclPaged[~azure.mgmt.datalake.analytics.catalog.models.Acl]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/catalog/usql/acl'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-        if skip is not None:
-            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-        if orderby is not None:
-            query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-        if count is not None:
-            query_parameters['$count'] = self._serialize.query("count", count, 'bool')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/acl'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('AclList', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.AclPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.AclPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -3703,18 +3721,16 @@ class CatalogOperations(object):
 
         return deserialized
 
-    def grant_acl_to_database(
-            self, account_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Grants an access control list (ACL) entry to the database from the Data
-        Lake Analytics catalog.
+    def grant_acl(
+            self, account_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Grants an access control list (ACL) entry to the Data Lake Analytics
+        catalog.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
         :type account_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
         :param parameters: Parameters supplied to create or update an access
-         control list (ACL) entry for a database.
+         control list (ACL) entry for a Data Lake Analytics catalog.
         :type parameters:
          ~azure.mgmt.datalake.analytics.catalog.models.AclCreateOrUpdateParameters
         :param dict custom_headers: headers that will be added to the request
@@ -3729,11 +3745,10 @@ class CatalogOperations(object):
         op = "GRANTACE"
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/acl'
+        url = '/catalog/usql/acl'
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3769,88 +3784,18 @@ class CatalogOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def revoke_acl_from_database(
-            self, account_name, database_name, ace_type, principal_id, custom_headers=None, raw=False, **operation_config):
-        """Revokes an access control list (ACL) entry for the database from the
-        Data Lake Analytics catalog.
+    def grant_acl_to_database(
+            self, account_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Grants an access control list (ACL) entry to the database from the Data
+        Lake Analytics catalog.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database.
         :type database_name: str
-        :param ace_type: the access control list (ACL) entry type. UserObj and
-         GroupObj denote the owning user and group, respectively. Possible
-         values include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
-        :type ace_type: str or
-         ~azure.mgmt.datalake.analytics.catalog.models.AclType
-        :param principal_id: the Azure AD object ID of the user or group being
-         specified in the access control list (ACL) entry.
-        :type principal_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.AclDeleteParameters(ace_type=ace_type, principal_id=principal_id)
-
-        op = "REVOKEACE"
-
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/acl'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['op'] = self._serialize.query("op", op, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'AclDeleteParameters')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def grant_acl(
-            self, account_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Grants an access control list (ACL) entry to the Data Lake Analytics
-        catalog.
-
-        :param account_name: The Azure Data Lake Analytics account upon which
-         to execute catalog operations.
-        :type account_name: str
         :param parameters: Parameters supplied to create or update an access
-         control list (ACL) entry for a Data Lake Analytics catalog.
+         control list (ACL) entry for a database.
         :type parameters:
          ~azure.mgmt.datalake.analytics.catalog.models.AclCreateOrUpdateParameters
         :param dict custom_headers: headers that will be added to the request
@@ -3865,10 +3810,11 @@ class CatalogOperations(object):
         op = "GRANTACE"
 
         # Construct URL
-        url = '/catalog/usql/acl'
+        url = '/catalog/usql/databases/{databaseName}/acl'
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3938,6 +3884,78 @@ class CatalogOperations(object):
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AclDeleteParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def revoke_acl_from_database(
+            self, account_name, database_name, ace_type, principal_id, custom_headers=None, raw=False, **operation_config):
+        """Revokes an access control list (ACL) entry for the database from the
+        Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database.
+        :type database_name: str
+        :param ace_type: the access control list (ACL) entry type. UserObj and
+         GroupObj denote the owning user and group, respectively. Possible
+         values include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
+        :type ace_type: str or
+         ~azure.mgmt.datalake.analytics.catalog.models.AclType
+        :param principal_id: the Azure AD object ID of the user or group being
+         specified in the access control list (ACL) entry.
+        :type principal_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.AclDeleteParameters(ace_type=ace_type, principal_id=principal_id)
+
+        op = "REVOKEACE"
+
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/acl'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
