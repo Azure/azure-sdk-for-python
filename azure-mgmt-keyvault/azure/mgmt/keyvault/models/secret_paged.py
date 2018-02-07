@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ResourcePaged(Paged):
+class SecretPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Resource <azure.mgmt.keyvault.models.Resource>` object
+    A paging container for iterating over a list of :class:`Secret <azure.mgmt.keyvault.models.Secret>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Resource]'}
+        'current_page': {'key': 'value', 'type': '[Secret]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ResourcePaged, self).__init__(*args, **kwargs)
+        super(SecretPaged, self).__init__(*args, **kwargs)

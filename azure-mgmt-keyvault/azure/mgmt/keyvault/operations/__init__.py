@@ -10,7 +10,11 @@
 # --------------------------------------------------------------------------
 
 from .vaults_operations import VaultsOperations
+from .operations import Operations
+from .secrets_operations import SecretsOperations
 
 __all__ = [
     'VaultsOperations',
+    'Operations',
+    'SecretsOperations',
 ]
