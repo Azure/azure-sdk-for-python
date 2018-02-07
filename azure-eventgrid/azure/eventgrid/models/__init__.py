@@ -19,12 +19,14 @@ from .resource_delete_success_data import ResourceDeleteSuccessData
 from .resource_delete_failure_data import ResourceDeleteFailureData
 from .resource_delete_cancel_data import ResourceDeleteCancelData
 from .event_grid_event import EventGridEvent
+from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
+from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
 from .device_twin_metadata import DeviceTwinMetadata
 from .device_twin_properties import DeviceTwinProperties
 from .device_twin_info_properties import DeviceTwinInfoProperties
 from .device_twin_info_x509_thumbprint import DeviceTwinInfoX509Thumbprint
 from .device_twin_info import DeviceTwinInfo
-from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
+from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
 
 __all__ = [
     'StorageBlobCreatedEventData',
@@ -37,10 +39,12 @@ __all__ = [
     'ResourceDeleteFailureData',
     'ResourceDeleteCancelData',
     'EventGridEvent',
+    'IotHubDeviceCreatedEventData',
+    'IotHubDeviceDeletedEventData',
     'DeviceTwinMetadata',
     'DeviceTwinProperties',
     'DeviceTwinInfoProperties',
     'DeviceTwinInfoX509Thumbprint',
     'DeviceTwinInfo',
-    'IotHubDeviceCreatedEventData',
+    'DeviceLifeCycleEventProperties',
 ]

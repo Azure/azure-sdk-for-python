@@ -12,9 +12,9 @@
 from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
 
 
-class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
+class IotHubDeviceDeletedEventData(DeviceLifeCycleEventProperties):
     """Schema of the Data property of an EventGridEvent for a
-    Microsoft.Devices.DeviceCreated event.
+    Microsoft.Devices.DeviceDeleted event.
 
     :param device_id: The unique identifier of the device. This case-sensitive
      string can be up to 128 characters long, and supports ASCII 7-bit
@@ -35,4 +35,4 @@ class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
     """
 
     def __init__(self, device_id=None, hub_name=None, op_type=None, operation_timestamp=None, twin=None):
-        super(IotHubDeviceCreatedEventData, self).__init__(device_id=device_id, hub_name=hub_name, op_type=op_type, operation_timestamp=operation_timestamp, twin=twin)
+        super(IotHubDeviceDeletedEventData, self).__init__(device_id=device_id, hub_name=hub_name, op_type=op_type, operation_timestamp=operation_timestamp, twin=twin)
