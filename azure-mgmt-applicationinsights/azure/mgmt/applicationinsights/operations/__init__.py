@@ -20,6 +20,7 @@ from .component_feature_capabilities_operations import ComponentFeatureCapabilit
 from .component_available_features_operations import ComponentAvailableFeaturesOperations
 from .api_keys_operations import APIKeysOperations
 from .annotations_operations import AnnotationsOperations
+from .work_item_configurations_operations import WorkItemConfigurationsOperations
 
 __all__ = [
     'Operations',
@@ -33,4 +34,5 @@ __all__ = [
     'ComponentAvailableFeaturesOperations',
     'APIKeysOperations',
     'AnnotationsOperations',
+    'WorkItemConfigurationsOperations',
 ]

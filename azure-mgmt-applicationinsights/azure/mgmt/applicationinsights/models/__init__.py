@@ -34,6 +34,9 @@ from .application_insights_component_api_key import ApplicationInsightsComponent
 from .annotation import Annotation
 from .inner_error import InnerError
 from .annotation_create_error import AnnotationCreateError
+from .work_item_configuration import WorkItemConfiguration
+from .work_item_create_configuration import WorkItemCreateConfiguration
+from .work_item_configuration_error import WorkItemConfigurationError
 from .operation_paged import OperationPaged
 from .application_insights_component_paged import ApplicationInsightsComponentPaged
 from .web_test_paged import WebTestPaged
@@ -71,6 +74,9 @@ __all__ = [
     'Annotation',
     'InnerError',
     'AnnotationCreateError',
+    'WorkItemConfiguration',
+    'WorkItemCreateConfiguration',
+    'WorkItemConfigurationError',
     'OperationPaged',
     'ApplicationInsightsComponentPaged',
     'WebTestPaged',

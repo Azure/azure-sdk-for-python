@@ -24,6 +24,7 @@ from .operations.component_feature_capabilities_operations import ComponentFeatu
 from .operations.component_available_features_operations import ComponentAvailableFeaturesOperations
 from .operations.api_keys_operations import APIKeysOperations
 from .operations.annotations_operations import AnnotationsOperations
+from .operations.work_item_configurations_operations import WorkItemConfigurationsOperations
 from . import models
 
 
@@ -87,6 +88,8 @@ class ApplicationInsightsManagementClient(object):
     :vartype api_keys: azure.mgmt.applicationinsights.operations.APIKeysOperations
     :ivar annotations: Annotations operations
     :vartype annotations: azure.mgmt.applicationinsights.operations.AnnotationsOperations
+    :ivar work_item_configurations: WorkItemConfigurations operations
+    :vartype work_item_configurations: azure.mgmt.applicationinsights.operations.WorkItemConfigurationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -128,4 +131,6 @@ class ApplicationInsightsManagementClient(object):
         self.api_keys = APIKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.annotations = AnnotationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.work_item_configurations = WorkItemConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
