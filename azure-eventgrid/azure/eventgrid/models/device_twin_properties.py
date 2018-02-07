@@ -23,8 +23,8 @@ class DeviceTwinProperties(Model):
     """
 
     _attribute_map = {
-        'metadata': {'key': '$metadata', 'type': 'DeviceTwinMetadata'},
-        'version': {'key': '$version', 'type': 'float'},
+        'metadata': {'key': 'metadata', 'type': 'DeviceTwinMetadata'},
+        'version': {'key': 'version', 'type': 'float'},
     }
 
     def __init__(self, metadata=None, version=None):

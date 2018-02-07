@@ -21,7 +21,7 @@ class DeviceTwinMetadata(Model):
     """
 
     _attribute_map = {
-        'last_updated': {'key': '$lastUpdated', 'type': 'str'},
+        'last_updated': {'key': 'lastUpdated', 'type': 'str'},
     }
 
     def __init__(self, last_updated=None):

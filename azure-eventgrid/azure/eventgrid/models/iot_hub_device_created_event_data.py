@@ -13,8 +13,7 @@ from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
 
 
 class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
-    """Schema of the Data property of an EventGridEvent for a
-    Microsoft.Devices.DeviceCreated event.
+    """Event data for Microsoft.Devices.DeviceCreated event.
 
     :param device_id: The unique identifier of the device. This case-sensitive
      string can be up to 128 characters long, and supports ASCII 7-bit
