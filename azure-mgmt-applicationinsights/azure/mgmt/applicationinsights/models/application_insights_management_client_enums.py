@@ -28,7 +28,25 @@ class RequestSource(Enum):
     rest = "rest"
 
 
+class FavoriteType(Enum):
+
+    shared = "shared"
+    user = "user"
+
+
 class WebTestKind(Enum):
 
     ping = "ping"
     multistep = "multistep"
+
+
+class FavoriteSourceType(Enum):
+
+    retention = "retention"
+    notebook = "notebook"
+    sessions = "sessions"
+    events = "events"
+    userflows = "userflows"
+    funnel = "funnel"
+    impact = "impact"
+    segmentation = "segmentation"
