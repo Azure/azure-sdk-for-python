@@ -11,6 +11,7 @@ Release History
 - Add generic resources update
 - Add version to Plan
 - Add new preview client ManagementGroupsClient
+- Links/Locks/Policy/Resource/Subscription clients now supports the "profile" parameter.
 
 1.2.2 (2017-10-17)
 ++++++++++++++++++
