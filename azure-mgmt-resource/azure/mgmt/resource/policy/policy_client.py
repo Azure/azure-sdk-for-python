@@ -58,23 +58,30 @@ class PolicyClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A dict using operation group name to API version.
+    :type profile: dict[str, str]
     """
 
     DEFAULT_API_VERSION='2016-12-01'
+    DEFAULT_PROFILE=None
 
     def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None):
+            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
 
         self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
-        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
         self.api_version = api_version
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
+
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
 
     @classmethod
     def models(cls, api_version=DEFAULT_API_VERSION):
@@ -98,7 +105,7 @@ class PolicyClient(object):
             from .v2017_06_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def policy_assignments(self):
         """Instance depends on the API version:
@@ -108,17 +115,18 @@ class PolicyClient(object):
            * 2016-12-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations>`
            * 2017-06-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyAssignmentsOperations>`
         """
-        if self.api_version == '2015-10-01-preview':
+        api_version = self.profile.get('policy_assignments', self.api_version)
+        if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyAssignmentsOperations as OperationClass
-        elif self.api_version == '2016-04-01':
+        elif api_version == '2016-04-01':
             from .v2016_04_01.operations import PolicyAssignmentsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import PolicyAssignmentsOperations as OperationClass
-        elif self.api_version == '2017-06-01-preview':
+        elif api_version == '2017-06-01-preview':
             from .v2017_06_01_preview.operations import PolicyAssignmentsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def policy_definitions(self):
@@ -129,17 +137,18 @@ class PolicyClient(object):
            * 2016-12-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations>`
            * 2017-06-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyDefinitionsOperations>`
         """
-        if self.api_version == '2015-10-01-preview':
+        api_version = self.profile.get('policy_definitions', self.api_version)
+        if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyDefinitionsOperations as OperationClass
-        elif self.api_version == '2016-04-01':
+        elif api_version == '2016-04-01':
             from .v2016_04_01.operations import PolicyDefinitionsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
+        elif api_version == '2016-12-01':
             from .v2016_12_01.operations import PolicyDefinitionsOperations as OperationClass
-        elif self.api_version == '2017-06-01-preview':
+        elif api_version == '2017-06-01-preview':
             from .v2017_06_01_preview.operations import PolicyDefinitionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def policy_set_definitions(self):
@@ -147,8 +156,9 @@ class PolicyClient(object):
 
            * 2017-06-01-preview: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicySetDefinitionsOperations>`
         """
-        if self.api_version == '2017-06-01-preview':
+        api_version = self.profile.get('policy_set_definitions', self.api_version)
+        if api_version == '2017-06-01-preview':
             from .v2017_06_01_preview.operations import PolicySetDefinitionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
