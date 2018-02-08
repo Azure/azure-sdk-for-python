@@ -112,6 +112,7 @@ from .compute_long_running_operation_properties import ComputeLongRunningOperati
 from .resource import Resource
 from .update_resource import UpdateResource
 from .sub_resource_read_only import SubResourceReadOnly
+from .recovery_walk_response import RecoveryWalkResponse
 from .operation_status_response import OperationStatusResponse
 from .request_rate_by_interval_input import RequestRateByIntervalInput
 from .throttled_requests_input import ThrottledRequestsInput
@@ -262,6 +263,7 @@ __all__ = [
     'Resource',
     'UpdateResource',
     'SubResourceReadOnly',
+    'RecoveryWalkResponse',
     'OperationStatusResponse',
     'RequestRateByIntervalInput',
     'ThrottledRequestsInput',
