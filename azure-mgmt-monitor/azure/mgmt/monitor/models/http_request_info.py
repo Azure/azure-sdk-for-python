@@ -33,6 +33,7 @@ class HttpRequestInfo(Model):
     }
 
     def __init__(self, client_request_id=None, client_ip_address=None, method=None, uri=None):
+        super(HttpRequestInfo, self).__init__()
         self.client_request_id = client_request_id
         self.client_ip_address = client_ip_address
         self.method = method
