@@ -104,7 +104,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d97fb2b4-4bac-11e7-8894-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -182,7 +182,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [52ffa810-4bad-11e7-b335-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/keys?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/keys?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -259,7 +259,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c31f402e-4bb0-11e7-8551-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/keys?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/keys?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -290,7 +290,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cfc77aee-4bb0-11e7-bfcc-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -321,7 +321,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d1b2d294-4bb0-11e7-b9f0-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/secrets?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/secrets?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:

@@ -45,7 +45,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [422913e6-4ad6-11e7-a5ae-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
@@ -77,7 +77,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [42c09818-4ad6-11e7-bbb9-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
@@ -110,7 +110,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [43415102-4ad6-11e7-af38-5065f34efe31]
     method: DELETE
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
         Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
@@ -142,7 +142,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [43bc9968-4ad6-11e7-8930-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/contacts?api-version=7.0-preview
   response:
     body: {string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'}
     headers:

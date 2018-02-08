@@ -90,12 +90,14 @@ from .storage_account_item_paged import StorageAccountItemPaged
 from .sas_definition_item_paged import SasDefinitionItemPaged
 from .key_vault_client_enums import (
     JsonWebKeyType,
+    JsonWebKeyCurveName,
     DeletionRecoveryLevel,
     KeyUsageType,
     ActionType,
     JsonWebKeyOperation,
     JsonWebKeyEncryptionAlgorithm,
     JsonWebKeySignatureAlgorithm,
+    SasTokenType,
 )
 
 __all__ = [
@@ -179,10 +181,12 @@ __all__ = [
     'StorageAccountItemPaged',
     'SasDefinitionItemPaged',
     'JsonWebKeyType',
+    'JsonWebKeyCurveName',
     'DeletionRecoveryLevel',
     'KeyUsageType',
     'ActionType',
     'JsonWebKeyOperation',
     'JsonWebKeyEncryptionAlgorithm',
     'JsonWebKeySignatureAlgorithm',
+    'SasTokenType',
 ]

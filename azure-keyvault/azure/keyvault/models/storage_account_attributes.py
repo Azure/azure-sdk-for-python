@@ -38,6 +38,7 @@ class StorageAccountAttributes(Model):
     }
 
     def __init__(self, enabled=None):
+        super(StorageAccountAttributes, self).__init__()
         self.enabled = enabled
         self.created = None
         self.updated = None

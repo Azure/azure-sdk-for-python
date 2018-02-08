@@ -24,7 +24,7 @@ except ImportError:
 from azure.keyvault import KeyVaultId
 from azure.keyvault import HttpBearerChallenge
 from azure.keyvault import HttpBearerChallengeCache
-from azure.keyvault.generated.models import \
+from azure.keyvault.models import \
     (CertificatePolicy, KeyProperties, SecretProperties, IssuerParameters,
      X509CertificateProperties, IssuerBundle, IssuerCredentials, OrganizationDetails,
      AdministratorDetails, Contact, KeyVaultError, SubjectAlternativeNames, JsonWebKey)
