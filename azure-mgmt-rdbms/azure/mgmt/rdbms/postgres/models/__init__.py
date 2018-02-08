@@ -11,9 +11,11 @@
 
 from .proxy_resource import ProxyResource
 from .tracked_resource import TrackedResource
+from .storage_profile import StorageProfile
 from .server_properties_for_create import ServerPropertiesForCreate
 from .server_properties_for_default_create import ServerPropertiesForDefaultCreate
 from .server_properties_for_restore import ServerPropertiesForRestore
+from .server_properties_for_geo_restore import ServerPropertiesForGeoRestore
 from .sku import Sku
 from .server import Server
 from .server_for_create import ServerForCreate
@@ -39,6 +41,7 @@ from .postgre_sql_management_client_enums import (
     ServerVersion,
     SslEnforcementEnum,
     ServerState,
+    GeoRedundantBackup,
     SkuTier,
     OperationOrigin,
 )
@@ -46,9 +49,11 @@ from .postgre_sql_management_client_enums import (
 __all__ = [
     'ProxyResource',
     'TrackedResource',
+    'StorageProfile',
     'ServerPropertiesForCreate',
     'ServerPropertiesForDefaultCreate',
     'ServerPropertiesForRestore',
+    'ServerPropertiesForGeoRestore',
     'Sku',
     'Server',
     'ServerForCreate',
@@ -73,6 +78,7 @@ __all__ = [
     'ServerVersion',
     'SslEnforcementEnum',
     'ServerState',
+    'GeoRedundantBackup',
     'SkuTier',
     'OperationOrigin',
 ]
