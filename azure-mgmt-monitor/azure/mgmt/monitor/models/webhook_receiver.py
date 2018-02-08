@@ -33,5 +33,6 @@ class WebhookReceiver(Model):
     }
 
     def __init__(self, name, service_uri):
+        super(WebhookReceiver, self).__init__()
         self.name = name
         self.service_uri = service_uri

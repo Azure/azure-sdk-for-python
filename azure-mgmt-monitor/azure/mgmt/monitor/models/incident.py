@@ -50,6 +50,7 @@ class Incident(Model):
     }
 
     def __init__(self):
+        super(Incident, self).__init__()
         self.name = None
         self.rule_name = None
         self.is_active = None
