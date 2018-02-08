@@ -29,4 +29,5 @@ class SecretRestoreParameters(Model):
     }
 
     def __init__(self, secret_bundle_backup):
+        super(SecretRestoreParameters, self).__init__()
         self.secret_bundle_backup = secret_bundle_backup
