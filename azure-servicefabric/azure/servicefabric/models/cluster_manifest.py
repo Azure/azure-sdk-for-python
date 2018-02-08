@@ -24,4 +24,5 @@ class ClusterManifest(Model):
     }
 
     def __init__(self, manifest=None):
+        super(ClusterManifest, self).__init__()
         self.manifest = manifest

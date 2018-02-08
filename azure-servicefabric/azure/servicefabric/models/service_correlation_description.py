@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class ServiceCorrelationDescription(Model):
     """Creates a particular correlation between services.
 
-    :param scheme: Possible values include: 'Invalid', 'Affinity',
+    :param scheme: The ServiceCorrelationScheme which describes the
+     relationship between this service and the service specified via
+     ServiceName. Possible values include: 'Invalid', 'Affinity',
      'AlignedAffinity', 'NonAlignedAffinity'
-    :type scheme: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param service_name:
+    :type scheme: str or ~azure.servicefabric.models.ServiceCorrelationScheme
+    :param service_name: The name of the service that the correlation
+     relationship is established with.
     :type service_name: str
     """
 
@@ -33,5 +36,6 @@ class ServiceCorrelationDescription(Model):
     }
 
     def __init__(self, scheme, service_name):
+        super(ServiceCorrelationDescription, self).__init__()
         self.scheme = scheme
         self.service_name = service_name

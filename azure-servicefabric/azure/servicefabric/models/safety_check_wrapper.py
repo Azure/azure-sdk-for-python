@@ -17,9 +17,10 @@ class SafetyCheckWrapper(Model):
     service fabric before continuing with the operations. These checks ensure
     the availability of the service and the reliability of the state.
 
-    :param safety_check:
-    :type safety_check: :class:`SafetyCheck
-     <azure.servicefabric.models.SafetyCheck>`
+    :param safety_check: Represents a safety check performed by service fabric
+     before continuing with the operations. These checks ensure the
+     availability of the service and the reliability of the state.
+    :type safety_check: ~azure.servicefabric.models.SafetyCheck
     """
 
     _attribute_map = {
@@ -27,4 +28,5 @@ class SafetyCheckWrapper(Model):
     }
 
     def __init__(self, safety_check=None):
+        super(SafetyCheckWrapper, self).__init__()
         self.safety_check = safety_check

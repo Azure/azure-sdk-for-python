@@ -33,5 +33,6 @@ class ChaosContextMapItem(Model):
     }
 
     def __init__(self, key, value):
+        super(ChaosContextMapItem, self).__init__()
         self.key = key
         self.value = value

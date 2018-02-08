@@ -42,6 +42,7 @@ class ActivityPolicy(Model):
     }
 
     def __init__(self, additional_properties=None, timeout=None, retry=None, retry_interval_in_seconds=None):
+        super(ActivityPolicy, self).__init__()
         self.additional_properties = additional_properties
         self.timeout = timeout
         self.retry = retry

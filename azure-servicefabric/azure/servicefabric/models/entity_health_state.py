@@ -16,10 +16,12 @@ class EntityHealthState(Model):
     """A base type for the health state of various entities in the cluster. It
     contains the aggregated health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     """
 
     _attribute_map = {
@@ -27,4 +29,5 @@ class EntityHealthState(Model):
     }
 
     def __init__(self, aggregated_health_state=None):
+        super(EntityHealthState, self).__init__()
         self.aggregated_health_state = aggregated_health_state

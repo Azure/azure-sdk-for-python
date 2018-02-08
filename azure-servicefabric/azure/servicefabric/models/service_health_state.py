@@ -16,11 +16,14 @@ class ServiceHealthState(EntityHealthState):
     """Represents the health state of a service, which contains the service
     identifier and its aggregated health state.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param service_name:
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
+    :param service_name: Name of the service whose health state is represented
+     by this object.
     :type service_name: str
     """
 

@@ -40,5 +40,6 @@ class PipelineReference(Model):
     type = "PipelineReference"
 
     def __init__(self, reference_name, name=None):
+        super(PipelineReference, self).__init__()
         self.reference_name = reference_name
         self.name = name

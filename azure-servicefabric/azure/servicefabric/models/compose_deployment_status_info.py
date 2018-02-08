@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class ComposeDeploymentStatusInfo(Model):
     """Information about a Service Fabric compose deployment.
 
-    :param name:
+    :param name: The name of the deployment.
     :type name: str
-    :param application_name:
+    :param application_name: The name of the application, including the
+     'fabric:' URI scheme.
     :type application_name: str
-    :param status: Possible values include: 'Invalid', 'Provisioning',
-     'Creating', 'Ready', 'Unprovisioning', 'Deleting', 'Failed', 'Upgrading'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
+    :param status: The status of the compose deployment. Possible values
+     include: 'Invalid', 'Provisioning', 'Creating', 'Ready', 'Unprovisioning',
+     'Deleting', 'Failed', 'Upgrading'
+    :type status: str or ~azure.servicefabric.models.ComposeDeploymentStatus
     :param status_details: The status details of compose deployment including
      failure message.
     :type status_details: str
@@ -35,6 +37,7 @@ class ComposeDeploymentStatusInfo(Model):
     }
 
     def __init__(self, name=None, application_name=None, status=None, status_details=None):
+        super(ComposeDeploymentStatusInfo, self).__init__()
         self.name = name
         self.application_name = application_name
         self.status = status

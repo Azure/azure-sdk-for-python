@@ -42,5 +42,6 @@ class FactoryIdentity(Model):
     type = "SystemAssigned"
 
     def __init__(self):
+        super(FactoryIdentity, self).__init__()
         self.principal_id = None
         self.tenant_id = None

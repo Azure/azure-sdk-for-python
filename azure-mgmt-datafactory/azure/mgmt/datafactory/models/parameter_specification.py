@@ -32,5 +32,6 @@ class ParameterSpecification(Model):
     }
 
     def __init__(self, type, default_value=None):
+        super(ParameterSpecification, self).__init__()
         self.type = type
         self.default_value = default_value

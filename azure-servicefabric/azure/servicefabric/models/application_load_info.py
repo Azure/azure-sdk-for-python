@@ -15,7 +15,13 @@ from msrest.serialization import Model
 class ApplicationLoadInfo(Model):
     """Load Information about a Service Fabric application.
 
-    :param id:
+    :param id: The identity of the application. This is an encoded
+     representation of the application name. This is used in the REST APIs to
+     identify the application resource.
+     Starting in version 6.0, hierarchical names are delimited with the "\\~"
+     character. For example, if the application name is "fabric:/myapp/app1",
+     the application identity would be "myapp\\~app1" in 6.0+ and "myapp/app1"
+     in previous versions.
     :type id: str
     :param minimum_nodes: The minimum number of nodes for this application.
      It is the number of nodes where Service Fabric will reserve Capacity in
@@ -35,10 +41,10 @@ class ApplicationLoadInfo(Model):
      For applications that do not have application capacity defined this value
      will be zero.
     :type node_count: long
-    :param application_load_metric_information:
-    :type application_load_metric_information: list of
-     :class:`ApplicationMetricDescription
-     <azure.servicefabric.models.ApplicationMetricDescription>`
+    :param application_load_metric_information: List of application capacity
+     metric description.
+    :type application_load_metric_information:
+     list[~azure.servicefabric.models.ApplicationMetricDescription]
     """
 
     _attribute_map = {
@@ -50,6 +56,7 @@ class ApplicationLoadInfo(Model):
     }
 
     def __init__(self, id=None, minimum_nodes=None, maximum_nodes=None, node_count=None, application_load_metric_information=None):
+        super(ApplicationLoadInfo, self).__init__()
         self.id = id
         self.minimum_nodes = minimum_nodes
         self.maximum_nodes = maximum_nodes

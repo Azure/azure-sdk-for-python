@@ -616,8 +616,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             )
         )
 
-        async = parse_response_for_async_op(response)
-        self._wait_for_async(async.request_id)
+        as_async = parse_response_for_async_op(response)
+        self._wait_for_async(as_async.request_id)
 
         # Assert
         self.assertEqual(response.status, 201)
@@ -645,8 +645,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             )
         )
 
-        async = parse_response_for_async_op(response)
-        self._wait_for_async(async.request_id)
+        as_async = parse_response_for_async_op(response)
+        self._wait_for_async(as_async.request_id)
 
         # Assert
         self.assertEqual(response.status, 200)
@@ -668,8 +668,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             )
         )
 
-        async = parse_response_for_async_op(response)
-        self._wait_for_async(async.request_id)
+        as_async = parse_response_for_async_op(response)
+        self._wait_for_async(as_async.request_id)
 
         # Assert
         self.assertEqual(response.status, 200)

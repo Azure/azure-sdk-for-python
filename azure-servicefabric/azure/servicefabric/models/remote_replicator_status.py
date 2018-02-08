@@ -17,7 +17,8 @@ class RemoteReplicatorStatus(Model):
     replicator’s point of view.
     .
 
-    :param replica_id:
+    :param replica_id: Represents the replica id of the remote secondary
+     replicator.
     :type replica_id: str
     :param last_acknowledgement_processed_time_utc: The last timestamp (in
      UTC) when an acknowledgement from the secondary replicator was processed
@@ -44,10 +45,10 @@ class RemoteReplicatorStatus(Model):
      A value of -1 implies that the secondary has applied all copy operations
      and the copy process is complete.
     :type last_applied_copy_sequence_number: str
-    :param remote_replicator_acknowledgement_status:
+    :param remote_replicator_acknowledgement_status: Represents the
+     acknowledgement status for the remote secondary replicator.
     :type remote_replicator_acknowledgement_status:
-     :class:`RemoteReplicatorAcknowledgementStatus
-     <azure.servicefabric.models.RemoteReplicatorAcknowledgementStatus>`
+     ~azure.servicefabric.models.RemoteReplicatorAcknowledgementStatus
     """
 
     _attribute_map = {
@@ -62,6 +63,7 @@ class RemoteReplicatorStatus(Model):
     }
 
     def __init__(self, replica_id=None, last_acknowledgement_processed_time_utc=None, last_received_replication_sequence_number=None, last_applied_replication_sequence_number=None, is_in_build=None, last_received_copy_sequence_number=None, last_applied_copy_sequence_number=None, remote_replicator_acknowledgement_status=None):
+        super(RemoteReplicatorStatus, self).__init__()
         self.replica_id = replica_id
         self.last_acknowledgement_processed_time_utc = last_acknowledgement_processed_time_utc
         self.last_received_replication_sequence_number = last_received_replication_sequence_number

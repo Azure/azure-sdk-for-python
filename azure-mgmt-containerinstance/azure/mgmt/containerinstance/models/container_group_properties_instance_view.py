@@ -19,8 +19,7 @@ class ContainerGroupPropertiesInstanceView(Model):
     sending a request.
 
     :ivar events: The events of this container group.
-    :vartype events: list of :class:`Event
-     <azure.mgmt.containerinstance.models.Event>`
+    :vartype events: list[~azure.mgmt.containerinstance.models.Event]
     :ivar state: The state of the container group. Only valid in response.
     :vartype state: str
     """
@@ -36,5 +35,6 @@ class ContainerGroupPropertiesInstanceView(Model):
     }
 
     def __init__(self):
+        super(ContainerGroupPropertiesInstanceView, self).__init__()
         self.events = None
         self.state = None

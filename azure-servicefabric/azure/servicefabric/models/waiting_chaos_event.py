@@ -17,11 +17,13 @@ class WaitingChaosEvent(ChaosEvent):
     cluster to become ready for faulting, for example, Chaos may be waiting for
     the on-going upgrade to finish.
 
-    :param time_stamp_utc:
+    :param time_stamp_utc: The UTC timestamp when this Chaos event was
+     generated.
     :type time_stamp_utc: datetime
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
-    :param reason:
+    :param reason: Describes why the WaitingChaosEvent was generated, for
+     example, due to a cluster upgrade.
     :type reason: str
     """
 

@@ -311,6 +311,18 @@ class StoredProcedureParameterType(Enum):
     date_enum = "Date"
 
 
+class SalesforceSourceReadBehavior(Enum):
+
+    query = "Query"
+    query_all = "QueryAll"
+
+
+class SSISExecutionRuntime(Enum):
+
+    x64 = "x64"
+    x86 = "x86"
+
+
 class HDInsightActivityDebugInfoOption(Enum):
 
     none = "None"
@@ -393,6 +405,12 @@ class IntegrationRuntimeSsisCatalogPricingTier(Enum):
     standard = "Standard"
     premium = "Premium"
     premium_rs = "PremiumRS"
+
+
+class IntegrationRuntimeLicenseType(Enum):
+
+    base_price = "BasePrice"
+    license_included = "LicenseIncluded"
 
 
 class IntegrationRuntimeAuthKeyName(Enum):

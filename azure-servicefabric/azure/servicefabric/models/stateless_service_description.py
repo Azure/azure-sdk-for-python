@@ -15,48 +15,52 @@ from .service_description import ServiceDescription
 class StatelessServiceDescription(ServiceDescription):
     """Describes a stateless service.
 
-    :param application_name:
+    :param application_name: The name of the application, including the
+     'fabric:' URI scheme.
     :type application_name: str
-    :param service_name:
+    :param service_name: The full name of the service with 'fabric:' URI
+     scheme.
     :type service_name: str
-    :param service_type_name:
+    :param service_type_name: Name of the service type as specified in the
+     service manifest.
     :type service_type_name: str
-    :param initialization_data:
-    :type initialization_data: list of int
-    :param partition_description:
-    :type partition_description: :class:`PartitionSchemeDescription
-     <azure.servicefabric.models.PartitionSchemeDescription>`
+    :param initialization_data: The initialization data as an array of bytes.
+     Initialization data is passed to service instances or replicas when they
+     are created.
+    :type initialization_data: list[int]
+    :param partition_description: The partition description as an object.
+    :type partition_description:
+     ~azure.servicefabric.models.PartitionSchemeDescription
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
      for restricting a service to particular nodes based on the service
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme:
-    :type correlation_scheme: list of :class:`ServiceCorrelationDescription
-     <azure.servicefabric.models.ServiceCorrelationDescription>`
-    :param service_load_metrics:
-    :type service_load_metrics: list of :class:`ServiceLoadMetricDescription
-     <azure.servicefabric.models.ServiceLoadMetricDescription>`
-    :param service_placement_policies:
-    :type service_placement_policies: list of
-     :class:`ServicePlacementPolicyDescription
-     <azure.servicefabric.models.ServicePlacementPolicyDescription>`
-    :param default_move_cost: Possible values include: 'Zero', 'Low',
-     'Medium', 'High'
-    :type default_move_cost: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param correlation_scheme: The correlation scheme.
+    :type correlation_scheme:
+     list[~azure.servicefabric.models.ServiceCorrelationDescription]
+    :param service_load_metrics: The service load metrics.
+    :type service_load_metrics:
+     list[~azure.servicefabric.models.ServiceLoadMetricDescription]
+    :param service_placement_policies: The service placement policies.
+    :type service_placement_policies:
+     list[~azure.servicefabric.models.ServicePlacementPolicyDescription]
+    :param default_move_cost: The move cost for the service. Possible values
+     include: 'Zero', 'Low', 'Medium', 'High'
+    :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
     :param is_default_move_cost_specified: Indicates if the DefaultMoveCost
      property is specified.
     :type is_default_move_cost_specified: bool
-    :param service_package_activation_mode: Possible values include:
+    :param service_package_activation_mode: The activation mode of service
+     package to be used for a service. Possible values include:
      'SharedProcess', 'ExclusiveProcess'
-    :type service_package_activation_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :type service_package_activation_mode: str or
+     ~azure.servicefabric.models.ServicePackageActivationMode
     :param service_dns_name: The DNS name of the service. It requires the DNS
      system service to be enabled in Service Fabric cluster.
     :type service_dns_name: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
     :param instance_count: The instance count.
     :type instance_count: int

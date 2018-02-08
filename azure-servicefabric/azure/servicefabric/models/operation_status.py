@@ -16,14 +16,17 @@ class OperationStatus(Model):
     """Contains the OperationId, OperationState, and OperationType for
     user-induced operations.
 
-    :param operation_id:
+    :param operation_id: A GUID that identifies a call to this API.  This is
+     also passed into the corresponding GetProgress API.
     :type operation_id: str
-    :param state: Possible values include: 'Invalid', 'Running',
-     'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param type: Possible values include: 'Invalid', 'PartitionDataLoss',
-     'PartitionQuorumLoss', 'PartitionRestart', 'NodeTransition'
-    :type type: str or :class:`enum <azure.servicefabric.models.enum>`
+    :param state: The state of the operation. Possible values include:
+     'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',
+     'ForceCancelled'
+    :type state: str or ~azure.servicefabric.models.OperationState
+    :param type: The type of the operation. Possible values include:
+     'Invalid', 'PartitionDataLoss', 'PartitionQuorumLoss', 'PartitionRestart',
+     'NodeTransition'
+    :type type: str or ~azure.servicefabric.models.OperationType
     """
 
     _attribute_map = {
@@ -33,6 +36,7 @@ class OperationStatus(Model):
     }
 
     def __init__(self, operation_id=None, state=None, type=None):
+        super(OperationStatus, self).__init__()
         self.operation_id = operation_id
         self.state = state
         self.type = type

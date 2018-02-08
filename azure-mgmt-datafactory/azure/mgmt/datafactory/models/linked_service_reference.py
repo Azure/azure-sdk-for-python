@@ -38,4 +38,5 @@ class LinkedServiceReference(Model):
     type = "LinkedServiceReference"
 
     def __init__(self, reference_name):
+        super(LinkedServiceReference, self).__init__()
         self.reference_name = reference_name

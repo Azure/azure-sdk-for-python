@@ -57,12 +57,28 @@ class ChaosParameters(Model):
      The larger the value, the lower the fault injection rate.
      . Default value: 30 .
     :type wait_time_between_iterations_in_seconds: long
-    :param cluster_health_policy:
-    :type cluster_health_policy: :class:`ClusterHealthPolicy
-     <azure.servicefabric.models.ClusterHealthPolicy>`
-    :param context:
-    :type context: :class:`ChaosContext
-     <azure.servicefabric.models.ChaosContext>`
+    :param cluster_health_policy: Passed-in cluster health policy is used to
+     validate health of the cluster in between Chaos iterations. If the cluster
+     health is in error or if an unexpected exception happens during fault
+     execution--to provide the cluster with some time to recuperate--Chaos will
+     wait for 30 minutes before the next health-check.
+    :type cluster_health_policy:
+     ~azure.servicefabric.models.ClusterHealthPolicy
+    :param context: Describes a map, which is a collection of (string, string)
+     type key-value pairs. The map can be used to record information about
+     the Chaos run. There cannot be more than 100 such pairs and each string
+     (key or value) can be at most 4095 characters long.
+     This map is set by the starter of the Chaos run to optionally store the
+     context about the specific run.
+    :type context: ~azure.servicefabric.models.ChaosContext
+    :param chaos_target_filter: List of cluster entities to target for Chaos
+     faults.
+     This filter can be used to target Chaos faults only to certain node types
+     or only to certain application instances. If ChaosTargetFilter is not
+     used, Chaos faults all cluster entities.
+     If ChaosTargetFilter is used, Chaos faults only the entities that meet the
+     ChaosTargetFilter specification.
+    :type chaos_target_filter: ~azure.servicefabric.models.ChaosTargetFilter
     """
 
     _validation = {
@@ -81,9 +97,11 @@ class ChaosParameters(Model):
         'wait_time_between_iterations_in_seconds': {'key': 'WaitTimeBetweenIterationsInSeconds', 'type': 'long'},
         'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
         'context': {'key': 'Context', 'type': 'ChaosContext'},
+        'chaos_target_filter': {'key': 'ChaosTargetFilter', 'type': 'ChaosTargetFilter'},
     }
 
-    def __init__(self, time_to_run_in_seconds="4294967295", max_cluster_stabilization_timeout_in_seconds=60, max_concurrent_faults=1, enable_move_replica_faults=True, wait_time_between_faults_in_seconds=20, wait_time_between_iterations_in_seconds=30, cluster_health_policy=None, context=None):
+    def __init__(self, time_to_run_in_seconds="4294967295", max_cluster_stabilization_timeout_in_seconds=60, max_concurrent_faults=1, enable_move_replica_faults=True, wait_time_between_faults_in_seconds=20, wait_time_between_iterations_in_seconds=30, cluster_health_policy=None, context=None, chaos_target_filter=None):
+        super(ChaosParameters, self).__init__()
         self.time_to_run_in_seconds = time_to_run_in_seconds
         self.max_cluster_stabilization_timeout_in_seconds = max_cluster_stabilization_timeout_in_seconds
         self.max_concurrent_faults = max_concurrent_faults
@@ -92,3 +110,4 @@ class ChaosParameters(Model):
         self.wait_time_between_iterations_in_seconds = wait_time_between_iterations_in_seconds
         self.cluster_health_policy = cluster_health_policy
         self.context = context
+        self.chaos_target_filter = chaos_target_filter

@@ -85,6 +85,7 @@ class ActivityRun(Model):
     }
 
     def __init__(self, additional_properties=None):
+        super(ActivityRun, self).__init__()
         self.additional_properties = additional_properties
         self.pipeline_name = None
         self.pipeline_run_id = None

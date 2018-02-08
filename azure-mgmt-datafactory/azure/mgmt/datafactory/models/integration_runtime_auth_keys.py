@@ -27,5 +27,6 @@ class IntegrationRuntimeAuthKeys(Model):
     }
 
     def __init__(self, auth_key1=None, auth_key2=None):
+        super(IntegrationRuntimeAuthKeys, self).__init__()
         self.auth_key1 = auth_key1
         self.auth_key2 = auth_key2

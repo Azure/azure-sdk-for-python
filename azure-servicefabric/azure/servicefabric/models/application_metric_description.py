@@ -64,6 +64,7 @@ class ApplicationMetricDescription(Model):
     }
 
     def __init__(self, name=None, maximum_capacity=None, reservation_capacity=None, total_application_capacity=None):
+        super(ApplicationMetricDescription, self).__init__()
         self.name = name
         self.maximum_capacity = maximum_capacity
         self.reservation_capacity = reservation_capacity

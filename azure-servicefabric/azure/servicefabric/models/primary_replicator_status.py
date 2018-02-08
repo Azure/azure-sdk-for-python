@@ -13,16 +13,19 @@ from .replicator_status import ReplicatorStatus
 
 
 class PrimaryReplicatorStatus(ReplicatorStatus):
-    """PrimaryReplicatorStatus.
+    """Provides statistics about the Service Fabric Replicator, when it is
+    functioning in a Primary role.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
-    :param replication_queue_status:
-    :type replication_queue_status: :class:`ReplicatorQueueStatus
-     <azure.servicefabric.models.ReplicatorQueueStatus>`
-    :param remote_replicators:
-    :type remote_replicators: list of :class:`RemoteReplicatorStatus
-     <azure.servicefabric.models.RemoteReplicatorStatus>`
+    :param replication_queue_status: Details about the replication queue on
+     the primary replicator.
+    :type replication_queue_status:
+     ~azure.servicefabric.models.ReplicatorQueueStatus
+    :param remote_replicators: The status of all the active and idle secondary
+     replicators that the primary is aware of.
+    :type remote_replicators:
+     list[~azure.servicefabric.models.RemoteReplicatorStatus]
     """
 
     _validation = {

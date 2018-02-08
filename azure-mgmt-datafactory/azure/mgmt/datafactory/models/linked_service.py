@@ -71,6 +71,7 @@ class LinkedService(Model):
     }
 
     def __init__(self, additional_properties=None, connect_via=None, description=None):
+        super(LinkedService, self).__init__()
         self.additional_properties = additional_properties
         self.connect_via = connect_via
         self.description = description

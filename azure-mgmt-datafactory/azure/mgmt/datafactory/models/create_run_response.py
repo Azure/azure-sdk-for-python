@@ -28,4 +28,5 @@ class CreateRunResponse(Model):
     }
 
     def __init__(self, run_id):
+        super(CreateRunResponse, self).__init__()
         self.run_id = run_id

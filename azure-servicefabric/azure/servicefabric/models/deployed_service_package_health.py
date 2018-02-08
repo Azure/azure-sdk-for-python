@@ -16,24 +16,29 @@ class DeployedServicePackageHealth(EntityHealth):
     """Information about the health of a service package for a specific
     application deployed on a Service Fabric node.
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param aggregated_health_state: The HealthState representing the
+     aggregated health state of the entity computed by Health Manager.
+     The health evaluation of the entity reflects all events reported on the
+     entity and its children (if any).
+     The aggregation is done by applying the desired health policy.
+     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.
-    :type health_events: list of :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
-    :param unhealthy_evaluations:
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    :param health_statistics:
-    :type health_statistics: :class:`HealthStatistics
-     <azure.servicefabric.models.HealthStatistics>`
-    :param application_name:
+    :type health_events: list[~azure.servicefabric.models.HealthEvent]
+    :param unhealthy_evaluations: The unhealthy evaluations that show why the
+     current aggregated health state was returned by Health Manager.
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    :param health_statistics: Shows the health statistics for all children
+     types of the queried entity.
+    :type health_statistics: ~azure.servicefabric.models.HealthStatistics
+    :param application_name: The name of the application, including the
+     'fabric:' URI scheme.
     :type application_name: str
-    :param service_manifest_name:
+    :param service_manifest_name: Name of the service manifest.
     :type service_manifest_name: str
-    :param node_name:
+    :param node_name: Name of the node where this service package is deployed.
     :type node_name: str
     """
 

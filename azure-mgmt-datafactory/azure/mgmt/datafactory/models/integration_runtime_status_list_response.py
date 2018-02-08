@@ -33,5 +33,6 @@ class IntegrationRuntimeStatusListResponse(Model):
     }
 
     def __init__(self, value, next_link=None):
+        super(IntegrationRuntimeStatusListResponse, self).__init__()
         self.value = value
         self.next_link = next_link

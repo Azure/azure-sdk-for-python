@@ -40,7 +40,7 @@ class FtpServerLinkedService(LinkedService):
      Expression with resultType string).
     :type user_name: object
     :param password: Password to logon the FTP server.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -69,7 +69,7 @@ class FtpServerLinkedService(LinkedService):
         'port': {'key': 'typeProperties.port', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'enable_ssl': {'key': 'typeProperties.enableSsl', 'type': 'object'},
         'enable_server_certificate_validation': {'key': 'typeProperties.enableServerCertificateValidation', 'type': 'object'},

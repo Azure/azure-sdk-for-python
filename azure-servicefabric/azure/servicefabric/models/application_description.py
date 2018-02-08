@@ -15,18 +15,29 @@ from msrest.serialization import Model
 class ApplicationDescription(Model):
     """Describes a Service Fabric application.
 
-    :param name:
+    :param name: The name of the application, including the 'fabric:' URI
+     scheme.
     :type name: str
-    :param type_name:
+    :param type_name: The application type name as defined in the application
+     manifest.
     :type type_name: str
-    :param type_version:
+    :param type_version: The version of the application type as defined in the
+     application manifest.
     :type type_version: str
-    :param parameter_list:
-    :type parameter_list: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
-    :param application_capacity:
-    :type application_capacity: :class:`ApplicationCapacityDescription
-     <azure.servicefabric.models.ApplicationCapacityDescription>`
+    :param parameter_list: List of application parameters with overridden
+     values from their default values specified in the application manifest.
+    :type parameter_list:
+     list[~azure.servicefabric.models.ApplicationParameter]
+    :param application_capacity: Describes capacity information for services
+     of this application. This description can be used for describing the
+     following.
+     - Reserving the capacity for the services on the nodes
+     - Limiting the total number of nodes that services of this application can
+     run on
+     - Limiting the custom capacity metrics to limit the total consumption of
+     this metric by the services of this application
+    :type application_capacity:
+     ~azure.servicefabric.models.ApplicationCapacityDescription
     """
 
     _validation = {
@@ -44,6 +55,7 @@ class ApplicationDescription(Model):
     }
 
     def __init__(self, name, type_name, type_version, parameter_list=None, application_capacity=None):
+        super(ApplicationDescription, self).__init__()
         self.name = name
         self.type_name = type_name
         self.type_version = type_version

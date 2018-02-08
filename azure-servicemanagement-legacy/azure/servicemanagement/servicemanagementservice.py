@@ -232,7 +232,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 location,
                 account_type,
                 extended_properties),
-            async=True)
+            as_async=True)
 
     def update_storage_account(self, service_name, description=None,
                                label=None, geo_replication_enabled=None,
@@ -288,7 +288,7 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('service_name', service_name)
         return self._perform_delete(
             self._get_storage_service_path(service_name),
-            async=True)
+            as_async=True)
 
     def check_storage_account_name_availability(self, service_name):
         '''
@@ -390,7 +390,7 @@ class ServiceManagementService(_ServiceManagementClient):
                                       location,
                                       affinity_group,
                                       extended_properties),
-                                  async=True)
+                                  as_async=True)
 
     def update_hosted_service(self, service_name, label=None, description=None,
                               extended_properties=None):
@@ -443,7 +443,7 @@ class ServiceManagementService(_ServiceManagementClient):
         if complete == True:
             path = path +'?comp=media'
 
-        return self._perform_delete(path, async=True)
+        return self._perform_delete(path, as_async=True)
 
     def get_deployment_by_slot(self, service_name, deployment_slot):
         '''
@@ -546,7 +546,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 start_deployment,
                 treat_warnings_as_error,
                 extended_properties),
-            async=True)
+            as_async=True)
 
     def delete_deployment(self, service_name, deployment_name,delete_vhd=False):
         '''
@@ -564,7 +564,7 @@ class ServiceManagementService(_ServiceManagementClient):
             path += '?comp=media'
         return self._perform_delete(
                 path,
-            async=True)
+            as_async=True)
 
     def swap_deployment(self, service_name, production, source_deployment):
         '''
@@ -587,7 +587,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(self._get_hosted_service_path(service_name),
                                   _XmlSerializer.swap_deployment_to_xml(
                                       production, source_deployment),
-                                  async=True)
+                                  as_async=True)
 
     def change_deployment_configuration(self, service_name, deployment_name,
                                         configuration,
@@ -630,7 +630,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 treat_warnings_as_error,
                 mode,
                 extended_properties),
-            async=True)
+            as_async=True)
 
     def update_deployment_status(self, service_name, deployment_name, status):
         '''
@@ -653,7 +653,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 service_name, deployment_name) + '/?comp=status',
             _XmlSerializer.update_deployment_status_to_xml(
                 status),
-            async=True)
+            as_async=True)
 
     def upgrade_deployment(self, service_name, deployment_name, mode,
                            package_url, configuration, label, force,
@@ -715,7 +715,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 role_to_upgrade,
                 force,
                 extended_properties),
-            async=True)
+            as_async=True)
 
     def walk_upgrade_domain(self, service_name, deployment_name,
                             upgrade_domain):
@@ -740,7 +740,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 service_name, deployment_name) + '/?comp=walkupgradedomain',
             _XmlSerializer.walk_upgrade_domain_to_xml(
                 upgrade_domain),
-            async=True)
+            as_async=True)
 
     def rollback_update_or_upgrade(self, service_name, deployment_name, mode,
                                    force):
@@ -773,7 +773,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 service_name, deployment_name) + '/?comp=rollback',
             _XmlSerializer.rollback_upgrade_to_xml(
                 mode, force),
-            async=True)
+            as_async=True)
 
     def reboot_role_instance(self, service_name, deployment_name,
                              role_instance_name):
@@ -796,7 +796,7 @@ class ServiceManagementService(_ServiceManagementClient):
                     '/roleinstances/' + _str(role_instance_name) + \
                     '?comp=reboot',
             '',
-            async=True)
+            as_async=True)
 
     def reimage_role_instance(self, service_name, deployment_name,
                               role_instance_name):
@@ -819,7 +819,7 @@ class ServiceManagementService(_ServiceManagementClient):
                     '/roleinstances/' + _str(role_instance_name) + \
                     '?comp=reimage',
             '',
-            async=True)
+            as_async=True)
 
     def rebuild_role_instance(self, service_name, deployment_name,
                              role_instance_name):
@@ -845,7 +845,7 @@ class ServiceManagementService(_ServiceManagementClient):
                     '/roleinstances/' + _str(role_instance_name) + \
                     '?comp=rebuild&resources=allLocalDrives',
             '',
-            async=True)
+            as_async=True)
 
     def delete_role_instances(self, service_name, deployment_name,
                              role_instance_names):
@@ -869,7 +869,7 @@ class ServiceManagementService(_ServiceManagementClient):
             self._get_deployment_path_using_name(
                 service_name, deployment_name) + '/roleinstances/?comp=delete',
             _XmlSerializer.role_instances_to_xml(role_instance_names),
-            async=True)
+            as_async=True)
 
     def check_hosted_service_name_availability(self, service_name):
         '''
@@ -946,7 +946,7 @@ class ServiceManagementService(_ServiceManagementClient):
             _str(service_name) + '/certificates',
             _XmlSerializer.certificate_file_to_xml(
                 data, certificate_format, password),
-            async=True)
+            as_async=True)
 
     def delete_service_certificate(self, service_name, thumbalgorithm,
                                    thumbprint):
@@ -968,7 +968,7 @@ class ServiceManagementService(_ServiceManagementClient):
             '/' + self.subscription_id + '/services/hostedservices/' +
             _str(service_name) + '/certificates/' +
             _str(thumbalgorithm) + '-' + _str(thumbprint),
-            async=True)
+            as_async=True)
 
     #--Operations for management certificates ----------------------------
     def list_management_certificates(self):
@@ -1206,7 +1206,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_reserved_ip_path(),
             _XmlSerializer.create_reserved_ip_to_xml(name, label, location),
-            async=True)
+            as_async=True)
 
     def delete_reserved_ip_address(self, name):
         '''
@@ -1217,7 +1217,7 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('name', name)
         return self._perform_delete(self._get_reserved_ip_path(name),
-                                    async=True)
+                                    as_async=True)
 
     def associate_reserved_ip_address(
         self, name, service_name, deployment_name, virtual_ip_name=None
@@ -1247,7 +1247,7 @@ class ServiceManagementService(_ServiceManagementClient):
             _XmlSerializer.associate_reserved_ip_to_xml(
                 service_name, deployment_name, virtual_ip_name
             ),
-            async=True,
+            as_async=True,
             x_ms_version='2015-02-01'
         )
 
@@ -1279,7 +1279,7 @@ class ServiceManagementService(_ServiceManagementClient):
             _XmlSerializer.associate_reserved_ip_to_xml(
                 service_name, deployment_name, virtual_ip_name
             ),
-            async=True,
+            as_async=True,
             x_ms_version='2015-02-01'
         )
 
@@ -1441,7 +1441,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 media_location,
                 dns_servers,
                 reserved_ip_name),
-            async=True)
+            as_async=True)
 
     def add_role(self, service_name, deployment_name, role_name, system_config,
                  os_virtual_hard_disk, network_config=None,
@@ -1526,7 +1526,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 provision_guest_agent,
                 vm_image_name,
                 media_location),
-            async=True)
+            as_async=True)
 
     def update_role(self, service_name, deployment_name, role_name,
                     os_virtual_hard_disk=None, network_config=None,
@@ -1594,7 +1594,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 role_size,
                 resource_extension_references,
                 provision_guest_agent),
-            async=True)
+            as_async=True)
 
     def delete_role(self, service_name, deployment_name, role_name, complete = False):
         '''
@@ -1620,7 +1620,7 @@ class ServiceManagementService(_ServiceManagementClient):
             path = path +'?comp=media'
 
         return self._perform_delete(path,
-                                    async=True)
+                                    as_async=True)
 
     def capture_role(self, service_name, deployment_name, role_name,
                      post_capture_action, target_image_name,
@@ -1660,7 +1660,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 target_image_name,
                 target_image_label,
                 provisioning_configuration),
-            async=True)
+            as_async=True)
 
     def start_role(self, service_name, deployment_name, role_name):
         '''
@@ -1680,7 +1680,7 @@ class ServiceManagementService(_ServiceManagementClient):
             self._get_role_instance_operations_path(
                 service_name, deployment_name, role_name),
             _XmlSerializer.start_role_operation_to_xml(),
-            async=True)
+            as_async=True)
 
     def start_roles(self, service_name, deployment_name, role_names):
         '''
@@ -1699,7 +1699,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_roles_operations_path(service_name, deployment_name),
             _XmlSerializer.start_roles_operation_to_xml(role_names),
-            async=True)
+            as_async=True)
 
     def restart_role(self, service_name, deployment_name, role_name):
         '''
@@ -1720,7 +1720,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 service_name, deployment_name, role_name),
             _XmlSerializer.restart_role_operation_to_xml(
             ),
-            async=True)
+            as_async=True)
 
     def shutdown_role(self, service_name, deployment_name, role_name,
                       post_shutdown_action='Stopped'):
@@ -1753,7 +1753,7 @@ class ServiceManagementService(_ServiceManagementClient):
             self._get_role_instance_operations_path(
                 service_name, deployment_name, role_name),
             _XmlSerializer.shutdown_role_operation_to_xml(post_shutdown_action),
-            async=True)
+            as_async=True)
 
     def shutdown_roles(self, service_name, deployment_name, role_names,
                        post_shutdown_action='Stopped'):
@@ -1786,7 +1786,7 @@ class ServiceManagementService(_ServiceManagementClient):
             self._get_roles_operations_path(service_name, deployment_name),
             _XmlSerializer.shutdown_roles_operation_to_xml(
                 role_names, post_shutdown_action),
-            async=True)
+            as_async=True)
 
     def add_dns_server(self, service_name, deployment_name, dns_server_name, address):
         '''
@@ -1808,7 +1808,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_dns_server_path(service_name, deployment_name),
             _XmlSerializer.dns_server_to_xml(dns_server_name, address),
-            async=True)
+            as_async=True)
 
     def update_dns_server(self, service_name, deployment_name, dns_server_name, address):
         '''
@@ -1832,7 +1832,7 @@ class ServiceManagementService(_ServiceManagementClient):
                                       deployment_name,
                                       dns_server_name),
             _XmlSerializer.dns_server_to_xml(dns_server_name, address),
-            async=True)
+            as_async=True)
 
     def delete_dns_server(self, service_name, deployment_name, dns_server_name):
         '''
@@ -1852,7 +1852,7 @@ class ServiceManagementService(_ServiceManagementClient):
             self._get_dns_server_path(service_name,
                                       deployment_name,
                                       dns_server_name),
-            async=True)
+            as_async=True)
 
     def list_resource_extensions(self):
         '''
@@ -1922,7 +1922,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 sku,
                 version
             ),
-            async=True,
+            as_async=True,
             x_ms_version='2015-04-01'
         )
 
@@ -1943,7 +1943,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_put(
             self._get_unreplication_path_using_vm_image_name(vm_image_name),
             None,
-            async=True,
+            as_async=True,
             x_ms_version='2015-04-01'
         )
 
@@ -1966,7 +1966,7 @@ class ServiceManagementService(_ServiceManagementClient):
         path = path + '?' + query.lstrip('&')
 
         return self._perform_put(
-            path, None, async=True, x_ms_version='2015-04-01'
+            path, None, as_async=True, x_ms_version='2015-04-01'
         )
 
     def capture_vm_image(self, service_name, deployment_name, role_name, options):
@@ -2019,7 +2019,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_capture_vm_image_path(service_name, deployment_name, role_name),
             _XmlSerializer.capture_vm_image_to_xml(options),
-            async=True)
+            as_async=True)
 
     def create_vm_image(self, vm_image):
         '''
@@ -2106,7 +2106,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_vm_image_path(),
             _XmlSerializer.create_vm_image_to_xml(vm_image),
-            async=True)
+            as_async=True)
 
     def delete_vm_image(self, vm_image_name, delete_vhd=False):
         '''
@@ -2122,7 +2122,7 @@ class ServiceManagementService(_ServiceManagementClient):
         path = self._get_vm_image_path(vm_image_name)
         if delete_vhd:
             path += '?comp=media'
-        return self._perform_delete(path, async=True)
+        return self._perform_delete(path, as_async=True)
 
     def list_vm_images(self, location=None, publisher=None, category=None):
         '''
@@ -2200,7 +2200,7 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('vm_image', vm_image)
         return self._perform_put(self._get_vm_image_path(vm_image_name),
                                  _XmlSerializer.update_vm_image_to_xml(vm_image),
-                                 async=True)
+                                 as_async=True)
 
     #--Operations for operating system images ----------------------------
     def list_os_images(self):
@@ -2252,7 +2252,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(self._get_image_path(),
                                   _XmlSerializer.os_image_to_xml(
                                       label, media_link, name, os),
-                                  async=True)
+                                  as_async=True)
 
     def update_os_image(self, image_name, label, media_link, name, os):
         '''
@@ -2285,7 +2285,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_put(self._get_image_path(image_name),
                                  _XmlSerializer.os_image_to_xml(
                                      label, media_link, name, os),
-                                 async=True)
+                                 as_async=True)
 
     def update_os_image_from_image_reference(self, image_name, os_image):
         '''
@@ -2336,7 +2336,7 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('image_name', image_name)
         _validate_not_none('os_image', os_image)
         return self._perform_put(self._get_image_path(image_name),
-            _XmlSerializer.update_os_image_to_xml(os_image), async=True
+            _XmlSerializer.update_os_image_to_xml(os_image), as_async=True
         )
 
     def delete_os_image(self, image_name, delete_vhd=False):
@@ -2352,7 +2352,7 @@ class ServiceManagementService(_ServiceManagementClient):
         path = self._get_image_path(image_name)
         if delete_vhd:
             path += '?comp=media'
-        return self._perform_delete(path, async=True)
+        return self._perform_delete(path, as_async=True)
 
     #--Operations for virtual machine disks ------------------------------
     def get_data_disk(self, service_name, deployment_name, role_name, lun):
@@ -2437,7 +2437,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 logical_disk_size_in_gb,
                 media_link,
                 source_media_link),
-            async=True)
+            as_async=True)
 
     def update_data_disk(self, service_name, deployment_name, role_name, lun,
                          host_caching=None, media_link=None, updated_lun=None,
@@ -2503,7 +2503,7 @@ class ServiceManagementService(_ServiceManagementClient):
                 logical_disk_size_in_gb,
                 media_link,
                 None),
-            async=True)
+            as_async=True)
 
     def delete_data_disk(self, service_name, deployment_name, role_name, lun, delete_vhd=False):
         '''
@@ -2527,7 +2527,7 @@ class ServiceManagementService(_ServiceManagementClient):
         path = self._get_data_disk_path(service_name, deployment_name, role_name, lun)
         if delete_vhd:
             path += '?comp=media'
-        return self._perform_delete(path, async=True)
+        return self._perform_delete(path, as_async=True)
 
     #--Operations for virtual machine disks ------------------------------
     def list_disks(self):

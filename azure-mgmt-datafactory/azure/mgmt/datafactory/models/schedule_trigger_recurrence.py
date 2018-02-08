@@ -44,6 +44,7 @@ class ScheduleTriggerRecurrence(Model):
     }
 
     def __init__(self, additional_properties=None, frequency=None, interval=None, start_time=None, end_time=None, time_zone=None, schedule=None):
+        super(ScheduleTriggerRecurrence, self).__init__()
         self.additional_properties = additional_properties
         self.frequency = frequency
         self.interval = interval

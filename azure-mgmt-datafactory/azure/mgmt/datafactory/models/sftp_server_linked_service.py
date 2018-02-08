@@ -41,7 +41,7 @@ class SftpServerLinkedService(LinkedService):
     :type user_name: object
     :param password: Password to logon the SFTP server for Basic
      authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -56,10 +56,10 @@ class SftpServerLinkedService(LinkedService):
      SshPublicKey authentication. For on-premises copy with SshPublicKey
      authentication, either PrivateKeyPath or PrivateKeyContent should be
      specified. SSH private key should be OpenSSH format.
-    :type private_key_content: ~azure.mgmt.datafactory.models.SecureString
+    :type private_key_content: ~azure.mgmt.datafactory.models.SecretBase
     :param pass_phrase: The password to decrypt the SSH private key if the SSH
      private key is encrypted.
-    :type pass_phrase: ~azure.mgmt.datafactory.models.SecureString
+    :type pass_phrase: ~azure.mgmt.datafactory.models.SecretBase
     :param skip_host_key_validation: If true, skip the SSH host key
      validation. Default value is false. Type: boolean (or Expression with
      resultType boolean).
@@ -84,11 +84,11 @@ class SftpServerLinkedService(LinkedService):
         'port': {'key': 'typeProperties.port', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'private_key_path': {'key': 'typeProperties.privateKeyPath', 'type': 'object'},
-        'private_key_content': {'key': 'typeProperties.privateKeyContent', 'type': 'SecureString'},
-        'pass_phrase': {'key': 'typeProperties.passPhrase', 'type': 'SecureString'},
+        'private_key_content': {'key': 'typeProperties.privateKeyContent', 'type': 'SecretBase'},
+        'pass_phrase': {'key': 'typeProperties.passPhrase', 'type': 'SecretBase'},
         'skip_host_key_validation': {'key': 'typeProperties.skipHostKeyValidation', 'type': 'object'},
         'host_key_fingerprint': {'key': 'typeProperties.hostKeyFingerprint', 'type': 'object'},
     }

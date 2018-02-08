@@ -16,9 +16,17 @@ class PartitionInformation(Model):
     """Information about the partition identity, partitioning scheme and keys
     supported by it.
 
-    :param id:
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Int64RangePartitionInformation, NamedPartitionInformation,
+    SingletonPartitionInformation
+
+    :param id: An internal ID used by Service Fabric to uniquely identify a
+     partition. This is a randomly generated GUID when the service was created.
+     The partition id is unique and does not change for the lifetime of the
+     service. If the same service was deleted and recreated the ids of its
+     partitions would be different.
     :type id: str
-    :param service_partition_kind: Polymorphic Discriminator
+    :param service_partition_kind: Constant filled by server.
     :type service_partition_kind: str
     """
 
@@ -36,5 +44,6 @@ class PartitionInformation(Model):
     }
 
     def __init__(self, id=None):
+        super(PartitionInformation, self).__init__()
         self.id = id
         self.service_partition_kind = None

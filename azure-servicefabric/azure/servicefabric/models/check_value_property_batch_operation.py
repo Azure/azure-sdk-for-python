@@ -14,19 +14,19 @@ from .property_batch_operation import PropertyBatchOperation
 
 class CheckValuePropertyBatchOperation(PropertyBatchOperation):
     """Represents a PropertyBatchOperation that compares the value of the property
-    with the expected value.  The CheckValuePropertyBatchOperation is generally
-    used as a precondition for the write operations in the batch.  Note that if
-    one PropertyBatchOperation in a PropertyBatch fails,  the entire batch
-    fails and cannot be committed in a transactional manner.
+    with the expected value.
+    The CheckValuePropertyBatchOperation is generally used as a precondition
+    for the write operations in the batch.
+    Note that if one PropertyBatchOperation in a PropertyBatch fails,
+    the entire batch fails and cannot be committed in a transactional manner.
     .
 
-    :param property_name:
+    :param property_name: The name of the Service Fabric property.
     :type property_name: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
-    :param value:
-    :type value: :class:`PropertyValue
-     <azure.servicefabric.models.PropertyValue>`
+    :param value: The expected property value.
+    :type value: ~azure.servicefabric.models.PropertyValue
     """
 
     _validation = {

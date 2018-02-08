@@ -18,10 +18,12 @@ class PackageSharingPolicyInfo(Model):
     :param shared_package_name: The name of code, configuration or data
      package that should be shared.
     :type shared_package_name: str
-    :param package_sharing_scope: Possible values include: 'None', 'All',
-     'Code', 'Config', 'Data'
-    :type package_sharing_scope: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param package_sharing_scope: Represents the scope for
+     PackageSharingPolicy. This is specified during DeployServicePackageToNode
+     operation. Possible values include: 'None', 'All', 'Code', 'Config',
+     'Data'
+    :type package_sharing_scope: str or
+     ~azure.servicefabric.models.PackageSharingPolicyScope
     """
 
     _attribute_map = {
@@ -30,5 +32,6 @@ class PackageSharingPolicyInfo(Model):
     }
 
     def __init__(self, shared_package_name=None, package_sharing_scope=None):
+        super(PackageSharingPolicyInfo, self).__init__()
         self.shared_package_name = shared_package_name
         self.package_sharing_scope = package_sharing_scope

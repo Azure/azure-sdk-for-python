@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class ReplicaStatusBase(Model):
     """Information about the replica.
 
-    :param kind: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: KeyValueStoreReplicaStatus
+
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -32,4 +35,5 @@ class ReplicaStatusBase(Model):
     }
 
     def __init__(self):
+        super(ReplicaStatusBase, self).__init__()
         self.kind = None

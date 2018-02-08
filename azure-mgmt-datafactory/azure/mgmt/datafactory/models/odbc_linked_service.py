@@ -27,19 +27,19 @@ class OdbcLinkedService(LinkedService):
     :type type: str
     :param connection_string: The non-access credential portion of the
      connection string as well as an optional encrypted credential.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecureString
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param authentication_type: Type of authentication used to connect to the
      ODBC data store. Possible values are: Anonymous and Basic. Type: string
      (or Expression with resultType string).
     :type authentication_type: object
     :param credential: The access credential portion of the connection string
      specified in driver-specific property-value format.
-    :type credential: ~azure.mgmt.datafactory.models.SecureString
+    :type credential: ~azure.mgmt.datafactory.models.SecretBase
     :param user_name: User name for Basic authentication. Type: string (or
      Expression with resultType string).
     :type user_name: object
     :param password: Password for Basic authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -56,11 +56,11 @@ class OdbcLinkedService(LinkedService):
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecureString'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
-        'credential': {'key': 'typeProperties.credential', 'type': 'SecureString'},
+        'credential': {'key': 'typeProperties.credential', 'type': 'SecretBase'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

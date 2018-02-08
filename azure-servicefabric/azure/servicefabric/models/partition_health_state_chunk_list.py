@@ -21,8 +21,7 @@ class PartitionHealthStateChunkList(Model):
 
     :param items: The list of partition health state chunks that respect the
      input filters in the chunk query.
-    :type items: list of :class:`PartitionHealthStateChunk
-     <azure.servicefabric.models.PartitionHealthStateChunk>`
+    :type items: list[~azure.servicefabric.models.PartitionHealthStateChunk]
     """
 
     _attribute_map = {
@@ -30,4 +29,5 @@ class PartitionHealthStateChunkList(Model):
     }
 
     def __init__(self, items=None):
+        super(PartitionHealthStateChunkList, self).__init__()
         self.items = items

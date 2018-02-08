@@ -41,6 +41,7 @@ class RecurrenceSchedule(Model):
     }
 
     def __init__(self, additional_properties=None, minutes=None, hours=None, week_days=None, month_days=None, monthly_occurrences=None):
+        super(RecurrenceSchedule, self).__init__()
         self.additional_properties = additional_properties
         self.minutes = minutes
         self.hours = hours

@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ApplicationTypeImageStoreVersion(Model):
-    """A version description for the application type.
-
-    :param application_type_version:
-    :type application_type_version: str
+class BudgetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Budget <azure.mgmt.consumption.models.Budget>` object
     """
 
-    _validation = {
-        'application_type_version': {'required': True},
-    }
-
     _attribute_map = {
-        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Budget]'}
     }
 
-    def __init__(self, application_type_version):
-        self.application_type_version = application_type_version
+    def __init__(self, *args, **kwargs):
+
+        super(BudgetPaged, self).__init__(*args, **kwargs)

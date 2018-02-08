@@ -40,6 +40,7 @@ class PipelineRunQueryFilter(Model):
     }
 
     def __init__(self, operand, operator, values):
+        super(PipelineRunQueryFilter, self).__init__()
         self.operand = operand
         self.operator = operator
         self.values = values

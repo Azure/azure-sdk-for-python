@@ -23,7 +23,7 @@ class RepairTaskApproveDescription(Model):
     :param version: The current version number of the repair task. If
      non-zero, then the request will only succeed if this value matches the
      actual current version of the repair task. If zero, then no version check
-     is performed.</para>
+     is performed.
     :type version: str
     """
 
@@ -37,5 +37,6 @@ class RepairTaskApproveDescription(Model):
     }
 
     def __init__(self, task_id, version=None):
+        super(RepairTaskApproveDescription, self).__init__()
         self.task_id = task_id
         self.version = version

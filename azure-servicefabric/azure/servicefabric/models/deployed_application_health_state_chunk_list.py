@@ -20,8 +20,8 @@ class DeployedApplicationHealthStateChunkList(Model):
 
     :param items: The list of deployed application health state chunks that
      respect the input filters in the chunk query.
-    :type items: list of :class:`DeployedApplicationHealthStateChunk
-     <azure.servicefabric.models.DeployedApplicationHealthStateChunk>`
+    :type items:
+     list[~azure.servicefabric.models.DeployedApplicationHealthStateChunk]
     """
 
     _attribute_map = {
@@ -29,4 +29,5 @@ class DeployedApplicationHealthStateChunkList(Model):
     }
 
     def __init__(self, items=None):
+        super(DeployedApplicationHealthStateChunkList, self).__init__()
         self.items = items

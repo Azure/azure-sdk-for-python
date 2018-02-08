@@ -49,6 +49,7 @@ class RepairTaskUpdateHealthPolicyDescription(Model):
     }
 
     def __init__(self, task_id, version=None, perform_preparing_health_check=None, perform_restoring_health_check=None):
+        super(RepairTaskUpdateHealthPolicyDescription, self).__init__()
         self.task_id = task_id
         self.version = version
         self.perform_preparing_health_check = perform_preparing_health_check

@@ -17,6 +17,9 @@ class ResourceAccess(Model):
     requires. The resourceAccess property of the RequiredResourceAccess type is
     a collection of ResourceAccess.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param id: The unique identifier for one of the OAuth2Permission or
      AppRole instances that the resource application exposes.
     :type id: str
@@ -30,10 +33,13 @@ class ResourceAccess(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id, type=None):
+    def __init__(self, id, additional_properties=None, type=None):
+        super(ResourceAccess, self).__init__()
+        self.additional_properties = additional_properties
         self.id = id
         self.type = type

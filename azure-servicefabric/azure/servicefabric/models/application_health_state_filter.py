@@ -77,8 +77,8 @@ class ApplicationHealthStateFilter(Model):
      For example, it can specify a filter to return all services with health
      state Error and another filter to always include a service identified by
      its service name.
-    :type service_filters: list of :class:`ServiceHealthStateFilter
-     <azure.servicefabric.models.ServiceHealthStateFilter>`
+    :type service_filters:
+     list[~azure.servicefabric.models.ServiceHealthStateFilter]
     :param deployed_application_filters: Defines a list of filters that
      specify which deployed applications to be included in the returned cluster
      health chunk as children of the application. The deployed applications are
@@ -90,9 +90,8 @@ class ApplicationHealthStateFilter(Model):
      For example, it can specify a filter to return all deployed applications
      with health state Error and another filter to always include a deployed
      application on a specified node.
-    :type deployed_application_filters: list of
-     :class:`DeployedApplicationHealthStateFilter
-     <azure.servicefabric.models.DeployedApplicationHealthStateFilter>`
+    :type deployed_application_filters:
+     list[~azure.servicefabric.models.DeployedApplicationHealthStateFilter]
     """
 
     _attribute_map = {
@@ -104,6 +103,7 @@ class ApplicationHealthStateFilter(Model):
     }
 
     def __init__(self, application_name_filter=None, application_type_name_filter=None, health_state_filter=0, service_filters=None, deployed_application_filters=None):
+        super(ApplicationHealthStateFilter, self).__init__()
         self.application_name_filter = application_name_filter
         self.application_type_name_filter = application_type_name_filter
         self.health_state_filter = health_state_filter

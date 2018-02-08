@@ -72,6 +72,7 @@ class Dataset(Model):
     }
 
     def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None):
+        super(Dataset, self).__init__()
         self.additional_properties = additional_properties
         self.description = description
         self.structure = structure
