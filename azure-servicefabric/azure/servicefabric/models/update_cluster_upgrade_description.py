@@ -15,24 +15,31 @@ from msrest.serialization import Model
 class UpdateClusterUpgradeDescription(Model):
     """Parameters for updating a cluster upgrade.
 
-    :param upgrade_kind: Possible values include: 'Invalid', 'Rolling',
+    :param upgrade_kind: The type of upgrade out of the following possible
+     values. Possible values include: 'Invalid', 'Rolling',
      'Rolling_ForceRestart'. Default value: "Rolling" .
-    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param update_description:
-    :type update_description: :class:`RollingUpgradeUpdateDescription
-     <azure.servicefabric.models.RollingUpgradeUpdateDescription>`
-    :param cluster_health_policy:
-    :type cluster_health_policy: :class:`ClusterHealthPolicy
-     <azure.servicefabric.models.ClusterHealthPolicy>`
-    :param enable_delta_health_evaluation:
+    :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeType
+    :param update_description: Describes the parameters for updating a rolling
+     upgrade of application or cluster.
+    :type update_description:
+     ~azure.servicefabric.models.RollingUpgradeUpdateDescription
+    :param cluster_health_policy: Defines a health policy used to evaluate the
+     health of the cluster or of a cluster node.
+    :type cluster_health_policy:
+     ~azure.servicefabric.models.ClusterHealthPolicy
+    :param enable_delta_health_evaluation: When true, enables delta health
+     evaluation rather than absolute health evaluation after completion of each
+     upgrade domain.
     :type enable_delta_health_evaluation: bool
-    :param cluster_upgrade_health_policy:
+    :param cluster_upgrade_health_policy: Defines a health policy used to
+     evaluate the health of the cluster during a cluster upgrade.
     :type cluster_upgrade_health_policy:
-     :class:`ClusterUpgradeHealthPolicyObject
-     <azure.servicefabric.models.ClusterUpgradeHealthPolicyObject>`
-    :param application_health_policy_map:
-    :type application_health_policy_map: :class:`ApplicationHealthPolicies
-     <azure.servicefabric.models.ApplicationHealthPolicies>`
+     ~azure.servicefabric.models.ClusterUpgradeHealthPolicyObject
+    :param application_health_policy_map: Defines the application health
+     policy map used to evaluate the health of an application or one of its
+     children entities.
+    :type application_health_policy_map:
+     ~azure.servicefabric.models.ApplicationHealthPolicies
     """
 
     _attribute_map = {
@@ -45,6 +52,7 @@ class UpdateClusterUpgradeDescription(Model):
     }
 
     def __init__(self, upgrade_kind="Rolling", update_description=None, cluster_health_policy=None, enable_delta_health_evaluation=None, cluster_upgrade_health_policy=None, application_health_policy_map=None):
+        super(UpdateClusterUpgradeDescription, self).__init__()
         self.upgrade_kind = upgrade_kind
         self.update_description = update_description
         self.cluster_health_policy = cluster_health_policy

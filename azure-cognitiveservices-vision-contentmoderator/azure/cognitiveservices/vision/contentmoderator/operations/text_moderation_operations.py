@@ -69,7 +69,7 @@ class TextModerationOperations(object):
         # Construct URL
         url = '/contentmoderator/moderate/v1.0/ProcessText/Screen/'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True)
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -141,7 +141,7 @@ class TextModerationOperations(object):
         # Construct URL
         url = '/contentmoderator/moderate/v1.0/ProcessText/DetectLanguage'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True)
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 

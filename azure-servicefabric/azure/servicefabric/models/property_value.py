@@ -15,7 +15,11 @@ from msrest.serialization import Model
 class PropertyValue(Model):
     """Describes a Service Fabric property value.
 
-    :param kind: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: BinaryPropertyValue, Int64PropertyValue,
+    DoublePropertyValue, StringPropertyValue, GuidPropertyValue
+
+    :param kind: Constant filled by server.
     :type kind: str
     """
 
@@ -32,4 +36,5 @@ class PropertyValue(Model):
     }
 
     def __init__(self):
+        super(PropertyValue, self).__init__()
         self.kind = None

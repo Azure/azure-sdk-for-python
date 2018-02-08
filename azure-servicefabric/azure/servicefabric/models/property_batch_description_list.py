@@ -17,8 +17,7 @@ class PropertyBatchDescriptionList(Model):
     none of the operations will be committed.
 
     :param operations: A list of the property batch operations to be executed.
-    :type operations: list of :class:`PropertyBatchOperation
-     <azure.servicefabric.models.PropertyBatchOperation>`
+    :type operations: list[~azure.servicefabric.models.PropertyBatchOperation]
     """
 
     _attribute_map = {
@@ -26,4 +25,5 @@ class PropertyBatchDescriptionList(Model):
     }
 
     def __init__(self, operations=None):
+        super(PropertyBatchDescriptionList, self).__init__()
         self.operations = operations

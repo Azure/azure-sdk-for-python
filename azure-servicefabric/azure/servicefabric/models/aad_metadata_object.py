@@ -18,9 +18,9 @@ class AadMetadataObject(Model):
 
     :param type: The client authentication method.
     :type type: str
-    :param metadata:
-    :type metadata: :class:`AadMetadata
-     <azure.servicefabric.models.AadMetadata>`
+    :param metadata: Azure Active Directory metadata used for secured
+     connection to cluster.
+    :type metadata: ~azure.servicefabric.models.AadMetadata
     """
 
     _attribute_map = {
@@ -29,5 +29,6 @@ class AadMetadataObject(Model):
     }
 
     def __init__(self, type=None, metadata=None):
+        super(AadMetadataObject, self).__init__()
         self.type = type
         self.metadata = metadata

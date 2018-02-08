@@ -37,6 +37,7 @@ class ActivityDependency(Model):
     }
 
     def __init__(self, activity, dependency_conditions, additional_properties=None):
+        super(ActivityDependency, self).__init__()
         self.additional_properties = additional_properties
         self.activity = activity
         self.dependency_conditions = dependency_conditions

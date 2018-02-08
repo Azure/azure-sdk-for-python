@@ -15,14 +15,13 @@ from msrest.serialization import Model
 class PropertyInfo(Model):
     """Information about a Service Fabric property.
 
-    :param name:
+    :param name: The name of the Service Fabric property.
     :type name: str
-    :param value:
-    :type value: :class:`PropertyValue
-     <azure.servicefabric.models.PropertyValue>`
-    :param metadata:
-    :type metadata: :class:`PropertyMetadata
-     <azure.servicefabric.models.PropertyMetadata>`
+    :param value: Describes a Service Fabric property value.
+    :type value: ~azure.servicefabric.models.PropertyValue
+    :param metadata: The metadata associated with a property, including the
+     property's name.
+    :type metadata: ~azure.servicefabric.models.PropertyMetadata
     """
 
     _validation = {
@@ -37,6 +36,7 @@ class PropertyInfo(Model):
     }
 
     def __init__(self, name, metadata, value=None):
+        super(PropertyInfo, self).__init__()
         self.name = name
         self.value = value
         self.metadata = metadata

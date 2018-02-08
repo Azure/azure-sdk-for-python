@@ -16,10 +16,13 @@ class ServiceTypeInfo(Model):
     """Information about a service type that is defined in a service manifest of a
     provisioned application type.
 
-    :param service_type_description:
-    :type service_type_description: :class:`ServiceTypeDescription
-     <azure.servicefabric.models.ServiceTypeDescription>`
-    :param service_manifest_name:
+    :param service_type_description: Describes a service type defined in the
+     service manifest of a provisioned application type. The properties the the
+     ones defined in the service manifest.
+    :type service_type_description:
+     ~azure.servicefabric.models.ServiceTypeDescription
+    :param service_manifest_name: The name of the service manifest in which
+     this service type is defined.
     :type service_manifest_name: str
     :param service_manifest_version: The version of the service manifest in
      which this service type is defined.
@@ -37,6 +40,7 @@ class ServiceTypeInfo(Model):
     }
 
     def __init__(self, service_type_description=None, service_manifest_name=None, service_manifest_version=None, is_service_group=None):
+        super(ServiceTypeInfo, self).__init__()
         self.service_type_description = service_type_description
         self.service_manifest_name = service_manifest_name
         self.service_manifest_version = service_manifest_version

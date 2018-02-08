@@ -41,6 +41,7 @@ class HealthStateCount(Model):
     }
 
     def __init__(self, ok_count=None, warning_count=None, error_count=None):
+        super(HealthStateCount, self).__init__()
         self.ok_count = ok_count
         self.warning_count = warning_count
         self.error_count = error_count

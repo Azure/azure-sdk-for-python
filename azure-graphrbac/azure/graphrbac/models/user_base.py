@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class UserBase(Model):
     """UserBase.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param immutable_id: This must be specified if you are using a federated
      domain for the user's userPrincipalName (UPN) property when creating a new
      user account. It is used to associate an on-premises Active Directory user
@@ -36,6 +39,7 @@ class UserBase(Model):
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'immutable_id': {'key': 'immutableId', 'type': 'str'},
         'usage_location': {'key': 'usageLocation', 'type': 'str'},
         'given_name': {'key': 'givenName', 'type': 'str'},
@@ -43,7 +47,9 @@ class UserBase(Model):
         'user_type': {'key': 'userType', 'type': 'str'},
     }
 
-    def __init__(self, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None):
+    def __init__(self, additional_properties=None, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None):
+        super(UserBase, self).__init__()
+        self.additional_properties = additional_properties
         self.immutable_id = immutable_id
         self.usage_location = usage_location
         self.given_name = given_name

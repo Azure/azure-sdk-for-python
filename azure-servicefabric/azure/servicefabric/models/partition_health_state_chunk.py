@@ -18,14 +18,17 @@ class PartitionHealthStateChunk(EntityHealthStateChunk):
     filters in the cluster health chunk query description.
     .
 
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param partition_id:
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param partition_id: The Id of the partition.
     :type partition_id: str
-    :param replica_health_state_chunks:
-    :type replica_health_state_chunks: :class:`ReplicaHealthStateChunkList
-     <azure.servicefabric.models.ReplicaHealthStateChunkList>`
+    :param replica_health_state_chunks: The list of replica health state
+     chunks belonging to the partition that respect the filters in the cluster
+     health chunk query description.
+    :type replica_health_state_chunks:
+     ~azure.servicefabric.models.ReplicaHealthStateChunkList
     """
 
     _attribute_map = {

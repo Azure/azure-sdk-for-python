@@ -19,9 +19,8 @@ class FabricError(Model):
     Service Fabric API operations that are not successful.
     .
 
-    :param error:
-    :type error: :class:`FabricErrorError
-     <azure.servicefabric.models.FabricErrorError>`
+    :param error: Error object containing error code and error message.
+    :type error: ~azure.servicefabric.models.FabricErrorError
     """
 
     _validation = {
@@ -33,6 +32,7 @@ class FabricError(Model):
     }
 
     def __init__(self, error):
+        super(FabricError, self).__init__()
         self.error = error
 
 

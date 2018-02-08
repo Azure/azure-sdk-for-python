@@ -48,6 +48,7 @@ class NodeLoadMetricInformation(Model):
     }
 
     def __init__(self, name=None, node_capacity=None, node_load=None, node_remaining_capacity=None, is_capacity_violation=None, node_buffered_capacity=None, node_remaining_buffered_capacity=None):
+        super(NodeLoadMetricInformation, self).__init__()
         self.name = name
         self.node_capacity = node_capacity
         self.node_load = node_load

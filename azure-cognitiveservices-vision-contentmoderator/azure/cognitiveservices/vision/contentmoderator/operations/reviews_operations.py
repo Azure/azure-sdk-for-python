@@ -57,7 +57,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -112,7 +112,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/jobs/{JobId}'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'JobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -195,7 +195,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -314,7 +314,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/jobs'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -402,7 +402,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -482,7 +482,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -542,7 +542,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/publish'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -598,7 +598,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/transcriptmoderationresult'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -659,7 +659,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/transcript'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -740,7 +740,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -811,7 +811,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }
@@ -877,7 +877,7 @@ class ReviewsOperations(object):
         # Construct URL
         url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
             'reviewId': self._serialize.url("review_id", review_id, 'str')
         }

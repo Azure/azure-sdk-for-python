@@ -33,7 +33,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
      Expression with resultType string).
     :type username: object
     :param password: The password for Basic authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Either encryptedCredential or username/password must
@@ -53,7 +53,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'url': {'key': 'typeProperties.url', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

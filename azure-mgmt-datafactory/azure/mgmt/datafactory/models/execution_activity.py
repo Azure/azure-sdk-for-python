@@ -19,7 +19,8 @@ class ExecutionActivity(Activity):
     sub-classes are: DataLakeAnalyticsUSQLActivity,
     AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
     GetMetadataActivity, WebActivity, LookupActivity,
-    SqlServerStoredProcedureActivity, CustomActivity, HDInsightSparkActivity,
+    SqlServerStoredProcedureActivity, CustomActivity,
+    ExecuteSSISPackageActivity, HDInsightSparkActivity,
     HDInsightStreamingActivity, HDInsightMapReduceActivity,
     HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
 
@@ -57,7 +58,7 @@ class ExecutionActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'type': {'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
     def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None):

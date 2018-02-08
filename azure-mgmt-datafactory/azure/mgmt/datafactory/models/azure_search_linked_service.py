@@ -29,7 +29,7 @@ class AzureSearchLinkedService(LinkedService):
      resultType string).
     :type url: object
     :param key: Admin Key for Azure Search service
-    :type key: ~azure.mgmt.datafactory.models.SecureString
+    :type key: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -47,7 +47,7 @@ class AzureSearchLinkedService(LinkedService):
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'url': {'key': 'typeProperties.url', 'type': 'object'},
-        'key': {'key': 'typeProperties.key', 'type': 'SecureString'},
+        'key': {'key': 'typeProperties.key', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

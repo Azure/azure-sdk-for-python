@@ -57,7 +57,7 @@ class ListManagementImageOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -112,7 +112,7 @@ class ListManagementImageOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -165,7 +165,7 @@ class ListManagementImageOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -218,7 +218,7 @@ class ListManagementImageOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images/{ImageId}'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
             'ImageId': self._serialize.url("image_id", image_id, 'str')
         }
@@ -283,7 +283,7 @@ class ListManagementImageOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -355,7 +355,7 @@ class ListManagementImageOperations(object):
         # Construct URL
         url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url", self.config.base_url, 'str', skip_quote=True),
+            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

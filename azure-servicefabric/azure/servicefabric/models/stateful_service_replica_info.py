@@ -17,26 +17,45 @@ class StatefulServiceReplicaInfo(ReplicaInfo):
     identity, role, status, health, node name, uptime, and other details about
     the replica.
 
-    :param replica_status: Possible values include: 'Invalid', 'InBuild',
-     'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param node_name:
+    :param replica_status: The status of a replica of a service. Possible
+     values are following.
+     -Invalid - Indicates the replica status is invalid. All Service Fabric
+     enumerations have the invalid type. The value is zero.
+     -InBuild - The replica is being built. This means that a primary replica
+     is seeding this replica. The value is 1.
+     -Standby - The replica is in standby. The value is 2.
+     -Ready - The replica is ready. The value is 3.
+     -Down - The replica is down. The value is 4.
+     -Dropped - Replica is dropped. This means that the replica has been
+     removed from the replica set. If it is persisted, its state has been
+     deleted. The value is 5.
+     . Possible values include: 'Invalid', 'InBuild', 'Standby', 'Ready',
+     'Down', 'Dropped'
+    :type replica_status: str or ~azure.servicefabric.models.enum
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
-    :param replica_role: Possible values include: 'Unknown', 'None',
-     'Primary', 'IdleSecondary', 'ActiveSecondary'
-    :type replica_role: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param replica_id:
+    :param replica_role: The role of a replica of a stateful service. Possible
+     values include: 'Unknown', 'None', 'Primary', 'IdleSecondary',
+     'ActiveSecondary'
+    :type replica_role: str or ~azure.servicefabric.models.ReplicaRole
+    :param replica_id: Id of a stateful service replica. ReplicaId is used by
+     Service Fabric to uniquely identify a replica of a partition. It is unique
+     within a partition and does not change for the lifetime of the replica. If
+     a replica gets dropped and another replica gets created on the same node
+     for the same partition, it will get a different value for the id.
+     Sometimes the id of a stateless service instance is also referred as a
+     replica id.
     :type replica_id: str
     """
 

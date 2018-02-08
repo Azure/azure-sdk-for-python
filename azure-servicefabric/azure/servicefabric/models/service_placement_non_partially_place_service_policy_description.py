@@ -18,7 +18,7 @@ class ServicePlacementNonPartiallyPlaceServicePolicyDescription(ServicePlacement
     be created.
     .
 
-    :param type: Polymorphic Discriminator
+    :param type: Constant filled by server.
     :type type: str
     """
 

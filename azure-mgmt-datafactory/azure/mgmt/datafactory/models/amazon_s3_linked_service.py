@@ -31,7 +31,7 @@ class AmazonS3LinkedService(LinkedService):
     :type access_key_id: object
     :param secret_access_key: The secret access key of the Amazon S3 Identity
      and Access Management (IAM) user.
-    :type secret_access_key: ~azure.mgmt.datafactory.models.SecureString
+    :type secret_access_key: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -48,7 +48,7 @@ class AmazonS3LinkedService(LinkedService):
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'access_key_id': {'key': 'typeProperties.accessKeyId', 'type': 'object'},
-        'secret_access_key': {'key': 'typeProperties.secretAccessKey', 'type': 'SecureString'},
+        'secret_access_key': {'key': 'typeProperties.secretAccessKey', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

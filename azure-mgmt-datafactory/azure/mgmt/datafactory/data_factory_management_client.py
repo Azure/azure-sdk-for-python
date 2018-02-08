@@ -51,7 +51,7 @@ class DataFactoryManagementClientConfiguration(AzureConfiguration):
 
         super(DataFactoryManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('datafactorymanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-dafactory/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

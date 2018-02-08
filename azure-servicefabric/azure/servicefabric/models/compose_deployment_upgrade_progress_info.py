@@ -15,64 +15,88 @@ from msrest.serialization import Model
 class ComposeDeploymentUpgradeProgressInfo(Model):
     """Describes the parameters for a compose deployment upgrade.
 
-    :param deployment_name:
+    :param deployment_name: The name of the target deployment.
     :type deployment_name: str
-    :param application_name:
+    :param application_name: The name of the target application, including the
+     'fabric:' URI scheme.
     :type application_name: str
-    :param upgrade_state: Possible values include: 'Invalid',
-     'ProvisioningTarget', 'RollingForwardInProgress', 'RollingForwardPending',
+    :param upgrade_state: The state of the compose deployment upgrade.
+     . Possible values include: 'Invalid', 'ProvisioningTarget',
+     'RollingForwardInProgress', 'RollingForwardPending',
      'UnprovisioningCurrent', 'RollingForwardCompleted',
      'RollingBackInProgress', 'UnprovisioningTarget', 'RollingBackCompleted',
      'Failed'
-    :type upgrade_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param upgrade_status_details:
+    :type upgrade_state: str or
+     ~azure.servicefabric.models.ComposeDeploymentUpgradeState
+    :param upgrade_status_details: Additional detailed information about the
+     status of the pending upgrade.
     :type upgrade_status_details: str
-    :param upgrade_kind: Possible values include: 'Invalid', 'Rolling'.
-     Default value: "Rolling" .
-    :type upgrade_kind: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param rolling_upgrade_mode: Possible values include: 'Invalid',
-     'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
-     "UnmonitoredAuto" .
-    :type rolling_upgrade_mode: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param force_restart:
+    :param upgrade_kind: The kind of upgrade out of the following possible
+     values. Possible values include: 'Invalid', 'Rolling'. Default value:
+     "Rolling" .
+    :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
+    :param rolling_upgrade_mode: The mode used to monitor health during a
+     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
+    :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
+    :param force_restart: If true, then processes are forcefully restarted
+     during upgrade even when the code version has not changed (the upgrade
+     only changes configuration or data).
     :type force_restart: bool
-    :param upgrade_replica_set_check_timeout_in_seconds:
+    :param upgrade_replica_set_check_timeout_in_seconds: The maximum amount of
+     time to block processing of an upgrade domain and prevent loss of
+     availability when there are unexpected issues. When this timeout expires,
+     processing of the upgrade domain will proceed regardless of availability
+     loss issues. The timeout is reset at the start of each upgrade domain.
+     Valid values are between 0 and 42949672925 inclusive. (unsigned 32-bit
+     integer).
     :type upgrade_replica_set_check_timeout_in_seconds: long
-    :param monitoring_policy:
-    :type monitoring_policy: :class:`MonitoringPolicyDescription
-     <azure.servicefabric.models.MonitoringPolicyDescription>`
-    :param application_health_policy:
-    :type application_health_policy: :class:`ApplicationHealthPolicy
-     <azure.servicefabric.models.ApplicationHealthPolicy>`
-    :param target_application_type_version:
+    :param monitoring_policy: Describes the parameters for monitoring an
+     upgrade in Monitored mode.
+    :type monitoring_policy:
+     ~azure.servicefabric.models.MonitoringPolicyDescription
+    :param application_health_policy: Defines a health policy used to evaluate
+     the health of an application or one of its children entities.
+    :type application_health_policy:
+     ~azure.servicefabric.models.ApplicationHealthPolicy
+    :param target_application_type_version: The target application type
+     version (found in the application manifest) for the application upgrade.
     :type target_application_type_version: str
-    :param upgrade_duration:
+    :param upgrade_duration: The estimated amount of time that the overall
+     upgrade elapsed. It is first interpreted as a string representing an ISO
+     8601 duration. If that fails, then it is interpreted as a number
+     representing the total number of milliseconds.
     :type upgrade_duration: str
-    :param current_upgrade_domain_duration:
+    :param current_upgrade_domain_duration: The estimated amount of time spent
+     processing current Upgrade Domain. It is first interpreted as a string
+     representing an ISO 8601 duration. If that fails, then it is interpreted
+     as a number representing the total number of milliseconds.
     :type current_upgrade_domain_duration: str
-    :param application_unhealthy_evaluations:
-    :type application_unhealthy_evaluations: list of
-     :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    :param current_upgrade_domain_progress:
+    :param application_unhealthy_evaluations: List of health evaluations that
+     resulted in the current aggregated health state.
+    :type application_unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    :param current_upgrade_domain_progress: Information about the current
+     in-progress upgrade domain.
     :type current_upgrade_domain_progress:
-     :class:`CurrentUpgradeDomainProgressInfo
-     <azure.servicefabric.models.CurrentUpgradeDomainProgressInfo>`
-    :param start_timestamp_utc:
+     ~azure.servicefabric.models.CurrentUpgradeDomainProgressInfo
+    :param start_timestamp_utc: The estimated UTC datetime when the upgrade
+     started.
     :type start_timestamp_utc: str
-    :param failure_timestamp_utc:
+    :param failure_timestamp_utc: The estimated UTC datetime when the upgrade
+     failed and FailureAction was executed.
     :type failure_timestamp_utc: str
-    :param failure_reason: Possible values include: 'None', 'Interrupted',
-     'HealthCheck', 'UpgradeDomainTimeout', 'UpgradeTimeout'
-    :type failure_reason: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param upgrade_domain_progress_at_failure:
+    :param failure_reason: The cause of an upgrade failure that resulted in
+     FailureAction being executed. Possible values include: 'None',
+     'Interrupted', 'HealthCheck', 'UpgradeDomainTimeout',
+     'OverallUpgradeTimeout'
+    :type failure_reason: str or ~azure.servicefabric.models.FailureReason
+    :param upgrade_domain_progress_at_failure: Information about the upgrade
+     domain progress at the time of upgrade failure.
     :type upgrade_domain_progress_at_failure:
-     :class:`FailureUpgradeDomainProgressInfo
-     <azure.servicefabric.models.FailureUpgradeDomainProgressInfo>`
-    :param application_upgrade_status_details:
+     ~azure.servicefabric.models.FailureUpgradeDomainProgressInfo
+    :param application_upgrade_status_details: Additional details of
+     application upgrade including failure message.
     :type application_upgrade_status_details: str
     """
 
@@ -100,6 +124,7 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
     }
 
     def __init__(self, deployment_name=None, application_name=None, upgrade_state=None, upgrade_status_details=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", force_restart=None, upgrade_replica_set_check_timeout_in_seconds=None, monitoring_policy=None, application_health_policy=None, target_application_type_version=None, upgrade_duration=None, current_upgrade_domain_duration=None, application_unhealthy_evaluations=None, current_upgrade_domain_progress=None, start_timestamp_utc=None, failure_timestamp_utc=None, failure_reason=None, upgrade_domain_progress_at_failure=None, application_upgrade_status_details=None):
+        super(ComposeDeploymentUpgradeProgressInfo, self).__init__()
         self.deployment_name = deployment_name
         self.application_name = application_name
         self.upgrade_state = upgrade_state

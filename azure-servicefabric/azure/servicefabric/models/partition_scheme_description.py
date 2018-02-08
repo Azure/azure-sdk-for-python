@@ -15,7 +15,12 @@ from msrest.serialization import Model
 class PartitionSchemeDescription(Model):
     """Describes how the service is partitioned.
 
-    :param partition_scheme: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: NamedPartitionSchemeDescription,
+    SingletonPartitionSchemeDescription,
+    UniformInt64RangePartitionSchemeDescription
+
+    :param partition_scheme: Constant filled by server.
     :type partition_scheme: str
     """
 
@@ -32,4 +37,5 @@ class PartitionSchemeDescription(Model):
     }
 
     def __init__(self):
+        super(PartitionSchemeDescription, self).__init__()
         self.partition_scheme = None

@@ -35,5 +35,6 @@ class IntegrationRuntimeStatusResponse(Model):
     }
 
     def __init__(self, properties):
+        super(IntegrationRuntimeStatusResponse, self).__init__()
         self.name = None
         self.properties = properties

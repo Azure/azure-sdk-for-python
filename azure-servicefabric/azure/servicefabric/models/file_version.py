@@ -15,19 +15,25 @@ from msrest.serialization import Model
 class FileVersion(Model):
     """Information about the version of image store file.
 
-    :param version_number: The current iamge store version number for the file
+    :param version_number: The current image store version number for the file
      is used in image store for checking whether it need to be updated.
     :type version_number: str
     :param epoch_data_loss_number: The epoch data loss number of image store
-     file is used to indicate the status of data loss.
+     replica when this file entry was updated or created.
     :type epoch_data_loss_number: str
+    :param epoch_configuration_number: The epoch configuration version number
+     of the image store replica when this file entry was created or updated.
+    :type epoch_configuration_number: str
     """
 
     _attribute_map = {
         'version_number': {'key': 'VersionNumber', 'type': 'str'},
         'epoch_data_loss_number': {'key': 'EpochDataLossNumber', 'type': 'str'},
+        'epoch_configuration_number': {'key': 'EpochConfigurationNumber', 'type': 'str'},
     }
 
-    def __init__(self, version_number=None, epoch_data_loss_number=None):
+    def __init__(self, version_number=None, epoch_data_loss_number=None, epoch_configuration_number=None):
+        super(FileVersion, self).__init__()
         self.version_number = version_number
         self.epoch_data_loss_number = epoch_data_loss_number
+        self.epoch_configuration_number = epoch_configuration_number

@@ -19,9 +19,9 @@ class NodeTransitionResult(Model):
     :param error_code: If OperationState is Completed, this is 0.  If
      OperationState is Faulted, this is an error code indicating the reason.
     :type error_code: int
-    :param node_result:
-    :type node_result: :class:`NodeResult
-     <azure.servicefabric.models.NodeResult>`
+    :param node_result: Contains information about a node that was targeted by
+     a user-induced operation.
+    :type node_result: ~azure.servicefabric.models.NodeResult
     """
 
     _attribute_map = {
@@ -30,5 +30,6 @@ class NodeTransitionResult(Model):
     }
 
     def __init__(self, error_code=None, node_result=None):
+        super(NodeTransitionResult, self).__init__()
         self.error_code = error_code
         self.node_result = node_result

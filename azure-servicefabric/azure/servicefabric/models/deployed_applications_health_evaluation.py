@@ -20,14 +20,16 @@ class DeployedApplicationsHealthEvaluation(HealthEvaluation):
     health state is either Error or Warning.
     .
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param aggregated_health_state: The health state of a Service Fabric
+     entity such as Cluster, Node, Application, Service, Partition, Replica
+     etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
+     'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param max_percent_unhealthy_deployed_applications: Maximum allowed
      percentage of unhealthy deployed applications from the
@@ -36,9 +38,11 @@ class DeployedApplicationsHealthEvaluation(HealthEvaluation):
     :param total_count: Total number of deployed applications of the
      application in the health store.
     :type total_count: long
-    :param unhealthy_evaluations:
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
+    :param unhealthy_evaluations: List of unhealthy evaluations that led to
+     the aggregated health state. Includes all the unhealthy
+     DeployedApplicationHealthEvaluation that impacted the aggregated health.
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
     """
 
     _validation = {

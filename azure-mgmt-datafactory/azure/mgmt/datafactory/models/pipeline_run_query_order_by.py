@@ -35,5 +35,6 @@ class PipelineRunQueryOrderBy(Model):
     }
 
     def __init__(self, order_by, order):
+        super(PipelineRunQueryOrderBy, self).__init__()
         self.order_by = order_by
         self.order = order

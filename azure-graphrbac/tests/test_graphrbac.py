@@ -53,7 +53,10 @@ class GraphRbacTest(AzureMgmtTestCase):
 
     def test_groups(self):
 
-        group = self.graphrbac_client.groups.create("pytestgroup_display", "pytestgroup_nickname")
+        group_create_parameters = azure.graphrbac.models.GroupCreateParameters(
+            "pytestgroup_display", "pytestgroup_nickname"
+        )
+        group = self.graphrbac_client.groups.create(group_create_parameters)
         self.assertEqual(group.display_name, "pytestgroup_display")
 
         group = self.graphrbac_client.groups.get(group.object_id)
@@ -78,7 +81,6 @@ class GraphRbacTest(AzureMgmtTestCase):
         sp = self.graphrbac_client.service_principals.create({
             'app_id': app.app_id, # Do NOT use app.object_id
             'account_enabled': False
-
         })
 
         self.graphrbac_client.service_principals.delete(sp.object_id)

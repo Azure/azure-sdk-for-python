@@ -35,9 +35,10 @@ class HealthInformation(Model):
      Together with the SourceId, the property uniquely identifies the health
      information.
     :type property: str
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
     :param time_to_live_in_milli_seconds: The duration for which this health
      report is valid. This field is using ISO8601 format for specifying the
      duration.
@@ -71,7 +72,7 @@ class HealthInformation(Model):
     :type sequence_number: str
     :param remove_when_expired: Value that indicates whether the report is
      removed from health store when it expires.
-     If set to true, the report is remopved from the health store after it
+     If set to true, the report is removed from the health store after it
      expires.
      If set to false, the report is treated as an error when expired. The value
      of this property is false by default.
@@ -100,6 +101,7 @@ class HealthInformation(Model):
     }
 
     def __init__(self, source_id, property, health_state, time_to_live_in_milli_seconds=None, description=None, sequence_number=None, remove_when_expired=None):
+        super(HealthInformation, self).__init__()
         self.source_id = source_id
         self.property = property
         self.health_state = health_state

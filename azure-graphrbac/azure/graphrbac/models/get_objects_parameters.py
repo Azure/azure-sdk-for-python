@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class GetObjectsParameters(Model):
     """Request parameters for the GetObjectsByObjectIds API.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param object_ids: The requested object IDs.
     :type object_ids: list[str]
     :param types: The requested object types.
@@ -29,12 +32,15 @@ class GetObjectsParameters(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'object_ids': {'key': 'objectIds', 'type': '[str]'},
         'types': {'key': 'types', 'type': '[str]'},
         'include_directory_object_references': {'key': 'includeDirectoryObjectReferences', 'type': 'bool'},
     }
 
-    def __init__(self, include_directory_object_references, object_ids=None, types=None):
+    def __init__(self, include_directory_object_references, additional_properties=None, object_ids=None, types=None):
+        super(GetObjectsParameters, self).__init__()
+        self.additional_properties = additional_properties
         self.object_ids = object_ids
         self.types = types
         self.include_directory_object_references = include_directory_object_references

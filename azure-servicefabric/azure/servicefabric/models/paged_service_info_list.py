@@ -18,11 +18,15 @@ class PagedServiceInfoList(Model):
     results can be obtained by executing the same query with the continuation
     token provided in this list.
 
-    :param continuation_token:
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results then the
+     continuation token is not included in the response.
     :type continuation_token: str
-    :param items:
-    :type items: list of :class:`ServiceInfo
-     <azure.servicefabric.models.ServiceInfo>`
+    :param items: List of service information.
+    :type items: list[~azure.servicefabric.models.ServiceInfo]
     """
 
     _attribute_map = {
@@ -31,5 +35,6 @@ class PagedServiceInfoList(Model):
     }
 
     def __init__(self, continuation_token=None, items=None):
+        super(PagedServiceInfoList, self).__init__()
         self.continuation_token = continuation_token
         self.items = items

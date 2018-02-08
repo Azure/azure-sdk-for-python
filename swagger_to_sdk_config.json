@@ -8,6 +8,7 @@
       "sdkrel:python-sdks-folder": ".",
       "multiapi": ""
     },
+    "repotag": "azure-sdk-for-python",
     "version": "0.2.0"
   },
   "projects": {

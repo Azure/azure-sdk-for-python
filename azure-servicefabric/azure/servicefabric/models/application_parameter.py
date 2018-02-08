@@ -33,5 +33,6 @@ class ApplicationParameter(Model):
     }
 
     def __init__(self, key, value):
+        super(ApplicationParameter, self).__init__()
         self.key = key
         self.value = value

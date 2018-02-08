@@ -40,6 +40,7 @@ class ContainerState(Model):
     }
 
     def __init__(self, state=None, start_time=None, exit_code=None, finish_time=None, detail_status=None):
+        super(ContainerState, self).__init__()
         self.state = state
         self.start_time = start_time
         self.exit_code = exit_code

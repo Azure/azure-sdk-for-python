@@ -51,6 +51,7 @@ class ManagedIntegrationRuntimeOperationResult(Model):
     }
 
     def __init__(self):
+        super(ManagedIntegrationRuntimeOperationResult, self).__init__()
         self.type = None
         self.start_time = None
         self.result = None

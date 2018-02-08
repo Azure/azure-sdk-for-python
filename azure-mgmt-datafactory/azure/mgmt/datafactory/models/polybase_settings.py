@@ -45,6 +45,7 @@ class PolybaseSettings(Model):
     }
 
     def __init__(self, additional_properties=None, reject_type=None, reject_value=None, reject_sample_value=None, use_type_default=None):
+        super(PolybaseSettings, self).__init__()
         self.additional_properties = additional_properties
         self.reject_type = reject_type
         self.reject_value = reject_value

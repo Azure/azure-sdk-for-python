@@ -39,6 +39,7 @@ class RedirectIncompatibleRowSettings(Model):
     }
 
     def __init__(self, linked_service_name, additional_properties=None, path=None):
+        super(RedirectIncompatibleRowSettings, self).__init__()
         self.additional_properties = additional_properties
         self.linked_service_name = linked_service_name
         self.path = path

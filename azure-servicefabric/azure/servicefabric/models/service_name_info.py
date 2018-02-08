@@ -15,9 +15,15 @@ from msrest.serialization import Model
 class ServiceNameInfo(Model):
     """Information about the service name.
 
-    :param id:
+    :param id: The identity of the service. This is an encoded representation
+     of the service name. This is used in the REST APIs to identify the service
+     resource.
+     Starting in version 6.0, hierarchical names are delimited with the "\\~"
+     character. For example, if the service name is "fabric:/myapp/app1/svc1",
+     the service identity would be "myapp~app1\\~svc1" in 6.0+ and
+     "myapp/app1/svc1" in previous versions.
     :type id: str
-    :param name:
+    :param name: The full name of the service with 'fabric:' URI scheme.
     :type name: str
     """
 
@@ -27,5 +33,6 @@ class ServiceNameInfo(Model):
     }
 
     def __init__(self, id=None, name=None):
+        super(ServiceNameInfo, self).__init__()
         self.id = id
         self.name = name

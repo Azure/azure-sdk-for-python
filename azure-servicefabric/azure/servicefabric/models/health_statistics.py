@@ -26,8 +26,8 @@ class HealthStatistics(Model):
     :param health_state_count_list: List of health state counts per entity
      kind, which keeps track of how many children of the queried entity are in
      Ok, Warning and Error state.
-    :type health_state_count_list: list of :class:`EntityKindHealthStateCount
-     <azure.servicefabric.models.EntityKindHealthStateCount>`
+    :type health_state_count_list:
+     list[~azure.servicefabric.models.EntityKindHealthStateCount]
     """
 
     _attribute_map = {
@@ -35,4 +35,5 @@ class HealthStatistics(Model):
     }
 
     def __init__(self, health_state_count_list=None):
+        super(HealthStatistics, self).__init__()
         self.health_state_count_list = health_state_count_list

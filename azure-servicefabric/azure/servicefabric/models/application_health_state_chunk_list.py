@@ -23,8 +23,7 @@ class ApplicationHealthStateChunkList(EntityHealthStateChunkList):
     :type total_count: long
     :param items: The list of application health state chunks that respect the
      input filters in the chunk query.
-    :type items: list of :class:`ApplicationHealthStateChunk
-     <azure.servicefabric.models.ApplicationHealthStateChunk>`
+    :type items: list[~azure.servicefabric.models.ApplicationHealthStateChunk]
     """
 
     _attribute_map = {

@@ -39,7 +39,7 @@ class MongoDbLinkedService(LinkedService):
      with resultType string).
     :type username: object
     :param password: Password for authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param auth_source: Database to verify the username and password. Type:
      string (or Expression with resultType string).
     :type auth_source: object
@@ -68,7 +68,7 @@ class MongoDbLinkedService(LinkedService):
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'database_name': {'key': 'typeProperties.databaseName', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'auth_source': {'key': 'typeProperties.authSource', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},

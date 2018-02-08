@@ -51,6 +51,7 @@ class IntegrationRuntimeComputeProperties(Model):
     }
 
     def __init__(self, additional_properties=None, location=None, node_size=None, number_of_nodes=None, max_parallel_executions_per_node=None, v_net_properties=None):
+        super(IntegrationRuntimeComputeProperties, self).__init__()
         self.additional_properties = additional_properties
         self.location = location
         self.node_size = node_size
