@@ -24,6 +24,7 @@ from .encryption_service import EncryptionService
 from .encryption_services import EncryptionServices
 from .key_vault_properties import KeyVaultProperties
 from .encryption import Encryption
+from .encryption_key_source import EncryptionKeySource
 from .virtual_network_rule import VirtualNetworkRule
 from .ip_rule import IPRule
 from .network_rule_set import NetworkRuleSet
@@ -85,6 +86,7 @@ __all__ = [
     'EncryptionServices',
     'KeyVaultProperties',
     'Encryption',
+    'EncryptionKeySource',
     'VirtualNetworkRule',
     'IPRule',
     'NetworkRuleSet',
