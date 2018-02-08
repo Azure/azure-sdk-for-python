@@ -39,4 +39,5 @@ class RegistryNameCheckRequest(Model):
     type = "Microsoft.ContainerRegistry/registries"
 
     def __init__(self, name):
+        super(RegistryNameCheckRequest, self).__init__()
         self.name = name

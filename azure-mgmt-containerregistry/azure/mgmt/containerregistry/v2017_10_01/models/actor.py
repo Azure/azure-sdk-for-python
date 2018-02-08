@@ -26,4 +26,5 @@ class Actor(Model):
     }
 
     def __init__(self, name=None):
+        super(Actor, self).__init__()
         self.name = name

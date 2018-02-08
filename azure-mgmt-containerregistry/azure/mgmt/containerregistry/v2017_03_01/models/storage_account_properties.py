@@ -24,4 +24,5 @@ class StorageAccountProperties(Model):
     }
 
     def __init__(self, name=None):
+        super(StorageAccountProperties, self).__init__()
         self.name = name

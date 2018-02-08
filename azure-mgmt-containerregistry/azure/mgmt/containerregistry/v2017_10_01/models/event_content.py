@@ -44,6 +44,7 @@ class EventContent(Model):
     }
 
     def __init__(self, id=None, timestamp=None, action=None, target=None, request=None, actor=None, source=None):
+        super(EventContent, self).__init__()
         self.id = id
         self.timestamp = timestamp
         self.action = action

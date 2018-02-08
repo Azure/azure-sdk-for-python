@@ -36,6 +36,7 @@ class EventResponseMessage(Model):
     }
 
     def __init__(self, content=None, headers=None, reason_phrase=None, status_code=None, version=None):
+        super(EventResponseMessage, self).__init__()
         self.content = content
         self.headers = headers
         self.reason_phrase = reason_phrase
