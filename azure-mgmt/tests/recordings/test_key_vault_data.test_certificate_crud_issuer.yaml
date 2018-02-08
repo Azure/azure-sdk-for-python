@@ -45,7 +45,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [46cff9fa-4ad6-11e7-afad-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer","provider":"test","credentials":{"account_id":"keyvaultuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"Jane","last_name":"Doe","email":"admin@contoso.com","phone":"4256666666"}]},"attributes":{"enabled":true,"created":1496766984,"updated":1496766984}}'}
     headers:
@@ -76,7 +76,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [47760166-4ad6-11e7-b389-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer","provider":"test","credentials":{"account_id":"keyvaultuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"Jane","last_name":"Doe","email":"admin@contoso.com","phone":"4256666666"}]},"attributes":{"enabled":true,"created":1496766984,"updated":1496766984}}'}
     headers:
@@ -110,7 +110,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [47fdab74-4ad6-11e7-8448-5065f34efe31]
     method: PATCH
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer","provider":"test","credentials":{"account_id":"xboxuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"Jane
         II","last_name":"Doe","email":"admin@contoso.com","phone":"1111111111"}]},"attributes":{"enabled":true,"created":1496766984,"updated":1496766985}}'}
@@ -143,7 +143,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [489a7e18-4ad6-11e7-aae2-5065f34efe31]
     method: DELETE
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer","provider":"test","credentials":{"account_id":"xboxuser"},"org_details":{"zip":0,"admin_details":[{"first_name":"Jane
         II","last_name":"Doe","email":"admin@contoso.com","phone":"1111111111"}]},"attributes":{"enabled":true,"created":1496766984,"updated":1496766985}}'}
@@ -175,7 +175,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [490d3a52-4ad6-11e7-9938-5065f34efe31]
     method: GET
-    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/certificates/issuers/pythonIssuer?api-version=7.0-preview
   response:
     body: {string: '{"error":{"code":"CertificateIssuerNotFound","message":"Issuer
         not found"}}'}

@@ -34,8 +34,8 @@ class KeyAttributes(Attributes):
      system can purge the key, at the end of the retention interval. Possible
      values include: 'Purgeable', 'Recoverable+Purgeable', 'Recoverable',
      'Recoverable+ProtectedSubscription'
-    :vartype recovery_level: str or :class:`DeletionRecoveryLevel
-     <azure.keyvault.models.DeletionRecoveryLevel>`
+    :vartype recovery_level: str or
+     ~azure.keyvault.models.DeletionRecoveryLevel
     """
 
     _validation = {

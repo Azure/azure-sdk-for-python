@@ -23,7 +23,7 @@ class Error(Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error:
-    :vartype inner_error: :class:`Error <azure.keyvault.models.Error>`
+    :vartype inner_error: ~azure.keyvault.models.Error
     """
 
     _validation = {
@@ -39,6 +39,7 @@ class Error(Model):
     }
 
     def __init__(self):
+        super(Error, self).__init__()
         self.code = None
         self.message = None
         self.inner_error = None

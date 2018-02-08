@@ -59,7 +59,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c10b3408-4ad6-11e7-8683-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/df43d3ab794d4b3f98ba2895627a525c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"kr6FUrCBJBnnvL7tE5NCG1l_zXFQqX8T_NzjWWE3mJ7yCXpMHYKDjKceIwUe_HguFuEau_7Y4ijvZ9tPfSUisgUoiwWLu8kdVuyAGbq9awp-AYEdsUzARkBMeltXdey9B6eRwQFnC6zerY1I4YxTjtJePMtyRUKhlaALQjldXlzvJOFHdgqXpttqtfu75dmL9cYuEnAP6ZKslfQS8KhVpwL0oiO4MBoaXINXEzyXyAe9yolRaZ6tMWvy7E3ekckJNKGX-zIxgwAByXNJO23rTnzzEmf16aSUF9GvZ3GYJYooLyFwiRCycujvVskSD7vvlrlINyUD0mUuQj9bEW_HtQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767189,"updated":1496767189,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -91,7 +91,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c24163b6-4ad6-11e7-ac5e-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/5a61b03d065d420eb5d90122f1b13a50","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"85E8OfuP00ECir7AWqn_vB25of4Yvmwnwl7jsxSU-6euyzpXe3Lj1pR86uWYMKxgQ4lFm5aCDCJr21w3vC7dXX0OGhDaEY6FUmtceN1Cyr02eTwjJgxN34LDuCgnev12dd_Q_UtPGu6FS18nc5WPvZb9a8Q_fG0AFxsU4SUIxM-VwWvMhqVteP9lfDBpJ12_IMgBuci3Fp_JSSxeo_FS2tBWL-dwbfAfnedMMu4lAMFhuvp0nYiuff5t_O9ZY9GBiAnC3yISp2IsUW9eU_PBntYAx0kTKX-IKCfWH4fwQzs75pqtDofmo-Bv6AXsTug5tJV53_uimrFUPBSZzyWHMw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767191,"updated":1496767191,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -123,7 +123,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c2db0fe6-4ad6-11e7-b08e-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/aa14f2e92b96499684d7a2acea83c106","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"q-BF8D8ov9v4rUAzKTfONb7FNN5LUQaLSbXP5beEZDNu-DfHDg8if7uMuffE8uWck0GiIjKcat7bw1rpYQ68bdaqimooS5dMPriMW3YqRpe8aHd139Mp9sM9td6s0ZT-7HgA6pRJZghl7em6L8bX4PsAoD0m0r9oZ-HcGLx1ZI-gimkL5mEdLdXzpuUag7odkIx_V9Igl2nrB5ouAMuHKxO8qSw2S4OWOFbm_t9KaIbNJh07gbtgiQYOoZVd0Z-QHih9YD4mmH0KoPWb5iTCaGQ1b2kl0tBYq6eIGG4eu1t5w9wdJO9sWQy8S6BQAdPlVpimskscRPirHGvAvHRlLQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767191,"updated":1496767191,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -155,7 +155,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c37c9d3a-4ad6-11e7-9872-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/fdaa26731f294491b9b688dfa000428f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5yY29XTr1gPvUOXGOirMxUycELenqrceK6pDFgyCldM2U5RnjZKh5Yljklbn2QDLGHVQGkaX-1oaBojum8f7V4wzdVaSY4tISrCpBmmhNMdRlCIfOQkU0o9D1ZUKrVbyldQQ_-u1DqpGayB-uS1Qsqk9PYXb1YNAgs2PY4j-QeNwtSO2a1LYk270dmxQyvCDDEgy8xHRVGnwI8pjp_Xd6NL4AlONX7TG9LUSZsB-umDygUL1cjAu-ktcBIe2JtfPWwnm8OhwWEsuzTPAu9fy6HxVZDBhm7BsbLunPs4-WA5ByxiNR0F6AelkUh0qKKKsl9s2LwNnRHHRYOzKnx9kLQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767193,"updated":1496767193,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -187,7 +187,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c42aacfa-4ad6-11e7-ab85-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec","deletedDate":1496767193,"scheduledPurgeDate":1504543193,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/5a61b03d065d420eb5d90122f1b13a50","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"85E8OfuP00ECir7AWqn_vB25of4Yvmwnwl7jsxSU-6euyzpXe3Lj1pR86uWYMKxgQ4lFm5aCDCJr21w3vC7dXX0OGhDaEY6FUmtceN1Cyr02eTwjJgxN34LDuCgnev12dd_Q_UtPGu6FS18nc5WPvZb9a8Q_fG0AFxsU4SUIxM-VwWvMhqVteP9lfDBpJ12_IMgBuci3Fp_JSSxeo_FS2tBWL-dwbfAfnedMMu4lAMFhuvp0nYiuff5t_O9ZY9GBiAnC3yISp2IsUW9eU_PBntYAx0kTKX-IKCfWH4fwQzs75pqtDofmo-Bv6AXsTug5tJV53_uimrFUPBSZzyWHMw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767191,"updated":1496767191,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -219,7 +219,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c4c4f190-4ad6-11e7-8292-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec","deletedDate":1496767195,"scheduledPurgeDate":1504543195,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/df43d3ab794d4b3f98ba2895627a525c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"kr6FUrCBJBnnvL7tE5NCG1l_zXFQqX8T_NzjWWE3mJ7yCXpMHYKDjKceIwUe_HguFuEau_7Y4ijvZ9tPfSUisgUoiwWLu8kdVuyAGbq9awp-AYEdsUzARkBMeltXdey9B6eRwQFnC6zerY1I4YxTjtJePMtyRUKhlaALQjldXlzvJOFHdgqXpttqtfu75dmL9cYuEnAP6ZKslfQS8KhVpwL0oiO4MBoaXINXEzyXyAe9yolRaZ6tMWvy7E3ekckJNKGX-zIxgwAByXNJO23rTnzzEmf16aSUF9GvZ3GYJYooLyFwiRCycujvVskSD7vvlrlINyUD0mUuQj9bEW_HtQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767189,"updated":1496767189,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -251,7 +251,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c5679470-4ad6-11e7-9950-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec","deletedDate":1496767195,"scheduledPurgeDate":1504543195,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/fdaa26731f294491b9b688dfa000428f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"5yY29XTr1gPvUOXGOirMxUycELenqrceK6pDFgyCldM2U5RnjZKh5Yljklbn2QDLGHVQGkaX-1oaBojum8f7V4wzdVaSY4tISrCpBmmhNMdRlCIfOQkU0o9D1ZUKrVbyldQQ_-u1DqpGayB-uS1Qsqk9PYXb1YNAgs2PY4j-QeNwtSO2a1LYk270dmxQyvCDDEgy8xHRVGnwI8pjp_Xd6NL4AlONX7TG9LUSZsB-umDygUL1cjAu-ktcBIe2JtfPWwnm8OhwWEsuzTPAu9fy6HxVZDBhm7BsbLunPs4-WA5ByxiNR0F6AelkUh0qKKKsl9s2LwNnRHHRYOzKnx9kLQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767193,"updated":1496767193,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -283,7 +283,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c6016410-4ad6-11e7-a2eb-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec","deletedDate":1496767196,"scheduledPurgeDate":1504543196,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/aa14f2e92b96499684d7a2acea83c106","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"q-BF8D8ov9v4rUAzKTfONb7FNN5LUQaLSbXP5beEZDNu-DfHDg8if7uMuffE8uWck0GiIjKcat7bw1rpYQ68bdaqimooS5dMPriMW3YqRpe8aHd139Mp9sM9td6s0ZT-7HgA6pRJZghl7em6L8bX4PsAoD0m0r9oZ-HcGLx1ZI-gimkL5mEdLdXzpuUag7odkIx_V9Igl2nrB5ouAMuHKxO8qSw2S4OWOFbm_t9KaIbNJh07gbtgiQYOoZVd0Z-QHih9YD4mmH0KoPWb5iTCaGQ1b2kl0tBYq6eIGG4eu1t5w9wdJO9sWQy8S6BQAdPlVpimskscRPirHGvAvHRlLQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767191,"updated":1496767191,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -314,7 +314,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d27ff248-4ad6-11e7-bb98-5065f34efe31]
     method: GET
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=7.0-preview
   response:
     body: {string: '{"value":[{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec","deletedDate":1496767196,"scheduledPurgeDate":1504543196,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec","attributes":{"enabled":true,"created":1496767191,"updated":1496767191,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec","deletedDate":1496767195,"scheduledPurgeDate":1504543195,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec","attributes":{"enabled":true,"created":1496767193,"updated":1496767193,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec","deletedDate":1496767195,"scheduledPurgeDate":1504543195,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec","attributes":{"enabled":true,"created":1496767189,"updated":1496767189,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec","deletedDate":1496767193,"scheduledPurgeDate":1504543193,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec","attributes":{"enabled":true,"created":1496767191,"updated":1496767191,"recoverylevel":"Recoverable+Purgeable"}}],"nextLink":null}'}
     headers:
@@ -346,7 +346,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d31ed91e-4ad6-11e7-8211-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec/recover?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec/recover?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/5a61b03d065d420eb5d90122f1b13a50","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"85E8OfuP00ECir7AWqn_vB25of4Yvmwnwl7jsxSU-6euyzpXe3Lj1pR86uWYMKxgQ4lFm5aCDCJr21w3vC7dXX0OGhDaEY6FUmtceN1Cyr02eTwjJgxN34LDuCgnev12dd_Q_UtPGu6FS18nc5WPvZb9a8Q_fG0AFxsU4SUIxM-VwWvMhqVteP9lfDBpJ12_IMgBuci3Fp_JSSxeo_FS2tBWL-dwbfAfnedMMu4lAMFhuvp0nYiuff5t_O9ZY9GBiAnC3yISp2IsUW9eU_PBntYAx0kTKX-IKCfWH4fwQzs75pqtDofmo-Bv6AXsTug5tJV53_uimrFUPBSZzyWHMw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767191,"updated":1496767191,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -378,7 +378,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d3c1d7ca-4ad6-11e7-b0f4-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec/recover?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec/recover?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/df43d3ab794d4b3f98ba2895627a525c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"kr6FUrCBJBnnvL7tE5NCG1l_zXFQqX8T_NzjWWE3mJ7yCXpMHYKDjKceIwUe_HguFuEau_7Y4ijvZ9tPfSUisgUoiwWLu8kdVuyAGbq9awp-AYEdsUzARkBMeltXdey9B6eRwQFnC6zerY1I4YxTjtJePMtyRUKhlaALQjldXlzvJOFHdgqXpttqtfu75dmL9cYuEnAP6ZKslfQS8KhVpwL0oiO4MBoaXINXEzyXyAe9yolRaZ6tMWvy7E3ekckJNKGX-zIxgwAByXNJO23rTnzzEmf16aSUF9GvZ3GYJYooLyFwiRCycujvVskSD7vvlrlINyUD0mUuQj9bEW_HtQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767189,"updated":1496767189,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -410,7 +410,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d4832c4c-4ad6-11e7-90b1-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec?api-version=7.0-preview
   response:
     body: {string: ''}
     headers:
@@ -440,7 +440,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d52d2c98-4ad6-11e7-9914-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec?api-version=7.0-preview
   response:
     body: {string: ''}
     headers:
@@ -469,7 +469,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d5bdaade-4ad6-11e7-aa63-5065f34efe31]
     method: GET
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=7.0-preview
   response:
     body: {string: '{"value":[],"nextLink":null}'}
     headers:
@@ -616,7 +616,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [34e5dfdc-4ad8-11e7-b05b-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/4856d437d50c4f11b36de8977a918c41","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3sMCE2qro_XuKpK4K004PN2TWDIwyrk2UX2qZvatzAAI5xnDzTTgZBkbKe5-Ho8gD0XaVcB8QSUOWX0FBYqHO3TvvtGufJ8OWKsyWvjwuLHZ_davbHzo8LVNFi7HHMqDFd2y95O0rzwQ5M2psTXCZGfdCVpibEiG_4VyiZK8ooM1f0V5EN-cLlwFK_R1VPGAIHEItulEKRralHRfX9HRAH_O-_KUFnUvL3aKRbkdbOvf2CJW_KjauOcHG1-6Uosfw3MwJKdNMRYjZLOb8UuIrpg68J15FaEsO2SAzpmGEQ0huno2oZLM7rhm5s8vRyy4KgxoQ6OO6RLjkAZHykXPbw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767813,"updated":1496767813,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -648,7 +648,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [35d1882c-4ad8-11e7-a8ef-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/ec89360adabd4b6880bba15e5b9a6b9b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vt03tTEp0Nm419gorBSfnwdXIXERNvcSFdNqwv48KzeK0JaMwxF9X1YoTzJemQTw23SjuOz_ZBpNYxwNgQ4GOOvGPFb5zG_SZZQ1QveQ7qd6lzCL8AS3ozz1KmPu8-mxuZ3hJLluzNJLglGaLNP1gZ8oh-aFmGSaPNdmkozLyD7A4drC5lRjDBQzcPTuFUMFwEp0VP_-zaTnGM8-Kp9deUfJZqyE7jZ54g11_zuMEEEQzt27SZFlvHcC19TspxZYElnvq6WAHYxsMw4VbHBMW6ilTITkzjp5cScQW96fYhBW5cnId5P0od93PI4PQwFtQcM2fB6Sfr33al1jjxjdHw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767814,"updated":1496767814,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -680,7 +680,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [36829f5a-4ad8-11e7-b74d-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/633241f01c434916bb21320dea63ed97","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yT9cEZx_Kvm7-9qtvslc-zqvK_Af4Iy-1qBi_gL1IVlBLt7JNiFJDvL19F8rUqWdpApKtIIx0kE4Nw1FDNAOuUTb6u4QoHFR-WZKrwywLIglKXKI1K2uZdQOtkdNCLlqMHtiUCsIYNqxiblOn8C7_RRfLj5eTKpLC72wfYucRRMxlLrnixWNa2A9jTiLso4edZCHbcRUct6ylI_wSJU1EPgQyWs1vE9Z3MRqK2ki4Oe9zJl0cbOT6CAhqPLyTibN6YGnqvPtzevEXF3CADokBaoCSKuXOVoyuvQLbNbaAdl9Q8BQroc897lT_ITIERV0UlrQ-QnAyR5-SqjS8s5jhQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767815,"updated":1496767815,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -712,7 +712,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [37053a26-4ad8-11e7-b4ff-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/create?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/create?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/e05aa34296ce4f53aa3ce2c62adc7a99","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yKZP1bybUVvFQY4iOswB_xYvuK1xNESu9SGkEA_7jwKkIrFJNeDYp1_LjMQsrtYtbWBVGYrwJ7RQK6WHdBzSWvDeWW_jxD8ZYIwLtiA8avpgD5u1q098lemD_gR2TUdoqxwuIG-V9Qf24vY-BghhSyMu3d7bVcyyaKVZW6oI1PS_7iJgseYGJgC7rCLKOZlP-nKBRoVmJvPSuyzZZdhUBTjFHnLt7mjLJDo507bVE0oGE0FIfSSf4Qn2qmPVB0DvQ0-fsGJm88zTVkZ5rdf-5G6g6Cr0j7T2iQkqUS46zii7s-G2eKNzdpEVoosNLJEk4qFD8YJzlMjDBcONiGwTnw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767816,"updated":1496767816,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -744,7 +744,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [37a6e164-4ad8-11e7-9b67-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec","deletedDate":1496767817,"scheduledPurgeDate":1504543817,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/ec89360adabd4b6880bba15e5b9a6b9b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vt03tTEp0Nm419gorBSfnwdXIXERNvcSFdNqwv48KzeK0JaMwxF9X1YoTzJemQTw23SjuOz_ZBpNYxwNgQ4GOOvGPFb5zG_SZZQ1QveQ7qd6lzCL8AS3ozz1KmPu8-mxuZ3hJLluzNJLglGaLNP1gZ8oh-aFmGSaPNdmkozLyD7A4drC5lRjDBQzcPTuFUMFwEp0VP_-zaTnGM8-Kp9deUfJZqyE7jZ54g11_zuMEEEQzt27SZFlvHcC19TspxZYElnvq6WAHYxsMw4VbHBMW6ilTITkzjp5cScQW96fYhBW5cnId5P0od93PI4PQwFtQcM2fB6Sfr33al1jjxjdHw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767814,"updated":1496767814,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -776,7 +776,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [38350d9c-4ad8-11e7-9a4e-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec","deletedDate":1496767818,"scheduledPurgeDate":1504543818,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec/633241f01c434916bb21320dea63ed97","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yT9cEZx_Kvm7-9qtvslc-zqvK_Af4Iy-1qBi_gL1IVlBLt7JNiFJDvL19F8rUqWdpApKtIIx0kE4Nw1FDNAOuUTb6u4QoHFR-WZKrwywLIglKXKI1K2uZdQOtkdNCLlqMHtiUCsIYNqxiblOn8C7_RRfLj5eTKpLC72wfYucRRMxlLrnixWNa2A9jTiLso4edZCHbcRUct6ylI_wSJU1EPgQyWs1vE9Z3MRqK2ki4Oe9zJl0cbOT6CAhqPLyTibN6YGnqvPtzevEXF3CADokBaoCSKuXOVoyuvQLbNbaAdl9Q8BQroc897lT_ITIERV0UlrQ-QnAyR5-SqjS8s5jhQ","e":"AQAB"},"attributes":{"enabled":true,"created":1496767815,"updated":1496767815,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -808,7 +808,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [38d34578-4ad8-11e7-a2d8-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec","deletedDate":1496767818,"scheduledPurgeDate":1504543818,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec/e05aa34296ce4f53aa3ce2c62adc7a99","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yKZP1bybUVvFQY4iOswB_xYvuK1xNESu9SGkEA_7jwKkIrFJNeDYp1_LjMQsrtYtbWBVGYrwJ7RQK6WHdBzSWvDeWW_jxD8ZYIwLtiA8avpgD5u1q098lemD_gR2TUdoqxwuIG-V9Qf24vY-BghhSyMu3d7bVcyyaKVZW6oI1PS_7iJgseYGJgC7rCLKOZlP-nKBRoVmJvPSuyzZZdhUBTjFHnLt7mjLJDo507bVE0oGE0FIfSSf4Qn2qmPVB0DvQ0-fsGJm88zTVkZ5rdf-5G6g6Cr0j7T2iQkqUS46zii7s-G2eKNzdpEVoosNLJEk4qFD8YJzlMjDBcONiGwTnw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767816,"updated":1496767816,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -840,7 +840,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [39615d24-4ad8-11e7-be9b-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec","deletedDate":1496767820,"scheduledPurgeDate":1504543820,"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/4856d437d50c4f11b36de8977a918c41","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3sMCE2qro_XuKpK4K004PN2TWDIwyrk2UX2qZvatzAAI5xnDzTTgZBkbKe5-Ho8gD0XaVcB8QSUOWX0FBYqHO3TvvtGufJ8OWKsyWvjwuLHZ_davbHzo8LVNFi7HHMqDFd2y95O0rzwQ5M2psTXCZGfdCVpibEiG_4VyiZK8ooM1f0V5EN-cLlwFK_R1VPGAIHEItulEKRralHRfX9HRAH_O-_KUFnUvL3aKRbkdbOvf2CJW_KjauOcHG1-6Uosfw3MwJKdNMRYjZLOb8UuIrpg68J15FaEsO2SAzpmGEQ0huno2oZLM7rhm5s8vRyy4KgxoQ6OO6RLjkAZHykXPbw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767813,"updated":1496767813,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -871,7 +871,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [45f4c17a-4ad8-11e7-8231-5065f34efe31]
     method: GET
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=7.0-preview
   response:
     body: {string: '{"value":[{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec","deletedDate":1496767818,"scheduledPurgeDate":1504543818,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg0bddb12ec","attributes":{"enabled":true,"created":1496767815,"updated":1496767815,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec","deletedDate":1496767818,"scheduledPurgeDate":1504543818,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyprg1bddb12ec","attributes":{"enabled":true,"created":1496767816,"updated":1496767816,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec","deletedDate":1496767820,"scheduledPurgeDate":1504543820,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec","attributes":{"enabled":true,"created":1496767813,"updated":1496767813,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec","deletedDate":1496767817,"scheduledPurgeDate":1504543817,"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec","attributes":{"enabled":true,"created":1496767814,"updated":1496767814,"recoverylevel":"Recoverable+Purgeable"}}],"nextLink":null}'}
     headers:
@@ -903,7 +903,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4671240c-4ad8-11e7-a644-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec/recover?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec1bddb12ec/recover?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec1bddb12ec/ec89360adabd4b6880bba15e5b9a6b9b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vt03tTEp0Nm419gorBSfnwdXIXERNvcSFdNqwv48KzeK0JaMwxF9X1YoTzJemQTw23SjuOz_ZBpNYxwNgQ4GOOvGPFb5zG_SZZQ1QveQ7qd6lzCL8AS3ozz1KmPu8-mxuZ3hJLluzNJLglGaLNP1gZ8oh-aFmGSaPNdmkozLyD7A4drC5lRjDBQzcPTuFUMFwEp0VP_-zaTnGM8-Kp9deUfJZqyE7jZ54g11_zuMEEEQzt27SZFlvHcC19TspxZYElnvq6WAHYxsMw4VbHBMW6ilTITkzjp5cScQW96fYhBW5cnId5P0od93PI4PQwFtQcM2fB6Sfr33al1jjxjdHw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767814,"updated":1496767814,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -935,7 +935,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4707e880-4ad8-11e7-abb1-5065f34efe31]
     method: POST
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec/recover?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyrec0bddb12ec/recover?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://vault-bddb12ec.vault.azure.net/keys/keyrec0bddb12ec/4856d437d50c4f11b36de8977a918c41","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3sMCE2qro_XuKpK4K004PN2TWDIwyrk2UX2qZvatzAAI5xnDzTTgZBkbKe5-Ho8gD0XaVcB8QSUOWX0FBYqHO3TvvtGufJ8OWKsyWvjwuLHZ_davbHzo8LVNFi7HHMqDFd2y95O0rzwQ5M2psTXCZGfdCVpibEiG_4VyiZK8ooM1f0V5EN-cLlwFK_R1VPGAIHEItulEKRralHRfX9HRAH_O-_KUFnUvL3aKRbkdbOvf2CJW_KjauOcHG1-6Uosfw3MwJKdNMRYjZLOb8UuIrpg68J15FaEsO2SAzpmGEQ0huno2oZLM7rhm5s8vRyy4KgxoQ6OO6RLjkAZHykXPbw","e":"AQAB"},"attributes":{"enabled":true,"created":1496767813,"updated":1496767813,"recoverylevel":"Recoverable+Purgeable"}}'}
     headers:
@@ -967,7 +967,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4796ab58-4ad8-11e7-be3e-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg0bddb12ec?api-version=7.0-preview
   response:
     body: {string: ''}
     headers:
@@ -997,7 +997,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4824cb74-4ad8-11e7-8041-5065f34efe31]
     method: DELETE
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys/keyprg1bddb12ec?api-version=7.0-preview
   response:
     body: {string: ''}
     headers:
@@ -1026,7 +1026,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [48b398e2-4ad8-11e7-846e-5065f34efe31]
     method: GET
-    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=2016-10-01
+    uri: https://vault-bddb12ec.vault.azure.net/deletedkeys?api-version=7.0-preview
   response:
     body: {string: '{"value":[],"nextLink":null}'}
     headers:

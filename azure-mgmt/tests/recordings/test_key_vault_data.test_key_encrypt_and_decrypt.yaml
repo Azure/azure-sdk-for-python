@@ -51,7 +51,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a21d5650-4ad6-11e7-b0bd-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1496767137,"updated":1496767137,"recoverylevel":"Purgeable"}}'}
     headers:
@@ -84,7 +84,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a2ec514a-4ad6-11e7-b162-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/encrypt?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/encrypt?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989","value":"DaYMDQ_1b3etFugTBXuBV5SEhxBc6eTfqUz5SQQXRpuwHHhSSgL0SUu2WgIJmhacID3fHkvrgW2z4vwCn-hTP7pWtFRGQU2pZsWjc2eP88u8mc7Nun9QUWFDs6ivOIjPcogXcR4AMshkTdbVFTkc1yg_ua6hKdFJzVKgTeouWAX_K5Bqpk3web8a_gJSjX0DXcHPttRRcjLOwdy8vonnZG1T2Wx6VaieQSH0UvNlSxm8ZPBQPvcDDOgB7qacUCdbJcF7EADDF93BHf08eHwvITKnsh1PA_ya2RqH2tNM7-CVypF3_LFmH2JO9FvrxyhbOz7LYURq-WPTw3ouTsAmkQ"}'}
     headers:
@@ -117,7 +117,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a36d191c-4ad6-11e7-8465-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/decrypt?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/decrypt?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989","value":"NTViMTkzMjZkNTNmZTI3YTA2MGZkMjY5ZGE3NzdmOTMzYmM0ZDJhZjJkYWJhZWVmODQ1ZTg4ODUyZWE2OGNmZjlhOTVhY2MxOTY1ZWRhZTA5N2ZlZGFhMTdkYjgzZmJkNTEyZDk5YmM4YjUyYjRhZDZiOTczOGYwODQ5OWZlZjVmZDE2NDE1Nzg4MGUwNDQ5MzFmNWFlZTNmNzhiNjFhYTM1YmNkMjg4ZWM1NzhkNGViMzUzZDcxNGE1YTVjZTVmYzEzZjRkMzI"}'}
     headers:
@@ -150,7 +150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a3d8c89c-4ad6-11e7-b856-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989/encrypt?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989/encrypt?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989","value":"OI6D9qg0CAFJIJKvooMkMckoamOsGyLrKkpciW7tjnLbLqpfsclz_ZfH0n059HyfOzstXdLx71eW2d-3WA5JmSime69QfedYDOiGgP8BBSioq7Nbeg7q2-GAzjmzW70iWExl2TpXrDcedBLP-PuvL-7e-Q_QjQmrbIqAodAPFSq4xUqkrhTMGb3vbahb-YvVzSS9adjEOk0G5pwcy0YStT0hUO0HILKQ7lzuVOINFNWyRX6071wVqq6K9Ai4CrBICJfm7N8hXPWX5ptMwfNXB1m1WeofeToOSKrm_l4DPsW03lSg53Tp0J4igMe6Ul3oBmteZd3D-ikMI-Iqer7s1A"}'}
     headers:
@@ -183,7 +183,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a4792422-4ad6-11e7-a4d9-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989/decrypt?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989/decrypt?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keycrypte52c13d3/0f0acb3587a14de6976c739e5e2cc989","value":"NTViMTkzMjZkNTNmZTI3YTA2MGZkMjY5ZGE3NzdmOTMzYmM0ZDJhZjJkYWJhZWVmODQ1ZTg4ODUyZWE2OGNmZjlhOTVhY2MxOTY1ZWRhZTA5N2ZlZGFhMTdkYjgzZmJkNTEyZDk5YmM4YjUyYjRhZDZiOTczOGYwODQ5OWZlZjVmZDE2NDE1Nzg4MGUwNDQ5MzFmNWFlZTNmNzhiNjFhYTM1YmNkMjg4ZWM1NzhkNGViMzUzZDcxNGE1YTVjZTVmYzEzZjRkMzI"}'}
     headers:

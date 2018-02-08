@@ -34,6 +34,7 @@ class KeyProperties(Model):
     }
 
     def __init__(self, exportable=None, key_type=None, key_size=None, reuse_key=None):
+        super(KeyProperties, self).__init__()
         self.exportable = exportable
         self.key_type = key_type
         self.key_size = key_size
