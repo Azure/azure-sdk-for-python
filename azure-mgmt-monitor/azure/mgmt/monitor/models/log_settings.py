@@ -38,6 +38,7 @@ class LogSettings(Model):
     }
 
     def __init__(self, enabled, category=None, retention_policy=None):
+        super(LogSettings, self).__init__()
         self.category = category
         self.enabled = enabled
         self.retention_policy = retention_policy
