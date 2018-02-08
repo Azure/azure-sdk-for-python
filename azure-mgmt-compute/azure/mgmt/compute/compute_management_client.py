@@ -190,6 +190,19 @@ class ComputeManagementClient(object):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def log_analytics(self):
+        """Instance depends on the API version:
+
+           * 2017-12-01: :class:`LogAnalyticsOperations<azure.mgmt.compute.v2017_12_01.operations.LogAnalyticsOperations>`
+        """
+        api_version = self.profile.get('log_analytics', self.api_version)
+        if api_version == '2017-12-01':
+            from .v2017_12_01.operations import LogAnalyticsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def resource_skus(self):
         """Instance depends on the API version:
 
