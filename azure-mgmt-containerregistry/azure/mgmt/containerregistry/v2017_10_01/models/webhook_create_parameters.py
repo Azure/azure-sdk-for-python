@@ -57,6 +57,7 @@ class WebhookCreateParameters(Model):
     }
 
     def __init__(self, location, service_uri, actions, tags=None, custom_headers=None, status=None, scope=None):
+        super(WebhookCreateParameters, self).__init__()
         self.tags = tags
         self.location = location
         self.service_uri = service_uri

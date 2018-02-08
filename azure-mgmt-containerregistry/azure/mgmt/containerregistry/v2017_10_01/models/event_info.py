@@ -24,4 +24,5 @@ class EventInfo(Model):
     }
 
     def __init__(self, id=None):
+        super(EventInfo, self).__init__()
         self.id = id

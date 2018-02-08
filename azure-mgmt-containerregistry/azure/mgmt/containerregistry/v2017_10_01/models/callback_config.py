@@ -32,5 +32,6 @@ class CallbackConfig(Model):
     }
 
     def __init__(self, service_uri, custom_headers=None):
+        super(CallbackConfig, self).__init__()
         self.service_uri = service_uri
         self.custom_headers = custom_headers

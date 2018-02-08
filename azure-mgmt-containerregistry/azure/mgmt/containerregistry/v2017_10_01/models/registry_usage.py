@@ -35,6 +35,7 @@ class RegistryUsage(Model):
     }
 
     def __init__(self, name=None, limit=None, current_value=None, unit=None):
+        super(RegistryUsage, self).__init__()
         self.name = name
         self.limit = limit
         self.current_value = current_value

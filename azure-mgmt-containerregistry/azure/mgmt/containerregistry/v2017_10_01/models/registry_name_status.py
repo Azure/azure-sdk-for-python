@@ -33,6 +33,7 @@ class RegistryNameStatus(Model):
     }
 
     def __init__(self, name_available=None, reason=None, message=None):
+        super(RegistryNameStatus, self).__init__()
         self.name_available = name_available
         self.reason = reason
         self.message = message
