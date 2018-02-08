@@ -18,12 +18,6 @@ class BackupLongTermRetentionPolicyState(Enum):
     enabled = "Enabled"
 
 
-class RestorePointType(Enum):
-
-    discrete = "DISCRETE"
-    continuous = "CONTINUOUS"
-
-
 class CapabilityStatus(Enum):
 
     visible = "Visible"
@@ -45,6 +39,12 @@ class PerformanceLevelUnit(Enum):
     dtu = "DTU"
 
 
+class CheckNameAvailabilityReason(Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
 class ServerConnectionType(Enum):
 
     default = "Default"
@@ -52,51 +52,16 @@ class ServerConnectionType(Enum):
     redirect = "Redirect"
 
 
-class SecurityAlertPolicyState(Enum):
+class CreateMode(Enum):
 
-    new = "New"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyEmailAccountAdmins(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyUseServerDefault(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class DataMaskingState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class DataMaskingRuleState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class DataMaskingFunction(Enum):
-
+    copy = "Copy"
     default = "Default"
-    ccn = "CCN"
-    email = "Email"
-    number = "Number"
-    ssn = "SSN"
-    text = "Text"
-
-
-class GeoBackupPolicyState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
+    non_readable_secondary = "NonReadableSecondary"
+    online_secondary = "OnlineSecondary"
+    point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
+    restore = "Restore"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
 
 
 class DatabaseEdition(Enum):
@@ -183,6 +148,120 @@ class ServiceObjectiveName(Enum):
     elastic_pool = "ElasticPool"
 
 
+class TransparentDataEncryptionStatus(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class RecommendedIndexAction(Enum):
+
+    create = "Create"
+    drop = "Drop"
+    rebuild = "Rebuild"
+
+
+class RecommendedIndexState(Enum):
+
+    active = "Active"
+    pending = "Pending"
+    executing = "Executing"
+    verifying = "Verifying"
+    pending_revert = "Pending Revert"
+    reverting = "Reverting"
+    reverted = "Reverted"
+    ignored = "Ignored"
+    expired = "Expired"
+    blocked = "Blocked"
+    success = "Success"
+
+
+class RecommendedIndexType(Enum):
+
+    clustered = "CLUSTERED"
+    nonclustered = "NONCLUSTERED"
+    columnstore = "COLUMNSTORE"
+    clusteredcolumnstore = "CLUSTERED COLUMNSTORE"
+
+
+class ReadScale(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SampleName(Enum):
+
+    adventure_works_lt = "AdventureWorksLT"
+
+
+class TransparentDataEncryptionActivityStatus(Enum):
+
+    encrypting = "Encrypting"
+    decrypting = "Decrypting"
+
+
+class ElasticPoolEdition(Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class SecurityAlertPolicyState(Enum):
+
+    new = "New"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyEmailAccountAdmins(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyUseServerDefault(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class DataMaskingState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingRuleState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingFunction(Enum):
+
+    default = "Default"
+    ccn = "CCN"
+    email = "Email"
+    number = "Number"
+    ssn = "SSN"
+    text = "Text"
+
+
+class ElasticPoolState(Enum):
+
+    creating = "Creating"
+    ready = "Ready"
+    disabled = "Disabled"
+
+
+class GeoBackupPolicyState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
 class StorageKeyType(Enum):
 
     storage_access_key = "StorageAccessKey"
@@ -242,95 +321,42 @@ class ReplicationState(Enum):
     suspended = "SUSPENDED"
 
 
-class CheckNameAvailabilityReason(Enum):
-
-    invalid = "Invalid"
-    already_exists = "AlreadyExists"
-
-
-class ElasticPoolEdition(Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-
-
-class CreateMode(Enum):
-
-    copy = "Copy"
-    default = "Default"
-    non_readable_secondary = "NonReadableSecondary"
-    online_secondary = "OnlineSecondary"
-    point_in_time_restore = "PointInTimeRestore"
-    recovery = "Recovery"
-    restore = "Restore"
-    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
-
-
-class TransparentDataEncryptionStatus(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class RecommendedIndexAction(Enum):
-
-    create = "Create"
-    drop = "Drop"
-    rebuild = "Rebuild"
-
-
-class RecommendedIndexState(Enum):
-
-    active = "Active"
-    pending = "Pending"
-    executing = "Executing"
-    verifying = "Verifying"
-    pending_revert = "Pending Revert"
-    reverting = "Reverting"
-    reverted = "Reverted"
-    ignored = "Ignored"
-    expired = "Expired"
-    blocked = "Blocked"
-    success = "Success"
-
-
-class RecommendedIndexType(Enum):
-
-    clustered = "CLUSTERED"
-    nonclustered = "NONCLUSTERED"
-    columnstore = "COLUMNSTORE"
-    clusteredcolumnstore = "CLUSTERED COLUMNSTORE"
-
-
-class ReadScale(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SampleName(Enum):
-
-    adventure_works_lt = "AdventureWorksLT"
-
-
-class ElasticPoolState(Enum):
-
-    creating = "Creating"
-    ready = "Ready"
-    disabled = "Disabled"
-
-
-class TransparentDataEncryptionActivityStatus(Enum):
-
-    encrypting = "Encrypting"
-    decrypting = "Decrypting"
-
-
 class BlobAuditingPolicyState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class AutomaticTuningMode(Enum):
+
+    inherit = "Inherit"
+    custom = "Custom"
+    auto = "Auto"
+    unspecified = "Unspecified"
+
+
+class AutomaticTuningOptionModeDesired(Enum):
+
+    off = "Off"
+    on = "On"
+    default = "Default"
+
+
+class AutomaticTuningOptionModeActual(Enum):
+
+    off = "Off"
+    on = "On"
+
+
+class AutomaticTuningDisabledReason(Enum):
+
+    default = "Default"
+    disabled = "Disabled"
+    auto_configured = "AutoConfigured"
+    inherited_from_server = "InheritedFromServer"
+    query_store_off = "QueryStoreOff"
+    query_store_read_only = "QueryStoreReadOnly"
+    not_supported = "NotSupported"
 
 
 class ServerKeyType(Enum):
@@ -450,3 +476,23 @@ class ManagementOperationState(Enum):
     failed = "Failed"
     cancel_in_progress = "CancelInProgress"
     cancelled = "Cancelled"
+
+
+class AutomaticTuningServerMode(Enum):
+
+    custom = "Custom"
+    auto = "Auto"
+    unspecified = "Unspecified"
+
+
+class AutomaticTuningServerReason(Enum):
+
+    default = "Default"
+    disabled = "Disabled"
+    auto_configured = "AutoConfigured"
+
+
+class RestorePointType(Enum):
+
+    continuous = "CONTINUOUS"
+    discrete = "DISCRETE"
