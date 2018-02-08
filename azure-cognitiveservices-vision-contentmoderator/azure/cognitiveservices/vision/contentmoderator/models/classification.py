@@ -15,23 +15,29 @@ from msrest.serialization import Model
 class Classification(Model):
     """The classification details of the text.
 
-    :param category1:
+    :param category1: The category1 score details of the text. <a
+     href="https://aka.ms/textClassifyCategories">Click here</a> for more
+     details on category classification.
     :type category1:
-     ~azure.cognitiveservices.vision.contentmoderator.models.Score
-    :param category2:
+     ~azure.cognitiveservices.vision.contentmoderator.models.ClassificationCategory1
+    :param category2: The category2 score details of the text. <a
+     href="https://aka.ms/textClassifyCategories">Click here</a> for more
+     details on category classification.
     :type category2:
-     ~azure.cognitiveservices.vision.contentmoderator.models.Score
-    :param category3:
+     ~azure.cognitiveservices.vision.contentmoderator.models.ClassificationCategory2
+    :param category3: The category3 score details of the text. <a
+     href="https://aka.ms/textClassifyCategories">Click here</a> for more
+     details on category classification.
     :type category3:
-     ~azure.cognitiveservices.vision.contentmoderator.models.Score
+     ~azure.cognitiveservices.vision.contentmoderator.models.ClassificationCategory3
     :param review_recommended: The review recommended flag.
     :type review_recommended: bool
     """
 
     _attribute_map = {
-        'category1': {'key': 'Category1', 'type': 'Score'},
-        'category2': {'key': 'Category2', 'type': 'Score'},
-        'category3': {'key': 'Category3', 'type': 'Score'},
+        'category1': {'key': 'Category1', 'type': 'ClassificationCategory1'},
+        'category2': {'key': 'Category2', 'type': 'ClassificationCategory2'},
+        'category3': {'key': 'Category3', 'type': 'ClassificationCategory3'},
         'review_recommended': {'key': 'ReviewRecommended', 'type': 'bool'},
     }
 
