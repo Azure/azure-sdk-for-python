@@ -44,6 +44,7 @@ class MetricValue(Model):
     }
 
     def __init__(self, time_stamp, average=None, minimum=None, maximum=None, total=None, count=None):
+        super(MetricValue, self).__init__()
         self.time_stamp = time_stamp
         self.average = average
         self.minimum = minimum

@@ -49,6 +49,7 @@ class AutoscaleSettingResourcePatch(Model):
     }
 
     def __init__(self, profiles, tags=None, notifications=None, enabled=True, name=None, target_resource_uri=None):
+        super(AutoscaleSettingResourcePatch, self).__init__()
         self.tags = tags
         self.profiles = profiles
         self.notifications = notifications

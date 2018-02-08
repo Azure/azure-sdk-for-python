@@ -29,5 +29,6 @@ class ActivityLogAlertPatchBody(Model):
     }
 
     def __init__(self, tags=None, enabled=True):
+        super(ActivityLogAlertPatchBody, self).__init__()
         self.tags = tags
         self.enabled = enabled

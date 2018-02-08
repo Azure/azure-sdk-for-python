@@ -38,5 +38,6 @@ class ActivityLogAlertLeafCondition(Model):
     }
 
     def __init__(self, field, equals):
+        super(ActivityLogAlertLeafCondition, self).__init__()
         self.field = field
         self.equals = equals
