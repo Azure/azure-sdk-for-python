@@ -43,6 +43,7 @@ class Target(Model):
     }
 
     def __init__(self, media_type=None, size=None, digest=None, length=None, repository=None, url=None, tag=None):
+        super(Target, self).__init__()
         self.media_type = media_type
         self.size = size
         self.digest = digest

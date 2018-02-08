@@ -39,6 +39,7 @@ class Request(Model):
     }
 
     def __init__(self, id=None, addr=None, host=None, method=None, useragent=None):
+        super(Request, self).__init__()
         self.id = id
         self.addr = addr
         self.host = host
