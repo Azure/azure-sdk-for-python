@@ -176,7 +176,7 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
                          enabled_for_template_deployment=True, enable_soft_delete=None, sku=None):
         vault_name = self.get_resource_name('vault-')
         vault = self.create_vault(self.group_name, vault_name,
-                                  permissions=permissions,enabled_for_deployment=enabled_for_deployment,
+                                  permissions=permissions, enabled_for_deployment=enabled_for_deployment,
                                   enabled_for_template_deployment=enabled_for_template_deployment, enable_soft_delete=enable_soft_delete,
                                   sku=sku)
 
@@ -191,7 +191,6 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
         properties = VaultProperties(tenant_id=self.settings.TENANT_ID,
                                      sku=Sku(sku or SkuName.premium.value),
                                      access_policies=access_policies,
-                                     vault_uri=None,
                                      enabled_for_deployment=enabled_for_deployment,
                                      enabled_for_disk_encryption=enabled_for_disk_encryption,
                                      enabled_for_template_deployment=enabled_for_template_deployment,
@@ -199,7 +198,7 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
         parameters = VaultCreateOrUpdateParameters(location='westus',
                                                    properties=properties)
 
-        vault = self.mgmt_client.vaults.create_or_update(group_name, vault_name, parameters)
+        vault = self.mgmt_client.vaults.create_or_update(group_name, vault_name, parameters).result()
 
         if not self.is_playback():
             self.sleep(10)

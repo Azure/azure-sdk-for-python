@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -27,6 +28,8 @@ class VaultsOperations(object):
     :ivar filter: The filter to apply on the operation. Constant value: "resourceType eq 'Microsoft.KeyVault/vaults'".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -36,35 +39,16 @@ class VaultsOperations(object):
 
         self.config = config
 
-    def create_or_update(
-            self, resource_group_name, vault_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create or update a key vault in the specified subscription.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the server belongs.
-        :type resource_group_name: str
-        :param vault_name: Name of the vault
-        :type vault_name: str
-        :param parameters: Parameters to create or update the vault
-        :type parameters: :class:`VaultCreateOrUpdateParameters
-         <azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_or_update_initial(
+            self, resource_group_name, vault_name, parameters, custom_headers=None, raw=False, **operation_config):
         api_version = "2016-10-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern='^[a-zA-Z0-9-]{3,24}$'),
+            'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -89,18 +73,163 @@ class VaultsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [201, 200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
+        if response.status_code == 200:
+            deserialized = self._deserialize('Vault', response)
         if response.status_code == 201:
             deserialized = self._deserialize('Vault', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, vault_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Create or update a key vault in the specified subscription.
+
+        :param resource_group_name: The name of the Resource Group to which
+         the server belongs.
+        :type resource_group_name: str
+        :param vault_name: Name of the vault
+        :type vault_name: str
+        :param parameters: Parameters to create or update the vault
+        :type parameters:
+         ~azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns Vault or
+         ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.keyvault.models.Vault]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 201]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('Vault', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+    def update(
+            self, resource_group_name, vault_name, tags=None, properties=None, custom_headers=None, raw=False, **operation_config):
+        """Update a key vault in the specified subscription.
+
+        :param resource_group_name: The name of the Resource Group to which
+         the server belongs.
+        :type resource_group_name: str
+        :param vault_name: Name of the vault
+        :type vault_name: str
+        :param tags: The tags that will be assigned to the key vault.
+        :type tags: dict[str, str]
+        :param properties: Properties of the vault
+        :type properties: ~azure.mgmt.keyvault.models.VaultPatchProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Vault or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.keyvault.models.Vault or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.VaultPatchParameters(tags=tags, properties=properties)
+
+        api_version = "2016-10-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'VaultPatchParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
         if response.status_code == 200:
+            deserialized = self._deserialize('Vault', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('Vault', response)
 
         if raw:
@@ -123,9 +252,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -155,7 +283,7 @@ class VaultsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -180,9 +308,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Vault or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.keyvault.models.Vault or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -212,7 +340,7 @@ class VaultsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -223,6 +351,86 @@ class VaultsOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('Vault', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_access_policy(
+            self, resource_group_name, vault_name, operation_kind, properties, custom_headers=None, raw=False, **operation_config):
+        """Update access policies in a key vault in the specified subscription.
+
+        :param resource_group_name: The name of the Resource Group to which
+         the vault belongs.
+        :type resource_group_name: str
+        :param vault_name: Name of the vault
+        :type vault_name: str
+        :param operation_kind: Name of the operation. Possible values include:
+         'add', 'replace', 'remove'
+        :type operation_kind: str or
+         ~azure.mgmt.keyvault.models.AccessPolicyUpdateKind
+        :param properties: Properties of the access policy
+        :type properties:
+         ~azure.mgmt.keyvault.models.VaultAccessPolicyProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: VaultAccessPolicyParameters or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.keyvault.models.VaultAccessPolicyParameters or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.VaultAccessPolicyParameters(properties=properties)
+
+        api_version = "2016-10-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/accessPolicies/{operationKind}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
+            'operationKind': self._serialize.url("operation_kind", operation_kind, 'AccessPolicyUpdateKind'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'VaultAccessPolicyParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('VaultAccessPolicyParameters', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('VaultAccessPolicyParameters', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -245,7 +453,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VaultPaged <azure.mgmt.keyvault.models.VaultPaged>`
+        :return: An iterator like instance of Vault
+        :rtype:
+         ~azure.mgmt.keyvault.models.VaultPaged[~azure.mgmt.keyvault.models.Vault]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -284,7 +494,78 @@ class VaultsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.VaultPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.VaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def list_by_subscription(
+            self, top=None, custom_headers=None, raw=False, **operation_config):
+        """The List operation gets information about the vaults associated with
+        the subscription.
+
+        :param top: Maximum number of results to return.
+        :type top: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Vault
+        :rtype:
+         ~azure.mgmt.keyvault.models.VaultPaged[~azure.mgmt.keyvault.models.Vault]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2016-10-01"
+
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/vaults'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -312,8 +593,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedVaultPaged
-         <azure.mgmt.keyvault.models.DeletedVaultPaged>`
+        :return: An iterator like instance of DeletedVault
+        :rtype:
+         ~azure.mgmt.keyvault.models.DeletedVaultPaged[~azure.mgmt.keyvault.models.DeletedVault]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -349,7 +631,7 @@ class VaultsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -381,10 +663,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedVault
-         <azure.mgmt.keyvault.models.DeletedVault>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedVault or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.keyvault.models.DeletedVault or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2016-10-01"
@@ -414,7 +695,7 @@ class VaultsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -432,25 +713,9 @@ class VaultsOperations(object):
 
         return deserialized
 
-    def purge_deleted(
-            self, vault_name, location, custom_headers=None, raw=False, **operation_config):
-        """Permanently deletes the specified vault. aka Purges the deleted Azure
-        key vault.
 
-        :param vault_name: The name of the soft-deleted vault.
-        :type vault_name: str
-        :param location: The location of the soft-deleted vault.
-        :type location: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _purge_deleted_initial(
+            self, vault_name, location, custom_headers=None, raw=False, **operation_config):
         api_version = "2016-10-01"
 
         # Construct URL
@@ -477,18 +742,59 @@ class VaultsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def purge_deleted(
+            self, vault_name, location, custom_headers=None, raw=False, **operation_config):
+        """Permanently deletes the specified vault. aka Purges the deleted Azure
+        key vault.
+
+        :param vault_name: The name of the soft-deleted vault.
+        :type vault_name: str
+        :param location: The location of the soft-deleted vault.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._purge_deleted_initial(
+            vault_name=vault_name,
+            location=location,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -500,10 +806,6 @@ class VaultsOperations(object):
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -524,8 +826,9 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourcePaged
-         <azure.mgmt.keyvault.models.ResourcePaged>`
+        :return: An iterator like instance of Resource
+        :rtype:
+         ~azure.mgmt.keyvault.models.ResourcePaged[~azure.mgmt.keyvault.models.Resource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "2015-11-01"
@@ -564,7 +867,7 @@ class VaultsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -579,6 +882,71 @@ class VaultsOperations(object):
         if raw:
             header_dict = {}
             client_raw_response = models.ResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def check_name_availability(
+            self, name, custom_headers=None, raw=False, **operation_config):
+        """Checks that the vault name is valid and is not already in use.
+
+        :param name: The vault name.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: CheckNameAvailabilityResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.keyvault.models.CheckNameAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        vault_name = models.VaultCheckNameAvailabilityParameters(name=name)
+
+        api_version = "2016-10-01"
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/checkNameAvailability'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(vault_name, 'VaultCheckNameAvailabilityParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CheckNameAvailabilityResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
