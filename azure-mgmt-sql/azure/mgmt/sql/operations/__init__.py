@@ -11,7 +11,6 @@
 
 from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
-from .restore_points_operations import RestorePointsOperations
 from .recoverable_databases_operations import RecoverableDatabasesOperations
 from .restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .capabilities_operations import CapabilitiesOperations
@@ -37,6 +36,7 @@ from .transparent_data_encryption_activities_operations import TransparentDataEn
 from .server_usages_operations import ServerUsagesOperations
 from .database_usages_operations import DatabaseUsagesOperations
 from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
+from .database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .encryption_protectors_operations import EncryptionProtectorsOperations
 from .failover_groups_operations import FailoverGroupsOperations
 from .operations import Operations
@@ -47,12 +47,13 @@ from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .database_operations import DatabaseOperations
+from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
+from .restore_points_operations import RestorePointsOperations
 
 __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
     'BackupLongTermRetentionVaultsOperations',
-    'RestorePointsOperations',
     'RecoverableDatabasesOperations',
     'RestorableDroppedDatabasesOperations',
     'CapabilitiesOperations',
@@ -78,6 +79,7 @@ __all__ = [
     'ServerUsagesOperations',
     'DatabaseUsagesOperations',
     'DatabaseBlobAuditingPoliciesOperations',
+    'DatabaseAutomaticTuningOperations',
     'EncryptionProtectorsOperations',
     'FailoverGroupsOperations',
     'Operations',
@@ -88,5 +90,7 @@ __all__ = [
     'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
     'DatabaseOperations',
+    'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
+    'RestorePointsOperations',
 ]
