@@ -18,8 +18,8 @@ from msrestazure.azure_operation import AzureOperationPoller
 from .. import models
 
 
-class RestorePointsOperations(object):
-    """RestorePointsOperations operations.
+class DatabaseRestorePointsOperations(object):
+    """DatabaseRestorePointsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -56,9 +56,9 @@ class RestorePointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of RestorePoint
+        :return: An iterator like instance of DatabaseRestorePoint
         :rtype:
-         ~azure.mgmt.sql.models.RestorePointPaged[~azure.mgmt.sql.models.RestorePoint]
+         ~azure.mgmt.sql.models.DatabaseRestorePointPaged[~azure.mgmt.sql.models.DatabaseRestorePoint]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -105,11 +105,11 @@ class RestorePointsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RestorePointPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.DatabaseRestorePointPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.RestorePointPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.DatabaseRestorePointPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -159,9 +159,9 @@ class RestorePointsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RestorePoint', response)
+            deserialized = self._deserialize('DatabaseRestorePoint', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('RestorePoint', response)
+            deserialized = self._deserialize('DatabaseRestorePoint', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -186,10 +186,10 @@ class RestorePointsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns RestorePoint
-         or ClientRawResponse if raw=true
+        :return: An instance of AzureOperationPoller that returns
+         DatabaseRestorePoint or ClientRawResponse if raw=true
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.RestorePoint]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.DatabaseRestorePoint]
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -226,7 +226,7 @@ class RestorePointsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = self._deserialize('RestorePoint', response)
+            deserialized = self._deserialize('DatabaseRestorePoint', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -260,8 +260,8 @@ class RestorePointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RestorePoint or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.RestorePoint or
+        :return: DatabaseRestorePoint or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.DatabaseRestorePoint or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -302,7 +302,7 @@ class RestorePointsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RestorePoint', response)
+            deserialized = self._deserialize('DatabaseRestorePoint', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class RestorePointPaged(Paged):
+class DatabaseRestorePointPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`RestorePoint <azure.mgmt.sql.models.RestorePoint>` object
+    A paging container for iterating over a list of :class:`DatabaseRestorePoint <azure.mgmt.sql.models.DatabaseRestorePoint>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RestorePoint]'}
+        'current_page': {'key': 'value', 'type': '[DatabaseRestorePoint]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(RestorePointPaged, self).__init__(*args, **kwargs)
+        super(DatabaseRestorePointPaged, self).__init__(*args, **kwargs)
