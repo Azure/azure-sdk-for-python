@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class PremiumMessagingRegionsPaged(Paged):
+class MessagingRegionsPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PremiumMessagingRegions <azure.mgmt.eventhub.models.PremiumMessagingRegions>` object
+    A paging container for iterating over a list of :class:`MessagingRegions <azure.mgmt.eventhub.models.MessagingRegions>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PremiumMessagingRegions]'}
+        'current_page': {'key': 'value', 'type': '[MessagingRegions]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(PremiumMessagingRegionsPaged, self).__init__(*args, **kwargs)
+        super(MessagingRegionsPaged, self).__init__(*args, **kwargs)

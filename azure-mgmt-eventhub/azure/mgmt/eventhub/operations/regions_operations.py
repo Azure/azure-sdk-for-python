@@ -47,9 +47,9 @@ class RegionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PremiumMessagingRegions
+        :return: An iterator like instance of MessagingRegions
         :rtype:
-         ~azure.mgmt.eventhub.models.PremiumMessagingRegionsPaged[~azure.mgmt.eventhub.models.PremiumMessagingRegions]
+         ~azure.mgmt.eventhub.models.MessagingRegionsPaged[~azure.mgmt.eventhub.models.MessagingRegions]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -93,11 +93,11 @@ class RegionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PremiumMessagingRegionsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MessagingRegionsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PremiumMessagingRegionsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MessagingRegionsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

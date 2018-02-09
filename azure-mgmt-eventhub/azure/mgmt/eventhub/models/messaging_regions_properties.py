@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class PremiumMessagingRegionsProperties(Model):
-    """PremiumMessagingRegionsProperties.
+class MessagingRegionsProperties(Model):
+    """MessagingRegionsProperties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,6 +35,6 @@ class PremiumMessagingRegionsProperties(Model):
     }
 
     def __init__(self):
-        super(PremiumMessagingRegionsProperties, self).__init__()
+        super(MessagingRegionsProperties, self).__init__()
         self.code = None
         self.full_name = None

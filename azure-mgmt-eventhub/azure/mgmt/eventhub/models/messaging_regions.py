@@ -12,8 +12,8 @@
 from .tracked_resource import TrackedResource
 
 
-class PremiumMessagingRegions(TrackedResource):
-    """Premium Messaging Region.
+class MessagingRegions(TrackedResource):
+    """Messaging Region.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,8 +29,7 @@ class PremiumMessagingRegions(TrackedResource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param properties:
-    :type properties:
-     ~azure.mgmt.eventhub.models.PremiumMessagingRegionsProperties
+    :type properties: ~azure.mgmt.eventhub.models.MessagingRegionsProperties
     """
 
     _validation = {
@@ -45,9 +44,9 @@ class PremiumMessagingRegions(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'PremiumMessagingRegionsProperties'},
+        'properties': {'key': 'properties', 'type': 'MessagingRegionsProperties'},
     }
 
     def __init__(self, location=None, tags=None, properties=None):
-        super(PremiumMessagingRegions, self).__init__(location=location, tags=tags)
+        super(MessagingRegions, self).__init__(location=location, tags=tags)
         self.properties = properties
