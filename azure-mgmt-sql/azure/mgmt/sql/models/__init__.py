@@ -14,7 +14,6 @@ from .proxy_resource import ProxyResource
 from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
 from .backup_long_term_retention_vault import BackupLongTermRetentionVault
 from .tracked_resource import TrackedResource
-from .restore_point import RestorePoint
 from .recoverable_database import RecoverableDatabase
 from .restorable_dropped_database import RestorableDroppedDatabase
 from .max_size_capability import MaxSizeCapability
@@ -64,6 +63,8 @@ from .service_objective import ServiceObjective
 from .server_usage import ServerUsage
 from .database_usage import DatabaseUsage
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
+from .automatic_tuning_options import AutomaticTuningOptions
+from .database_automatic_tuning import DatabaseAutomaticTuning
 from .encryption_protector import EncryptionProtector
 from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
 from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
@@ -93,11 +94,14 @@ from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
 from .resource_move_definition import ResourceMoveDefinition
+from .automatic_tuning_server_options import AutomaticTuningServerOptions
+from .server_automatic_tuning import ServerAutomaticTuning
 from .server_dns_alias import ServerDnsAlias
 from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
+from .restore_point import RestorePoint
+from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
 from .backup_long_term_retention_policy_paged import BackupLongTermRetentionPolicyPaged
 from .backup_long_term_retention_vault_paged import BackupLongTermRetentionVaultPaged
-from .restore_point_paged import RestorePointPaged
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -135,9 +139,9 @@ from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_operation_paged import DatabaseOperationPaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
+from .restore_point_paged import RestorePointPaged
 from .sql_management_client_enums import (
     BackupLongTermRetentionPolicyState,
-    RestorePointType,
     CapabilityStatus,
     MaxSizeUnits,
     PerformanceLevelUnit,
@@ -170,6 +174,10 @@ from .sql_management_client_enums import (
     ReplicationRole,
     ReplicationState,
     BlobAuditingPolicyState,
+    AutomaticTuningMode,
+    AutomaticTuningOptionModeDesired,
+    AutomaticTuningOptionModeActual,
+    AutomaticTuningDisabledReason,
     ServerKeyType,
     ReadWriteEndpointFailoverPolicy,
     ReadOnlyEndpointFailoverPolicy,
@@ -185,6 +193,9 @@ from .sql_management_client_enums import (
     SyncMemberState,
     VirtualNetworkRuleState,
     ManagementOperationState,
+    AutomaticTuningServerMode,
+    AutomaticTuningServerReason,
+    RestorePointType,
 )
 
 __all__ = [
@@ -193,7 +204,6 @@ __all__ = [
     'BackupLongTermRetentionPolicy',
     'BackupLongTermRetentionVault',
     'TrackedResource',
-    'RestorePoint',
     'RecoverableDatabase',
     'RestorableDroppedDatabase',
     'MaxSizeCapability',
@@ -243,6 +253,8 @@ __all__ = [
     'ServerUsage',
     'DatabaseUsage',
     'DatabaseBlobAuditingPolicy',
+    'AutomaticTuningOptions',
+    'DatabaseAutomaticTuning',
     'EncryptionProtector',
     'FailoverGroupReadWriteEndpoint',
     'FailoverGroupReadOnlyEndpoint',
@@ -272,11 +284,14 @@ __all__ = [
     'VirtualNetworkRule',
     'DatabaseOperation',
     'ResourceMoveDefinition',
+    'AutomaticTuningServerOptions',
+    'ServerAutomaticTuning',
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
+    'RestorePoint',
+    'CreateDatabaseRestorePointDefinition',
     'BackupLongTermRetentionPolicyPaged',
     'BackupLongTermRetentionVaultPaged',
-    'RestorePointPaged',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -314,8 +329,8 @@ __all__ = [
     'VirtualNetworkRulePaged',
     'DatabaseOperationPaged',
     'ServerDnsAliasPaged',
+    'RestorePointPaged',
     'BackupLongTermRetentionPolicyState',
-    'RestorePointType',
     'CapabilityStatus',
     'MaxSizeUnits',
     'PerformanceLevelUnit',
@@ -348,6 +363,10 @@ __all__ = [
     'ReplicationRole',
     'ReplicationState',
     'BlobAuditingPolicyState',
+    'AutomaticTuningMode',
+    'AutomaticTuningOptionModeDesired',
+    'AutomaticTuningOptionModeActual',
+    'AutomaticTuningDisabledReason',
     'ServerKeyType',
     'ReadWriteEndpointFailoverPolicy',
     'ReadOnlyEndpointFailoverPolicy',
@@ -363,4 +382,7 @@ __all__ = [
     'SyncMemberState',
     'VirtualNetworkRuleState',
     'ManagementOperationState',
+    'AutomaticTuningServerMode',
+    'AutomaticTuningServerReason',
+    'RestorePointType',
 ]

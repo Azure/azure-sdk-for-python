@@ -15,7 +15,6 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
-from .operations.restore_points_operations import RestorePointsOperations
 from .operations.recoverable_databases_operations import RecoverableDatabasesOperations
 from .operations.restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -41,6 +40,7 @@ from .operations.transparent_data_encryption_activities_operations import Transp
 from .operations.server_usages_operations import ServerUsagesOperations
 from .operations.database_usages_operations import DatabaseUsagesOperations
 from .operations.database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
+from .operations.database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .operations.encryption_protectors_operations import EncryptionProtectorsOperations
 from .operations.failover_groups_operations import FailoverGroupsOperations
 from .operations.operations import Operations
@@ -51,7 +51,9 @@ from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.database_operations import DatabaseOperations
+from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
+from .operations.restore_points_operations import RestorePointsOperations
 from . import models
 
 
@@ -98,8 +100,6 @@ class SqlManagementClient(object):
     :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
     :ivar backup_long_term_retention_vaults: BackupLongTermRetentionVaults operations
     :vartype backup_long_term_retention_vaults: azure.mgmt.sql.operations.BackupLongTermRetentionVaultsOperations
-    :ivar restore_points: RestorePoints operations
-    :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
     :ivar recoverable_databases: RecoverableDatabases operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
@@ -150,6 +150,8 @@ class SqlManagementClient(object):
     :vartype database_usages: azure.mgmt.sql.operations.DatabaseUsagesOperations
     :ivar database_blob_auditing_policies: DatabaseBlobAuditingPolicies operations
     :vartype database_blob_auditing_policies: azure.mgmt.sql.operations.DatabaseBlobAuditingPoliciesOperations
+    :ivar database_automatic_tuning: DatabaseAutomaticTuning operations
+    :vartype database_automatic_tuning: azure.mgmt.sql.operations.DatabaseAutomaticTuningOperations
     :ivar encryption_protectors: EncryptionProtectors operations
     :vartype encryption_protectors: azure.mgmt.sql.operations.EncryptionProtectorsOperations
     :ivar failover_groups: FailoverGroups operations
@@ -170,8 +172,12 @@ class SqlManagementClient(object):
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
+    :ivar server_automatic_tuning: ServerAutomaticTuning operations
+    :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
+    :ivar restore_points: RestorePoints operations
+    :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -195,8 +201,6 @@ class SqlManagementClient(object):
         self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_long_term_retention_vaults = BackupLongTermRetentionVaultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.restore_points = RestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -248,6 +252,8 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.database_automatic_tuning = DatabaseAutomaticTuningOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.encryption_protectors = EncryptionProtectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.failover_groups = FailoverGroupsOperations(
@@ -268,5 +274,9 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.server_automatic_tuning = ServerAutomaticTuningOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.restore_points = RestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
