@@ -5,6 +5,16 @@ import re
 import sys
 from pathlib import Path
 
+try:
+    import msrestazure
+except:  # Install msrestazure. Would be best to mock it, since we don't need it, but all scenarios I know are fine with a pip install for now
+    import subprocess
+    subprocess.call("pip install msrestazure", shell=True)  # Use shell to use venv if available
+
+    # The following DOES not work, since it bypasses venv for some reason
+    # import pip
+    # pip.main(["install", "msrestazure"])
+
 _GENERATE_MARKER = "############ Generated from here ############\n"
 
 def parse_input(input_parameter):
