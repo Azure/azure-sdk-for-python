@@ -24,17 +24,13 @@ class ScheduleUpdateParameters(Model):
     :type is_enabled: bool
     """
 
-    _validation = {
-        'name': {'required': True},
-    }
-
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, name, description=None, is_enabled=None):
+    def __init__(self, name=None, description=None, is_enabled=None):
         super(ScheduleUpdateParameters, self).__init__()
         self.name = name
         self.description = description

@@ -22,6 +22,8 @@ class ConnectionType(Model):
     :vartype id: str
     :ivar name: Gets the name of the connection type.
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param is_global: Gets or sets a Boolean value to indicate if the
      connection type is global.
     :type is_global: bool
@@ -40,6 +42,7 @@ class ConnectionType(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'field_definitions': {'readonly': True},
         'creation_time': {'readonly': True},
     }
@@ -47,6 +50,7 @@ class ConnectionType(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'is_global': {'key': 'properties.isGlobal', 'type': 'bool'},
         'field_definitions': {'key': 'properties.fieldDefinitions', 'type': '{FieldDefinition}'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
@@ -58,6 +62,7 @@ class ConnectionType(Model):
         super(ConnectionType, self).__init__()
         self.id = None
         self.name = None
+        self.type = None
         self.is_global = is_global
         self.field_definitions = None
         self.creation_time = None

@@ -45,6 +45,8 @@ from .operations.webhook_operations import WebhookOperations
 from .operations.software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
 from .operations.software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
 from .operations.software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
+from .operations.source_control_operations import SourceControlOperations
+from .operations.source_control_sync_job_operations import SourceControlSyncJobOperations
 from . import models
 
 
@@ -165,6 +167,10 @@ class AutomationClient(object):
     :vartype software_update_configuration_runs: azure.mgmt.automation.operations.SoftwareUpdateConfigurationRunsOperations
     :ivar software_update_configuration_machine_runs: SoftwareUpdateConfigurationMachineRuns operations
     :vartype software_update_configuration_machine_runs: azure.mgmt.automation.operations.SoftwareUpdateConfigurationMachineRunsOperations
+    :ivar source_control: SourceControl operations
+    :vartype source_control: azure.mgmt.automation.operations.SourceControlOperations
+    :ivar source_control_sync_job: SourceControlSyncJob operations
+    :vartype source_control_sync_job: azure.mgmt.automation.operations.SourceControlSyncJobOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -255,4 +261,8 @@ class AutomationClient(object):
         self.software_update_configuration_runs = SoftwareUpdateConfigurationRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.software_update_configuration_machine_runs = SoftwareUpdateConfigurationMachineRunsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.source_control = SourceControlOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.source_control_sync_job = SourceControlSyncJobOperations(
             self._client, self.config, self._serialize, self._deserialize)

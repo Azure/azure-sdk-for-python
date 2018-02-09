@@ -18,10 +18,12 @@ class Schedule(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Gets or sets the id of the resource.
-    :type id: str
-    :param name: Gets or sets the name of the schedule.
-    :type name: str
+    :ivar id: Gets the id of the resource.
+    :vartype id: str
+    :ivar name: Gets name of the schedule.
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param start_time: Gets or sets the start time of the schedule.
     :type start_time: datetime
     :ivar start_time_offset_minutes: Gets the start time's offset in minutes.
@@ -57,12 +59,16 @@ class Schedule(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'start_time_offset_minutes': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'start_time_offset_minutes': {'key': 'properties.startTimeOffsetMinutes', 'type': 'float'},
         'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
@@ -79,10 +85,11 @@ class Schedule(Model):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, start_time=None, expiry_time=None, expiry_time_offset_minutes=None, is_enabled=False, next_run=None, next_run_offset_minutes=None, interval=None, frequency=None, time_zone=None, advanced_schedule=None, creation_time=None, last_modified_time=None, description=None):
+    def __init__(self, start_time=None, expiry_time=None, expiry_time_offset_minutes=None, is_enabled=False, next_run=None, next_run_offset_minutes=None, interval=None, frequency=None, time_zone=None, advanced_schedule=None, creation_time=None, last_modified_time=None, description=None):
         super(Schedule, self).__init__()
-        self.id = id
-        self.name = name
+        self.id = None
+        self.name = None
+        self.type = None
         self.start_time = start_time
         self.start_time_offset_minutes = None
         self.expiry_time = expiry_time

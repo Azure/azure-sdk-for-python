@@ -23,17 +23,13 @@ class VariableUpdateParameters(Model):
     :type description: str
     """
 
-    _validation = {
-        'name': {'required': True},
-    }
-
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'properties.value', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, name, value=None, description=None):
+    def __init__(self, name=None, value=None, description=None):
         super(VariableUpdateParameters, self).__init__()
         self.name = name
         self.value = value
