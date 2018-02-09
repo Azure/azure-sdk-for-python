@@ -49,6 +49,7 @@ class CorrelationFilter(Model):
     }
 
     def __init__(self, correlation_id=None, message_id=None, to=None, reply_to=None, label=None, session_id=None, reply_to_session_id=None, content_type=None, requires_preprocessing=True):
+        super(CorrelationFilter, self).__init__()
         self.correlation_id = correlation_id
         self.message_id = message_id
         self.to = to
