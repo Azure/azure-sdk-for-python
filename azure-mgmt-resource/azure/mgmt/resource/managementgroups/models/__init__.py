@@ -18,7 +18,7 @@ from .parent_group_info import ParentGroupInfo
 from .management_group_details import ManagementGroupDetails
 from .management_group_child_info import ManagementGroupChildInfo
 from .management_group import ManagementGroup
-from .create_group_request import CreateGroupRequest
+from .create_management_group_request import CreateManagementGroupRequest
 from .management_group_info_paged import ManagementGroupInfoPaged
 from .operation_paged import OperationPaged
 
@@ -32,7 +32,7 @@ __all__ = [
     'ManagementGroupDetails',
     'ManagementGroupChildInfo',
     'ManagementGroup',
-    'CreateGroupRequest',
+    'CreateManagementGroupRequest',
     'ManagementGroupInfoPaged',
     'OperationPaged',
 ]

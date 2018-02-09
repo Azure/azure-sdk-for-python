@@ -213,7 +213,7 @@ class ManagementGroupsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managementgroups.models.ErrorResponseException>`
         """
-        create_group_request = models.CreateGroupRequest(display_name=display_name, parent_id=parent_id)
+        create_management_group_request = models.CreateManagementGroupRequest(display_name=display_name, parent_id=parent_id)
 
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
@@ -239,7 +239,7 @@ class ManagementGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_group_request, 'CreateGroupRequest')
+        body_content = self._serialize.body(create_management_group_request, 'CreateManagementGroupRequest')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -287,7 +287,7 @@ class ManagementGroupsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managementgroups.models.ErrorResponseException>`
         """
-        create_group_request = models.CreateGroupRequest(display_name=display_name, parent_id=parent_id)
+        create_management_group_request = models.CreateManagementGroupRequest(display_name=display_name, parent_id=parent_id)
 
         # Construct URL
         url = '/providers/Microsoft.Management/managementGroups/{groupId}'
@@ -313,7 +313,7 @@ class ManagementGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_group_request, 'CreateGroupRequest')
+        body_content = self._serialize.body(create_management_group_request, 'CreateManagementGroupRequest')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
