@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class VaultProperties(Model):
+class VaultPatchProperties(Model):
     """Properties of the vault.
 
     :param tenant_id: The Azure Active Directory tenant ID that should be used
@@ -24,9 +24,6 @@ class VaultProperties(Model):
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID.
     :type access_policies: list[~azure.mgmt.keyvault.models.AccessPolicyEntry]
-    :param vault_uri: The URI of the vault for performing operations on keys
-     and secrets.
-    :type vault_uri: str
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from the
      key vault.
@@ -47,16 +44,10 @@ class VaultProperties(Model):
     :type create_mode: str or ~azure.mgmt.keyvault.models.CreateMode
     """
 
-    _validation = {
-        'tenant_id': {'required': True},
-        'sku': {'required': True},
-    }
-
     _attribute_map = {
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'access_policies': {'key': 'accessPolicies', 'type': '[AccessPolicyEntry]'},
-        'vault_uri': {'key': 'vaultUri', 'type': 'str'},
         'enabled_for_deployment': {'key': 'enabledForDeployment', 'type': 'bool'},
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
@@ -64,12 +55,11 @@ class VaultProperties(Model):
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
     }
 
-    def __init__(self, tenant_id, sku, access_policies=None, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None):
-        super(VaultProperties, self).__init__()
+    def __init__(self, tenant_id=None, sku=None, access_policies=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None):
+        super(VaultPatchProperties, self).__init__()
         self.tenant_id = tenant_id
         self.sku = sku
         self.access_policies = access_policies
-        self.vault_uri = vault_uri
         self.enabled_for_deployment = enabled_for_deployment
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
