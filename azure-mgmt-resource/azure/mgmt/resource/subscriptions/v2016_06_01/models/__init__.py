@@ -10,10 +10,10 @@
 # --------------------------------------------------------------------------
 
 from .location import Location
+from .location_list_result import LocationListResult
 from .subscription_policies import SubscriptionPolicies
 from .subscription import Subscription
 from .tenant_id_description import TenantIdDescription
-from .location_paged import LocationPaged
 from .subscription_paged import SubscriptionPaged
 from .tenant_id_description_paged import TenantIdDescriptionPaged
 from .subscription_client_enums import (
@@ -23,10 +23,10 @@ from .subscription_client_enums import (
 
 __all__ = [
     'Location',
+    'LocationListResult',
     'SubscriptionPolicies',
     'Subscription',
     'TenantIdDescription',
-    'LocationPaged',
     'SubscriptionPaged',
     'TenantIdDescriptionPaged',
     'SubscriptionState',
