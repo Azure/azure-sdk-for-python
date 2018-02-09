@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class CreateGroupRequest(Model):
+class CreateManagementGroupRequest(Model):
     """Management group creation parameters.
 
     :param display_name: The friendly name of the management group.
@@ -29,6 +29,6 @@ class CreateGroupRequest(Model):
     }
 
     def __init__(self, display_name=None, parent_id=None):
-        super(CreateGroupRequest, self).__init__()
+        super(CreateManagementGroupRequest, self).__init__()
         self.display_name = display_name
         self.parent_id = parent_id
