@@ -26,12 +26,16 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .error_response import ErrorResponse, ErrorResponseException
 from .arm_disaster_recovery import ArmDisasterRecovery
+from .messaging_regions_properties import MessagingRegionsProperties
+from .messaging_regions import MessagingRegions
+from .messaging_plan import MessagingPlan
 from .operation_paged import OperationPaged
 from .eh_namespace_paged import EHNamespacePaged
 from .authorization_rule_paged import AuthorizationRulePaged
 from .arm_disaster_recovery_paged import ArmDisasterRecoveryPaged
 from .eventhub_paged import EventhubPaged
 from .consumer_group_paged import ConsumerGroupPaged
+from .messaging_regions_paged import MessagingRegionsPaged
 from .event_hub_management_client_enums import (
     SkuName,
     SkuTier,
@@ -62,12 +66,16 @@ __all__ = [
     'Operation',
     'ErrorResponse', 'ErrorResponseException',
     'ArmDisasterRecovery',
+    'MessagingRegionsProperties',
+    'MessagingRegions',
+    'MessagingPlan',
     'OperationPaged',
     'EHNamespacePaged',
     'AuthorizationRulePaged',
     'ArmDisasterRecoveryPaged',
     'EventhubPaged',
     'ConsumerGroupPaged',
+    'MessagingRegionsPaged',
     'SkuName',
     'SkuTier',
     'AccessRights',
