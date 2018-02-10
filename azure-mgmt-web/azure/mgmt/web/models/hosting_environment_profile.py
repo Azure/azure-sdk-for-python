@@ -38,6 +38,7 @@ class HostingEnvironmentProfile(Model):
     }
 
     def __init__(self, id=None):
+        super(HostingEnvironmentProfile, self).__init__()
         self.id = id
         self.name = None
         self.type = None

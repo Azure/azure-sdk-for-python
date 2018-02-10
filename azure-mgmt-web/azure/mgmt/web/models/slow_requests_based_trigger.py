@@ -17,7 +17,7 @@ class SlowRequestsBasedTrigger(Model):
 
     :param time_taken: Time taken.
     :type time_taken: str
-    :param count: Count.
+    :param count: Request Count.
     :type count: int
     :param time_interval: Time interval.
     :type time_interval: str
@@ -30,6 +30,7 @@ class SlowRequestsBasedTrigger(Model):
     }
 
     def __init__(self, time_taken=None, count=None, time_interval=None):
+        super(SlowRequestsBasedTrigger, self).__init__()
         self.time_taken = time_taken
         self.count = count
         self.time_interval = time_interval

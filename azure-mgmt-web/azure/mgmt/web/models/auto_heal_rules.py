@@ -28,5 +28,6 @@ class AutoHealRules(Model):
     }
 
     def __init__(self, triggers=None, actions=None):
+        super(AutoHealRules, self).__init__()
         self.triggers = triggers
         self.actions = actions

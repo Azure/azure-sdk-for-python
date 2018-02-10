@@ -33,5 +33,6 @@ class CsmSlotEntity(Model):
     }
 
     def __init__(self, target_slot, preserve_vnet):
+        super(CsmSlotEntity, self).__init__()
         self.target_slot = target_slot
         self.preserve_vnet = preserve_vnet

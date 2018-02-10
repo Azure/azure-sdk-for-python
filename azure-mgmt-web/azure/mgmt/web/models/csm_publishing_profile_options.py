@@ -27,4 +27,5 @@ class CsmPublishingProfileOptions(Model):
     }
 
     def __init__(self, format=None):
+        super(CsmPublishingProfileOptions, self).__init__()
         self.format = format

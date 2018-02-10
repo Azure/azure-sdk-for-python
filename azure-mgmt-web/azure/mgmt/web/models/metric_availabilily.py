@@ -27,5 +27,6 @@ class MetricAvailabilily(Model):
     }
 
     def __init__(self, time_grain=None, retention=None):
+        super(MetricAvailabilily, self).__init__()
         self.time_grain = time_grain
         self.retention = retention
