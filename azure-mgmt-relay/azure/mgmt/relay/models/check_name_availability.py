@@ -30,4 +30,5 @@ class CheckNameAvailability(Model):
     }
 
     def __init__(self, name):
+        super(CheckNameAvailability, self).__init__()
         self.name = name

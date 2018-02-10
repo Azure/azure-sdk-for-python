@@ -36,4 +36,5 @@ class Sku(Model):
     name = "Standard"
 
     def __init__(self, tier=None):
+        super(Sku, self).__init__()
         self.tier = tier
