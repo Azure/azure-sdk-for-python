@@ -24,4 +24,5 @@ class NameIdentifier(Model):
     }
 
     def __init__(self, name=None):
+        super(NameIdentifier, self).__init__()
         self.name = name

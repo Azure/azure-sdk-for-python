@@ -40,6 +40,7 @@ class SlotSwapStatus(Model):
     }
 
     def __init__(self):
+        super(SlotSwapStatus, self).__init__()
         self.timestamp_utc = None
         self.source_slot_name = None
         self.destination_slot_name = None

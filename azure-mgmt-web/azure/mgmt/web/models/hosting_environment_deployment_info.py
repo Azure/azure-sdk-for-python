@@ -27,5 +27,6 @@ class HostingEnvironmentDeploymentInfo(Model):
     }
 
     def __init__(self, name=None, location=None):
+        super(HostingEnvironmentDeploymentInfo, self).__init__()
         self.name = name
         self.location = location

@@ -48,6 +48,8 @@ class BackupRequest(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'backup_request_name': {'required': True},
+        'storage_account_url': {'required': True},
     }
 
     _attribute_map = {
@@ -63,7 +65,7 @@ class BackupRequest(ProxyOnlyResource):
         'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
-    def __init__(self, kind=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
+    def __init__(self, backup_request_name, storage_account_url, kind=None, enabled=None, backup_schedule=None, databases=None, backup_request_type=None):
         super(BackupRequest, self).__init__(kind=kind)
         self.backup_request_name = backup_request_name
         self.enabled = enabled

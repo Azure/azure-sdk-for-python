@@ -123,6 +123,13 @@ class SiteConfig(Model):
     :param ip_security_restrictions: IP security restrictions.
     :type ip_security_restrictions:
      list[~azure.mgmt.web.models.IpSecurityRestriction]
+    :param http20_enabled: Http20Enabled: configures a web site to allow
+     clients to connect over http2.0. Default value: True .
+    :type http20_enabled: bool
+    :param min_tls_version: MinTlsVersion: configures the minimum version of
+     TLS required for SSL requests. Possible values include: '1.0', '1.1',
+     '1.2'
+    :type min_tls_version: str or ~azure.mgmt.web.models.SupportedTlsVersions
     """
 
     _validation = {
@@ -173,9 +180,12 @@ class SiteConfig(Model):
         'auto_swap_slot_name': {'key': 'autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'localMySqlEnabled', 'type': 'bool'},
         'ip_security_restrictions': {'key': 'ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
+        'http20_enabled': {'key': 'http20Enabled', 'type': 'bool'},
+        'min_tls_version': {'key': 'minTlsVersion', 'type': 'str'},
     }
 
-    def __init__(self, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, linux_fx_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None):
+    def __init__(self, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, linux_fx_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None, http20_enabled=True, min_tls_version=None):
+        super(SiteConfig, self).__init__()
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version
@@ -219,3 +229,5 @@ class SiteConfig(Model):
         self.auto_swap_slot_name = auto_swap_slot_name
         self.local_my_sql_enabled = local_my_sql_enabled
         self.ip_security_restrictions = ip_security_restrictions
+        self.http20_enabled = http20_enabled
+        self.min_tls_version = min_tls_version
