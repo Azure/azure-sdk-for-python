@@ -19,6 +19,7 @@ from .resource import Resource
 from .operation_display_info import OperationDisplayInfo
 from .operation_entity import OperationEntity
 from .suppression_contract import SuppressionContract
+from .config_data_paged import ConfigDataPaged
 from .resource_recommendation_base_paged import ResourceRecommendationBasePaged
 from .operation_entity_paged import OperationEntityPaged
 from .suppression_contract_paged import SuppressionContractPaged
@@ -39,6 +40,7 @@ __all__ = [
     'OperationDisplayInfo',
     'OperationEntity',
     'SuppressionContract',
+    'ConfigDataPaged',
     'ResourceRecommendationBasePaged',
     'OperationEntityPaged',
     'SuppressionContractPaged',

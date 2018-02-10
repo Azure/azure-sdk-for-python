@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.1"
+from msrest.paging import Paged
 
+
+class ConfigDataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ConfigData <azure.mgmt.advisor.models.ConfigData>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ConfigData]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ConfigDataPaged, self).__init__(*args, **kwargs)
