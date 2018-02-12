@@ -22,6 +22,8 @@ class Certificate(Model):
     :vartype id: str
     :ivar name: Gets the name of the certificate.
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :ivar thumbprint: Gets the thumbprint of the certificate.
     :vartype thumbprint: str
     :ivar expiry_time: Gets the expiry time of the certificate.
@@ -39,6 +41,7 @@ class Certificate(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'thumbprint': {'readonly': True},
         'expiry_time': {'readonly': True},
         'is_exportable': {'readonly': True},
@@ -49,6 +52,7 @@ class Certificate(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
         'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
         'is_exportable': {'key': 'properties.isExportable', 'type': 'bool'},
@@ -61,6 +65,7 @@ class Certificate(Model):
         super(Certificate, self).__init__()
         self.id = None
         self.name = None
+        self.type = None
         self.thumbprint = None
         self.expiry_time = None
         self.is_exportable = None

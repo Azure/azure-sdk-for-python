@@ -20,8 +20,10 @@ class Credential(Model):
 
     :ivar id: Gets the id of the resource.
     :vartype id: str
-    :param name: Gets the name of the credential.
-    :type name: str
+    :ivar name: Gets the name of the credential.
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :ivar user_name: Gets the user name of the credential.
     :vartype user_name: str
     :ivar creation_time: Gets the creation time.
@@ -34,6 +36,8 @@ class Credential(Model):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'user_name': {'readonly': True},
         'creation_time': {'readonly': True},
         'last_modified_time': {'readonly': True},
@@ -42,16 +46,18 @@ class Credential(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, name=None, description=None):
+    def __init__(self, description=None):
         super(Credential, self).__init__()
         self.id = None
-        self.name = name
+        self.name = None
+        self.type = None
         self.user_name = None
         self.creation_time = None
         self.last_modified_time = None
