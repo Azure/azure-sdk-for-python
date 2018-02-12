@@ -26,6 +26,8 @@ class UsagesOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-06-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -49,10 +51,9 @@ class UsagesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`VaultUsage
-         <azure.mgmt.recoveryservices.models.VaultUsage>`
-        :rtype: :class:`VaultUsagePaged
-         <azure.mgmt.recoveryservices.models.VaultUsagePaged>`
+        :return: An iterator like instance of VaultUsage
+        :rtype:
+         ~azure.mgmt.recoveryservices.models.VaultUsagePaged[~azure.mgmt.recoveryservices.models.VaultUsage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -88,7 +89,7 @@ class UsagesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

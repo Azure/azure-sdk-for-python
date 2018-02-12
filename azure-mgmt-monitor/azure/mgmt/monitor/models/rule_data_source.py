@@ -39,5 +39,6 @@ class RuleDataSource(Model):
     }
 
     def __init__(self, resource_uri=None):
+        super(RuleDataSource, self).__init__()
         self.resource_uri = resource_uri
         self.odatatype = None

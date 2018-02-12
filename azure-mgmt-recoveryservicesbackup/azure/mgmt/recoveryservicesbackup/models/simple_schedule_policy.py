@@ -15,19 +15,19 @@ from .schedule_policy import SchedulePolicy
 class SimpleSchedulePolicy(SchedulePolicy):
     """Simple policy schedule.
 
-    :param schedule_policy_type: Polymorphic Discriminator
+    :param schedule_policy_type: Constant filled by server.
     :type schedule_policy_type: str
     :param schedule_run_frequency: Frequency of the schedule operation of this
      policy. Possible values include: 'Invalid', 'Daily', 'Weekly'
-    :type schedule_run_frequency: str or :class:`ScheduleRunType
-     <azure.mgmt.recoveryservicesbackup.models.ScheduleRunType>`
+    :type schedule_run_frequency: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ScheduleRunType
     :param schedule_run_days: List of days of week this schedule has to be
      run.
-    :type schedule_run_days: list of str or :class:`DayOfWeek
-     <azure.mgmt.recoveryservicesbackup.models.DayOfWeek>`
+    :type schedule_run_days: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.DayOfWeek]
     :param schedule_run_times: List of times of day this schedule has to be
      run.
-    :type schedule_run_times: list of datetime
+    :type schedule_run_times: list[datetime]
     :param schedule_weekly_frequency: At every number weeks this schedule has
      to be run.
     :type schedule_weekly_frequency: int

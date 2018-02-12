@@ -29,18 +29,18 @@ class OperationResultInfoBaseResource(OperationWorkerResponse):
      'ExpectationFailed', 'UpgradeRequired', 'InternalServerError',
      'NotImplemented', 'BadGateway', 'ServiceUnavailable', 'GatewayTimeout',
      'HttpVersionNotSupported'
-    :type status_code: str or :class:`HttpStatusCode
-     <azure.mgmt.recoveryservicesbackup.models.HttpStatusCode>`
+    :type status_code: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HttpStatusCode
     :param headers: HTTP headers associated with this operation.
-    :type headers: dict
+    :type headers: dict[str, list[str]]
     :param operation: OperationResultInfoBaseResource operation
-    :type operation: :class:`OperationResultInfoBase
-     <azure.mgmt.recoveryservicesbackup.models.OperationResultInfoBase>`
+    :type operation:
+     ~azure.mgmt.recoveryservicesbackup.models.OperationResultInfoBase
     """
 
     _attribute_map = {
         'status_code': {'key': 'statusCode', 'type': 'HttpStatusCode'},
-        'headers': {'key': 'Headers', 'type': '{[str]}'},
+        'headers': {'key': 'headers', 'type': '{[str]}'},
         'operation': {'key': 'operation', 'type': 'OperationResultInfoBase'},
     }
 

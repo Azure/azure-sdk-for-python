@@ -43,6 +43,7 @@ class FileProperties(Model):
     }
 
     def __init__(self, last_modified, content_length, creation_time=None, content_type=None, file_mode=None):
+        super(FileProperties, self).__init__()
         self.creation_time = creation_time
         self.last_modified = last_modified
         self.content_length = content_length

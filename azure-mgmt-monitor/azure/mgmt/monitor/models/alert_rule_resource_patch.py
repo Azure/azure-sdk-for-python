@@ -56,6 +56,7 @@ class AlertRuleResourcePatch(Model):
     }
 
     def __init__(self, name, is_enabled, condition, tags=None, description=None, actions=None):
+        super(AlertRuleResourcePatch, self).__init__()
         self.tags = tags
         self.name = name
         self.description = description

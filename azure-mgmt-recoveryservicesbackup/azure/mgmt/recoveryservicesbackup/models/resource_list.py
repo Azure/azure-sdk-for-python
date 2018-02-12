@@ -25,4 +25,5 @@ class ResourceList(Model):
     }
 
     def __init__(self, next_link=None):
+        super(ResourceList, self).__init__()
         self.next_link = next_link

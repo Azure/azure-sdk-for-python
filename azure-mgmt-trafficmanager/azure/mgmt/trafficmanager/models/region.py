@@ -22,8 +22,7 @@ class Region(Model):
     :type name: str
     :param regions: The list of Regions grouped under this Region in the
      Geographic Hierarchy.
-    :type regions: list of :class:`Region
-     <azure.mgmt.trafficmanager.models.Region>`
+    :type regions: list[~azure.mgmt.trafficmanager.models.Region]
     """
 
     _attribute_map = {
@@ -33,6 +32,7 @@ class Region(Model):
     }
 
     def __init__(self, code=None, name=None, regions=None):
+        super(Region, self).__init__()
         self.code = code
         self.name = name
         self.regions = regions

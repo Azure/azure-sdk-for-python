@@ -33,6 +33,7 @@ class ManagementEventAggregationCondition(Model):
     }
 
     def __init__(self, operator=None, threshold=None, window_size=None):
+        super(ManagementEventAggregationCondition, self).__init__()
         self.operator = operator
         self.threshold = threshold
         self.window_size = window_size

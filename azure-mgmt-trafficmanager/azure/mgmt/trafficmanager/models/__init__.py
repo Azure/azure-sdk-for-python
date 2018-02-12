@@ -21,6 +21,11 @@ from .traffic_manager_geographic_hierarchy import TrafficManagerGeographicHierar
 from .resource import Resource
 from .tracked_resource import TrackedResource
 from .proxy_resource import ProxyResource
+from .heat_map_endpoint import HeatMapEndpoint
+from .query_experience import QueryExperience
+from .traffic_flow import TrafficFlow
+from .heat_map_model import HeatMapModel
+from .traffic_manager_user_metrics_key_model import TrafficManagerUserMetricsKeyModel
 from .profile_paged import ProfilePaged
 from .traffic_manager_management_client_enums import (
     EndpointStatus,
@@ -44,6 +49,11 @@ __all__ = [
     'Resource',
     'TrackedResource',
     'ProxyResource',
+    'HeatMapEndpoint',
+    'QueryExperience',
+    'TrafficFlow',
+    'HeatMapModel',
+    'TrafficManagerUserMetricsKeyModel',
     'ProfilePaged',
     'EndpointStatus',
     'EndpointMonitorStatus',
