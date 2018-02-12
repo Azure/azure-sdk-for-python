@@ -18,13 +18,13 @@ class NameAvailabilityInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name_available: the Boolean value of true or false to indicate
+    :ivar name_available: The Boolean value of true or false to indicate
      whether the Data Lake Store account name is available or not.
     :vartype name_available: bool
-    :ivar reason: the reason why the Data Lake Store account name is not
+    :ivar reason: The reason why the Data Lake Store account name is not
      available, if nameAvailable is false.
     :vartype reason: str
-    :ivar message: the message describing why the Data Lake Store account name
+    :ivar message: The message describing why the Data Lake Store account name
      is not available, if nameAvailable is false.
     :vartype message: str
     """

@@ -18,19 +18,19 @@ class CapabilityInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar subscription_id: the subscription credentials that uniquely
+    :ivar subscription_id: The subscription credentials that uniquely
      identifies the subscription.
     :vartype subscription_id: str
-    :ivar state: the subscription state. Possible values include:
+    :ivar state: The subscription state. Possible values include:
      'Registered', 'Suspended', 'Deleted', 'Unregistered', 'Warned'
     :vartype state: str or ~azure.mgmt.datalake.store.models.SubscriptionState
-    :ivar max_account_count: the maximum supported number of accounts under
+    :ivar max_account_count: The maximum supported number of accounts under
      this subscription.
     :vartype max_account_count: int
-    :ivar account_count: the current number of accounts under this
+    :ivar account_count: The current number of accounts under this
      subscription.
     :vartype account_count: int
-    :ivar migration_state: the Boolean value of true or false to indicate the
+    :ivar migration_state: The Boolean value of true or false to indicate the
      maintenance state.
     :vartype migration_state: bool
     """
