@@ -26,6 +26,8 @@ class ProfilesOperations(object):
     :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-04-02".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -325,7 +327,7 @@ class ProfilesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, profile_name, tags, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Updates an existing CDN profile with the specified profile name under
         the specified subscription and resource group.
 

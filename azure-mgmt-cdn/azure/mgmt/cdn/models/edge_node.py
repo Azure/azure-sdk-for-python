@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class EdgeNode(Resource):
+class EdgeNode(ProxyResource):
     """Edgenode is a global Point of Presence (POP) location used to deliver CDN
     content to end users.
 
@@ -25,10 +25,6 @@ class EdgeNode(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     :param ip_address_groups: List of ip address groups.
     :type ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
     """
@@ -37,7 +33,6 @@ class EdgeNode(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'ip_address_groups': {'required': True},
     }
 
@@ -45,11 +40,9 @@ class EdgeNode(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'ip_address_groups': {'key': 'properties.ipAddressGroups', 'type': '[IpAddressGroup]'},
     }
 
-    def __init__(self, location, ip_address_groups, tags=None):
-        super(EdgeNode, self).__init__(location=location, tags=tags)
+    def __init__(self, ip_address_groups):
+        super(EdgeNode, self).__init__()
         self.ip_address_groups = ip_address_groups

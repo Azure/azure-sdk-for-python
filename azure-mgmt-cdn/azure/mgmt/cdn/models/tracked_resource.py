@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The core properties of ARM resources.
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,21 +24,28 @@ class Resource(Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, location, tags=None):
+        super(TrackedResource, self).__init__()
+        self.location = location
+        self.tags = tags

@@ -26,6 +26,8 @@ class EndpointsOperations(object):
     :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-04-02".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -521,11 +523,13 @@ class EndpointsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             deserialized = None
 
+            if response.status_code == 200:
+                deserialized = self._deserialize('Endpoint', response)
             if response.status_code == 202:
                 deserialized = self._deserialize('Endpoint', response)
 
@@ -610,11 +614,13 @@ class EndpointsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             deserialized = None
 
+            if response.status_code == 200:
+                deserialized = self._deserialize('Endpoint', response)
             if response.status_code == 202:
                 deserialized = self._deserialize('Endpoint', response)
 
@@ -707,7 +713,7 @@ class EndpointsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
@@ -797,7 +803,7 @@ class EndpointsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
             if raw:
