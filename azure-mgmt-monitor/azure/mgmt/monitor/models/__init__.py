@@ -55,8 +55,13 @@ from .diagnostic_settings_category_resource_collection import DiagnosticSettings
 from .email_receiver import EmailReceiver
 from .sms_receiver import SmsReceiver
 from .webhook_receiver import WebhookReceiver
+from .itsm_receiver import ItsmReceiver
+from .azure_app_push_receiver import AzureAppPushReceiver
+from .automation_runbook_receiver import AutomationRunbookReceiver
+from .voice_receiver import VoiceReceiver
 from .action_group_resource import ActionGroupResource
 from .enable_request import EnableRequest
+from .action_group_patch_body import ActionGroupPatchBody
 from .activity_log_alert_leaf_condition import ActivityLogAlertLeafCondition
 from .activity_log_alert_all_of_condition import ActivityLogAlertAllOfCondition
 from .activity_log_alert_action_group import ActivityLogAlertActionGroup
@@ -153,8 +158,13 @@ __all__ = [
     'EmailReceiver',
     'SmsReceiver',
     'WebhookReceiver',
+    'ItsmReceiver',
+    'AzureAppPushReceiver',
+    'AutomationRunbookReceiver',
+    'VoiceReceiver',
     'ActionGroupResource',
     'EnableRequest',
+    'ActionGroupPatchBody',
     'ActivityLogAlertLeafCondition',
     'ActivityLogAlertAllOfCondition',
     'ActivityLogAlertActionGroup',
