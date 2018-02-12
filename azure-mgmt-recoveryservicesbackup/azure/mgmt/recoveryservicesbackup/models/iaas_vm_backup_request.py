@@ -15,7 +15,7 @@ from .backup_request import BackupRequest
 class IaasVMBackupRequest(BackupRequest):
     """IaaS VM workload-specific backup request.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param recovery_point_expiry_time_in_utc: Backup copy will expire after
      the time specified (UTC).

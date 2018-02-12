@@ -19,13 +19,26 @@ class BMSRPQueryObject(Model):
     :type start_date: datetime
     :param end_date: Backup copies created before this time.
     :type end_date: datetime
+    :param restore_point_query_type: RestorePoint type. Possible values
+     include: 'Invalid', 'Full', 'Log', 'Differential', 'FullAndDifferential',
+     'All'
+    :type restore_point_query_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RestorePointQueryType
+    :param extended_info: In Get Recovery Point, it tells whether extended
+     information about recovery point is asked.
+    :type extended_info: bool
     """
 
     _attribute_map = {
         'start_date': {'key': 'startDate', 'type': 'iso-8601'},
         'end_date': {'key': 'endDate', 'type': 'iso-8601'},
+        'restore_point_query_type': {'key': 'restorePointQueryType', 'type': 'str'},
+        'extended_info': {'key': 'extendedInfo', 'type': 'bool'},
     }
 
-    def __init__(self, start_date=None, end_date=None):
+    def __init__(self, start_date=None, end_date=None, restore_point_query_type=None, extended_info=None):
+        super(BMSRPQueryObject, self).__init__()
         self.start_date = start_date
         self.end_date = end_date
+        self.restore_point_query_type = restore_point_query_type
+        self.extended_info = extended_info

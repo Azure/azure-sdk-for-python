@@ -72,6 +72,7 @@ class TimeWindow(Model):
     }
 
     def __init__(self, start, end, time_zone=None):
+        super(TimeWindow, self).__init__()
         self.time_zone = time_zone
         self.start = start
         self.end = end

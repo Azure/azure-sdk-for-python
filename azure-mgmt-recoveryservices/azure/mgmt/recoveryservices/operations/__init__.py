@@ -9,8 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_vault_configs_operations import BackupVaultConfigsOperations
-from .backup_storage_configs_operations import BackupStorageConfigsOperations
 from .vault_certificates_operations import VaultCertificatesOperations
 from .registered_identities_operations import RegisteredIdentitiesOperations
 from .replication_usages_operations import ReplicationUsagesOperations
@@ -20,8 +18,6 @@ from .vault_extended_info_operations import VaultExtendedInfoOperations
 from .usages_operations import UsagesOperations
 
 __all__ = [
-    'BackupVaultConfigsOperations',
-    'BackupStorageConfigsOperations',
     'VaultCertificatesOperations',
     'RegisteredIdentitiesOperations',
     'ReplicationUsagesOperations',

@@ -40,5 +40,6 @@ class RuleCondition(Model):
     }
 
     def __init__(self, data_source=None):
+        super(RuleCondition, self).__init__()
         self.data_source = data_source
         self.odatatype = None

@@ -65,6 +65,7 @@ class PoolUpdatePropertiesParameter(Model):
     }
 
     def __init__(self, certificate_references, application_package_references, metadata, start_task=None):
+        super(PoolUpdatePropertiesParameter, self).__init__()
         self.start_task = start_task
         self.certificate_references = certificate_references
         self.application_package_references = application_package_references

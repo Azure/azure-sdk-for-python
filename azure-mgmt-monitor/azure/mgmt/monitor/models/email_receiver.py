@@ -41,6 +41,7 @@ class EmailReceiver(Model):
     }
 
     def __init__(self, name, email_address):
+        super(EmailReceiver, self).__init__()
         self.name = name
         self.email_address = email_address
         self.status = None

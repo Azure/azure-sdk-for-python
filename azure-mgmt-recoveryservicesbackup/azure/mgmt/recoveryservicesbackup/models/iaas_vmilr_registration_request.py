@@ -15,7 +15,7 @@ from .ilr_request import ILRRequest
 class IaasVMILRRegistrationRequest(ILRRequest):
     """Restore files/folders from a backup copy of IaaS VM.
 
-    :param object_type: Polymorphic Discriminator
+    :param object_type: Constant filled by server.
     :type object_type: str
     :param recovery_point_id: ID of the IaaS VM backup copy from where the
      files/folders have to be restored.

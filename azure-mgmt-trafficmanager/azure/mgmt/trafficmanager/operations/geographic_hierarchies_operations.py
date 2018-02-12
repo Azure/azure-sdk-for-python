@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -25,6 +25,8 @@ class GeographicHierarchiesOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-05-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -45,10 +47,11 @@ class GeographicHierarchiesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TrafficManagerGeographicHierarchy
-         <azure.mgmt.trafficmanager.models.TrafficManagerGeographicHierarchy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: TrafficManagerGeographicHierarchy or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.trafficmanager.models.TrafficManagerGeographicHierarchy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -70,7 +73,7 @@ class GeographicHierarchiesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

@@ -42,5 +42,6 @@ class PoolEnableAutoScaleParameter(Model):
     }
 
     def __init__(self, auto_scale_formula=None, auto_scale_evaluation_interval=None):
+        super(PoolEnableAutoScaleParameter, self).__init__()
         self.auto_scale_formula = auto_scale_formula
         self.auto_scale_evaluation_interval = auto_scale_evaluation_interval

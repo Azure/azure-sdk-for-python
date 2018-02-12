@@ -20,9 +20,10 @@ class MabJob(Job):
     :type entity_friendly_name: str
     :param backup_management_type: Backup management type to execute the
      current job. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
-     'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: The operation name.
     :type operation: str
     :param status: Job status.
@@ -33,33 +34,36 @@ class MabJob(Job):
     :type end_time: datetime
     :param activity_id: ActivityId of job.
     :type activity_id: str
-    :param job_type: Polymorphic Discriminator
+    :param job_type: Constant filled by server.
     :type job_type: str
     :param duration: Time taken by job to run.
     :type duration: timedelta
     :param actions_info: The state/actions applicable on jobs like
      cancel/retry.
-    :type actions_info: list of str or :class:`JobSupportedAction
-     <azure.mgmt.recoveryservicesbackup.models.JobSupportedAction>`
+    :type actions_info: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.JobSupportedAction]
     :param mab_server_name: Name of server protecting the DS.
     :type mab_server_name: str
     :param mab_server_type: Server type of MAB container. Possible values
      include: 'Invalid', 'Unknown', 'IaasVMContainer',
      'IaasVMServiceContainer', 'DPMContainer', 'AzureBackupServerContainer',
-     'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter'
-    :type mab_server_type: str or :class:`MabServerType
-     <azure.mgmt.recoveryservicesbackup.models.MabServerType>`
+     'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter',
+     'VMAppContainer', 'SQLAGWorkLoadContainer', 'StorageContainer',
+     'GenericContainer'
+    :type mab_server_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.MabServerType
     :param workload_type: Workload type of backup item. Possible values
      include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange',
-     'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource'
-    :type workload_type: str or :class:`WorkloadType
-     <azure.mgmt.recoveryservicesbackup.models.WorkloadType>`
+     'Sharepoint', 'VMwareVM', 'SystemState', 'Client', 'GenericDataSource',
+     'SQLDataBase', 'AzureFileShare'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :param error_details: The errors.
-    :type error_details: list of :class:`MabErrorInfo
-     <azure.mgmt.recoveryservicesbackup.models.MabErrorInfo>`
+    :type error_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.MabErrorInfo]
     :param extended_info: Additional information on the job.
-    :type extended_info: :class:`MabJobExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.MabJobExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.MabJobExtendedInfo
     """
 
     _validation = {

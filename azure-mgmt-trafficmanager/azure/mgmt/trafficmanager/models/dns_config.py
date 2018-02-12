@@ -44,6 +44,7 @@ class DnsConfig(Model):
     }
 
     def __init__(self, relative_name=None, ttl=None):
+        super(DnsConfig, self).__init__()
         self.relative_name = relative_name
         self.fqdn = None
         self.ttl = ttl

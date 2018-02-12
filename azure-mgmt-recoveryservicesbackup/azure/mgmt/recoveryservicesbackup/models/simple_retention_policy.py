@@ -15,11 +15,11 @@ from .retention_policy import RetentionPolicy
 class SimpleRetentionPolicy(RetentionPolicy):
     """Simple policy retention.
 
-    :param retention_policy_type: Polymorphic Discriminator
+    :param retention_policy_type: Constant filled by server.
     :type retention_policy_type: str
     :param retention_duration: Retention duration of the protection policy.
-    :type retention_duration: :class:`RetentionDuration
-     <azure.mgmt.recoveryservicesbackup.models.RetentionDuration>`
+    :type retention_duration:
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionDuration
     """
 
     _validation = {

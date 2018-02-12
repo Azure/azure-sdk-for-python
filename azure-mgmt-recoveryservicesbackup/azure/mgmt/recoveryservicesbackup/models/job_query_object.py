@@ -18,18 +18,18 @@ class JobQueryObject(Model):
     :param status: Status of the job. Possible values include: 'Invalid',
      'InProgress', 'Completed', 'Failed', 'CompletedWithWarnings', 'Cancelled',
      'Cancelling'
-    :type status: str or :class:`JobStatus
-     <azure.mgmt.recoveryservicesbackup.models.JobStatus>`
+    :type status: str or ~azure.mgmt.recoveryservicesbackup.models.JobStatus
     :param backup_management_type: Type of backup managmenent for the job.
      Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: Type of operation. Possible values include: 'Invalid',
      'Register', 'UnRegister', 'ConfigureBackup', 'Backup', 'Restore',
      'DisableBackup', 'DeleteBackupData'
-    :type operation: str or :class:`JobOperationType
-     <azure.mgmt.recoveryservicesbackup.models.JobOperationType>`
+    :type operation: str or
+     ~azure.mgmt.recoveryservicesbackup.models.JobOperationType
     :param job_id: JobID represents the job uniquely.
     :type job_id: str
     :param start_time: Job has started at this time. Value is in UTC.
@@ -48,6 +48,7 @@ class JobQueryObject(Model):
     }
 
     def __init__(self, status=None, backup_management_type=None, operation=None, job_id=None, start_time=None, end_time=None):
+        super(JobQueryObject, self).__init__()
         self.status = status
         self.backup_management_type = backup_management_type
         self.operation = operation

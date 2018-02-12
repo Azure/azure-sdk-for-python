@@ -31,5 +31,6 @@ class LocalizableString(Model):
     }
 
     def __init__(self, value, localized_value=None):
+        super(LocalizableString, self).__init__()
         self.value = value
         self.localized_value = localized_value

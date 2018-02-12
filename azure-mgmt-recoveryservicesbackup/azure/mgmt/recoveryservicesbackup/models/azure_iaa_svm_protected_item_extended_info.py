@@ -33,6 +33,7 @@ class AzureIaaSVMProtectedItemExtendedInfo(Model):
     }
 
     def __init__(self, oldest_recovery_point=None, recovery_point_count=None, policy_inconsistent=None):
+        super(AzureIaaSVMProtectedItemExtendedInfo, self).__init__()
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_inconsistent = policy_inconsistent
