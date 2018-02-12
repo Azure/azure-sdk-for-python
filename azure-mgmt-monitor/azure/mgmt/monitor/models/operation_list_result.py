@@ -30,5 +30,6 @@ class OperationListResult(Model):
     }
 
     def __init__(self, value=None, next_link=None):
+        super(OperationListResult, self).__init__()
         self.value = value
         self.next_link = next_link

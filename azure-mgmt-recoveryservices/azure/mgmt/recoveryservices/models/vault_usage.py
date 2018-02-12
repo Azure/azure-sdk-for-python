@@ -17,8 +17,7 @@ class VaultUsage(Model):
 
     :param unit: Unit of the usage. Possible values include: 'Count', 'Bytes',
      'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond'
-    :type unit: str or :class:`UsagesUnit
-     <azure.mgmt.recoveryservices.models.UsagesUnit>`
+    :type unit: str or ~azure.mgmt.recoveryservices.models.UsagesUnit
     :param quota_period: Quota period of usage.
     :type quota_period: str
     :param next_reset_time: Next reset time of usage.
@@ -28,8 +27,7 @@ class VaultUsage(Model):
     :param limit: Limit of usage.
     :type limit: long
     :param name: Name of usage.
-    :type name: :class:`NameInfo
-     <azure.mgmt.recoveryservices.models.NameInfo>`
+    :type name: ~azure.mgmt.recoveryservices.models.NameInfo
     """
 
     _attribute_map = {
@@ -42,6 +40,7 @@ class VaultUsage(Model):
     }
 
     def __init__(self, unit=None, quota_period=None, next_reset_time=None, current_value=None, limit=None, name=None):
+        super(VaultUsage, self).__init__()
         self.unit = unit
         self.quota_period = quota_period
         self.next_reset_time = next_reset_time

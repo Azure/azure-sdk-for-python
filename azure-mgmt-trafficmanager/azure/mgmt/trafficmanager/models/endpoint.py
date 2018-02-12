@@ -36,8 +36,8 @@ class Endpoint(ProxyResource):
     :param endpoint_status: The status of the endpoint. If the endpoint is
      Enabled, it is probed for endpoint health and is included in the traffic
      routing method. Possible values include: 'Enabled', 'Disabled'
-    :type endpoint_status: str or :class:`EndpointStatus
-     <azure.mgmt.trafficmanager.models.EndpointStatus>`
+    :type endpoint_status: str or
+     ~azure.mgmt.trafficmanager.models.EndpointStatus
     :param weight: The weight of this endpoint when using the 'Weighted'
      traffic routing method. Possible values are from 1 to 1000.
     :type weight: long
@@ -53,8 +53,8 @@ class Endpoint(ProxyResource):
     :param endpoint_monitor_status: The monitoring status of the endpoint.
      Possible values include: 'CheckingEndpoint', 'Online', 'Degraded',
      'Disabled', 'Inactive', 'Stopped'
-    :type endpoint_monitor_status: str or :class:`EndpointMonitorStatus
-     <azure.mgmt.trafficmanager.models.EndpointMonitorStatus>`
+    :type endpoint_monitor_status: str or
+     ~azure.mgmt.trafficmanager.models.EndpointMonitorStatus
     :param min_child_endpoints: The minimum number of endpoints that must be
      available in the child profile in order for the parent profile to be
      considered available. Only applicable to endpoint of type
@@ -63,7 +63,7 @@ class Endpoint(ProxyResource):
     :param geo_mapping: The list of countries/regions mapped to this endpoint
      when using the ‘Geographic’ traffic routing method. Please consult Traffic
      Manager Geographic documentation for a full list of accepted values.
-    :type geo_mapping: list of str
+    :type geo_mapping: list[str]
     """
 
     _validation = {

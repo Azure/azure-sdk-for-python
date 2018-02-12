@@ -70,6 +70,7 @@ class MetricTrigger(Model):
     }
 
     def __init__(self, metric_name, metric_resource_uri, time_grain, statistic, time_window, time_aggregation, operator, threshold):
+        super(MetricTrigger, self).__init__()
         self.metric_name = metric_name
         self.metric_resource_uri = metric_resource_uri
         self.time_grain = time_grain

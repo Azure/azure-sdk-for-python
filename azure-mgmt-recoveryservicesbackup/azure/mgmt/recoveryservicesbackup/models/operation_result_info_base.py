@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class OperationResultInfoBase(Model):
     """Base class for operation result info.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ExportJobsOperationResultInfo, OperationResultInfo
+
+    :param object_type: Constant filled by server.
     :type object_type: str
     """
 
@@ -32,4 +35,5 @@ class OperationResultInfoBase(Model):
     }
 
     def __init__(self):
+        super(OperationResultInfoBase, self).__init__()
         self.object_type = None

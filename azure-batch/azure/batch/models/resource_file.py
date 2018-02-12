@@ -45,6 +45,7 @@ class ResourceFile(Model):
     }
 
     def __init__(self, blob_source, file_path, file_mode=None):
+        super(ResourceFile, self).__init__()
         self.blob_source = blob_source
         self.file_path = file_path
         self.file_mode = file_mode

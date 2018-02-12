@@ -25,4 +25,5 @@ class GetProtectedItemQueryObject(Model):
     }
 
     def __init__(self, expand=None):
+        super(GetProtectedItemQueryObject, self).__init__()
         self.expand = expand

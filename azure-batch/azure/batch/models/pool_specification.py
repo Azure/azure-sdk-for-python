@@ -168,6 +168,7 @@ class PoolSpecification(Model):
     }
 
     def __init__(self, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated_nodes=None, target_low_priority_nodes=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, user_accounts=None, metadata=None):
+        super(PoolSpecification, self).__init__()
         self.display_name = display_name
         self.vm_size = vm_size
         self.cloud_service_configuration = cloud_service_configuration

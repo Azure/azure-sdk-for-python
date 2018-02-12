@@ -33,7 +33,7 @@ class VaultExtendedInfoResource(Resource):
     :type encryption_key: str
     :param encryption_key_thumbprint: Encryption key thumbprint.
     :type encryption_key_thumbprint: str
-    :param algorithm: Algorithm.
+    :param algorithm: Algorithm for Vault ExtendedInfo
     :type algorithm: str
     """
 

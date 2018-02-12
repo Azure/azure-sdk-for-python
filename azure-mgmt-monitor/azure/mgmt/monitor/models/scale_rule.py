@@ -32,5 +32,6 @@ class ScaleRule(Model):
     }
 
     def __init__(self, metric_trigger, scale_action):
+        super(ScaleRule, self).__init__()
         self.metric_trigger = metric_trigger
         self.scale_action = scale_action

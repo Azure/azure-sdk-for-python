@@ -24,4 +24,5 @@ class DPMContainerExtendedInfo(Model):
     }
 
     def __init__(self, last_refreshed_at=None):
+        super(DPMContainerExtendedInfo, self).__init__()
         self.last_refreshed_at = last_refreshed_at

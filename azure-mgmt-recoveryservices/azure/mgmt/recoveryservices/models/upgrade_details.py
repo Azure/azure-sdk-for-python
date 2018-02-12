@@ -29,15 +29,15 @@ class UpgradeDetails(Model):
     :vartype end_time_utc: datetime
     :ivar status: Status of the vault upgrade operation. Possible values
      include: 'Unknown', 'InProgress', 'Upgraded', 'Failed'
-    :vartype status: str or :class:`VaultUpgradeState
-     <azure.mgmt.recoveryservices.models.VaultUpgradeState>`
+    :vartype status: str or
+     ~azure.mgmt.recoveryservices.models.VaultUpgradeState
     :ivar message: Message to the user containing information about the
      upgrade operation.
     :vartype message: str
     :ivar trigger_type: The way the vault upgradation was triggered. Possible
      values include: 'UserTriggered', 'ForcedUpgrade'
-    :vartype trigger_type: str or :class:`TriggerType
-     <azure.mgmt.recoveryservices.models.TriggerType>`
+    :vartype trigger_type: str or
+     ~azure.mgmt.recoveryservices.models.TriggerType
     :ivar upgraded_resource_id: Resource ID of the upgraded vault.
     :vartype upgraded_resource_id: str
     :ivar previous_resource_id: Resource ID of the vault before the upgrade.
@@ -69,6 +69,7 @@ class UpgradeDetails(Model):
     }
 
     def __init__(self):
+        super(UpgradeDetails, self).__init__()
         self.operation_id = None
         self.start_time_utc = None
         self.last_updated_time_utc = None

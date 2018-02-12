@@ -36,6 +36,7 @@ class MabJobTaskDetails(Model):
     }
 
     def __init__(self, task_id=None, start_time=None, end_time=None, duration=None, status=None):
+        super(MabJobTaskDetails, self).__init__()
         self.task_id = task_id
         self.start_time = start_time
         self.end_time = end_time
