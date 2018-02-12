@@ -24,7 +24,7 @@ class AzureIaaSVMErrorInfo(Model):
     :type error_string: str
     :param recommendations: List of localized recommendations for above error
      code.
-    :type recommendations: list of str
+    :type recommendations: list[str]
     """
 
     _attribute_map = {
@@ -35,6 +35,7 @@ class AzureIaaSVMErrorInfo(Model):
     }
 
     def __init__(self, error_code=None, error_title=None, error_string=None, recommendations=None):
+        super(AzureIaaSVMErrorInfo, self).__init__()
         self.error_code = error_code
         self.error_title = error_title
         self.error_string = error_string

@@ -23,15 +23,17 @@ class ExportJobsOperationResultsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-12-01".
+    :ivar api_version: Client Api Version. Constant value: "2017-07-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-12-01"
+        self.api_version = "2017-07-01"
 
         self.config = config
 
@@ -54,13 +56,11 @@ class ExportJobsOperationResultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`OperationResultInfoBaseResource
-         <azure.mgmt.recoveryservicesbackup.models.OperationResultInfoBaseResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
+        :return: OperationResultInfoBaseResource or ClientRawResponse if
          raw=true
-        :rtype: :class:`OperationResultInfoBaseResource
-         <azure.mgmt.recoveryservicesbackup.models.OperationResultInfoBaseResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.OperationResultInfoBaseResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -89,7 +89,7 @@ class ExportJobsOperationResultsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
@@ -99,6 +99,8 @@ class ExportJobsOperationResultsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('OperationResultInfoBaseResource', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('OperationResultInfoBaseResource', response)
 
         if raw:
