@@ -9,5 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-07-01-preview"
+from msrest.serialization import Model
 
+
+class ApplicationTypeResourceList(Model):
+    """The list of application type names.
+
+    :param value:
+    :type value:
+     list[~azure.mgmt.servicefabric.models.ApplicationTypeResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ApplicationTypeResource]'},
+    }
+
+    def __init__(self, value=None):
+        super(ApplicationTypeResourceList, self).__init__()
+        self.value = value

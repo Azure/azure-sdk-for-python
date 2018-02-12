@@ -37,5 +37,6 @@ class ClusterHealthPolicy(Model):
     }
 
     def __init__(self, max_percent_unhealthy_nodes=None, max_percent_unhealthy_applications=None):
+        super(ClusterHealthPolicy, self).__init__()
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
         self.max_percent_unhealthy_applications = max_percent_unhealthy_applications

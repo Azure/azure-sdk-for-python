@@ -12,20 +12,21 @@
 from msrest.serialization import Model
 
 
-class ErrorModelError(Model):
-    """The error detail .
+class ClusterListResult(Model):
+    """Cluster list results.
 
-    :param code: The error code
-    :type code: str
-    :param message: The error message
-    :type message: str
+    :param value:
+    :type value: list[~azure.mgmt.servicefabric.models.Cluster]
+    :param next_link: The URL to use for getting the next set of results.
+    :type next_link: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Cluster]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
-        self.code = code
-        self.message = message
+    def __init__(self, value=None, next_link=None):
+        super(ClusterListResult, self).__init__()
+        self.value = value
+        self.next_link = next_link

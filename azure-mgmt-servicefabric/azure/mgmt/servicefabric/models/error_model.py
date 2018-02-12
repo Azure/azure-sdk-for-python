@@ -14,19 +14,23 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorModel(Model):
-    """The structure of the error.
+    """The error details.
 
-    :param error: The error detail
-    :type error: :class:`ErrorModelError
-     <azure.mgmt.servicefabric.models.ErrorModelError>`
+    :param code: The error code.
+    :type code: str
+    :param message: The error message.
+    :type message: str
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorModelError'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, error=None):
-        self.error = error
+    def __init__(self, code=None, message=None):
+        super(ErrorModel, self).__init__()
+        self.code = code
+        self.message = message
 
 
 class ErrorModelException(HttpOperationError):

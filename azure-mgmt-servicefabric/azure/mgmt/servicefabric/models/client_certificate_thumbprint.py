@@ -13,12 +13,13 @@ from msrest.serialization import Model
 
 
 class ClientCertificateThumbprint(Model):
-    """Client certificate details using thumbprint.
+    """Describes the client certificate details using thumbprint.
 
-    :param is_admin: Is this certificate used for admin access from the
-     client, if false, it is used or query only access
+    :param is_admin: Indicates if the client certificate has admin access to
+     the cluster. Non admin clients can perform only read only operations on
+     the cluster.
     :type is_admin: bool
-    :param certificate_thumbprint: Certificate thumbprint
+    :param certificate_thumbprint: The thumbprint of the client certificate.
     :type certificate_thumbprint: str
     """
 
@@ -33,5 +34,6 @@ class ClientCertificateThumbprint(Model):
     }
 
     def __init__(self, is_admin, certificate_thumbprint):
+        super(ClientCertificateThumbprint, self).__init__()
         self.is_admin = is_admin
         self.certificate_thumbprint = certificate_thumbprint

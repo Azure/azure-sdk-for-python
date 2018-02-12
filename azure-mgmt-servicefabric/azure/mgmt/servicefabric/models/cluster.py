@@ -13,98 +13,96 @@ from .resource import Resource
 
 
 class Cluster(Resource):
-    """The cluster resource.
+    """The cluster resource
+    .
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Azure resource ID.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Azure resource name.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Azure resource type.
     :vartype type: str
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
-    :ivar available_cluster_versions: The available cluster code version which
-     the cluster can upgrade to, note that you must choose upgradeMode to
-     manual to upgrade to
-    :vartype available_cluster_versions: list of :class:`ClusterVersionDetails
-     <azure.mgmt.servicefabric.models.ClusterVersionDetails>`
-    :ivar cluster_id: The unique identifier for the cluster resource
+    :type tags: dict[str, str]
+    :param available_cluster_versions: The Service Fabric runtime versions
+     available for this cluster.
+    :type available_cluster_versions:
+     list[~azure.mgmt.servicefabric.models.ClusterVersionDetails]
+    :ivar cluster_id: A service generated unique identifier for the cluster
+     resource.
     :vartype cluster_id: str
-    :ivar cluster_state: The state for the cluster. Possible values include:
-     'WaitingForNodes', 'Deploying', 'BaselineUpgrade',
-     'UpdatingUserConfiguration', 'UpdatingUserCertificate',
-     'UpdatingInfrastructure', 'EnforcingClusterVersion',
-     'UpgradeServiceUnreachable', 'AutoScale', 'Ready'
-    :vartype cluster_state: str or :class:`enum
-     <azure.mgmt.servicefabric.models.enum>`
-    :ivar cluster_endpoint: The endpoint for the cluster connecting to
-     servicefabric resource provider
+    :param cluster_state: Possible values include: 'WaitingForNodes',
+     'Deploying', 'BaselineUpgrade', 'UpdatingUserConfiguration',
+     'UpdatingUserCertificate', 'UpdatingInfrastructure',
+     'EnforcingClusterVersion', 'UpgradeServiceUnreachable', 'AutoScale',
+     'Ready'
+    :type cluster_state: str or ~azure.mgmt.servicefabric.models.enum
+    :ivar cluster_endpoint: The Azure Resource Provider endpoint. A system
+     service in the cluster connects to this  endpoint.
     :vartype cluster_endpoint: str
-    :param cluster_code_version: The ServiceFabric code version running in
-     your cluster
+    :param cluster_code_version: The Service Fabric runtime version of the
+     cluster. This property can only by set the user when **upgradeMode** is
+     set to 'Manual'. To get list of available Service Fabric versions for new
+     clusters use [ClusterVersion API](./ClusterVersion.md). To get the list of
+     available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
-    :param certificate: This primay certificate will be used as cluster node
-     to node security, SSL certificate for cluster management endpoint and
-     default admin client
-    :type certificate: :class:`CertificateDescription
-     <azure.mgmt.servicefabric.models.CertificateDescription>`
-    :param reliability_level: Cluster reliability level indicates replica set
-     size of system service. Possible values include: 'Bronze', 'Silver',
-     'Gold', 'Platinum'
-    :type reliability_level: str or :class:`enum
-     <azure.mgmt.servicefabric.models.enum>`
-    :param upgrade_mode: Cluster upgrade mode indicates if fabric upgrade is
-     initiated automatically by the system or not. Possible values include:
-     'Automatic', 'Manual'
-    :type upgrade_mode: str or :class:`enum
-     <azure.mgmt.servicefabric.models.enum>`
-    :param client_certificate_thumbprints: The client thumbprint details ,it
-     is used for client access for cluster operation
-    :type client_certificate_thumbprints: list of
-     :class:`ClientCertificateThumbprint
-     <azure.mgmt.servicefabric.models.ClientCertificateThumbprint>`
-    :param client_certificate_common_names:  List of client certificates to
-     whitelist based on common names
-    :type client_certificate_common_names: list of
-     :class:`ClientCertificateCommonName
-     <azure.mgmt.servicefabric.models.ClientCertificateCommonName>`
-    :param fabric_settings: List of custom fabric settings to configure the
-     cluster.
-    :type fabric_settings: list of :class:`SettingsSectionDescription
-     <azure.mgmt.servicefabric.models.SettingsSectionDescription>`
+    :param certificate: The certificate to use for securing the cluster. The
+     certificate provided will be used for  node to node security within the
+     cluster, SSL certificate for cluster management endpoint and default
+     admin client.
+    :type certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+    :param reliability_level: Possible values include: 'None', 'Bronze',
+     'Silver', 'Gold', 'Platinum'
+    :type reliability_level: str or ~azure.mgmt.servicefabric.models.enum
+    :param upgrade_mode: Possible values include: 'Automatic', 'Manual'
+    :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.enum
+    :param client_certificate_thumbprints: The list of client certificates
+     referenced by thumbprint that are allowed to manage the cluster.
+    :type client_certificate_thumbprints:
+     list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
+    :param client_certificate_common_names: The list of client certificates
+     referenced by common name that are allowed to manage the cluster.
+    :type client_certificate_common_names:
+     list[~azure.mgmt.servicefabric.models.ClientCertificateCommonName]
+    :param fabric_settings: The list of custom fabric settings to configure
+     the cluster.
+    :type fabric_settings:
+     list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
     :param reverse_proxy_certificate: The server certificate used by reverse
-     proxy
-    :type reverse_proxy_certificate: :class:`CertificateDescription
-     <azure.mgmt.servicefabric.models.CertificateDescription>`
-    :param management_endpoint: The http management endpoint of the cluster
+     proxy.
+    :type reverse_proxy_certificate:
+     ~azure.mgmt.servicefabric.models.CertificateDescription
+    :param management_endpoint: The http management endpoint of the cluster.
     :type management_endpoint: str
-    :param node_types: The list of nodetypes that make up the cluster
-    :type node_types: list of :class:`NodeTypeDescription
-     <azure.mgmt.servicefabric.models.NodeTypeDescription>`
-    :param azure_active_directory: The settings to enable AAD authentication
-     on the cluster
-    :type azure_active_directory: :class:`AzureActiveDirectory
-     <azure.mgmt.servicefabric.models.AzureActiveDirectory>`
+    :param node_types: The list of node types in the cluster.
+    :type node_types:
+     list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
+    :param azure_active_directory: The AAD authentication settings of the
+     cluster.
+    :type azure_active_directory:
+     ~azure.mgmt.servicefabric.models.AzureActiveDirectory
     :ivar provisioning_state: The provisioning state of the cluster resource.
      Possible values include: 'Updating', 'Succeeded', 'Failed', 'Canceled'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.servicefabric.models.ProvisioningState>`
-    :param vm_image: The name of VM image VMSS has been configured with.
-     Generic names such as Windows or Linux can be used.
+    :vartype provisioning_state: str or
+     ~azure.mgmt.servicefabric.models.ProvisioningState
+    :param vm_image: The VM image VMSS has been configured with. Generic names
+     such as Windows or Linux can be used.
     :type vm_image: str
-    :param diagnostics_storage_account_config: The storage diagnostics account
-     configuration details
+    :param diagnostics_storage_account_config: The storage account information
+     for storing Service Fabric diagnostic logs.
     :type diagnostics_storage_account_config:
-     :class:`DiagnosticsStorageAccountConfig
-     <azure.mgmt.servicefabric.models.DiagnosticsStorageAccountConfig>`
+     ~azure.mgmt.servicefabric.models.DiagnosticsStorageAccountConfig
     :param upgrade_description: The policy to use when upgrading the cluster.
-    :type upgrade_description: :class:`ClusterUpgradePolicy
-     <azure.mgmt.servicefabric.models.ClusterUpgradePolicy>`
+    :type upgrade_description:
+     ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+    :param add_on_features: The list of add-on features to enable in the
+     cluster.
+    :type add_on_features: list[str]
     """
 
     _validation = {
@@ -112,9 +110,7 @@ class Cluster(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'available_cluster_versions': {'readonly': True},
         'cluster_id': {'readonly': True},
-        'cluster_state': {'readonly': True},
         'cluster_endpoint': {'readonly': True},
         'management_endpoint': {'required': True},
         'node_types': {'required': True},
@@ -146,13 +142,14 @@ class Cluster(Resource):
         'vm_image': {'key': 'properties.vmImage', 'type': 'str'},
         'diagnostics_storage_account_config': {'key': 'properties.diagnosticsStorageAccountConfig', 'type': 'DiagnosticsStorageAccountConfig'},
         'upgrade_description': {'key': 'properties.upgradeDescription', 'type': 'ClusterUpgradePolicy'},
+        'add_on_features': {'key': 'properties.addOnFeatures', 'type': '[str]'},
     }
 
-    def __init__(self, location, management_endpoint, node_types, tags=None, cluster_code_version=None, certificate=None, reliability_level=None, upgrade_mode=None, client_certificate_thumbprints=None, client_certificate_common_names=None, fabric_settings=None, reverse_proxy_certificate=None, azure_active_directory=None, vm_image=None, diagnostics_storage_account_config=None, upgrade_description=None):
+    def __init__(self, location, management_endpoint, node_types, tags=None, available_cluster_versions=None, cluster_state=None, cluster_code_version=None, certificate=None, reliability_level=None, upgrade_mode=None, client_certificate_thumbprints=None, client_certificate_common_names=None, fabric_settings=None, reverse_proxy_certificate=None, azure_active_directory=None, vm_image=None, diagnostics_storage_account_config=None, upgrade_description=None, add_on_features=None):
         super(Cluster, self).__init__(location=location, tags=tags)
-        self.available_cluster_versions = None
+        self.available_cluster_versions = available_cluster_versions
         self.cluster_id = None
-        self.cluster_state = None
+        self.cluster_state = cluster_state
         self.cluster_endpoint = None
         self.cluster_code_version = cluster_code_version
         self.certificate = certificate
@@ -169,3 +166,4 @@ class Cluster(Resource):
         self.vm_image = vm_image
         self.diagnostics_storage_account_config = diagnostics_storage_account_config
         self.upgrade_description = upgrade_description
+        self.add_on_features = add_on_features

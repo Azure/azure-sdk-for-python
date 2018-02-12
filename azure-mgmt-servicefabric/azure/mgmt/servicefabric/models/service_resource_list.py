@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2017-07-01-preview"
+from msrest.serialization import Model
 
+
+class ServiceResourceList(Model):
+    """The list of service resources.
+
+    :param value:
+    :type value: list[~azure.mgmt.servicefabric.models.ServiceResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServiceResource]'},
+    }
+
+    def __init__(self, value=None):
+        super(ServiceResourceList, self).__init__()
+        self.value = value
