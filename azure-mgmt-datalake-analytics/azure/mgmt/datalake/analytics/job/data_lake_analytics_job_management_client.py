@@ -13,9 +13,9 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.job_operations import JobOperations
 from .operations.pipeline_operations import PipelineOperations
 from .operations.recurrence_operations import RecurrenceOperations
-from .operations.job_operations import JobOperations
 from . import models
 
 
@@ -56,12 +56,12 @@ class DataLakeAnalyticsJobManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: DataLakeAnalyticsJobManagementClientConfiguration
 
+    :ivar job: Job operations
+    :vartype job: azure.mgmt.datalake.analytics.job.operations.JobOperations
     :ivar pipeline: Pipeline operations
     :vartype pipeline: azure.mgmt.datalake.analytics.job.operations.PipelineOperations
     :ivar recurrence: Recurrence operations
     :vartype recurrence: azure.mgmt.datalake.analytics.job.operations.RecurrenceOperations
-    :ivar job: Job operations
-    :vartype job: azure.mgmt.datalake.analytics.job.operations.JobOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,9 +82,9 @@ class DataLakeAnalyticsJobManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.job = JobOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.pipeline = PipelineOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recurrence = RecurrenceOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job = JobOperations(
             self._client, self.config, self._serialize, self._deserialize)
