@@ -12,30 +12,30 @@
 from msrest.serialization import Model
 
 
-class QueryKey(Model):
-    """Describes an API key for a given Azure Search service that has permissions
-    for query operations only.
+class Operation(Model):
+    """Describes a REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The name of the query API key; may be empty.
+    :ivar name: The name of the operation. This name is of the form
+     {provider}/{resource}/{operation}.
     :vartype name: str
-    :ivar key: The value of the query API key.
-    :vartype key: str
+    :ivar display: The object that describes the operation.
+    :vartype display: ~azure.mgmt.search.models.OperationDisplay
     """
 
     _validation = {
         'name': {'readonly': True},
-        'key': {'readonly': True},
+        'display': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
     def __init__(self):
-        super(QueryKey, self).__init__()
+        super(Operation, self).__init__()
         self.name = None
-        self.key = None
+        self.display = None

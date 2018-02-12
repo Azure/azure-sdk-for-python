@@ -16,7 +16,10 @@ from .query_key import QueryKey
 from .sku import Sku
 from .search_service import SearchService
 from .resource import Resource
+from .operation_display import OperationDisplay
+from .operation import Operation
 from .search_management_request_options import SearchManagementRequestOptions
+from .operation_paged import OperationPaged
 from .query_key_paged import QueryKeyPaged
 from .search_service_paged import SearchServicePaged
 from .search_management_client_enums import (
@@ -36,7 +39,10 @@ __all__ = [
     'Sku',
     'SearchService',
     'Resource',
+    'OperationDisplay',
+    'Operation',
     'SearchManagementRequestOptions',
+    'OperationPaged',
     'QueryKeyPaged',
     'SearchServicePaged',
     'UnavailableNameReason',

@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -25,6 +25,8 @@ class AdminKeysOperations(object):
     :param deserializer: An objec model deserializer.
     :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -50,17 +52,15 @@ class AdminKeysOperations(object):
         :param search_management_request_options: Additional parameters for
          the operation
         :type search_management_request_options:
-         :class:`SearchManagementRequestOptions
-         <azure.mgmt.search.models.SearchManagementRequestOptions>`
+         ~azure.mgmt.search.models.SearchManagementRequestOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AdminKeyResult
-         <azure.mgmt.search.models.AdminKeyResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AdminKeyResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.search.models.AdminKeyResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         client_request_id = None
@@ -94,7 +94,7 @@ class AdminKeysOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -127,22 +127,19 @@ class AdminKeysOperations(object):
         :param key_kind: Specifies which key to regenerate. Valid values
          include 'primary' and 'secondary'. Possible values include: 'primary',
          'secondary'
-        :type key_kind: str or :class:`AdminKeyKind
-         <azure.mgmt.search.models.AdminKeyKind>`
+        :type key_kind: str or ~azure.mgmt.search.models.AdminKeyKind
         :param search_management_request_options: Additional parameters for
          the operation
         :type search_management_request_options:
-         :class:`SearchManagementRequestOptions
-         <azure.mgmt.search.models.SearchManagementRequestOptions>`
+         ~azure.mgmt.search.models.SearchManagementRequestOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AdminKeyResult
-         <azure.mgmt.search.models.AdminKeyResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: AdminKeyResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.search.models.AdminKeyResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         client_request_id = None
@@ -177,7 +174,7 @@ class AdminKeysOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

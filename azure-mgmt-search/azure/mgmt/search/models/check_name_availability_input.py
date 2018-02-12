@@ -41,4 +41,5 @@ class CheckNameAvailabilityInput(Model):
     type = "searchServices"
 
     def __init__(self, name):
+        super(CheckNameAvailabilityInput, self).__init__()
         self.name = name
