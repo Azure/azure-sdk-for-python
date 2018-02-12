@@ -11,7 +11,6 @@
 
 from .config_data_properties import ConfigDataProperties
 from .config_data import ConfigData
-from .configuration_list_result import ConfigurationListResult
 from .arm_error_response_body import ARMErrorResponseBody
 from .short_description import ShortDescription
 from .resource_recommendation_base import ResourceRecommendationBase
@@ -32,7 +31,6 @@ from .advisor_management_client_enums import (
 __all__ = [
     'ConfigDataProperties',
     'ConfigData',
-    'ConfigurationListResult',
     'ARMErrorResponseBody',
     'ShortDescription',
     'ResourceRecommendationBase',
