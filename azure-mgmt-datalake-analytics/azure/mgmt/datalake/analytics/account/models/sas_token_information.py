@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class SasTokenInfo(Model):
+class SasTokenInformation(Model):
     """SAS token information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar access_token: the access token for the associated Azure Storage
+    :ivar access_token: The access token for the associated Azure Storage
      Container.
     :vartype access_token: str
     """
@@ -32,5 +32,5 @@ class SasTokenInfo(Model):
     }
 
     def __init__(self):
-        super(SasTokenInfo, self).__init__()
+        super(SasTokenInformation, self).__init__()
         self.access_token = None
