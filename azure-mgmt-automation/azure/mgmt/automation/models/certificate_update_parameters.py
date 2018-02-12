@@ -21,16 +21,12 @@ class CertificateUpdateParameters(Model):
     :type description: str
     """
 
-    _validation = {
-        'name': {'required': True},
-    }
-
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, name, description=None):
+    def __init__(self, name=None, description=None):
         super(CertificateUpdateParameters, self).__init__()
         self.name = name
         self.description = description

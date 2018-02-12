@@ -41,6 +41,8 @@ from .webhook_operations import WebhookOperations
 from .software_update_configurations_operations import SoftwareUpdateConfigurationsOperations
 from .software_update_configuration_runs_operations import SoftwareUpdateConfigurationRunsOperations
 from .software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
+from .source_control_operations import SourceControlOperations
+from .source_control_sync_job_operations import SourceControlSyncJobOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -75,4 +77,6 @@ __all__ = [
     'SoftwareUpdateConfigurationsOperations',
     'SoftwareUpdateConfigurationRunsOperations',
     'SoftwareUpdateConfigurationMachineRunsOperations',
+    'SourceControlOperations',
+    'SourceControlSyncJobOperations',
 ]

@@ -25,10 +25,6 @@ class CredentialUpdateParameters(Model):
     :type description: str
     """
 
-    _validation = {
-        'name': {'required': True},
-    }
-
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'user_name': {'key': 'properties.userName', 'type': 'str'},
@@ -36,7 +32,7 @@ class CredentialUpdateParameters(Model):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, name, user_name=None, password=None, description=None):
+    def __init__(self, name=None, user_name=None, password=None, description=None):
         super(CredentialUpdateParameters, self).__init__()
         self.name = name
         self.user_name = user_name
