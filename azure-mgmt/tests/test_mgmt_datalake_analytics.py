@@ -669,7 +669,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.assertTrue(True)
 
     @record
-    def test_adla_compute_policy(self):
+    def test_adla_compute_policies(self):
         self.run_prereqs()
 
         # define account params
