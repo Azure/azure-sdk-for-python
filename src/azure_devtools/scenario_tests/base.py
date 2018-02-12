@@ -172,7 +172,10 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
             body = response['body']['string']
             if body and not isinstance(body, six.string_types):
-                response['body']['string'] = body.decode('utf-8')
+                try:
+                    response['body']['string'] = body.decode('utf-8')
+                except ValueError:
+                    pass
 
             for processor in self.recording_processors:
                 response = processor.process_response(response)
