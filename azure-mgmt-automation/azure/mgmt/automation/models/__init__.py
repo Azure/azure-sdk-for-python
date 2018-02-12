@@ -52,6 +52,7 @@ from .agent_registration_regenerate_key_parameter import AgentRegistrationRegene
 from .content_source import ContentSource
 from .dsc_configuration_association_property import DscConfigurationAssociationProperty
 from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
+from .provisioning_state_property import ProvisioningStateProperty
 from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_parameter import DscConfigurationParameter
 from .dsc_configuration import DscConfiguration
@@ -212,6 +213,7 @@ __all__ = [
     'ContentSource',
     'DscConfigurationAssociationProperty',
     'DscCompilationJobCreateParameters',
+    'ProvisioningStateProperty',
     'DscCompilationJob',
     'DscConfigurationParameter',
     'DscConfiguration',

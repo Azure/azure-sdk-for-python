@@ -20,6 +20,8 @@ class DscCompilationJob(Model):
 
     :ivar id: Gets the id of the resource.
     :vartype id: str
+    :ivar name: Dsc Compilation Job name
+    :vartype name: str
     :param configuration: Gets or sets the configuration.
     :type configuration:
      ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
@@ -29,6 +31,12 @@ class DscCompilationJob(Model):
     :vartype job_id: str
     :ivar creation_time: Gets the creation time of the job.
     :vartype creation_time: datetime
+    :param provisioning_state: The current provisioning state of the job.
+    :type provisioning_state:
+     ~azure.mgmt.automation.models.ProvisioningStateProperty
+    :param run_on: Gets or sets the runOn which specifies the group name where
+     the job is to be executed.
+    :type run_on: str
     :param status: Gets or sets the status of the job. Possible values
      include: 'New', 'Activating', 'Running', 'Completed', 'Failed', 'Stopped',
      'Blocked', 'Suspended', 'Disconnected', 'Suspending', 'Stopping',
@@ -53,6 +61,7 @@ class DscCompilationJob(Model):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'started_by': {'readonly': True},
         'job_id': {'readonly': True},
         'creation_time': {'readonly': True},
@@ -65,10 +74,13 @@ class DscCompilationJob(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
         'started_by': {'key': 'properties.startedBy', 'type': 'str'},
         'job_id': {'key': 'properties.jobId', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateProperty'},
+        'run_on': {'key': 'properties.runOn', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
@@ -79,13 +91,16 @@ class DscCompilationJob(Model):
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
     }
 
-    def __init__(self, configuration=None, status=None, status_details=None, parameters=None):
+    def __init__(self, configuration=None, provisioning_state=None, run_on=None, status=None, status_details=None, parameters=None):
         super(DscCompilationJob, self).__init__()
         self.id = None
+        self.name = None
         self.configuration = configuration
         self.started_by = None
         self.job_id = None
         self.creation_time = None
+        self.provisioning_state = provisioning_state
+        self.run_on = run_on
         self.status = status
         self.status_details = status_details
         self.start_time = None
