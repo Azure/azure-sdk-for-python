@@ -12,26 +12,28 @@
 from msrest.serialization import Model
 
 
-class SettingsParameterDescription(Model):
-    """Describes a parameter in fabric settings of the cluster.
+class ServiceTypeHealthPolicyMapItem(Model):
+    """Defines an item in ServiceTypeHealthPolicyMap.
+    .
 
-    :param name: The parameter name of fabric setting.
-    :type name: str
-    :param value: The parameter value of fabric setting.
-    :type value: str
+    :param key: The key of the service type health policy map item. This is
+     the name of the service type.
+    :type key: str
+    :param value:
+    :type value: ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy
     """
 
     _validation = {
-        'name': {'required': True},
+        'key': {'required': True},
         'value': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'key': {'key': 'Key', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'ServiceTypeHealthPolicy'},
     }
 
-    def __init__(self, name, value):
-        super(SettingsParameterDescription, self).__init__()
-        self.name = name
+    def __init__(self, key, value):
+        super(ServiceTypeHealthPolicyMapItem, self).__init__()
+        self.key = key
         self.value = value

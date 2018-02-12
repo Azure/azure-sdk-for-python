@@ -13,16 +13,15 @@ from msrest.serialization import Model
 
 
 class ClusterVersionDetails(Model):
-    """The detail of the ServiceFabric runtime version result.
+    """The detail of the Service Fabric runtime version result.
 
-    :param code_version: The ServiceFabric runtime version of the cluster
+    :param code_version: The Service Fabric runtime version of the cluster.
     :type code_version: str
-    :param support_expiry_utc: The date of expiry of support of the version
+    :param support_expiry_utc: The date of expiry of support of the version.
     :type support_expiry_utc: str
-    :param environment: Cluster operating system. Possible values include:
-     'Windows', 'Linux'
-    :type environment: str or :class:`enum
-     <azure.mgmt.servicefabric.models.enum>`
+    :param environment: Indicates if this version is for Windows or Linux
+     operating system. Possible values include: 'Windows', 'Linux'
+    :type environment: str or ~azure.mgmt.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -32,6 +31,7 @@ class ClusterVersionDetails(Model):
     }
 
     def __init__(self, code_version=None, support_expiry_utc=None, environment=None):
+        super(ClusterVersionDetails, self).__init__()
         self.code_version = code_version
         self.support_expiry_utc = support_expiry_utc
         self.environment = environment

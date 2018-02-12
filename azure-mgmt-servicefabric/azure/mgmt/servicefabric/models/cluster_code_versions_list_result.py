@@ -12,29 +12,22 @@
 from msrest.serialization import Model
 
 
-class OperationResult(Model):
-    """Available operation list result.
+class ClusterCodeVersionsListResult(Model):
+    """The list results of the ServiceFabric runtime versions.
 
-    :param name: The name of the operation.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.servicefabric.models.AvailableOperationDisplay
-    :param origin: Origin result
-    :type origin: str
+    :param value:
+    :type value:
+     list[~azure.mgmt.servicefabric.models.ClusterCodeVersionsResult]
     :param next_link: The URL to use for getting the next set of results.
     :type next_link: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'AvailableOperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ClusterCodeVersionsResult]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display=None, origin=None, next_link=None):
-        super(OperationResult, self).__init__()
-        self.name = name
-        self.display = display
-        self.origin = origin
+    def __init__(self, value=None, next_link=None):
+        super(ClusterCodeVersionsListResult, self).__init__()
+        self.value = value
         self.next_link = next_link

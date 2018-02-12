@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """The resource model definition.
+class ProxyResource(Model):
+    """The resource model definition for proxy-only resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,8 +26,6 @@ class Resource(Model):
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -42,13 +40,11 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
-        super(Resource, self).__init__()
+    def __init__(self, location):
+        super(ProxyResource, self).__init__()
         self.id = None
         self.name = None
         self.type = None
         self.location = location
-        self.tags = tags

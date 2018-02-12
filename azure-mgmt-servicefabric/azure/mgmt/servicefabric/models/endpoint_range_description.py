@@ -32,5 +32,6 @@ class EndpointRangeDescription(Model):
     }
 
     def __init__(self, start_port, end_port):
+        super(EndpointRangeDescription, self).__init__()
         self.start_port = start_port
         self.end_port = end_port

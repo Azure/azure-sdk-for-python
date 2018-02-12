@@ -13,37 +13,48 @@ from msrest.serialization import Model
 
 
 class ClusterUpgradePolicy(Model):
-    """Cluster upgrade policy.
+    """Describes the policy used when upgrading the cluster.
 
-    :param override_user_upgrade_policy: Use the user defined upgrade policy
-     or not
-    :type override_user_upgrade_policy: bool
-    :param force_restart: Force node to restart or not
+    :param force_restart: If true, then processes are forcefully restarted
+     during upgrade even when the code version has not changed (the upgrade
+     only changes configuration or data).
     :type force_restart: bool
-    :param upgrade_replica_set_check_timeout: Timeout for replica set upgrade
-     to complete,it represents .Net TimeSpan
+    :param upgrade_replica_set_check_timeout: The maximum amount of time to
+     block processing of an upgrade domain and revent loss of availability when
+     there are unexpected issues. When this timeout expires, processing of the
+     upgrade domain will proceed regardless of availability loss issues. The
+     timeout is reset at the start of each upgrade domain. The timeout can be
+     in either hh:mm:ss or in d.hh:mm:ss.ms format.
     :type upgrade_replica_set_check_timeout: str
     :param health_check_wait_duration: The length of time to wait after
-     completing an upgrade domain before performing health checks, it
-     represents .Net TimeSpan
+     completing an upgrade domain before performing health checks. The duration
+     can be in either hh:mm:ss or in d.hh:mm:ss.ms format.
     :type health_check_wait_duration: str
-    :param health_check_stable_duration: The length of time that health checks
-     must pass continuously,it represents .Net TimeSpan
+    :param health_check_stable_duration: The amount of time that the
+     application or cluster must remain healthy before the upgrade proceeds to
+     the next upgrade domain. The duration can be in either hh:mm:ss or in
+     d.hh:mm:ss.ms format.
     :type health_check_stable_duration: str
-    :param health_check_retry_timeout: The length of time that health checks
-     can fail continuously,it represents .Net TimeSpan
+    :param health_check_retry_timeout: The amount of time to retry health
+     evaluation when the application or cluster is unhealthy before the upgrade
+     rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms
+     format.
     :type health_check_retry_timeout: str
-    :param upgrade_timeout: The upgrade timeout,it represents .Net TimeSpan
+    :param upgrade_timeout: The amount of time the overall upgrade has to
+     complete before the upgrade rolls back. The timeout can be in either
+     hh:mm:ss or in d.hh:mm:ss.ms format.
     :type upgrade_timeout: str
-    :param upgrade_domain_timeout: The timeout for any upgrade domain,it
-     represents .Net TimeSpan
+    :param upgrade_domain_timeout: The amount of time each upgrade domain has
+     to complete before the upgrade rolls back. The timeout can be in either
+     hh:mm:ss or in d.hh:mm:ss.ms format.
     :type upgrade_domain_timeout: str
-    :param health_policy: Cluster health Policy
-    :type health_policy: :class:`ClusterHealthPolicy
-     <azure.mgmt.servicefabric.models.ClusterHealthPolicy>`
-    :param delta_health_policy: Delta health policy
-    :type delta_health_policy: :class:`ClusterUpgradeDeltaHealthPolicy
-     <azure.mgmt.servicefabric.models.ClusterUpgradeDeltaHealthPolicy>`
+    :param health_policy: The cluster health policy used when upgrading the
+     cluster.
+    :type health_policy: ~azure.mgmt.servicefabric.models.ClusterHealthPolicy
+    :param delta_health_policy: The delta health policy used when upgrading
+     the cluster.
+    :type delta_health_policy:
+     ~azure.mgmt.servicefabric.models.ClusterUpgradeDeltaHealthPolicy
     """
 
     _validation = {
@@ -57,7 +68,6 @@ class ClusterUpgradePolicy(Model):
     }
 
     _attribute_map = {
-        'override_user_upgrade_policy': {'key': 'overrideUserUpgradePolicy', 'type': 'bool'},
         'force_restart': {'key': 'forceRestart', 'type': 'bool'},
         'upgrade_replica_set_check_timeout': {'key': 'upgradeReplicaSetCheckTimeout', 'type': 'str'},
         'health_check_wait_duration': {'key': 'healthCheckWaitDuration', 'type': 'str'},
@@ -69,8 +79,8 @@ class ClusterUpgradePolicy(Model):
         'delta_health_policy': {'key': 'deltaHealthPolicy', 'type': 'ClusterUpgradeDeltaHealthPolicy'},
     }
 
-    def __init__(self, upgrade_replica_set_check_timeout, health_check_wait_duration, health_check_stable_duration, health_check_retry_timeout, upgrade_timeout, upgrade_domain_timeout, health_policy, override_user_upgrade_policy=None, force_restart=None, delta_health_policy=None):
-        self.override_user_upgrade_policy = override_user_upgrade_policy
+    def __init__(self, upgrade_replica_set_check_timeout, health_check_wait_duration, health_check_stable_duration, health_check_retry_timeout, upgrade_timeout, upgrade_domain_timeout, health_policy, force_restart=None, delta_health_policy=None):
+        super(ClusterUpgradePolicy, self).__init__()
         self.force_restart = force_restart
         self.upgrade_replica_set_check_timeout = upgrade_replica_set_check_timeout
         self.health_check_wait_duration = health_check_wait_duration
