@@ -2,6 +2,29 @@
 
 Release History
 ===============
+0.4.0 (2018-02-12)
+++++++++++++++++++
+
+**Breaking changes**
+
+- The account operations object has been changed from "account" to "accounts"
+    - E.g., account.get(...) to accounts.get(...)
+- When creating or updating resources (accounts, firewall rules, etc.), explicit parameter objects are now required:
+    - Account creation:
+        - "DataLakeStoreAccount" to "CreateDataLakeStoreAccountParameters"
+            - List of "FirewallRule" to "CreateFirewallRuleWithAccountParameters"
+            - List of "TrustedIdProvider" to "CreateTrustedIdProviderWithAccountParameters"
+    - Account update:
+        - "DataLakeStoreUpdateParameters" to "UpdateDataLakeStoreParameters"
+            - List of "FirewallRule" to "UpdateFirewallRuleWithAccountParameters"
+            - List of "TrustedIdProvider" to "UpdateTrustedIdProviderWithAccountParameters"
+    - Firewall rule creation and update:
+        - "FirewallRule" to "CreateOrUpdateFirewallRuleParameters"
+        - "FirewallRule" to "UpdateFirewallRuleParameters"
+    - Trusted identity provider creation and update:
+        - "TrustedIdProvider" to "CreateOrUpdateTrustedIdProviderParameters"
+        - "TrustedIdProvider" to "UpdateTrustedIdProviderParameters"
+
 0.3.0 (2018-01-09)
 ++++++++++++++++++
 
