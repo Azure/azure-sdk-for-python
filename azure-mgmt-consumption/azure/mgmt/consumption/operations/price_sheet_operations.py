@@ -37,7 +37,7 @@ class PriceSheetOperations(object):
         self.config = config
 
     def get(
-            self, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets the price sheet for a scope by subscriptionId. Price sheet is
         available via this API only for May 1, 2014 or later.
 
@@ -50,6 +50,9 @@ class PriceSheetOperations(object):
          element, the value of the nextLink element will include a skiptoken
          parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
+        :param top: May be used to limit the number of results to the top N
+         results.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -74,6 +77,8 @@ class PriceSheetOperations(object):
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         if skiptoken is not None:
             query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+        if top is not None:
+            query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -105,7 +110,7 @@ class PriceSheetOperations(object):
         return deserialized
 
     def get_by_billing_period(
-            self, billing_period_name, expand=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_period_name, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get the price sheet for a scope by subscriptionId and billing period.
         Price sheet is available via this API only for May 1, 2014 or later.
 
@@ -120,6 +125,9 @@ class PriceSheetOperations(object):
          element, the value of the nextLink element will include a skiptoken
          parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
+        :param top: May be used to limit the number of results to the top N
+         results.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -145,6 +153,8 @@ class PriceSheetOperations(object):
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         if skiptoken is not None:
             query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+        if top is not None:
+            query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
