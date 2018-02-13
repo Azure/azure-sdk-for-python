@@ -29,7 +29,7 @@ class AzureBatchLinkedService(LinkedService):
      Expression with resultType string).
     :type account_name: object
     :param access_key: The Azure Batch account access key.
-    :type access_key: ~azure.mgmt.datafactory.models.SecureString
+    :type access_key: ~azure.mgmt.datafactory.models.SecretBase
     :param batch_uri: The Azure Batch URI. Type: string (or Expression with
      resultType string).
     :type batch_uri: object
@@ -59,7 +59,7 @@ class AzureBatchLinkedService(LinkedService):
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'account_name': {'key': 'typeProperties.accountName', 'type': 'object'},
-        'access_key': {'key': 'typeProperties.accessKey', 'type': 'SecureString'},
+        'access_key': {'key': 'typeProperties.accessKey', 'type': 'SecretBase'},
         'batch_uri': {'key': 'typeProperties.batchUri', 'type': 'object'},
         'pool_name': {'key': 'typeProperties.poolName', 'type': 'object'},
         'linked_service_name': {'key': 'typeProperties.linkedServiceName', 'type': 'LinkedServiceReference'},

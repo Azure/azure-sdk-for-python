@@ -25,9 +25,9 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
     :param authentication_type: Constant filled by server.
     :type authentication_type: str
     :param pfx: Base64-encoded contents of a PFX file.
-    :type pfx: ~azure.mgmt.datafactory.models.SecureString
+    :type pfx: ~azure.mgmt.datafactory.models.SecretBase
     :param password: Password for the PFX file.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
@@ -40,8 +40,8 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
     _attribute_map = {
         'url': {'key': 'url', 'type': 'object'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'pfx': {'key': 'pfx', 'type': 'SecureString'},
-        'password': {'key': 'password', 'type': 'SecureString'},
+        'pfx': {'key': 'pfx', 'type': 'SecretBase'},
+        'password': {'key': 'password', 'type': 'SecretBase'},
     }
 
     def __init__(self, url, pfx, password):
