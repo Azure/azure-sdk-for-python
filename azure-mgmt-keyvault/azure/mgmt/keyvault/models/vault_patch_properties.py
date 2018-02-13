@@ -39,14 +39,14 @@ class VaultPatchProperties(Model):
      deletion ('soft' delete) is enabled for this key vault. The property may
      not be set to false.
     :type enable_soft_delete: bool
+    :param create_mode: The vault's create mode to indicate whether the vault
+     need to be recovered or not. Possible values include: 'recover', 'default'
+    :type create_mode: str or ~azure.mgmt.keyvault.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
      against purge is enabled for this vault; it is only effective if soft
      delete is also enabled. Once activated, the property may no longer be
      reset to false.
     :type enable_purge_protection: bool
-    :param create_mode: The vault's create mode to indicate whether the vault
-     need to be recovered or not. Possible values include: 'recover', 'default'
-    :type create_mode: str or ~azure.mgmt.keyvault.models.CreateMode
     """
 
     _attribute_map = {
@@ -57,11 +57,11 @@ class VaultPatchProperties(Model):
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
-        'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
+        'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
     }
 
-    def __init__(self, tenant_id=None, sku=None, access_policies=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, enable_purge_protection=None, create_mode=None):
+    def __init__(self, tenant_id=None, sku=None, access_policies=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None, enable_purge_protection=None):
         super(VaultPatchProperties, self).__init__()
         self.tenant_id = tenant_id
         self.sku = sku
@@ -70,5 +70,5 @@ class VaultPatchProperties(Model):
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
         self.enable_soft_delete = enable_soft_delete
-        self.enable_purge_protection = enable_purge_protection
         self.create_mode = create_mode
+        self.enable_purge_protection = enable_purge_protection
