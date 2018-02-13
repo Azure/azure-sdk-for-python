@@ -26,12 +26,12 @@ class SqlServerLinkedService(LinkedService):
     :param type: Constant filled by server.
     :type type: str
     :param connection_string: The connection string.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecureString
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param user_name: The on-premises Windows authentication user name. Type:
      string (or Expression with resultType string).
     :type user_name: object
     :param password: The on-premises Windows authentication password.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -48,9 +48,9 @@ class SqlServerLinkedService(LinkedService):
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecureString'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

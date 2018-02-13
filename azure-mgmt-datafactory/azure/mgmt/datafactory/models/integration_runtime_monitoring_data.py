@@ -28,5 +28,6 @@ class IntegrationRuntimeMonitoringData(Model):
     }
 
     def __init__(self, name=None, nodes=None):
+        super(IntegrationRuntimeMonitoringData, self).__init__()
         self.name = name
         self.nodes = nodes

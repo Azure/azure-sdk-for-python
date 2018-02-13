@@ -22,14 +22,13 @@ class ContainerPropertiesInstanceView(Model):
      been restarted.
     :vartype restart_count: int
     :ivar current_state: Current container instance state.
-    :vartype current_state: :class:`ContainerState
-     <azure.mgmt.containerinstance.models.ContainerState>`
+    :vartype current_state:
+     ~azure.mgmt.containerinstance.models.ContainerState
     :ivar previous_state: Previous container instance state.
-    :vartype previous_state: :class:`ContainerState
-     <azure.mgmt.containerinstance.models.ContainerState>`
+    :vartype previous_state:
+     ~azure.mgmt.containerinstance.models.ContainerState
     :ivar events: The events of the container instance.
-    :vartype events: list of :class:`Event
-     <azure.mgmt.containerinstance.models.Event>`
+    :vartype events: list[~azure.mgmt.containerinstance.models.Event]
     """
 
     _validation = {
@@ -47,6 +46,7 @@ class ContainerPropertiesInstanceView(Model):
     }
 
     def __init__(self):
+        super(ContainerPropertiesInstanceView, self).__init__()
         self.restart_count = None
         self.current_state = None
         self.previous_state = None

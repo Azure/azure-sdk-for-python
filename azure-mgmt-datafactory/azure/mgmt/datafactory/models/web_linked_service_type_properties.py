@@ -43,5 +43,6 @@ class WebLinkedServiceTypeProperties(Model):
     }
 
     def __init__(self, url):
+        super(WebLinkedServiceTypeProperties, self).__init__()
         self.url = url
         self.authentication_type = None

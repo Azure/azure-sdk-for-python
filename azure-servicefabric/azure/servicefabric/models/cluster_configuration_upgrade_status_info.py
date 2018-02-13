@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class ClusterConfigurationUpgradeStatusInfo(Model):
     """Information about a standalone cluster configuration upgrade status.
 
-    :param upgrade_state: Possible values include: 'Invalid',
-     'RollingBackInProgress', 'RollingBackCompleted', 'RollingForwardPending',
-     'RollingForwardInProgress', 'RollingForwardCompleted', 'Failed'
-    :type upgrade_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param upgrade_state: The state of the upgrade domain. Possible values
+     include: 'Invalid', 'RollingBackInProgress', 'RollingBackCompleted',
+     'RollingForwardPending', 'RollingForwardInProgress',
+     'RollingForwardCompleted', 'Failed'
+    :type upgrade_state: str or ~azure.servicefabric.models.UpgradeState
     :param progress_status: The cluster manifest version.
     :type progress_status: int
     :param config_version: The cluster configuration version.
@@ -36,6 +36,7 @@ class ClusterConfigurationUpgradeStatusInfo(Model):
     }
 
     def __init__(self, upgrade_state=None, progress_status=None, config_version=None, details=None):
+        super(ClusterConfigurationUpgradeStatusInfo, self).__init__()
         self.upgrade_state = upgrade_state
         self.progress_status = progress_status
         self.config_version = config_version

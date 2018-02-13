@@ -30,6 +30,7 @@ class BasicDependency(Model):
     }
 
     def __init__(self, id=None, resource_type=None, resource_name=None):
+        super(BasicDependency, self).__init__()
         self.id = id
         self.resource_type = resource_type
         self.resource_name = resource_name

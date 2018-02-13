@@ -27,8 +27,8 @@ class ContentModeratorClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param base_url: Supported Azure regions for Content Moderator endpoints.
-     Possible values include: 'westus.api.cognitive.microsoft.com',
+    :param base_url_parameter: Supported Azure regions for Content Moderator
+     endpoints. Possible values include: 'westus.api.cognitive.microsoft.com',
      'westus2.api.cognitive.microsoft.com',
      'eastus.api.cognitive.microsoft.com',
      'eastus2.api.cognitive.microsoft.com',
@@ -41,7 +41,7 @@ class ContentModeratorClientConfiguration(Configuration):
      'australiaeast.api.cognitive.microsoft.com',
      'brazilsouth.api.cognitive.microsoft.com',
      'contentmoderatortest.azure-api.net'
-    :type base_url: str or
+    :type base_url_parameter: str or
      ~azure.cognitiveservices.vision.contentmoderator.models.AzureRegionBaseUrl
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -49,10 +49,10 @@ class ContentModeratorClientConfiguration(Configuration):
     """
 
     def __init__(
-            self, base_url, credentials):
+            self, base_url_parameter, credentials):
 
-        if base_url is None:
-            raise ValueError("Parameter 'base_url' must not be None.")
+        if base_url_parameter is None:
+            raise ValueError("Parameter 'base_url_parameter' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         base_url = 'https://{baseUrl}'
@@ -61,7 +61,7 @@ class ContentModeratorClientConfiguration(Configuration):
 
         self.add_user_agent('azure-cognitiveservices-vision-contentmoderator/{}'.format(VERSION))
 
-        self.base_url = base_url
+        self.base_url_parameter = base_url_parameter
         self.credentials = credentials
 
 
@@ -95,8 +95,8 @@ class ContentModeratorClient(object):
     :ivar reviews: Reviews operations
     :vartype reviews: azure.cognitiveservices.vision.contentmoderator.operations.ReviewsOperations
 
-    :param base_url: Supported Azure regions for Content Moderator endpoints.
-     Possible values include: 'westus.api.cognitive.microsoft.com',
+    :param base_url_parameter: Supported Azure regions for Content Moderator
+     endpoints. Possible values include: 'westus.api.cognitive.microsoft.com',
      'westus2.api.cognitive.microsoft.com',
      'eastus.api.cognitive.microsoft.com',
      'eastus2.api.cognitive.microsoft.com',
@@ -109,7 +109,7 @@ class ContentModeratorClient(object):
      'australiaeast.api.cognitive.microsoft.com',
      'brazilsouth.api.cognitive.microsoft.com',
      'contentmoderatortest.azure-api.net'
-    :type base_url: str or
+    :type base_url_parameter: str or
      ~azure.cognitiveservices.vision.contentmoderator.models.AzureRegionBaseUrl
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -117,9 +117,9 @@ class ContentModeratorClient(object):
     """
 
     def __init__(
-            self, base_url, credentials):
+            self, base_url_parameter, credentials):
 
-        self.config = ContentModeratorClientConfiguration(base_url, credentials)
+        self.config = ContentModeratorClientConfiguration(base_url_parameter, credentials)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

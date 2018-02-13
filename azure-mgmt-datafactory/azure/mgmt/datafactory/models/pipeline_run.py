@@ -73,6 +73,7 @@ class PipelineRun(Model):
     }
 
     def __init__(self, additional_properties=None):
+        super(PipelineRun, self).__init__()
         self.additional_properties = additional_properties
         self.run_id = None
         self.pipeline_name = None

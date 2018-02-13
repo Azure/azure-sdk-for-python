@@ -19,9 +19,9 @@ class ServiceTypeHealthPolicyMapItem(Model):
     :param key: The key of the service type health policy map item. This is
      the name of the service type.
     :type key: str
-    :param value:
-    :type value: :class:`ServiceTypeHealthPolicy
-     <azure.servicefabric.models.ServiceTypeHealthPolicy>`
+    :param value: The value of the service type health policy map item. This
+     is the ServiceTypeHealthPolicy for this service type.
+    :type value: ~azure.servicefabric.models.ServiceTypeHealthPolicy
     """
 
     _validation = {
@@ -35,5 +35,6 @@ class ServiceTypeHealthPolicyMapItem(Model):
     }
 
     def __init__(self, key, value):
+        super(ServiceTypeHealthPolicyMapItem, self).__init__()
         self.key = key
         self.value = value

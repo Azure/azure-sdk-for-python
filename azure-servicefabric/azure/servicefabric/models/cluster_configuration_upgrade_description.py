@@ -72,6 +72,7 @@ class ClusterConfigurationUpgradeDescription(Model):
     }
 
     def __init__(self, cluster_config, health_check_retry_timeout="PT0H0M0S", health_check_wait_duration_in_seconds="PT0H0M0S", health_check_stable_duration_in_seconds="PT0H0M0S", upgrade_domain_timeout_in_seconds="PT0H0M0S", upgrade_timeout_in_seconds="PT0H0M0S", max_percent_unhealthy_applications=0, max_percent_unhealthy_nodes=0, max_percent_delta_unhealthy_nodes=0, max_percent_upgrade_domain_delta_unhealthy_nodes=0):
+        super(ClusterConfigurationUpgradeDescription, self).__init__()
         self.cluster_config = cluster_config
         self.health_check_retry_timeout = health_check_retry_timeout
         self.health_check_wait_duration_in_seconds = health_check_wait_duration_in_seconds

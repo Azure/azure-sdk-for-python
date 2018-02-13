@@ -17,23 +17,39 @@ class StatelessServiceInstanceInfo(ReplicaInfo):
     the identity, status, health, node name, uptime, and other details about
     the instance.
 
-    :param replica_status: Possible values include: 'Invalid', 'InBuild',
-     'Standby', 'Ready', 'Down', 'Dropped'
-    :type replica_status: str or :class:`enum
-     <azure.servicefabric.models.enum>`
-    :param health_state: Possible values include: 'Invalid', 'Ok', 'Warning',
-     'Error', 'Unknown'
-    :type health_state: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param node_name:
+    :param replica_status: The status of a replica of a service. Possible
+     values are following.
+     -Invalid - Indicates the replica status is invalid. All Service Fabric
+     enumerations have the invalid type. The value is zero.
+     -InBuild - The replica is being built. This means that a primary replica
+     is seeding this replica. The value is 1.
+     -Standby - The replica is in standby. The value is 2.
+     -Ready - The replica is ready. The value is 3.
+     -Down - The replica is down. The value is 4.
+     -Dropped - Replica is dropped. This means that the replica has been
+     removed from the replica set. If it is persisted, its state has been
+     deleted. The value is 5.
+     . Possible values include: 'Invalid', 'InBuild', 'Standby', 'Ready',
+     'Down', 'Dropped'
+    :type replica_status: str or ~azure.servicefabric.models.enum
+    :param health_state: The health state of a Service Fabric entity such as
+     Cluster, Node, Application, Service, Partition, Replica etc. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type health_state: str or ~azure.servicefabric.models.HealthState
+    :param node_name: The name of a Service Fabric node.
     :type node_name: str
     :param address: The address the replica is listening on.
     :type address: str
     :param last_in_build_duration_in_seconds: The last in build duration of
      the replica in seconds.
     :type last_in_build_duration_in_seconds: str
-    :param service_kind: Polymorphic Discriminator
+    :param service_kind: Constant filled by server.
     :type service_kind: str
-    :param instance_id:
+    :param instance_id: Id of a stateless service instance. InstanceId is used
+     by Service Fabric to uniquely identify an instance of a partition of a
+     stateless service. It is unique within a partition and does not change for
+     the lifetime of the instance. If the instance has failed over on the same
+     or different node, it will get a different value for the InstanceId.
     :type instance_id: str
     """
 

@@ -3,6 +3,15 @@
 Release History
 ===============
 
+1.3.0rc1 (2018-XX-XX)
++++++++++++++++++++++
+
+**Features**
+
+- Add generic resources update
+- Add version to Plan
+- Links/Locks/Policy/Resource/Subscription clients now supports the "profile" parameter.
+
 1.2.2 (2017-10-17)
 ++++++++++++++++++
 

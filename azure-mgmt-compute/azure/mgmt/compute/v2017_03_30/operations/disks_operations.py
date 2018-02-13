@@ -97,8 +97,10 @@ class DisksOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param disk_name: The name of the disk within the given subscription
-         and resource group.
+        :param disk_name: The name of the managed disk that is being created.
+         The name can't be changed after the disk is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
+         length is 80 characters.
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Put disk
          operation.
@@ -218,8 +220,10 @@ class DisksOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param disk_name: The name of the disk within the given subscription
-         and resource group.
+        :param disk_name: The name of the managed disk that is being created.
+         The name can't be changed after the disk is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
+         length is 80 characters.
         :type disk_name: str
         :param disk: Disk object supplied in the body of the Patch disk
          operation.
@@ -287,8 +291,10 @@ class DisksOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param disk_name: The name of the disk within the given subscription
-         and resource group.
+        :param disk_name: The name of the managed disk that is being created.
+         The name can't be changed after the disk is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
+         length is 80 characters.
         :type disk_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -395,8 +401,10 @@ class DisksOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param disk_name: The name of the disk within the given subscription
-         and resource group.
+        :param disk_name: The name of the managed disk that is being created.
+         The name can't be changed after the disk is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
+         length is 80 characters.
         :type disk_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -643,8 +651,10 @@ class DisksOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param disk_name: The name of the disk within the given subscription
-         and resource group.
+        :param disk_name: The name of the managed disk that is being created.
+         The name can't be changed after the disk is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
+         length is 80 characters.
         :type disk_name: str
         :param access: Possible values include: 'None', 'Read'
         :type access: str or
@@ -762,8 +772,10 @@ class DisksOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param disk_name: The name of the disk within the given subscription
-         and resource group.
+        :param disk_name: The name of the managed disk that is being created.
+         The name can't be changed after the disk is created. Supported
+         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
+         length is 80 characters.
         :type disk_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

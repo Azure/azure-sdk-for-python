@@ -68,6 +68,7 @@ class RepairTaskHistory(Model):
     }
 
     def __init__(self, created_utc_timestamp=None, claimed_utc_timestamp=None, preparing_utc_timestamp=None, approved_utc_timestamp=None, executing_utc_timestamp=None, restoring_utc_timestamp=None, completed_utc_timestamp=None, preparing_health_check_start_utc_timestamp=None, preparing_health_check_end_utc_timestamp=None, restoring_health_check_start_utc_timestamp=None, restoring_health_check_end_utc_timestamp=None):
+        super(RepairTaskHistory, self).__init__()
         self.created_utc_timestamp = created_utc_timestamp
         self.claimed_utc_timestamp = claimed_utc_timestamp
         self.preparing_utc_timestamp = preparing_utc_timestamp

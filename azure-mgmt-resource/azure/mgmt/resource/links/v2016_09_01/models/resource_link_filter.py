@@ -28,4 +28,5 @@ class ResourceLinkFilter(Model):
     }
 
     def __init__(self, target_id):
+        super(ResourceLinkFilter, self).__init__()
         self.target_id = target_id

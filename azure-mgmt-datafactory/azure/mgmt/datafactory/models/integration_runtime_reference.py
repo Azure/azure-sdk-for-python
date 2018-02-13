@@ -41,5 +41,6 @@ class IntegrationRuntimeReference(Model):
     type = "IntegrationRuntimeReference"
 
     def __init__(self, reference_name, parameters=None):
+        super(IntegrationRuntimeReference, self).__init__()
         self.reference_name = reference_name
         self.parameters = parameters

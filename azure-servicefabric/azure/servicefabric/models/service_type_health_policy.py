@@ -66,6 +66,7 @@ class ServiceTypeHealthPolicy(Model):
     }
 
     def __init__(self, max_percent_unhealthy_partitions_per_service=0, max_percent_unhealthy_replicas_per_partition=0, max_percent_unhealthy_services=0):
+        super(ServiceTypeHealthPolicy, self).__init__()
         self.max_percent_unhealthy_partitions_per_service = max_percent_unhealthy_partitions_per_service
         self.max_percent_unhealthy_replicas_per_partition = max_percent_unhealthy_replicas_per_partition
         self.max_percent_unhealthy_services = max_percent_unhealthy_services

@@ -17,9 +17,10 @@ class WaitForPrimarySwapSafetyCheck(PartitionSafetyCheck):
     before starting an upgrade to ensure the availability of the primary
     replica for the partition.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
-    :param partition_id:
+    :param partition_id: Id of the partition which is undergoing the safety
+     check.
     :type partition_id: str
     """
 

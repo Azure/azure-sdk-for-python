@@ -18,10 +18,10 @@ class NodeRepairTargetDescription(RepairTargetDescriptionBase):
     directly from your code.
     .
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
     :param node_names: The list of nodes targeted by a repair action.
-    :type node_names: list of str
+    :type node_names: list[str]
     """
 
     _validation = {

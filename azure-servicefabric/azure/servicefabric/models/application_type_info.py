@@ -15,22 +15,29 @@ from msrest.serialization import Model
 class ApplicationTypeInfo(Model):
     """Information about an application type.
 
-    :param name:
+    :param name: The application type name as defined in the application
+     manifest.
     :type name: str
-    :param version:
+    :param version: The version of the application type as defined in the
+     application manifest.
     :type version: str
-    :param default_parameter_list:
-    :type default_parameter_list: list of :class:`ApplicationParameter
-     <azure.servicefabric.models.ApplicationParameter>`
-    :param status: Possible values include: 'Invalid', 'Provisioning',
-     'Available', 'Unprovisioning', 'Failed'
-    :type status: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param status_details:
+    :param default_parameter_list: List of application type parameters that
+     can be overridden when creating or updating the application.
+    :type default_parameter_list:
+     list[~azure.servicefabric.models.ApplicationParameter]
+    :param status: The status of the application type.
+     . Possible values include: 'Invalid', 'Provisioning', 'Available',
+     'Unprovisioning', 'Failed'
+    :type status: str or ~azure.servicefabric.models.ApplicationTypeStatus
+    :param status_details: Additional detailed information about the status of
+     the application type.
     :type status_details: str
-    :param application_type_definition_kind: Possible values include:
-     'Invalid', 'ServiceFabricApplicationPackage', 'Compose'
-    :type application_type_definition_kind: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param application_type_definition_kind: The mechanism used to define a
+     Service Fabric application type.
+     . Possible values include: 'Invalid', 'ServiceFabricApplicationPackage',
+     'Compose'
+    :type application_type_definition_kind: str or
+     ~azure.servicefabric.models.ApplicationTypeDefinitionKind
     """
 
     _attribute_map = {
@@ -43,6 +50,7 @@ class ApplicationTypeInfo(Model):
     }
 
     def __init__(self, name=None, version=None, default_parameter_list=None, status=None, status_details=None, application_type_definition_kind=None):
+        super(ApplicationTypeInfo, self).__init__()
         self.name = name
         self.version = version
         self.default_parameter_list = default_parameter_list

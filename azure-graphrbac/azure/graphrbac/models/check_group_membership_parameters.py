@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class CheckGroupMembershipParameters(Model):
     """Request parameters for IsMemberOf API call.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param group_id: The object ID of the group to check.
     :type group_id: str
     :param member_id: The object ID of the contact, group, user, or service
@@ -28,10 +31,13 @@ class CheckGroupMembershipParameters(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'group_id': {'key': 'groupId', 'type': 'str'},
         'member_id': {'key': 'memberId', 'type': 'str'},
     }
 
-    def __init__(self, group_id, member_id):
+    def __init__(self, group_id, member_id, additional_properties=None):
+        super(CheckGroupMembershipParameters, self).__init__()
+        self.additional_properties = additional_properties
         self.group_id = group_id
         self.member_id = member_id

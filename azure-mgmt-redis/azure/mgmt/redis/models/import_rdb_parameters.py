@@ -31,5 +31,6 @@ class ImportRDBParameters(Model):
     }
 
     def __init__(self, files, format=None):
+        super(ImportRDBParameters, self).__init__()
         self.format = format
         self.files = files

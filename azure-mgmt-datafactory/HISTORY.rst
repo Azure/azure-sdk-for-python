@@ -3,6 +3,15 @@
 Release History
 ===============
 
+0.4.0 (2018-02-02)
+++++++++++++++++++
+
+**Features**
+
+- Add readBehavior to Salesforce Source
+- Enable Azure Key Vault support for all data store linked services
+- Add license type property to Azure SSIS integration runtime
+
 0.3.0 (2017-12-12)
 ++++++++++++++++++
 

@@ -15,9 +15,10 @@ from msrest.serialization import Model
 class HealthEvaluationWrapper(Model):
     """Wrapper object for health evaluation.
 
-    :param health_evaluation:
-    :type health_evaluation: :class:`HealthEvaluation
-     <azure.servicefabric.models.HealthEvaluation>`
+    :param health_evaluation: Represents a health evaluation which describes
+     the data and the algorithm used by health manager to evaluate the health
+     of an entity.
+    :type health_evaluation: ~azure.servicefabric.models.HealthEvaluation
     """
 
     _attribute_map = {
@@ -25,4 +26,5 @@ class HealthEvaluationWrapper(Model):
     }
 
     def __init__(self, health_evaluation=None):
+        super(HealthEvaluationWrapper, self).__init__()
         self.health_evaluation = health_evaluation

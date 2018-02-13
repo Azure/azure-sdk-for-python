@@ -75,9 +75,8 @@ class DeployedApplicationHealthStateFilter(Model):
      For example, it can specify a filter to return all deployed service
      packages with health state Error and another filter to always include a
      deployed service package on a node.
-    :type deployed_service_package_filters: list of
-     :class:`DeployedServicePackageHealthStateFilter
-     <azure.servicefabric.models.DeployedServicePackageHealthStateFilter>`
+    :type deployed_service_package_filters:
+     list[~azure.servicefabric.models.DeployedServicePackageHealthStateFilter]
     """
 
     _attribute_map = {
@@ -87,6 +86,7 @@ class DeployedApplicationHealthStateFilter(Model):
     }
 
     def __init__(self, node_name_filter=None, health_state_filter=0, deployed_service_package_filters=None):
+        super(DeployedApplicationHealthStateFilter, self).__init__()
         self.node_name_filter = node_name_filter
         self.health_state_filter = health_state_filter
         self.deployed_service_package_filters = deployed_service_package_filters

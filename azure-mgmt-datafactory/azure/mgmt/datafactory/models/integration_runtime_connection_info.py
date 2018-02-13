@@ -60,6 +60,7 @@ class IntegrationRuntimeConnectionInfo(Model):
     }
 
     def __init__(self, additional_properties=None):
+        super(IntegrationRuntimeConnectionInfo, self).__init__()
         self.additional_properties = additional_properties
         self.service_token = None
         self.identity_cert_thumbprint = None

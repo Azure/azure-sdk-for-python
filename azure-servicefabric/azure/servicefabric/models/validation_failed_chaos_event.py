@@ -15,11 +15,15 @@ from .chaos_event import ChaosEvent
 class ValidationFailedChaosEvent(ChaosEvent):
     """Chaos event corresponding to a failure during validation.
 
-    :param time_stamp_utc:
+    :param time_stamp_utc: The UTC timestamp when this Chaos event was
+     generated.
     :type time_stamp_utc: datetime
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
-    :param reason:
+    :param reason: Describes why the ValidationFailedChaosEvent was generated.
+     This may happen because more than MaxPercentUnhealthyNodes are unhealthy
+     for more than MaxClusterStabilizationTimeout. This reason will be in the
+     Reason property of the ValidationFailedChaosEvent as a string.
     :type reason: str
     """
 

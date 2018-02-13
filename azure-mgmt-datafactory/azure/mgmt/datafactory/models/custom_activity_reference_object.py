@@ -28,5 +28,6 @@ class CustomActivityReferenceObject(Model):
     }
 
     def __init__(self, linked_services=None, datasets=None):
+        super(CustomActivityReferenceObject, self).__init__()
         self.linked_services = linked_services
         self.datasets = datasets

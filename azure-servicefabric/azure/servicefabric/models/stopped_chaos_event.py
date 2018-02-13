@@ -16,11 +16,13 @@ class StoppedChaosEvent(ChaosEvent):
     """Describes a Chaos event that gets generated when Chaos stops because either
     the user issued a stop or the time to run was up.
 
-    :param time_stamp_utc:
+    :param time_stamp_utc: The UTC timestamp when this Chaos event was
+     generated.
     :type time_stamp_utc: datetime
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
-    :param reason:
+    :param reason: Describes why Chaos stopped. Chaos can stop because of
+     StopChaos API call or the timeToRun provided in ChaosParameters is over.
     :type reason: str
     """
 

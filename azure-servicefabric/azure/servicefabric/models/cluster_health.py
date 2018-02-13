@@ -19,27 +19,31 @@ class ClusterHealth(EntityHealth):
     evaluations.
     .
 
-    :param aggregated_health_state: Possible values include: 'Invalid', 'Ok',
-     'Warning', 'Error', 'Unknown'
-    :type aggregated_health_state: str or :class:`enum
-     <azure.servicefabric.models.enum>`
+    :param aggregated_health_state: The HealthState representing the
+     aggregated health state of the entity computed by Health Manager.
+     The health evaluation of the entity reflects all events reported on the
+     entity and its children (if any).
+     The aggregation is done by applying the desired health policy.
+     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :type aggregated_health_state: str or
+     ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.
-    :type health_events: list of :class:`HealthEvent
-     <azure.servicefabric.models.HealthEvent>`
-    :param unhealthy_evaluations:
-    :type unhealthy_evaluations: list of :class:`HealthEvaluationWrapper
-     <azure.servicefabric.models.HealthEvaluationWrapper>`
-    :param health_statistics:
-    :type health_statistics: :class:`HealthStatistics
-     <azure.servicefabric.models.HealthStatistics>`
+    :type health_events: list[~azure.servicefabric.models.HealthEvent]
+    :param unhealthy_evaluations: The unhealthy evaluations that show why the
+     current aggregated health state was returned by Health Manager.
+    :type unhealthy_evaluations:
+     list[~azure.servicefabric.models.HealthEvaluationWrapper]
+    :param health_statistics: Shows the health statistics for all children
+     types of the queried entity.
+    :type health_statistics: ~azure.servicefabric.models.HealthStatistics
     :param node_health_states: Cluster node health states as found in the
      health store.
-    :type node_health_states: list of :class:`NodeHealthState
-     <azure.servicefabric.models.NodeHealthState>`
+    :type node_health_states:
+     list[~azure.servicefabric.models.NodeHealthState]
     :param application_health_states: Cluster application health states as
      found in the health store.
-    :type application_health_states: list of :class:`ApplicationHealthState
-     <azure.servicefabric.models.ApplicationHealthState>`
+    :type application_health_states:
+     list[~azure.servicefabric.models.ApplicationHealthState]
     """
 
     _attribute_map = {

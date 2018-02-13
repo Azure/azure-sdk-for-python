@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class PartitionDataLossProgress(Model):
     """Information about a partition data loss user-induced operation.
 
-    :param state: Possible values include: 'Invalid', 'Running',
-     'RollingBack', 'Completed', 'Faulted', 'Cancelled', 'ForceCancelled'
-    :type state: str or :class:`enum <azure.servicefabric.models.enum>`
-    :param invoke_data_loss_result:
-    :type invoke_data_loss_result: :class:`InvokeDataLossResult
-     <azure.servicefabric.models.InvokeDataLossResult>`
+    :param state: The state of the operation. Possible values include:
+     'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',
+     'ForceCancelled'
+    :type state: str or ~azure.servicefabric.models.OperationState
+    :param invoke_data_loss_result: Represents information about an operation
+     in a terminal state (Completed or Faulted).
+    :type invoke_data_loss_result:
+     ~azure.servicefabric.models.InvokeDataLossResult
     """
 
     _attribute_map = {
@@ -29,5 +31,6 @@ class PartitionDataLossProgress(Model):
     }
 
     def __init__(self, state=None, invoke_data_loss_result=None):
+        super(PartitionDataLossProgress, self).__init__()
         self.state = state
         self.invoke_data_loss_result = invoke_data_loss_result

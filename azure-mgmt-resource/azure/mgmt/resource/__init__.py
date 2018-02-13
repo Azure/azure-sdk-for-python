@@ -23,5 +23,5 @@ __all__ = [
     'ResourceManagementClient',
     'SubscriptionClient',
     'ManagementLinkClient',
-    'ApplicationClient'
+    'ApplicationClient',
 ]

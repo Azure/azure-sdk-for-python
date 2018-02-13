@@ -24,9 +24,9 @@ class OrchestratorVersionProfileListResult(Model):
     :vartype name: str
     :ivar type: Type of the orchestrator version profile list result.
     :vartype type: str
-    :param orchestrators: List of orchstrator version profiles.
+    :param orchestrators: List of orchestrator version profiles.
     :type orchestrators:
-     ~azure.mgmt.containerservice.models.OrchestratorVersionProfile
+     list[~azure.mgmt.containerservice.models.OrchestratorVersionProfile]
     """
 
     _validation = {
@@ -40,10 +40,11 @@ class OrchestratorVersionProfileListResult(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'orchestrators': {'key': 'properties.orchestrators', 'type': 'OrchestratorVersionProfile'},
+        'orchestrators': {'key': 'properties.orchestrators', 'type': '[OrchestratorVersionProfile]'},
     }
 
     def __init__(self, orchestrators):
+        super(OrchestratorVersionProfileListResult, self).__init__()
         self.id = None
         self.name = None
         self.type = None

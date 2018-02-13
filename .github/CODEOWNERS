@@ -8,7 +8,7 @@
 /azure-mgmt-batchai/ @AlexanderYukhanov
 /azure-mgmt-cdn/ @tjprescott
 /azure-mgmt-consumption/ @sandeepnl
-/azure-mgmt-containerinstance/ @yolo3301
+/azure-mgmt-containerinstance/ @yolo3301 @xizhamsft
 /azure-mgmt-containerregistry/ @djyou 
 /azure-mgmt-cosmosdb/ @dmakwana
 /azure-mgmt-datafactory/ @hvermis

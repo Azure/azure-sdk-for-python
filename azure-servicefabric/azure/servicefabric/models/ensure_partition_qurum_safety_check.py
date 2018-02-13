@@ -16,9 +16,10 @@ class EnsurePartitionQurumSafetyCheck(PartitionSafetyCheck):
     """Safety check that ensures that a quorum of replicas are not lost for a
     partition.
 
-    :param kind: Polymorphic Discriminator
+    :param kind: Constant filled by server.
     :type kind: str
-    :param partition_id:
+    :param partition_id: Id of the partition which is undergoing the safety
+     check.
     :type partition_id: str
     """
 

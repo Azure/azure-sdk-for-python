@@ -16,7 +16,7 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     """Describes a partitioning scheme where an integer range is allocated evenly
     across a number of partitions.
 
-    :param partition_scheme: Polymorphic Discriminator
+    :param partition_scheme: Constant filled by server.
     :type partition_scheme: str
     :param count: The number of partitions.
     :type count: int

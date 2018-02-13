@@ -39,6 +39,7 @@ class DeploymentOperation(Model):
     }
 
     def __init__(self, properties=None):
+        super(DeploymentOperation, self).__init__()
         self.id = None
         self.operation_id = None
         self.properties = properties

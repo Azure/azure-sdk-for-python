@@ -27,5 +27,6 @@ class UnprovisionFabricDescription(Model):
     }
 
     def __init__(self, code_version=None, config_version=None):
+        super(UnprovisionFabricDescription, self).__init__()
         self.code_version = code_version
         self.config_version = config_version

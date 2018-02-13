@@ -25,4 +25,5 @@ class ServiceTypeManifest(Model):
     }
 
     def __init__(self, manifest=None):
+        super(ServiceTypeManifest, self).__init__()
         self.manifest = manifest

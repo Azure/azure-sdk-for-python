@@ -24,4 +24,5 @@ class FabricCodeVersionInfo(Model):
     }
 
     def __init__(self, code_version=None):
+        super(FabricCodeVersionInfo, self).__init__()
         self.code_version = code_version

@@ -30,6 +30,7 @@ class GenericResourceFilter(Model):
     }
 
     def __init__(self, resource_type=None, tagname=None, tagvalue=None):
+        super(GenericResourceFilter, self).__init__()
         self.resource_type = resource_type
         self.tagname = tagname
         self.tagvalue = tagvalue

@@ -56,6 +56,8 @@ class DatabaseAccount(Resource):
     :param consistency_policy: The consistency policy for the Cosmos DB
      database account.
     :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
+    :param capabilities: List of Cosmos DB capabilities for the account
+    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
     :ivar write_locations: An array that contains the write location for the
      Cosmos DB account.
     :vartype write_locations: list[~azure.mgmt.cosmosdb.models.Location]
@@ -93,12 +95,13 @@ class DatabaseAccount(Resource):
         'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
         'write_locations': {'key': 'properties.writeLocations', 'type': '[Location]'},
         'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
     }
 
-    def __init__(self, location, tags=None, kind="GlobalDocumentDB", provisioning_state=None, ip_range_filter=None, enable_automatic_failover=None, consistency_policy=None):
+    def __init__(self, location, tags=None, kind="GlobalDocumentDB", provisioning_state=None, ip_range_filter=None, enable_automatic_failover=None, consistency_policy=None, capabilities=None):
         super(DatabaseAccount, self).__init__(location=location, tags=tags)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -107,6 +110,7 @@ class DatabaseAccount(Resource):
         self.ip_range_filter = ip_range_filter
         self.enable_automatic_failover = enable_automatic_failover
         self.consistency_policy = consistency_policy
+        self.capabilities = capabilities
         self.write_locations = None
         self.read_locations = None
         self.failover_policies = None

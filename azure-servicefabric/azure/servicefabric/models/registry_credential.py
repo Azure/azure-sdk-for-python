@@ -32,6 +32,7 @@ class RegistryCredential(Model):
     }
 
     def __init__(self, registry_user_name=None, registry_password=None, password_encrypted=None):
+        super(RegistryCredential, self).__init__()
         self.registry_user_name = registry_user_name
         self.registry_password = registry_password
         self.password_encrypted = password_encrypted
