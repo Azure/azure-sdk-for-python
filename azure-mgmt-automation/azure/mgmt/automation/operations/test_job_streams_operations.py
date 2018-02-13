@@ -38,7 +38,8 @@ class TestJobStreamsOperations(object):
 
     def get(
             self, automation_account_name, runbook_name, job_stream_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve a test job streams identified by runbook name and stream id.
+        """Retrieve a test job stream of the test job identified by runbook name
+        and stream id.
 
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -60,11 +61,11 @@ class TestJobStreamsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/streams/{jobStreamId}'
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
-            'jobStreamId': self._serialize.url("job_stream_id", job_stream_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'jobStreamId': self._serialize.url("job_stream_id", job_stream_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -127,10 +128,10 @@ class TestJobStreamsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/streams'
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-                    'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

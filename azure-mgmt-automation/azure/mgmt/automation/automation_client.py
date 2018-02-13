@@ -28,8 +28,6 @@ from .operations.dsc_node_operations import DscNodeOperations
 from .operations.node_reports_operations import NodeReportsOperations
 from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .operations.hybrid_runbook_worker_group_operations import HybridRunbookWorkerGroupOperations
-from .operations.job_operations import JobOperations
-from .operations.job_stream_operations import JobStreamOperations
 from .operations.job_schedule_operations import JobScheduleOperations
 from .operations.activity_operations import ActivityOperations
 from .operations.module_operations import ModuleOperations
@@ -38,6 +36,7 @@ from .operations.fields_operations import FieldsOperations
 from .operations.runbook_draft_operations import RunbookDraftOperations
 from .operations.runbook_operations import RunbookOperations
 from .operations.test_job_streams_operations import TestJobStreamsOperations
+from .operations.test_job_operations import TestJobOperations
 from .operations.test_jobs_operations import TestJobsOperations
 from .operations.schedule_operations import ScheduleOperations
 from .operations.variable_operations import VariableOperations
@@ -47,6 +46,8 @@ from .operations.software_update_configuration_runs_operations import SoftwareUp
 from .operations.software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .operations.source_control_operations import SourceControlOperations
 from .operations.source_control_sync_job_operations import SourceControlSyncJobOperations
+from .operations.job_operations import JobOperations
+from .operations.job_stream_operations import JobStreamOperations
 from . import models
 
 
@@ -133,10 +134,6 @@ class AutomationClient(object):
     :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
     :ivar hybrid_runbook_worker_group: HybridRunbookWorkerGroup operations
     :vartype hybrid_runbook_worker_group: azure.mgmt.automation.operations.HybridRunbookWorkerGroupOperations
-    :ivar job: Job operations
-    :vartype job: azure.mgmt.automation.operations.JobOperations
-    :ivar job_stream: JobStream operations
-    :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
     :ivar job_schedule: JobSchedule operations
     :vartype job_schedule: azure.mgmt.automation.operations.JobScheduleOperations
     :ivar activity: Activity operations
@@ -153,6 +150,8 @@ class AutomationClient(object):
     :vartype runbook: azure.mgmt.automation.operations.RunbookOperations
     :ivar test_job_streams: TestJobStreams operations
     :vartype test_job_streams: azure.mgmt.automation.operations.TestJobStreamsOperations
+    :ivar test_job: TestJob operations
+    :vartype test_job: azure.mgmt.automation.operations.TestJobOperations
     :ivar test_jobs: TestJobs operations
     :vartype test_jobs: azure.mgmt.automation.operations.TestJobsOperations
     :ivar schedule: Schedule operations
@@ -171,6 +170,10 @@ class AutomationClient(object):
     :vartype source_control: azure.mgmt.automation.operations.SourceControlOperations
     :ivar source_control_sync_job: SourceControlSyncJob operations
     :vartype source_control_sync_job: azure.mgmt.automation.operations.SourceControlSyncJobOperations
+    :ivar job: Job operations
+    :vartype job: azure.mgmt.automation.operations.JobOperations
+    :ivar job_stream: JobStream operations
+    :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -228,10 +231,6 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.hybrid_runbook_worker_group = HybridRunbookWorkerGroupOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.job = JobOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_stream = JobStreamOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.job_schedule = JobScheduleOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.activity = ActivityOperations(
@@ -247,6 +246,8 @@ class AutomationClient(object):
         self.runbook = RunbookOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.test_job_streams = TestJobStreamsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.test_job = TestJobOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.test_jobs = TestJobsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -265,4 +266,8 @@ class AutomationClient(object):
         self.source_control = SourceControlOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.source_control_sync_job = SourceControlSyncJobOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job = JobOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_stream = JobStreamOperations(
             self._client, self.config, self._serialize, self._deserialize)
