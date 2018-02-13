@@ -12,31 +12,31 @@
 from msrest.serialization import Model
 
 
-class Sku(Model):
-    """SKU details.
+class VaultCheckNameAvailabilityParameters(Model):
+    """The parameters used to check the availabity of the vault name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar family: SKU family name. Default value: "A" .
-    :vartype family: str
-    :param name: SKU name to specify whether the key vault is a standard vault
-     or a premium vault. Possible values include: 'standard', 'premium'
-    :type name: str or ~azure.mgmt.keyvault.models.SkuName
+    :param name: The vault name.
+    :type name: str
+    :ivar type: The type of resource, Microsoft.KeyVault/vaults. Default
+     value: "Microsoft.KeyVault/vaults" .
+    :vartype type: str
     """
 
     _validation = {
-        'family': {'required': True, 'constant': True},
         'name': {'required': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'family': {'key': 'family', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'SkuName'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    family = "A"
+    type = "Microsoft.KeyVault/vaults"
 
     def __init__(self, name):
-        super(Sku, self).__init__()
+        super(VaultCheckNameAvailabilityParameters, self).__init__()
         self.name = name
