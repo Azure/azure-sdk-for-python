@@ -9,12 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class DscNode(Model):
+class DscNode(ProxyResource):
     """Definition of the dsc node type.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param last_seen: Gets or sets the last seen time of the node.
     :type last_seen: datetime
     :param registration_time: Gets or sets the registration time of the node.
@@ -38,7 +47,16 @@ class DscNode(Model):
      list[~azure.mgmt.automation.models.DscNodeExtensionHandlerAssociationProperty]
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'last_seen': {'key': 'lastSeen', 'type': 'iso-8601'},
         'registration_time': {'key': 'registrationTime', 'type': 'iso-8601'},
         'ip': {'key': 'ip', 'type': 'str'},

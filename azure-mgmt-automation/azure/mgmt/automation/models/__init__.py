@@ -82,6 +82,7 @@ from .job_stream import JobStream
 from .job_stream_list_result import JobStreamListResult
 from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
 from .module_update_parameters import ModuleUpdateParameters
+from .proxy_resource import ProxyResource
 from .runbook_draft_undo_edit_result import RunbookDraftUndoEditResult
 from .runbook_create_or_update_parameters import RunbookCreateOrUpdateParameters
 from .runbook_create_or_update_draft_properties import RunbookCreateOrUpdateDraftProperties
@@ -243,6 +244,7 @@ __all__ = [
     'JobStreamListResult',
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
+    'ProxyResource',
     'RunbookDraftUndoEditResult',
     'RunbookCreateOrUpdateParameters',
     'RunbookCreateOrUpdateDraftProperties',
