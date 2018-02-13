@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class Job(ProxyResource):
-    """Definition of the job.
+class JobCollectionItem(ProxyResource):
+    """Job collection item properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,38 +24,24 @@ class Job(ProxyResource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param runbook: Gets or sets the runbook.
+    :param runbook: The runbook association.
     :type runbook: ~azure.mgmt.automation.models.RunbookAssociationProperty
-    :param started_by: Gets or sets the job started by.
-    :type started_by: str
-    :param run_on: Gets or sets the runOn which specifies the group name where
-     the job is to be executed.
-    :type run_on: str
-    :param job_id: Gets or sets the id of the job.
+    :param job_id: The id of the job.
     :type job_id: str
-    :param creation_time: Gets or sets the creation time of the job.
+    :param creation_time: The creation time of the job.
     :type creation_time: datetime
-    :param status: Gets or sets the status of the job. Possible values
-     include: 'New', 'Activating', 'Running', 'Completed', 'Failed', 'Stopped',
-     'Blocked', 'Suspended', 'Disconnected', 'Suspending', 'Stopping',
-     'Resuming', 'Removing'
+    :param status: The status of the job. Possible values include: 'New',
+     'Activating', 'Running', 'Completed', 'Failed', 'Stopped', 'Blocked',
+     'Suspended', 'Disconnected', 'Suspending', 'Stopping', 'Resuming',
+     'Removing'
     :type status: str or ~azure.mgmt.automation.models.JobStatus
-    :param status_details: Gets or sets the status details of the job.
-    :type status_details: str
-    :param start_time: Gets or sets the start time of the job.
+    :param start_time: The start time of the job.
     :type start_time: datetime
-    :param end_time: Gets or sets the end time of the job.
+    :param end_time: The end time of the job.
     :type end_time: datetime
-    :param exception: Gets or sets the exception of the job.
-    :type exception: str
-    :param last_modified_time: Gets or sets the last modified time of the job.
+    :param last_modified_time: The last modified time of the job.
     :type last_modified_time: datetime
-    :param last_status_modified_time: Gets or sets the last status modified
-     time of the job.
-    :type last_status_modified_time: datetime
-    :param parameters: Gets or sets the parameters of the job.
-    :type parameters: dict[str, str]
-    :param provisioning_state: The provisioning state of a resource.
+    :param provisioning_state: The current provisioning state of the job.
     :type provisioning_state:
      ~azure.mgmt.automation.models.ProvisioningStateProperty
     """
@@ -71,34 +57,22 @@ class Job(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'started_by': {'key': 'properties.startedBy', 'type': 'str'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
         'job_id': {'key': 'properties.jobId', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'exception': {'key': 'properties.exception', 'type': 'str'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_status_modified_time': {'key': 'properties.lastStatusModifiedTime', 'type': 'iso-8601'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateProperty'},
     }
 
-    def __init__(self, runbook=None, started_by=None, run_on=None, job_id=None, creation_time=None, status=None, status_details=None, start_time=None, end_time=None, exception=None, last_modified_time=None, last_status_modified_time=None, parameters=None, provisioning_state=None):
-        super(Job, self).__init__()
+    def __init__(self, runbook=None, job_id=None, creation_time=None, status=None, start_time=None, end_time=None, last_modified_time=None, provisioning_state=None):
+        super(JobCollectionItem, self).__init__()
         self.runbook = runbook
-        self.started_by = started_by
-        self.run_on = run_on
         self.job_id = job_id
         self.creation_time = creation_time
         self.status = status
-        self.status_details = status_details
         self.start_time = start_time
         self.end_time = end_time
-        self.exception = exception
         self.last_modified_time = last_modified_time
-        self.last_status_modified_time = last_status_modified_time
-        self.parameters = parameters
         self.provisioning_state = provisioning_state
