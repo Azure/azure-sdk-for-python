@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ConfigurationListResult(Model):
-    """The list of Advisor configurations.
-
-    :param value: The list of configurations.
-    :type value: list[~azure.mgmt.advisor.models.ConfigData]
-    :param next_link: The link used to get the next page of configurations.
-    :type next_link: str
+class ConfigDataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ConfigData <azure.mgmt.advisor.models.ConfigData>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConfigData]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ConfigData]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        super(ConfigurationListResult, self).__init__()
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(ConfigDataPaged, self).__init__(*args, **kwargs)
