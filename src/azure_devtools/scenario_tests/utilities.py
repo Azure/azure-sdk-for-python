@@ -45,7 +45,7 @@ def is_text_payload(entity):
         headers = entity.get('headers')
 
     if headers:
-        # content-type is an array from response, convert to string first for keyword match  
+        # content-type is an array from response, convert to string first for keyword match
         content_type = str(headers.get('content-type', None))
         return bool([x for x in text_content_list if x in content_type])
     return True
