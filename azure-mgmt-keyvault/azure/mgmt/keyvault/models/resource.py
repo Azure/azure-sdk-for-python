@@ -20,20 +20,20 @@ class Resource(Model):
 
     :ivar id: The Azure Resource Manager resource ID for the key vault.
     :vartype id: str
-    :param name: The name of the key vault.
-    :type name: str
+    :ivar name: The name of the key vault.
+    :vartype name: str
     :ivar type: The resource type of the key vault.
     :vartype type: str
     :param location: The supported Azure location where the key vault should
      be created.
     :type location: str
     :param tags: The tags that will be assigned to the key vault.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
     }
@@ -46,9 +46,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name, location, tags=None):
+    def __init__(self, location, tags=None):
+        super(Resource, self).__init__()
         self.id = None
-        self.name = name
+        self.name = None
         self.type = None
         self.location = location
         self.tags = tags

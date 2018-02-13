@@ -12,38 +12,44 @@
 from msrest.serialization import Model
 
 
-class DeletedVault(Model):
-    """Deleted vault information with extended details.
+class VaultAccessPolicyParameters(Model):
+    """Parameters for updating the access policy in a vault.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The resource ID for the deleted key vault.
+    :ivar id: The resource id of the access policy.
     :vartype id: str
-    :ivar name: The name of the key vault.
+    :ivar name: The resource name of the access policy.
     :vartype name: str
-    :ivar type: The resource type of the key vault.
+    :ivar type: The resource name of the access policy.
     :vartype type: str
-    :param properties: Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.models.DeletedVaultProperties
+    :ivar location: The resource type of the the access policy.
+    :vartype location: str
+    :param properties: Properties of the access policy
+    :type properties: ~azure.mgmt.keyvault.models.VaultAccessPolicyProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DeletedVaultProperties'},
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'VaultAccessPolicyProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(DeletedVault, self).__init__()
+    def __init__(self, properties):
+        super(VaultAccessPolicyParameters, self).__init__()
         self.id = None
         self.name = None
         self.type = None
+        self.location = None
         self.properties = properties
