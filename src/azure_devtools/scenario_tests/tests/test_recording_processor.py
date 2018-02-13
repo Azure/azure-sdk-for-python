@@ -78,6 +78,7 @@ class TestRecordingProcessors(unittest.TestCase):
             mock_request = mock.Mock()
             mock_request.uri = template.format(mock_sub_id)
             mock_request.body = self._mock_subscription_request_body(mock_sub_id)
+            mock_request.headers = {'content-type': 'application/json'}
 
             rp.process_request(mock_request)
             self.assertEqual(mock_request.uri, template.format(replaced_subscription_id))
@@ -106,7 +107,8 @@ class TestRecordingProcessors(unittest.TestCase):
             mock_response = dict({'body': {}})
             mock_response['body']['string'] = template.format(mock_sub_id)
             mock_response['headers'] = {'Location': [location_header_template.format(mock_sub_id)],
-                                        'azure-asyncoperation': [asyncoperation_header_template.format(mock_sub_id)]}
+                                        'azure-asyncoperation': [asyncoperation_header_template.format(mock_sub_id)],
+                                        'content-type': ['application/json']}
             rp.process_response(mock_response)
             self.assertEqual(mock_response['body']['string'], template.format(replaced_subscription_id))
 
