@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from .utilities import is_text_payload
 
 class RecordingProcessor(object):
     def process_request(self, request):  # pylint: disable=no-self-use
@@ -23,11 +24,6 @@ class RecordingProcessor(object):
             if key.lower() == header.lower():
                 entity['headers'][key] = [replace_fn(v) for v in values]
 
-    @classmethod
-    def is_text_payload(cls, entity):
-        from .utilities import is_text_payload
-        return is_text_payload(entity)
-
 
 class SubscriptionRecordingProcessor(RecordingProcessor):
     def __init__(self, replacement):
@@ -36,13 +32,13 @@ class SubscriptionRecordingProcessor(RecordingProcessor):
     def process_request(self, request):
         request.uri = self._replace_subscription_id(request.uri)
 
-        if self.is_text_payload(request) and request.body:
+        if is_text_payload(request) and request.body:
             request.body = self._replace_subscription_id(request.body.decode()).encode()
 
         return request
 
     def process_response(self, response):
-        if self.is_text_payload(response) and response['body']['string']:
+        if is_text_payload(response) and response['body']['string']:
             response['body']['string'] = self._replace_subscription_id(response['body']['string'])
 
         self.replace_header_fn(response, 'location', self._replace_subscription_id)
@@ -71,7 +67,7 @@ class LargeRequestBodyProcessor(RecordingProcessor):
         self._max_request_body = max_request_body
 
     def process_request(self, request):
-        if self.is_text_payload(request) and request.body and len(request.body) > self._max_request_body * 1024:
+        if is_text_payload(request) and request.body and len(request.body) > self._max_request_body * 1024:
             request.body = '!!! The request body has been omitted from the recording because its ' \
                            'size {} is larger than {}KB. !!!'.format(len(request.body),
                                                                      self._max_request_body)
@@ -86,7 +82,7 @@ class LargeResponseBodyProcessor(RecordingProcessor):
         self._max_response_body = max_response_body
 
     def process_response(self, response):
-        if self.is_text_payload(response):
+        if is_text_payload(response):
             length = len(response['body']['string'] or '')
             if length > self._max_response_body * 1024:
                 response['body']['string'] = \
@@ -98,7 +94,7 @@ class LargeResponseBodyProcessor(RecordingProcessor):
 
 class LargeResponseBodyReplacer(RecordingProcessor):
     def process_response(self, response):
-        if self.is_text_payload(response):
+        if is_text_payload(response):
             import six
             body = response['body']['string']
 
@@ -115,30 +111,6 @@ class LargeResponseBodyReplacer(RecordingProcessor):
                     response['body']['string'] = '0' * length
                 else:
                     response['body']['string'] = bytes([0] * length)
-
-        return response
-
-
-class BinaryResponseBodyProcessor(RecordingProcessor):
-
-    def process_response(self, response):
-        if not self.is_text_payload(response):
-            import base64
-            if response['body']['string']:
-                response['body']['string'] = base64.b64encode(response['body']['string'])
-
-        return response
-
-
-class BinaryResponseBodyFixer(RecordingProcessor):
-
-    def process_response(self, response):
-        if not self.is_text_payload(response):
-            import base64
-
-            body = response['body']['string']
-            if body:
-                response['body']['string'] = base64.b64decode(body)
 
         return response
 
@@ -169,7 +141,7 @@ class AccessTokenReplacer(RecordingProcessor):
         self._replacement = replacement
 
     def process_response(self, response):
-        if self.is_text_payload(response):
+        if is_text_payload(response):
             import json
             try:
                 body = json.loads(response['body']['string'])
@@ -191,7 +163,7 @@ class GeneralNameReplacer(RecordingProcessor):
         for old, new in self.names_name:
             request.uri = request.uri.replace(old, new)
 
-            if self.is_text_payload(request) and request.body:
+            if is_text_payload(request) and request.body:
                 body = str(request.body)
                 if old in body:
                     request.body = body.replace(old, new)
@@ -200,7 +172,7 @@ class GeneralNameReplacer(RecordingProcessor):
 
     def process_response(self, response):
         for old, new in self.names_name:
-            if self.is_text_payload(response) and response['body']['string']:
+            if is_text_payload(response) and response['body']['string']:
                 response['body']['string'] = response['body']['string'].replace(old, new)
 
             self.replace_header(response, 'location', old, new)

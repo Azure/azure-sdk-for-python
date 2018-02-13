@@ -8,7 +8,7 @@ import inspect
 import functools
 
 from .base import ReplayableTest
-from .utilities import create_random_name
+from .utilities import create_random_name, is_text_payload
 from .recording_processors import RecordingProcessor
 
 
@@ -111,7 +111,7 @@ class SingleValueReplacer(RecordingProcessor):
             request.uri = request.uri.replace(quote_plus(self.random_name),
                                               quote_plus(self.moniker))
 
-        if self.is_text_payload(request) and request.body:
+        if is_text_payload(request) and request.body:
             body = str(request.body)
             if self.random_name in body:
                 request.body = body.replace(self.random_name, self.moniker)
@@ -119,7 +119,7 @@ class SingleValueReplacer(RecordingProcessor):
         return request
 
     def process_response(self, response):
-        if self.is_text_payload(response) and response['body']['string']:
+        if is_text_payload(response) and response['body']['string']:
             response['body']['string'] = response['body']['string'].replace(self.random_name,
                                                                             self.moniker)
 

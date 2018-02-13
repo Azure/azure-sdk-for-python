@@ -11,7 +11,6 @@ from .preparers import AbstractPreparer, SingleValueReplacer
 from .recording_processors import (
     RecordingProcessor, SubscriptionRecordingProcessor,
     LargeRequestBodyProcessor, LargeResponseBodyProcessor, LargeResponseBodyReplacer,
-    BinaryResponseBodyProcessor, BinaryResponseBodyFixer,
     OAuthRequestResponsesFilter, DeploymentNameReplacer, GeneralNameReplacer, AccessTokenReplacer, RequestUrlNormalizer,
 )
 from .utilities import create_random_name, get_sha1_hash
@@ -22,7 +21,6 @@ __all__ = ['IntegrationTestBase', 'ReplayableTest', 'LiveTest',
            'AbstractPreparer', 'SingleValueReplacer',
            'RecordingProcessor', 'SubscriptionRecordingProcessor',
            'LargeRequestBodyProcessor', 'LargeResponseBodyProcessor', 'LargeResponseBodyReplacer',
-           'BinaryResponseBodyProcessor', 'BinaryResponseBodyFixer',
            'OAuthRequestResponsesFilter', 'DeploymentNameReplacer', 'GeneralNameReplacer',
            'AccessTokenReplacer', 'RequestUrlNormalizer',
            'live_only', 'record_only',
