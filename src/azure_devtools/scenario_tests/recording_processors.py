@@ -26,8 +26,13 @@ class RecordingProcessor(object):
     @classmethod
     def is_text_payload(cls, entity):
         text_content_list = ['application/json', 'application/xml', 'text/html']
-        content_type = str(entity['headers'].get('content-type', '') or entity['headers'].get('Content-Type', ''))  # TODO:  simplify it!
-        return bool([x for x in text_content_list if x in content_type])
+        headers = getattr(entity, 'headers', None)
+        if headers is None:
+            headers = entity.get('headers')
+        if headers:
+            content_type = str(headers.get('content-type', None))
+            return bool([x for x in text_content_list if x in content_type])
+        return True
 
 
 class SubscriptionRecordingProcessor(RecordingProcessor):
@@ -122,7 +127,6 @@ class LargeResponseBodyReplacer(RecordingProcessor):
 
 class BinaryResponseBodyProcessor(RecordingProcessor):
 
-
     def process_response(self, response):
         if not self.is_text_payload(response):
             import base64
@@ -192,25 +196,23 @@ class GeneralNameReplacer(RecordingProcessor):
         self.names_name.append((old, new))
 
     def process_request(self, request):
-        if self.is_text_payload(request):
-            for old, new in self.names_name:
-                request.uri = request.uri.replace(old, new)
+        for old, new in self.names_name:
+            request.uri = request.uri.replace(old, new)
 
-                if request.body:
-                    body = str(request.body)
-                    if old in body:
-                        request.body = body.replace(old, new)
+            if self.is_text_payload(request) and request.body:
+                body = str(request.body)
+                if old in body:
+                    request.body = body.replace(old, new)
 
         return request
 
     def process_response(self, response):
-        if self.is_text_payload(response):
-            for old, new in self.names_name:
-                if response['body']['string']:
-                    response['body']['string'] = response['body']['string'].replace(old, new)
+        for old, new in self.names_name:
+            if self.is_text_payload(response) and response['body']['string']:
+                response['body']['string'] = response['body']['string'].replace(old, new)
 
-                self.replace_header(response, 'location', old, new)
-                self.replace_header(response, 'azure-asyncoperation', old, new)
+            self.replace_header(response, 'location', old, new)
+            self.replace_header(response, 'azure-asyncoperation', old, new)
 
         return response
 
