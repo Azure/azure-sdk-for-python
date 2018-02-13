@@ -25,14 +25,8 @@ class RecordingProcessor(object):
 
     @classmethod
     def is_text_payload(cls, entity):
-        text_content_list = ['application/json', 'application/xml', 'text/html']
-        headers = getattr(entity, 'headers', None)
-        if headers is None:
-            headers = entity.get('headers')
-        if headers:
-            content_type = str(headers.get('content-type', None))
-            return bool([x for x in text_content_list if x in content_type])
-        return True
+        from .utilities import is_text_payload
+        return is_text_payload(entity)
 
 
 class SubscriptionRecordingProcessor(RecordingProcessor):
@@ -131,8 +125,7 @@ class BinaryResponseBodyProcessor(RecordingProcessor):
         if not self.is_text_payload(response):
             import base64
             if response['body']['string']:
-                # response['body']['string'] = base64.b64decode(response['body']['string']).decode('utf8')
-                response['body']['string'] = response['body']['string'].decode('latin1')
+                response['body']['string'] = base64.b64encode(response['body']['string'])
 
         return response
 
@@ -145,8 +138,7 @@ class BinaryResponseBodyFixer(RecordingProcessor):
 
             body = response['body']['string']
             if body:
-                #response['body']['string'] = base64.b64encode(body.decode('utf8'))
-                response['body']['string'] = body.decode('utf8').encode('latin1')
+                response['body']['string'] = base64.b64decode(body)
 
         return response
 

@@ -34,3 +34,15 @@ def get_sha1_hash(file_path):
             sha1.update(data)
 
     return sha1.hexdigest()
+
+
+def is_text_payload(entity):
+    text_content_list = ['application/json', 'application/xml', 'text/html']
+    headers = getattr(entity, 'headers', None)
+    if headers is None:
+        headers = entity.get('headers')
+    if headers:
+        # content-type is an array from response, convert to string first for keyword match  
+        content_type = str(headers.get('content-type', None))
+        return bool([x for x in text_content_list if x in content_type])
+    return True
