@@ -12,8 +12,8 @@
 from .linked_service import LinkedService
 
 
-class AzureSqlDatabaseLinkedService(LinkedService):
-    """Microsoft Azure SQL Database linked service.
+class VerticaLinkedService(LinkedService):
+    """Vertica linked service.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -25,18 +25,8 @@ class AzureSqlDatabaseLinkedService(LinkedService):
     :type description: str
     :param type: Constant filled by server.
     :type type: str
-    :param connection_string: The connection string.
+    :param connection_string: An ODBC connection string.
     :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
-    :param service_principal_id: The ID of the service principal used to
-     authenticate against Azure SQL Database. Type: string (or Expression with
-     resultType string).
-    :type service_principal_id: object
-    :param service_principal_key: The key of the service principal used to
-     authenticate against Azure SQL Database.
-    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
-    :param tenant: The name or ID of the tenant to which the service principal
-     belongs. Type: string (or Expression with resultType string).
-    :type tenant: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -45,7 +35,6 @@ class AzureSqlDatabaseLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'connection_string': {'required': True},
     }
 
     _attribute_map = {
@@ -54,17 +43,11 @@ class AzureSqlDatabaseLinkedService(LinkedService):
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
-        'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
-        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
-        'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None):
-        super(AzureSqlDatabaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, additional_properties=None, connect_via=None, description=None, connection_string=None, encrypted_credential=None):
+        super(VerticaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
         self.connection_string = connection_string
-        self.service_principal_id = service_principal_id
-        self.service_principal_key = service_principal_key
-        self.tenant = tenant
         self.encrypted_credential = encrypted_credential
-        self.type = 'AzureSqlDatabase'
+        self.type = 'Vertica'

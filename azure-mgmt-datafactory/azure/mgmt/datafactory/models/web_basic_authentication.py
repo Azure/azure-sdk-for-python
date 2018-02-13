@@ -26,7 +26,7 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
      Expression with resultType string).
     :type username: object
     :param password: The password for Basic authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
@@ -40,7 +40,7 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
         'url': {'key': 'url', 'type': 'object'},
         'authentication_type': {'key': 'authenticationType', 'type': 'str'},
         'username': {'key': 'username', 'type': 'object'},
-        'password': {'key': 'password', 'type': 'SecureString'},
+        'password': {'key': 'password', 'type': 'SecretBase'},
     }
 
     def __init__(self, url, username, password):
