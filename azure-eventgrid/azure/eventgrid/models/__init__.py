@@ -27,6 +27,13 @@ from .device_twin_info_properties import DeviceTwinInfoProperties
 from .device_twin_info_x509_thumbprint import DeviceTwinInfoX509Thumbprint
 from .device_twin_info import DeviceTwinInfo
 from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
+from .container_registry_image_pushed_event_data import ContainerRegistryImagePushedEventData
+from .container_registry_image_deleted_event_data import ContainerRegistryImageDeletedEventData
+from .target import Target
+from .request import Request
+from .actor import Actor
+from .source import Source
+from .event_content import EventContent
 
 __all__ = [
     'StorageBlobCreatedEventData',
@@ -47,4 +54,11 @@ __all__ = [
     'DeviceTwinInfoX509Thumbprint',
     'DeviceTwinInfo',
     'DeviceLifeCycleEventProperties',
+    'ContainerRegistryImagePushedEventData',
+    'ContainerRegistryImageDeletedEventData',
+    'Target',
+    'Request',
+    'Actor',
+    'Source',
+    'EventContent',
 ]
