@@ -21,9 +21,11 @@ class UsageAggregatesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2015-06-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -55,8 +57,8 @@ class UsageAggregatesOperations(object):
         :param aggregation_granularity: `Daily` (default) returns the data in
          daily granularity, `Hourly` returns the data in hourly granularity.
          Possible values include: 'Daily', 'Hourly'
-        :type aggregation_granularity: str or :class:`AggregationGranularity
-         <azure.mgmt.commerce.models.AggregationGranularity>`
+        :type aggregation_granularity: str or
+         ~azure.mgmt.commerce.models.AggregationGranularity
         :param continuation_token: Used when a continuation token string is
          provided in the response body of the previous call, enabling paging
          through a large result set. If not present, the data is retrieved from
@@ -67,10 +69,9 @@ class UsageAggregatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`UsageAggregation
-         <azure.mgmt.commerce.models.UsageAggregation>`
-        :rtype: :class:`UsageAggregationPaged
-         <azure.mgmt.commerce.models.UsageAggregationPaged>`
+        :return: An iterator like instance of UsageAggregation
+        :rtype:
+         ~azure.mgmt.commerce.models.UsageAggregationPaged[~azure.mgmt.commerce.models.UsageAggregation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.commerce.models.ErrorResponseException>`
         """
@@ -113,7 +114,7 @@ class UsageAggregatesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)

@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class OfferTermInfo(Model):
     """Describes the offer term.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: MonetaryCredit, MonetaryCommitment, RecurringCharge
+
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Polymorphic Discriminator
+    :param name: Constant filled by server.
     :type name: str
     """
 
@@ -36,5 +39,6 @@ class OfferTermInfo(Model):
     }
 
     def __init__(self, effective_date=None):
+        super(OfferTermInfo, self).__init__()
         self.effective_date = effective_date
         self.name = None
