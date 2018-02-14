@@ -17,6 +17,12 @@ to be installed.
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
 
+Documentation
+=============
+
+All documentation related to these packages can be found at http://docs.microsoft.com/python/azure/
+
+
 Features
 ========
 

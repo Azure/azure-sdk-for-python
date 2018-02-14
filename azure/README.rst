@@ -12,6 +12,12 @@ This package uses PEP440 syntax, and thus requires pip >= 6.0 and/or setuptools 
 to be installed.
 
 
+Documentation
+=============
+
+All documentation related to these packages can be found at http://docs.microsoft.com/python/azure/
+
+
 Features
 ========
 
