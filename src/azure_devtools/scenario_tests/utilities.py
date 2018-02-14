@@ -37,7 +37,7 @@ def get_sha1_hash(file_path):
 
 
 def is_text_payload(entity):
-    text_content_list = ['application/json', 'application/xml', 'text/html']
+    text_content_list = ['application/json', 'application/xml', 'text/']
 
     # 'headers' is a field of 'request', but it is a dict-key in 'response'
     headers = getattr(entity, 'headers', None)
@@ -45,7 +45,10 @@ def is_text_payload(entity):
         headers = entity.get('headers')
 
     if headers:
-        # content-type is an array from response, convert to string first for keyword match
-        content_type = str(headers.get('content-type', None))
-        return bool([x for x in text_content_list if x in content_type])
+        content_type = headers.get('content-type', None)
+        if content_type:
+            # content-type could an array from response, let us extract it out
+            content_type = content_type[0] if isinstance(content_type, list) else content_type
+            content_type = content_type.split(";")[0].lower()
+            return any(content_type.startswith(x) for x in text_content_list)
     return True
