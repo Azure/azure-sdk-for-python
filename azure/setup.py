@@ -26,12 +26,12 @@ except ImportError:
 
 setup(
     name='azure',
-    version='2.0.0',
+    version='3.0.0a1',
     description='Microsoft Azure Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -39,7 +39,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -54,7 +53,9 @@ setup(
         'azure-keyvault~=0.3.3',
         'azure-servicebus~=0.21.1',
         'azure-servicefabric~=5.6.130',
-        'azure-storage~=0.34.2',
+        'azure-storage-blob~=1.1.0',
+        'azure-storage-queue~=1.1.0',
+        'azure-storage-file~=1.1.0',
         'azure-servicemanagement-legacy~=0.20.6',
     ],
 )
