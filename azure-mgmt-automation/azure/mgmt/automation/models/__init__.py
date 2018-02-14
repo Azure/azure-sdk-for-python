@@ -78,6 +78,7 @@ from .schedule_association_property import ScheduleAssociationProperty
 from .job_schedule_create_parameters import JobScheduleCreateParameters
 from .job_schedule import JobSchedule
 from .job_stream import JobStream
+from .linked_workspace import LinkedWorkspace
 from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
 from .module_update_parameters import ModuleUpdateParameters
 from .runbook_draft_undo_edit_result import RunbookDraftUndoEditResult
@@ -237,6 +238,7 @@ __all__ = [
     'JobScheduleCreateParameters',
     'JobSchedule',
     'JobStream',
+    'LinkedWorkspace',
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
     'RunbookDraftUndoEditResult',

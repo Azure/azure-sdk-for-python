@@ -27,6 +27,7 @@ from .hybrid_runbook_worker_group_operations import HybridRunbookWorkerGroupOper
 from .job_operations import JobOperations
 from .job_stream_operations import JobStreamOperations
 from .job_schedule_operations import JobScheduleOperations
+from .linked_workspace_operations import LinkedWorkspaceOperations
 from .activity_operations import ActivityOperations
 from .module_operations import ModuleOperations
 from .object_data_types_operations import ObjectDataTypesOperations
@@ -63,6 +64,7 @@ __all__ = [
     'JobOperations',
     'JobStreamOperations',
     'JobScheduleOperations',
+    'LinkedWorkspaceOperations',
     'ActivityOperations',
     'ModuleOperations',
     'ObjectDataTypesOperations',

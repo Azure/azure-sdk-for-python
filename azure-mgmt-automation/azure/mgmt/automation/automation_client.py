@@ -31,6 +31,7 @@ from .operations.hybrid_runbook_worker_group_operations import HybridRunbookWork
 from .operations.job_operations import JobOperations
 from .operations.job_stream_operations import JobStreamOperations
 from .operations.job_schedule_operations import JobScheduleOperations
+from .operations.linked_workspace_operations import LinkedWorkspaceOperations
 from .operations.activity_operations import ActivityOperations
 from .operations.module_operations import ModuleOperations
 from .operations.object_data_types_operations import ObjectDataTypesOperations
@@ -139,6 +140,8 @@ class AutomationClient(object):
     :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
     :ivar job_schedule: JobSchedule operations
     :vartype job_schedule: azure.mgmt.automation.operations.JobScheduleOperations
+    :ivar linked_workspace: LinkedWorkspace operations
+    :vartype linked_workspace: azure.mgmt.automation.operations.LinkedWorkspaceOperations
     :ivar activity: Activity operations
     :vartype activity: azure.mgmt.automation.operations.ActivityOperations
     :ivar module: Module operations
@@ -233,6 +236,8 @@ class AutomationClient(object):
         self.job_stream = JobStreamOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job_schedule = JobScheduleOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.linked_workspace = LinkedWorkspaceOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.activity = ActivityOperations(
             self._client, self.config, self._serialize, self._deserialize)
