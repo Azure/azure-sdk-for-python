@@ -21,9 +21,11 @@ class RateCardOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2015-06-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -56,13 +58,9 @@ class RateCardOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ResourceRateCardInfo
-         <azure.mgmt.commerce.models.ResourceRateCardInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ResourceRateCardInfo
-         <azure.mgmt.commerce.models.ResourceRateCardInfo>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ResourceRateCardInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.commerce.models.ResourceRateCardInfo or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.commerce.models.ErrorResponseException>`
         """
@@ -90,7 +88,7 @@ class RateCardOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)

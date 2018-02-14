@@ -25,4 +25,5 @@ class InfoField(Model):
     }
 
     def __init__(self, project=None):
+        super(InfoField, self).__init__()
         self.project = project
