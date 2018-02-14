@@ -141,14 +141,13 @@ class AccessTokenReplacer(RecordingProcessor):
         self._replacement = replacement
 
     def process_response(self, response):
-        if is_text_payload(response):
-            import json
-            try:
-                body = json.loads(response['body']['string'])
-                body['access_token'] = self._replacement
-            except (KeyError, ValueError):
-                return response
-            response['body']['string'] = json.dumps(body)
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            body['access_token'] = self._replacement
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
         return response
 
 
