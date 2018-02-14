@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Request(Model):
+class ContainerRegistryEventRequest(Model):
     """The request that generated the event.
 
     :param id: The ID of the request that initiated the event.
@@ -39,7 +39,7 @@ class Request(Model):
     }
 
     def __init__(self, id=None, addr=None, host=None, method=None, useragent=None):
-        super(Request, self).__init__()
+        super(ContainerRegistryEventRequest, self).__init__()
         self.id = id
         self.addr = addr
         self.host = host

@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Actor(Model):
+class ContainerRegistryEventActor(Model):
     """The agent that initiated the event. For most situations, this could be from
     the authorization context of the request.
 
@@ -26,5 +26,5 @@ class Actor(Model):
     }
 
     def __init__(self, name=None):
-        super(Actor, self).__init__()
+        super(ContainerRegistryEventActor, self).__init__()
         self.name = name

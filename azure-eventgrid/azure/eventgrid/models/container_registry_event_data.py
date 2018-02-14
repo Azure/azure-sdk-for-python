@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class EventContent(Model):
+class ContainerRegistryEventData(Model):
     """The content of the event request message.
 
     :param id: The event ID.
@@ -22,29 +22,29 @@ class EventContent(Model):
     :param action: The action that encompasses the provided event.
     :type action: str
     :param target: The target of the event.
-    :type target: ~azure.eventgrid.models.Target
+    :type target: ~azure.eventgrid.models.ContainerRegistryEventTarget
     :param request: The request that generated the event.
-    :type request: ~azure.eventgrid.models.Request
+    :type request: ~azure.eventgrid.models.ContainerRegistryEventRequest
     :param actor: The agent that initiated the event. For most situations,
      this could be from the authorization context of the request.
-    :type actor: ~azure.eventgrid.models.Actor
+    :type actor: ~azure.eventgrid.models.ContainerRegistryEventActor
     :param source: The registry node that generated the event. Put
      differently, while the actor initiates the event, the source generates it.
-    :type source: ~azure.eventgrid.models.Source
+    :type source: ~azure.eventgrid.models.ContainerRegistryEventSource
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'action': {'key': 'action', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'Target'},
-        'request': {'key': 'request', 'type': 'Request'},
-        'actor': {'key': 'actor', 'type': 'Actor'},
-        'source': {'key': 'source', 'type': 'Source'},
+        'target': {'key': 'target', 'type': 'ContainerRegistryEventTarget'},
+        'request': {'key': 'request', 'type': 'ContainerRegistryEventRequest'},
+        'actor': {'key': 'actor', 'type': 'ContainerRegistryEventActor'},
+        'source': {'key': 'source', 'type': 'ContainerRegistryEventSource'},
     }
 
     def __init__(self, id=None, timestamp=None, action=None, target=None, request=None, actor=None, source=None):
-        super(EventContent, self).__init__()
+        super(ContainerRegistryEventData, self).__init__()
         self.id = id
         self.timestamp = timestamp
         self.action = action

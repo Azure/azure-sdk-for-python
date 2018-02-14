@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_content import EventContent
+from .container_registry_event_data import ContainerRegistryEventData
 
 
-class ContainerRegistryImagePushedEventData(EventContent):
+class ContainerRegistryImagePushedEventData(ContainerRegistryEventData):
     """Schema of the Data property of an EventGridEvent for a
     Microsoft.ContainerRegistry.ImagePushed event.
 
@@ -23,15 +23,15 @@ class ContainerRegistryImagePushedEventData(EventContent):
     :param action: The action that encompasses the provided event.
     :type action: str
     :param target: The target of the event.
-    :type target: ~azure.eventgrid.models.Target
+    :type target: ~azure.eventgrid.models.ContainerRegistryEventTarget
     :param request: The request that generated the event.
-    :type request: ~azure.eventgrid.models.Request
+    :type request: ~azure.eventgrid.models.ContainerRegistryEventRequest
     :param actor: The agent that initiated the event. For most situations,
      this could be from the authorization context of the request.
-    :type actor: ~azure.eventgrid.models.Actor
+    :type actor: ~azure.eventgrid.models.ContainerRegistryEventActor
     :param source: The registry node that generated the event. Put
      differently, while the actor initiates the event, the source generates it.
-    :type source: ~azure.eventgrid.models.Source
+    :type source: ~azure.eventgrid.models.ContainerRegistryEventSource
     """
 
     def __init__(self, id=None, timestamp=None, action=None, target=None, request=None, actor=None, source=None):

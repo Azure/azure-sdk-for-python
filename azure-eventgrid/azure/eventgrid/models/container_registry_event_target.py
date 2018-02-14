@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Target(Model):
+class ContainerRegistryEventTarget(Model):
     """The target of the event.
 
     :param media_type: The MIME type of the referenced object.
@@ -43,7 +43,7 @@ class Target(Model):
     }
 
     def __init__(self, media_type=None, size=None, digest=None, length=None, repository=None, url=None, tag=None):
-        super(Target, self).__init__()
+        super(ContainerRegistryEventTarget, self).__init__()
         self.media_type = media_type
         self.size = size
         self.digest = digest

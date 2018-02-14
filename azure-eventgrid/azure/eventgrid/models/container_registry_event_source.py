@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Source(Model):
+class ContainerRegistryEventSource(Model):
     """The registry node that generated the event. Put differently, while the
     actor initiates the event, the source generates it.
 
@@ -31,6 +31,6 @@ class Source(Model):
     }
 
     def __init__(self, addr=None, instance_id=None):
-        super(Source, self).__init__()
+        super(ContainerRegistryEventSource, self).__init__()
         self.addr = addr
         self.instance_id = instance_id
