@@ -40,6 +40,7 @@ class AccessKeys(Model):
     }
 
     def __init__(self, primary_connection_string=None, secondary_connection_string=None, primary_key=None, secondary_key=None, key_name=None):
+        super(AccessKeys, self).__init__()
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
         self.primary_key = primary_key

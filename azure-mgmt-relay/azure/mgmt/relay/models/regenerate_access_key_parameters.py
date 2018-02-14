@@ -34,5 +34,6 @@ class RegenerateAccessKeyParameters(Model):
     }
 
     def __init__(self, key_type, key=None):
+        super(RegenerateAccessKeyParameters, self).__init__()
         self.key_type = key_type
         self.key = key
