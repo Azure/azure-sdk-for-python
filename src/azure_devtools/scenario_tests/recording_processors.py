@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .utilities import is_text_payload
+from .utilities import is_text_payload, is_json_payload
 
 class RecordingProcessor(object):
     def process_request(self, request):  # pylint: disable=no-self-use
@@ -85,6 +85,13 @@ class LargeResponseBodyProcessor(RecordingProcessor):
         if is_text_payload(response):
             length = len(response['body']['string'] or '')
             if length > self._max_response_body * 1024:
+
+                if is_json_payload(response):
+                    from .preparers import AllowLargeResponse  # pylint: disable=cyclic-import
+                    raise ValueError("The json response body exceeds the default limit of '{}'kb. Use '@{}' "
+                                     "on your test method to increase the limit or update test logics to avoid "
+                                     "big payloads".format(self._max_response_body, AllowLargeResponse.__name__))
+
                 response['body']['string'] = \
                     "!!! The response body has been omitted from the recording because it is larger " \
                     "than {} KB. It will be replaced with blank content of {} bytes while replay. " \
@@ -94,7 +101,7 @@ class LargeResponseBodyProcessor(RecordingProcessor):
 
 class LargeResponseBodyReplacer(RecordingProcessor):
     def process_response(self, response):
-        if is_text_payload(response):
+        if is_text_payload(response) and not is_json_payload(response):
             import six
             body = response['body']['string']
 

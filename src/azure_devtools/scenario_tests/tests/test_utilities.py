@@ -5,7 +5,8 @@
 
 import unittest
 import mock
-from azure_devtools.scenario_tests.utilities import create_random_name, get_sha1_hash, is_text_payload
+from azure_devtools.scenario_tests.utilities import (create_random_name, get_sha1_hash,
+                                                     is_text_payload, is_json_payload)
 
 
 class TestUtilityFunctions(unittest.TestCase):
@@ -101,3 +102,17 @@ William Shakespeare
 
         http_entity.headers = None  # default to text mode if there is no header
         self.assertTrue(is_text_payload(http_entity))
+
+    def test_json_payload(self):
+        http_entity = mock.MagicMock()
+        headers = {}
+        http_entity.headers = headers
+
+        headers['content-type'] = 'APPLICATION/JSON; charset=utf-8'
+        self.assertTrue(is_json_payload(http_entity))
+
+        headers['content-type'] = 'application/json; charset=utf-8'
+        self.assertTrue(is_json_payload(http_entity))
+
+        headers['content-type'] = 'application/xml; charset=utf-8'
+        self.assertFalse(is_json_payload(http_entity))

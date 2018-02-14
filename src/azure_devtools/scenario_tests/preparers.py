@@ -129,6 +129,20 @@ class SingleValueReplacer(RecordingProcessor):
         return response
 
 
+# Function wise, enabling large payload recording has nothing to do with resource preparers
+# We still base on it so that this decorator can chain with other preparers w/o too much hacks
+class AllowLargeResponse(AbstractPreparer):
+    def __init__(self, size_kb=1024):
+        self.size_kb = size_kb
+        super(AllowLargeResponse, self).__init__('nanana', 20)
+
+    def create_resource(self, _, **kwargs):
+        from azure_devtools.scenario_tests import LargeResponseBodyProcessor
+        large_resp_body = next((r for r in self.test_class_instance.recording_processors
+                                if isinstance(r, LargeResponseBodyProcessor)), None)
+        if large_resp_body:
+            large_resp_body._max_response_body = self.size_kb  # pylint: disable=protected-access
+
 # Utility
 
 def is_preparer_func(fn):
