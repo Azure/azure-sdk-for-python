@@ -57,7 +57,6 @@ uninstall `azure-storage`, you must uninstall `azure-storage` first:
 .. code:: shell
 
     pip uninstall azure-storage
-    pip install azure-storage
 
 
 Upgrading from azure<1.0 is not supported. You must uninstall the old version first.
