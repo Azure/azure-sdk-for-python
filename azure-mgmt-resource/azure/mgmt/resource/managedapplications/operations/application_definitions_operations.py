@@ -23,7 +23,7 @@ class ApplicationDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2017-09-01".
     """
 

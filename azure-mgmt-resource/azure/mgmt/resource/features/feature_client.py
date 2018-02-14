@@ -111,3 +111,16 @@ class FeatureClient(object):
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def subscription_features(self):
+        """Instance depends on the API version:
+
+           * 2015-12-01: :class:`SubscriptionFeaturesOperations<azure.mgmt.resource.features.v2015_12_01.operations.SubscriptionFeaturesOperations>`
+        """
+        api_version = self.profile.get('subscription_features', self.api_version)
+        if api_version == '2015-12-01':
+            from .v2015_12_01.operations import SubscriptionFeaturesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

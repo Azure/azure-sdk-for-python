@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.features_operations import FeaturesOperations
+from .operations.subscription_features_operations import SubscriptionFeaturesOperations
 from . import models
 
 
@@ -57,6 +58,8 @@ class FeatureClient(object):
 
     :ivar features: Features operations
     :vartype features: azure.mgmt.resource.features.v2015_12_01.operations.FeaturesOperations
+    :ivar subscription_features: SubscriptionFeatures operations
+    :vartype subscription_features: azure.mgmt.resource.features.v2015_12_01.operations.SubscriptionFeaturesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -78,4 +81,6 @@ class FeatureClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.features = FeaturesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_features = SubscriptionFeaturesOperations(
             self._client, self.config, self._serialize, self._deserialize)
