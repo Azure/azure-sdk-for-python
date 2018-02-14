@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class AgentRegistrationRegenerateKeyParameter(Model):
     """The parameters supplied to the regenerate keys operation.
 
-    :param key_name: Gets or sets the agent registration key name - Primary or
-     Secondary. Possible values include: 'Primary', 'Secondary'
+    :param key_name: Gets or sets the agent registration key name - primary or
+     secondary. Possible values include: 'primary', 'secondary'
     :type key_name: str or
      ~azure.mgmt.automation.models.AgentRegistrationKeyName
     :param name: Gets or sets the name of the resource.
