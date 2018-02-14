@@ -54,7 +54,9 @@ setup(
         'azure-keyvault~=0.3.3',
         'azure-servicebus~=0.21.1',
         'azure-servicefabric~=5.6.130',
-        'azure-storage~=0.34.2',
+        'azure-storage-blob~=1.1.0',
+        'azure-storage-queue~=1.1.0',
+        'azure-storage-file~=1.1.0',
         'azure-servicemanagement-legacy~=0.20.6',
     ],
 )
