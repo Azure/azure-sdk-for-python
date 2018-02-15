@@ -18,6 +18,7 @@ from .connection_operations import ConnectionOperations
 from .connection_type_operations import ConnectionTypeOperations
 from .credential_operations import CredentialOperations
 from .dsc_compilation_job_operations import DscCompilationJobOperations
+from .dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .dsc_configuration_operations import DscConfigurationOperations
 from .agent_registration_information_operations import AgentRegistrationInformationOperations
 from .dsc_node_operations import DscNodeOperations
@@ -54,6 +55,7 @@ __all__ = [
     'ConnectionTypeOperations',
     'CredentialOperations',
     'DscCompilationJobOperations',
+    'DscCompilationJobStreamOperations',
     'DscConfigurationOperations',
     'AgentRegistrationInformationOperations',
     'DscNodeOperations',

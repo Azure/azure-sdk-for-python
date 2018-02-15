@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class DscNodeConfiguration(ProxyResource):
-    """Definition of the dsc node configuration.
+class ProxyResource(Model):
+    """The Resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,13 +24,6 @@ class DscNodeConfiguration(ProxyResource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param last_modified_time: Gets or sets the last modified time.
-    :type last_modified_time: datetime
-    :param creation_time: Gets or sets creation time.
-    :type creation_time: datetime
-    :param configuration: Gets or sets the configuration of the node.
-    :type configuration:
-     ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
     """
 
     _validation = {
@@ -43,13 +36,10 @@ class DscNodeConfiguration(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'configuration': {'key': 'configuration', 'type': 'DscConfigurationAssociationProperty'},
     }
 
-    def __init__(self, last_modified_time=None, creation_time=None, configuration=None):
-        super(DscNodeConfiguration, self).__init__()
-        self.last_modified_time = last_modified_time
-        self.creation_time = creation_time
-        self.configuration = configuration
+    def __init__(self):
+        super(ProxyResource, self).__init__()
+        self.id = None
+        self.name = None
+        self.type = None
