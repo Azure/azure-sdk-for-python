@@ -39,7 +39,7 @@ class PipelineResource(SubResource):
     :param concurrency: The max number of concurrent runs for the pipeline.
     :type concurrency: int
     :param annotations: List of tags that can be used for describing the
-     Pipeline.
+     Dataset.
     :type annotations: list[object]
     """
 

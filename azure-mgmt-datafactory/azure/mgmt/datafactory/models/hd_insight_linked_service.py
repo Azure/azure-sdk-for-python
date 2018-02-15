@@ -27,7 +27,7 @@ class HDInsightLinkedService(LinkedService):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Linked Service.
+     Dataset.
     :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
