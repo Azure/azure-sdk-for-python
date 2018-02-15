@@ -46,6 +46,7 @@ class NodeStateCounts(Model):
     }
 
     def __init__(self, idle_node_count, running_node_count, preparing_node_count, unusable_node_count, leaving_node_count):
+        super(NodeStateCounts, self).__init__()
         self.idle_node_count = idle_node_count
         self.running_node_count = running_node_count
         self.preparing_node_count = preparing_node_count

@@ -30,4 +30,5 @@ class JobPreparation(Model):
     }
 
     def __init__(self, command_line):
+        super(JobPreparation, self).__init__()
         self.command_line = command_line

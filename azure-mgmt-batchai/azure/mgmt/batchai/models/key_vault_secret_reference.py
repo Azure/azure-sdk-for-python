@@ -16,8 +16,7 @@ class KeyVaultSecretReference(Model):
     """Describes a reference to Key Vault Secret.
 
     :param source_vault: Fully qualified resource Id for the Key Vault.
-    :type source_vault: :class:`ResourceId
-     <azure.mgmt.batchai.models.ResourceId>`
+    :type source_vault: ~azure.mgmt.batchai.models.ResourceId
     :param secret_url: The URL referencing a secret in a Key Vault.
     :type secret_url: str
     """
@@ -33,5 +32,6 @@ class KeyVaultSecretReference(Model):
     }
 
     def __init__(self, source_vault, secret_url):
+        super(KeyVaultSecretReference, self).__init__()
         self.source_vault = source_vault
         self.secret_url = secret_url

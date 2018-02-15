@@ -41,6 +41,7 @@ class AutoScaleSettings(Model):
     }
 
     def __init__(self, minimum_node_count, maximum_node_count, initial_node_count=0):
+        super(AutoScaleSettings, self).__init__()
         self.minimum_node_count = minimum_node_count
         self.maximum_node_count = maximum_node_count
         self.initial_node_count = initial_node_count

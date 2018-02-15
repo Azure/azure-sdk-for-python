@@ -59,6 +59,7 @@ class TensorFlowSettings(Model):
     }
 
     def __init__(self, python_script_file_path, master_command_line_args, python_interpreter_path=None, worker_command_line_args=None, parameter_server_command_line_args=None, worker_count=None, parameter_server_count=None):
+        super(TensorFlowSettings, self).__init__()
         self.python_script_file_path = python_script_file_path
         self.python_interpreter_path = python_interpreter_path
         self.master_command_line_args = master_command_line_args

@@ -27,7 +27,7 @@ class Job(Resource):
     :ivar location: The location of the resource
     :vartype location: str
     :ivar tags: The tags of the resource
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     :param experiment_name: Describe the experiment information of the job
     :type experiment_name: str
     :param priority: Priority associated with the job. Priority associated
@@ -37,7 +37,7 @@ class Job(Resource):
     :type priority: int
     :param cluster: Specifies the Id of the cluster on which this job will
      run.
-    :type cluster: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
+    :type cluster: ~azure.mgmt.batchai.models.ResourceId
     :param node_count: Number of compute nodes to run the job on. The job will
      be gang scheduled on that many compute nodes
     :type node_count: int
@@ -45,63 +45,53 @@ class Job(Resource):
      container. If the container was downloaded as part of cluster setup then
      the same container image will be used. If not provided, the job will run
      on the VM.
-    :type container_settings: :class:`ContainerSettings
-     <azure.mgmt.batchai.models.ContainerSettings>`
+    :type container_settings: ~azure.mgmt.batchai.models.ContainerSettings
     :param tool_type: The toolkit type of this job. Possible values are: cntk,
      tensorflow, caffe, caffe2, chainer, custom. Possible values include:
      'cntk', 'tensorflow', 'caffe', 'caffe2', 'chainer', 'custom'
-    :type tool_type: str or :class:`ToolType
-     <azure.mgmt.batchai.models.ToolType>`
+    :type tool_type: str or ~azure.mgmt.batchai.models.ToolType
     :param cntk_settings: Specifies the settings for CNTK (aka Microsoft
      Cognitive Toolkit) job.
-    :type cntk_settings: :class:`CNTKsettings
-     <azure.mgmt.batchai.models.CNTKsettings>`
+    :type cntk_settings: ~azure.mgmt.batchai.models.CNTKsettings
     :param tensor_flow_settings: Specifies the settings for Tensor Flow job.
-    :type tensor_flow_settings: :class:`TensorFlowSettings
-     <azure.mgmt.batchai.models.TensorFlowSettings>`
+    :type tensor_flow_settings: ~azure.mgmt.batchai.models.TensorFlowSettings
     :param caffe_settings: Specifies the settings for Caffe job.
-    :type caffe_settings: :class:`CaffeSettings
-     <azure.mgmt.batchai.models.CaffeSettings>`
+    :type caffe_settings: ~azure.mgmt.batchai.models.CaffeSettings
     :param chainer_settings: Specifies the settings for Chainer job.
-    :type chainer_settings: :class:`ChainerSettings
-     <azure.mgmt.batchai.models.ChainerSettings>`
+    :type chainer_settings: ~azure.mgmt.batchai.models.ChainerSettings
     :param custom_toolkit_settings: Specifies the settings for custom tool kit
      job.
-    :type custom_toolkit_settings: :class:`CustomToolkitSettings
-     <azure.mgmt.batchai.models.CustomToolkitSettings>`
+    :type custom_toolkit_settings:
+     ~azure.mgmt.batchai.models.CustomToolkitSettings
     :param job_preparation: Specifies the actions to be performed before tool
      kit is launched. The specified actions will run on all the nodes that are
      part of the job
-    :type job_preparation: :class:`JobPreparation
-     <azure.mgmt.batchai.models.JobPreparation>`
+    :type job_preparation: ~azure.mgmt.batchai.models.JobPreparation
     :param std_out_err_path_prefix: The path where the Batch AI service will
      upload stdout and stderror of the job.
     :type std_out_err_path_prefix: str
     :param input_directories: Specifies the list of input directories for the
      Job.
-    :type input_directories: list of :class:`InputDirectory
-     <azure.mgmt.batchai.models.InputDirectory>`
+    :type input_directories: list[~azure.mgmt.batchai.models.InputDirectory]
     :param output_directories: Specifies the list of output directories where
      the models will be created. .
-    :type output_directories: list of :class:`OutputDirectory
-     <azure.mgmt.batchai.models.OutputDirectory>`
+    :type output_directories: list[~azure.mgmt.batchai.models.OutputDirectory]
     :param environment_variables: Additional environment variables to be
      passed to the job. Batch AI services sets the following environment
      variables for all jobs: AZ_BATCHAI_INPUT_id, AZ_BATCHAI_OUTPUT_id,
      AZ_BATCHAI_NUM_GPUS_PER_NODE, For distributed TensorFlow jobs, following
      additional environment variables are set by the Batch AI Service:
      AZ_BATCHAI_PS_HOSTS, AZ_BATCHAI_WORKER_HOSTS.
-    :type environment_variables: list of :class:`EnvironmentSetting
-     <azure.mgmt.batchai.models.EnvironmentSetting>`
+    :type environment_variables:
+     list[~azure.mgmt.batchai.models.EnvironmentSetting]
     :param constraints: Constraints associated with the Job.
-    :type constraints: :class:`JobPropertiesConstraints
-     <azure.mgmt.batchai.models.JobPropertiesConstraints>`
+    :type constraints: ~azure.mgmt.batchai.models.JobPropertiesConstraints
     :ivar creation_time: The job creation time. The creation time of the job.
     :vartype creation_time: datetime
     :ivar provisioning_state: The provisioned state of the Batch AI job.
      Possible values include: 'creating', 'succeeded', 'failed', 'deleting'
-    :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.batchai.models.ProvisioningState>`
+    :vartype provisioning_state: str or
+     ~azure.mgmt.batchai.models.ProvisioningState
     :ivar provisioning_state_transition_time: The time at which the job
      entered its current provisioning state. The time at which the job entered
      its current provisioning state.
@@ -119,16 +109,15 @@ class Job(Resource):
      code) and has exhausted its retry limit. A job is also marked as failed if
      an error occurred launching the job. Possible values include: 'queued',
      'running', 'terminating', 'succeeded', 'failed'
-    :type execution_state: str or :class:`ExecutionState
-     <azure.mgmt.batchai.models.ExecutionState>`
+    :type execution_state: str or ~azure.mgmt.batchai.models.ExecutionState
     :ivar execution_state_transition_time: The time at which the job entered
      its current execution state. The time at which the job entered its current
      execution state.
     :vartype execution_state_transition_time: datetime
     :param execution_info: Contains information about the execution of a job
      in the Azure Batch service.
-    :type execution_info: :class:`JobPropertiesExecutionInfo
-     <azure.mgmt.batchai.models.JobPropertiesExecutionInfo>`
+    :type execution_info:
+     ~azure.mgmt.batchai.models.JobPropertiesExecutionInfo
     """
 
     _validation = {
