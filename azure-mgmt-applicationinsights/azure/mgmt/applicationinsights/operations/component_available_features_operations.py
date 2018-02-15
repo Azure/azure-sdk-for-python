@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ComponentQuotaStatusOperations(object):
-    """ComponentQuotaStatusOperations operations.
+class ComponentAvailableFeaturesOperations(object):
+    """ComponentAvailableFeaturesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,8 +39,7 @@ class ComponentQuotaStatusOperations(object):
 
     def get(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Returns daily data volume cap (quota) status for an Application
-        Insights component.
+        """Returns all available features of the application insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -52,15 +51,15 @@ class ComponentQuotaStatusOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInsightsComponentQuotaStatus or ClientRawResponse
-         if raw=true
+        :return: ApplicationInsightsComponentAvailableFeatures or
+         ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentQuotaStatus
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAvailableFeatures
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/quotastatus'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/getavailablebillingfeatures'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -94,7 +93,7 @@ class ComponentQuotaStatusOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInsightsComponentQuotaStatus', response)
+            deserialized = self._deserialize('ApplicationInsightsComponentAvailableFeatures', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

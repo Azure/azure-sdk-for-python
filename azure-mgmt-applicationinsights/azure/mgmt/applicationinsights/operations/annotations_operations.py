@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class APIKeysOperations(object):
-    """APIKeysOperations operations.
+class AnnotationsOperations(object):
+    """AnnotationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,30 +38,34 @@ class APIKeysOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of API keys of an Application Insights component.
+            self, resource_group_name, resource_name, start, end, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of annotations for a component for given time range.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
+        :param start: The start time to query from for annotations, cannot be
+         older than 90 days from current date.
+        :type start: str
+        :param end: The end time to query for annotations.
+        :type end: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         ApplicationInsightsComponentAPIKey
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKeyPaged[~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: An iterator like instance of None
+        :rtype: list[~azure.mgmt.applicationinsights.models.Annotation][None]
+        :raises:
+         :class:`AnnotationErrorException<azure.mgmt.applicationinsights.models.AnnotationErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/ApiKeys'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/Annotations'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -72,6 +76,8 @@ class APIKeysOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['start'] = self._serialize.query("start", start, 'str')
+                query_parameters['end'] = self._serialize.query("end", end, 'str')
 
             else:
                 url = next_link
@@ -93,49 +99,46 @@ class APIKeysOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.AnnotationErrorException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.ApplicationInsightsComponentAPIKeyPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.list(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ApplicationInsightsComponentAPIKeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.list(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def create(
-            self, resource_group_name, resource_name, api_key_properties, custom_headers=None, raw=False, **operation_config):
-        """Create an API Key of an Application Insights component.
+            self, resource_group_name, resource_name, annotation_properties, custom_headers=None, raw=False, **operation_config):
+        """Create an Annotation of an Application Insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param api_key_properties: Properties that need to be specified to
-         create an API key of a Application Insights component.
-        :type api_key_properties:
-         ~azure.mgmt.applicationinsights.models.APIKeyRequest
+        :param annotation_properties: Properties that need to be specified to
+         create an annotation of a Application Insights component.
+        :type annotation_properties:
+         ~azure.mgmt.applicationinsights.models.Annotation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInsightsComponentAPIKey or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.applicationinsights.models.Annotation] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`AnnotationErrorException<azure.mgmt.applicationinsights.models.AnnotationErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/ApiKeys'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/Annotations'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -158,22 +161,20 @@ class APIKeysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(api_key_properties, 'APIKeyRequest')
+        body_content = self._serialize.body(annotation_properties, 'Annotation')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
+        request = self._client.put(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AnnotationErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInsightsComponentAPIKey', response)
+            deserialized = self._deserialize('[Annotation]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -182,36 +183,33 @@ class APIKeysOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, resource_name, key_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an API Key of an Application Insights component.
+            self, resource_group_name, resource_name, annotation_id, custom_headers=None, raw=False, **operation_config):
+        """Delete an Annotation of an Application Insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param key_id: The API Key ID. This is unique within a Application
-         Insights component.
-        :type key_id: str
+        :param annotation_id: The unique annotation ID. This is unique within
+         a Application Insights component.
+        :type annotation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInsightsComponentAPIKey or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/APIKeys/{keyId}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/Annotations/{annotationId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'keyId': self._serialize.url("key_id", key_id, 'str')
+            'annotationId': self._serialize.url("annotation_id", annotation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -241,7 +239,7 @@ class APIKeysOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInsightsComponentAPIKey', response)
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -250,36 +248,35 @@ class APIKeysOperations(object):
         return deserialized
 
     def get(
-            self, resource_group_name, resource_name, key_id, custom_headers=None, raw=False, **operation_config):
-        """Get the API Key for this key id.
+            self, resource_group_name, resource_name, annotation_id, custom_headers=None, raw=False, **operation_config):
+        """Get the annotation for given id.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param key_id: The API Key ID. This is unique within a Application
-         Insights component.
-        :type key_id: str
+        :param annotation_id: The unique annotation ID. This is unique within
+         a Application Insights component.
+        :type annotation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInsightsComponentAPIKey or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.mgmt.applicationinsights.models.Annotation] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`AnnotationErrorException<azure.mgmt.applicationinsights.models.AnnotationErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/APIKeys/{keyId}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/Annotations/{annotationId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'keyId': self._serialize.url("key_id", key_id, 'str')
+            'annotationId': self._serialize.url("annotation_id", annotation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -302,14 +299,12 @@ class APIKeysOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.AnnotationErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInsightsComponentAPIKey', response)
+            deserialized = self._deserialize('[Annotation]', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
