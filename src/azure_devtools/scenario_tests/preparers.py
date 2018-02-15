@@ -8,7 +8,7 @@ import inspect
 import functools
 
 from .base import ReplayableTest
-from .utilities import create_random_name
+from .utilities import create_random_name, is_text_payload
 from .recording_processors import RecordingProcessor
 
 
@@ -111,7 +111,7 @@ class SingleValueReplacer(RecordingProcessor):
             request.uri = request.uri.replace(quote_plus(self.random_name),
                                               quote_plus(self.moniker))
 
-        if request.body:
+        if is_text_payload(request) and request.body:
             body = str(request.body)
             if self.random_name in body:
                 request.body = body.replace(self.random_name, self.moniker)
@@ -119,7 +119,7 @@ class SingleValueReplacer(RecordingProcessor):
         return request
 
     def process_response(self, response):
-        if response['body']['string']:
+        if is_text_payload(response) and response['body']['string']:
             response['body']['string'] = response['body']['string'].replace(self.random_name,
                                                                             self.moniker)
 
@@ -128,6 +128,20 @@ class SingleValueReplacer(RecordingProcessor):
 
         return response
 
+
+# Function wise, enabling large payload recording has nothing to do with resource preparers
+# We still base on it so that this decorator can chain with other preparers w/o too much hacks
+class AllowLargeResponse(AbstractPreparer):
+    def __init__(self, size_kb=1024):
+        self.size_kb = size_kb
+        super(AllowLargeResponse, self).__init__('nanana', 20)
+
+    def create_resource(self, _, **kwargs):
+        from azure_devtools.scenario_tests import LargeResponseBodyProcessor
+        large_resp_body = next((r for r in self.test_class_instance.recording_processors
+                                if isinstance(r, LargeResponseBodyProcessor)), None)
+        if large_resp_body:
+            large_resp_body._max_response_body = self.size_kb  # pylint: disable=protected-access
 
 # Utility
 

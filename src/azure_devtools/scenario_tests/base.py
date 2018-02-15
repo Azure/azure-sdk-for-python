@@ -162,6 +162,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         return request
 
     def _process_response_recording(self, response):
+        from .utilities import is_text_payload
         if self.in_recording:
             # make header name lower case and filter unwanted headers
             headers = {}
@@ -171,7 +172,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
             response['headers'] = headers
 
             body = response['body']['string']
-            if body and not isinstance(body, six.string_types):
+            if is_text_payload(response) and body and not isinstance(body, six.string_types):
                 response['body']['string'] = body.decode('utf-8')
 
             for processor in self.recording_processors:

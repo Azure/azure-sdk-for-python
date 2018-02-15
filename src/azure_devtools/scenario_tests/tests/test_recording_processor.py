@@ -78,6 +78,7 @@ class TestRecordingProcessors(unittest.TestCase):
             mock_request = mock.Mock()
             mock_request.uri = template.format(mock_sub_id)
             mock_request.body = self._mock_subscription_request_body(mock_sub_id)
+            mock_request.headers = {'content-type': 'application/json'}
 
             rp.process_request(mock_request)
             self.assertEqual(mock_request.uri, template.format(replaced_subscription_id))
@@ -106,7 +107,8 @@ class TestRecordingProcessors(unittest.TestCase):
             mock_response = dict({'body': {}})
             mock_response['body']['string'] = template.format(mock_sub_id)
             mock_response['headers'] = {'Location': [location_header_template.format(mock_sub_id)],
-                                        'azure-asyncoperation': [asyncoperation_header_template.format(mock_sub_id)]}
+                                        'azure-asyncoperation': [asyncoperation_header_template.format(mock_sub_id)],
+                                        'content-type': ['application/json']}
             rp.process_response(mock_response)
             self.assertEqual(mock_response['body']['string'], template.format(replaced_subscription_id))
 
@@ -114,3 +116,26 @@ class TestRecordingProcessors(unittest.TestCase):
                                      [location_header_template.format(replaced_subscription_id)])
             self.assertSequenceEqual(mock_response['headers']['azure-asyncoperation'],
                                      [asyncoperation_header_template.format(replaced_subscription_id)])
+
+
+    def test_recording_processor_skip_body_on_unrecognized_content_type(self):
+        location_header_template = 'https://graph.windows.net/{}/directoryObjects/' \
+                                   'f604c53a-aa21-44d5-a41f-c1ef0b5304bd/Microsoft.DirectoryServices.Application'
+        replaced_subscription_id = str(uuid.uuid4())
+        rp = SubscriptionRecordingProcessor(replaced_subscription_id)
+
+        mock_sub_id = str(uuid.uuid4())
+        mock_response = dict({'body': {}})
+        mock_response['body']['string'] = mock_sub_id
+        mock_response['headers'] = {
+            'Location': [location_header_template.format(mock_sub_id)],
+            'content-type': ['application/foo']
+        }
+
+        # action
+        rp.process_response(mock_response)
+
+        # assert
+        self.assertEqual(mock_response['body']['string'], mock_sub_id)  # body unchanged
+        self.assertEqual(mock_response['headers']['Location'],
+                         [location_header_template.format(replaced_subscription_id)])  # header changed

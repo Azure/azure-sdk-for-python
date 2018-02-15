@@ -34,3 +34,32 @@ def get_sha1_hash(file_path):
             sha1.update(data)
 
     return sha1.hexdigest()
+
+
+def _get_content_type(entity):
+    # 'headers' is a field of 'request', but it is a dict-key in 'response'
+    headers = getattr(entity, 'headers', None)
+    if headers is None:
+        headers = entity.get('headers')
+
+    content_type = None
+    if headers:
+        content_type = headers.get('content-type', None)
+        if content_type:
+            # content-type could an array from response, let us extract it out
+            content_type = content_type[0] if isinstance(content_type, list) else content_type
+            content_type = content_type.split(";")[0].lower()
+    return content_type
+
+
+def is_text_payload(entity):
+    text_content_list = ['application/json', 'application/xml', 'text/', 'application/test-content']
+
+    content_type = _get_content_type(entity)
+    if content_type:
+        return any(content_type.startswith(x) for x in text_content_list)
+    return True
+
+
+def is_json_payload(entity):
+    return _get_content_type(entity) == 'application/json'

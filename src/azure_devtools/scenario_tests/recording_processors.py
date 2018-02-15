@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from .utilities import is_text_payload, is_json_payload
 
 class RecordingProcessor(object):
     def process_request(self, request):  # pylint: disable=no-self-use
@@ -31,13 +32,13 @@ class SubscriptionRecordingProcessor(RecordingProcessor):
     def process_request(self, request):
         request.uri = self._replace_subscription_id(request.uri)
 
-        if request.body:
+        if is_text_payload(request) and request.body:
             request.body = self._replace_subscription_id(request.body.decode()).encode()
 
         return request
 
     def process_response(self, response):
-        if response['body']['string']:
+        if is_text_payload(response) and response['body']['string']:
             response['body']['string'] = self._replace_subscription_id(response['body']['string'])
 
         self.replace_header_fn(response, 'location', self._replace_subscription_id)
@@ -66,7 +67,7 @@ class LargeRequestBodyProcessor(RecordingProcessor):
         self._max_request_body = max_request_body
 
     def process_request(self, request):
-        if request.body and len(request.body) > self._max_request_body * 1024:
+        if is_text_payload(request) and request.body and len(request.body) > self._max_request_body * 1024:
             request.body = '!!! The request body has been omitted from the recording because its ' \
                            'size {} is larger than {}KB. !!!'.format(len(request.body),
                                                                      self._max_request_body)
@@ -81,34 +82,42 @@ class LargeResponseBodyProcessor(RecordingProcessor):
         self._max_response_body = max_response_body
 
     def process_response(self, response):
-        length = len(response['body']['string'] or '')
-        if length > self._max_response_body * 1024:
-            response['body']['string'] = \
-                "!!! The response body has been omitted from the recording because it is larger " \
-                "than {} KB. It will be replaced with blank content of {} bytes while replay. " \
-                "{}{}".format(self._max_response_body, length, self.control_flag, length)
+        if is_text_payload(response):
+            length = len(response['body']['string'] or '')
+            if length > self._max_response_body * 1024:
 
+                if is_json_payload(response):
+                    from .preparers import AllowLargeResponse  # pylint: disable=cyclic-import
+                    raise ValueError("The json response body exceeds the default limit of {}kb. Use '@{}' "
+                                     "on your test method to increase the limit or update test logics to avoid "
+                                     "big payloads".format(self._max_response_body, AllowLargeResponse.__name__))
+
+                response['body']['string'] = \
+                    "!!! The response body has been omitted from the recording because it is larger " \
+                    "than {} KB. It will be replaced with blank content of {} bytes while replay. " \
+                    "{}{}".format(self._max_response_body, length, self.control_flag, length)
         return response
 
 
 class LargeResponseBodyReplacer(RecordingProcessor):
     def process_response(self, response):
-        import six
-        body = response['body']['string']
+        if is_text_payload(response) and not is_json_payload(response):
+            import six
+            body = response['body']['string']
 
-        # backward compatibility. under 2.7 response body is unicode, under 3.5 response body is
-        # bytes. when set the value back, the same type must be used.
-        body_is_string = isinstance(body, six.string_types)
+            # backward compatibility. under 2.7 response body is unicode, under 3.5 response body is
+            # bytes. when set the value back, the same type must be used.
+            body_is_string = isinstance(body, six.string_types)
 
-        content_in_string = (response['body']['string'] or b'').decode('utf-8')
-        index = content_in_string.find(LargeResponseBodyProcessor.control_flag)
+            content_in_string = (response['body']['string'] or b'').decode('utf-8')
+            index = content_in_string.find(LargeResponseBodyProcessor.control_flag)
 
-        if index > -1:
-            length = int(content_in_string[index + len(LargeResponseBodyProcessor.control_flag):])
-            if body_is_string:
-                response['body']['string'] = '0' * length
-            else:
-                response['body']['string'] = bytes([0] * length)
+            if index > -1:
+                length = int(content_in_string[index + len(LargeResponseBodyProcessor.control_flag):])
+                if body_is_string:
+                    response['body']['string'] = '0' * length
+                else:
+                    response['body']['string'] = bytes([0] * length)
 
         return response
 
@@ -122,6 +131,7 @@ class OAuthRequestResponsesFilter(RecordingProcessor):
         import re
         if not re.match('https://login.microsoftonline.com/([^/]+)/oauth2/token', request.uri):
             return request
+        return None
 
 
 class DeploymentNameReplacer(RecordingProcessor):
@@ -159,7 +169,7 @@ class GeneralNameReplacer(RecordingProcessor):
         for old, new in self.names_name:
             request.uri = request.uri.replace(old, new)
 
-            if request.body:
+            if is_text_payload(request) and request.body:
                 body = str(request.body)
                 if old in body:
                     request.body = body.replace(old, new)
@@ -168,7 +178,7 @@ class GeneralNameReplacer(RecordingProcessor):
 
     def process_response(self, response):
         for old, new in self.names_name:
-            if response['body']['string']:
+            if is_text_payload(response) and response['body']['string']:
                 response['body']['string'] = response['body']['string'].replace(old, new)
 
             self.replace_header(response, 'location', old, new)
