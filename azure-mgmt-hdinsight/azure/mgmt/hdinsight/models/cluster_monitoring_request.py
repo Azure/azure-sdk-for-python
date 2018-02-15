@@ -27,5 +27,6 @@ class ClusterMonitoringRequest(Model):
     }
 
     def __init__(self, workspace_id=None, primary_key=None):
+        super(ClusterMonitoringRequest, self).__init__()
         self.workspace_id = workspace_id
         self.primary_key = primary_key

@@ -33,6 +33,7 @@ class ConnectivityEndpoint(Model):
     }
 
     def __init__(self, name=None, protocol=None, location=None, port=None):
+        super(ConnectivityEndpoint, self).__init__()
         self.name = name
         self.protocol = protocol
         self.location = location

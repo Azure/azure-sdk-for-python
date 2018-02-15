@@ -30,6 +30,7 @@ class LinuxOperatingSystemProfile(Model):
     }
 
     def __init__(self, username=None, password=None, ssh_profile=None):
+        super(LinuxOperatingSystemProfile, self).__init__()
         self.username = username
         self.password = password
         self.ssh_profile = ssh_profile

@@ -39,6 +39,7 @@ class DataDisksGroups(Model):
     }
 
     def __init__(self, disks_per_node=None):
+        super(DataDisksGroups, self).__init__()
         self.disks_per_node = disks_per_node
         self.storage_account_type = None
         self.disk_size_gb = None

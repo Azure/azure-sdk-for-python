@@ -71,6 +71,7 @@ class ApplicationGetProperties(Model):
     }
 
     def __init__(self, compute_profile=None, install_script_actions=None, uninstall_script_actions=None, https_endpoints=None, ssh_endpoints=None, application_type=None, errors=None, additional_properties=None):
+        super(ApplicationGetProperties, self).__init__()
         self.compute_profile = compute_profile
         self.install_script_actions = install_script_actions
         self.uninstall_script_actions = uninstall_script_actions

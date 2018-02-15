@@ -24,4 +24,5 @@ class VersionsCapability(Model):
     }
 
     def __init__(self, available=None):
+        super(VersionsCapability, self).__init__()
         self.available = available

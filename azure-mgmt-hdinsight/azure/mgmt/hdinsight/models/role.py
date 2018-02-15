@@ -47,6 +47,7 @@ class Role(Model):
     }
 
     def __init__(self, name=None, min_instance_count=None, target_instance_count=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None):
+        super(Role, self).__init__()
         self.name = name
         self.min_instance_count = min_instance_count
         self.target_instance_count = target_instance_count

@@ -36,6 +36,7 @@ class ScriptActionPersistedGetResponseSpec(Model):
     }
 
     def __init__(self, name=None, uri=None, parameters=None, roles=None, application_name=None):
+        super(ScriptActionPersistedGetResponseSpec, self).__init__()
         self.name = name
         self.uri = uri
         self.parameters = parameters

@@ -36,6 +36,7 @@ class ScriptAction(Model):
     }
 
     def __init__(self, name, uri, parameters):
+        super(ScriptAction, self).__init__()
         self.name = name
         self.uri = uri
         self.parameters = parameters

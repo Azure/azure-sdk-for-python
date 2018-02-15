@@ -31,6 +31,7 @@ class HttpConnectivitySettings(Model):
     }
 
     def __init__(self, enabled_credential=None, username=None, password=None):
+        super(HttpConnectivitySettings, self).__init__()
         self.enabled_credential = enabled_credential
         self.username = username
         self.password = password

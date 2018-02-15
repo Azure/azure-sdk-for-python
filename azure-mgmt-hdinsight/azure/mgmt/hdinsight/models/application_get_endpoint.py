@@ -30,6 +30,7 @@ class ApplicationGetEndpoint(Model):
     }
 
     def __init__(self, location=None, destination_port=None, public_port=None):
+        super(ApplicationGetEndpoint, self).__init__()
         self.location = location
         self.destination_port = destination_port
         self.public_port = public_port

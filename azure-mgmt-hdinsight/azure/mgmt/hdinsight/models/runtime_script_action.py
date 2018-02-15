@@ -46,6 +46,7 @@ class RuntimeScriptAction(Model):
     }
 
     def __init__(self, name, uri, roles, parameters=None):
+        super(RuntimeScriptAction, self).__init__()
         self.name = name
         self.uri = uri
         self.parameters = parameters

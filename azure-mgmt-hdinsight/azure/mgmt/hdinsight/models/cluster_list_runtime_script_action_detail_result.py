@@ -36,5 +36,6 @@ class ClusterListRuntimeScriptActionDetailResult(Model):
     }
 
     def __init__(self):
+        super(ClusterListRuntimeScriptActionDetailResult, self).__init__()
         self.value = None
         self.next_link = None

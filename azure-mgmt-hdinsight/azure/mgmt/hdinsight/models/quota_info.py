@@ -24,4 +24,5 @@ class QuotaInfo(Model):
     }
 
     def __init__(self, cores_used=None):
+        super(QuotaInfo, self).__init__()
         self.cores_used = cores_used

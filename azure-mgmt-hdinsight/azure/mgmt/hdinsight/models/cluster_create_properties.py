@@ -44,6 +44,7 @@ class ClusterCreateProperties(Model):
     }
 
     def __init__(self, cluster_version=None, os_type=None, tier=None, cluster_definition=None, security_profile=None, compute_profile=None, storage_profile=None):
+        super(ClusterCreateProperties, self).__init__()
         self.cluster_version = cluster_version
         self.os_type = os_type
         self.tier = tier

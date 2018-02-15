@@ -24,4 +24,5 @@ class StorageProfile(Model):
     }
 
     def __init__(self, storageaccounts=None):
+        super(StorageProfile, self).__init__()
         self.storageaccounts = storageaccounts

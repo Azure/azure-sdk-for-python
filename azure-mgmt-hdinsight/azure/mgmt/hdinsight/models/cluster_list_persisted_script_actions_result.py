@@ -34,5 +34,6 @@ class ClusterListPersistedScriptActionsResult(Model):
     }
 
     def __init__(self, value=None):
+        super(ClusterListPersistedScriptActionsResult, self).__init__()
         self.value = value
         self.next_link = None
