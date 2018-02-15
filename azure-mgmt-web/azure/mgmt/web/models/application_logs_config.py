@@ -33,6 +33,7 @@ class ApplicationLogsConfig(Model):
     }
 
     def __init__(self, file_system=None, azure_table_storage=None, azure_blob_storage=None):
+        super(ApplicationLogsConfig, self).__init__()
         self.file_system = file_system
         self.azure_table_storage = azure_table_storage
         self.azure_blob_storage = azure_blob_storage

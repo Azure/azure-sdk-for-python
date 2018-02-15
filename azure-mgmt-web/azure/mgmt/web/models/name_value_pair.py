@@ -27,5 +27,6 @@ class NameValuePair(Model):
     }
 
     def __init__(self, name=None, value=None):
+        super(NameValuePair, self).__init__()
         self.name = name
         self.value = value

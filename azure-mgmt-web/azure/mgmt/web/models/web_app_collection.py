@@ -15,14 +15,18 @@ from msrest.serialization import Model
 class WebAppCollection(Model):
     """Collection of App Service apps.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param value: Collection of resources.
     :type value: list[~azure.mgmt.web.models.Site]
-    :param next_link: Link to next page of resources.
-    :type next_link: str
+    :ivar next_link: Link to next page of resources.
+    :vartype next_link: str
     """
 
     _validation = {
         'value': {'required': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
@@ -30,6 +34,7 @@ class WebAppCollection(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value, next_link=None):
+    def __init__(self, value):
+        super(WebAppCollection, self).__init__()
         self.value = value
-        self.next_link = next_link
+        self.next_link = None

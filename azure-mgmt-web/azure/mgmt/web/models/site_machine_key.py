@@ -19,7 +19,7 @@ class SiteMachineKey(Model):
     :type validation: str
     :param validation_key: Validation key.
     :type validation_key: str
-    :param decryption: Decryption.
+    :param decryption: Algorithm used for decryption.
     :type decryption: str
     :param decryption_key: Decryption key.
     :type decryption_key: str
@@ -33,6 +33,7 @@ class SiteMachineKey(Model):
     }
 
     def __init__(self, validation=None, validation_key=None, decryption=None, decryption_key=None):
+        super(SiteMachineKey, self).__init__()
         self.validation = validation
         self.validation_key = validation_key
         self.decryption = decryption

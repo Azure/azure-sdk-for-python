@@ -61,6 +61,7 @@ class StampCapacity(Model):
     }
 
     def __init__(self, name=None, available_capacity=None, total_capacity=None, unit=None, compute_mode=None, worker_size=None, worker_size_id=None, exclude_from_capacity_allocation=None, is_applicable_for_all_compute_modes=None, site_mode=None):
+        super(StampCapacity, self).__init__()
         self.name = name
         self.available_capacity = available_capacity
         self.total_capacity = total_capacity

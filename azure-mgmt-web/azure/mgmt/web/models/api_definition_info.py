@@ -24,4 +24,5 @@ class ApiDefinitionInfo(Model):
     }
 
     def __init__(self, url=None):
+        super(ApiDefinitionInfo, self).__init__()
         self.url = url

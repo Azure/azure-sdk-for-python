@@ -43,6 +43,8 @@ class StorageMigrationOptions(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'azurefiles_connection_string': {'required': True},
+        'azurefiles_share': {'required': True},
     }
 
     _attribute_map = {
@@ -56,7 +58,7 @@ class StorageMigrationOptions(ProxyOnlyResource):
         'block_write_access_to_site': {'key': 'properties.blockWriteAccessToSite', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, azurefiles_connection_string=None, azurefiles_share=None, switch_site_after_migration=False, block_write_access_to_site=False):
+    def __init__(self, azurefiles_connection_string, azurefiles_share, kind=None, switch_site_after_migration=False, block_write_access_to_site=False):
         super(StorageMigrationOptions, self).__init__(kind=kind)
         self.azurefiles_connection_string = azurefiles_connection_string
         self.azurefiles_share = azurefiles_share

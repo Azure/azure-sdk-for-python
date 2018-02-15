@@ -32,5 +32,6 @@ class IpSecurityRestriction(Model):
     }
 
     def __init__(self, ip_address, subnet_mask=None):
+        super(IpSecurityRestriction, self).__init__()
         self.ip_address = ip_address
         self.subnet_mask = subnet_mask

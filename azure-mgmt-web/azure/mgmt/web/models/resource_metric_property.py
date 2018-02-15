@@ -27,5 +27,6 @@ class ResourceMetricProperty(Model):
     }
 
     def __init__(self, key=None, value=None):
+        super(ResourceMetricProperty, self).__init__()
         self.key = key
         self.value = value

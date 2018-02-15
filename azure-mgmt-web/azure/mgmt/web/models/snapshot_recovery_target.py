@@ -32,5 +32,6 @@ class SnapshotRecoveryTarget(Model):
     }
 
     def __init__(self, location=None, id=None):
+        super(SnapshotRecoveryTarget, self).__init__()
         self.location = location
         self.id = id
