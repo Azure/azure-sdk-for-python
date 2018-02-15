@@ -127,6 +127,13 @@ class AggregationType(Enum):
     total = "Total"
 
 
+class Sensitivity(Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
 class ResultType(Enum):
 
     data = "Data"

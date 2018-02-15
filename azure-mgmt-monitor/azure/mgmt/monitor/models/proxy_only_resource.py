@@ -39,6 +39,7 @@ class ProxyOnlyResource(Model):
     }
 
     def __init__(self):
+        super(ProxyOnlyResource, self).__init__()
         self.id = None
         self.name = None
         self.type = None

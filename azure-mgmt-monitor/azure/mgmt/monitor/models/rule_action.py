@@ -36,4 +36,5 @@ class RuleAction(Model):
     }
 
     def __init__(self):
+        super(RuleAction, self).__init__()
         self.odatatype = None
