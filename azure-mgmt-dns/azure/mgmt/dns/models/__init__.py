@@ -21,11 +21,13 @@ from .soa_record import SoaRecord
 from .caa_record import CaaRecord
 from .record_set import RecordSet
 from .record_set_update_parameters import RecordSetUpdateParameters
+from .sub_resource import SubResource
 from .zone import Zone
 from .resource import Resource
 from .record_set_paged import RecordSetPaged
 from .zone_paged import ZonePaged
 from .dns_management_client_enums import (
+    ZoneType,
     RecordType,
 )
 
@@ -42,9 +44,11 @@ __all__ = [
     'CaaRecord',
     'RecordSet',
     'RecordSetUpdateParameters',
+    'SubResource',
     'Zone',
     'Resource',
     'RecordSetPaged',
     'ZonePaged',
+    'ZoneType',
     'RecordType',
 ]
