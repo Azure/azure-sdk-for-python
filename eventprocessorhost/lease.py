@@ -32,7 +32,7 @@ class Lease:
         self.owner = lease.owner
         self.token = lease.token
 
-    def is_expired(self):
+    async def is_expired(self):
         """
         Determines whether the lease is expired. By default lease never expires.
         Deriving class implements the lease expiry logic.

@@ -5,34 +5,49 @@
 
 import logging
 import asyncio
-import sys
 from eventprocessorhost.abstract_event_processor import AbstractEventProcessor
 from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
 from eventprocessorhost.eh_config import EventHubConfig
 from eventprocessorhost.eph import EventProcessorHost
 
+
+class ExEventProcessorHost(EventProcessorHost):
+    async def open_async(self):
+        _loop = asyncio.get_event_loop()
+        _loop.create_task(self.kill_me())
+        await super().open_async()
+
+    async def kill_me(self):
+        await asyncio.sleep(30)
+        self.loop.create_task(self.close_async())
+
+
 class EventProcessor(AbstractEventProcessor):
     """
     Example Implmentation of AbstractEventProcessor
     """
+
     def __init__(self, params=None):
         """
         Init Event processor
         """
+        super().__init__(params)
         self._msg_counter = 0
+
     async def open_async(self, context):
         """
         Called by processor host to initialize the event processor.
         """
-        logging.info("Connection established %s", context.partition_id)
+        print("Connection established %s", context.partition_id)
 
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
         (Params) Context:Information about the partition
         """
-        logging.info("Connection closed (reason %s, id %s, offset %s, sq_number %s)", reason,
-                     context.partition_id, context.offset, context.sequence_number)
+        print("Connection closed (reason %s, id %s, offset %s, sq_number %s)" % (reason,
+                                                                                 context.partition_id, context.offset,
+                                                                                 context.sequence_number))
 
     async def process_events_async(self, context, messages):
         """
@@ -40,7 +55,7 @@ class EventProcessor(AbstractEventProcessor):
         This is where the real work of the event processor is done.
         (Params) Context: Information about the partition, Messages: The events to be processed.
         """
-        logging.info("Events processed %s %s", context.partition_id, messages)
+        print("Events processed %s %s" % (context.partition_id, str([message.message for message in messages])))
         await context.checkpoint_async()
 
     async def process_error_async(self, context, error):
@@ -50,26 +65,33 @@ class EventProcessor(AbstractEventProcessor):
         continuing to pump messages,so no action is required from
         (Params) Context: Information about the partition, Error: The error that occured.
         """
-        logging.error("Event Processor Error %s ", repr(error))
+        logging.error("Event Processor Error %s " % repr(error))
+
+
+# Event loop and host
+loop = asyncio.get_event_loop()
 
 try:
     # Storage Account Credentials
-    STORAGE_ACCOUNT_NAME = "<mystorageaccount>"
-    STORAGE_KEY = "<storage_key>"
+    STORAGE_ACCOUNT_NAME = ""
+    STORAGE_KEY = ""
     LEASE_CONTAINER_NAME = "leases"
 
     # Eventhub config and storage manager 
-    EH_CONFIG = EventHubConfig('<mynamespace>', '<myeventhub>','<SAS-policy>', 
-                               '<SAS-key>', consumer_group="$default")
+    EH_CONFIG = EventHubConfig('', '', '',
+                               '', consumer_group="$default")
     STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
                                                          LEASE_CONTAINER_NAME)
-    #Event loop and host
-    LOOP = asyncio.get_event_loop()
-    HOST = EventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
-                              ep_params=["param1","param2"], loop=LOOP)
 
-    LOOP.run_until_complete(HOST.open_async())
-    LOOP.run_until_complete(HOST.close_async())
+    # HOST = exEventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
+    #                             ep_params=["param1", "param2"], loop=LOOP)
+
+    host = EventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
+                              ep_params=["param1", "param2"], loop=loop)
+    loop.create_task(host.open_async())
+    while any([True if not task.done() else False for task in asyncio.Task.all_tasks()]):
+        loop.run_until_complete(asyncio.sleep(1))
+    loop.run_until_complete(host.close_async())
 
 finally:
-    LOOP.stop()
+    loop.stop()

@@ -3,10 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-import time
 import logging
 import asyncio
-import threading
 from queue import Queue
 import concurrent.futures
 from collections import Counter
@@ -15,10 +13,12 @@ import requests
 from eventprocessorhost.eh_partition_pump import EventHubPartitionPump
 from eventprocessorhost.cancellation_token import CancellationToken
 
+
 class PartitionManager:
     """
     Manages the partition event pump execution
     """
+
     def __init__(self, host):
         self.host = host
         self.partition_pumps = {}
@@ -42,7 +42,7 @@ class PartitionManager:
                                     api-version=2014-01'.format(self.host.eh_config.sb_name,
                                                                 self.host.eh_config.eh_name),
                                    headers=headers)
-                soup = BeautifulSoup(res.text, "lxml-xml") # process xml response
+                soup = BeautifulSoup(res.text, "lxml-xml")  # process xml response
                 self.partition_ids = [pid.text for pid in soup.find("PartitionIds")]
             except Exception as err:
                 raise Exception("failed to get partition ids", repr(err))
@@ -60,16 +60,16 @@ class PartitionManager:
         logging.info("%s PartitionCount: %s", self.host.guid, partition_count)
         self.pump_executor = concurrent.futures.ThreadPoolExecutor(max_workers=partition_count)
 
-        self.run_task = await self.run_async()
+        self.run_task = asyncio.ensure_future(self.run_async())
 
     async def stop_async(self):
         """
         Terminiates the partition manger.
         """
         self.cancellation_token.cancel()
-        local_run_task = self.run_task
-        if local_run_task:
-            await local_run_task()
+
+        if self.run_task and not self.run_task.done():
+            await self.run_task
 
     async def run_async(self):
         """
@@ -78,10 +78,10 @@ class PartitionManager:
         try:
             await self.run_loop_async()
         except Exception as err:
-            logging.error("Run loop failed %s", repr(err))
+            logging.error("Run loop failed %s" % repr(err))
 
         try:
-            logging.info("Shutting down all pumps %s", self.host.guid)
+            logging.info("Shutting down all pumps %s" % self.host.guid)
             await self.remove_all_pumps_async("Shutdown")
         except Exception as err:
             raise Exception("failed to remove all pumps", repr(err))
@@ -94,18 +94,18 @@ class PartitionManager:
         """
         await self.host.storage_manager.create_checkpoint_store_if_not_exists_async()
         partition_ids = await self.get_partition_ids_async()
-        retry_threads = []
-        for p_id in partition_ids:
-            t = threading.Thread(target=self.retry, \
-                                 args=(self.host.storage_manager.create_checkpoint_if_not_exists_async,),\
-                                 kwargs={'partition_id': p_id, 
-                                         'retry_message': "Failure creating checkpoint for partition, retrying",
-                                         'final_failure_message':"Out of retries creating checkpoint blob for partition",
-                                         'max_retries':5, 'host_id': self.host.guid})
-            retry_threads.append(t)
-            t.start()
-        # Wait to create all checkpoints
-        [t.join() for t in retry_threads]
+        retry_tasks = []
+        for partition_id in partition_ids:
+            retry_tasks.append(self.retry_async(self.host.storage_manager.create_checkpoint_if_not_exists_async,
+                                                partition_id=partition_id,
+                                                retry_message="Failure creating checkpoint for partition, retrying",
+                                                final_failure_message="Out of retries creating checkpoint"
+                                                                      " blob for partition",
+                                                max_retries=5,
+                                                host_id=self.host.host_name))
+
+        await asyncio.gather(*retry_tasks)
+
         return len(partition_ids)
 
     def retry(self, func, partition_id, retry_message, final_failure_message, max_retries, host_id):
@@ -144,16 +144,12 @@ class PartitionManager:
             # Renew any leases that currently belong to us.
             getting_all_leases = await lease_manager.get_all_leases()
             leases_owned_by_others_q = Queue()
-            possible_lease_threads = []
-            for get_lease_task in getting_all_leases:
-                t = threading.Thread(target=self.attempt_renew_lease, args=(get_lease_task,),\
-                                     kwargs={'owned_by_others_q': leases_owned_by_others_q, 
-                                             'lease_manager': lease_manager})
-                possible_lease_threads.append(t)
-                t.start()
-                
-            # Wait to calculate possible leases
-            [t.join() for t in possible_lease_threads]
+            renew_tasks = [self.attempt_renew_lease_async(get_lease_task,
+                                                          owned_by_others_q=leases_owned_by_others_q,
+                                                          lease_manager=lease_manager)
+                           for get_lease_task in getting_all_leases]
+            await asyncio.gather(*renew_tasks)
+
             # Extract all leasees leases_owned_by_others and our_lease_count from the
             all_leases = {}
             leases_owned_by_others = []
@@ -171,16 +167,16 @@ class PartitionManager:
             leases_owned_by_others_count = len(leases_owned_by_others)
             if leases_owned_by_others_count > 0:
                 steal_this_lease = self.which_lease_to_steal(leases_owned_by_others,
-                                                            our_lease_count)
+                                                             our_lease_count)
                 if steal_this_lease:
                     try:
                         logging.info("Lease to steal %s", str(steal_this_lease.serializable()))
                         if await lease_manager.acquire_lease_async(steal_this_lease):
                             logging.info("Stole lease sucessfully %s %s", self.host.guid,
-                                        steal_this_lease.partition_id)
+                                         steal_this_lease.partition_id)
                         else:
                             logging.info("Failed to steal lease for partition %s %s",
-                                        self.host.guid, steal_this_lease.partition_id)
+                                         self.host.guid, steal_this_lease.partition_id)
                     except Exception as err:
                         logging.error("Failed to steal lease %s", repr(err))
 
@@ -209,10 +205,10 @@ class PartitionManager:
                 await self.remove_pump_async(partition_id, "Shutdown")
             else:
                 # Pump is working, should just replace the lease.
-                # This is causing a race condition since if the checkpoint is being updated 
+                # This is causing a race condition since if the checkpoint is being updated
                 # when the lease changes then the pump will error and shut down
-                captured_pump.set_lease(lease) 
-                
+                captured_pump.set_lease(lease)
+
         else:
             logging.info("Starting pump %s %s", self.host.guid, partition_id)
             await self.create_new_pump_async(partition_id, lease)
@@ -221,9 +217,10 @@ class PartitionManager:
         """
         Create a new pump thread with a given lease
         """
+        loop = asyncio.get_event_loop()
         partition_pump = EventHubPartitionPump(self.host, lease)
         # Do the put after start, if the start fails then put doesn't happen
-        self.host.loop.run_in_executor(self.pump_executor, partition_pump.run)
+        loop.create_task(partition_pump.open_async())
         self.partition_pumps[partition_id] = partition_pump
         logging.info("Created new partition pump %s %s", self.host.guid, partition_id)
 
@@ -235,24 +232,23 @@ class PartitionManager:
             captured_pump = self.partition_pumps[partition_id]
             if not captured_pump.is_closing():
                 await captured_pump.close_async(reason)
-            #else, pump is already closing/closed, don't need to try to shut it down again
-            del self.partition_pumps[partition_id] # remove pump
-            logging.debug("Removed pump %s %s ", self.host.guid, partition_id)
-            logging.debug("%d pumps still running", len(self.partition_pumps))
+            # else, pump is already closing/closed, don't need to try to shut it down again
+            del self.partition_pumps[partition_id]  # remove pump
+            logging.debug("Removed pump %s %s " % (self.host.guid, partition_id))
+            logging.debug("%d pumps still running" % len(self.partition_pumps))
         else:
             # PartitionManager main loop tries to remove pump for every partition that the
             # host does not own, just to be sure. Not finding a pump for a partition is normal
             # and expected most of the time.
-            logging.debug("No pump found to remove for this partition %s %s",
-                          self.host.guid, partition_id)
+            logging.debug("No pump found to remove for this partition %s %s" % (self.host.guid, partition_id))
 
     async def remove_all_pumps_async(self, reason):
-        """ 
+        """
         Stops all partition pumps
         (Note this might be wrong and need to await all tasks before returning done)
         """
-        for p_id in list(self.partition_pumps):
-            await self.remove_pump_async(p_id, reason)
+        pump_tasks = [self.remove_pump_async(p_id, reason) for p_id in self.partition_pumps]
+        await asyncio.gather(*pump_tasks)
         return True
 
     def which_lease_to_steal(self, stealable_leases, have_lease_count):
@@ -307,9 +303,9 @@ class PartitionManager:
         """
         try:
             possible_lease = await lease_task
-            if possible_lease.is_expired():
-                logging.info("Trying to aquire lease %s %s", self.host.guid,
-                            possible_lease.partition_id)
+            if await possible_lease.is_expired():
+                logging.info("Trying to aquire lease %s %s" % (self.host.guid,
+                                                               possible_lease.partition_id))
                 if await lease_manager.acquire_lease_async(possible_lease):
                     owned_by_others_q.put((False, possible_lease))
                 else:
@@ -317,20 +313,19 @@ class PartitionManager:
 
             elif possible_lease.owner == self.host.host_name:
                 try:
-                    logging.debug("Trying to renew lease %s %s", self.host.guid,
-                                  possible_lease.partition_id)
+                    logging.debug("Trying to renew lease %s %s" % (self.host.guid,
+                                                                   possible_lease.partition_id))
                     if await lease_manager.renew_lease_async(possible_lease):
                         owned_by_others_q.put((False, possible_lease))
                     else:
                         owned_by_others_q.put((True, possible_lease))
-                except Exception as err: #Update to LeaseLostException:
-                    logging.error("Lease lost exception %s %s %s", repr(err),
-                                self.host.guid, possible_lease.partition_id)
+                except Exception as err:  # Update to LeaseLostException:
+                    logging.error("Lease lost exception %s %s %s" % (repr(err),
+                                                                     self.host.guid, possible_lease.partition_id))
                     owned_by_others_q.put((True, possible_lease))
             else:
                 owned_by_others_q.put((True, possible_lease))
 
         except Exception as err:
             logging.error("Failure during getting/acquiring/renewing lease,\
-                        skipping %s", repr(err))
-
+                        skipping %s" % repr(err))

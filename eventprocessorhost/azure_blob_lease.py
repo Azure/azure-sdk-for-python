@@ -4,6 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 import json
+import asyncio
 from eventprocessorhost.lease import Lease
 
 class AzureBlobLease(Lease):
@@ -54,11 +55,14 @@ class AzureBlobLease(Lease):
         self.offset = lease.offset
         self.sequence_number = lease.sequence_number
 
-    def is_expired(self):
+    async def is_expired(self):
         """
         Check and return azure blob lease state using storage api
         """
-        current_state = self.state()
+        if asyncio.iscoroutinefunction(self.state):
+            current_state = await self.state()
+        else:
+            current_state = self.state()
         if current_state:
             return current_state != "leased"
         return False

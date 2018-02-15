@@ -41,9 +41,10 @@ class EventHubPartitionPump(PartitionPump):
             self.set_pump_status("OpenFailed")
 
         if self.pump_status == "Opening":
+            loop = asyncio.get_event_loop()
             self.set_pump_status("Running")
             self.eh_client.run_daemon()
-            await self.partition_receiver.run()
+            loop.create_task(self.partition_receiver.run())
 
         if self.pump_status == "OpenFailed":
             self.set_pump_status("Closing")
