@@ -28,5 +28,6 @@ class AutoHealCustomAction(Model):
     }
 
     def __init__(self, exe=None, parameters=None):
+        super(AutoHealCustomAction, self).__init__()
         self.exe = exe
         self.parameters = parameters

@@ -189,6 +189,7 @@ class AppServiceEnvironment(Model):
     }
 
     def __init__(self, name, location, virtual_network, worker_pools, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None, user_whitelisted_ip_ranges=None):
+        super(AppServiceEnvironment, self).__init__()
         self.name = name
         self.location = location
         self.provisioning_state = None

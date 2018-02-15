@@ -32,6 +32,7 @@ class AutoHealActions(Model):
     }
 
     def __init__(self, action_type=None, custom_action=None, min_process_execution_time=None):
+        super(AutoHealActions, self).__init__()
         self.action_type = action_type
         self.custom_action = custom_action
         self.min_process_execution_time = min_process_execution_time

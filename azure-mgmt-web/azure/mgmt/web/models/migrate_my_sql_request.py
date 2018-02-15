@@ -37,6 +37,8 @@ class MigrateMySqlRequest(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'connection_string': {'required': True},
+        'migration_type': {'required': True},
     }
 
     _attribute_map = {
@@ -48,7 +50,7 @@ class MigrateMySqlRequest(ProxyOnlyResource):
         'migration_type': {'key': 'properties.migrationType', 'type': 'MySqlMigrationType'},
     }
 
-    def __init__(self, kind=None, connection_string=None, migration_type=None):
+    def __init__(self, connection_string, migration_type, kind=None):
         super(MigrateMySqlRequest, self).__init__(kind=kind)
         self.connection_string = connection_string
         self.migration_type = migration_type
