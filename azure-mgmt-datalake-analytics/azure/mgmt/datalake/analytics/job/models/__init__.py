@@ -38,9 +38,9 @@ from .base_job_parameters import BaseJobParameters
 from .job_information_basic import JobInformationBasic
 from .job_information import JobInformation
 from .update_job_parameters import UpdateJobParameters
+from .job_information_basic_paged import JobInformationBasicPaged
 from .job_pipeline_information_paged import JobPipelineInformationPaged
 from .job_recurrence_information_paged import JobRecurrenceInformationPaged
-from .job_information_basic_paged import JobInformationBasicPaged
 from .data_lake_analytics_job_management_client_enums import (
     JobResourceType,
     SeverityTypes,
@@ -80,9 +80,9 @@ __all__ = [
     'JobInformationBasic',
     'JobInformation',
     'UpdateJobParameters',
+    'JobInformationBasicPaged',
     'JobPipelineInformationPaged',
     'JobRecurrenceInformationPaged',
-    'JobInformationBasicPaged',
     'JobResourceType',
     'SeverityTypes',
     'CompileMode',

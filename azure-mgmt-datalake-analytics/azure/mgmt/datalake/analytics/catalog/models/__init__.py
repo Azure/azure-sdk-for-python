@@ -12,7 +12,6 @@
 from .acl_create_or_update_parameters import AclCreateOrUpdateParameters
 from .acl_delete_parameters import AclDeleteParameters
 from .acl import Acl
-from .acl_list import AclList
 from .data_lake_analytics_catalog_secret_create_or_update_parameters import DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
 from .data_lake_analytics_catalog_credential_create_parameters import DataLakeAnalyticsCatalogCredentialCreateParameters
 from .data_lake_analytics_catalog_credential_delete_parameters import DataLakeAnalyticsCatalogCredentialDeleteParameters
@@ -58,6 +57,7 @@ from .usql_type_paged import USqlTypePaged
 from .usql_table_valued_function_paged import USqlTableValuedFunctionPaged
 from .usql_assembly_clr_paged import USqlAssemblyClrPaged
 from .usql_schema_paged import USqlSchemaPaged
+from .acl_paged import AclPaged
 from .usql_database_paged import USqlDatabasePaged
 from .data_lake_analytics_catalog_management_client_enums import (
     AclType,
@@ -69,7 +69,6 @@ __all__ = [
     'AclCreateOrUpdateParameters',
     'AclDeleteParameters',
     'Acl',
-    'AclList',
     'DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters',
     'DataLakeAnalyticsCatalogCredentialCreateParameters',
     'DataLakeAnalyticsCatalogCredentialDeleteParameters',
@@ -115,6 +114,7 @@ __all__ = [
     'USqlTableValuedFunctionPaged',
     'USqlAssemblyClrPaged',
     'USqlSchemaPaged',
+    'AclPaged',
     'USqlDatabasePaged',
     'AclType',
     'PermissionType',

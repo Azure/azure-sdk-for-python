@@ -36,6 +36,12 @@ class FirewallState(Enum):
     disabled = "Disabled"
 
 
+class FirewallAllowAzureIpsState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class TrustedIdProviderState(Enum):
 
     enabled = "Enabled"
@@ -51,12 +57,6 @@ class TierType(Enum):
     commitment_500_tb = "Commitment_500TB"
     commitment_1_pb = "Commitment_1PB"
     commitment_5_pb = "Commitment_5PB"
-
-
-class FirewallAllowAzureIpsState(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
 
 
 class DataLakeStoreAccountStatus(Enum):
@@ -80,6 +80,13 @@ class DataLakeStoreAccountState(Enum):
     suspended = "Suspended"
 
 
+class OperationOrigin(Enum):
+
+    user = "user"
+    system = "system"
+    usersystem = "user,system"
+
+
 class SubscriptionState(Enum):
 
     registered = "Registered"
@@ -87,10 +94,3 @@ class SubscriptionState(Enum):
     deleted = "Deleted"
     unregistered = "Unregistered"
     warned = "Warned"
-
-
-class OperationOrigin(Enum):
-
-    user = "user"
-    system = "system"
-    usersystem = "user,system"

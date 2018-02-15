@@ -13,11 +13,11 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.accounts_operations import AccountsOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.trusted_id_providers_operations import TrustedIdProvidersOperations
-from .operations.account_operations import AccountOperations
-from .operations.locations_operations import LocationsOperations
 from .operations.operations import Operations
+from .operations.locations_operations import LocationsOperations
 from . import models
 
 
@@ -61,16 +61,16 @@ class DataLakeStoreAccountManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: DataLakeStoreAccountManagementClientConfiguration
 
+    :ivar accounts: Accounts operations
+    :vartype accounts: azure.mgmt.datalake.store.operations.AccountsOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.datalake.store.operations.FirewallRulesOperations
     :ivar trusted_id_providers: TrustedIdProviders operations
     :vartype trusted_id_providers: azure.mgmt.datalake.store.operations.TrustedIdProvidersOperations
-    :ivar account: Account operations
-    :vartype account: azure.mgmt.datalake.store.operations.AccountOperations
-    :ivar locations: Locations operations
-    :vartype locations: azure.mgmt.datalake.store.operations.LocationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datalake.store.operations.Operations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.datalake.store.operations.LocationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -93,13 +93,13 @@ class DataLakeStoreAccountManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.accounts = AccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.trusted_id_providers = TrustedIdProvidersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.account = AccountOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
