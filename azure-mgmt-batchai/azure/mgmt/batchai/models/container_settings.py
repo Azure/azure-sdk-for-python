@@ -16,8 +16,8 @@ class ContainerSettings(Model):
     """Settings for the container to be downloaded.
 
     :param image_source_registry: Registry to download the container from.
-    :type image_source_registry: :class:`ImageSourceRegistry
-     <azure.mgmt.batchai.models.ImageSourceRegistry>`
+    :type image_source_registry:
+     ~azure.mgmt.batchai.models.ImageSourceRegistry
     """
 
     _validation = {
@@ -29,4 +29,5 @@ class ContainerSettings(Model):
     }
 
     def __init__(self, image_source_registry):
+        super(ContainerSettings, self).__init__()
         self.image_source_registry = image_source_registry

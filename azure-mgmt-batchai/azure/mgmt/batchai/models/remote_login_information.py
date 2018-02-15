@@ -36,6 +36,7 @@ class RemoteLoginInformation(Model):
     }
 
     def __init__(self, node_id, ip_address, port):
+        super(RemoteLoginInformation, self).__init__()
         self.node_id = node_id
         self.ip_address = ip_address
         self.port = port

@@ -20,8 +20,7 @@ class AzureFileShareReference(Model):
     :param azure_file_url: URL to access the Azure File.
     :type azure_file_url: str
     :param credentials: Information of the Azure File credentials.
-    :type credentials: :class:`AzureStorageCredentialsInfo
-     <azure.mgmt.batchai.models.AzureStorageCredentialsInfo>`
+    :type credentials: ~azure.mgmt.batchai.models.AzureStorageCredentialsInfo
     :param relative_mount_path: Specifies the relative path on the compute
      node where the Azure file share will be mounted. Note that all file shares
      will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
@@ -51,6 +50,7 @@ class AzureFileShareReference(Model):
     }
 
     def __init__(self, account_name, azure_file_url, credentials, relative_mount_path, file_mode="0777", directory_mode="0777"):
+        super(AzureFileShareReference, self).__init__()
         self.account_name = account_name
         self.azure_file_url = azure_file_url
         self.credentials = credentials

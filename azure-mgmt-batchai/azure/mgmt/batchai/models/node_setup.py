@@ -22,10 +22,9 @@ class NodeSetup(Model):
      is rebooted. For that reason the task code needs to be idempotent.
      Generally it is used to either download static data that is required for
      all jobs that run on the cluster VMs or to download/install software.
-    :type setup_task: :class:`SetupTask <azure.mgmt.batchai.models.SetupTask>`
+    :type setup_task: ~azure.mgmt.batchai.models.SetupTask
     :param mount_volumes: Information on shared volumes to be used by jobs.
-    :type mount_volumes: :class:`MountVolumes
-     <azure.mgmt.batchai.models.MountVolumes>`
+    :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
     """
 
     _attribute_map = {
@@ -34,5 +33,6 @@ class NodeSetup(Model):
     }
 
     def __init__(self, setup_task=None, mount_volumes=None):
+        super(NodeSetup, self).__init__()
         self.setup_task = setup_task
         self.mount_volumes = mount_volumes

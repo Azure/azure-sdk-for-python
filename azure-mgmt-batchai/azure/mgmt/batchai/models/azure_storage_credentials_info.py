@@ -23,8 +23,8 @@ class AzureStorageCredentialsInfo(Model):
      Azure KeyVault and pass it to the Batch AI Service to integrate with
      KeyVault. One of accountKey or accountKeySecretReference must be
      specified.
-    :type account_key_secret_reference: :class:`KeyVaultSecretReference
-     <azure.mgmt.batchai.models.KeyVaultSecretReference>`
+    :type account_key_secret_reference:
+     ~azure.mgmt.batchai.models.KeyVaultSecretReference
     """
 
     _attribute_map = {
@@ -33,5 +33,6 @@ class AzureStorageCredentialsInfo(Model):
     }
 
     def __init__(self, account_key=None, account_key_secret_reference=None):
+        super(AzureStorageCredentialsInfo, self).__init__()
         self.account_key = account_key
         self.account_key_secret_reference = account_key_secret_reference
