@@ -34,7 +34,7 @@ class ResourceMetric(Model):
     :vartype id: str
     :ivar metric_values: Metric values.
     :vartype metric_values: list[~azure.mgmt.web.models.ResourceMetricValue]
-    :ivar properties: Properties.
+    :ivar properties: Resource metric properties collection.
     :vartype properties: list[~azure.mgmt.web.models.ResourceMetricProperty]
     """
 
@@ -63,6 +63,7 @@ class ResourceMetric(Model):
     }
 
     def __init__(self):
+        super(ResourceMetric, self).__init__()
         self.name = None
         self.unit = None
         self.time_grain = None

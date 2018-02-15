@@ -84,6 +84,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         'type': {'readonly': True},
         'domain_verification_token': {'readonly': True},
         'validity_in_years': {'maximum': 3, 'minimum': 1},
+        'product_type': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'signed_certificate': {'readonly': True},
@@ -123,7 +124,7 @@ class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
         'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, kind=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
+    def __init__(self, product_type, kind=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, auto_renew=True, csr=None):
         super(AppServiceCertificateOrderPatchResource, self).__init__(kind=kind)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
