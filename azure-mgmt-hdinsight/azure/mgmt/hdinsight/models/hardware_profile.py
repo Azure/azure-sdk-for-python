@@ -24,4 +24,5 @@ class HardwareProfile(Model):
     }
 
     def __init__(self, vm_size=None):
+        super(HardwareProfile, self).__init__()
         self.vm_size = vm_size

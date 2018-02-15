@@ -34,6 +34,7 @@ class StorageAccount(Model):
     }
 
     def __init__(self, name=None, is_default=None, container=None, key=None):
+        super(StorageAccount, self).__init__()
         self.name = name
         self.is_default = is_default
         self.container = container

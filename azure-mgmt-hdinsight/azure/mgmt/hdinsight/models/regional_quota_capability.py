@@ -30,6 +30,7 @@ class RegionalQuotaCapability(Model):
     }
 
     def __init__(self, region_name=None, cores_used=None, cores_available=None):
+        super(RegionalQuotaCapability, self).__init__()
         self.region_name = region_name
         self.cores_used = cores_used
         self.cores_available = cores_available

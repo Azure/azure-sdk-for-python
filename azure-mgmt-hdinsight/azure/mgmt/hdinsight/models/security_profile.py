@@ -48,6 +48,7 @@ class SecurityProfile(Model):
     }
 
     def __init__(self, directory_type=None, domain=None, organizational_unit_dn=None, ldaps_urls=None, domain_username=None, domain_user_password=None, cluster_users_group_dns=None):
+        super(SecurityProfile, self).__init__()
         self.directory_type = directory_type
         self.domain = domain
         self.organizational_unit_dn = organizational_unit_dn

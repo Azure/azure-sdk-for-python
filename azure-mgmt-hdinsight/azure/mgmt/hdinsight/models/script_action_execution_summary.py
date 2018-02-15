@@ -36,5 +36,6 @@ class ScriptActionExecutionSummary(Model):
     }
 
     def __init__(self):
+        super(ScriptActionExecutionSummary, self).__init__()
         self.status = None
         self.instance_count = None

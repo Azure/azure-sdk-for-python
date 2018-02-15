@@ -39,6 +39,7 @@ class VmSizeCompatibilityFilter(Model):
     }
 
     def __init__(self, filter_mode=None, regions=None, cluster_flavors=None, node_types=None, cluster_versions=None, vmsizes=None):
+        super(VmSizeCompatibilityFilter, self).__init__()
         self.filter_mode = filter_mode
         self.regions = regions
         self.cluster_flavors = cluster_flavors

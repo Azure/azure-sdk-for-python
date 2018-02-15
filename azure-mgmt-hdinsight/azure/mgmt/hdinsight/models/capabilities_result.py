@@ -40,6 +40,7 @@ class CapabilitiesResult(Model):
     }
 
     def __init__(self, versions=None, regions=None, vm_sizes=None, vm_size_filters=None, features=None, quota=None):
+        super(CapabilitiesResult, self).__init__()
         self.versions = versions
         self.regions = regions
         self.vm_sizes = vm_sizes

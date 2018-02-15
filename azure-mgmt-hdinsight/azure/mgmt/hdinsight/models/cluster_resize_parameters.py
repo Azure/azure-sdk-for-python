@@ -24,4 +24,5 @@ class ClusterResizeParameters(Model):
     }
 
     def __init__(self, target_instance_count=None):
+        super(ClusterResizeParameters, self).__init__()
         self.target_instance_count = target_instance_count

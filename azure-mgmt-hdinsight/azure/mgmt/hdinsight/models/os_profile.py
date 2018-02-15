@@ -25,4 +25,5 @@ class OsProfile(Model):
     }
 
     def __init__(self, linux_operating_system_profile=None):
+        super(OsProfile, self).__init__()
         self.linux_operating_system_profile = linux_operating_system_profile

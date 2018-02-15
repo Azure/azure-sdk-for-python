@@ -24,4 +24,5 @@ class VmSizesCapability(Model):
     }
 
     def __init__(self, available=None):
+        super(VmSizesCapability, self).__init__()
         self.available = available

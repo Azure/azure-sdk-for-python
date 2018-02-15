@@ -33,6 +33,7 @@ class VersionSpec(Model):
     }
 
     def __init__(self, friendly_name=None, display_name=None, is_default=None, component_versions=None):
+        super(VersionSpec, self).__init__()
         self.friendly_name = friendly_name
         self.display_name = display_name
         self.is_default = is_default

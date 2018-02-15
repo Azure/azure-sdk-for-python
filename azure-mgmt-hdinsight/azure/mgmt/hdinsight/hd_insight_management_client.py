@@ -51,7 +51,7 @@ class HDInsightManagementClientConfiguration(AzureConfiguration):
 
         super(HDInsightManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('hdinsightmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-hdinsight/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

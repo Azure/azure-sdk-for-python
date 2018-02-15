@@ -27,5 +27,6 @@ class Errors(Model):
     }
 
     def __init__(self, code=None, message=None):
+        super(Errors, self).__init__()
         self.code = code
         self.message = message

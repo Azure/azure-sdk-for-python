@@ -29,5 +29,6 @@ class ClusterMonitoringResponse(Model):
     }
 
     def __init__(self, cluster_monitoring_enabled=None, workspace_id=None):
+        super(ClusterMonitoringResponse, self).__init__()
         self.cluster_monitoring_enabled = cluster_monitoring_enabled
         self.workspace_id = workspace_id

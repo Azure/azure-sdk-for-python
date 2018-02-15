@@ -33,5 +33,6 @@ class ExecuteScriptActionParameters(Model):
     }
 
     def __init__(self, persist_on_success, script_actions=None):
+        super(ExecuteScriptActionParameters, self).__init__()
         self.script_actions = script_actions
         self.persist_on_success = persist_on_success

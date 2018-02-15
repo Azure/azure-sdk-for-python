@@ -24,4 +24,5 @@ class SshProfile(Model):
     }
 
     def __init__(self, public_keys=None):
+        super(SshProfile, self).__init__()
         self.public_keys = public_keys

@@ -24,4 +24,5 @@ class ComputeProfile(Model):
     }
 
     def __init__(self, roles=None):
+        super(ComputeProfile, self).__init__()
         self.roles = roles

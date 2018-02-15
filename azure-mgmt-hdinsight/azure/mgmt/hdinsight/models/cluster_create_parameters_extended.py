@@ -30,6 +30,7 @@ class ClusterCreateParametersExtended(Model):
     }
 
     def __init__(self, location=None, tags=None, properties=None):
+        super(ClusterCreateParametersExtended, self).__init__()
         self.location = location
         self.tags = tags
         self.properties = properties

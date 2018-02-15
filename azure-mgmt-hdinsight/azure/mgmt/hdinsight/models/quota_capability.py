@@ -25,4 +25,5 @@ class QuotaCapability(Model):
     }
 
     def __init__(self, regional_quotas=None):
+        super(QuotaCapability, self).__init__()
         self.regional_quotas = regional_quotas

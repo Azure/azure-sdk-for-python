@@ -34,6 +34,7 @@ class ClusterDefinition(Model):
     }
 
     def __init__(self, blueprint=None, kind=None, component_version=None, configurations=None):
+        super(ClusterDefinition, self).__init__()
         self.blueprint = blueprint
         self.kind = kind
         self.component_version = component_version

@@ -24,4 +24,5 @@ class RegionsCapability(Model):
     }
 
     def __init__(self, available=None):
+        super(RegionsCapability, self).__init__()
         self.available = available

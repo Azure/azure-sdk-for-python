@@ -24,4 +24,5 @@ class SshPublicKey(Model):
     }
 
     def __init__(self, certificate_data=None):
+        super(SshPublicKey, self).__init__()
         self.certificate_data = certificate_data

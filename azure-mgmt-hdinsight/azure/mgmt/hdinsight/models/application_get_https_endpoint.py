@@ -37,6 +37,7 @@ class ApplicationGetHttpsEndpoint(Model):
     }
 
     def __init__(self, additional_properties=None, access_modes=None, location=None, destination_port=None, public_port=None):
+        super(ApplicationGetHttpsEndpoint, self).__init__()
         self.additional_properties = additional_properties
         self.access_modes = access_modes
         self.location = location

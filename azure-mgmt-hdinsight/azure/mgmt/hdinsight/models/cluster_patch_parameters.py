@@ -24,4 +24,5 @@ class ClusterPatchParameters(Model):
     }
 
     def __init__(self, tags=None):
+        super(ClusterPatchParameters, self).__init__()
         self.tags = tags

@@ -67,6 +67,7 @@ class ClusterGetProperties(Model):
     }
 
     def __init__(self, cluster_definition, cluster_version=None, os_type=None, tier=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date=None, cluster_state=None, quota_info=None, errors=None, connectivity_endpoints=None):
+        super(ClusterGetProperties, self).__init__()
         self.cluster_version = cluster_version
         self.os_type = os_type
         self.tier = tier
