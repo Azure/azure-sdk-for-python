@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2015-06-01-preview"
+from msrest.serialization import Model
 
+
+class SubResource(Model):
+    """A reference to a another resource.
+
+    :param id: Resource Id.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        super(SubResource, self).__init__()
+        self.id = id
