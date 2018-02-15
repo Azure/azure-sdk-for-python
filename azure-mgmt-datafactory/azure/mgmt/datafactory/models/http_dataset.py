@@ -29,6 +29,9 @@ class HttpDataset(Dataset):
     :param parameters: Parameters for dataset.
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param relative_url: The relative URL based on the URL in the
@@ -64,6 +67,7 @@ class HttpDataset(Dataset):
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'relative_url': {'key': 'typeProperties.relativeUrl', 'type': 'object'},
         'request_method': {'key': 'typeProperties.requestMethod', 'type': 'object'},
@@ -73,8 +77,8 @@ class HttpDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, relative_url=None, request_method=None, request_body=None, additional_headers=None, format=None, compression=None):
-        super(HttpDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
+    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, relative_url=None, request_method=None, request_body=None, additional_headers=None, format=None, compression=None):
+        super(HttpDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
         self.relative_url = relative_url
         self.request_method = request_method
         self.request_body = request_body

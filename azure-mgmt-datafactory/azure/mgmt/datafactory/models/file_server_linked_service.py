@@ -23,6 +23,12 @@ class FileServerLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Linked Service.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param host: Host name of the server. Type: string (or Expression with
@@ -48,6 +54,8 @@ class FileServerLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'user_id': {'key': 'typeProperties.userId', 'type': 'object'},
@@ -55,8 +63,8 @@ class FileServerLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, additional_properties=None, connect_via=None, description=None, user_id=None, password=None, encrypted_credential=None):
-        super(FileServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, host, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, user_id=None, password=None, encrypted_credential=None):
+        super(FileServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.host = host
         self.user_id = user_id
         self.password = password

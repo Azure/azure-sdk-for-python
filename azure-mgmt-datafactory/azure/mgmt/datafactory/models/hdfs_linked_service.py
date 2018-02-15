@@ -23,6 +23,12 @@ class HdfsLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Linked Service.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param url: The URL of the HDFS service endpoint, e.g.
@@ -53,6 +59,8 @@ class HdfsLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'url': {'key': 'typeProperties.url', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
@@ -61,8 +69,8 @@ class HdfsLinkedService(LinkedService):
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
     }
 
-    def __init__(self, url, additional_properties=None, connect_via=None, description=None, authentication_type=None, encrypted_credential=None, user_name=None, password=None):
-        super(HdfsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, authentication_type=None, encrypted_credential=None, user_name=None, password=None):
+        super(HdfsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.url = url
         self.authentication_type = authentication_type
         self.encrypted_credential = encrypted_credential

@@ -23,6 +23,12 @@ class SalesforceLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Linked Service.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param environment_url: The URL of Salesforce instance. Default is
@@ -54,6 +60,8 @@ class SalesforceLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'environment_url': {'key': 'typeProperties.environmentUrl', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
@@ -62,8 +70,8 @@ class SalesforceLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, connect_via=None, description=None, environment_url=None, username=None, password=None, security_token=None, encrypted_credential=None):
-        super(SalesforceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, environment_url=None, username=None, password=None, security_token=None, encrypted_credential=None):
+        super(SalesforceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.environment_url = environment_url
         self.username = username
         self.password = password

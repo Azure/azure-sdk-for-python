@@ -23,6 +23,12 @@ class XeroLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Linked Service.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param host: The endpoint of the Xero server. (i.e. api.xero.com)
@@ -60,6 +66,8 @@ class XeroLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'consumer_key': {'key': 'typeProperties.consumerKey', 'type': 'SecretBase'},
@@ -70,8 +78,8 @@ class XeroLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, additional_properties=None, connect_via=None, description=None, consumer_key=None, private_key=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(XeroLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, host, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, consumer_key=None, private_key=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
+        super(XeroLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.host = host
         self.consumer_key = consumer_key
         self.private_key = private_key

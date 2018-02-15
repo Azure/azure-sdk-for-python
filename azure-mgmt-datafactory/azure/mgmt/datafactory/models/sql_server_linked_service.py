@@ -23,6 +23,12 @@ class SqlServerLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Linked Service.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param connection_string: The connection string.
@@ -47,6 +53,8 @@ class SqlServerLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
@@ -54,8 +62,8 @@ class SqlServerLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, user_name=None, password=None, encrypted_credential=None):
-        super(SqlServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, user_name=None, password=None, encrypted_credential=None):
+        super(SqlServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.connection_string = connection_string
         self.user_name = user_name
         self.password = password

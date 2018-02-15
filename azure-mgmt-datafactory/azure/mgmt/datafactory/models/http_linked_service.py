@@ -23,6 +23,12 @@ class HttpLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Linked Service.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param url: The base URL of the HTTP endpoint, e.g.
@@ -71,6 +77,8 @@ class HttpLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'url': {'key': 'typeProperties.url', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
@@ -82,8 +90,8 @@ class HttpLinkedService(LinkedService):
         'enable_server_certificate_validation': {'key': 'typeProperties.enableServerCertificateValidation', 'type': 'object'},
     }
 
-    def __init__(self, url, additional_properties=None, connect_via=None, description=None, authentication_type=None, user_name=None, password=None, embedded_cert_data=None, cert_thumbprint=None, encrypted_credential=None, enable_server_certificate_validation=None):
-        super(HttpLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, authentication_type=None, user_name=None, password=None, embedded_cert_data=None, cert_thumbprint=None, encrypted_credential=None, enable_server_certificate_validation=None):
+        super(HttpLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.url = url
         self.authentication_type = authentication_type
         self.user_name = user_name
