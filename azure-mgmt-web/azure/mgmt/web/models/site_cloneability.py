@@ -41,6 +41,7 @@ class SiteCloneability(Model):
     }
 
     def __init__(self, result=None, blocking_features=None, unsupported_features=None, blocking_characteristics=None):
+        super(SiteCloneability, self).__init__()
         self.result = result
         self.blocking_features = blocking_features
         self.unsupported_features = unsupported_features

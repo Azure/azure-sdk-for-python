@@ -30,21 +30,21 @@ class PremierAddOn(Resource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param sku: SKU.
+    :param sku: Premier add on SKU.
     :type sku: str
-    :param product: Product.
+    :param product: Premier add on Product.
     :type product: str
-    :param vendor: Vendor.
+    :param vendor: Premier add on Vendor.
     :type vendor: str
-    :param premier_add_on_name: Name.
+    :param premier_add_on_name: Premier add on Name.
     :type premier_add_on_name: str
-    :param premier_add_on_location: Location.
+    :param premier_add_on_location: Premier add on Location.
     :type premier_add_on_location: str
-    :param premier_add_on_tags: Tags.
+    :param premier_add_on_tags: Premier add on Tags.
     :type premier_add_on_tags: dict[str, str]
-    :param marketplace_publisher: Marketplace publisher.
+    :param marketplace_publisher: Premier add on Marketplace publisher.
     :type marketplace_publisher: str
-    :param marketplace_offer: Marketplace offer.
+    :param marketplace_offer: Premier add on Marketplace offer.
     :type marketplace_offer: str
     """
 

@@ -43,6 +43,7 @@ class User(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'publishing_user_name': {'required': True},
     }
 
     _attribute_map = {
@@ -57,7 +58,7 @@ class User(ProxyOnlyResource):
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, user_name=None, publishing_user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
+    def __init__(self, publishing_user_name, kind=None, user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
         super(User, self).__init__(kind=kind)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name
