@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ComputePolicyCreateOrUpdateParameters(Model):
-    """The parameters used to create a new compute policy.
+class UpdateComputePolicyParameters(Model):
+    """The parameters used to update a compute policy.
 
     :param object_id: The AAD object identifier for the entity to create a
      policy for.
@@ -33,8 +33,6 @@ class ComputePolicyCreateOrUpdateParameters(Model):
     """
 
     _validation = {
-        'object_id': {'required': True},
-        'object_type': {'required': True},
         'max_degree_of_parallelism_per_job': {'minimum': 1},
         'min_priority_per_job': {'minimum': 1},
     }
@@ -46,8 +44,8 @@ class ComputePolicyCreateOrUpdateParameters(Model):
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
     }
 
-    def __init__(self, object_id, object_type, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
-        super(ComputePolicyCreateOrUpdateParameters, self).__init__()
+    def __init__(self, object_id=None, object_type=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
+        super(UpdateComputePolicyParameters, self).__init__()
         self.object_id = object_id
         self.object_type = object_type
         self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job

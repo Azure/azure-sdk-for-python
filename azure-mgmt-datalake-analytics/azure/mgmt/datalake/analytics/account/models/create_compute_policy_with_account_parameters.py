@@ -12,10 +12,11 @@
 from msrest.serialization import Model
 
 
-class ComputePolicyAccountCreateParameters(Model):
-    """The parameters used to create a new compute policy.
+class CreateComputePolicyWithAccountParameters(Model):
+    """The parameters used to create a new compute policy while creating a new
+    Data Lake Analytics account.
 
-    :param name: The unique name of the policy to create
+    :param name: The unique name of the compute policy to create.
     :type name: str
     :param object_id: The AAD object identifier for the entity to create a
      policy for.
@@ -51,7 +52,7 @@ class ComputePolicyAccountCreateParameters(Model):
     }
 
     def __init__(self, name, object_id, object_type, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
-        super(ComputePolicyAccountCreateParameters, self).__init__()
+        super(CreateComputePolicyWithAccountParameters, self).__init__()
         self.name = name
         self.object_id = object_id
         self.object_type = object_type

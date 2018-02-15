@@ -1172,4 +1172,1095 @@ interactions:
       x-ms-request-id: [f354d404-9414-40ab-bd17-0f605eeab5cd]
       x-ms-routing-request-id: ['WESTUS2:20180109T233236Z:2ffcb7d4-519f-4956-80b8-f0620fee4824']
     status: {code: 200, message: OK}
+- request:
+    body: '{"name": "pyarmadls847d11a7", "type": "Microsoft.DataLakeStore/accounts"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['73']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [73e8dd12-103a-11e8-bb05-705a0f2f3d93]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/checkNameAvailability?api-version=2016-11-01
+  response:
+    body: {string: '{"nameAvailable":true}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:19:48 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['22']
+      x-ms-correlation-request-id: [54b50508-0d53-4155-87bc-7c0f149dd5ff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [23438ed7-dbd4-4fb4-b287-3e1b1438f9c8]
+      x-ms-routing-request-id: ['WESTUS2:20180212T211948Z:54b50508-0d53-4155-87bc-7c0f149dd5ff']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "East US 2", "tags": {"tag1": "value1"}, "identity": {"type":
+      "SystemAssigned"}, "properties": {"encryptionConfig": {"type": "ServiceManaged"},
+      "encryptionState": "Enabled"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['187']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [749960f0-103a-11e8-8900-705a0f2f3d93]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"51229721-02f8-4329-b8ad-e06ca456b298"},"location":"East
+        US 2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/51229721-02f8-4329-b8ad-e06ca456b2980?api-version=2016-11-01&expanded=true']
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Length: ['644']
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:19:53 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7/operationresults/0?api-version=2016-11-01']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [d737a1af-6dbd-4395-a7ef-f51f6f57b705]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [efa6f3df-9a89-462a-91c0-5787cf7f2ae3]
+      x-ms-routing-request-id: ['WESTUS2:20180212T211953Z:d737a1af-6dbd-4395-a7ef-f51f6f57b705']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [749960f0-103a-11e8-8900-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/51229721-02f8-4329-b8ad-e06ca456b2980?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"InProgress"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:20:04 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['23']
+      x-ms-correlation-request-id: [602c923d-b726-4146-baf7-5750197627fe]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [1b69592c-2c73-4464-bd16-c0919fc5d7a5]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212004Z:602c923d-b726-4146-baf7-5750197627fe']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [749960f0-103a-11e8-8900-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/51229721-02f8-4329-b8ad-e06ca456b2980?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"Succeeded"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:20:34 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['22']
+      x-ms-correlation-request-id: [517cf962-d026-4227-9b01-73cc5d08c098]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [a71c9eb4-8c3a-4e37-a0a4-5104f85a97f6]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212035Z:517cf962-d026-4227-9b01-73cc5d08c098']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [749960f0-103a-11e8-8900-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"51229721-02f8-4329-b8ad-e06ca456b298","creationTime":"2018-02-12T21:19:57.0092266Z","lastModifiedTime":"2018-02-12T21:19:57.0092266Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"25e93568-df03-4b15-9311-994e44792cd3","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:20:36 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1045']
+      x-ms-correlation-request-id: [7a0a40f3-b82e-4766-b3b1-54ca68558b75]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [292473b5-d6fc-4a17-8b10-698751134672]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212037Z:7a0a40f3-b82e-4766-b3b1-54ca68558b75']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"name": "pyarmadls847d11a7", "type": "Microsoft.DataLakeStore/accounts"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['73']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [91a5999a-103a-11e8-9017-705a0f2f3d93]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/checkNameAvailability?api-version=2016-11-01
+  response:
+    body: {string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"An
+        account named ''pyarmadls847d11a7'' already exists."}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:20:38 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['113']
+      x-ms-correlation-request-id: [08a7a284-0ab2-43a8-9ea7-373ab0c26ae3]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [f29e9dbf-fb05-4b19-8f46-1bb0c6d7ac72]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212038Z:08a7a284-0ab2-43a8-9ea7-373ab0c26ae3']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [923d748a-103a-11e8-baec-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"51229721-02f8-4329-b8ad-e06ca456b298","creationTime":"2018-02-12T21:19:57.0092266Z","lastModifiedTime":"2018-02-12T21:19:57.0092266Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"25e93568-df03-4b15-9311-994e44792cd3","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:20:38 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1045']
+      x-ms-correlation-request-id: [3e5627e1-7745-42f3-a4ec-50d703930a3b]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [3cd9f6d8-3d71-43d3-b804-9c1a4dc2b91f]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212039Z:3e5627e1-7745-42f3-a4ec-50d703930a3b']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "East US 2", "tags": {"tag1": "value1"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['53']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [92e2dd14-103a-11e8-866c-705a0f2f3d93]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"429491f3-e383-4d3c-a318-2281f05aacac"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/429491f3-e383-4d3c-a318-2281f05aacac0?api-version=2016-11-01&expanded=true']
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Length: ['433']
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:20:42 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7/operationresults/0?api-version=2016-11-01']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [35683a3d-2a2b-4b95-be4c-110a57c2ef24]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [a2bb2adc-0c67-4de3-bda6-2cda26bdb887]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212042Z:35683a3d-2a2b-4b95-be4c-110a57c2ef24']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [92e2dd14-103a-11e8-866c-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/429491f3-e383-4d3c-a318-2281f05aacac0?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"InProgress"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:20:52 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['23']
+      x-ms-correlation-request-id: [f796a638-9d70-44b0-b122-e5f3d5a9b8f9]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [0350c07b-67ff-4ad8-ad2a-8961b0b58570]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212053Z:f796a638-9d70-44b0-b122-e5f3d5a9b8f9']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [92e2dd14-103a-11e8-866c-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/429491f3-e383-4d3c-a318-2281f05aacac0?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"Succeeded"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:21:23 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['22']
+      x-ms-correlation-request-id: [69eb73f3-5a6a-4fec-87af-1cbd01886e29]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [9eb70242-a028-4ac0-ba4b-6b1c24f1296c]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212124Z:69eb73f3-5a6a-4fec-87af-1cbd01886e29']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [92e2dd14-103a-11e8-866c-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"429491f3-e383-4d3c-a318-2281f05aacac","creationTime":"2018-02-12T21:20:44.368853Z","lastModifiedTime":"2018-02-12T21:20:44.368853Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:21:24 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['906']
+      x-ms-correlation-request-id: [269526ef-ff06-4ede-96a1-e7fa70a52091]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [e28cbeec-5ffe-4c2e-9b5a-d767b55b463f]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212125Z:269526ef-ff06-4ede-96a1-e7fa70a52091']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [ae465e12-103a-11e8-8704-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"429491f3-e383-4d3c-a318-2281f05aacac","creationTime":"2018-02-12T21:20:44.368853Z","lastModifiedTime":"2018-02-12T21:20:44.368853Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:21:25 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['906']
+      x-ms-correlation-request-id: [81b422f6-8b83-4bcd-a382-c0b9dbc995b2]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [5acfae8a-c110-45c0-bb6b-394e3f8511d1]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212126Z:81b422f6-8b83-4bcd-a382-c0b9dbc995b2']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"name": "pyarmadls847d11a7", "type": "Microsoft.DataLakeStore/accounts"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['73']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [3016c0f6-103b-11e8-9fe2-705a0f2f3d93]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/checkNameAvailability?api-version=2016-11-01
+  response:
+    body: {string: '{"nameAvailable":true}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:03 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['22']
+      x-ms-correlation-request-id: [d32650a4-455a-420e-b7d4-a83f5da5af7b]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [9b6dc34d-4ef1-41a3-b73d-93710c76cd5c]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212504Z:d32650a4-455a-420e-b7d4-a83f5da5af7b']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "East US 2", "tags": {"tag1": "value1"}, "identity": {"type":
+      "SystemAssigned"}, "properties": {"encryptionConfig": {"type": "ServiceManaged"},
+      "encryptionState": "Enabled"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['187']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [30d63e3a-103b-11e8-9193-705a0f2f3d93]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"d9179e2d-7515-4718-b25e-0432f38cf422"},"location":"East
+        US 2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"00000000-0000-0000-0000-000000000000","tenantId":"00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/d9179e2d-7515-4718-b25e-0432f38cf4220?api-version=2016-11-01&expanded=true']
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Length: ['644']
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:08 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7/operationresults/0?api-version=2016-11-01']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [e6884c22-8ea2-47f5-8518-12b15836926d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [c0619f22-ad7e-4c11-b0a9-d6ece1822b81]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212509Z:e6884c22-8ea2-47f5-8518-12b15836926d']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [30d63e3a-103b-11e8-9193-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/d9179e2d-7515-4718-b25e-0432f38cf4220?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"InProgress"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:20 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['23']
+      x-ms-correlation-request-id: [ef3bad04-7f4a-4a4c-8a58-2c0e0b062e2f]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [cce601b2-a64e-41dd-9df5-a9d91fef20c0]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212520Z:ef3bad04-7f4a-4a4c-8a58-2c0e0b062e2f']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [30d63e3a-103b-11e8-9193-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/d9179e2d-7515-4718-b25e-0432f38cf4220?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"Succeeded"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:50 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['22']
+      x-ms-correlation-request-id: [b6a367c9-474d-40df-8d95-7de00bf91ee4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [65798f78-9e09-4609-9745-e4c711badfbf]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212551Z:b6a367c9-474d-40df-8d95-7de00bf91ee4']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [30d63e3a-103b-11e8-9193-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"d9179e2d-7515-4718-b25e-0432f38cf422","creationTime":"2018-02-12T21:25:09.9513797Z","lastModifiedTime":"2018-02-12T21:25:09.9513797Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"cd342977-9584-4834-b311-e869cf6c3201","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:52 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1045']
+      x-ms-correlation-request-id: [3053b384-fa2b-4182-a4a5-7aa937a1ae6d]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [27b95e47-199a-47c5-9c7e-3bfabdbb5ddf]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212552Z:3053b384-fa2b-4182-a4a5-7aa937a1ae6d']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"name": "pyarmadls847d11a7", "type": "Microsoft.DataLakeStore/accounts"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['73']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [4d9d03d0-103b-11e8-9fd7-705a0f2f3d93]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/checkNameAvailability?api-version=2016-11-01
+  response:
+    body: {string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"An
+        account named ''pyarmadls847d11a7'' already exists."}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:53 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['113']
+      x-ms-correlation-request-id: [cf30fc26-2939-4eaa-affb-e48976a529b9]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [a21fc529-6372-46ba-8c8e-049b43db098e]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212553Z:cf30fc26-2939-4eaa-affb-e48976a529b9']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [4e3c6312-103b-11e8-a797-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"d9179e2d-7515-4718-b25e-0432f38cf422","creationTime":"2018-02-12T21:25:09.9513797Z","lastModifiedTime":"2018-02-12T21:25:09.9513797Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"identity":{"type":"SystemAssigned","principalId":"cd342977-9584-4834-b311-e869cf6c3201","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:54 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1045']
+      x-ms-correlation-request-id: [99194bef-e47f-44b6-b6fc-0c4fbdc2e9e2]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [989d028b-fb7f-4820-8199-868044ee7b20]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212554Z:99194bef-e47f-44b6-b6fc-0c4fbdc2e9e2']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "East US 2", "tags": {"tag1": "value1"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['53']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [4ee1a3d8-103b-11e8-947e-705a0f2f3d93]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"66fa4816-1a94-4475-ad9a-cdb35dc77ddf"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/66fa4816-1a94-4475-ad9a-cdb35dc77ddf0?api-version=2016-11-01&expanded=true']
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Length: ['433']
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:25:57 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7/operationresults/0?api-version=2016-11-01']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [47f75211-d51f-4c2f-9807-017cb4c7d42f]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [0c8164b9-e261-4fb0-8d03-3c49a4cf76e6]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212557Z:47f75211-d51f-4c2f-9807-017cb4c7d42f']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [4ee1a3d8-103b-11e8-947e-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/66fa4816-1a94-4475-ad9a-cdb35dc77ddf0?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"InProgress"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:08 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['23']
+      x-ms-correlation-request-id: [2ae69d82-b7f5-4299-b07d-f23bbe6ef621]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [ff343b83-70e7-4c17-9415-073f292a5400]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212608Z:2ae69d82-b7f5-4299-b07d-f23bbe6ef621']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [4ee1a3d8-103b-11e8-947e-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/66fa4816-1a94-4475-ad9a-cdb35dc77ddf0?api-version=2016-11-01&expanded=true
+  response:
+    body: {string: '{"status":"Succeeded"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:39 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['22']
+      x-ms-correlation-request-id: [b67fde2c-bccf-4729-9ee6-cf9a4c15d318]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [fae51914-af29-4c9a-b01e-356ec3a996a0]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212639Z:b67fde2c-bccf-4729-9ee6-cf9a4c15d318']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      x-ms-client-request-id: [4ee1a3d8-103b-11e8-947e-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"66fa4816-1a94-4475-ad9a-cdb35dc77ddf","creationTime":"2018-02-12T21:25:56.302289Z","lastModifiedTime":"2018-02-12T21:25:56.302289Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:40 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['906']
+      x-ms-correlation-request-id: [36e8c6c2-ff5c-4301-ab35-613d0dec8e11]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [3d4ab410-d379-4055-9101-f8e80bf9d83e]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212640Z:36e8c6c2-ff5c-4301-ab35-613d0dec8e11']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6a686650-103b-11e8-a9d8-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"66fa4816-1a94-4475-ad9a-cdb35dc77ddf","creationTime":"2018-02-12T21:25:56.302289Z","lastModifiedTime":"2018-02-12T21:25:56.302289Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:41 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['906']
+      x-ms-correlation-request-id: [0e4cd47a-5ede-49c6-a019-c3f52aa85cce]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [59f8588a-cf2b-4788-9ac3-d137d556c85b]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212642Z:0e4cd47a-5ede-49c6-a019-c3f52aa85cce']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6b1c1418-103b-11e8-be01-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts?api-version=2016-11-01
+  response:
+    body: {string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"66fa4816-1a94-4475-ad9a-cdb35dc77ddf","creationTime":"2018-02-12T21:25:56.302289Z","lastModifiedTime":"2018-02-12T21:25:56.302289Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"d9179e2d-7515-4718-b25e-0432f38cf422","creationTime":"2018-02-12T21:25:09.9513797Z","lastModifiedTime":"2018-02-12T21:25:09.9513797Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:42 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1154']
+      x-ms-correlation-request-id: [ffa4214d-688d-46b4-a89a-f0b0e6d67d27]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [0f9c74c0-1b3b-4667-bfda-13b550da364d]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212643Z:ffa4214d-688d-46b4-a89a-f0b0e6d67d27']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6bd17364-103b-11e8-8522-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/accounts?api-version=2016-11-01
+  response:
+    body: {string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2847d11a7.azuredatalakestore.net","accountId":"66fa4816-1a94-4475-ad9a-cdb35dc77ddf","creationTime":"2018-02-12T21:25:56.302289Z","lastModifiedTime":"2018-02-12T21:25:56.302289Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls2847d11a7","name":"pyarmadls2847d11a7","type":"Microsoft.DataLakeStore/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"d9179e2d-7515-4718-b25e-0432f38cf422","creationTime":"2018-02-12T21:25:09.9513797Z","lastModifiedTime":"2018-02-12T21:25:09.9513797Z"},"location":"East
+        US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:43 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1154']
+      x-ms-correlation-request-id: [e6967e56-0777-4cd6-a502-abee644025b5]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [ac89d21b-878f-4caf-bd3e-6a6fd146f3ed]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212644Z:e6967e56-0777-4cd6-a502-abee644025b5']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"tags": {"tag2": "value2"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['28']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6c6f8e2e-103b-11e8-b339-705a0f2f3d93]
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallAllowDataLakeAnalytics":"Disabled","firewallRules":[],"virtualNetworkRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls847d11a7.azuredatalakestore.net","accountId":"d9179e2d-7515-4718-b25e-0432f38cf422","creationTime":"2018-02-12T21:25:09.9513797Z","lastModifiedTime":"2018-02-12T21:26:44.1433416Z"},"location":"East
+        US 2","tags":{"tag2":"value2"},"identity":{"type":"SystemAssigned","principalId":"cd342977-9584-4834-b311-e869cf6c3201","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7","name":"pyarmadls847d11a7","type":"Microsoft.DataLakeStore/accounts"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:46 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1045']
+      x-ms-correlation-request-id: [f7dd451e-3d42-4f59-a1b4-1a408d6bf4d6]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [3da99d3a-e04d-4740-b47a-16efafdb7f74]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212646Z:f7dd451e-3d42-4f59-a1b4-1a408d6bf4d6']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6dc3199c-103b-11e8-9b2d-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/capability?api-version=2016-11-01
+  response:
+    body: {string: '{"subscriptionId":"00000000-0000-0000-0000-000000000000","state":"Registered","maxAccountCount":10,"accountCount":2,"migrationState":false}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:45 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['139']
+      x-ms-correlation-request-id: [807170a5-af21-4f3b-aaea-d10a1a58c800]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [7a612cf2-4e14-4fa8-bf34-21e4ca409ff6]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212646Z:807170a5-af21-4f3b-aaea-d10a1a58c800']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6e629306-103b-11e8-9af5-705a0f2f3d93]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.DataLakeStore/operations?api-version=2016-11-01
+  response:
+    body: {string: '{"value":[{"name":"Microsoft.DataLakeStore/operations/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Available Operations","operation":"Get Available
+        Operations","description":"Get available operations of DataLakeStore."}},{"name":"Microsoft.DataLakeStore/register/action","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Registration","operation":"Register to DataLakeStore","description":"Register
+        subscription to DataLakeStore."}},{"name":"Microsoft.DataLakeStore/accounts/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Account","operation":"Get DataLakeStore Account","description":"Get
+        information about an existing DataLakeStore account."}},{"name":"Microsoft.DataLakeStore/accounts/write","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Account","operation":"Create or Update DataLakeStore
+        Account","description":"Create or update a DataLakeStore account."}},{"name":"Microsoft.DataLakeStore/accounts/delete","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Account","operation":"Delete DataLakeStore Account","description":"Delete
+        a DataLakeStore account."}},{"name":"Microsoft.DataLakeStore/accounts/operationResults/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Operation Result","operation":"Get DataLakeStore
+        Account OperationResult","description":"Get result of a DataLakeStore account
+        operation."}},{"name":"Microsoft.DataLakeStore/accounts/enableKeyVault/action","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Key Vault","operation":"Enable Key Vault for DataLakeStore
+        Account","description":"Enable KeyVault for a DataLakeStore account."}},{"name":"Microsoft.DataLakeStore/accounts/firewallRules/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Firewall Rule","operation":"Get Firewall Rule","description":"Get
+        information about a firewall rule."}},{"name":"Microsoft.DataLakeStore/accounts/firewallRules/write","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Firewall Rule","operation":"Create or Update Firewall
+        Rule","description":"Create or update a firewall rule."}},{"name":"Microsoft.DataLakeStore/accounts/firewallRules/delete","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Firewall Rule","operation":"Delete Firewall Rule","description":"Delete
+        a firewall rule."}},{"name":"Microsoft.DataLakeStore/accounts/trustedIdProviders/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Trusted IdProvider","operation":"Get Trusted Identity
+        Provider","description":"Get information about a trusted identity provider."}},{"name":"Microsoft.DataLakeStore/accounts/trustedIdProviders/write","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Trusted IdProvider","operation":"Create or Update
+        Trusted Identity Provider","description":"Create or update a trusted identity
+        provider."}},{"name":"Microsoft.DataLakeStore/accounts/trustedIdProviders/delete","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Trusted IdProvider","operation":"Delete Trusted
+        Identity Provider","description":"Delete a trusted identity provider."}},{"name":"Microsoft.DataLakeStore/accounts/Superuser/action","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Superuser","operation":"Grant Superuser","description":"Grant
+        Superuser on Data Lake Store when granted with Microsoft.Authorization/roleAssignments/write."}},{"name":"Microsoft.DataLakeStore/locations/capability/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Subscription Capability","operation":"Get DataLakeStore
+        Subscription Capability","description":"Get capability information of a subscription
+        regarding using DataLakeStore."}},{"name":"Microsoft.DataLakeStore/locations/checkNameAvailability/action","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Name Availability","operation":"Check DataLakeStore
+        Account Name Availability","description":"Check availability of a DataLakeStore
+        account name."}},{"name":"Microsoft.DataLakeStore/locations/operationResults/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Operation Result","operation":"Get DataLakeStore
+        Account OperationResult","description":"Get result of a DataLakeStore account
+        operation."}},{"name":"Microsoft.DataLakeStore/accounts/providers/Microsoft.Insights/metricDefinitions/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Metric Definition","operation":"Get DataLakeStore
+        Account metric definitions","description":"Get the available metrics for the
+        DataLakeStore account."},"origin":"system","properties":{"serviceSpecification":{"metricSpecifications":[{"name":"TotalStorage","displayName":"Total
+        Storage","displayDescription":"Total amount of data stored in the account.","unit":"Bytes","aggregationType":"Maximum","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"},{"timeGrain":"PT1H","blobDuration":"P1D"}]},{"name":"DataWritten","displayName":"Data
+        Written","displayDescription":"Total amount of data written to the account.","unit":"Bytes","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"},{"timeGrain":"PT1H","blobDuration":"P1D"}]},{"name":"DataRead","displayName":"Data
+        Read","displayDescription":"Total amount of data read from the account.","unit":"Bytes","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"},{"timeGrain":"PT1H","blobDuration":"P1D"}]},{"name":"WriteRequests","displayName":"Write
+        Requests","displayDescription":"Count of data write requests to the account.","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"},{"timeGrain":"PT1H","blobDuration":"P1D"}]},{"name":"ReadRequests","displayName":"Read
+        Requests","displayDescription":"Count of data read requests to the account.","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"},{"timeGrain":"PT1H","blobDuration":"P1D"}]}]}}},{"name":"Microsoft.DataLakeStore/accounts/providers/Microsoft.Insights/logDefinitions/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Log Definition","operation":"Get DataLakeStore
+        Account log definitions","description":"Get the available logs for the DataLakeStore
+        account."},"origin":"system","properties":{"serviceSpecification":{"logSpecifications":[{"name":"Audit","displayName":"Audit
+        Logs","blobDuration":"PT1H"},{"name":"Requests","displayName":"Request Logs","blobDuration":"PT1H"}]}}},{"name":"Microsoft.DataLakeStore/accounts/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Diagnostic Setting","operation":"Get DataLakeStore
+        Account diagnostic settings","description":"Get the diagnostic settings for
+        the DataLakeStore account."},"origin":"system"},{"name":"Microsoft.DataLakeStore/accounts/providers/Microsoft.Insights/diagnosticSettings/write","display":{"provider":"Microsoft
+        DataLakeStore","resource":"Diagnostic Setting","operation":"Create or update
+        DataLakeStore Account diagnostic settings","description":"Create or update
+        the diagnostic settings for the DataLakeStore account."},"origin":"system"}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Type: [application/json]
+      Date: ['Mon, 12 Feb 2018 21:26:48 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['7160']
+      x-ms-correlation-request-id: [feb6709a-a884-45eb-a739-675b351020b1]
+      x-ms-ratelimit-remaining-tenant-reads: ['14999']
+      x-ms-request-id: [3a544811-4902-4f6a-92f0-8f16902aeb41]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212648Z:feb6709a-a884-45eb-a739-675b351020b1']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.24
+          msrest_azure/0.4.19 azure-mgmt-datalake-store/2016-11-01 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6ef6671e-103b-11e8-853a-705a0f2f3d93]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_store_test_adls_accounts847d11a7/providers/Microsoft.DataLakeStore/accounts/pyarmadls847d11a7?api-version=2016-11-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Connection: [close]
+      Content-Length: ['0']
+      Date: ['Mon, 12 Feb 2018 21:26:52 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [76ac1c39-b96a-46ae-a1e8-53ffafaada79]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [f7928427-dbd8-4313-8788-1e22afec871d]
+      x-ms-routing-request-id: ['WESTUS2:20180212T212652Z:76ac1c39-b96a-46ae-a1e8-53ffafaada79']
+    status: {code: 200, message: OK}
 version: 1
