@@ -118,6 +118,9 @@ from .analysis_definition import AnalysisDefinition
 from .diagnostic_analysis import DiagnosticAnalysis
 from .diagnostic_category import DiagnosticCategory
 from .diagnostic_detector_response import DiagnosticDetectorResponse
+from .stack_minor_version import StackMinorVersion
+from .stack_major_version import StackMajorVersion
+from .application_stack import ApplicationStack
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
@@ -221,6 +224,7 @@ from .deleted_site_paged import DeletedSitePaged
 from .diagnostic_category_paged import DiagnosticCategoryPaged
 from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
+from .application_stack_paged import ApplicationStackPaged
 from .source_control_paged import SourceControlPaged
 from .geo_region_paged import GeoRegionPaged
 from .identifier_paged import IdentifierPaged
@@ -426,6 +430,9 @@ __all__ = [
     'DiagnosticAnalysis',
     'DiagnosticCategory',
     'DiagnosticDetectorResponse',
+    'StackMinorVersion',
+    'StackMajorVersion',
+    'ApplicationStack',
     'Recommendation',
     'RecommendationRule',
     'CsmMoveResourceEnvelope',
@@ -529,6 +536,7 @@ __all__ = [
     'DiagnosticCategoryPaged',
     'AnalysisDefinitionPaged',
     'DetectorDefinitionPaged',
+    'ApplicationStackPaged',
     'SourceControlPaged',
     'GeoRegionPaged',
     'IdentifierPaged',
