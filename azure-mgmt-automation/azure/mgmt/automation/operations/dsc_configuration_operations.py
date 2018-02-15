@@ -21,7 +21,7 @@ class DscConfigurationOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2015-10-31".
     """
 
@@ -222,7 +222,7 @@ class DscConfigurationOperations(object):
         return deserialized
 
     def get_content(
-            self, automation_account_name, configuration_name, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, automation_account_name, configuration_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the configuration script identified by configuration name.
 
         :param automation_account_name: The automation account name.
@@ -232,15 +232,10 @@ class DscConfigurationOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
@@ -270,7 +265,7 @@ class DscConfigurationOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=True, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -278,7 +273,7 @@ class DscConfigurationOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

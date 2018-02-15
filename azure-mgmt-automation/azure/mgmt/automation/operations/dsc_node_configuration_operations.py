@@ -21,7 +21,7 @@ class DscNodeConfigurationOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2015-10-31".
     """
 
@@ -205,14 +205,12 @@ class DscNodeConfigurationOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DscNodeConfiguration', response)
-        if response.status_code == 201:
             deserialized = self._deserialize('DscNodeConfiguration', response)
 
         if raw:

@@ -98,8 +98,8 @@ class ScheduleDay(Enum):
 
 class AgentRegistrationKeyName(Enum):
 
-    primary = "Primary"
-    secondary = "Secondary"
+    primary = "primary"
+    secondary = "secondary"
 
 
 class JobStatus(Enum):
