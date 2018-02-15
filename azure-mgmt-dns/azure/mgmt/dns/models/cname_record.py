@@ -24,4 +24,5 @@ class CnameRecord(Model):
     }
 
     def __init__(self, cname=None):
+        super(CnameRecord, self).__init__()
         self.cname = cname
