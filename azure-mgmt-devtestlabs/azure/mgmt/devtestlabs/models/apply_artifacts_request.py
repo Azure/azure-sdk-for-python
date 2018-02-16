@@ -25,4 +25,5 @@ class ApplyArtifactsRequest(Model):
     }
 
     def __init__(self, artifacts=None):
+        super(ApplyArtifactsRequest, self).__init__()
         self.artifacts = artifacts

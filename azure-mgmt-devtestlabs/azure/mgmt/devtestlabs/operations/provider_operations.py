@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class GalleryImagesOperations(object):
-    """GalleryImagesOperations operations.
+class ProviderOperations(object):
+    """ProviderOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,56 +38,27 @@ class GalleryImagesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, lab_name, expand=None, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
-        """List gallery images in a given lab.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Result of the request to list REST API operations.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param lab_name: The name of the lab.
-        :type lab_name: str
-        :param expand: Specify the $expand query. Example:
-         'properties($select=author)'
-        :type expand: str
-        :param filter: The filter to apply to the operation.
-        :type filter: str
-        :param top: The maximum number of resources to return from the
-         operation.
-        :type top: int
-        :param orderby: The ordering expression for the results, using OData
-         notation.
-        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of GalleryImage
+        :return: An iterator like instance of OperationMetadata
         :rtype:
-         ~azure.mgmt.devtestlabs.models.GalleryImagePaged[~azure.mgmt.devtestlabs.models.GalleryImage]
+         ~azure.mgmt.devtestlabs.models.OperationMetadataPaged[~azure.mgmt.devtestlabs.models.OperationMetadata]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/galleryimages'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'labName': self._serialize.url("lab_name", lab_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = '/providers/Microsoft.DevTestLab/operations'
 
                 # Construct parameters
                 query_parameters = {}
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -117,11 +88,11 @@ class GalleryImagesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.GalleryImagePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.OperationMetadataPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.GalleryImagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.OperationMetadataPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

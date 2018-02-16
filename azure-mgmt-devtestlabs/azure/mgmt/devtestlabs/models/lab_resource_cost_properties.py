@@ -51,6 +51,7 @@ class LabResourceCostProperties(Model):
     }
 
     def __init__(self, resourcename=None, resource_uid=None, resource_cost=None, resource_type=None, resource_owner=None, resource_pricing_tier=None, resource_status=None, resource_id=None, external_resource_id=None):
+        super(LabResourceCostProperties, self).__init__()
         self.resourcename = resourcename
         self.resource_uid = resource_uid
         self.resource_cost = resource_cost

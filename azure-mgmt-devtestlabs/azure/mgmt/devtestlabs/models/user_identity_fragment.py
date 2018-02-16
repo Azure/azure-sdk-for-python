@@ -41,6 +41,7 @@ class UserIdentityFragment(Model):
     }
 
     def __init__(self, principal_name=None, principal_id=None, tenant_id=None, object_id=None, app_id=None):
+        super(UserIdentityFragment, self).__init__()
         self.principal_name = principal_name
         self.principal_id = principal_id
         self.tenant_id = tenant_id

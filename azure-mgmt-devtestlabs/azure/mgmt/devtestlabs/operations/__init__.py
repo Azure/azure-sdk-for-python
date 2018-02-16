@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .provider_operations import ProviderOperations
 from .labs_operations import LabsOperations
 from .operations import Operations
 from .global_schedules_operations import GlobalSchedulesOperations
@@ -33,6 +34,7 @@ from .virtual_machine_schedules_operations import VirtualMachineSchedulesOperati
 from .virtual_networks_operations import VirtualNetworksOperations
 
 __all__ = [
+    'ProviderOperations',
     'LabsOperations',
     'Operations',
     'GlobalSchedulesOperations',

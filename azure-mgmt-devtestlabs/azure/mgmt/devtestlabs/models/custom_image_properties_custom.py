@@ -35,6 +35,7 @@ class CustomImagePropertiesCustom(Model):
     }
 
     def __init__(self, os_type, image_name=None, sys_prep=None):
+        super(CustomImagePropertiesCustom, self).__init__()
         self.image_name = image_name
         self.sys_prep = sys_prep
         self.os_type = os_type
