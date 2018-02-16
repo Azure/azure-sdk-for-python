@@ -52,7 +52,7 @@ class Operations(object):
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.DataFactory/operations'
+        url = self.list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -85,3 +85,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.DataFactory/operations'}
