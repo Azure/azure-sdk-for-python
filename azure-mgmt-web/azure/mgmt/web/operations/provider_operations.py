@@ -59,7 +59,7 @@ class ProviderOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Web/availableStacks'
+                url = self.get_available_stacks.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -102,6 +102,7 @@ class ProviderOperations(object):
             return client_raw_response
 
         return deserialized
+    get_available_stacks.metadata = {'url': '/providers/Microsoft.Web/availableStacks'}
 
     def list_operations(
             self, custom_headers=None, raw=False, **operation_config):
@@ -125,7 +126,7 @@ class ProviderOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Web/operations'
+                url = self.list_operations.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -166,6 +167,7 @@ class ProviderOperations(object):
             return client_raw_response
 
         return deserialized
+    list_operations.metadata = {'url': '/providers/Microsoft.Web/operations'}
 
     def get_available_stacks_on_prem(
             self, os_type_selected=None, custom_headers=None, raw=False, **operation_config):
@@ -189,7 +191,7 @@ class ProviderOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/availableStacks'
+                url = self.get_available_stacks_on_prem.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -236,3 +238,4 @@ class ProviderOperations(object):
             return client_raw_response
 
         return deserialized
+    get_available_stacks_on_prem.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/availableStacks'}

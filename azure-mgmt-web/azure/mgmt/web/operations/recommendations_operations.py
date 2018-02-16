@@ -63,7 +63,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -106,6 +106,7 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations'}
 
     def reset_all_filters(
             self, custom_headers=None, raw=False, **operation_config):
@@ -123,7 +124,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations/reset'
+        url = self.reset_all_filters.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -155,6 +156,7 @@ class RecommendationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    reset_all_filters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/recommendations/reset'}
 
     def list_history_for_web_app(
             self, resource_group_name, site_name, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -185,7 +187,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendationHistory'
+        url = self.list_history_for_web_app.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -228,6 +230,7 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_history_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendationHistory'}
 
     def list_recommended_rules_for_web_app(
             self, resource_group_name, site_name, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -259,7 +262,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations'
+        url = self.list_recommended_rules_for_web_app.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -304,6 +307,7 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_recommended_rules_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations'}
 
     def disable_all_for_web_app(
             self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
@@ -326,7 +330,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/disable'
+        url = self.disable_all_for_web_app.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -360,6 +364,7 @@ class RecommendationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    disable_all_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/disable'}
 
     def reset_all_filters_for_web_app(
             self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
@@ -382,7 +387,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/reset'
+        url = self.reset_all_filters_for_web_app.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -416,6 +421,7 @@ class RecommendationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    reset_all_filters_for_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/reset'}
 
     def get_rule_details_by_web_app(
             self, resource_group_name, site_name, name, update_seen=None, custom_headers=None, raw=False, **operation_config):
@@ -444,7 +450,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/{name}'
+        url = self.get_rule_details_by_web_app.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -488,3 +494,4 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_rule_details_by_web_app.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/{name}'}

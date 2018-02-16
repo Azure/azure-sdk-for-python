@@ -59,7 +59,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/hostingEnvironments'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -104,6 +104,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/hostingEnvironments'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -128,7 +129,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -174,6 +175,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments'}
 
     def get(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -198,7 +200,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -239,12 +241,13 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, name, hosting_environment_envelope, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -363,12 +366,13 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
 
     def _delete_initial(
             self, resource_group_name, name, force_delete=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -471,6 +475,7 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
     def update(
             self, resource_group_name, name, hosting_environment_envelope, custom_headers=None, raw=False, **operation_config):
@@ -499,7 +504,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -546,6 +551,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}'}
 
     def list_capacities(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -574,7 +580,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/compute'
+                url = self.list_capacities.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -621,6 +627,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_capacities.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/compute'}
 
     def list_vips(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -644,7 +651,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/virtualip'
+        url = self.list_vips.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -685,6 +692,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_vips.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/capacities/virtualip'}
 
     def list_diagnostics(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -708,7 +716,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/diagnostics'
+        url = self.list_diagnostics.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -749,6 +757,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_diagnostics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/diagnostics'}
 
     def get_diagnostics_item(
             self, resource_group_name, name, diagnostics_name, custom_headers=None, raw=False, **operation_config):
@@ -775,7 +784,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/diagnostics/{diagnosticsName}'
+        url = self.get_diagnostics_item.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -817,6 +826,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_diagnostics_item.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/diagnostics/{diagnosticsName}'}
 
     def list_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -840,7 +850,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/metricdefinitions'
+        url = self.list_metric_definitions.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -881,6 +891,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/metricdefinitions'}
 
     def list_metrics(
             self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -916,7 +927,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/metrics'
+                url = self.list_metrics.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -967,6 +978,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/metrics'}
 
     def list_multi_role_pools(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -993,7 +1005,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools'
+                url = self.list_multi_role_pools.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -1040,6 +1052,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_multi_role_pools.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools'}
 
     def get_multi_role_pool(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1063,7 +1076,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'
+        url = self.get_multi_role_pool.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -1104,12 +1117,13 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_multi_role_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'}
 
 
     def _create_or_update_multi_role_pool_initial(
             self, resource_group_name, name, multi_role_pool_envelope, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'
+        url = self.create_or_update_multi_role_pool.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -1227,6 +1241,7 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update_multi_role_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'}
 
     def update_multi_role_pool(
             self, resource_group_name, name, multi_role_pool_envelope, custom_headers=None, raw=False, **operation_config):
@@ -1253,7 +1268,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'
+        url = self.update_multi_role_pool.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -1300,6 +1315,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    update_multi_role_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default'}
 
     def list_multi_role_pool_instance_metric_definitions(
             self, resource_group_name, name, instance, custom_headers=None, raw=False, **operation_config):
@@ -1330,7 +1346,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}/metricdefinitions'
+                url = self.list_multi_role_pool_instance_metric_definitions.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -1378,6 +1394,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_multi_role_pool_instance_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}/metricdefinitions'}
 
     def list_multi_role_pool_instance_metrics(
             self, resource_group_name, name, instance, details=None, custom_headers=None, raw=False, **operation_config):
@@ -1411,7 +1428,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}metrics'
+                url = self.list_multi_role_pool_instance_metrics.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -1461,6 +1478,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_multi_role_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/instances/{instance}metrics'}
 
     def list_multi_role_metric_definitions(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1489,7 +1507,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metricdefinitions'
+                url = self.list_multi_role_metric_definitions.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -1536,6 +1554,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_multi_role_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metricdefinitions'}
 
     def list_multi_role_metrics(
             self, resource_group_name, name, start_time=None, end_time=None, time_grain=None, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -1577,7 +1596,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metrics'
+                url = self.list_multi_role_metrics.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -1634,6 +1653,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_multi_role_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/metrics'}
 
     def list_multi_role_pool_skus(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1660,7 +1680,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/skus'
+                url = self.list_multi_role_pool_skus.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -1707,6 +1727,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_multi_role_pool_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/skus'}
 
     def list_multi_role_usages(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1733,7 +1754,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/usages'
+                url = self.list_multi_role_usages.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -1780,6 +1801,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_multi_role_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/multiRolePools/default/usages'}
 
     def list_operations(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1803,7 +1825,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/operations'
+        url = self.list_operations.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -1844,6 +1866,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_operations.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/operations'}
 
     def reboot(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -1866,7 +1889,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/reboot'
+        url = self.reboot.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -1900,12 +1923,13 @@ class AppServiceEnvironmentsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    reboot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/reboot'}
 
 
     def _resume_initial(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/resume'
+        url = self.resume.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -2015,6 +2039,7 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/resume'}
 
     def list_app_service_plans(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -2041,7 +2066,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/serverfarms'
+                url = self.list_app_service_plans.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -2088,6 +2113,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_app_service_plans.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/serverfarms'}
 
     def list_web_apps(
             self, resource_group_name, name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
@@ -2116,7 +2142,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/sites'
+                url = self.list_web_apps.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -2165,12 +2191,13 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_web_apps.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/sites'}
 
 
     def _suspend_initial(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/suspend'
+        url = self.suspend.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -2280,6 +2307,7 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    suspend.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/suspend'}
 
     def list_usages(
             self, resource_group_name, name, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -2312,7 +2340,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/usages'
+                url = self.list_usages.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -2361,6 +2389,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/usages'}
 
     def list_worker_pools(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
@@ -2387,7 +2416,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools'
+                url = self.list_worker_pools.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -2434,6 +2463,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_worker_pools.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools'}
 
     def get_worker_pool(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
@@ -2459,7 +2489,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'
+        url = self.get_worker_pool.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -2501,12 +2531,13 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_worker_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'}
 
 
     def _create_or_update_worker_pool_initial(
             self, resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'
+        url = self.create_or_update_worker_pool.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -2627,6 +2658,7 @@ class AppServiceEnvironmentsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update_worker_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'}
 
     def update_worker_pool(
             self, resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers=None, raw=False, **operation_config):
@@ -2654,7 +2686,7 @@ class AppServiceEnvironmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'
+        url = self.update_worker_pool.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
@@ -2702,6 +2734,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    update_worker_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}'}
 
     def list_worker_pool_instance_metric_definitions(
             self, resource_group_name, name, worker_pool_name, instance, custom_headers=None, raw=False, **operation_config):
@@ -2734,7 +2767,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}/metricdefinitions'
+                url = self.list_worker_pool_instance_metric_definitions.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -2783,6 +2816,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_worker_pool_instance_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}/metricdefinitions'}
 
     def list_worker_pool_instance_metrics(
             self, resource_group_name, name, worker_pool_name, instance, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -2824,7 +2858,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}metrics'
+                url = self.list_worker_pool_instance_metrics.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -2877,6 +2911,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_worker_pool_instance_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/instances/{instance}metrics'}
 
     def list_web_worker_metric_definitions(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
@@ -2905,7 +2940,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metricdefinitions'
+                url = self.list_web_worker_metric_definitions.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -2953,6 +2988,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_web_worker_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metricdefinitions'}
 
     def list_web_worker_metrics(
             self, resource_group_name, name, worker_pool_name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -2992,7 +3028,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metrics'
+                url = self.list_web_worker_metrics.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -3044,6 +3080,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_web_worker_metrics.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/metrics'}
 
     def list_worker_pool_skus(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
@@ -3072,7 +3109,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/skus'
+                url = self.list_worker_pool_skus.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -3120,6 +3157,7 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_worker_pool_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/skus'}
 
     def list_web_worker_usages(
             self, resource_group_name, name, worker_pool_name, custom_headers=None, raw=False, **operation_config):
@@ -3148,7 +3186,7 @@ class AppServiceEnvironmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/usages'
+                url = self.list_web_worker_usages.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
@@ -3196,3 +3234,4 @@ class AppServiceEnvironmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_web_worker_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/hostingEnvironments/{name}/workerPools/{workerPoolName}/usages'}

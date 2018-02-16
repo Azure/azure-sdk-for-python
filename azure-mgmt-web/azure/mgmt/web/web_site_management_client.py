@@ -164,7 +164,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/publishingUsers/web'
+        url = self.get_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -199,6 +199,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    get_publishing_user.metadata = {'url': '/providers/Microsoft.Web/publishingUsers/web'}
 
     def update_publishing_user(
             self, user_details, custom_headers=None, raw=False, **operation_config):
@@ -221,7 +222,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/publishingUsers/web'
+        url = self.update_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -260,6 +261,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    update_publishing_user.metadata = {'url': '/providers/Microsoft.Web/publishingUsers/web'}
 
     def list_source_controls(
             self, custom_headers=None, raw=False, **operation_config):
@@ -283,7 +285,7 @@ class WebSiteManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Web/sourcecontrols'
+                url = self.list_source_controls.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -324,6 +326,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_source_controls.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols'}
 
     def get_source_control(
             self, source_control_type, custom_headers=None, raw=False, **operation_config):
@@ -346,7 +349,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
+        url = self.get_source_control.metadata['url']
         path_format_arguments = {
             'sourceControlType': self._serialize.url("source_control_type", source_control_type, 'str')
         }
@@ -385,6 +388,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    get_source_control.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'}
 
     def update_source_control(
             self, source_control_type, request_message, custom_headers=None, raw=False, **operation_config):
@@ -409,7 +413,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
+        url = self.update_source_control.metadata['url']
         path_format_arguments = {
             'sourceControlType': self._serialize.url("source_control_type", source_control_type, 'str')
         }
@@ -452,6 +456,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    update_source_control.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'}
 
     def check_name_availability(
             self, name, type, is_fqdn=None, custom_headers=None, raw=False, **operation_config):
@@ -483,7 +488,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/checknameavailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -526,6 +531,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/checknameavailability'}
 
     def get_subscription_deployment_locations(
             self, custom_headers=None, raw=False, **operation_config):
@@ -546,7 +552,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deploymentLocations'
+        url = self.get_subscription_deployment_locations.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -585,6 +591,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    get_subscription_deployment_locations.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deploymentLocations'}
 
     def list_geo_regions(
             self, sku=None, linux_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
@@ -615,7 +622,7 @@ class WebSiteManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/geoRegions'
+                url = self.list_geo_regions.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -664,6 +671,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_geo_regions.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/geoRegions'}
 
     def list_site_identifiers_assigned_to_host_name(
             self, name=None, custom_headers=None, raw=False, **operation_config):
@@ -691,7 +699,7 @@ class WebSiteManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/listSitesAssignedToHostName'
+                url = self.list_site_identifiers_assigned_to_host_name.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -739,6 +747,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_site_identifiers_assigned_to_host_name.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/listSitesAssignedToHostName'}
 
     def list_premier_add_on_offers(
             self, custom_headers=None, raw=False, **operation_config):
@@ -762,7 +771,7 @@ class WebSiteManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/premieraddonoffers'
+                url = self.list_premier_add_on_offers.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -807,6 +816,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_premier_add_on_offers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/premieraddonoffers'}
 
     def list_skus(
             self, custom_headers=None, raw=False, **operation_config):
@@ -827,7 +837,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/skus'
+        url = self.list_skus.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -866,6 +876,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/skus'}
 
     def verify_hosting_environment_vnet(
             self, parameters, custom_headers=None, raw=False, **operation_config):
@@ -890,7 +901,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/verifyHostingEnvironmentVnet'
+        url = self.verify_hosting_environment_vnet.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -933,6 +944,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    verify_hosting_environment_vnet.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/verifyHostingEnvironmentVnet'}
 
     def move(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
@@ -961,7 +973,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'
+        url = self.move.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -998,6 +1010,7 @@ class WebSiteManagementClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    move.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'}
 
     def validate(
             self, resource_group_name, validate_request, custom_headers=None, raw=False, **operation_config):
@@ -1023,7 +1036,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'
+        url = self.validate.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -1067,6 +1080,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'}
 
     def validate_move(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
@@ -1095,7 +1109,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/validateMoveResources'
+        url = self.validate_move.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -1132,3 +1146,4 @@ class WebSiteManagementClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    validate_move.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/validateMoveResources'}
