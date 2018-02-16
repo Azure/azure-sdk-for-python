@@ -18,12 +18,6 @@ class BackupLongTermRetentionPolicyState(Enum):
     enabled = "Enabled"
 
 
-class RestorePointType(Enum):
-
-    discrete = "DISCRETE"
-    continuous = "CONTINUOUS"
-
-
 class CapabilityStatus(Enum):
 
     visible = "Visible"
@@ -496,3 +490,9 @@ class AutomaticTuningServerReason(Enum):
     default = "Default"
     disabled = "Disabled"
     auto_configured = "AutoConfigured"
+
+
+class RestorePointType(Enum):
+
+    continuous = "CONTINUOUS"
+    discrete = "DISCRETE"

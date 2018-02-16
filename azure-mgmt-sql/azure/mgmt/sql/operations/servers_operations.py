@@ -59,7 +59,7 @@ class ServersOperations(object):
         api_version = "2014-04-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -102,6 +102,7 @@ class ServersOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/checkNameAvailability'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -123,7 +124,7 @@ class ServersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/servers'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -168,6 +169,7 @@ class ServersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/servers'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -193,7 +195,7 @@ class ServersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -239,6 +241,7 @@ class ServersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers'}
 
     def get(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
@@ -263,7 +266,7 @@ class ServersOperations(object):
         api_version = "2015-05-01-preview"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -304,6 +307,7 @@ class ServersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'}
 
 
     def _create_or_update_initial(
@@ -311,7 +315,7 @@ class ServersOperations(object):
         api_version = "2015-05-01-preview"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -427,6 +431,7 @@ class ServersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'}
 
 
     def _delete_initial(
@@ -434,7 +439,7 @@ class ServersOperations(object):
         api_version = "2015-05-01-preview"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -529,6 +534,7 @@ class ServersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'}
 
 
     def _update_initial(
@@ -536,7 +542,7 @@ class ServersOperations(object):
         api_version = "2015-05-01-preview"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -650,3 +656,4 @@ class ServersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}'}

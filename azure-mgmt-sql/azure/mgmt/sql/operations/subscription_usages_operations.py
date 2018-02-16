@@ -58,7 +58,7 @@ class SubscriptionUsagesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/usages'
+                url = self.list_by_location.metadata['url']
                 path_format_arguments = {
                     'locationName': self._serialize.url("location_name", location_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -104,6 +104,7 @@ class SubscriptionUsagesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/usages'}
 
     def get(
             self, location_name, usage_name, custom_headers=None, raw=False, **operation_config):
@@ -125,7 +126,7 @@ class SubscriptionUsagesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/usages/{usageName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'usageName': self._serialize.url("usage_name", usage_name, 'str'),
@@ -166,3 +167,4 @@ class SubscriptionUsagesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/usages/{usageName}'}

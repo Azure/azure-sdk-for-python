@@ -54,7 +54,7 @@ class CapabilitiesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationId}/capabilities'
+        url = self.list_by_location.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'locationId': self._serialize.url("location_id", location_id, 'str')
@@ -94,3 +94,4 @@ class CapabilitiesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationId}/capabilities'}
