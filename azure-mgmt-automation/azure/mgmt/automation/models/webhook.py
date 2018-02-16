@@ -15,15 +15,10 @@ from msrest.serialization import Model
 class Webhook(Model):
     """Definition of the webhook type.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Gets the id of the resource.
-    :vartype id: str
-    :ivar name: Gets the name of the webhook.
-    :vartype name: str
-    :ivar type: Gets the type of the resource.
-    :vartype type: str
+    :param id: Gets or sets the id of the resource.
+    :type id: str
+    :param name: Gets or sets the name of the webhook.
+    :type name: str
     :param is_enabled: Gets or sets the value of the enabled flag of the
      webhook. Default value: False .
     :type is_enabled: bool
@@ -49,16 +44,9 @@ class Webhook(Model):
     :type description: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
@@ -71,11 +59,10 @@ class Webhook(Model):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, is_enabled=False, uri=None, expiry_time=None, last_invoked_time=None, parameters=None, runbook=None, run_on=None, creation_time=None, last_modified_time=None, description=None):
+    def __init__(self, id=None, name=None, is_enabled=False, uri=None, expiry_time=None, last_invoked_time=None, parameters=None, runbook=None, run_on=None, creation_time=None, last_modified_time=None, description=None):
         super(Webhook, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id = id
+        self.name = name
         self.is_enabled = is_enabled
         self.uri = uri
         self.expiry_time = expiry_time

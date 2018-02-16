@@ -25,7 +25,7 @@ class SourceControlSyncJobById(Model):
     :ivar creation_time: Gets the creation time of the job.
     :vartype creation_time: datetime
     :param provisioning_state: Gets the provisioning state of the job.
-     Possible values include: 'Completed', 'Failed', 'Running'
+     Possible values include: 'Succeeded', 'Failed', 'Running'
     :type provisioning_state: str or
      ~azure.mgmt.automation.models.ProvisioningState
     :ivar start_time: Gets the start time of the job.
