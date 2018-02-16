@@ -55,7 +55,7 @@ class Operations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/microsoft.insights/operations'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -94,3 +94,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/microsoft.insights/operations'}

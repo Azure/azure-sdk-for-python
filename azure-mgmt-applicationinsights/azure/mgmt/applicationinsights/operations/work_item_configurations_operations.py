@@ -61,7 +61,7 @@ class WorkItemConfigurationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -106,6 +106,7 @@ class WorkItemConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs'}
 
     def create(
             self, resource_group_name, resource_name, work_item_configuration_properties, custom_headers=None, raw=False, **operation_config):
@@ -132,7 +133,7 @@ class WorkItemConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -177,6 +178,7 @@ class WorkItemConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs'}
 
     def get_default(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -201,7 +203,7 @@ class WorkItemConfigurationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/DefaultWorkItemConfig'
+                url = self.get_default.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -248,6 +250,7 @@ class WorkItemConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_default.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/DefaultWorkItemConfig'}
 
     def delete(
             self, resource_group_name, resource_name, work_item_config_id, custom_headers=None, raw=False, **operation_config):
@@ -272,7 +275,7 @@ class WorkItemConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs/{workItemConfigId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -314,3 +317,4 @@ class WorkItemConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs/{workItemConfigId}'}
