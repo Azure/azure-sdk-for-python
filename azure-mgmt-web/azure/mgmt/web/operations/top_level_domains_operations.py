@@ -57,7 +57,7 @@ class TopLevelDomainsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -102,6 +102,7 @@ class TopLevelDomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains'}
 
     def get(
             self, name, custom_headers=None, raw=False, **operation_config):
@@ -122,7 +123,7 @@ class TopLevelDomainsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -162,6 +163,7 @@ class TopLevelDomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}'}
 
     def list_agreements(
             self, name, include_privacy=None, for_transfer=None, custom_headers=None, raw=False, **operation_config):
@@ -197,7 +199,7 @@ class TopLevelDomainsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}/listAgreements'
+                url = self.list_agreements.metadata['url']
                 path_format_arguments = {
                     'name': self._serialize.url("name", name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -246,3 +248,4 @@ class TopLevelDomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_agreements.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}/listAgreements'}
