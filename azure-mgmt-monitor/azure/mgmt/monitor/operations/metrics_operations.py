@@ -105,9 +105,9 @@ class MetricsOperations(object):
         if aggregation is not None:
             query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
         if top is not None:
-            query_parameters['$top'] = self._serialize.query("top", top, 'float')
+            query_parameters['top'] = self._serialize.query("top", top, 'float')
         if orderby is not None:
-            query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+            query_parameters['orderby'] = self._serialize.query("orderby", orderby, 'str')
         if filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
         if result_type is not None:
