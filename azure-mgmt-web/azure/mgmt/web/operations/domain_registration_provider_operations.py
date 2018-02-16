@@ -59,7 +59,7 @@ class DomainRegistrationProviderOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.DomainRegistration/operations'
+                url = self.list_operations.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -100,3 +100,4 @@ class DomainRegistrationProviderOperations(object):
             return client_raw_response
 
         return deserialized
+    list_operations.metadata = {'url': '/providers/Microsoft.DomainRegistration/operations'}

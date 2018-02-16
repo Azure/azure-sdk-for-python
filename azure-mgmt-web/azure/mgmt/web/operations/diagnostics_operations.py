@@ -62,7 +62,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics'
+                url = self.list_site_diagnostic_categories.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -109,6 +109,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_site_diagnostic_categories.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics'}
 
     def get_site_diagnostic_category(
             self, resource_group_name, site_name, diagnostic_category, custom_headers=None, raw=False, **operation_config):
@@ -134,7 +135,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}'
+        url = self.get_site_diagnostic_category.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -176,6 +177,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_site_diagnostic_category.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}'}
 
     def list_site_analyses(
             self, resource_group_name, site_name, diagnostic_category, custom_headers=None, raw=False, **operation_config):
@@ -204,7 +206,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses'
+                url = self.list_site_analyses.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -252,6 +254,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_site_analyses.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses'}
 
     def get_site_analysis(
             self, resource_group_name, site_name, diagnostic_category, analysis_name, custom_headers=None, raw=False, **operation_config):
@@ -279,7 +282,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'
+        url = self.get_site_analysis.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -322,6 +325,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_site_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}
 
     def execute_site_analysis(
             self, resource_group_name, site_name, diagnostic_category, analysis_name, start_time=None, end_time=None, time_grain=None, custom_headers=None, raw=False, **operation_config):
@@ -355,7 +359,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'
+        url = self.execute_site_analysis.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -404,6 +408,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    execute_site_analysis.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'}
 
     def list_site_detectors(
             self, resource_group_name, site_name, diagnostic_category, custom_headers=None, raw=False, **operation_config):
@@ -432,7 +437,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors'
+                url = self.list_site_detectors.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -480,6 +485,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_site_detectors.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors'}
 
     def get_site_detector(
             self, resource_group_name, site_name, diagnostic_category, detector_name, custom_headers=None, raw=False, **operation_config):
@@ -510,7 +516,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'
+                url = self.get_site_detector.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -559,6 +565,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}
 
     def execute_site_detector(
             self, resource_group_name, site_name, detector_name, diagnostic_category, start_time=None, end_time=None, time_grain=None, custom_headers=None, raw=False, **operation_config):
@@ -592,7 +599,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'
+        url = self.execute_site_detector.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -641,6 +648,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    execute_site_detector.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'}
 
     def list_site_diagnostic_categories_slot(
             self, resource_group_name, site_name, slot, custom_headers=None, raw=False, **operation_config):
@@ -669,7 +677,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics'
+                url = self.list_site_diagnostic_categories_slot.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -717,6 +725,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_site_diagnostic_categories_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics'}
 
     def get_site_diagnostic_category_slot(
             self, resource_group_name, site_name, diagnostic_category, slot, custom_headers=None, raw=False, **operation_config):
@@ -744,7 +753,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}'
+        url = self.get_site_diagnostic_category_slot.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -787,6 +796,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_site_diagnostic_category_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}'}
 
     def list_site_analyses_slot(
             self, resource_group_name, site_name, diagnostic_category, slot, custom_headers=None, raw=False, **operation_config):
@@ -817,7 +827,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses'
+                url = self.list_site_analyses_slot.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -866,6 +876,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_site_analyses_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses'}
 
     def get_site_analysis_slot(
             self, resource_group_name, site_name, diagnostic_category, analysis_name, slot, custom_headers=None, raw=False, **operation_config):
@@ -895,7 +906,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'
+        url = self.get_site_analysis_slot.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -939,6 +950,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_site_analysis_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}'}
 
     def execute_site_analysis_slot(
             self, resource_group_name, site_name, diagnostic_category, analysis_name, slot, start_time=None, end_time=None, time_grain=None, custom_headers=None, raw=False, **operation_config):
@@ -974,7 +986,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'
+        url = self.execute_site_analysis_slot.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -1024,6 +1036,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    execute_site_analysis_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/analyses/{analysisName}/execute'}
 
     def list_site_detectors_slot(
             self, resource_group_name, site_name, diagnostic_category, slot, custom_headers=None, raw=False, **operation_config):
@@ -1054,7 +1067,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors'
+                url = self.list_site_detectors_slot.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -1103,6 +1116,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_site_detectors_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors'}
 
     def get_site_detector_slot(
             self, resource_group_name, site_name, diagnostic_category, detector_name, slot, custom_headers=None, raw=False, **operation_config):
@@ -1135,7 +1149,7 @@ class DiagnosticsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'
+                url = self.get_site_detector_slot.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -1185,6 +1199,7 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_site_detector_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}'}
 
     def execute_site_detector_slot(
             self, resource_group_name, site_name, detector_name, diagnostic_category, slot, start_time=None, end_time=None, time_grain=None, custom_headers=None, raw=False, **operation_config):
@@ -1220,7 +1235,7 @@ class DiagnosticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'
+        url = self.execute_site_detector_slot.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
@@ -1270,3 +1285,4 @@ class DiagnosticsOperations(object):
             return client_raw_response
 
         return deserialized
+    execute_site_detector_slot.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute'}

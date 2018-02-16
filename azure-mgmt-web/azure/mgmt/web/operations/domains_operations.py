@@ -61,7 +61,7 @@ class DomainsOperations(object):
         identifier = models.NameIdentifier(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/checkDomainAvailability'
+        url = self.check_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -104,6 +104,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    check_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/checkDomainAvailability'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -125,7 +126,7 @@ class DomainsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/domains'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -170,6 +171,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/domains'}
 
     def get_control_center_sso_request(
             self, custom_headers=None, raw=False, **operation_config):
@@ -189,7 +191,7 @@ class DomainsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/generateSsoRequest'
+        url = self.get_control_center_sso_request.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -228,6 +230,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_control_center_sso_request.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/generateSsoRequest'}
 
     def list_recommendations(
             self, keywords=None, max_domain_recommendations=None, custom_headers=None, raw=False, **operation_config):
@@ -256,7 +259,7 @@ class DomainsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/listDomainRecommendations'
+                url = self.list_recommendations.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -304,6 +307,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_recommendations.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/listDomainRecommendations'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -328,7 +332,7 @@ class DomainsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -374,6 +378,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains'}
 
     def get(
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
@@ -397,7 +402,7 @@ class DomainsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -438,12 +443,13 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9\.-]+'),
@@ -560,6 +566,7 @@ class DomainsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
     def delete(
             self, resource_group_name, domain_name, force_hard_delete_domain=None, custom_headers=None, raw=False, **operation_config):
@@ -586,7 +593,7 @@ class DomainsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -622,6 +629,7 @@ class DomainsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
     def update(
             self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
@@ -647,7 +655,7 @@ class DomainsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9\.-]+'),
@@ -694,6 +702,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'}
 
     def list_ownership_identifiers(
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
@@ -720,7 +729,7 @@ class DomainsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers'
+                url = self.list_ownership_identifiers.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
                     'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -767,6 +776,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_ownership_identifiers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers'}
 
     def get_ownership_identifier(
             self, resource_group_name, domain_name, name, custom_headers=None, raw=False, **operation_config):
@@ -792,7 +802,7 @@ class DomainsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
+        url = self.get_ownership_identifier.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -834,6 +844,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
     def create_or_update_ownership_identifier(
             self, resource_group_name, domain_name, name, kind=None, ownership_id=None, custom_headers=None, raw=False, **operation_config):
@@ -867,7 +878,7 @@ class DomainsOperations(object):
         domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
+        url = self.create_or_update_ownership_identifier.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -913,6 +924,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
     def delete_ownership_identifier(
             self, resource_group_name, domain_name, name, custom_headers=None, raw=False, **operation_config):
@@ -937,7 +949,7 @@ class DomainsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
+        url = self.delete_ownership_identifier.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -972,6 +984,7 @@ class DomainsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
     def update_ownership_identifier(
             self, resource_group_name, domain_name, name, kind=None, ownership_id=None, custom_headers=None, raw=False, **operation_config):
@@ -1005,7 +1018,7 @@ class DomainsOperations(object):
         domain_ownership_identifier = models.DomainOwnershipIdentifier(kind=kind, ownership_id=ownership_id)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
+        url = self.update_ownership_identifier.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -1051,6 +1064,7 @@ class DomainsOperations(object):
             return client_raw_response
 
         return deserialized
+    update_ownership_identifier.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'}
 
     def renew(
             self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
@@ -1074,7 +1088,7 @@ class DomainsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/renew'
+        url = self.renew.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
@@ -1106,3 +1120,4 @@ class DomainsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    renew.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/renew'}
