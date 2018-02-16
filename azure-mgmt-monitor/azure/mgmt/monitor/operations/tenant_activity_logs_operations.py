@@ -21,7 +21,7 @@ class TenantActivityLogsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2015-04-01".
     """
 
@@ -89,7 +89,7 @@ class TenantActivityLogsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/microsoft.insights/eventtypes/management/values'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -132,3 +132,4 @@ class TenantActivityLogsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/microsoft.insights/eventtypes/management/values'}
