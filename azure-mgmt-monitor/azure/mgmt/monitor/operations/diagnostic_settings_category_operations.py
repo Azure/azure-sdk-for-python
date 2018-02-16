@@ -21,7 +21,7 @@ class DiagnosticSettingsCategoryOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
     """
 
@@ -57,7 +57,7 @@ class DiagnosticSettingsCategoryOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories/{name}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str')
@@ -95,6 +95,7 @@ class DiagnosticSettingsCategoryOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories/{name}'}
 
     def list(
             self, resource_uri, custom_headers=None, raw=False, **operation_config):
@@ -116,7 +117,7 @@ class DiagnosticSettingsCategoryOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
         }
@@ -153,3 +154,4 @@ class DiagnosticSettingsCategoryOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettingsCategories'}

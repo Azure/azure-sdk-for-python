@@ -21,7 +21,7 @@ class MetricDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
     """
 
@@ -57,7 +57,7 @@ class MetricDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{resourceUri}/providers/microsoft.insights/metricDefinitions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
                 }
@@ -100,3 +100,4 @@ class MetricDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricDefinitions'}
