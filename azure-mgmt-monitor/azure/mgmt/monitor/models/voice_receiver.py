@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class VoiceReceiver(Model):
-    """An voice receiver.
+    """A voice receiver.
 
     :param name: The name of the voice receiver. Names must be unique across
      all receivers within an action group.
