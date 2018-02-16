@@ -20,6 +20,9 @@ from .runbook_draft import RunbookDraft
 from .runbook import Runbook
 from .module_error_info import ModuleErrorInfo
 from .module import Module
+from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
+from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
+from .dsc_node import DscNode
 from .content_source import ContentSource
 from .dsc_configuration_parameter import DscConfigurationParameter
 from .dsc_configuration import DscConfiguration
@@ -54,13 +57,9 @@ from .agent_registration import AgentRegistration
 from .agent_registration_regenerate_key_parameter import AgentRegistrationRegenerateKeyParameter
 from .dsc_configuration_association_property import DscConfigurationAssociationProperty
 from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
-from .provisioning_state_property import ProvisioningStateProperty
 from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
-from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
-from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
-from .dsc_node import DscNode
 from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration import DscNodeConfiguration
 from .dsc_node_update_parameters import DscNodeUpdateParameters
@@ -79,10 +78,9 @@ from .schedule_association_property import ScheduleAssociationProperty
 from .job_schedule_create_parameters import JobScheduleCreateParameters
 from .job_schedule import JobSchedule
 from .job_stream import JobStream
-from .job_stream_list_result import JobStreamListResult
+from .linked_workspace import LinkedWorkspace
 from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
 from .module_update_parameters import ModuleUpdateParameters
-from .proxy_resource import ProxyResource
 from .runbook_draft_undo_edit_result import RunbookDraftUndoEditResult
 from .runbook_create_or_update_parameters import RunbookCreateOrUpdateParameters
 from .runbook_create_or_update_draft_properties import RunbookCreateOrUpdateDraftProperties
@@ -182,6 +180,9 @@ __all__ = [
     'Runbook',
     'ModuleErrorInfo',
     'Module',
+    'DscNodeExtensionHandlerAssociationProperty',
+    'DscNodeConfigurationAssociationProperty',
+    'DscNode',
     'ContentSource',
     'DscConfigurationParameter',
     'DscConfiguration',
@@ -216,13 +217,9 @@ __all__ = [
     'AgentRegistrationRegenerateKeyParameter',
     'DscConfigurationAssociationProperty',
     'DscCompilationJobCreateParameters',
-    'ProvisioningStateProperty',
     'DscCompilationJob',
     'DscConfigurationCreateOrUpdateParameters',
     'DscMetaConfiguration',
-    'DscNodeConfigurationAssociationProperty',
-    'DscNodeExtensionHandlerAssociationProperty',
-    'DscNode',
     'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfiguration',
     'DscNodeUpdateParameters',
@@ -241,10 +238,9 @@ __all__ = [
     'JobScheduleCreateParameters',
     'JobSchedule',
     'JobStream',
-    'JobStreamListResult',
+    'LinkedWorkspace',
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
-    'ProxyResource',
     'RunbookDraftUndoEditResult',
     'RunbookCreateOrUpdateParameters',
     'RunbookCreateOrUpdateDraftProperties',
