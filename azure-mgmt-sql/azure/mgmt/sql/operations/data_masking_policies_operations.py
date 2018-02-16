@@ -22,7 +22,7 @@ class DataMaskingPoliciesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     :ivar data_masking_policy_name: The name of the database for which the data masking rule applies. Constant value: "Default".
     """

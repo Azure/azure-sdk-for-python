@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
+from .operations.restore_points_operations import RestorePointsOperations
 from .operations.recoverable_databases_operations import RecoverableDatabasesOperations
 from .operations.restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -53,7 +54,6 @@ from .operations.virtual_network_rules_operations import VirtualNetworkRulesOper
 from .operations.database_operations import DatabaseOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
-from .operations.database_restore_points_operations import DatabaseRestorePointsOperations
 from . import models
 
 
@@ -100,6 +100,8 @@ class SqlManagementClient(object):
     :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
     :ivar backup_long_term_retention_vaults: BackupLongTermRetentionVaults operations
     :vartype backup_long_term_retention_vaults: azure.mgmt.sql.operations.BackupLongTermRetentionVaultsOperations
+    :ivar restore_points: RestorePoints operations
+    :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
     :ivar recoverable_databases: RecoverableDatabases operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
@@ -176,8 +178,6 @@ class SqlManagementClient(object):
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
-    :ivar database_restore_points: DatabaseRestorePoints operations
-    :vartype database_restore_points: azure.mgmt.sql.operations.DatabaseRestorePointsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -201,6 +201,8 @@ class SqlManagementClient(object):
         self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_long_term_retention_vaults = BackupLongTermRetentionVaultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.restore_points = RestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -277,6 +279,4 @@ class SqlManagementClient(object):
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.database_restore_points = DatabaseRestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)

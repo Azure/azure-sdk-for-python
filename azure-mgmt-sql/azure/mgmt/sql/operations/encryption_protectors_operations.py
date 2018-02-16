@@ -24,7 +24,7 @@ class EncryptionProtectorsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     :ivar encryption_protector_name: The name of the encryption protector to be retrieved. Constant value: "current".
     """

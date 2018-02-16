@@ -22,7 +22,7 @@ class DatabaseBlobAuditingPoliciesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar blob_auditing_policy_name: The name of the blob auditing policy. Constant value: "default".
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """

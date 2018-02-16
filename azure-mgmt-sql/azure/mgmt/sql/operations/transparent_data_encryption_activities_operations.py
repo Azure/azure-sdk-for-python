@@ -22,7 +22,7 @@ class TransparentDataEncryptionActivitiesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     :ivar transparent_data_encryption_name: The name of the transparent data encryption configuration. Constant value: "current".
     """
