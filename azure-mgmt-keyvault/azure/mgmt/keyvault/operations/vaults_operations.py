@@ -64,7 +64,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
@@ -111,6 +111,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'}
 
     def update(
             self, resource_group_name, vault_name, tags=None, properties=None, custom_headers=None, raw=False, **operation_config):
@@ -140,7 +141,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
@@ -187,6 +188,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'}
 
     def delete(
             self, resource_group_name, vault_name, custom_headers=None, raw=False, **operation_config):
@@ -209,7 +211,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
@@ -243,6 +245,7 @@ class VaultsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'}
 
     def get(
             self, resource_group_name, vault_name, custom_headers=None, raw=False, **operation_config):
@@ -266,7 +269,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
@@ -307,6 +310,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'}
 
     def update_access_policy(
             self, resource_group_name, vault_name, operation_kind, properties, custom_headers=None, raw=False, **operation_config):
@@ -339,7 +343,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/accessPolicies/{operationKind}'
+        url = self.update_access_policy.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vaultName': self._serialize.url("vault_name", vault_name, 'str', pattern=r'^[a-zA-Z0-9-]{3,24}$'),
@@ -387,6 +391,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    update_access_policy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/accessPolicies/{operationKind}'}
 
     def list_by_resource_group(
             self, resource_group_name, top=None, custom_headers=None, raw=False, **operation_config):
@@ -414,7 +419,7 @@ class VaultsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -462,6 +467,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults'}
 
     def list_by_subscription(
             self, top=None, custom_headers=None, raw=False, **operation_config):
@@ -486,7 +492,7 @@ class VaultsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/vaults'
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -533,6 +539,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/vaults'}
 
     def list_deleted(
             self, custom_headers=None, raw=False, **operation_config):
@@ -554,7 +561,7 @@ class VaultsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/deletedVaults'
+                url = self.list_deleted.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -599,6 +606,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_deleted.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/deletedVaults'}
 
     def get_deleted(
             self, vault_name, location, custom_headers=None, raw=False, **operation_config):
@@ -621,7 +629,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}'
+        url = self.get_deleted.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'location': self._serialize.url("location", location, 'str'),
@@ -662,6 +670,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_deleted.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}'}
 
 
     def _purge_deleted_initial(
@@ -669,7 +678,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}/purge'
+        url = self.purge_deleted.metadata['url']
         path_format_arguments = {
             'vaultName': self._serialize.url("vault_name", vault_name, 'str'),
             'location': self._serialize.url("location", location, 'str'),
@@ -763,6 +772,7 @@ class VaultsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    purge_deleted.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/locations/{location}/deletedVaults/{vaultName}/purge'}
 
     def list(
             self, top=None, custom_headers=None, raw=False, **operation_config):
@@ -787,7 +797,7 @@ class VaultsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resources'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -835,6 +845,7 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resources'}
 
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
@@ -857,7 +868,7 @@ class VaultsOperations(object):
         api_version = "2016-10-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -900,3 +911,4 @@ class VaultsOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/checkNameAvailability'}
