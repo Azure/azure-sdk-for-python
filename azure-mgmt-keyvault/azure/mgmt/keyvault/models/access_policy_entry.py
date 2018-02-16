@@ -28,8 +28,7 @@ class AccessPolicyEntry(Model):
     :type application_id: str
     :param permissions: Permissions the identity has for keys, secrets and
      certificates.
-    :type permissions: :class:`Permissions
-     <azure.mgmt.keyvault.models.Permissions>`
+    :type permissions: ~azure.mgmt.keyvault.models.Permissions
     """
 
     _validation = {
@@ -46,6 +45,7 @@ class AccessPolicyEntry(Model):
     }
 
     def __init__(self, tenant_id, object_id, permissions, application_id=None):
+        super(AccessPolicyEntry, self).__init__()
         self.tenant_id = tenant_id
         self.object_id = object_id
         self.application_id = application_id
