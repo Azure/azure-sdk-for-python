@@ -21,7 +21,7 @@ class MetricBaselineOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-11-01-preview".
     """
 
@@ -76,7 +76,7 @@ class MetricBaselineOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/baseline/{metricName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
             'metricName': self._serialize.url("metric_name", metric_name, 'str')
@@ -124,6 +124,7 @@ class MetricBaselineOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline/{metricName}'}
 
     def calculate_baseline(
             self, resource_uri, time_series_information, custom_headers=None, raw=False, **operation_config):
@@ -151,7 +152,7 @@ class MetricBaselineOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/calculatebaseline'
+        url = self.calculate_baseline.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
         }
@@ -192,3 +193,4 @@ class MetricBaselineOperations(object):
             return client_raw_response
 
         return deserialized
+    calculate_baseline.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/calculatebaseline'}
