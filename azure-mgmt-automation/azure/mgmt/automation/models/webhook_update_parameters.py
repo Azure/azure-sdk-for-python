@@ -28,10 +28,6 @@ class WebhookUpdateParameters(Model):
     :type description: str
     """
 
-    _validation = {
-        'name': {'required': True},
-    }
-
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
@@ -40,7 +36,7 @@ class WebhookUpdateParameters(Model):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, name, is_enabled=None, run_on=None, parameters=None, description=None):
+    def __init__(self, name=None, is_enabled=None, run_on=None, parameters=None, description=None):
         super(WebhookUpdateParameters, self).__init__()
         self.name = name
         self.is_enabled = is_enabled

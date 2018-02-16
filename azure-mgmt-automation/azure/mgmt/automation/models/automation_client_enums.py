@@ -98,8 +98,8 @@ class ScheduleDay(Enum):
 
 class AgentRegistrationKeyName(Enum):
 
-    primary = "primary"
-    secondary = "secondary"
+    primary = "Primary"
+    secondary = "Secondary"
 
 
 class JobStatus(Enum):
@@ -226,6 +226,6 @@ class SourceType(Enum):
 
 class ProvisioningState(Enum):
 
-    completed = "Completed"
+    succeeded = "Succeeded"
     failed = "Failed"
     running = "Running"
