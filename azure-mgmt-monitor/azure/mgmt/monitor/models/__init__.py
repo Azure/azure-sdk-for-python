@@ -58,7 +58,6 @@ from .webhook_receiver import WebhookReceiver
 from .itsm_receiver import ItsmReceiver
 from .azure_app_push_receiver import AzureAppPushReceiver
 from .automation_runbook_receiver import AutomationRunbookReceiver
-from .voice_receiver import VoiceReceiver
 from .action_group_resource import ActionGroupResource
 from .enable_request import EnableRequest
 from .action_group_patch_body import ActionGroupPatchBody
@@ -161,7 +160,6 @@ __all__ = [
     'ItsmReceiver',
     'AzureAppPushReceiver',
     'AutomationRunbookReceiver',
-    'VoiceReceiver',
     'ActionGroupResource',
     'EnableRequest',
     'ActionGroupPatchBody',
