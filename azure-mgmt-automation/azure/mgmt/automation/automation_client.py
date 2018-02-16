@@ -22,7 +22,6 @@ from .operations.connection_operations import ConnectionOperations
 from .operations.connection_type_operations import ConnectionTypeOperations
 from .operations.credential_operations import CredentialOperations
 from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
-from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_configuration_operations import DscConfigurationOperations
 from .operations.agent_registration_information_operations import AgentRegistrationInformationOperations
 from .operations.dsc_node_operations import DscNodeOperations
@@ -32,6 +31,7 @@ from .operations.hybrid_runbook_worker_group_operations import HybridRunbookWork
 from .operations.job_operations import JobOperations
 from .operations.job_stream_operations import JobStreamOperations
 from .operations.job_schedule_operations import JobScheduleOperations
+from .operations.linked_workspace_operations import LinkedWorkspaceOperations
 from .operations.activity_operations import ActivityOperations
 from .operations.module_operations import ModuleOperations
 from .operations.object_data_types_operations import ObjectDataTypesOperations
@@ -122,8 +122,6 @@ class AutomationClient(object):
     :vartype credential: azure.mgmt.automation.operations.CredentialOperations
     :ivar dsc_compilation_job: DscCompilationJob operations
     :vartype dsc_compilation_job: azure.mgmt.automation.operations.DscCompilationJobOperations
-    :ivar dsc_compilation_job_stream: DscCompilationJobStream operations
-    :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
     :ivar dsc_configuration: DscConfiguration operations
     :vartype dsc_configuration: azure.mgmt.automation.operations.DscConfigurationOperations
     :ivar agent_registration_information: AgentRegistrationInformation operations
@@ -142,6 +140,8 @@ class AutomationClient(object):
     :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
     :ivar job_schedule: JobSchedule operations
     :vartype job_schedule: azure.mgmt.automation.operations.JobScheduleOperations
+    :ivar linked_workspace: LinkedWorkspace operations
+    :vartype linked_workspace: azure.mgmt.automation.operations.LinkedWorkspaceOperations
     :ivar activity: Activity operations
     :vartype activity: azure.mgmt.automation.operations.ActivityOperations
     :ivar module: Module operations
@@ -219,8 +219,6 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.dsc_compilation_job = DscCompilationJobOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.dsc_configuration = DscConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.agent_registration_information = AgentRegistrationInformationOperations(
@@ -238,6 +236,8 @@ class AutomationClient(object):
         self.job_stream = JobStreamOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job_schedule = JobScheduleOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.linked_workspace = LinkedWorkspaceOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.activity = ActivityOperations(
             self._client, self.config, self._serialize, self._deserialize)
