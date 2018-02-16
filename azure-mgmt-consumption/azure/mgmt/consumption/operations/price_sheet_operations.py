@@ -21,7 +21,7 @@ class PriceSheetOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-31. Constant value: "2018-01-31".
     """
 
@@ -65,7 +65,7 @@ class PriceSheetOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -108,6 +108,7 @@ class PriceSheetOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/pricesheets/default'}
 
     def get_by_billing_period(
             self, billing_period_name, expand=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
@@ -140,7 +141,7 @@ class PriceSheetOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'
+        url = self.get_by_billing_period.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
@@ -184,3 +185,4 @@ class PriceSheetOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_billing_period.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/pricesheets/default'}
