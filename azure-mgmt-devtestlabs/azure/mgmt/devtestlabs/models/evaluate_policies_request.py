@@ -25,4 +25,5 @@ class EvaluatePoliciesRequest(Model):
     }
 
     def __init__(self, policies=None):
+        super(EvaluatePoliciesRequest, self).__init__()
         self.policies = policies

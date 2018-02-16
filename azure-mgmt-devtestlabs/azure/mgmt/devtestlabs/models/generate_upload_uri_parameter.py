@@ -24,4 +24,5 @@ class GenerateUploadUriParameter(Model):
     }
 
     def __init__(self, blob_name=None):
+        super(GenerateUploadUriParameter, self).__init__()
         self.blob_name = blob_name

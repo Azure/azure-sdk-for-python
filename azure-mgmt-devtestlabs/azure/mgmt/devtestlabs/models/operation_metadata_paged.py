@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class DayDetailsFragment(Model):
-    """Properties of a daily schedule.
-
-    :param time: The time of day the schedule will occur.
-    :type time: str
+class OperationMetadataPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`OperationMetadata <azure.mgmt.devtestlabs.models.OperationMetadata>` object
     """
 
     _attribute_map = {
-        'time': {'key': 'time', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[OperationMetadata]'}
     }
 
-    def __init__(self, time=None):
-        super(DayDetailsFragment, self).__init__()
-        self.time = time
+    def __init__(self, *args, **kwargs):
+
+        super(OperationMetadataPaged, self).__init__(*args, **kwargs)

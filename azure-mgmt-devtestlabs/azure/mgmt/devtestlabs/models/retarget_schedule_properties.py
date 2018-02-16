@@ -29,5 +29,6 @@ class RetargetScheduleProperties(Model):
     }
 
     def __init__(self, current_resource_id=None, target_resource_id=None):
+        super(RetargetScheduleProperties, self).__init__()
         self.current_resource_id = current_resource_id
         self.target_resource_id = target_resource_id

@@ -30,6 +30,7 @@ class CustomImagePropertiesFromVm(Model):
     }
 
     def __init__(self, source_vm_id=None, windows_os_info=None, linux_os_info=None):
+        super(CustomImagePropertiesFromVm, self).__init__()
         self.source_vm_id = source_vm_id
         self.windows_os_info = windows_os_info
         self.linux_os_info = linux_os_info

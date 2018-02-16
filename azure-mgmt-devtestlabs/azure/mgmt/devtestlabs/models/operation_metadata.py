@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class ExternalSubnet(Model):
-    """Subnet information as returned by the Microsoft.Network API.
+class OperationMetadata(Model):
+    """The REST API operation supported by DevTestLab ResourceProvider.
 
-    :param id: Gets or sets the identifier.
-    :type id: str
-    :param name: Gets or sets the name.
+    :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
+    :param display: The object that describes the operations
+    :type display: ~azure.mgmt.devtestlabs.models.OperationMetadataDisplay
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationMetadataDisplay'},
     }
 
-    def __init__(self, id=None, name=None):
-        super(ExternalSubnet, self).__init__()
-        self.id = id
+    def __init__(self, name=None, display=None):
+        super(OperationMetadata, self).__init__()
         self.name = name
+        self.display = display

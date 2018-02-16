@@ -36,6 +36,7 @@ class GalleryImageReferenceFragment(Model):
     }
 
     def __init__(self, offer=None, publisher=None, sku=None, os_type=None, version=None):
+        super(GalleryImageReferenceFragment, self).__init__()
         self.offer = offer
         self.publisher = publisher
         self.sku = sku

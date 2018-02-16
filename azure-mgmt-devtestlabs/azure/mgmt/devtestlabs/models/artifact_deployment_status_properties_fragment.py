@@ -32,6 +32,7 @@ class ArtifactDeploymentStatusPropertiesFragment(Model):
     }
 
     def __init__(self, deployment_status=None, artifacts_applied=None, total_artifacts=None):
+        super(ArtifactDeploymentStatusPropertiesFragment, self).__init__()
         self.deployment_status = deployment_status
         self.artifacts_applied = artifacts_applied
         self.total_artifacts = total_artifacts

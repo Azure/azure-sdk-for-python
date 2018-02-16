@@ -28,5 +28,6 @@ class WeekDetailsFragment(Model):
     }
 
     def __init__(self, weekdays=None, time=None):
+        super(WeekDetailsFragment, self).__init__()
         self.weekdays = weekdays
         self.time = time

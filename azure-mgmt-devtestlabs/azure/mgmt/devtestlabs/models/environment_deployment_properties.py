@@ -28,5 +28,6 @@ class EnvironmentDeploymentProperties(Model):
     }
 
     def __init__(self, arm_template_id=None, parameters=None):
+        super(EnvironmentDeploymentProperties, self).__init__()
         self.arm_template_id = arm_template_id
         self.parameters = parameters
