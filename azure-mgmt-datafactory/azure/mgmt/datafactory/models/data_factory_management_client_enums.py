@@ -286,6 +286,7 @@ class WebActivityMethod(Enum):
     get = "GET"
     post = "POST"
     put = "PUT"
+    delete = "DELETE"
 
 
 class CassandraSourceReadConsistencyLevels(Enum):
