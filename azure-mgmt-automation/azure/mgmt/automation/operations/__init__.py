@@ -25,9 +25,8 @@ from .dsc_node_operations import DscNodeOperations
 from .node_reports_operations import NodeReportsOperations
 from .dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .hybrid_runbook_worker_group_operations import HybridRunbookWorkerGroupOperations
-from .job_operations import JobOperations
-from .job_stream_operations import JobStreamOperations
 from .job_schedule_operations import JobScheduleOperations
+from .linked_workspace_operations import LinkedWorkspaceOperations
 from .activity_operations import ActivityOperations
 from .module_operations import ModuleOperations
 from .object_data_types_operations import ObjectDataTypesOperations
@@ -35,7 +34,7 @@ from .fields_operations import FieldsOperations
 from .runbook_draft_operations import RunbookDraftOperations
 from .runbook_operations import RunbookOperations
 from .test_job_streams_operations import TestJobStreamsOperations
-from .test_jobs_operations import TestJobsOperations
+from .test_job_operations import TestJobOperations
 from .schedule_operations import ScheduleOperations
 from .variable_operations import VariableOperations
 from .webhook_operations import WebhookOperations
@@ -44,6 +43,8 @@ from .software_update_configuration_runs_operations import SoftwareUpdateConfigu
 from .software_update_configuration_machine_runs_operations import SoftwareUpdateConfigurationMachineRunsOperations
 from .source_control_operations import SourceControlOperations
 from .source_control_sync_job_operations import SourceControlSyncJobOperations
+from .job_operations import JobOperations
+from .job_stream_operations import JobStreamOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -62,9 +63,8 @@ __all__ = [
     'NodeReportsOperations',
     'DscNodeConfigurationOperations',
     'HybridRunbookWorkerGroupOperations',
-    'JobOperations',
-    'JobStreamOperations',
     'JobScheduleOperations',
+    'LinkedWorkspaceOperations',
     'ActivityOperations',
     'ModuleOperations',
     'ObjectDataTypesOperations',
@@ -72,7 +72,7 @@ __all__ = [
     'RunbookDraftOperations',
     'RunbookOperations',
     'TestJobStreamsOperations',
-    'TestJobsOperations',
+    'TestJobOperations',
     'ScheduleOperations',
     'VariableOperations',
     'WebhookOperations',
@@ -81,4 +81,6 @@ __all__ = [
     'SoftwareUpdateConfigurationMachineRunsOperations',
     'SourceControlOperations',
     'SourceControlSyncJobOperations',
+    'JobOperations',
+    'JobStreamOperations',
 ]

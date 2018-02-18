@@ -22,12 +22,6 @@ class JobCreateParameters(Model):
     :param run_on: Gets or sets the runOn which specifies the group name where
      the job is to be executed.
     :type run_on: str
-    :param name: Gets or sets name of the resource.
-    :type name: str
-    :param location: Gets or sets the location of the resource.
-    :type location: str
-    :param tags: Gets or sets the tags attached to the resource.
-    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -38,16 +32,10 @@ class JobCreateParameters(Model):
         'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'run_on': {'key': 'properties.runOn', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, runbook, parameters=None, run_on=None, name=None, location=None, tags=None):
+    def __init__(self, runbook, parameters=None, run_on=None):
         super(JobCreateParameters, self).__init__()
         self.runbook = runbook
         self.parameters = parameters
         self.run_on = run_on
-        self.name = name
-        self.location = location
-        self.tags = tags

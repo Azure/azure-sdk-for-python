@@ -54,7 +54,7 @@ from .agent_registration import AgentRegistration
 from .agent_registration_regenerate_key_parameter import AgentRegistrationRegenerateKeyParameter
 from .dsc_configuration_association_property import DscConfigurationAssociationProperty
 from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
-from .provisioning_state_property import ProvisioningStateProperty
+from .job_provisioning_state_property import JobProvisioningStateProperty
 from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
@@ -75,11 +75,13 @@ from .hybrid_runbook_worker_group_update_parameters import HybridRunbookWorkerGr
 from .runbook_association_property import RunbookAssociationProperty
 from .job import Job
 from .job_create_parameters import JobCreateParameters
+from .job_list_result import JobListResult
 from .schedule_association_property import ScheduleAssociationProperty
 from .job_schedule_create_parameters import JobScheduleCreateParameters
 from .job_schedule import JobSchedule
 from .job_stream import JobStream
 from .job_stream_list_result import JobStreamListResult
+from .linked_workspace import LinkedWorkspace
 from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
 from .module_update_parameters import ModuleUpdateParameters
 from .proxy_resource import ProxyResource
@@ -121,6 +123,7 @@ from .source_control_create_or_update_parameters import SourceControlCreateOrUpd
 from .source_control_sync_job import SourceControlSyncJob
 from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
 from .source_control_sync_job_by_id import SourceControlSyncJobById
+from .job_collection_item import JobCollectionItem
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -135,18 +138,18 @@ from .dsc_node_paged import DscNodePaged
 from .dsc_node_report_paged import DscNodeReportPaged
 from .dsc_node_configuration_paged import DscNodeConfigurationPaged
 from .hybrid_runbook_worker_group_paged import HybridRunbookWorkerGroupPaged
-from .job_paged import JobPaged
-from .job_stream_paged import JobStreamPaged
 from .job_schedule_paged import JobSchedulePaged
 from .activity_paged import ActivityPaged
 from .module_paged import ModulePaged
 from .type_field_paged import TypeFieldPaged
 from .runbook_paged import RunbookPaged
+from .job_stream_paged import JobStreamPaged
 from .schedule_paged import SchedulePaged
 from .variable_paged import VariablePaged
 from .webhook_paged import WebhookPaged
 from .source_control_paged import SourceControlPaged
 from .source_control_sync_job_paged import SourceControlSyncJobPaged
+from .job_collection_item_paged import JobCollectionItemPaged
 from .automation_client_enums import (
     RunbookTypeEnum,
     RunbookState,
@@ -159,6 +162,7 @@ from .automation_client_enums import (
     AutomationAccountState,
     ScheduleDay,
     AgentRegistrationKeyName,
+    JobProvisioningState,
     JobStatus,
     JobStreamType,
     HttpStatusCode,
@@ -216,7 +220,7 @@ __all__ = [
     'AgentRegistrationRegenerateKeyParameter',
     'DscConfigurationAssociationProperty',
     'DscCompilationJobCreateParameters',
-    'ProvisioningStateProperty',
+    'JobProvisioningStateProperty',
     'DscCompilationJob',
     'DscConfigurationCreateOrUpdateParameters',
     'DscMetaConfiguration',
@@ -237,11 +241,13 @@ __all__ = [
     'RunbookAssociationProperty',
     'Job',
     'JobCreateParameters',
+    'JobListResult',
     'ScheduleAssociationProperty',
     'JobScheduleCreateParameters',
     'JobSchedule',
     'JobStream',
     'JobStreamListResult',
+    'LinkedWorkspace',
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
     'ProxyResource',
@@ -283,6 +289,7 @@ __all__ = [
     'SourceControlSyncJob',
     'SourceControlSyncJobByIdErrors',
     'SourceControlSyncJobById',
+    'JobCollectionItem',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
@@ -297,18 +304,18 @@ __all__ = [
     'DscNodeReportPaged',
     'DscNodeConfigurationPaged',
     'HybridRunbookWorkerGroupPaged',
-    'JobPaged',
-    'JobStreamPaged',
     'JobSchedulePaged',
     'ActivityPaged',
     'ModulePaged',
     'TypeFieldPaged',
     'RunbookPaged',
+    'JobStreamPaged',
     'SchedulePaged',
     'VariablePaged',
     'WebhookPaged',
     'SourceControlPaged',
     'SourceControlSyncJobPaged',
+    'JobCollectionItemPaged',
     'RunbookTypeEnum',
     'RunbookState',
     'RunbookProvisioningState',
@@ -320,6 +327,7 @@ __all__ = [
     'AutomationAccountState',
     'ScheduleDay',
     'AgentRegistrationKeyName',
+    'JobProvisioningState',
     'JobStatus',
     'JobStreamType',
     'HttpStatusCode',

@@ -15,8 +15,6 @@ from msrest.serialization import Model
 class TestJobCreateParameters(Model):
     """The parameters supplied to the create test job operation.
 
-    :param runbook_name: Gets or sets the runbook name.
-    :type runbook_name: str
     :param parameters: Gets or sets the parameters of the test job.
     :type parameters: dict[str, str]
     :param run_on: Gets or sets the runOn which specifies the group name where
@@ -24,18 +22,12 @@ class TestJobCreateParameters(Model):
     :type run_on: str
     """
 
-    _validation = {
-        'runbook_name': {'required': True},
-    }
-
     _attribute_map = {
-        'runbook_name': {'key': 'runbookName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
         'run_on': {'key': 'runOn', 'type': 'str'},
     }
 
-    def __init__(self, runbook_name, parameters=None, run_on=None):
+    def __init__(self, parameters=None, run_on=None):
         super(TestJobCreateParameters, self).__init__()
-        self.runbook_name = runbook_name
         self.parameters = parameters
         self.run_on = run_on

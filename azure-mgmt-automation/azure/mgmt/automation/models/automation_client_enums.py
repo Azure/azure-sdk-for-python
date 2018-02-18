@@ -102,6 +102,14 @@ class AgentRegistrationKeyName(Enum):
     secondary = "secondary"
 
 
+class JobProvisioningState(Enum):
+
+    failed = "Failed"
+    succeeded = "Succeeded"
+    suspended = "Suspended"
+    processing = "Processing"
+
+
 class JobStatus(Enum):
 
     new = "New"

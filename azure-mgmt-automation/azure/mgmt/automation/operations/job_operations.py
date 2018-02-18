@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -22,7 +23,7 @@ class JobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-10-31".
+    :ivar api_version: Client Api Version. Constant value: "2017-05-15-preview".
     """
 
     models = models
@@ -32,40 +33,32 @@ class JobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-10-31"
+        self.api_version = "2017-05-15-preview"
 
         self.config = config
 
     def get_output(
-            self, automation_account_name, job_id, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Retrieve the job output identified by job id.
+            self, job_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieve the job output identified by job name.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
+        :param job_name: The name of the job to be created.
+        :type job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobId}/output'
+        url = self.get_output.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -80,57 +73,54 @@ class JobOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if self.config.client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=True, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_output.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/output'}
 
     def get_runbook_content(
-            self, automation_account_name, job_id, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Retrieve the runbook content of the job identified by job id.
+            self, job_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieve the runbook content of the job identified by job name.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
+        :param job_name: The job name.
+        :type job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobId}/runbookContent'
+        url = self.get_runbook_content.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -145,35 +135,38 @@ class JobOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if self.config.client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=True, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._client.stream_download(response, callback)
+            deserialized = self._deserialize('str', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_runbook_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/runbookContent'}
 
     def suspend(
-            self, automation_account_name, job_id, custom_headers=None, raw=False, **operation_config):
-        """Suspend the job identified by jobId.
+            self, job_name, custom_headers=None, raw=False, **operation_config):
+        """Suspend the job identified by job name.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
+        :param job_name: The job name.
+        :type job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -185,12 +178,12 @@ class JobOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobId}/suspend'
+        url = self.suspend.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -205,6 +198,8 @@ class JobOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if self.config.client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -218,15 +213,14 @@ class JobOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    suspend.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/suspend'}
 
     def stop(
-            self, automation_account_name, job_id, custom_headers=None, raw=False, **operation_config):
-        """Stop the job identified by jobId.
+            self, job_name, custom_headers=None, raw=False, **operation_config):
+        """Stop the job identified by jobName.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
+        :param job_name: The job name.
+        :type job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -238,11 +232,11 @@ class JobOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobId}/stop'
+        url = self.stop.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -258,6 +252,8 @@ class JobOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if self.config.client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -271,15 +267,14 @@ class JobOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/stop'}
 
     def get(
-            self, automation_account_name, job_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve the job identified by job id.
+            self, job_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieve the job identified by job name.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
+        :param job_name: The job name.
+        :type job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -292,12 +287,12 @@ class JobOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -312,6 +307,8 @@ class JobOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if self.config.client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -332,15 +329,14 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}'}
 
     def create(
-            self, automation_account_name, job_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, job_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a job of the runbook.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
+        :param job_name: The job name.
+        :type job_name: str
         :param parameters: The parameters supplied to the create job
          operation.
         :type parameters: ~azure.mgmt.automation.models.JobCreateParameters
@@ -356,12 +352,12 @@ class JobOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobId}'
+        url = self.create.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -376,6 +372,8 @@ class JobOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if self.config.client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -400,13 +398,12 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}'}
 
     def list_by_automation_account(
-            self, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of jobs.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -414,9 +411,9 @@ class JobOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Job
+        :return: An iterator like instance of JobCollectionItem
         :rtype:
-         ~azure.mgmt.automation.models.JobPaged[~azure.mgmt.automation.models.Job]
+         ~azure.mgmt.automation.models.JobCollectionItemPaged[~azure.mgmt.automation.models.JobCollectionItem]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
@@ -424,10 +421,10 @@ class JobOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs'
+                url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-                    'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
+                    'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -449,6 +446,8 @@ class JobOperations(object):
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
+            if self.config.client_request_id is not None:
+                header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
             if self.config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -463,23 +462,22 @@ class JobOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.JobPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.JobCollectionItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.JobPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.JobCollectionItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    list_by_automation_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs'}
 
     def resume(
-            self, automation_account_name, job_id, custom_headers=None, raw=False, **operation_config):
-        """Resume the job identified by jobId.
+            self, job_name, custom_headers=None, raw=False, **operation_config):
+        """Resume the job identified by jobName.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
+        :param job_name: The job name.
+        :type job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -491,11 +489,11 @@ class JobOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobId}/resume'
+        url = self.resume.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -511,6 +509,8 @@ class JobOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if self.config.client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -524,3 +524,4 @@ class JobOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/resume'}
