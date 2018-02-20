@@ -16,7 +16,7 @@ class ParameterSpecification(Model):
     """Definition of a single parameter for an entity.
 
     :param type: Parameter type. Possible values include: 'Object', 'String',
-     'Int', 'Float', 'Bool', 'Array'
+     'Int', 'Float', 'Bool', 'Array', 'SecureString'
     :type type: str or ~azure.mgmt.datafactory.models.ParameterType
     :param default_value: Default value of parameter.
     :type default_value: object
