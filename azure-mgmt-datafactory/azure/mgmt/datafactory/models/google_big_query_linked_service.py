@@ -23,6 +23,12 @@ class GoogleBigQueryLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param project: The default BigQuery project to query against.
@@ -43,12 +49,6 @@ class GoogleBigQueryLinkedService(LinkedService):
     :param refresh_token: The refresh token obtained from Google for
      authorizing access to BigQuery for UserAuthentication.
     :type refresh_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param client_id: The client id of the google application used to acquire
-     the refresh token.
-    :type client_id: ~azure.mgmt.datafactory.models.SecretBase
-    :param client_secret: The client secret of the google application used to
-     acquire the refresh token.
-    :type client_secret: ~azure.mgmt.datafactory.models.SecretBase
     :param email: The service account email ID that is used for
      ServiceAuthentication and can only be used on self-hosted IR.
     :type email: object
@@ -81,14 +81,14 @@ class GoogleBigQueryLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'project': {'key': 'typeProperties.project', 'type': 'object'},
         'additional_projects': {'key': 'typeProperties.additionalProjects', 'type': 'object'},
         'request_google_drive_scope': {'key': 'typeProperties.requestGoogleDriveScope', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'refresh_token': {'key': 'typeProperties.refreshToken', 'type': 'SecretBase'},
-        'client_id': {'key': 'typeProperties.clientId', 'type': 'SecretBase'},
-        'client_secret': {'key': 'typeProperties.clientSecret', 'type': 'SecretBase'},
         'email': {'key': 'typeProperties.email', 'type': 'object'},
         'key_file_path': {'key': 'typeProperties.keyFilePath', 'type': 'object'},
         'trusted_cert_path': {'key': 'typeProperties.trustedCertPath', 'type': 'object'},
@@ -96,15 +96,13 @@ class GoogleBigQueryLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, project, authentication_type, additional_properties=None, connect_via=None, description=None, additional_projects=None, request_google_drive_scope=None, refresh_token=None, client_id=None, client_secret=None, email=None, key_file_path=None, trusted_cert_path=None, use_system_trust_store=None, encrypted_credential=None):
-        super(GoogleBigQueryLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, project, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, additional_projects=None, request_google_drive_scope=None, refresh_token=None, email=None, key_file_path=None, trusted_cert_path=None, use_system_trust_store=None, encrypted_credential=None):
+        super(GoogleBigQueryLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.project = project
         self.additional_projects = additional_projects
         self.request_google_drive_scope = request_google_drive_scope
         self.authentication_type = authentication_type
         self.refresh_token = refresh_token
-        self.client_id = client_id
-        self.client_secret = client_secret
         self.email = email
         self.key_file_path = key_file_path
         self.trusted_cert_path = trusted_cert_path

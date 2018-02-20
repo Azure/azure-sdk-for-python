@@ -23,6 +23,12 @@ class SapHanaLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param server: Host name of the SAP HANA server. Type: string (or
@@ -52,6 +58,8 @@ class SapHanaLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
@@ -60,8 +68,8 @@ class SapHanaLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, additional_properties=None, connect_via=None, description=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None):
-        super(SapHanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, server, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None):
+        super(SapHanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.server = server
         self.authentication_type = authentication_type
         self.user_name = user_name
