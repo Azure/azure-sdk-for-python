@@ -18,10 +18,12 @@ class PacketCaptureResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Name of the packet capture session.
+    :ivar name: Name of the packet capture.
     :vartype name: str
-    :ivar id: ID of the packet capture operation.
+    :ivar id: ID of the packet capture.
     :vartype id: str
+    :ivar type: Packet capture type.
+    :vartype type: str
     :param etag:  Default value: "A unique read-only string that changes
      whenever the resource is updated." .
     :type etag: str
@@ -53,6 +55,7 @@ class PacketCaptureResult(Model):
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
+        'type': {'readonly': True},
         'target': {'required': True},
         'storage_location': {'required': True},
     }
@@ -60,6 +63,7 @@ class PacketCaptureResult(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'target': {'key': 'properties.target', 'type': 'str'},
         'bytes_to_capture_per_packet': {'key': 'properties.bytesToCapturePerPacket', 'type': 'int'},
@@ -74,6 +78,7 @@ class PacketCaptureResult(Model):
         super(PacketCaptureResult, self).__init__()
         self.name = None
         self.id = None
+        self.type = None
         self.etag = etag
         self.target = target
         self.bytes_to_capture_per_packet = bytes_to_capture_per_packet
