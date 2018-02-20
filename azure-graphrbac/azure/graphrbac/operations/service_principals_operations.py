@@ -21,7 +21,7 @@ class ServicePrincipalsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "1.6".
     """
 
@@ -55,7 +55,7 @@ class ServicePrincipalsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/servicePrincipals'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -96,6 +96,7 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{tenantID}/servicePrincipals'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -118,7 +119,7 @@ class ServicePrincipalsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/servicePrincipals'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -169,6 +170,7 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{tenantID}/servicePrincipals'}
 
     def delete(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -187,7 +189,7 @@ class ServicePrincipalsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/servicePrincipals/{objectId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -218,6 +220,7 @@ class ServicePrincipalsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}'}
 
     def get(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -237,7 +240,7 @@ class ServicePrincipalsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/servicePrincipals/{objectId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -275,6 +278,7 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}'}
 
     def list_owners(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -301,7 +305,7 @@ class ServicePrincipalsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/servicePrincipals/{objectId}/owners'
+                url = self.list_owners.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -345,6 +349,7 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_owners.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}/owners'}
 
     def list_key_credentials(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -368,7 +373,7 @@ class ServicePrincipalsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
+                url = self.list_key_credentials.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -412,6 +417,7 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_key_credentials.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'}
 
     def update_key_credentials(
             self, object_id, value, custom_headers=None, raw=False, **operation_config):
@@ -435,7 +441,7 @@ class ServicePrincipalsOperations(object):
         parameters = models.KeyCredentialsUpdateParameters(value=value)
 
         # Construct URL
-        url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
+        url = self.update_key_credentials.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -470,6 +476,7 @@ class ServicePrincipalsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_key_credentials.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'}
 
     def list_password_credentials(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -492,7 +499,7 @@ class ServicePrincipalsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
+                url = self.list_password_credentials.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -536,6 +543,7 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_password_credentials.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'}
 
     def update_password_credentials(
             self, object_id, value, custom_headers=None, raw=False, **operation_config):
@@ -558,7 +566,7 @@ class ServicePrincipalsOperations(object):
         parameters = models.PasswordCredentialsUpdateParameters(value=value)
 
         # Construct URL
-        url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
+        url = self.update_password_credentials.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -593,3 +601,4 @@ class ServicePrincipalsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_password_credentials.metadata = {'url': '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'}
