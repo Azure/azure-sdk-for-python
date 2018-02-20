@@ -94,7 +94,7 @@ class CdnManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-02'
+        self.api_version = '2017-10-12'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -134,7 +134,7 @@ class CdnManagementClient(object):
         check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 
         # Construct URL
-        url = '/providers/Microsoft.Cdn/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -171,6 +171,7 @@ class CdnManagementClient(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/providers/Microsoft.Cdn/checkNameAvailability'}
 
     def validate_probe(
             self, probe_url, custom_headers=None, raw=False, **operation_config):
@@ -196,7 +197,7 @@ class CdnManagementClient(object):
         validate_probe_input = models.ValidateProbeInput(probe_url=probe_url)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/validateProbe'
+        url = self.validate_probe.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -237,3 +238,4 @@ class CdnManagementClient(object):
             return client_raw_response
 
         return deserialized
+    validate_probe.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/validateProbe'}
