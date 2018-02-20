@@ -6,6 +6,8 @@ On Python 3.5 and above, it also includes,
 * an event processor host module that manages the distribution of partition readers.
 
 # Build and Install
+
+### Local
 The core library requires Apache Proton-C and its Python binding.
 * build Proton-C: https://github.com/apache/qpid-proton/blob/master/INSTALL.md  
 
@@ -15,12 +17,31 @@ For eventprocessorhost, you will also need (list for Fedora 26, adjust for other
 
 *On Windows a private patch to proton-c code is required for the library to work.*
 
+### Docker
+
+The following Dockerfile at  `./examples/Dockerfile` creates a Docker image with Apache Proton and the Azure Event Hubs SDK.
+
+The base image is Python `3.6-slim-stretch` and Proton `0.18.1` but you can set the `PYTHON_IMAGE_VERSION` `PROTON_VERSION` `PYTHON_DIR_VERSION` when building the image.
+
+```
+docker build -t azure-eventhubs-sdk --build-arg PYTHON_IMAGE_VERSION=3.6-slim-stretch --build-arg PROTON_VERSION=0.18.1 --build-arg PYTHON_DIR_VERSION=3.6 .
+```
+
+After the image is built you can run the samples with
+```
+docker run -it azure-eventhubs-sdk python examples/send.py
+```
+
+##### Note that you have fill the Event Hub connection parameters in the example py files.
+
 # Examples
 * ./examples/send.py - use sender to publish events
 * ./examples/recv.py - use receiver to read events
 * ./examples/send_async.py - async/await support of a sender
 * ./examples/recv_async.py - async/await support of a receiver
 * ./examples/eph.py - event processor host
+* ./examples/Dockerfile - create a Docker image with Apache Proton and Azure Event Hubs SDK
+
 * ./tests/send.py - how to perform parallel send operations to achieve high throughput
 * ./tests/recv.py - how to write an event pump to read events from multiple partitions
 
