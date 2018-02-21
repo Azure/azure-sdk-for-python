@@ -26,6 +26,8 @@ class RecoveryPointsOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-12-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -59,10 +61,9 @@ class RecoveryPointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`RecoveryPointResource
-         <azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource>`
-        :rtype: :class:`RecoveryPointResourcePaged
-         <azure.mgmt.recoveryservicesbackup.models.RecoveryPointResourcePaged>`
+        :return: An iterator like instance of RecoveryPointResource
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResourcePaged[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -103,7 +104,7 @@ class RecoveryPointsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -148,13 +149,10 @@ class RecoveryPointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RecoveryPointResource
-         <azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RecoveryPointResource
-         <azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RecoveryPointResource or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -186,7 +184,7 @@ class RecoveryPointsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

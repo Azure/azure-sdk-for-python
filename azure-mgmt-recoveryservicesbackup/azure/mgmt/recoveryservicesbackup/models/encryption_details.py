@@ -37,6 +37,7 @@ class EncryptionDetails(Model):
     }
 
     def __init__(self, encryption_enabled=None, kek_url=None, secret_key_url=None, kek_vault_id=None, secret_key_vault_id=None):
+        super(EncryptionDetails, self).__init__()
         self.encryption_enabled = encryption_enabled
         self.kek_url = kek_url
         self.secret_key_url = secret_key_url

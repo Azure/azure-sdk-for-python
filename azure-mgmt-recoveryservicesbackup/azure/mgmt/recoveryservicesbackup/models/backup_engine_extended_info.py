@@ -49,6 +49,7 @@ class BackupEngineExtendedInfo(Model):
     }
 
     def __init__(self, database_name=None, protected_items_count=None, protected_servers_count=None, disk_count=None, used_disk_space=None, available_disk_space=None, refreshed_at=None, azure_protected_instances=None):
+        super(BackupEngineExtendedInfo, self).__init__()
         self.database_name = database_name
         self.protected_items_count = protected_items_count
         self.protected_servers_count = protected_servers_count

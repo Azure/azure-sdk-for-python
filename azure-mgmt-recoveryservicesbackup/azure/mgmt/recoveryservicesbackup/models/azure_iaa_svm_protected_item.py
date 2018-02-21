@@ -15,17 +15,22 @@ from .protected_item import ProtectedItem
 class AzureIaaSVMProtectedItem(ProtectedItem):
     """IaaS VM workload-specific backup item.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureIaaSClassicComputeVMProtectedItem,
+    AzureIaaSComputeVMProtectedItem
+
     :param backup_management_type: Type of backup managemenent for the backed
      up item. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param workload_type: Type of workload this item represents. Possible
      values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB',
      'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource'
-    :type workload_type: str or :class:`DataSourceType
-     <azure.mgmt.recoveryservicesbackup.models.DataSourceType>`
+     'GenericDataSource', 'SQLDataBase', 'AzureFileShare'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :param container_name: Unique name of container
     :type container_name: str
     :param source_resource_id: ARM ID of the resource to be backed up.
@@ -36,7 +41,9 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param last_recovery_point: Timestamp when the last (latest) backup copy
      was created for this backup item.
     :type last_recovery_point: datetime
-    :param protected_item_type: Polymorphic Discriminator
+    :param backup_set_name: Name of the backup set the backup item belongs to
+    :type backup_set_name: str
+    :param protected_item_type: Constant filled by server.
     :type protected_item_type: str
     :param friendly_name: Friendly name of the VM represented by this backup
      item.
@@ -49,17 +56,16 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param protection_state: Backup state of this backup item. Possible values
      include: 'Invalid', 'IRPending', 'Protected', 'ProtectionError',
      'ProtectionStopped', 'ProtectionPaused'
-    :type protection_state: str or :class:`ProtectionState
-     <azure.mgmt.recoveryservicesbackup.models.ProtectionState>`
+    :type protection_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
      include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
-    :type health_status: str or :class:`HealthStatus
-     <azure.mgmt.recoveryservicesbackup.models.HealthStatus>`
+    :type health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
-    :type health_details: list of :class:`AzureIaaSVMHealthDetails
-     <azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMHealthDetails>`
-    :param last_backup_status: Last backup operation status. Possible values:
-     Healthy, Unhealthy.
+    :type health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMHealthDetails]
+    :param last_backup_status: Last backup operation status.
     :type last_backup_status: str
     :param last_backup_time: Timestamp of the last backup operation on this
      backup item.
@@ -67,8 +73,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param protected_item_data_id: Data ID of the protected item.
     :type protected_item_data_id: str
     :param extended_info: Additional information for this backup item.
-    :type extended_info: :class:`AzureIaaSVMProtectedItemExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
     """
 
     _validation = {
@@ -82,6 +88,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'policy_id': {'key': 'policyId', 'type': 'str'},
         'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
+        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
@@ -99,8 +106,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'protected_item_type': {'Microsoft.ClassicCompute/virtualMachines': 'AzureIaaSClassicComputeVMProtectedItem', 'Microsoft.Compute/virtualMachines': 'AzureIaaSComputeVMProtectedItem'}
     }
 
-    def __init__(self, backup_management_type=None, workload_type=None, container_name=None, source_resource_id=None, policy_id=None, last_recovery_point=None, friendly_name=None, virtual_machine_id=None, protection_status=None, protection_state=None, health_status=None, health_details=None, last_backup_status=None, last_backup_time=None, protected_item_data_id=None, extended_info=None):
-        super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point)
+    def __init__(self, backup_management_type=None, workload_type=None, container_name=None, source_resource_id=None, policy_id=None, last_recovery_point=None, backup_set_name=None, friendly_name=None, virtual_machine_id=None, protection_status=None, protection_state=None, health_status=None, health_details=None, last_backup_status=None, last_backup_time=None, protected_item_data_id=None, extended_info=None):
+        super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name)
         self.friendly_name = friendly_name
         self.virtual_machine_id = virtual_machine_id
         self.protection_status = protection_status

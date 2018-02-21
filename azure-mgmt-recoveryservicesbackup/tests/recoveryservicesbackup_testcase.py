@@ -29,11 +29,11 @@ from msrestazure.azure_exceptions import CloudError
 
 class MgmtRecoveryServicesBackupTestDefinition(object):
 
-    vm_friendly_name = "swaggersdktest"
-    vm_rg_name = "swaggersdktestrg"
+    vm_friendly_name = "pythonsdktest"
+    vm_rg_name = "pythonsdktestrg"
     vm_type = "Compute"
-    restore_storage_acc_name = "swaggersdktest"
-    restore_storage_acc_rg_name = "swaggersdktestrg"
+    restore_storage_acc_name = "pythonsdktest"
+    restore_storage_acc_rg_name = "pythonsdktestrg"
     fabric_name = "Azure"
     location = "southeastasia"
     
@@ -274,7 +274,7 @@ class MgmtRecoveryServicesBackupTestHelper(object):
             )
         self._validate_operation_response(response)
 
-        job_response = self._get_operation_response(
+        self._get_operation_response(
             response,
             lambda operation_id: self.backup_client.protected_item_operation_results.get(
                 self.vault_name, self.resource_group, self.test_definition.fabric_name, container_name, protected_item_name, operation_id, raw=True,
@@ -347,7 +347,6 @@ class MgmtRecoveryServicesBackupTestHelper(object):
         self.context.assertIsNotNone(raw_response)
         self.context.assertEqual(raw_response.response.status_code, 202)
         self.context.assertTrue("Location" in raw_response.response.headers or "Azure-AsyncOperation" in raw_response.response.headers)
-        self.context.assertTrue("Retry-After" in raw_response.response.headers)
 
     def _get_operation_status(self, raw_response, get_operation_status_func):
         operation_id_path = urlparse(raw_response.response.headers["Azure-AsyncOperation"]).path

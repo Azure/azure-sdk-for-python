@@ -26,6 +26,8 @@ class BackupResourceStorageConfigsOperations(object):
     :ivar api_version: Client Api Version. Constant value: "2016-12-01".
     """
 
+    models = models
+
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
@@ -49,13 +51,10 @@ class BackupResourceStorageConfigsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`BackupResourceConfigResource
-         <azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`BackupResourceConfigResource
-         <azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: BackupResourceConfigResource or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -83,7 +82,7 @@ class BackupResourceStorageConfigsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -102,7 +101,7 @@ class BackupResourceStorageConfigsOperations(object):
         return deserialized
 
     def update(
-            self, vault_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, vault_name, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Updates vault storage model type.
 
         :param vault_name: The name of the recovery services vault.
@@ -110,16 +109,16 @@ class BackupResourceStorageConfigsOperations(object):
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
         :type resource_group_name: str
+        :param parameters: Vault storage config request
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -145,9 +144,13 @@ class BackupResourceStorageConfigsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(parameters, 'BackupResourceConfigResource')
+
         # Construct and send request
         request = self._client.patch(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
