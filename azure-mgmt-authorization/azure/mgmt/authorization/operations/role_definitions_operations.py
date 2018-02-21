@@ -56,7 +56,7 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
@@ -96,6 +96,7 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'}
 
     def get(
             self, scope, role_definition_id, custom_headers=None, raw=False, **operation_config):
@@ -116,7 +117,7 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
@@ -156,6 +157,7 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'}
 
     def create_or_update(
             self, scope, role_definition_id, role_definition, custom_headers=None, raw=False, **operation_config):
@@ -178,7 +180,7 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
@@ -222,6 +224,7 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'}
 
     def list(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -246,7 +249,7 @@ class RoleDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -293,6 +296,7 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions'}
 
     def get_by_id(
             self, role_id, custom_headers=None, raw=False, **operation_config):
@@ -316,7 +320,7 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleId}'
+        url = self.get_by_id.metadata['url']
         path_format_arguments = {
             'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
@@ -355,3 +359,4 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_id.metadata = {'url': '/{roleId}'}

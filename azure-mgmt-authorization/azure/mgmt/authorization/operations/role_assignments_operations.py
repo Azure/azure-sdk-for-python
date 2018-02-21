@@ -72,7 +72,7 @@ class RoleAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/roleAssignments'
+                url = self.list_for_resource.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -124,6 +124,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_for_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/roleAssignments'}
 
     def list_for_resource_group(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -150,7 +151,7 @@ class RoleAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleAssignments'
+                url = self.list_for_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -198,6 +199,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/roleAssignments'}
 
     def delete(
             self, scope, role_assignment_name, custom_headers=None, raw=False, **operation_config):
@@ -219,7 +221,7 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
@@ -259,6 +261,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'}
 
     def create(
             self, scope, role_assignment_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -289,7 +292,7 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
@@ -333,6 +336,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'}
 
     def get(
             self, scope, role_assignment_name, custom_headers=None, raw=False, **operation_config):
@@ -353,7 +357,7 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleAssignmentName': self._serialize.url("role_assignment_name", role_assignment_name, 'str')
@@ -393,6 +397,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'}
 
     def delete_by_id(
             self, role_id, custom_headers=None, raw=False, **operation_config):
@@ -411,7 +416,7 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleId}'
+        url = self.delete_by_id.metadata['url']
         path_format_arguments = {
             'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
@@ -450,6 +455,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_by_id.metadata = {'url': '/{roleId}'}
 
     def create_by_id(
             self, role_id, parameters, custom_headers=None, raw=False, **operation_config):
@@ -471,7 +477,7 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleId}'
+        url = self.create_by_id.metadata['url']
         path_format_arguments = {
             'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
@@ -514,6 +520,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_by_id.metadata = {'url': '/{roleId}'}
 
     def get_by_id(
             self, role_id, custom_headers=None, raw=False, **operation_config):
@@ -532,7 +539,7 @@ class RoleAssignmentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{roleId}'
+        url = self.get_by_id.metadata['url']
         path_format_arguments = {
             'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
         }
@@ -571,6 +578,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_id.metadata = {'url': '/{roleId}'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -595,7 +603,7 @@ class RoleAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/roleAssignments'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -642,6 +650,7 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/roleAssignments'}
 
     def list_for_scope(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -668,7 +677,7 @@ class RoleAssignmentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{scope}/providers/Microsoft.Authorization/roleAssignments'
+                url = self.list_for_scope.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -715,3 +724,4 @@ class RoleAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_for_scope.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleAssignments'}

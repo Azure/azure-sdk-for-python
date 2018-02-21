@@ -57,7 +57,7 @@ class ProviderOperationsMetadataOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str')
         }
@@ -98,6 +98,7 @@ class ProviderOperationsMetadataOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'}
 
     def list(
             self, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
@@ -119,7 +120,7 @@ class ProviderOperationsMetadataOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Authorization/providerOperations'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -162,3 +163,4 @@ class ProviderOperationsMetadataOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.Authorization/providerOperations'}
