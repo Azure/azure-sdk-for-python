@@ -3,6 +3,12 @@
 Release History
 ===============
 
+1.0.1 (2018-02-21)
+++++++++++++++++++
+
+- usage_aggregation.quantity is now correctly declared as float
+- All operation groups have now a "models" attribute
+
 1.0.0 (2017-06-23)
 ++++++++++++++++++
 
