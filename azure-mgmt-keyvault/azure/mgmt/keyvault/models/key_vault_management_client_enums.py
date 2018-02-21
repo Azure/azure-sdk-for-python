@@ -76,6 +76,10 @@ class StoragePermissions(Enum):
     set = "set"
     update = "update"
     regeneratekey = "regeneratekey"
+    recover = "recover"
+    purge = "purge"
+    backup = "backup"
+    restore = "restore"
     setsas = "setsas"
     listsas = "listsas"
     getsas = "getsas"
@@ -86,3 +90,16 @@ class CreateMode(Enum):
 
     recover = "recover"
     default = "default"
+
+
+class Reason(Enum):
+
+    account_name_invalid = "AccountNameInvalid"
+    already_exists = "AlreadyExists"
+
+
+class AccessPolicyUpdateKind(Enum):
+
+    add = "add"
+    replace = "replace"
+    remove = "remove"
