@@ -11,12 +11,13 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class WebTestLocationsOperations(object):
+    """WebTestLocationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,25 +38,37 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available insights REST API operations.
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of web test locations available to this Application
+        Insights component.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the Application Insights component
+         resource.
+        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of
+         ApplicationInsightsComponentWebTestLocation
         :rtype:
-         ~azure.mgmt.applicationinsights.models.OperationPaged[~azure.mgmt.applicationinsights.models.Operation]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.applicationinsights.models.ErrorResponseException>`
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentWebTestLocationPaged[~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentWebTestLocation]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -81,17 +94,19 @@ class Operations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ApplicationInsightsComponentWebTestLocationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ApplicationInsightsComponentWebTestLocationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/microsoft.insights/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/syntheticmonitorlocations'}
