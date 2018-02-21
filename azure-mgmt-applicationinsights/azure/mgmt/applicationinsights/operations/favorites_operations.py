@@ -90,7 +90,7 @@ class FavoritesOperations(object):
                 if favorite_type is not None:
                     query_parameters['favoriteType'] = self._serialize.query("favorite_type", favorite_type, 'str')
                 if source_type is not None:
-                    query_parameters['sourceType'] = self._serialize.query("source_type", source_type, 'FavoriteSourceType')
+                    query_parameters['sourceType'] = self._serialize.query("source_type", source_type, 'str')
                 if can_fetch_content is not None:
                     query_parameters['canFetchContent'] = self._serialize.query("can_fetch_content", can_fetch_content, 'bool')
                 if tags is not None:

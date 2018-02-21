@@ -14,14 +14,16 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
+from .operations.annotations_operations import AnnotationsOperations
 from .operations.api_keys_operations import APIKeysOperations
 from .operations.export_configurations_operations import ExportConfigurationsOperations
-from .operations.proactive_detection_configurations_operations import ProactiveDetectionConfigurationsOperations
 from .operations.component_current_billing_features_operations import ComponentCurrentBillingFeaturesOperations
 from .operations.component_quota_status_operations import ComponentQuotaStatusOperations
 from .operations.component_feature_capabilities_operations import ComponentFeatureCapabilitiesOperations
 from .operations.component_available_features_operations import ComponentAvailableFeaturesOperations
+from .operations.proactive_detection_configurations_operations import ProactiveDetectionConfigurationsOperations
 from .operations.components_operations import ComponentsOperations
+from .operations.work_item_configurations_operations import WorkItemConfigurationsOperations
 from .operations.favorites_operations import FavoritesOperations
 from .operations.favorite_operations import FavoriteOperations
 from .operations.web_test_locations_operations import WebTestLocationsOperations
@@ -69,12 +71,12 @@ class ApplicationInsightsManagementClient(object):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.applicationinsights.operations.Operations
+    :ivar annotations: Annotations operations
+    :vartype annotations: azure.mgmt.applicationinsights.operations.AnnotationsOperations
     :ivar api_keys: APIKeys operations
     :vartype api_keys: azure.mgmt.applicationinsights.operations.APIKeysOperations
     :ivar export_configurations: ExportConfigurations operations
     :vartype export_configurations: azure.mgmt.applicationinsights.operations.ExportConfigurationsOperations
-    :ivar proactive_detection_configurations: ProactiveDetectionConfigurations operations
-    :vartype proactive_detection_configurations: azure.mgmt.applicationinsights.operations.ProactiveDetectionConfigurationsOperations
     :ivar component_current_billing_features: ComponentCurrentBillingFeatures operations
     :vartype component_current_billing_features: azure.mgmt.applicationinsights.operations.ComponentCurrentBillingFeaturesOperations
     :ivar component_quota_status: ComponentQuotaStatus operations
@@ -83,8 +85,12 @@ class ApplicationInsightsManagementClient(object):
     :vartype component_feature_capabilities: azure.mgmt.applicationinsights.operations.ComponentFeatureCapabilitiesOperations
     :ivar component_available_features: ComponentAvailableFeatures operations
     :vartype component_available_features: azure.mgmt.applicationinsights.operations.ComponentAvailableFeaturesOperations
+    :ivar proactive_detection_configurations: ProactiveDetectionConfigurations operations
+    :vartype proactive_detection_configurations: azure.mgmt.applicationinsights.operations.ProactiveDetectionConfigurationsOperations
     :ivar components: Components operations
     :vartype components: azure.mgmt.applicationinsights.operations.ComponentsOperations
+    :ivar work_item_configurations: WorkItemConfigurations operations
+    :vartype work_item_configurations: azure.mgmt.applicationinsights.operations.WorkItemConfigurationsOperations
     :ivar favorites: Favorites operations
     :vartype favorites: azure.mgmt.applicationinsights.operations.FavoritesOperations
     :ivar favorite: Favorite operations
@@ -115,11 +121,11 @@ class ApplicationInsightsManagementClient(object):
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.annotations = AnnotationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.api_keys = APIKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.export_configurations = ExportConfigurationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.proactive_detection_configurations = ProactiveDetectionConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.component_current_billing_features = ComponentCurrentBillingFeaturesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -129,7 +135,11 @@ class ApplicationInsightsManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.component_available_features = ComponentAvailableFeaturesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.proactive_detection_configurations = ProactiveDetectionConfigurationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.components = ComponentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.work_item_configurations = WorkItemConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.favorites = FavoritesOperations(
             self._client, self.config, self._serialize, self._deserialize)
