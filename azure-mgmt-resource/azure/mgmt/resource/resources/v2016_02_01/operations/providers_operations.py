@@ -22,7 +22,7 @@ class ProvidersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-02-01".
     """
 
@@ -55,7 +55,7 @@ class ProvidersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister'
+        url = self.unregister.metadata['url']
         path_format_arguments = {
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -95,6 +95,7 @@ class ProvidersOperations(object):
             return client_raw_response
 
         return deserialized
+    unregister.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister'}
 
     def register(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
@@ -114,7 +115,7 @@ class ProvidersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register'
+        url = self.register.metadata['url']
         path_format_arguments = {
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -154,6 +155,7 @@ class ProvidersOperations(object):
             return client_raw_response
 
         return deserialized
+    register.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register'}
 
     def list(
             self, top=None, expand=None, custom_headers=None, raw=False, **operation_config):
@@ -179,7 +181,7 @@ class ProvidersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -228,6 +230,7 @@ class ProvidersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers'}
 
     def get(
             self, resource_provider_namespace, expand=None, custom_headers=None, raw=False, **operation_config):
@@ -250,7 +253,7 @@ class ProvidersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -292,3 +295,4 @@ class ProvidersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}'}
