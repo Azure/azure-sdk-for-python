@@ -21,6 +21,8 @@ from .identity import Identity
 from .generic_resource import GenericResource
 from .resource import Resource
 from .error_response import ErrorResponse, ErrorResponseException
+from .operation_display import OperationDisplay
+from .feature_operation_result import FeatureOperationResult
 from .application_paged import ApplicationPaged
 from .application_definition_paged import ApplicationDefinitionPaged
 from .application_client_enums import (
@@ -43,6 +45,8 @@ __all__ = [
     'GenericResource',
     'Resource',
     'ErrorResponse', 'ErrorResponseException',
+    'OperationDisplay',
+    'FeatureOperationResult',
     'ApplicationPaged',
     'ApplicationDefinitionPaged',
     'ProvisioningState',
