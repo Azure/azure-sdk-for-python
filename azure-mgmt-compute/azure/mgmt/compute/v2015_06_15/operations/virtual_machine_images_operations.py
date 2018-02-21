@@ -22,7 +22,7 @@ class VirtualMachineImagesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2015-06-15".
     """
 
@@ -62,7 +62,7 @@ class VirtualMachineImagesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions/{version}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -106,6 +106,7 @@ class VirtualMachineImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions/{version}'}
 
     def list(
             self, location, publisher_name, offer, skus, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
@@ -138,7 +139,7 @@ class VirtualMachineImagesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -187,6 +188,7 @@ class VirtualMachineImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions'}
 
     def list_offers(
             self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
@@ -209,7 +211,7 @@ class VirtualMachineImagesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers'
+        url = self.list_offers.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -250,6 +252,7 @@ class VirtualMachineImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_offers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers'}
 
     def list_publishers(
             self, location, custom_headers=None, raw=False, **operation_config):
@@ -270,7 +273,7 @@ class VirtualMachineImagesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers'
+        url = self.list_publishers.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -310,6 +313,7 @@ class VirtualMachineImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_publishers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers'}
 
     def list_skus(
             self, location, publisher_name, offer, custom_headers=None, raw=False, **operation_config):
@@ -334,7 +338,7 @@ class VirtualMachineImagesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus'
+        url = self.list_skus.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'publisherName': self._serialize.url("publisher_name", publisher_name, 'str'),
@@ -376,3 +380,4 @@ class VirtualMachineImagesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus'}

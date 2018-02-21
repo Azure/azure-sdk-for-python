@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .compute_operation_value import ComputeOperationValue
 from .instance_view_status import InstanceViewStatus
 from .sub_resource import SubResource
 from .sku import Sku
 from .availability_set import AvailabilitySet
+from .availability_set_update import AvailabilitySetUpdate
 from .virtual_machine_size import VirtualMachineSize
 from .virtual_machine_extension_image import VirtualMachineExtensionImage
 from .virtual_machine_image_resource import VirtualMachineImageResource
@@ -59,12 +61,14 @@ from .virtual_machine_identity import VirtualMachineIdentity
 from .maintenance_redeploy_status import MaintenanceRedeployStatus
 from .virtual_machine_instance_view import VirtualMachineInstanceView
 from .virtual_machine import VirtualMachine
+from .virtual_machine_update import VirtualMachineUpdate
 from .rolling_upgrade_policy import RollingUpgradePolicy
 from .upgrade_policy import UpgradePolicy
 from .image_os_disk import ImageOSDisk
 from .image_data_disk import ImageDataDisk
 from .image_storage_profile import ImageStorageProfile
 from .image import Image
+from .image_update import ImageUpdate
 from .virtual_machine_scale_set_identity import VirtualMachineScaleSetIdentity
 from .virtual_machine_scale_set_os_profile import VirtualMachineScaleSetOSProfile
 from .virtual_machine_scale_set_update_os_profile import VirtualMachineScaleSetUpdateOSProfile
@@ -125,6 +129,7 @@ from .run_command_parameter_definition import RunCommandParameterDefinition
 from .run_command_document_base import RunCommandDocumentBase
 from .run_command_document import RunCommandDocument
 from .run_command_result import RunCommandResult
+from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
@@ -160,10 +165,12 @@ from .compute_management_client_enums import (
 )
 
 __all__ = [
+    'ComputeOperationValue',
     'InstanceViewStatus',
     'SubResource',
     'Sku',
     'AvailabilitySet',
+    'AvailabilitySetUpdate',
     'VirtualMachineSize',
     'VirtualMachineExtensionImage',
     'VirtualMachineImageResource',
@@ -210,12 +217,14 @@ __all__ = [
     'MaintenanceRedeployStatus',
     'VirtualMachineInstanceView',
     'VirtualMachine',
+    'VirtualMachineUpdate',
     'RollingUpgradePolicy',
     'UpgradePolicy',
     'ImageOSDisk',
     'ImageDataDisk',
     'ImageStorageProfile',
     'Image',
+    'ImageUpdate',
     'VirtualMachineScaleSetIdentity',
     'VirtualMachineScaleSetOSProfile',
     'VirtualMachineScaleSetUpdateOSProfile',
@@ -276,6 +285,7 @@ __all__ = [
     'RunCommandDocumentBase',
     'RunCommandDocument',
     'RunCommandResult',
+    'ComputeOperationValuePaged',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',

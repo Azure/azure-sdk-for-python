@@ -24,7 +24,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-12-01".
     """
 
@@ -43,7 +43,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
     def _cancel_initial(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/rollingUpgrades/cancel'
+        url = self.cancel.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -148,12 +148,13 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/rollingUpgrades/cancel'}
 
 
     def _start_os_upgrade_initial(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/osRollingUpgrade'
+        url = self.start_os_upgrade.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -261,6 +262,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    start_os_upgrade.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/osRollingUpgrade'}
 
     def get_latest(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
@@ -283,7 +285,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/rollingUpgrades/latest'
+        url = self.get_latest.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -324,3 +326,4 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
             return client_raw_response
 
         return deserialized
+    get_latest.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/rollingUpgrades/latest'}
