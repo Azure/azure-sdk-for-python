@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class APIKeysOperations(object):
-    """APIKeysOperations operations.
+class WorkItemConfigurationsOperations(object):
+    """WorkItemConfigurationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,7 +39,7 @@ class APIKeysOperations(object):
 
     def list(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of API keys of an Application Insights component.
+        """Gets the list work item configurations that exist for the application.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -51,17 +51,159 @@ class APIKeysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of
-         ApplicationInsightsComponentAPIKey
+        :return: An iterator like instance of None
         :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKeyPaged[~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         list[~azure.mgmt.applicationinsights.models.WorkItemConfiguration][None]
+        :raises:
+         :class:`WorkItemConfigurationErrorException<azure.mgmt.applicationinsights.models.WorkItemConfigurationErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.WorkItemConfigurationErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.list(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.list(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs'}
+
+    def create(
+            self, resource_group_name, resource_name, work_item_configuration_properties, custom_headers=None, raw=False, **operation_config):
+        """Create a work item configuration for an Application Insights component.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the Application Insights component
+         resource.
+        :type resource_name: str
+        :param work_item_configuration_properties: Properties that need to be
+         specified to create a work item configuration of a Application
+         Insights component.
+        :type work_item_configuration_properties:
+         ~azure.mgmt.applicationinsights.models.WorkItemCreateConfiguration
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: WorkItemConfiguration or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.applicationinsights.models.WorkItemConfiguration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.create.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(work_item_configuration_properties, 'WorkItemCreateConfiguration')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('WorkItemConfiguration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs'}
+
+    def get_default(
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
+        """Gets default work item configurations that exist for the application.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the Application Insights component
+         resource.
+        :type resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of None
+        :rtype:
+         ~azure.mgmt.applicationinsights.models.WorkItemConfiguration[None]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.get_default.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -100,111 +242,36 @@ class APIKeysOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ApplicationInsightsComponentAPIKeyPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.WorkItemConfiguration(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ApplicationInsightsComponentAPIKeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.WorkItemConfiguration(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/ApiKeys'}
-
-    def create(
-            self, resource_group_name, resource_name, api_key_properties, custom_headers=None, raw=False, **operation_config):
-        """Create an API Key of an Application Insights component.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param resource_name: The name of the Application Insights component
-         resource.
-        :type resource_name: str
-        :param api_key_properties: Properties that need to be specified to
-         create an API key of a Application Insights component.
-        :type api_key_properties:
-         ~azure.mgmt.applicationinsights.models.APIKeyRequest
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInsightsComponentAPIKey or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.create.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(api_key_properties, 'APIKeyRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInsightsComponentAPIKey', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/ApiKeys'}
+    get_default.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/DefaultWorkItemConfig'}
 
     def delete(
-            self, resource_group_name, resource_name, key_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an API Key of an Application Insights component.
+            self, resource_group_name, resource_name, work_item_config_id, custom_headers=None, raw=False, **operation_config):
+        """Delete an workitem configuration of an Application Insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param key_id: The API Key ID. This is unique within a Application
-         Insights component.
-        :type key_id: str
+        :param work_item_config_id: The unique work item configuration Id.
+         This can be either friendly name of connector as defined in connector
+         configuration
+        :type work_item_config_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInsightsComponentAPIKey or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey
-         or ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -213,7 +280,7 @@ class APIKeysOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'keyId': self._serialize.url("key_id", key_id, 'str')
+            'workItemConfigId': self._serialize.url("work_item_config_id", work_item_config_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -243,80 +310,11 @@ class APIKeysOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInsightsComponentAPIKey', response)
+            deserialized = self._deserialize('object', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/APIKeys/{keyId}'}
-
-    def get(
-            self, resource_group_name, resource_name, key_id, custom_headers=None, raw=False, **operation_config):
-        """Get the API Key for this key id.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param resource_name: The name of the Application Insights component
-         resource.
-        :type resource_name: str
-        :param key_id: The API Key ID. This is unique within a Application
-         Insights component.
-        :type key_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ApplicationInsightsComponentAPIKey or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'keyId': self._serialize.url("key_id", key_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ApplicationInsightsComponentAPIKey', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/APIKeys/{keyId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/WorkItemConfigs/{workItemConfigId}'}
