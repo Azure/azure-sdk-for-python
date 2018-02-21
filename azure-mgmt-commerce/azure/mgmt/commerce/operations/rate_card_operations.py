@@ -65,7 +65,7 @@ class RateCardOperations(object):
          :class:`ErrorResponseException<azure.mgmt.commerce.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Commerce/RateCard'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -103,3 +103,4 @@ class RateCardOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Commerce/RateCard'}
