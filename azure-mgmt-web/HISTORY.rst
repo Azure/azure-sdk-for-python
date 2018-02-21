@@ -3,6 +3,30 @@
 Release History
 ===============
 
+0.35.0 (2018-02-20)
++++++++++++++++++++
+
+**Breaking changes**
+
+- Many models signature changed to expose correctly required parameters. Example (non exhaustive) list:
+
+  - AppServiceCertificateOrderPatchResource now requires product_type
+  - AppServicePlanPatchResource now requires app_service_plan_patch_resource_name
+  - CertificatePatchResource now requires password
+  - DomainPatchResource now requires contact_admin, contact_billing, contact_registrant, contact_tech, consent
+  - MigrateMySqlRequest now requires connection_string, migration_type
+  - PushSettings now requires is_push_enabled
+
+- get_available_stacks now returns a pageable object
+
+**Features**
+
+- Add certificate_registration_provider operations group
+- Add Diagnostics operations group
+- Add domain registration provider operations groups
+- All operations group have now a "models" attribute
+
+
 0.34.1 (2017-10-24)
 +++++++++++++++++++
 
