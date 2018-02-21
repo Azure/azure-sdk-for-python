@@ -30,12 +30,11 @@ class Vault(TrackedResource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties:
-    :type properties: :class:`VaultProperties
-     <azure.mgmt.recoveryservices.models.VaultProperties>`
+    :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
     :param sku:
-    :type sku: :class:`Sku <azure.mgmt.recoveryservices.models.Sku>`
+    :type sku: ~azure.mgmt.recoveryservices.models.Sku
     """
 
     _validation = {

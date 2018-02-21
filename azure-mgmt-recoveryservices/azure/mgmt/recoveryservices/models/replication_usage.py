@@ -17,11 +17,10 @@ class ReplicationUsage(Model):
 
     :param monitoring_summary: Summary of the replication monitoring data for
      this vault.
-    :type monitoring_summary: :class:`MonitoringSummary
-     <azure.mgmt.recoveryservices.models.MonitoringSummary>`
+    :type monitoring_summary:
+     ~azure.mgmt.recoveryservices.models.MonitoringSummary
     :param jobs_summary: Summary of the replication jobs data for this vault.
-    :type jobs_summary: :class:`JobsSummary
-     <azure.mgmt.recoveryservices.models.JobsSummary>`
+    :type jobs_summary: ~azure.mgmt.recoveryservices.models.JobsSummary
     :param protected_item_count: Number of replication protected items for
      this vault.
     :type protected_item_count: int
@@ -46,6 +45,7 @@ class ReplicationUsage(Model):
     }
 
     def __init__(self, monitoring_summary=None, jobs_summary=None, protected_item_count=None, recovery_plan_count=None, registered_servers_count=None, recovery_services_provider_auth_type=None):
+        super(ReplicationUsage, self).__init__()
         self.monitoring_summary = monitoring_summary
         self.jobs_summary = jobs_summary
         self.protected_item_count = protected_item_count

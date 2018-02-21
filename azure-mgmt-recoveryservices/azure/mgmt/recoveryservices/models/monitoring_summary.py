@@ -43,6 +43,7 @@ class MonitoringSummary(Model):
     }
 
     def __init__(self, un_healthy_vm_count=None, un_healthy_provider_count=None, events_count=None, deprecated_provider_count=None, supported_provider_count=None, unsupported_provider_count=None):
+        super(MonitoringSummary, self).__init__()
         self.un_healthy_vm_count = un_healthy_vm_count
         self.un_healthy_provider_count = un_healthy_provider_count
         self.events_count = events_count

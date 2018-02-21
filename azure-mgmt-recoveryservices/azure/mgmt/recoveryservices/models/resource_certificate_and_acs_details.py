@@ -31,7 +31,7 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):
     :type valid_from: datetime
     :param valid_to: Certificate Validity End Date time.
     :type valid_to: datetime
-    :param auth_type: Polymorphic Discriminator
+    :param auth_type: Constant filled by server.
     :type auth_type: str
     :param global_acs_namespace: ACS namespace name - tenant for our service.
     :type global_acs_namespace: str

@@ -16,16 +16,26 @@ class VaultCertificateResponse(Model):
     """Certificate corresponding to a vault that can be used by clients to
     register themselves with the vault.
 
-    :param name:
-    :type name: str
-    :param type:
-    :type type: str
-    :param id:
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
     :param properties:
-    :type properties: :class:`ResourceCertificateDetails
-     <azure.mgmt.recoveryservices.models.ResourceCertificateDetails>`
+    :type properties:
+     ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
     """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'id': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -34,8 +44,9 @@ class VaultCertificateResponse(Model):
         'properties': {'key': 'properties', 'type': 'ResourceCertificateDetails'},
     }
 
-    def __init__(self, name=None, type=None, id=None, properties=None):
-        self.name = name
-        self.type = type
-        self.id = id
+    def __init__(self, properties=None):
+        super(VaultCertificateResponse, self).__init__()
+        self.name = None
+        self.type = None
+        self.id = None
         self.properties = properties

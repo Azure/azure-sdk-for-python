@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .patch_tracked_resource import PatchTrackedResource
 
 
-class VaultExtendedInfoResource(Resource):
-    """Vault extended information.
+class PatchVault(PatchTrackedResource):
+    """Patch Resource information, as returned by the resource provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,14 +27,14 @@ class VaultExtendedInfoResource(Resource):
     :vartype type: str
     :param e_tag: Optional ETag.
     :type e_tag: str
-    :param integrity_key: Integrity key.
-    :type integrity_key: str
-    :param encryption_key: Encryption key.
-    :type encryption_key: str
-    :param encryption_key_thumbprint: Encryption key thumbprint.
-    :type encryption_key_thumbprint: str
-    :param algorithm: Algorithm for Vault ExtendedInfo
-    :type algorithm: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param properties:
+    :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
+    :param sku:
+    :type sku: ~azure.mgmt.recoveryservices.models.Sku
     """
 
     _validation = {
@@ -48,15 +48,13 @@ class VaultExtendedInfoResource(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'integrity_key': {'key': 'properties.integrityKey', 'type': 'str'},
-        'encryption_key': {'key': 'properties.encryptionKey', 'type': 'str'},
-        'encryption_key_thumbprint': {'key': 'properties.encryptionKeyThumbprint', 'type': 'str'},
-        'algorithm': {'key': 'properties.algorithm', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'VaultProperties'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, e_tag=None, integrity_key=None, encryption_key=None, encryption_key_thumbprint=None, algorithm=None):
-        super(VaultExtendedInfoResource, self).__init__(e_tag=e_tag)
-        self.integrity_key = integrity_key
-        self.encryption_key = encryption_key
-        self.encryption_key_thumbprint = encryption_key_thumbprint
-        self.algorithm = algorithm
+    def __init__(self, e_tag=None, location=None, tags=None, properties=None, sku=None):
+        super(PatchVault, self).__init__(e_tag=e_tag, location=location, tags=tags)
+        self.properties = properties
+        self.sku = sku

@@ -30,6 +30,7 @@ class JobsSummary(Model):
     }
 
     def __init__(self, failed_jobs=None, suspended_jobs=None, in_progress_jobs=None):
+        super(JobsSummary, self).__init__()
         self.failed_jobs = failed_jobs
         self.suspended_jobs = suspended_jobs
         self.in_progress_jobs = in_progress_jobs

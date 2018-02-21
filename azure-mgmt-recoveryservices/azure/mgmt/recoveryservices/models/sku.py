@@ -16,8 +16,7 @@ class Sku(Model):
     """Identifies the unique system identifier for each Azure resource.
 
     :param name: The Sku name. Possible values include: 'Standard', 'RS0'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.recoveryservices.models.SkuName>`
+    :type name: str or ~azure.mgmt.recoveryservices.models.SkuName
     """
 
     _validation = {
@@ -29,4 +28,5 @@ class Sku(Model):
     }
 
     def __init__(self, name):
+        super(Sku, self).__init__()
         self.name = name

@@ -15,6 +15,10 @@ from msrest.serialization import Model
 class ResourceCertificateDetails(Model):
     """Certificate details representing the Vault credentials.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ResourceCertificateAndAadDetails,
+    ResourceCertificateAndAcsDetails
+
     :param certificate: The base64 encoded certificate raw data string.
     :type certificate: bytearray
     :param friendly_name: Certificate friendlyname.
@@ -31,7 +35,7 @@ class ResourceCertificateDetails(Model):
     :type valid_from: datetime
     :param valid_to: Certificate Validity End Date time.
     :type valid_to: datetime
-    :param auth_type: Polymorphic Discriminator
+    :param auth_type: Constant filled by server.
     :type auth_type: str
     """
 
@@ -56,6 +60,7 @@ class ResourceCertificateDetails(Model):
     }
 
     def __init__(self, certificate=None, friendly_name=None, issuer=None, resource_id=None, subject=None, thumbprint=None, valid_from=None, valid_to=None):
+        super(ResourceCertificateDetails, self).__init__()
         self.certificate = certificate
         self.friendly_name = friendly_name
         self.issuer = issuer
