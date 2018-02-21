@@ -21,7 +21,7 @@ class GroupsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "1.6".
     """
 
@@ -56,7 +56,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/isMemberOf'
+        url = self.is_member_of.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -97,6 +97,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    is_member_of.metadata = {'url': '/{tenantID}/isMemberOf'}
 
     def remove_member(
             self, group_object_id, member_object_id, custom_headers=None, raw=False, **operation_config):
@@ -118,7 +119,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'
+        url = self.remove_member.metadata['url']
         path_format_arguments = {
             'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
             'memberObjectId': self._serialize.url("member_object_id", member_object_id, 'str'),
@@ -150,6 +151,7 @@ class GroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    remove_member.metadata = {'url': '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'}
 
     def add_member(
             self, group_object_id, url, additional_properties=None, custom_headers=None, raw=False, **operation_config):
@@ -180,7 +182,7 @@ class GroupsOperations(object):
         parameters = models.GroupAddMemberParameters(additional_properties=additional_properties, url=url)
 
         # Construct URL
-        url = '/{tenantID}/groups/{groupObjectId}/$links/members'
+        url = self.add_member.metadata['url']
         path_format_arguments = {
             'groupObjectId': self._serialize.url("group_object_id", group_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -215,6 +217,7 @@ class GroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_member.metadata = {'url': '/{tenantID}/groups/{groupObjectId}/$links/members'}
 
     def create(
             self, parameters, custom_headers=None, raw=False, **operation_config):
@@ -234,7 +237,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -275,6 +278,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{tenantID}/groups'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -297,7 +301,7 @@ class GroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/groups'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -348,6 +352,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{tenantID}/groups'}
 
     def get_group_members(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -371,7 +376,7 @@ class GroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/groups/{objectId}/members'
+                url = self.get_group_members.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -421,6 +426,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_group_members.metadata = {'url': '/{tenantID}/groups/{objectId}/members'}
 
     def get(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -441,7 +447,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups/{objectId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -479,6 +485,7 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{tenantID}/groups/{objectId}'}
 
     def delete(
             self, object_id, custom_headers=None, raw=False, **operation_config):
@@ -497,7 +504,7 @@ class GroupsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/groups/{objectId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'objectId': self._serialize.url("object_id", object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -528,6 +535,7 @@ class GroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{tenantID}/groups/{objectId}'}
 
     def get_member_groups(
             self, object_id, security_enabled_only, additional_properties=None, custom_headers=None, raw=False, **operation_config):
@@ -560,7 +568,7 @@ class GroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/groups/{objectId}/getMemberGroups'
+                url = self.get_member_groups.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -607,3 +615,4 @@ class GroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_member_groups.metadata = {'url': '/{tenantID}/groups/{objectId}/getMemberGroups'}

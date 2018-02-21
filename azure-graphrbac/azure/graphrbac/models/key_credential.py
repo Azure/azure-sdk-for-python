@@ -31,6 +31,8 @@ class KeyCredential(Model):
     :param type: Type. Acceptable values are 'AsymmetricX509Cert' and
      'Symmetric'.
     :type type: str
+    :param custom_key_identifier: Custom Key Identifier
+    :type custom_key_identifier: bytearray
     """
 
     _attribute_map = {
@@ -41,9 +43,10 @@ class KeyCredential(Model):
         'key_id': {'key': 'keyId', 'type': 'str'},
         'usage': {'key': 'usage', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'custom_key_identifier': {'key': 'customKeyIdentifier', 'type': 'bytearray'},
     }
 
-    def __init__(self, additional_properties=None, start_date=None, end_date=None, value=None, key_id=None, usage=None, type=None):
+    def __init__(self, additional_properties=None, start_date=None, end_date=None, value=None, key_id=None, usage=None, type=None, custom_key_identifier=None):
         super(KeyCredential, self).__init__()
         self.additional_properties = additional_properties
         self.start_date = start_date
@@ -52,3 +55,4 @@ class KeyCredential(Model):
         self.key_id = key_id
         self.usage = usage
         self.type = type
+        self.custom_key_identifier = custom_key_identifier

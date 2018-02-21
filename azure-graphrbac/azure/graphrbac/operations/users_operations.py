@@ -21,7 +21,7 @@ class UsersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "1.6".
     """
 
@@ -54,7 +54,7 @@ class UsersOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -95,6 +95,7 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{tenantID}/users'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -117,7 +118,7 @@ class UsersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/users'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -168,6 +169,7 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{tenantID}/users'}
 
     def get(
             self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
@@ -188,7 +190,7 @@ class UsersOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users/{upnOrObjectId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -226,6 +228,7 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{tenantID}/users/{upnOrObjectId}'}
 
     def update(
             self, upn_or_object_id, parameters, custom_headers=None, raw=False, **operation_config):
@@ -247,7 +250,7 @@ class UsersOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users/{upnOrObjectId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -282,6 +285,7 @@ class UsersOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update.metadata = {'url': '/{tenantID}/users/{upnOrObjectId}'}
 
     def delete(
             self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
@@ -301,7 +305,7 @@ class UsersOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/users/{upnOrObjectId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'upnOrObjectId': self._serialize.url("upn_or_object_id", upn_or_object_id, 'str'),
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -332,6 +336,7 @@ class UsersOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{tenantID}/users/{upnOrObjectId}'}
 
     def get_member_groups(
             self, object_id, security_enabled_only, additional_properties=None, custom_headers=None, raw=False, **operation_config):
@@ -364,7 +369,7 @@ class UsersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/users/{objectId}/getMemberGroups'
+                url = self.get_member_groups.metadata['url']
                 path_format_arguments = {
                     'objectId': self._serialize.url("object_id", object_id, 'str'),
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
@@ -411,3 +416,4 @@ class UsersOperations(object):
             return client_raw_response
 
         return deserialized
+    get_member_groups.metadata = {'url': '/{tenantID}/users/{objectId}/getMemberGroups'}
