@@ -9,30 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .nh_resource import NHResource
 
 
-class CheckAvailabilityResult(Resource):
-    """Description of a CheckAvailibility resource.
+class SharedAccessAuthorizationRule(NHResource):
+    """Description of a Namespace AuthorizationRules.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: Resource location
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: The geo-location where the resource lives
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
-    :param is_availiable: True if the name is available and can be used to
-     create new Namespace/NotificationHub. Otherwise false.
-    :type is_availiable: bool
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
+    :param rights: The rights associated with the rule.
+    :type rights: list[str or
+     ~azure.mgmt.notificationhubs.models.AccessRights]
     """
 
     _validation = {
@@ -46,12 +48,12 @@ class CheckAvailabilityResult(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
+        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, location, tags=None, sku=None, is_availiable=None):
-        super(CheckAvailabilityResult, self).__init__(location=location, tags=tags, sku=sku)
-        self.is_availiable = is_availiable
+    def __init__(self, location, tags=None, sku=None, rights=None):
+        super(SharedAccessAuthorizationRule, self).__init__(tags=tags, location=location, sku=sku)
+        self.rights = rights

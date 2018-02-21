@@ -26,4 +26,5 @@ class PolicykeyResource(Model):
     }
 
     def __init__(self, policy_key=None):
+        super(PolicykeyResource, self).__init__()
         self.policy_key = policy_key

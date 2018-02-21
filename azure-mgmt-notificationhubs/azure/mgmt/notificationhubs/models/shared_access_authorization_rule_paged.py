@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SharedAccessAuthorizationRuleResourcePaged(Paged):
+class SharedAccessAuthorizationRulePaged(Paged):
     """
-    A paging container for iterating over a list of SharedAccessAuthorizationRuleResource object
+    A paging container for iterating over a list of :class:`SharedAccessAuthorizationRule <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRule>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SharedAccessAuthorizationRuleResource]'}
+        'current_page': {'key': 'value', 'type': '[SharedAccessAuthorizationRule]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SharedAccessAuthorizationRuleResourcePaged, self).__init__(*args, **kwargs)
+        super(SharedAccessAuthorizationRulePaged, self).__init__(*args, **kwargs)

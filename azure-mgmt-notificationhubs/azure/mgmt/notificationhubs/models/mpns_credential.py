@@ -30,6 +30,7 @@ class MpnsCredential(Model):
     }
 
     def __init__(self, mpns_certificate=None, certificate_key=None, thumbprint=None):
+        super(MpnsCredential, self).__init__()
         self.mpns_certificate = mpns_certificate
         self.certificate_key = certificate_key
         self.thumbprint = thumbprint

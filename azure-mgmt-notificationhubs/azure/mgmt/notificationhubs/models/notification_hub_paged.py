@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class NotificationHubResourcePaged(Paged):
+class NotificationHubPaged(Paged):
     """
-    A paging container for iterating over a list of NotificationHubResource object
+    A paging container for iterating over a list of :class:`NotificationHub <azure.mgmt.notificationhubs.models.NotificationHub>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[NotificationHubResource]'}
+        'current_page': {'key': 'value', 'type': '[NotificationHub]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(NotificationHubResourcePaged, self).__init__(*args, **kwargs)
+        super(NotificationHubPaged, self).__init__(*args, **kwargs)
