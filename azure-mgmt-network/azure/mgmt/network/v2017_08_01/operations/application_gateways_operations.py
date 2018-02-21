@@ -24,7 +24,7 @@ class ApplicationGatewaysOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
@@ -43,7 +43,7 @@ class ApplicationGatewaysOperations(object):
     def _delete_initial(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
@@ -136,6 +136,7 @@ class ApplicationGatewaysOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'}
 
     def get(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
@@ -156,7 +157,7 @@ class ApplicationGatewaysOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
@@ -197,12 +198,13 @@ class ApplicationGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, application_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
@@ -318,6 +320,7 @@ class ApplicationGatewaysOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}'}
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -339,7 +342,7 @@ class ApplicationGatewaysOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -385,6 +388,7 @@ class ApplicationGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways'}
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
@@ -404,7 +408,7 @@ class ApplicationGatewaysOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGateways'
+                url = self.list_all.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -449,12 +453,13 @@ class ApplicationGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
+    list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGateways'}
 
 
     def _start_initial(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/start'
+        url = self.start.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
@@ -547,12 +552,13 @@ class ApplicationGatewaysOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/start'}
 
 
     def _stop_initial(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/stop'
+        url = self.stop.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
@@ -645,12 +651,13 @@ class ApplicationGatewaysOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/stop'}
 
 
     def _backend_health_initial(
             self, resource_group_name, application_gateway_name, expand=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/backendhealth'
+        url = self.backend_health.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'applicationGatewayName': self._serialize.url("application_gateway_name", application_gateway_name, 'str'),
@@ -762,6 +769,7 @@ class ApplicationGatewaysOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    backend_health.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/applicationGateways/{applicationGatewayName}/backendhealth'}
 
     def list_available_waf_rule_sets(
             self, custom_headers=None, raw=False, **operation_config):
@@ -780,7 +788,7 @@ class ApplicationGatewaysOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableWafRuleSets'
+        url = self.list_available_waf_rule_sets.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -819,6 +827,7 @@ class ApplicationGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
+    list_available_waf_rule_sets.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableWafRuleSets'}
 
     def list_available_ssl_options(
             self, custom_headers=None, raw=False, **operation_config):
@@ -837,7 +846,7 @@ class ApplicationGatewaysOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default'
+        url = self.list_available_ssl_options.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -876,6 +885,7 @@ class ApplicationGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
+    list_available_ssl_options.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default'}
 
     def list_available_ssl_predefined_policies(
             self, custom_headers=None, raw=False, **operation_config):
@@ -896,7 +906,7 @@ class ApplicationGatewaysOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default/predefinedPolicies'
+                url = self.list_available_ssl_predefined_policies.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -941,6 +951,7 @@ class ApplicationGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
+    list_available_ssl_predefined_policies.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default/predefinedPolicies'}
 
     def get_ssl_predefined_policy(
             self, predefined_policy_name, custom_headers=None, raw=False, **operation_config):
@@ -961,7 +972,7 @@ class ApplicationGatewaysOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default/predefinedPolicies/{predefinedPolicyName}'
+        url = self.get_ssl_predefined_policy.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'predefinedPolicyName': self._serialize.url("predefined_policy_name", predefined_policy_name, 'str')
@@ -1001,3 +1012,4 @@ class ApplicationGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
+    get_ssl_predefined_policy.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/applicationGatewayAvailableSslOptions/default/predefinedPolicies/{predefinedPolicyName}'}

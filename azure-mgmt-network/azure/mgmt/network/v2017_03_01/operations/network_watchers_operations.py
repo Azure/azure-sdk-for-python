@@ -24,7 +24,7 @@ class NetworkWatchersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-03-01".
     """
 
@@ -62,7 +62,7 @@ class NetworkWatchersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -109,6 +109,7 @@ class NetworkWatchersOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'}
 
     def get(
             self, resource_group_name, network_watcher_name, custom_headers=None, raw=False, **operation_config):
@@ -129,7 +130,7 @@ class NetworkWatchersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -170,12 +171,13 @@ class NetworkWatchersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'}
 
 
     def _delete_initial(
             self, resource_group_name, network_watcher_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -268,6 +270,7 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}'}
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -289,7 +292,7 @@ class NetworkWatchersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -335,6 +338,7 @@ class NetworkWatchersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers'}
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
@@ -354,7 +358,7 @@ class NetworkWatchersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkWatchers'
+                url = self.list_all.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -399,6 +403,7 @@ class NetworkWatchersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkWatchers'}
 
     def get_topology(
             self, resource_group_name, network_watcher_name, target_resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -424,7 +429,7 @@ class NetworkWatchersOperations(object):
         parameters = models.TopologyParameters(target_resource_group_name=target_resource_group_name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/topology'
+        url = self.get_topology.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -469,12 +474,13 @@ class NetworkWatchersOperations(object):
             return client_raw_response
 
         return deserialized
+    get_topology.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/topology'}
 
 
     def _verify_ip_flow_initial(
             self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/ipFlowVerify'
+        url = self.verify_ip_flow.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -590,12 +596,13 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    verify_ip_flow.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/ipFlowVerify'}
 
 
     def _get_next_hop_initial(
             self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/nextHop'
+        url = self.get_next_hop.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -711,6 +718,7 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    get_next_hop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/nextHop'}
 
 
     def _get_vm_security_rules_initial(
@@ -718,7 +726,7 @@ class NetworkWatchersOperations(object):
         parameters = models.SecurityGroupViewParameters(target_resource_id=target_resource_id)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/securityGroupView'
+        url = self.get_vm_security_rules.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -833,12 +841,13 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    get_vm_security_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/securityGroupView'}
 
 
     def _get_troubleshooting_initial(
             self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/troubleshoot'
+        url = self.get_troubleshooting.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -954,6 +963,7 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    get_troubleshooting.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/troubleshoot'}
 
 
     def _get_troubleshooting_result_initial(
@@ -961,7 +971,7 @@ class NetworkWatchersOperations(object):
         parameters = models.QueryTroubleshootingParameters(target_resource_id=target_resource_id)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryTroubleshootResult'
+        url = self.get_troubleshooting_result.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -1076,12 +1086,13 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    get_troubleshooting_result.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryTroubleshootResult'}
 
 
     def _set_flow_log_configuration_initial(
             self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/configureFlowLog'
+        url = self.set_flow_log_configuration.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -1198,6 +1209,7 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    set_flow_log_configuration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/configureFlowLog'}
 
 
     def _get_flow_log_status_initial(
@@ -1205,7 +1217,7 @@ class NetworkWatchersOperations(object):
         parameters = models.FlowLogStatusParameters(target_resource_id=target_resource_id)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryFlowLogStatus'
+        url = self.get_flow_log_status.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -1321,6 +1333,7 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    get_flow_log_status.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/queryFlowLogStatus'}
 
 
     def _check_connectivity_initial(
@@ -1328,7 +1341,7 @@ class NetworkWatchersOperations(object):
         parameters = models.ConnectivityParameters(source=source, destination=destination)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectivityCheck'
+        url = self.check_connectivity.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkWatcherName': self._serialize.url("network_watcher_name", network_watcher_name, 'str'),
@@ -1450,3 +1463,4 @@ class NetworkWatchersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    check_connectivity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkWatchers/{networkWatcherName}/connectivityCheck'}
