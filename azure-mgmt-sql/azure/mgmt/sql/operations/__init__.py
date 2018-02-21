@@ -47,9 +47,16 @@ from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .database_operations import DatabaseOperations
+from .job_agents_operations import JobAgentsOperations
+from .job_credentials_operations import JobCredentialsOperations
+from .job_executions_operations import JobExecutionsOperations
+from .jobs_operations import JobsOperations
+from .job_steps_operations import JobStepsOperations
+from .job_target_groups_operations import JobTargetGroupsOperations
+from .job_versions_operations import JobVersionsOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
-from .database_restore_points_operations import DatabaseRestorePointsOperations
+from .restore_points_operations import RestorePointsOperations
 
 __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
@@ -90,7 +97,14 @@ __all__ = [
     'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
     'DatabaseOperations',
+    'JobAgentsOperations',
+    'JobCredentialsOperations',
+    'JobExecutionsOperations',
+    'JobsOperations',
+    'JobStepsOperations',
+    'JobTargetGroupsOperations',
+    'JobVersionsOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
-    'DatabaseRestorePointsOperations',
+    'RestorePointsOperations',
 ]

@@ -12,7 +12,7 @@
 from .proxy_resource import ProxyResource
 
 
-class DatabaseRestorePoint(ProxyResource):
+class RestorePoint(ProxyResource):
     """Database restore points.
 
     Variables are only populated by the server, and will be ignored when
@@ -56,14 +56,14 @@ class DatabaseRestorePoint(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'restore_point_type': {'key': 'properties.restorePointType', 'type': 'str'},
+        'restore_point_type': {'key': 'properties.restorePointType', 'type': 'RestorePointType'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'restore_point_creation_date': {'key': 'properties.restorePointCreationDate', 'type': 'iso-8601'},
         'restore_point_label': {'key': 'properties.restorePointLabel', 'type': 'str'},
     }
 
     def __init__(self):
-        super(DatabaseRestorePoint, self).__init__()
+        super(RestorePoint, self).__init__()
         self.location = None
         self.restore_point_type = None
         self.earliest_restore_date = None
