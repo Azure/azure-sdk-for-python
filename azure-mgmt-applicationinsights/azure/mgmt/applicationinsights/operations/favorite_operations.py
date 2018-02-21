@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class WebTestsOperations(object):
-    """WebTestsOperations operations.
+class FavoriteOperations(object):
+    """FavoriteOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,92 +37,29 @@ class WebTestsOperations(object):
 
         self.config = config
 
-    def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get all Application Insights web tests defined within a specified
-        resource group.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of WebTest
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.WebTestPaged[~azure.mgmt.applicationinsights.models.WebTest]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list_by_resource_group.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.WebTestPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.WebTestPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests'}
-
     def get(
-            self, resource_group_name, web_test_name, custom_headers=None, raw=False, **operation_config):
-        """Get a specific Application Insights web test definition.
+            self, resource_group_name, resource_name, favorite_id, custom_headers=None, raw=False, **operation_config):
+        """Get a single favorite by its FavoriteId, defined within an Application
+        Insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param web_test_name: The name of the Application Insights webtest
+        :param resource_name: The name of the Application Insights component
          resource.
-        :type web_test_name: str
+        :type resource_name: str
+        :param favorite_id: The Id of a specific favorite defined in the
+         Application Insights component
+        :type favorite_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WebTest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.applicationinsights.models.WebTest or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ApplicationInsightsComponentFavorite or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -130,7 +67,8 @@ class WebTestsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'webTestName': self._serialize.url("web_test_name", web_test_name, 'str')
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -160,44 +98,50 @@ class WebTestsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WebTest', response)
+            deserialized = self._deserialize('ApplicationInsightsComponentFavorite', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
 
-    def create_or_update(
-            self, resource_group_name, web_test_name, web_test_definition, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an Application Insights web test definition.
+    def add(
+            self, resource_group_name, resource_name, favorite_id, favorite_properties, custom_headers=None, raw=False, **operation_config):
+        """Adds a new favorites to an Application Insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param web_test_name: The name of the Application Insights webtest
+        :param resource_name: The name of the Application Insights component
          resource.
-        :type web_test_name: str
-        :param web_test_definition: Properties that need to be specified to
-         create or update an Application Insights web test definition.
-        :type web_test_definition:
-         ~azure.mgmt.applicationinsights.models.WebTest
+        :type resource_name: str
+        :param favorite_id: The Id of a specific favorite defined in the
+         Application Insights component
+        :type favorite_id: str
+        :param favorite_properties: Properties that need to be specified to
+         create a new favorite and add it to an Application Insights component.
+        :type favorite_properties:
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WebTest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.applicationinsights.models.WebTest or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ApplicationInsightsComponentFavorite or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.add.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'webTestName': self._serialize.url("web_test_name", web_test_name, 'str')
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -216,7 +160,7 @@ class WebTestsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(web_test_definition, 'WebTest')
+        body_content = self._serialize.body(favorite_properties, 'ApplicationInsightsComponentFavorite')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -231,44 +175,51 @@ class WebTestsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WebTest', response)
+            deserialized = self._deserialize('ApplicationInsightsComponentFavorite', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
+    add.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
 
-    def update_tags(
-            self, resource_group_name, web_test_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an Application Insights web test definition.
+    def update(
+            self, resource_group_name, resource_name, favorite_id, favorite_properties, custom_headers=None, raw=False, **operation_config):
+        """Updates a favorite that has already been added to an Application
+        Insights component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param web_test_name: The name of the Application Insights webtest
+        :param resource_name: The name of the Application Insights component
          resource.
-        :type web_test_name: str
-        :param tags: Resource tags
-        :type tags: dict[str, str]
+        :type resource_name: str
+        :param favorite_id: The Id of a specific favorite defined in the
+         Application Insights component
+        :type favorite_id: str
+        :param favorite_properties: Properties that need to be specified to
+         update the existing favorite.
+        :type favorite_properties:
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WebTest or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.applicationinsights.models.WebTest or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ApplicationInsightsComponentFavorite or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        web_test_tags = models.TagsResource(tags=tags)
-
         # Construct URL
-        url = self.update_tags.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'webTestName': self._serialize.url("web_test_name", web_test_name, 'str')
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -287,7 +238,7 @@ class WebTestsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(web_test_tags, 'TagsResource')
+        body_content = self._serialize.body(favorite_properties, 'ApplicationInsightsComponentFavorite')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
@@ -302,24 +253,28 @@ class WebTestsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WebTest', response)
+            deserialized = self._deserialize('ApplicationInsightsComponentFavorite', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
 
     def delete(
-            self, resource_group_name, web_test_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an Application Insights web test.
+            self, resource_group_name, resource_name, favorite_id, custom_headers=None, raw=False, **operation_config):
+        """Remove a favorite that is associated to an Application Insights
+        component.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param web_test_name: The name of the Application Insights webtest
+        :param resource_name: The name of the Application Insights component
          resource.
-        :type web_test_name: str
+        :type resource_name: str
+        :param favorite_id: The Id of a specific favorite defined in the
+         Application Insights component
+        :type favorite_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -332,9 +287,10 @@ class WebTestsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'webTestName': self._serialize.url("web_test_name", web_test_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
+            'favoriteId': self._serialize.url("favorite_id", favorite_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -356,7 +312,7 @@ class WebTestsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -364,70 +320,4 @@ class WebTestsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
-
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Get all Application Insights web test alerts definitioned within a
-        subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of WebTest
-        :rtype:
-         ~azure.mgmt.applicationinsights.models.WebTestPaged[~azure.mgmt.applicationinsights.models.WebTest]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.WebTestPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.WebTestPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/webtests'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
