@@ -103,6 +103,58 @@ class FeaturesOperations(object):
         return deserialized
     list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Features/features'}
 
+    def operations(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets all the preview feature operations.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: FeatureOperationResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.resource.features.v2015_12_01.models.FeatureOperationResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.operations.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('FeatureOperationResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    operations.metadata = {'url': '/providers/Microsoft.Features/operations'}
+
     def list(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
         """Gets all the preview features in a provider namespace that are
@@ -238,7 +290,7 @@ class FeaturesOperations(object):
 
     def register(
             self, resource_provider_namespace, feature_name, custom_headers=None, raw=False, **operation_config):
-        """Registers the preview feature for the subscription.
+        """Registers the preview feature.
 
         :param resource_provider_namespace: The namespace of the resource
          provider.
@@ -259,8 +311,7 @@ class FeaturesOperations(object):
         url = self.register.metadata['url']
         path_format_arguments = {
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
-            'featureName': self._serialize.url("feature_name", feature_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'featureName': self._serialize.url("feature_name", feature_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -297,4 +348,4 @@ class FeaturesOperations(object):
             return client_raw_response
 
         return deserialized
-    register.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/register'}
+    register.metadata = {'url': '/providers/Microsoft.Features/providers/{providerNamespace}/features/{featureName}/register'}

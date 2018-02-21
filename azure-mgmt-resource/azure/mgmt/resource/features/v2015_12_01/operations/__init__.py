@@ -10,7 +10,9 @@
 # --------------------------------------------------------------------------
 
 from .features_operations import FeaturesOperations
+from .subscription_features_operations import SubscriptionFeaturesOperations
 
 __all__ = [
     'FeaturesOperations',
+    'SubscriptionFeaturesOperations',
 ]
