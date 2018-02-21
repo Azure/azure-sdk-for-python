@@ -53,7 +53,7 @@ from .operations.virtual_network_rules_operations import VirtualNetworkRulesOper
 from .operations.database_operations import DatabaseOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
-from .operations.database_restore_points_operations import DatabaseRestorePointsOperations
+from .operations.restore_points_operations import RestorePointsOperations
 from . import models
 
 
@@ -176,8 +176,8 @@ class SqlManagementClient(object):
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
-    :ivar database_restore_points: DatabaseRestorePoints operations
-    :vartype database_restore_points: azure.mgmt.sql.operations.DatabaseRestorePointsOperations
+    :ivar restore_points: RestorePoints operations
+    :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -278,5 +278,5 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.database_restore_points = DatabaseRestorePointsOperations(
+        self.restore_points = RestorePointsOperations(
             self._client, self.config, self._serialize, self._deserialize)

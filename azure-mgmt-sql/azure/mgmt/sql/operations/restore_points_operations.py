@@ -18,13 +18,13 @@ from msrestazure.azure_operation import AzureOperationPoller
 from .. import models
 
 
-class DatabaseRestorePointsOperations(object):
-    """DatabaseRestorePointsOperations operations.
+class RestorePointsOperations(object):
+    """RestorePointsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2017-03-01-preview".
     """
 
@@ -41,7 +41,7 @@ class DatabaseRestorePointsOperations(object):
 
     def list_by_database(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a collection of restore points that belongs to the database.
+        """Gets a list of database restore points.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -56,16 +56,16 @@ class DatabaseRestorePointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DatabaseRestorePoint
+        :return: An iterator like instance of RestorePoint
         :rtype:
-         ~azure.mgmt.sql.models.DatabaseRestorePointPaged[~azure.mgmt.sql.models.DatabaseRestorePoint]
+         ~azure.mgmt.sql.models.RestorePointPaged[~azure.mgmt.sql.models.RestorePoint]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/restorePoints'
+                url = self.list_by_database.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -105,14 +105,15 @@ class DatabaseRestorePointsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DatabaseRestorePointPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.RestorePointPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DatabaseRestorePointPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.RestorePointPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/restorePoints'}
 
 
     def _create_initial(
@@ -120,7 +121,7 @@ class DatabaseRestorePointsOperations(object):
         parameters = models.CreateDatabaseRestorePointDefinition(restore_point_label=restore_point_label)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/restorePoints'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -159,9 +160,9 @@ class DatabaseRestorePointsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseRestorePoint', response)
+            deserialized = self._deserialize('RestorePoint', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('DatabaseRestorePoint', response)
+            deserialized = self._deserialize('RestorePoint', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -186,10 +187,10 @@ class DatabaseRestorePointsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         DatabaseRestorePoint or ClientRawResponse if raw=true
+        :return: An instance of AzureOperationPoller that returns RestorePoint
+         or ClientRawResponse if raw=true
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.DatabaseRestorePoint]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.RestorePoint]
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -226,7 +227,7 @@ class DatabaseRestorePointsOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = self._deserialize('DatabaseRestorePoint', response)
+            deserialized = self._deserialize('RestorePoint', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -240,6 +241,7 @@ class DatabaseRestorePointsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/restorePoints'}
 
     def get(
             self, resource_group_name, server_name, database_name, restore_point_name, custom_headers=None, raw=False, **operation_config):
@@ -260,13 +262,13 @@ class DatabaseRestorePointsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: DatabaseRestorePoint or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.DatabaseRestorePoint or
+        :return: RestorePoint or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.sql.models.RestorePoint or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/restorePoints/{restorePointName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -302,10 +304,11 @@ class DatabaseRestorePointsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseRestorePoint', response)
+            deserialized = self._deserialize('RestorePoint', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/restorePoints/{restorePointName}'}
