@@ -35,7 +35,7 @@ class DscCompilationJob(ProxyResource):
     :vartype creation_time: datetime
     :param provisioning_state: The current provisioning state of the job.
     :type provisioning_state:
-     ~azure.mgmt.automation.models.ProvisioningStateProperty
+     ~azure.mgmt.automation.models.JobProvisioningStateProperty
     :param run_on: Gets or sets the runOn which specifies the group name where
      the job is to be executed.
     :type run_on: str
@@ -83,7 +83,7 @@ class DscCompilationJob(ProxyResource):
         'started_by': {'key': 'properties.startedBy', 'type': 'str'},
         'job_id': {'key': 'properties.jobId', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateProperty'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'JobProvisioningStateProperty'},
         'run_on': {'key': 'properties.runOn', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'status_details': {'key': 'properties.statusDetails', 'type': 'str'},

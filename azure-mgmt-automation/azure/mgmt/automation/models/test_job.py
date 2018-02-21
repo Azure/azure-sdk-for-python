@@ -38,6 +38,9 @@ class TestJob(Model):
     :type last_status_modified_time: datetime
     :param parameters: Gets or sets the parameters of the test job.
     :type parameters: dict[str, str]
+    :param log_activity_trace: The activity-level tracing options of the
+     runbook.
+    :type log_activity_trace: int
     """
 
     _attribute_map = {
@@ -51,9 +54,10 @@ class TestJob(Model):
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
         'last_status_modified_time': {'key': 'lastStatusModifiedTime', 'type': 'iso-8601'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
+        'log_activity_trace': {'key': 'logActivityTrace', 'type': 'int'},
     }
 
-    def __init__(self, creation_time=None, status=None, status_details=None, run_on=None, start_time=None, end_time=None, exception=None, last_modified_time=None, last_status_modified_time=None, parameters=None):
+    def __init__(self, creation_time=None, status=None, status_details=None, run_on=None, start_time=None, end_time=None, exception=None, last_modified_time=None, last_status_modified_time=None, parameters=None, log_activity_trace=None):
         super(TestJob, self).__init__()
         self.creation_time = creation_time
         self.status = status
@@ -65,3 +69,4 @@ class TestJob(Model):
         self.last_modified_time = last_modified_time
         self.last_status_modified_time = last_status_modified_time
         self.parameters = parameters
+        self.log_activity_trace = log_activity_trace

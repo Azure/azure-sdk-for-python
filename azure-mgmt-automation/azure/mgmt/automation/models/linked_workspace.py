@@ -12,24 +12,24 @@
 from msrest.serialization import Model
 
 
-class ProvisioningStateProperty(Model):
-    """The provisioning state property.
+class LinkedWorkspace(Model):
+    """Definition of the linked workspace.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar id: Gets the id of the linked workspace.
+    :vartype id: str
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        'id': {'readonly': True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self):
-        super(ProvisioningStateProperty, self).__init__()
-        self.provisioning_state = None
+        super(LinkedWorkspace, self).__init__()
+        self.id = None

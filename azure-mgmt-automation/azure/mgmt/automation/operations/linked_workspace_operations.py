@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class DscCompilationJobStreamOperations(object):
-    """DscCompilationJobStreamOperations operations.
+class LinkedWorkspaceOperations(object):
+    """LinkedWorkspaceOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,31 +36,28 @@ class DscCompilationJobStreamOperations(object):
 
         self.config = config
 
-    def list_by_job(
-            self, automation_account_name, job_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve all the job streams for the compilation Job.
+    def get(
+            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieve the linked workspace for the account id.
 
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
-        :param job_id: The job id.
-        :type job_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: JobStreamListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.automation.models.JobStreamListResult or
+        :return: LinkedWorkspace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.automation.models.LinkedWorkspace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_job.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -89,11 +86,11 @@ class DscCompilationJobStreamOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('JobStreamListResult', response)
+            deserialized = self._deserialize('LinkedWorkspace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list_by_job.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{jobId}/streams/'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/linkedWorkspace'}

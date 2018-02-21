@@ -9,14 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Job(Model):
+class Job(ProxyResource):
     """Definition of the job.
 
-    :param id: Gets or sets the id of the resource.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
     :param runbook: Gets or sets the runbook.
     :type runbook: ~azure.mgmt.automation.models.RunbookAssociationProperty
     :param started_by: Gets or sets the job started by.
@@ -48,10 +55,21 @@ class Job(Model):
     :type last_status_modified_time: datetime
     :param parameters: Gets or sets the parameters of the job.
     :type parameters: dict[str, str]
+    :param provisioning_state: The provisioning state of a resource.
+    :type provisioning_state:
+     ~azure.mgmt.automation.models.JobProvisioningStateProperty
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
         'started_by': {'key': 'properties.startedBy', 'type': 'str'},
         'run_on': {'key': 'properties.runOn', 'type': 'str'},
@@ -65,11 +83,11 @@ class Job(Model):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'last_status_modified_time': {'key': 'properties.lastStatusModifiedTime', 'type': 'iso-8601'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'JobProvisioningStateProperty'},
     }
 
-    def __init__(self, id=None, runbook=None, started_by=None, run_on=None, job_id=None, creation_time=None, status=None, status_details=None, start_time=None, end_time=None, exception=None, last_modified_time=None, last_status_modified_time=None, parameters=None):
+    def __init__(self, runbook=None, started_by=None, run_on=None, job_id=None, creation_time=None, status=None, status_details=None, start_time=None, end_time=None, exception=None, last_modified_time=None, last_status_modified_time=None, parameters=None, provisioning_state=None):
         super(Job, self).__init__()
-        self.id = id
         self.runbook = runbook
         self.started_by = started_by
         self.run_on = run_on
@@ -83,3 +101,4 @@ class Job(Model):
         self.last_modified_time = last_modified_time
         self.last_status_modified_time = last_status_modified_time
         self.parameters = parameters
+        self.provisioning_state = provisioning_state

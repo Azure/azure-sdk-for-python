@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TestJobsOperations(object):
-    """TestJobsOperations operations.
+class TestJobOperations(object):
+    """TestJobOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,7 +37,7 @@ class TestJobsOperations(object):
         self.config = config
 
     def create(
-            self, automation_account_name, runbook_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, runbook_name, parameters=None, run_on=None, custom_headers=None, raw=False, **operation_config):
         """Create a test job of the runbook.
 
         :param automation_account_name: The automation account name.
@@ -45,10 +45,11 @@ class TestJobsOperations(object):
         :param runbook_name: The parameters supplied to the create test job
          operation.
         :type runbook_name: str
-        :param parameters: The parameters supplied to the create test job
-         operation.
-        :type parameters:
-         ~azure.mgmt.automation.models.TestJobCreateParameters
+        :param parameters: Gets or sets the parameters of the test job.
+        :type parameters: dict[str, str]
+        :param run_on: Gets or sets the runOn which specifies the group name
+         where the job is to be executed.
+        :type run_on: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -60,13 +61,15 @@ class TestJobsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
+        parameters1 = models.TestJobCreateParameters(parameters=parameters, run_on=run_on)
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob'
+        url = self.create.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -85,7 +88,7 @@ class TestJobsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'TestJobCreateParameters')
+        body_content = self._serialize.body(parameters1, 'TestJobCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -105,6 +108,7 @@ class TestJobsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob'}
 
     def get(
             self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
@@ -126,12 +130,12 @@ class TestJobsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob'
+        url = self.get.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -166,6 +170,7 @@ class TestJobsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob'}
 
     def resume(
             self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
@@ -186,12 +191,12 @@ class TestJobsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/resume'
+        url = self.resume.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -219,6 +224,7 @@ class TestJobsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/resume'}
 
     def stop(
             self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
@@ -239,12 +245,12 @@ class TestJobsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/stop'
+        url = self.stop.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -272,6 +278,7 @@ class TestJobsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/stop'}
 
     def suspend(
             self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
@@ -292,12 +299,12 @@ class TestJobsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/suspend'
+        url = self.suspend.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -325,3 +332,4 @@ class TestJobsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    suspend.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/suspend'}

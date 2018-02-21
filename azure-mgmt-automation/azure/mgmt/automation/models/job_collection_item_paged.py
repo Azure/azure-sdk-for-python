@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class JobPaged(Paged):
+class JobCollectionItemPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Job <azure.mgmt.automation.models.Job>` object
+    A paging container for iterating over a list of :class:`JobCollectionItem <azure.mgmt.automation.models.JobCollectionItem>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Job]'}
+        'current_page': {'key': 'value', 'type': '[JobCollectionItem]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(JobPaged, self).__init__(*args, **kwargs)
+        super(JobCollectionItemPaged, self).__init__(*args, **kwargs)
