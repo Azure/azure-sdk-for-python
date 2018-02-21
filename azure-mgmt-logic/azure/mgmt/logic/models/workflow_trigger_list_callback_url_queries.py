@@ -33,6 +33,7 @@ class WorkflowTriggerListCallbackUrlQueries(Model):
     }
 
     def __init__(self, api_version=None, sp=None, sv=None, sig=None):
+        super(WorkflowTriggerListCallbackUrlQueries, self).__init__()
         self.api_version = api_version
         self.sp = sp
         self.sv = sv

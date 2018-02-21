@@ -16,14 +16,12 @@ class EdifactOneWayAgreement(Model):
     """The Edifact one way agreement.
 
     :param sender_business_identity: The sender business identity
-    :type sender_business_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
+    :type sender_business_identity: ~azure.mgmt.logic.models.BusinessIdentity
     :param receiver_business_identity: The receiver business identity
-    :type receiver_business_identity: :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
+    :type receiver_business_identity:
+     ~azure.mgmt.logic.models.BusinessIdentity
     :param protocol_settings: The EDIFACT protocol settings.
-    :type protocol_settings: :class:`EdifactProtocolSettings
-     <azure.mgmt.logic.models.EdifactProtocolSettings>`
+    :type protocol_settings: ~azure.mgmt.logic.models.EdifactProtocolSettings
     """
 
     _validation = {
@@ -39,6 +37,7 @@ class EdifactOneWayAgreement(Model):
     }
 
     def __init__(self, sender_business_identity, receiver_business_identity, protocol_settings):
+        super(EdifactOneWayAgreement, self).__init__()
         self.sender_business_identity = sender_business_identity
         self.receiver_business_identity = receiver_business_identity
         self.protocol_settings = protocol_settings

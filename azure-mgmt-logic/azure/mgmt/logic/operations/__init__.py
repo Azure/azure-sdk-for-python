@@ -22,6 +22,7 @@ from .partners_operations import PartnersOperations
 from .agreements_operations import AgreementsOperations
 from .certificates_operations import CertificatesOperations
 from .sessions_operations import SessionsOperations
+from .isolated_environments_operations import IsolatedEnvironmentsOperations
 
 __all__ = [
     'WorkflowsOperations',
@@ -37,4 +38,5 @@ __all__ = [
     'AgreementsOperations',
     'CertificatesOperations',
     'SessionsOperations',
+    'IsolatedEnvironmentsOperations',
 ]

@@ -17,8 +17,7 @@ class IntegrationAccountSchemaFilter(Model):
 
     :param schema_type: The schema type of integration account schema.
      Possible values include: 'NotSpecified', 'Xml'
-    :type schema_type: str or :class:`SchemaType
-     <azure.mgmt.logic.models.SchemaType>`
+    :type schema_type: str or ~azure.mgmt.logic.models.SchemaType
     """
 
     _validation = {
@@ -30,4 +29,5 @@ class IntegrationAccountSchemaFilter(Model):
     }
 
     def __init__(self, schema_type):
+        super(IntegrationAccountSchemaFilter, self).__init__()
         self.schema_type = schema_type

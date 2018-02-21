@@ -27,5 +27,6 @@ class ContentHash(Model):
     }
 
     def __init__(self, algorithm=None, value=None):
+        super(ContentHash, self).__init__()
         self.algorithm = algorithm
         self.value = value

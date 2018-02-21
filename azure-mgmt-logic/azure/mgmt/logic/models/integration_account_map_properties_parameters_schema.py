@@ -24,4 +24,5 @@ class IntegrationAccountMapPropertiesParametersSchema(Model):
     }
 
     def __init__(self, ref=None):
+        super(IntegrationAccountMapPropertiesParametersSchema, self).__init__()
         self.ref = ref

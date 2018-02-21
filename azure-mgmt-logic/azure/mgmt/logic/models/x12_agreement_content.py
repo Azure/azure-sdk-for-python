@@ -16,11 +16,9 @@ class X12AgreementContent(Model):
     """The X12 agreement content.
 
     :param receive_agreement: The X12 one-way receive agreement.
-    :type receive_agreement: :class:`X12OneWayAgreement
-     <azure.mgmt.logic.models.X12OneWayAgreement>`
+    :type receive_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
     :param send_agreement: The X12 one-way send agreement.
-    :type send_agreement: :class:`X12OneWayAgreement
-     <azure.mgmt.logic.models.X12OneWayAgreement>`
+    :type send_agreement: ~azure.mgmt.logic.models.X12OneWayAgreement
     """
 
     _validation = {
@@ -34,5 +32,6 @@ class X12AgreementContent(Model):
     }
 
     def __init__(self, receive_agreement, send_agreement):
+        super(X12AgreementContent, self).__init__()
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement

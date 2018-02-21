@@ -16,11 +16,9 @@ class AS2AgreementContent(Model):
     """The integration account AS2 agreement content.
 
     :param receive_agreement: The AS2 one-way receive agreement.
-    :type receive_agreement: :class:`AS2OneWayAgreement
-     <azure.mgmt.logic.models.AS2OneWayAgreement>`
+    :type receive_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
     :param send_agreement: The AS2 one-way send agreement.
-    :type send_agreement: :class:`AS2OneWayAgreement
-     <azure.mgmt.logic.models.AS2OneWayAgreement>`
+    :type send_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
     """
 
     _validation = {
@@ -34,5 +32,6 @@ class AS2AgreementContent(Model):
     }
 
     def __init__(self, receive_agreement, send_agreement):
+        super(AS2AgreementContent, self).__init__()
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement

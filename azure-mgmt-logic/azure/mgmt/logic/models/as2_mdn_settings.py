@@ -39,8 +39,8 @@ class AS2MdnSettings(Model):
     :param mic_hashing_algorithm: The signing or hashing algorithm. Possible
      values include: 'NotSpecified', 'None', 'MD5', 'SHA1', 'SHA2256',
      'SHA2384', 'SHA2512'
-    :type mic_hashing_algorithm: str or :class:`HashingAlgorithm
-     <azure.mgmt.logic.models.HashingAlgorithm>`
+    :type mic_hashing_algorithm: str or
+     ~azure.mgmt.logic.models.HashingAlgorithm
     """
 
     _validation = {
@@ -65,6 +65,7 @@ class AS2MdnSettings(Model):
     }
 
     def __init__(self, need_mdn, sign_mdn, send_mdn_asynchronously, sign_outbound_mdn_if_optional, send_inbound_mdn_to_message_box, mic_hashing_algorithm, receipt_delivery_url=None, disposition_notification_to=None, mdn_text=None):
+        super(AS2MdnSettings, self).__init__()
         self.need_mdn = need_mdn
         self.sign_mdn = sign_mdn
         self.send_mdn_asynchronously = send_mdn_asynchronously

@@ -16,8 +16,7 @@ class KeyVaultKeyReference(Model):
     """The reference to the key vault key.
 
     :param key_vault: The key vault reference.
-    :type key_vault: :class:`KeyVaultKeyReferenceKeyVault
-     <azure.mgmt.logic.models.KeyVaultKeyReferenceKeyVault>`
+    :type key_vault: ~azure.mgmt.logic.models.KeyVaultKeyReferenceKeyVault
     :param key_name: The private key name in key vault.
     :type key_name: str
     :param key_version: The private key version in key vault.
@@ -36,6 +35,7 @@ class KeyVaultKeyReference(Model):
     }
 
     def __init__(self, key_vault, key_name, key_version=None):
+        super(KeyVaultKeyReference, self).__init__()
         self.key_vault = key_vault
         self.key_name = key_name
         self.key_version = key_version

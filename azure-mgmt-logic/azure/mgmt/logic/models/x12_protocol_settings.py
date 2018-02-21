@@ -16,41 +16,34 @@ class X12ProtocolSettings(Model):
     """The X12 agreement protocol settings.
 
     :param validation_settings: The X12 validation settings.
-    :type validation_settings: :class:`X12ValidationSettings
-     <azure.mgmt.logic.models.X12ValidationSettings>`
+    :type validation_settings: ~azure.mgmt.logic.models.X12ValidationSettings
     :param framing_settings: The X12 framing settings.
-    :type framing_settings: :class:`X12FramingSettings
-     <azure.mgmt.logic.models.X12FramingSettings>`
+    :type framing_settings: ~azure.mgmt.logic.models.X12FramingSettings
     :param envelope_settings: The X12 envelope settings.
-    :type envelope_settings: :class:`X12EnvelopeSettings
-     <azure.mgmt.logic.models.X12EnvelopeSettings>`
+    :type envelope_settings: ~azure.mgmt.logic.models.X12EnvelopeSettings
     :param acknowledgement_settings: The X12 acknowledgment settings.
-    :type acknowledgement_settings: :class:`X12AcknowledgementSettings
-     <azure.mgmt.logic.models.X12AcknowledgementSettings>`
+    :type acknowledgement_settings:
+     ~azure.mgmt.logic.models.X12AcknowledgementSettings
     :param message_filter: The X12 message filter.
-    :type message_filter: :class:`X12MessageFilter
-     <azure.mgmt.logic.models.X12MessageFilter>`
+    :type message_filter: ~azure.mgmt.logic.models.X12MessageFilter
     :param security_settings: The X12 security settings.
-    :type security_settings: :class:`X12SecuritySettings
-     <azure.mgmt.logic.models.X12SecuritySettings>`
+    :type security_settings: ~azure.mgmt.logic.models.X12SecuritySettings
     :param processing_settings: The X12 processing settings.
-    :type processing_settings: :class:`X12ProcessingSettings
-     <azure.mgmt.logic.models.X12ProcessingSettings>`
+    :type processing_settings: ~azure.mgmt.logic.models.X12ProcessingSettings
     :param envelope_overrides: The X12 envelope override settings.
-    :type envelope_overrides: list of :class:`X12EnvelopeOverride
-     <azure.mgmt.logic.models.X12EnvelopeOverride>`
+    :type envelope_overrides:
+     list[~azure.mgmt.logic.models.X12EnvelopeOverride]
     :param validation_overrides: The X12 validation override settings.
-    :type validation_overrides: list of :class:`X12ValidationOverride
-     <azure.mgmt.logic.models.X12ValidationOverride>`
+    :type validation_overrides:
+     list[~azure.mgmt.logic.models.X12ValidationOverride]
     :param message_filter_list: The X12 message filter list.
-    :type message_filter_list: list of :class:`X12MessageIdentifier
-     <azure.mgmt.logic.models.X12MessageIdentifier>`
+    :type message_filter_list:
+     list[~azure.mgmt.logic.models.X12MessageIdentifier]
     :param schema_references: The X12 schema references.
-    :type schema_references: list of :class:`X12SchemaReference
-     <azure.mgmt.logic.models.X12SchemaReference>`
+    :type schema_references: list[~azure.mgmt.logic.models.X12SchemaReference]
     :param x12_delimiter_overrides: The X12 delimiter override settings.
-    :type x12_delimiter_overrides: list of :class:`X12DelimiterOverrides
-     <azure.mgmt.logic.models.X12DelimiterOverrides>`
+    :type x12_delimiter_overrides:
+     list[~azure.mgmt.logic.models.X12DelimiterOverrides]
     """
 
     _validation = {
@@ -80,6 +73,7 @@ class X12ProtocolSettings(Model):
     }
 
     def __init__(self, validation_settings, framing_settings, envelope_settings, acknowledgement_settings, message_filter, security_settings, processing_settings, schema_references, envelope_overrides=None, validation_overrides=None, message_filter_list=None, x12_delimiter_overrides=None):
+        super(X12ProtocolSettings, self).__init__()
         self.validation_settings = validation_settings
         self.framing_settings = framing_settings
         self.envelope_settings = envelope_settings

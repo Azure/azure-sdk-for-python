@@ -28,4 +28,5 @@ class X12MessageIdentifier(Model):
     }
 
     def __init__(self, message_id):
+        super(X12MessageIdentifier, self).__init__()
         self.message_id = message_id

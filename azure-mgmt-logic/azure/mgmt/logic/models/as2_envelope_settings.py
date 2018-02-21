@@ -47,6 +47,7 @@ class AS2EnvelopeSettings(Model):
     }
 
     def __init__(self, message_content_type, transmit_file_name_in_mime_header, file_name_template, suspend_message_on_file_name_generation_error, autogenerate_file_name):
+        super(AS2EnvelopeSettings, self).__init__()
         self.message_content_type = message_content_type
         self.transmit_file_name_in_mime_header = transmit_file_name_in_mime_header
         self.file_name_template = file_name_template

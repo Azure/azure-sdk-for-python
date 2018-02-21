@@ -19,8 +19,7 @@ class WorkflowTriggerHistoryFilter(Model):
      include: 'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded',
      'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut',
      'Aborted', 'Ignored'
-    :type status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+    :type status: str or ~azure.mgmt.logic.models.WorkflowStatus
     """
 
     _attribute_map = {
@@ -28,4 +27,5 @@ class WorkflowTriggerHistoryFilter(Model):
     }
 
     def __init__(self, status=None):
+        super(WorkflowTriggerHistoryFilter, self).__init__()
         self.status = status

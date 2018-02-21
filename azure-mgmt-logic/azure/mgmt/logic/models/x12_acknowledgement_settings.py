@@ -95,6 +95,7 @@ class X12AcknowledgementSettings(Model):
     }
 
     def __init__(self, need_technical_acknowledgement, batch_technical_acknowledgements, need_functional_acknowledgement, batch_functional_acknowledgements, need_implementation_acknowledgement, batch_implementation_acknowledgements, need_loop_for_valid_messages, send_synchronous_acknowledgement, acknowledgement_control_number_lower_bound, acknowledgement_control_number_upper_bound, rollover_acknowledgement_control_number, functional_acknowledgement_version=None, implementation_acknowledgement_version=None, acknowledgement_control_number_prefix=None, acknowledgement_control_number_suffix=None):
+        super(X12AcknowledgementSettings, self).__init__()
         self.need_technical_acknowledgement = need_technical_acknowledgement
         self.batch_technical_acknowledgements = batch_technical_acknowledgements
         self.need_functional_acknowledgement = need_functional_acknowledgement

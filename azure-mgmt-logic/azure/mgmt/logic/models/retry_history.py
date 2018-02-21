@@ -26,8 +26,7 @@ class RetryHistory(Model):
     :param service_request_id: Gets the service request Id.
     :type service_request_id: str
     :param error: Gets the error response.
-    :type error: :class:`ErrorResponse
-     <azure.mgmt.logic.models.ErrorResponse>`
+    :type error: ~azure.mgmt.logic.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -40,6 +39,7 @@ class RetryHistory(Model):
     }
 
     def __init__(self, start_time=None, end_time=None, code=None, client_request_id=None, service_request_id=None, error=None):
+        super(RetryHistory, self).__init__()
         self.start_time = start_time
         self.end_time = end_time
         self.code = code

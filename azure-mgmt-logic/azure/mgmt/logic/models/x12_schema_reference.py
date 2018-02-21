@@ -39,6 +39,7 @@ class X12SchemaReference(Model):
     }
 
     def __init__(self, message_id, schema_version, schema_name, sender_application_id=None):
+        super(X12SchemaReference, self).__init__()
         self.message_id = message_id
         self.sender_application_id = sender_application_id
         self.schema_version = schema_version

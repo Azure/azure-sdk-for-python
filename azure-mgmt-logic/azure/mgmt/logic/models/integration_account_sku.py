@@ -17,8 +17,7 @@ class IntegrationAccountSku(Model):
 
     :param name: The sku name. Possible values include: 'NotSpecified',
      'Free', 'Standard'
-    :type name: str or :class:`IntegrationAccountSkuName
-     <azure.mgmt.logic.models.IntegrationAccountSkuName>`
+    :type name: str or ~azure.mgmt.logic.models.IntegrationAccountSkuName
     """
 
     _validation = {
@@ -30,4 +29,5 @@ class IntegrationAccountSku(Model):
     }
 
     def __init__(self, name):
+        super(IntegrationAccountSku, self).__init__()
         self.name = name
