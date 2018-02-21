@@ -11,6 +11,7 @@
 
 from .resource import Resource
 from .hardware_profile import HardwareProfile
+from .disk import Disk
 from .storage_profile import StorageProfile
 from .os_profile import OSProfile
 from .ip_address import IpAddress
@@ -29,6 +30,7 @@ from .hana_management_client_enums import (
 __all__ = [
     'Resource',
     'HardwareProfile',
+    'Disk',
     'StorageProfile',
     'OSProfile',
     'IpAddress',
