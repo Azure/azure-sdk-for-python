@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .encryption_key_source import EncryptionKeySource
+from msrest.serialization import Model
 
 
-class Encryption(EncryptionKeySource):
-    """The encryption settings on the storage account.
+class EncryptionKeySource(Model):
+    """The encryption keysource settings on the storage account.
 
     :param key_source: The encryption keySource (provider). Possible values
      (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Possible
@@ -23,8 +23,6 @@ class Encryption(EncryptionKeySource):
     :param key_vault_properties: Properties provided by key vault.
     :type key_vault_properties:
      ~azure.mgmt.storage.v2017_10_01.models.KeyVaultProperties
-    :param services: List of services which support encryption.
-    :type services: ~azure.mgmt.storage.v2017_10_01.models.EncryptionServices
     """
 
     _validation = {
@@ -34,9 +32,9 @@ class Encryption(EncryptionKeySource):
     _attribute_map = {
         'key_source': {'key': 'keySource', 'type': 'str'},
         'key_vault_properties': {'key': 'keyvaultproperties', 'type': 'KeyVaultProperties'},
-        'services': {'key': 'services', 'type': 'EncryptionServices'},
     }
 
-    def __init__(self, key_source="Microsoft.Storage", key_vault_properties=None, services=None):
-        super(Encryption, self).__init__(key_source=key_source, key_vault_properties=key_vault_properties)
-        self.services = services
+    def __init__(self, key_source="Microsoft.Storage", key_vault_properties=None):
+        super(EncryptionKeySource, self).__init__()
+        self.key_source = key_source
+        self.key_vault_properties = key_vault_properties
