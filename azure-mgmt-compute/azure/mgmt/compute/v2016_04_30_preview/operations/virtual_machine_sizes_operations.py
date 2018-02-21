@@ -22,7 +22,7 @@ class VirtualMachineSizesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-04-30-preview".
     """
 
@@ -59,7 +59,7 @@ class VirtualMachineSizesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/vmSizes'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -105,3 +105,4 @@ class VirtualMachineSizesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/vmSizes'}

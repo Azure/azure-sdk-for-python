@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .availability_sets_operations import AvailabilitySetsOperations
 from .virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
@@ -25,6 +26,7 @@ from .log_analytics_operations import LogAnalyticsOperations
 from .virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 
 __all__ = [
+    'Operations',
     'AvailabilitySetsOperations',
     'VirtualMachineExtensionImagesOperations',
     'VirtualMachineExtensionsOperations',

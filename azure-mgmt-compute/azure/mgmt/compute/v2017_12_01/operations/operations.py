@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ResourceSkusOperations(object):
-    """ResourceSkusOperations operations.
+class Operations(object):
+    """Operations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-03-30".
+    :ivar api_version: Client Api Version. Constant value: "2017-12-01".
     """
 
     models = models
@@ -33,23 +33,22 @@ class ResourceSkusOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-30"
+        self.api_version = "2017-12-01"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of Microsoft.Compute SKUs available for your
-        Subscription.
+        """Gets a list of compute operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceSku
+        :return: An iterator like instance of ComputeOperationValue
         :rtype:
-         ~azure.mgmt.compute.v2017_03_30.models.ResourceSkuPaged[~azure.mgmt.compute.v2017_03_30.models.ResourceSku]
+         ~azure.mgmt.compute.v2017_12_01.models.ComputeOperationValuePaged[~azure.mgmt.compute.v2017_12_01.models.ComputeOperationValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -57,10 +56,6 @@ class ResourceSkusOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -93,12 +88,12 @@ class ResourceSkusOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ResourceSkuPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ComputeOperationValuePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ResourceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ComputeOperationValuePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/skus'}
+    list.metadata = {'url': '/providers/Microsoft.Compute/operations'}
