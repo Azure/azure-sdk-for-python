@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityResponse(Model):
-    """CheckNameAvailabilityResponse.
+    """Response containing the status of namespace availability.
 
     :param name_available: Checks if the namespace name is available
     :type name_available: bool
@@ -32,6 +32,7 @@ class CheckNameAvailabilityResponse(Model):
     }
 
     def __init__(self, name_available=None, reason=None, message=None):
+        super(CheckNameAvailabilityResponse, self).__init__()
         self.name_available = name_available
         self.reason = reason
         self.message = message

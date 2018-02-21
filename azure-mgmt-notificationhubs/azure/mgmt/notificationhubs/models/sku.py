@@ -17,8 +17,7 @@ class Sku(Model):
 
     :param name: Name of the notification hub sku. Possible values include:
      'Free', 'Basic', 'Standard'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.notificationhubs.models.SkuName>`
+    :type name: str or ~azure.mgmt.notificationhubs.models.SkuName
     :param tier: The tier of particular sku
     :type tier: str
     :param size: The Sku size
@@ -42,6 +41,7 @@ class Sku(Model):
     }
 
     def __init__(self, name, tier=None, size=None, family=None, capacity=None):
+        super(Sku, self).__init__()
         self.name = name
         self.tier = tier
         self.size = size

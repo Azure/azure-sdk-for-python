@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 
 from .. import models
 
@@ -23,41 +24,45 @@ class NamespacesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-04-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2017-11-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-01"
+        self.api_version = "2017-11-01"
 
         self.config = config
 
     def check_availability(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """Checks the availability of the given service namespace across all Azure
         subscriptions. This is useful because the domain name is created based
         on the service namespace name.
 
-        :param parameters: The namespace name.
-        :type parameters: :class:`CheckAvailabilityParameters
-         <azure.mgmt.notificationhubs.models.CheckAvailabilityParameters>`
+        :param name: Resource name
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CheckAvailabilityResult
-         <azure.mgmt.notificationhubs.models.CheckAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CheckNameAvailabilityResponse or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.CheckNameAvailabilityResponse or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.CheckNameAvailabilityRequestParameters(name=name)
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.NotificationHubs/checkNamespaceAvailability'
+        url = self.check_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -78,12 +83,12 @@ class NamespacesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CheckAvailabilityParameters')
+        body_content = self._serialize.body(parameters, 'CheckNameAvailabilityRequestParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -93,13 +98,14 @@ class NamespacesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CheckAvailabilityResult', response)
+            deserialized = self._deserialize('CheckNameAvailabilityResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    check_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.NotificationHubs/checkNameAvailability'}
 
     def create_or_update(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -111,21 +117,20 @@ class NamespacesOperations(object):
         :param namespace_name: The namespace name.
         :type namespace_name: str
         :param parameters: Parameters supplied to create a Namespace Resource.
-        :type parameters: :class:`NamespaceCreateOrUpdateParameters
-         <azure.mgmt.notificationhubs.models.NamespaceCreateOrUpdateParameters>`
+        :type parameters:
+         ~azure.mgmt.notificationhubs.models.NamespaceResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NamespaceResource
-         <azure.mgmt.notificationhubs.models.NamespaceResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NamespaceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.NamespaceResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -148,23 +153,23 @@ class NamespacesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'NamespaceCreateOrUpdateParameters')
+        body_content = self._serialize.body(parameters, 'NamespaceResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [201, 200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 201:
-            deserialized = self._deserialize('NamespaceResource', response)
         if response.status_code == 200:
+            deserialized = self._deserialize('NamespaceResource', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('NamespaceResource', response)
 
         if raw:
@@ -172,8 +177,9 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'}
 
-    def patch(
+    def update(
             self, resource_group_name, namespace_name, tags=None, sku=None, custom_headers=None, raw=False, **operation_config):
         """Patches the existing namespace.
 
@@ -182,24 +188,23 @@ class NamespacesOperations(object):
         :param namespace_name: The namespace name.
         :type namespace_name: str
         :param tags: Resource tags
-        :type tags: dict
+        :type tags: dict[str, str]
         :param sku: The sku of the created namespace
-        :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+        :type sku: ~azure.mgmt.notificationhubs.models.Sku
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NamespaceResource
-         <azure.mgmt.notificationhubs.models.NamespaceResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NamespaceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.NamespaceResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.NamespacePatchParameters(tags=tags, sku=sku)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -227,7 +232,7 @@ class NamespacesOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -244,246 +249,16 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'}
 
-    def delete(
+
+    def _delete_initial(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an existing namespace. This operation also removes all
-        associated notificationHubs under the namespace.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        def long_running_send():
-
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [204, 200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-
-    def get(
-            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the description for the specified namespace.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NamespaceResource
-         <azure.mgmt.notificationhubs.models.NamespaceResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('NamespaceResource', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates an authorization rule for a namespace.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :param authorization_rule_name: Aauthorization Rule Name.
-        :type authorization_rule_name: str
-        :param parameters: The shared access authorization rule.
-        :type parameters:
-         :class:`SharedAccessAuthorizationRuleCreateOrUpdateParameters
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'SharedAccessAuthorizationRuleCreateOrUpdateParameters')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def delete_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a namespace authorization rule.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :param authorization_rule_name: Authorization Rule Name.
-        :type authorization_rule_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -504,9 +279,9 @@ class NamespacesOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -515,33 +290,90 @@ class NamespacesOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def get_authorization_rule(
-            self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an authorization rule for a namespace by name.
+    def delete(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an existing namespace. This operation also removes all
+        associated notificationHubs under the namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
+        :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param authorization_rule_name: Authorization rule name.
-        :type authorization_rule_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202, 204]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'}
+
+    def get(
+            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
+        """Returns the description for the specified namespace.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NamespaceResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.NamespaceResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -562,7 +394,7 @@ class NamespacesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -572,15 +404,16 @@ class NamespacesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
+            deserialized = self._deserialize('NamespaceResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}'}
 
-    def list(
+    def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists the available namespaces within a resourceGroup.
 
@@ -593,15 +426,16 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NamespaceResourcePaged
-         <azure.mgmt.notificationhubs.models.NamespaceResourcePaged>`
+        :return: An iterator like instance of NamespaceResource
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.NamespaceResourcePaged[~azure.mgmt.notificationhubs.models.NamespaceResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -629,7 +463,7 @@ class NamespacesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -647,8 +481,9 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces'}
 
-    def list_all(
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
         """Lists all the available namespaces within the subscription irrespective
         of the resourceGroups.
@@ -658,15 +493,16 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NamespaceResourcePaged
-         <azure.mgmt.notificationhubs.models.NamespaceResourcePaged>`
+        :return: An iterator like instance of NamespaceResource
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.NamespaceResourcePaged[~azure.mgmt.notificationhubs.models.NamespaceResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.NotificationHubs/namespaces'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -693,7 +529,7 @@ class NamespacesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -711,75 +547,7 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def list_authorization_rules(
-            self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the authorization rules for a namespace.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name
-        :type namespace_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.NotificationHubs/namespaces'}
 
     def list_keys(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -797,14 +565,13 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceListKeys
-         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceListKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.ResourceListKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}/listKeys'
+        url = self.list_keys.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -829,7 +596,7 @@ class NamespacesOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -846,6 +613,7 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}/listKeys'}
 
     def regenerate_keys(
             self, resource_group_name, namespace_name, authorization_rule_name, policy_key=None, custom_headers=None, raw=False, **operation_config):
@@ -868,16 +636,15 @@ class NamespacesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceListKeys
-         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceListKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.ResourceListKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.PolicykeyResource(policy_key=policy_key)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}/regenerateKeys'
+        url = self.regenerate_keys.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -906,7 +673,7 @@ class NamespacesOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -923,3 +690,4 @@ class NamespacesOperations(object):
             return client_raw_response
 
         return deserialized
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}/regenerateKeys'}

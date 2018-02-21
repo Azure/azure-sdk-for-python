@@ -14,9 +14,9 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.namespaces_operations import NamespacesOperations
-from .operations.name_operations import NameOperations
+from .operations.authorization_rules_operations import AuthorizationRulesOperations
 from .operations.notification_hubs_operations import NotificationHubsOperations
-from .operations.hubs_operations import HubsOperations
+from .operations.hub_authorization_rules_operations import HubAuthorizationRulesOperations
 from . import models
 
 
@@ -42,14 +42,12 @@ class NotificationHubsManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(NotificationHubsManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('notificationhubsmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-notificationhubs/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -64,12 +62,12 @@ class NotificationHubsManagementClient(object):
 
     :ivar namespaces: Namespaces operations
     :vartype namespaces: azure.mgmt.notificationhubs.operations.NamespacesOperations
-    :ivar name: Name operations
-    :vartype name: azure.mgmt.notificationhubs.operations.NameOperations
+    :ivar authorization_rules: AuthorizationRules operations
+    :vartype authorization_rules: azure.mgmt.notificationhubs.operations.AuthorizationRulesOperations
     :ivar notification_hubs: NotificationHubs operations
     :vartype notification_hubs: azure.mgmt.notificationhubs.operations.NotificationHubsOperations
-    :ivar hubs: Hubs operations
-    :vartype hubs: azure.mgmt.notificationhubs.operations.HubsOperations
+    :ivar hub_authorization_rules: HubAuthorizationRules operations
+    :vartype hub_authorization_rules: azure.mgmt.notificationhubs.operations.HubAuthorizationRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -88,15 +86,15 @@ class NotificationHubsManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-01'
+        self.api_version = '2017-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.namespaces = NamespacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.name = NameOperations(
+        self.authorization_rules = AuthorizationRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.notification_hubs = NotificationHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.hubs = HubsOperations(
+        self.hub_authorization_rules = HubAuthorizationRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)

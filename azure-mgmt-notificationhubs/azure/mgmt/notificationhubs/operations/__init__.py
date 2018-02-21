@@ -10,13 +10,13 @@
 # --------------------------------------------------------------------------
 
 from .namespaces_operations import NamespacesOperations
-from .name_operations import NameOperations
+from .authorization_rules_operations import AuthorizationRulesOperations
 from .notification_hubs_operations import NotificationHubsOperations
-from .hubs_operations import HubsOperations
+from .hub_authorization_rules_operations import HubAuthorizationRulesOperations
 
 __all__ = [
     'NamespacesOperations',
-    'NameOperations',
+    'AuthorizationRulesOperations',
     'NotificationHubsOperations',
-    'HubsOperations',
+    'HubAuthorizationRulesOperations',
 ]

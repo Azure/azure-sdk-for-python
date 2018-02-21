@@ -36,5 +36,6 @@ class CheckNameAvailabilityRequestParameters(Model):
     }
 
     def __init__(self, name):
+        super(CheckNameAvailabilityRequestParameters, self).__init__()
         self.name = name
         self.type = None
