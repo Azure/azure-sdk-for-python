@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.authorization
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtAuthorizationTest(AzureMgmtTestCase):
 
@@ -19,13 +17,11 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         self.authorization_client = self.create_mgmt_client(
             azure.mgmt.authorization.AuthorizationManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_authorization(self):
+    @ResourceGroupPreparer()
+    def test_authorization(self, resource_group, location):
         permissions = self.authorization_client.permissions.list_for_resource_group(
-            self.group_name
+            resource_group.name
         )
         
         permissions = list(permissions)
