@@ -28,4 +28,5 @@ class AuthorizationRuleProperties(Model):
     }
 
     def __init__(self, rights):
+        super(AuthorizationRuleProperties, self).__init__()
         self.rights = rights

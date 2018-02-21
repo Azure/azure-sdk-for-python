@@ -49,6 +49,7 @@ class CaptureDescription(Model):
     }
 
     def __init__(self, enabled=None, encoding=None, interval_in_seconds=None, size_limit_in_bytes=None, destination=None):
+        super(CaptureDescription, self).__init__()
         self.enabled = enabled
         self.encoding = encoding
         self.interval_in_seconds = interval_in_seconds

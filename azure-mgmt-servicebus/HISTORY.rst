@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.4.1 (XXXXXXXXXX)
+++++++++++++++++++
+
+- Add dead_lettering_on_filter_evaluation_exceptions
+
 0.4.0 (2017-12-12)
 ++++++++++++++++++
 
