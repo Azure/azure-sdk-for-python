@@ -55,6 +55,13 @@ class ActionGroupResource(Resource):
      receivers that are part of this action group.
     :type automation_runbook_receivers:
      list[~azure.mgmt.monitor.models.AutomationRunbookReceiver]
+    :param voice_receivers: The list of voice receivers that are part of this
+     action group.
+    :type voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiver]
+    :param logic_app_receivers: The list of logic app receivers that are part
+     of this action group.
+    :type logic_app_receivers:
+     list[~azure.mgmt.monitor.models.LogicAppReceiver]
     """
 
     _validation = {
@@ -80,9 +87,11 @@ class ActionGroupResource(Resource):
         'itsm_receivers': {'key': 'properties.itsmReceivers', 'type': '[ItsmReceiver]'},
         'azure_app_push_receivers': {'key': 'properties.azureAppPushReceivers', 'type': '[AzureAppPushReceiver]'},
         'automation_runbook_receivers': {'key': 'properties.automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
+        'voice_receivers': {'key': 'properties.voiceReceivers', 'type': '[VoiceReceiver]'},
+        'logic_app_receivers': {'key': 'properties.logicAppReceivers', 'type': '[LogicAppReceiver]'},
     }
 
-    def __init__(self, location, group_short_name, tags=None, enabled=True, email_receivers=None, sms_receivers=None, webhook_receivers=None, itsm_receivers=None, azure_app_push_receivers=None, automation_runbook_receivers=None):
+    def __init__(self, location, group_short_name, tags=None, enabled=True, email_receivers=None, sms_receivers=None, webhook_receivers=None, itsm_receivers=None, azure_app_push_receivers=None, automation_runbook_receivers=None, voice_receivers=None, logic_app_receivers=None):
         super(ActionGroupResource, self).__init__(location=location, tags=tags)
         self.group_short_name = group_short_name
         self.enabled = enabled
@@ -92,3 +101,5 @@ class ActionGroupResource(Resource):
         self.itsm_receivers = itsm_receivers
         self.azure_app_push_receivers = azure_app_push_receivers
         self.automation_runbook_receivers = automation_runbook_receivers
+        self.voice_receivers = voice_receivers
+        self.logic_app_receivers = logic_app_receivers

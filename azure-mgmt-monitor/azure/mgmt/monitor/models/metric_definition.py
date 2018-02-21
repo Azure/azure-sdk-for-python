@@ -21,8 +21,6 @@ class MetricDefinition(Model):
     :param resource_id: the resource identifier of the resource that emitted
      the metric.
     :type resource_id: str
-    :param namespace: the namespace the metric blongs to.
-    :type namespace: str
     :param name: the name and the display name of the metric, i.e. it is a
      localizable string.
     :type name: ~azure.mgmt.monitor.models.LocalizableString
@@ -35,10 +33,6 @@ class MetricDefinition(Model):
      'None', 'Average', 'Count', 'Minimum', 'Maximum', 'Total'
     :type primary_aggregation_type: str or
      ~azure.mgmt.monitor.models.AggregationType
-    :param supported_aggregation_types: the collection of what aggregation
-     types are supported.
-    :type supported_aggregation_types: list[str or
-     ~azure.mgmt.monitor.models.AggregationType]
     :param metric_availabilities: the collection of what aggregation intervals
      are available to be queried.
     :type metric_availabilities:
@@ -53,25 +47,21 @@ class MetricDefinition(Model):
     _attribute_map = {
         'is_dimension_required': {'key': 'isDimensionRequired', 'type': 'bool'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
         'unit': {'key': 'unit', 'type': 'Unit'},
         'primary_aggregation_type': {'key': 'primaryAggregationType', 'type': 'AggregationType'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[AggregationType]'},
         'metric_availabilities': {'key': 'metricAvailabilities', 'type': '[MetricAvailability]'},
         'id': {'key': 'id', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[LocalizableString]'},
     }
 
-    def __init__(self, is_dimension_required=None, resource_id=None, namespace=None, name=None, unit=None, primary_aggregation_type=None, supported_aggregation_types=None, metric_availabilities=None, id=None, dimensions=None):
+    def __init__(self, is_dimension_required=None, resource_id=None, name=None, unit=None, primary_aggregation_type=None, metric_availabilities=None, id=None, dimensions=None):
         super(MetricDefinition, self).__init__()
         self.is_dimension_required = is_dimension_required
         self.resource_id = resource_id
-        self.namespace = namespace
         self.name = name
         self.unit = unit
         self.primary_aggregation_type = primary_aggregation_type
-        self.supported_aggregation_types = supported_aggregation_types
         self.metric_availabilities = metric_availabilities
         self.id = id
         self.dimensions = dimensions
