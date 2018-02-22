@@ -24,7 +24,7 @@ class ServicesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
     """
 
@@ -47,7 +47,7 @@ class ServicesOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -180,6 +180,7 @@ class ServicesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'}
 
     def update(
             self, resource_group_name, search_service_name, service, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -213,7 +214,7 @@ class ServicesOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -260,6 +261,7 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'}
 
     def get(
             self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -292,7 +294,7 @@ class ServicesOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -335,6 +337,7 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'}
 
     def delete(
             self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -366,7 +369,7 @@ class ServicesOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -402,6 +405,7 @@ class ServicesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}'}
 
     def list_by_resource_group(
             self, resource_group_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -433,7 +437,7 @@ class ServicesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -481,6 +485,7 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices'}
 
     def check_name_availability(
             self, name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -513,7 +518,7 @@ class ServicesOperations(object):
         check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Search/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -558,3 +563,4 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Search/checkNameAvailability'}

@@ -22,7 +22,7 @@ class QueryKeysOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
     """
 
@@ -70,7 +70,7 @@ class QueryKeysOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/createQueryKey/{name}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -114,6 +114,7 @@ class QueryKeysOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/createQueryKey/{name}'}
 
     def list_by_search_service(
             self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -148,7 +149,7 @@ class QueryKeysOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/listQueryKeys'
+                url = self.list_by_search_service.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -197,6 +198,7 @@ class QueryKeysOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_search_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/listQueryKeys'}
 
     def delete(
             self, resource_group_name, search_service_name, key, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
@@ -232,7 +234,7 @@ class QueryKeysOperations(object):
             client_request_id = search_management_request_options.client_request_id
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/deleteQueryKey/{key}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
@@ -269,3 +271,4 @@ class QueryKeysOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/deleteQueryKey/{key}'}
