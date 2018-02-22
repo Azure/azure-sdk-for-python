@@ -38,6 +38,7 @@ class TrafficFlow(Model):
     }
 
     def __init__(self, source_ip=None, latitude=None, longitude=None, query_experiences=None):
+        super(TrafficFlow, self).__init__()
         self.source_ip = source_ip
         self.latitude = latitude
         self.longitude = longitude

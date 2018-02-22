@@ -37,6 +37,7 @@ class QueryExperience(Model):
     }
 
     def __init__(self, endpoint_id, query_count, latency=None):
+        super(QueryExperience, self).__init__()
         self.endpoint_id = endpoint_id
         self.query_count = query_count
         self.latency = latency

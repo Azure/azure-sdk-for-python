@@ -32,6 +32,7 @@ class Region(Model):
     }
 
     def __init__(self, code=None, name=None, regions=None):
+        super(Region, self).__init__()
         self.code = code
         self.name = name
         self.regions = regions

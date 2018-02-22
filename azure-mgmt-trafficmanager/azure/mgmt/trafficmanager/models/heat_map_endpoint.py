@@ -28,5 +28,6 @@ class HeatMapEndpoint(Model):
     }
 
     def __init__(self, resource_id=None, endpoint_id=None):
+        super(HeatMapEndpoint, self).__init__()
         self.resource_id = resource_id
         self.endpoint_id = endpoint_id

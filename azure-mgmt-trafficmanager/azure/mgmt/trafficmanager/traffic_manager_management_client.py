@@ -48,7 +48,7 @@ class TrafficManagerManagementClientConfiguration(AzureConfiguration):
 
         super(TrafficManagerManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('trafficmanagermanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-trafficmanager/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

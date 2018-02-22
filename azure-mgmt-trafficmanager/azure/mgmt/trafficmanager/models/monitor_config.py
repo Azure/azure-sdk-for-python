@@ -53,6 +53,7 @@ class MonitorConfig(Model):
     }
 
     def __init__(self, profile_monitor_status=None, protocol=None, port=None, path=None, interval_in_seconds=None, timeout_in_seconds=None, tolerated_number_of_failures=None):
+        super(MonitorConfig, self).__init__()
         self.profile_monitor_status = profile_monitor_status
         self.protocol = protocol
         self.port = port
