@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class RegionsOperations(object):
+    """RegionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,18 +36,20 @@ class Operations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Event Hub REST API operations.
+    def list_by_sku(
+            self, sku, custom_headers=None, raw=False, **operation_config):
+        """Gets the available Regions for a given sku.
 
+        :param sku: The sku type.
+        :type sku: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of MessagingRegions
         :rtype:
-         ~azure.mgmt.eventhub.models.OperationPaged[~azure.mgmt.eventhub.models.Operation]
+         ~azure.mgmt.eventhub.models.MessagingRegionsPaged[~azure.mgmt.eventhub.models.MessagingRegions]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.models.ErrorResponseException>`
         """
@@ -55,7 +57,12 @@ class Operations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_sku.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'sku': self._serialize.url("sku", sku, 'str', max_length=50, min_length=1)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -86,12 +93,12 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MessagingRegionsPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MessagingRegionsPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.EventHub/operations'}
+    list_by_sku.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/sku/{sku}/regions'}
