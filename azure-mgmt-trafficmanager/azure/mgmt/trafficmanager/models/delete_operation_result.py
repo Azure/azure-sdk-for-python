@@ -31,4 +31,5 @@ class DeleteOperationResult(Model):
     }
 
     def __init__(self):
+        super(DeleteOperationResult, self).__init__()
         self.operation_result = None

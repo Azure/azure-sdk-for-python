@@ -18,12 +18,11 @@ class MonitorConfig(Model):
     :param profile_monitor_status: The profile-level monitoring status of the
      Traffic Manager profile. Possible values include: 'CheckingEndpoints',
      'Online', 'Degraded', 'Disabled', 'Inactive'
-    :type profile_monitor_status: str or :class:`ProfileMonitorStatus
-     <azure.mgmt.trafficmanager.models.ProfileMonitorStatus>`
+    :type profile_monitor_status: str or
+     ~azure.mgmt.trafficmanager.models.ProfileMonitorStatus
     :param protocol: The protocol (HTTP, HTTPS or TCP) used to probe for
      endpoint health. Possible values include: 'HTTP', 'HTTPS', 'TCP'
-    :type protocol: str or :class:`MonitorProtocol
-     <azure.mgmt.trafficmanager.models.MonitorProtocol>`
+    :type protocol: str or ~azure.mgmt.trafficmanager.models.MonitorProtocol
     :param port: The TCP port used to probe for endpoint health.
     :type port: long
     :param path: The path relative to the endpoint domain name used to probe
@@ -54,6 +53,7 @@ class MonitorConfig(Model):
     }
 
     def __init__(self, profile_monitor_status=None, protocol=None, port=None, path=None, interval_in_seconds=None, timeout_in_seconds=None, tolerated_number_of_failures=None):
+        super(MonitorConfig, self).__init__()
         self.profile_monitor_status = profile_monitor_status
         self.protocol = protocol
         self.port = port

@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+class HeatMapModel(ProxyResource):
+    """Class representing a Traffic Manager HeatMap.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,10 +26,17 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives
-    :type location: str
+    :param start_time: The beginning of the time window for this HeatMap,
+     inclusive.
+    :type start_time: datetime
+    :param end_time: The ending of the time window for this HeatMap,
+     exclusive.
+    :type end_time: datetime
+    :param endpoints: The endpoints used in this HeatMap calculation.
+    :type endpoints: list[~azure.mgmt.trafficmanager.models.HeatMapEndpoint]
+    :param traffic_flows: The traffic flows produced in this HeatMap
+     calculation.
+    :type traffic_flows: list[~azure.mgmt.trafficmanager.models.TrafficFlow]
     """
 
     _validation = {
@@ -42,11 +49,15 @@ class TrackedResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
+        'endpoints': {'key': 'properties.endpoints', 'type': '[HeatMapEndpoint]'},
+        'traffic_flows': {'key': 'properties.trafficFlows', 'type': '[TrafficFlow]'},
     }
 
-    def __init__(self, tags=None, location=None):
-        super(TrackedResource, self).__init__()
-        self.tags = tags
-        self.location = location
+    def __init__(self, start_time=None, end_time=None, endpoints=None, traffic_flows=None):
+        super(HeatMapModel, self).__init__()
+        self.start_time = start_time
+        self.end_time = end_time
+        self.endpoints = endpoints
+        self.traffic_flows = traffic_flows
