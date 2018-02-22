@@ -9,9 +9,7 @@ import unittest
 
 import azure.mgmt.commerce
 from datetime import date, timedelta
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase
 
 class MgmtCommerceTest(AzureMgmtTestCase):
 
@@ -21,7 +19,6 @@ class MgmtCommerceTest(AzureMgmtTestCase):
             azure.mgmt.commerce.UsageManagementClient
         )
 
-    @record
     def test_commerce(self):
         # Test not recorded for privacy concerns
         #output = self.commerce_client.usage_aggregates.list(
