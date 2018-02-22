@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+class TrafficManagerUserMetricsKeyModel(ProxyResource):
+    """Class representing a Traffic Manager Real User Metrics key response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,10 +26,8 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Network/trafficmanagerProfiles.
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: The Azure Region where the resource lives
-    :type location: str
+    :param key: The key returned by the Real User Metrics operation.
+    :type key: str
     """
 
     _validation = {
@@ -42,11 +40,9 @@ class TrackedResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, location=None):
-        super(TrackedResource, self).__init__()
-        self.tags = tags
-        self.location = location
+    def __init__(self, key=None):
+        super(TrafficManagerUserMetricsKeyModel, self).__init__()
+        self.key = key
