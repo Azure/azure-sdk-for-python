@@ -34,6 +34,7 @@ class ComputeDataDiskFragment(Model):
     }
 
     def __init__(self, name=None, disk_uri=None, managed_disk_id=None, disk_size_gi_b=None):
+        super(ComputeDataDiskFragment, self).__init__()
         self.name = name
         self.disk_uri = disk_uri
         self.managed_disk_id = managed_disk_id

@@ -413,6 +413,12 @@ class IntegrationRuntimeLicenseType(Enum):
     license_included = "LicenseIncluded"
 
 
+class IntegrationRuntimeEdition(Enum):
+
+    standard = "Standard"
+    enterprise = "Enterprise"
+
+
 class IntegrationRuntimeAuthKeyName(Enum):
 
     auth_key1 = "authKey1"

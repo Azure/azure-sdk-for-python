@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Profile(Resource):
+class Profile(TrackedResource):
     """CDN profile is a logical grouping of endpoints that share the same
     settings, such as CDN provider and pricing tier.
 

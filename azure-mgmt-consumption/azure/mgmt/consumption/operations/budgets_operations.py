@@ -21,7 +21,7 @@ class BudgetsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-31. Constant value: "2018-01-31".
     """
 
@@ -55,7 +55,7 @@ class BudgetsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -98,6 +98,7 @@ class BudgetsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets'}
 
     def list_by_resource_group_name(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -120,7 +121,7 @@ class BudgetsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets'
+                url = self.list_by_resource_group_name.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -164,6 +165,7 @@ class BudgetsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets'}
 
     def get(
             self, budget_name, custom_headers=None, raw=False, **operation_config):
@@ -183,7 +185,7 @@ class BudgetsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'budgetName': self._serialize.url("budget_name", budget_name, 'str')
@@ -221,6 +223,7 @@ class BudgetsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'}
 
     def create_or_update(
             self, budget_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -245,7 +248,7 @@ class BudgetsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'budgetName': self._serialize.url("budget_name", budget_name, 'str')
@@ -289,6 +292,7 @@ class BudgetsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'}
 
     def delete(
             self, budget_name, custom_headers=None, raw=False, **operation_config):
@@ -307,7 +311,7 @@ class BudgetsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'budgetName': self._serialize.url("budget_name", budget_name, 'str')
@@ -338,6 +342,7 @@ class BudgetsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/budgets/{budgetName}'}
 
     def get_by_resource_group_name(
             self, resource_group_name, budget_name, custom_headers=None, raw=False, **operation_config):
@@ -360,7 +365,7 @@ class BudgetsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        url = self.get_by_resource_group_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -399,6 +404,7 @@ class BudgetsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_resource_group_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'}
 
     def create_or_update_by_resource_group_name(
             self, resource_group_name, budget_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -425,7 +431,7 @@ class BudgetsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        url = self.create_or_update_by_resource_group_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -470,6 +476,7 @@ class BudgetsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_by_resource_group_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'}
 
     def delete_by_resource_group_name(
             self, resource_group_name, budget_name, custom_headers=None, raw=False, **operation_config):
@@ -490,7 +497,7 @@ class BudgetsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'
+        url = self.delete_by_resource_group_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -522,3 +529,4 @@ class BudgetsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_by_resource_group_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Consumption/budgets/{budgetName}'}

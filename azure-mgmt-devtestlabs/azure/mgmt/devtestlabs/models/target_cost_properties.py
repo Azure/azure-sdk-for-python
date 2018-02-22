@@ -42,6 +42,7 @@ class TargetCostProperties(Model):
     }
 
     def __init__(self, status=None, target=None, cost_thresholds=None, cycle_start_date_time=None, cycle_end_date_time=None, cycle_type=None):
+        super(TargetCostProperties, self).__init__()
         self.status = status
         self.target = target
         self.cost_thresholds = cost_thresholds

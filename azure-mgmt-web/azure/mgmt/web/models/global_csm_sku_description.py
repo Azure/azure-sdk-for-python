@@ -43,6 +43,7 @@ class GlobalCsmSkuDescription(Model):
     }
 
     def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, locations=None, capabilities=None):
+        super(GlobalCsmSkuDescription, self).__init__()
         self.name = name
         self.tier = tier
         self.size = size

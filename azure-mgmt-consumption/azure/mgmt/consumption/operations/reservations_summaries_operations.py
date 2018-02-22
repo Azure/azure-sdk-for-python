@@ -21,7 +21,7 @@ class ReservationsSummariesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-31. Constant value: "2018-01-31".
     """
 
@@ -63,7 +63,7 @@ class ReservationsSummariesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/providers/Microsoft.Consumption/reservationSummaries'
+                url = self.list_by_reservation_order.metadata['url']
                 path_format_arguments = {
                     'reservationOrderId': self._serialize.url("reservation_order_id", reservation_order_id, 'str')
                 }
@@ -109,6 +109,7 @@ class ReservationsSummariesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_reservation_order.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/providers/Microsoft.Consumption/reservationSummaries'}
 
     def list_by_reservation_order_and_reservation(
             self, reservation_order_id, reservation_id, grain, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -139,7 +140,7 @@ class ReservationsSummariesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationSummaries'
+                url = self.list_by_reservation_order_and_reservation.metadata['url']
                 path_format_arguments = {
                     'reservationOrderId': self._serialize.url("reservation_order_id", reservation_order_id, 'str'),
                     'reservationId': self._serialize.url("reservation_id", reservation_id, 'str')
@@ -186,3 +187,4 @@ class ReservationsSummariesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_reservation_order_and_reservation.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/reservations/{reservationId}/providers/Microsoft.Consumption/reservationSummaries'}

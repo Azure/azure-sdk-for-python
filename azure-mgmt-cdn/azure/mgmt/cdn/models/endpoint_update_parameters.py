@@ -17,8 +17,11 @@ class EndpointUpdateParameters(Model):
 
     :param tags: Endpoint tags.
     :type tags: dict[str, str]
-    :param origin_host_header: The host header CDN sends along with content
-     requests to origin. The default value is the host name of the origin.
+    :param origin_host_header: The host header value sent to the origin with
+     each request. If you leave this blank, the request hostname determines
+     this value. Azure CDN origins, such as Web Apps, Blob Storage, and Cloud
+     Services require this host header value to match the origin hostname by
+     default.
     :type origin_host_header: str
     :param origin_path: A directory path on the origin that CDN can use to
      retreive content from, e.g. contoso.cloudapp.net/originpath.
@@ -79,6 +82,7 @@ class EndpointUpdateParameters(Model):
     }
 
     def __init__(self, tags=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, optimization_type=None, probe_path=None, geo_filters=None):
+        super(EndpointUpdateParameters, self).__init__()
         self.tags = tags
         self.origin_host_header = origin_host_header
         self.origin_path = origin_path

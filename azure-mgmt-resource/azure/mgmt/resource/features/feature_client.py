@@ -28,7 +28,6 @@ class FeatureClientConfiguration(AzureConfiguration):
     :param api_version: The API version to use for this operation.
     :type api_version: str
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
@@ -64,26 +63,33 @@ class FeatureClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: The API version to use for this operation.
-    :type api_version: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A dict using operation group name to API version.
+    :type profile: dict[str, str]
     """
 
+    DEFAULT_API_VERSION = '2015-12-01'
+    DEFAULT_PROFILE = None
+
     def __init__(
-            self, credentials, subscription_id, api_version='2015-12-01', base_url=None):
+            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
 
         self.config = FeatureClientConfiguration(credentials, subscription_id, api_version, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
-        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
         self.api_version = api_version
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
 
     @classmethod
-    def models(cls, api_version='2015-12-01'):
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
+
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
            * 2015-12-01: :mod:`v2015_12_01.models<azure.mgmt.resource.features.v2015_12_01.models>`
@@ -92,15 +98,16 @@ class FeatureClient(object):
             from .v2015_12_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
+    
     @property
     def features(self):
         """Instance depends on the API version:
 
            * 2015-12-01: :class:`FeaturesOperations<azure.mgmt.resource.features.v2015_12_01.operations.FeaturesOperations>`
         """
-        if self.api_version == '2015-12-01':
+        api_version = self.profile.get('features', self.api_version)
+        if api_version == '2015-12-01':
             from .v2015_12_01.operations import FeaturesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

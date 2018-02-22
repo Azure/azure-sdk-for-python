@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class UpdateTrustedIdProviderParameters(Model):
-    """Data Lake Store Trusted Identity Provider update parameters.
+    """The parameters used to update a trusted identity provider.
 
-    :param id_provider: The URL of this trusted identity provider
+    :param id_provider: The URL of this trusted identity provider.
     :type id_provider: str
     """
 
