@@ -15,6 +15,10 @@ from .operation import Operation
 from .resource import Resource
 from .tags_resource import TagsResource
 from .application_insights_component import ApplicationInsightsComponent
+from .component_purge_body_filters import ComponentPurgeBodyFilters
+from .component_purge_body import ComponentPurgeBody
+from .component_purge_response import ComponentPurgeResponse
+from .component_purge_status_response import ComponentPurgeStatusResponse
 from .web_test_geolocation import WebTestGeolocation
 from .web_test_properties_configuration import WebTestPropertiesConfiguration
 from .web_test import WebTest
@@ -55,6 +59,10 @@ __all__ = [
     'Resource',
     'TagsResource',
     'ApplicationInsightsComponent',
+    'ComponentPurgeBodyFilters',
+    'ComponentPurgeBody',
+    'ComponentPurgeResponse',
+    'ComponentPurgeStatusResponse',
     'WebTestGeolocation',
     'WebTestPropertiesConfiguration',
     'WebTest',
