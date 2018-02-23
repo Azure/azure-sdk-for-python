@@ -28,6 +28,12 @@ class RequestSource(Enum):
     rest = "rest"
 
 
+class PurgeState(Enum):
+
+    pending = "Pending"
+    completed = "Completed"
+
+
 class WebTestKind(Enum):
 
     ping = "ping"
