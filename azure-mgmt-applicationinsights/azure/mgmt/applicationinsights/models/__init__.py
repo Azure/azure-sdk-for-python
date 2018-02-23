@@ -49,6 +49,7 @@ from .application_insights_management_client_enums import (
     ApplicationType,
     FlowType,
     RequestSource,
+    PurgeState,
     WebTestKind,
 )
 
@@ -92,5 +93,6 @@ __all__ = [
     'ApplicationType',
     'FlowType',
     'RequestSource',
+    'PurgeState',
     'WebTestKind',
 ]

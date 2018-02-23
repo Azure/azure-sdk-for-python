@@ -16,7 +16,8 @@ class ComponentPurgeStatusResponse(Model):
     """Response containing status for a specific purge operation.
 
     :param status: Status of the operation represented by the requested Id.
-    :type status: str
+     Possible values include: 'Pending', 'Completed'
+    :type status: str or ~azure.mgmt.applicationinsights.models.PurgeState
     """
 
     _validation = {
