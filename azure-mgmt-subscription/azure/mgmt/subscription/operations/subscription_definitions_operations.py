@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -23,7 +24,7 @@ class SubscriptionDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. Current version is 2015-06-01. Constant value: "2017-11-01-preview".
     """
 
@@ -38,28 +39,11 @@ class SubscriptionDefinitionsOperations(object):
 
         self.config = config
 
-    def create(
-            self, subscription_definition_name, body, custom_headers=None, raw=False, **operation_config):
-        """Create an Azure subscription definition.
 
-        :param subscription_definition_name: The name of the Azure
-         subscription definition.
-        :type subscription_definition_name: str
-        :param body: The subscription definition creation.
-        :type body: ~azure.mgmt.subscription.models.SubscriptionDefinition
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         SubscriptionDefinition or ClientRawResponse if raw=true
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.subscription.models.SubscriptionDefinition]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
+    def _create_initial(
+            self, subscription_definition_name, body, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/providers/Microsoft.Subscription/subscriptionDefinitions/{subscriptionDefinitionName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionDefinitionName': self._serialize.url("subscription_definition_name", subscription_definition_name, 'str')
         }
@@ -83,34 +67,87 @@ class SubscriptionDefinitionsOperations(object):
         body_content = self._serialize.body(body, 'SubscriptionDefinition')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SubscriptionDefinition', response)
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            try:
+                client_raw_response.add_headers(header_dict)
+            except DeserializationError:
+                pass # Deserialization of Headers here can fail
+            return client_raw_response
+
+        return deserialized
+
+    def create(
+            self, subscription_definition_name, body, custom_headers=None, raw=False, **operation_config):
+        """Create an Azure subscription definition.
+
+        :param subscription_definition_name: The name of the Azure
+         subscription definition.
+        :type subscription_definition_name: str
+        :param body: The subscription definition creation.
+        :type body: ~azure.mgmt.subscription.models.SubscriptionDefinition
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         SubscriptionDefinition or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.subscription.models.SubscriptionDefinition]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
+        """
+        raw_result = self._create_initial(
+            subscription_definition_name=subscription_definition_name,
+            body=body,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
             if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
-            deserialized = None
-            header_dict = {}
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('SubscriptionDefinition', response)
-                header_dict = {
-                    'Location': 'str',
-                    'Retry-After': 'str',
-                }
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'str',
+            }
+            deserialized = self._deserialize('SubscriptionDefinition', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -119,16 +156,13 @@ class SubscriptionDefinitionsOperations(object):
 
             return deserialized
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/providers/Microsoft.Subscription/subscriptionDefinitions/{subscriptionDefinitionName}'}
 
     def get(
             self, subscription_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -149,7 +183,7 @@ class SubscriptionDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Subscription/subscriptionDefinitions/{subscriptionDefinitionName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionDefinitionName': self._serialize.url("subscription_definition_name", subscription_definition_name, 'str')
         }
@@ -171,7 +205,7 @@ class SubscriptionDefinitionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -186,6 +220,7 @@ class SubscriptionDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/providers/Microsoft.Subscription/subscriptionDefinitions/{subscriptionDefinitionName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -206,7 +241,7 @@ class SubscriptionDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Subscription/subscriptionDefinitions'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -229,7 +264,7 @@ class SubscriptionDefinitionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -245,6 +280,7 @@ class SubscriptionDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.Subscription/subscriptionDefinitions'}
 
     def get_operation_status(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
@@ -266,7 +302,7 @@ class SubscriptionDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Subscription/subscriptionOperations/{operationId}'
+        url = self.get_operation_status.metadata['url']
         path_format_arguments = {
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
@@ -288,7 +324,7 @@ class SubscriptionDefinitionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
@@ -311,3 +347,4 @@ class SubscriptionDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_operation_status.metadata = {'url': '/providers/Microsoft.Subscription/subscriptionOperations/{operationId}'}

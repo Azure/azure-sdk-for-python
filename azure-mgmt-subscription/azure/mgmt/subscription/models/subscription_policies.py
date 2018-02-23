@@ -44,6 +44,7 @@ class SubscriptionPolicies(Model):
     }
 
     def __init__(self):
+        super(SubscriptionPolicies, self).__init__()
         self.location_placement_id = None
         self.quota_id = None
         self.spending_limit = None
