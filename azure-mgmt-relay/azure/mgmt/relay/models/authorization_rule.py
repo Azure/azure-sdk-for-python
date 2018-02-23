@@ -32,7 +32,7 @@ class AuthorizationRule(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'rights': {'unique': True},
+        'rights': {'required': True, 'unique': True},
     }
 
     _attribute_map = {
@@ -42,6 +42,6 @@ class AuthorizationRule(Resource):
         'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, rights=None):
+    def __init__(self, rights):
         super(AuthorizationRule, self).__init__()
         self.rights = rights
