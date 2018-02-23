@@ -82,6 +82,9 @@ class PolicyState(Model):
      definition inside the policy set, if the policy assignment is for a policy
      set.
     :type policy_definition_reference_id: str
+    :param extended_properties: The collection of extended properties, e.g.
+     aggregates.
+    :type extended_properties: dict[str, object]
     """
 
     _attribute_map = {
@@ -112,9 +115,10 @@ class PolicyState(Model):
         'policy_set_definition_parameters': {'key': 'policySetDefinitionParameters', 'type': 'str'},
         'management_group_ids': {'key': 'managementGroupIds', 'type': 'str'},
         'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'extended_properties': {'key': 'extendedProperties', 'type': '{object}'},
     }
 
-    def __init__(self, odataid=None, odatacontext=None, timestamp=None, resource_id=None, policy_assignment_id=None, policy_definition_id=None, effective_parameters=None, is_compliant=None, subscription_id=None, resource_type=None, resource_location=None, resource_group=None, resource_tags=None, policy_assignment_name=None, policy_assignment_owner=None, policy_assignment_parameters=None, policy_assignment_scope=None, policy_definition_name=None, policy_definition_action=None, policy_definition_category=None, policy_set_definition_id=None, policy_set_definition_name=None, policy_set_definition_owner=None, policy_set_definition_category=None, policy_set_definition_parameters=None, management_group_ids=None, policy_definition_reference_id=None):
+    def __init__(self, odataid=None, odatacontext=None, timestamp=None, resource_id=None, policy_assignment_id=None, policy_definition_id=None, effective_parameters=None, is_compliant=None, subscription_id=None, resource_type=None, resource_location=None, resource_group=None, resource_tags=None, policy_assignment_name=None, policy_assignment_owner=None, policy_assignment_parameters=None, policy_assignment_scope=None, policy_definition_name=None, policy_definition_action=None, policy_definition_category=None, policy_set_definition_id=None, policy_set_definition_name=None, policy_set_definition_owner=None, policy_set_definition_category=None, policy_set_definition_parameters=None, management_group_ids=None, policy_definition_reference_id=None, extended_properties=None):
         super(PolicyState, self).__init__()
         self.odataid = odataid
         self.odatacontext = odatacontext
@@ -143,3 +147,4 @@ class PolicyState(Model):
         self.policy_set_definition_parameters = policy_set_definition_parameters
         self.management_group_ids = management_group_ids
         self.policy_definition_reference_id = policy_definition_reference_id
+        self.extended_properties = extended_properties

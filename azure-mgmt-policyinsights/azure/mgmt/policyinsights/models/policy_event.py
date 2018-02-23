@@ -87,6 +87,9 @@ class PolicyEvent(Model):
     :param principal_oid: Principal object ID for the user who initiated the
      resource operation that triggered the policy event.
     :type principal_oid: str
+    :param extended_properties: The collection of extended properties, e.g.
+     aggregates.
+    :type extended_properties: dict[str, object]
     """
 
     _attribute_map = {
@@ -119,9 +122,10 @@ class PolicyEvent(Model):
         'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'principal_oid': {'key': 'principalOid', 'type': 'str'},
+        'extended_properties': {'key': 'extendedProperties', 'type': '{object}'},
     }
 
-    def __init__(self, odataid=None, odatacontext=None, timestamp=None, resource_id=None, policy_assignment_id=None, policy_definition_id=None, effective_parameters=None, is_compliant=None, subscription_id=None, resource_type=None, resource_location=None, resource_group=None, resource_tags=None, policy_assignment_name=None, policy_assignment_owner=None, policy_assignment_parameters=None, policy_assignment_scope=None, policy_definition_name=None, policy_definition_action=None, policy_definition_category=None, policy_set_definition_id=None, policy_set_definition_name=None, policy_set_definition_owner=None, policy_set_definition_category=None, policy_set_definition_parameters=None, management_group_ids=None, policy_definition_reference_id=None, tenant_id=None, principal_oid=None):
+    def __init__(self, odataid=None, odatacontext=None, timestamp=None, resource_id=None, policy_assignment_id=None, policy_definition_id=None, effective_parameters=None, is_compliant=None, subscription_id=None, resource_type=None, resource_location=None, resource_group=None, resource_tags=None, policy_assignment_name=None, policy_assignment_owner=None, policy_assignment_parameters=None, policy_assignment_scope=None, policy_definition_name=None, policy_definition_action=None, policy_definition_category=None, policy_set_definition_id=None, policy_set_definition_name=None, policy_set_definition_owner=None, policy_set_definition_category=None, policy_set_definition_parameters=None, management_group_ids=None, policy_definition_reference_id=None, tenant_id=None, principal_oid=None, extended_properties=None):
         super(PolicyEvent, self).__init__()
         self.odataid = odataid
         self.odatacontext = odatacontext
@@ -152,3 +156,4 @@ class PolicyEvent(Model):
         self.policy_definition_reference_id = policy_definition_reference_id
         self.tenant_id = tenant_id
         self.principal_oid = principal_oid
+        self.extended_properties = extended_properties

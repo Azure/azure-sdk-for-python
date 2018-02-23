@@ -15,14 +15,23 @@ from msrest.serialization import Model
 class Operations(Model):
     """List of available operations.
 
+    :param odatacount: OData entity count; represents the number of operations
+     returned.
+    :type odatacount: int
     :param value: List of available operations.
     :type value: list[~azure.mgmt.policyinsights.models.Operation]
     """
 
+    _validation = {
+        'odatacount': {'minimum': 1},
+    }
+
     _attribute_map = {
+        'odatacount': {'key': '@odata\\.count', 'type': 'int'},
         'value': {'key': 'value', 'type': '[Operation]'},
     }
 
-    def __init__(self, value=None):
+    def __init__(self, odatacount=None, value=None):
         super(Operations, self).__init__()
+        self.odatacount = odatacount
         self.value = value
