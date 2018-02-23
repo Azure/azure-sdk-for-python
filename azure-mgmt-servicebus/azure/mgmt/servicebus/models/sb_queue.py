@@ -72,6 +72,9 @@ class SBQueue(Resource):
      'Restoring', 'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting',
      'Renaming', 'Unknown'
     :type status: str or ~azure.mgmt.servicebus.models.EntityStatus
+    :param enable_batched_operations: Value that indicates whether server-side
+     batched operations are enabled.
+    :type enable_batched_operations: bool
     :param auto_delete_on_idle: ISO 8061 timeSpan idle interval after which
      the queue is automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: timedelta
@@ -120,6 +123,7 @@ class SBQueue(Resource):
         'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'duration'},
         'max_delivery_count': {'key': 'properties.maxDeliveryCount', 'type': 'int'},
         'status': {'key': 'properties.status', 'type': 'EntityStatus'},
+        'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'duration'},
         'enable_partitioning': {'key': 'properties.enablePartitioning', 'type': 'bool'},
         'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
@@ -127,7 +131,7 @@ class SBQueue(Resource):
         'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
     }
 
-    def __init__(self, lock_duration=None, max_size_in_megabytes=None, requires_duplicate_detection=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, auto_delete_on_idle=None, enable_partitioning=None, enable_express=None, forward_to=None, forward_dead_lettered_messages_to=None):
+    def __init__(self, lock_duration=None, max_size_in_megabytes=None, requires_duplicate_detection=None, requires_session=None, default_message_time_to_live=None, dead_lettering_on_message_expiration=None, duplicate_detection_history_time_window=None, max_delivery_count=None, status=None, enable_batched_operations=None, auto_delete_on_idle=None, enable_partitioning=None, enable_express=None, forward_to=None, forward_dead_lettered_messages_to=None):
         super(SBQueue, self).__init__()
         self.count_details = None
         self.created_at = None
@@ -144,6 +148,7 @@ class SBQueue(Resource):
         self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
         self.max_delivery_count = max_delivery_count
         self.status = status
+        self.enable_batched_operations = enable_batched_operations
         self.auto_delete_on_idle = auto_delete_on_idle
         self.enable_partitioning = enable_partitioning
         self.enable_express = enable_express
