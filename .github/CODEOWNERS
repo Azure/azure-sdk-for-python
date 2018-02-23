@@ -16,6 +16,7 @@
 /azure-mgmt-datalake-store/ @ro-joowan
 /azure-mgmt-eventgrid/ @kalyanaj
 /azure-mgmt-keyvault/ @schaabs
+/azure-mgmt-locationbasedservices/ @jp94
 /azure-mgmt-machinelearningcompute/ @shutchings
 /azure-mgmt-recoveryservicesbackup/ @dragonfly91
 /azure-mgmt-servicefabric/ @QingChenmsft
