@@ -24,7 +24,7 @@ class VirtualMachineExtensionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-03-30".
     """
 
@@ -43,7 +43,7 @@ class VirtualMachineExtensionsOperations(object):
     def _create_or_update_initial(
             self, resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmName': self._serialize.url("vm_name", vm_name, 'str'),
@@ -164,12 +164,13 @@ class VirtualMachineExtensionsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'}
 
 
     def _delete_initial(
             self, resource_group_name, vm_name, vm_extension_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmName': self._serialize.url("vm_name", vm_name, 'str'),
@@ -279,6 +280,7 @@ class VirtualMachineExtensionsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'}
 
     def get(
             self, resource_group_name, vm_name, vm_extension_name, expand=None, custom_headers=None, raw=False, **operation_config):
@@ -304,7 +306,7 @@ class VirtualMachineExtensionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmName': self._serialize.url("vm_name", vm_name, 'str'),
@@ -348,3 +350,4 @@ class VirtualMachineExtensionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'}

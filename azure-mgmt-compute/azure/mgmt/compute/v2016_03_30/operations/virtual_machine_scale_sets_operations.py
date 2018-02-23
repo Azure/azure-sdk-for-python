@@ -24,7 +24,7 @@ class VirtualMachineScaleSetsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-03-30".
     """
 
@@ -43,7 +43,7 @@ class VirtualMachineScaleSetsOperations(object):
     def _create_or_update_initial(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("name", name, 'str'),
@@ -158,12 +158,13 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'}
 
 
     def _delete_initial(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -268,6 +269,7 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'}
 
     def get(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
@@ -288,7 +290,7 @@ class VirtualMachineScaleSetsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -329,6 +331,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'}
 
 
     def _deallocate_initial(
@@ -338,7 +341,7 @@ class VirtualMachineScaleSetsOperations(object):
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/deallocate'
+        url = self.deallocate.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -459,6 +462,7 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    deallocate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/deallocate'}
 
 
     def _delete_instances_initial(
@@ -466,7 +470,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/delete'
+        url = self.delete_instances.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -578,6 +582,7 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete_instances.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/delete'}
 
     def get_instance_view(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
@@ -600,7 +605,7 @@ class VirtualMachineScaleSetsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/instanceView'
+        url = self.get_instance_view.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -641,6 +646,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_instance_view.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/instanceView'}
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -662,7 +668,7 @@ class VirtualMachineScaleSetsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -708,6 +714,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets'}
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
@@ -730,7 +737,7 @@ class VirtualMachineScaleSetsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/virtualMachineScaleSets'
+                url = self.list_all.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -775,6 +782,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/virtualMachineScaleSets'}
 
     def list_skus(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
@@ -799,7 +807,7 @@ class VirtualMachineScaleSetsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/skus'
+                url = self.list_skus.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -846,6 +854,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/skus'}
 
 
     def _power_off_initial(
@@ -855,7 +864,7 @@ class VirtualMachineScaleSetsOperations(object):
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/poweroff'
+        url = self.power_off.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -976,6 +985,7 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    power_off.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/poweroff'}
 
 
     def _restart_initial(
@@ -985,7 +995,7 @@ class VirtualMachineScaleSetsOperations(object):
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/restart'
+        url = self.restart.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -1103,6 +1113,7 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/restart'}
 
 
     def _start_initial(
@@ -1112,7 +1123,7 @@ class VirtualMachineScaleSetsOperations(object):
             vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/start'
+        url = self.start.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -1230,6 +1241,7 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/start'}
 
 
     def _update_instances_initial(
@@ -1237,7 +1249,7 @@ class VirtualMachineScaleSetsOperations(object):
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/manualupgrade'
+        url = self.update_instances.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -1350,12 +1362,13 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update_instances.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/manualupgrade'}
 
 
     def _reimage_initial(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/reimage'
+        url = self.reimage.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
@@ -1461,3 +1474,4 @@ class VirtualMachineScaleSetsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    reimage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/reimage'}
