@@ -25,7 +25,7 @@ class FileServersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Specifies the version of API used for this request. Constant value: "2017-09-01-preview".
+    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class FileServersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01-preview"
+        self.api_version = "2018-03-01"
 
         self.config = config
 
@@ -43,7 +43,7 @@ class FileServersOperations(object):
     def _create_initial(
             self, resource_group_name, file_server_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers/{fileServerName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'fileServerName': self._serialize.url("file_server_name", file_server_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -160,12 +160,13 @@ class FileServersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers/{fileServerName}'}
 
 
     def _delete_initial(
             self, resource_group_name, file_server_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers/{fileServerName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'fileServerName': self._serialize.url("file_server_name", file_server_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -262,6 +263,7 @@ class FileServersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers/{fileServerName}'}
 
     def get(
             self, resource_group_name, file_server_name, custom_headers=None, raw=False, **operation_config):
@@ -286,7 +288,7 @@ class FileServersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers/{fileServerName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'fileServerName': self._serialize.url("file_server_name", file_server_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -327,6 +329,7 @@ class FileServersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers/{fileServerName}'}
 
     def list(
             self, file_servers_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -361,7 +364,7 @@ class FileServersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/fileServers'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -412,6 +415,7 @@ class FileServersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/fileServers'}
 
     def list_by_resource_group(
             self, resource_group_name, file_servers_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
@@ -449,7 +453,7 @@ class FileServersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -501,3 +505,4 @@ class FileServersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers'}

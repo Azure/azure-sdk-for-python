@@ -25,7 +25,7 @@ class JobsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Specifies the version of API used for this request. Constant value: "2017-09-01-preview".
+    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class JobsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01-preview"
+        self.api_version = "2018-03-01"
 
         self.config = config
 
@@ -43,7 +43,7 @@ class JobsOperations(object):
     def _create_initial(
             self, resource_group_name, job_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'jobName': self._serialize.url("job_name", job_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -159,12 +159,13 @@ class JobsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}'}
 
 
     def _delete_initial(
             self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'jobName': self._serialize.url("job_name", job_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -261,6 +262,7 @@ class JobsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}'}
 
     def get(
             self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
@@ -285,7 +287,7 @@ class JobsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'jobName': self._serialize.url("job_name", job_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -326,6 +328,7 @@ class JobsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}'}
 
     def list_remote_login_information(
             self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
@@ -354,7 +357,7 @@ class JobsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}/listRemoteLoginInformation'
+                url = self.list_remote_login_information.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'jobName': self._serialize.url("job_name", job_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -401,12 +404,13 @@ class JobsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_remote_login_information.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}/listRemoteLoginInformation'}
 
 
     def _terminate_initial(
             self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}/terminate'
+        url = self.terminate.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'jobName': self._serialize.url("job_name", job_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -503,6 +507,7 @@ class JobsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    terminate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}/terminate'}
 
     def list(
             self, jobs_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -534,7 +539,7 @@ class JobsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/jobs'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -585,6 +590,7 @@ class JobsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/jobs'}
 
     def list_by_resource_group(
             self, resource_group_name, jobs_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
@@ -622,7 +628,7 @@ class JobsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -674,11 +680,13 @@ class JobsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs'}
 
     def list_output_files(
             self, resource_group_name, job_name, jobs_list_output_files_options, custom_headers=None, raw=False, **operation_config):
-        """List all files inside the given output directory (Only if the output
-        directory is on Azure File Share or Azure Storage container).
+        """List all directories and files inside the given directory of the output
+        directory (Only if the output directory is on Azure File Share or Azure
+        Storage container).
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -705,6 +713,9 @@ class JobsOperations(object):
         outputdirectoryid = None
         if jobs_list_output_files_options is not None:
             outputdirectoryid = jobs_list_output_files_options.outputdirectoryid
+        directory = None
+        if jobs_list_output_files_options is not None:
+            directory = jobs_list_output_files_options.directory
         linkexpiryinminutes = None
         if jobs_list_output_files_options is not None:
             linkexpiryinminutes = jobs_list_output_files_options.linkexpiryinminutes
@@ -716,7 +727,7 @@ class JobsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}/listOutputFiles'
+                url = self.list_output_files.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'jobName': self._serialize.url("job_name", job_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -728,6 +739,8 @@ class JobsOperations(object):
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 query_parameters['outputdirectoryid'] = self._serialize.query("outputdirectoryid", outputdirectoryid, 'str')
+                if directory is not None:
+                    query_parameters['directory'] = self._serialize.query("directory", directory, 'str')
                 if linkexpiryinminutes is not None:
                     query_parameters['linkexpiryinminutes'] = self._serialize.query("linkexpiryinminutes", linkexpiryinminutes, 'int', maximum=600, minimum=5)
                 if max_results is not None:
@@ -768,3 +781,4 @@ class JobsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_output_files.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/jobs/{jobName}/listOutputFiles'}

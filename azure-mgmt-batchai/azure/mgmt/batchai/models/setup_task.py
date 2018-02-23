@@ -18,9 +18,15 @@ class SetupTask(Model):
 
     :param command_line: Command Line to start Setup process.
     :type command_line: str
-    :param environment_variables: Collection of environment settings.
+    :param environment_variables: Collection of environment variables to be
+     set for setup task.
     :type environment_variables:
-     list[~azure.mgmt.batchai.models.EnvironmentSetting]
+     list[~azure.mgmt.batchai.models.EnvironmentVariable]
+    :param secrets: Collection of environment variables with secret values to
+     be set for setup task. Server will never report values of these variables
+     back.
+    :type secrets:
+     list[~azure.mgmt.batchai.models.EnvironmentVariableWithSecretValue]
     :param run_elevated: Specifies whether to run the setup task in elevated
      mode. The default value is false.  Default value: False .
     :type run_elevated: bool
@@ -36,14 +42,16 @@ class SetupTask(Model):
 
     _attribute_map = {
         'command_line': {'key': 'commandLine', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '[EnvironmentSetting]'},
+        'environment_variables': {'key': 'environmentVariables', 'type': '[EnvironmentVariable]'},
+        'secrets': {'key': 'secrets', 'type': '[EnvironmentVariableWithSecretValue]'},
         'run_elevated': {'key': 'runElevated', 'type': 'bool'},
         'std_out_err_path_prefix': {'key': 'stdOutErrPathPrefix', 'type': 'str'},
     }
 
-    def __init__(self, command_line, std_out_err_path_prefix, environment_variables=None, run_elevated=False):
+    def __init__(self, command_line, std_out_err_path_prefix, environment_variables=None, secrets=None, run_elevated=False):
         super(SetupTask, self).__init__()
         self.command_line = command_line
         self.environment_variables = environment_variables
+        self.secrets = secrets
         self.run_elevated = run_elevated
         self.std_out_err_path_prefix = std_out_err_path_prefix

@@ -19,6 +19,8 @@ class JobsListOutputFilesOptions(Model):
      OutputDirectory-->id parameter that is given by the user during Create
      Job.
     :type outputdirectoryid: str
+    :param directory: The path to the directory. Default value: "." .
+    :type directory: str
     :param linkexpiryinminutes: The number of minutes after which the download
      link will expire. Default value: 60 .
     :type linkexpiryinminutes: int
@@ -31,8 +33,9 @@ class JobsListOutputFilesOptions(Model):
         'outputdirectoryid': {'required': True},
     }
 
-    def __init__(self, outputdirectoryid, linkexpiryinminutes=60, max_results=1000):
+    def __init__(self, outputdirectoryid, directory=".", linkexpiryinminutes=60, max_results=1000):
         super(JobsListOutputFilesOptions, self).__init__()
         self.outputdirectoryid = outputdirectoryid
+        self.directory = directory
         self.linkexpiryinminutes = linkexpiryinminutes
         self.max_results = max_results

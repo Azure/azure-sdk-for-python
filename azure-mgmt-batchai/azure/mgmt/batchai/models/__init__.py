@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .usage_name import UsageName
+from .usage import Usage
 from .user_account_settings import UserAccountSettings
 from .ssh_configuration import SshConfiguration
 from .data_disks import DataDisks
@@ -23,7 +25,8 @@ from .auto_scale_settings import AutoScaleSettings
 from .scale_settings import ScaleSettings
 from .image_reference import ImageReference
 from .virtual_machine_configuration import VirtualMachineConfiguration
-from .environment_setting import EnvironmentSetting
+from .environment_variable import EnvironmentVariable
+from .environment_variable_with_secret_value import EnvironmentVariableWithSecretValue
 from .setup_task import SetupTask
 from .azure_storage_credentials_info import AzureStorageCredentialsInfo
 from .azure_file_share_reference import AzureFileShareReference
@@ -31,6 +34,8 @@ from .azure_blob_file_system_reference import AzureBlobFileSystemReference
 from .file_server_reference import FileServerReference
 from .unmanaged_file_system_reference import UnmanagedFileSystemReference
 from .mount_volumes import MountVolumes
+from .app_insights_destination import AppInsightsDestination
+from .performance_counters_settings import PerformanceCountersSettings
 from .node_setup import NodeSetup
 from .node_state_counts import NodeStateCounts
 from .cluster_create_parameters import ClusterCreateParameters
@@ -42,6 +47,7 @@ from .private_registry_credentials import PrivateRegistryCredentials
 from .image_source_registry import ImageSourceRegistry
 from .container_settings import ContainerSettings
 from .cnt_ksettings import CNTKsettings
+from .py_torch_settings import PyTorchSettings
 from .tensor_flow_settings import TensorFlowSettings
 from .caffe_settings import CaffeSettings
 from .caffe2_settings import Caffe2Settings
@@ -69,6 +75,7 @@ from .jobs_list_output_files_options import JobsListOutputFilesOptions
 from .file_servers_list_options import FileServersListOptions
 from .file_servers_list_by_resource_group_options import FileServersListByResourceGroupOptions
 from .operation_paged import OperationPaged
+from .usage_paged import UsagePaged
 from .remote_login_information_paged import RemoteLoginInformationPaged
 from .cluster_paged import ClusterPaged
 from .job_paged import JobPaged
@@ -89,6 +96,8 @@ from .batch_ai_management_client_enums import (
 )
 
 __all__ = [
+    'UsageName',
+    'Usage',
     'UserAccountSettings',
     'SshConfiguration',
     'DataDisks',
@@ -103,7 +112,8 @@ __all__ = [
     'ScaleSettings',
     'ImageReference',
     'VirtualMachineConfiguration',
-    'EnvironmentSetting',
+    'EnvironmentVariable',
+    'EnvironmentVariableWithSecretValue',
     'SetupTask',
     'AzureStorageCredentialsInfo',
     'AzureFileShareReference',
@@ -111,6 +121,8 @@ __all__ = [
     'FileServerReference',
     'UnmanagedFileSystemReference',
     'MountVolumes',
+    'AppInsightsDestination',
+    'PerformanceCountersSettings',
     'NodeSetup',
     'NodeStateCounts',
     'ClusterCreateParameters',
@@ -122,6 +134,7 @@ __all__ = [
     'ImageSourceRegistry',
     'ContainerSettings',
     'CNTKsettings',
+    'PyTorchSettings',
     'TensorFlowSettings',
     'CaffeSettings',
     'Caffe2Settings',
@@ -149,6 +162,7 @@ __all__ = [
     'FileServersListOptions',
     'FileServersListByResourceGroupOptions',
     'OperationPaged',
+    'UsagePaged',
     'RemoteLoginInformationPaged',
     'ClusterPaged',
     'JobPaged',

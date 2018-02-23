@@ -23,6 +23,17 @@ class ImageReference(Model):
     :type sku: str
     :param version: Version of the image.
     :type version: str
+    :param virtual_machine_image_id: The ARM resource identifier of the
+     virtual machine image. Computes nodes of the cluster will be created using
+     this custom image. This is of the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/images/{imageName}.
+     The virtual machine image must be in the same region and subscription as
+     the cluster. For information about the firewall settings for the Batch
+     node agent to communicate with the Batch service see
+     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+     Note, you need to provide publisher, offer and sku of the base OS image of
+     which the custom image has been derived from.
+    :type virtual_machine_image_id: str
     """
 
     _validation = {
@@ -36,11 +47,13 @@ class ImageReference(Model):
         'offer': {'key': 'offer', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
+        'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'str'},
     }
 
-    def __init__(self, publisher, offer, sku, version=None):
+    def __init__(self, publisher, offer, sku, version=None, virtual_machine_image_id=None):
         super(ImageReference, self).__init__()
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
         self.version = version
+        self.virtual_machine_image_id = virtual_machine_image_id
