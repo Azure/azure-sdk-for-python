@@ -22,8 +22,10 @@ class AzureFileShareReference(Model):
     :param credentials: Information of the Azure File credentials.
     :type credentials: ~azure.mgmt.batchai.models.AzureStorageCredentialsInfo
     :param relative_mount_path: Specifies the relative path on the compute
-     node where the Azure file share will be mounted. Note that all file shares
-     will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
+     node where the Azure file share will be mounted. Note that all cluster
+     level file shares will be mounted under $AZ_BATCHAI_MOUNT_ROOT location
+     and all job level file shares will be mounted under
+     $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
     :param file_mode: Specifies the file mode. Default value is 0777. Valid
      only if OS is linux. Default value: "0777" .

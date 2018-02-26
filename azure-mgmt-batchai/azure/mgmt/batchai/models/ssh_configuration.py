@@ -16,10 +16,11 @@ class SshConfiguration(Model):
     """SSH configuration settings for the VM.
 
     :param public_ips_to_allow: List of source IP ranges to allow SSH
-     connection to VM. Default value is '*' can be used to match all source
-     IPs. Maximum number of publicIPs that can be specified are 400.
+     connection to a node. Default value is '*' can be used to match all source
+     IPs. Maximum number of IP ranges that can be specified are 400.
     :type public_ips_to_allow: list[str]
-    :param user_account_settings: Settings for user account of VMs.
+    :param user_account_settings: Settings for user account to be created on a
+     node.
     :type user_account_settings:
      ~azure.mgmt.batchai.models.UserAccountSettings
     """

@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
+from .operations.usage_operations import UsageOperations
 from .operations.clusters_operations import ClustersOperations
 from .operations.jobs_operations import JobsOperations
 from .operations.file_servers_operations import FileServersOperations
@@ -60,6 +61,8 @@ class BatchAIManagementClient(object):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.batchai.operations.Operations
+    :ivar usage: Usage operations
+    :vartype usage: azure.mgmt.batchai.operations.UsageOperations
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.batchai.operations.ClustersOperations
     :ivar jobs: Jobs operations
@@ -82,11 +85,13 @@ class BatchAIManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-09-01-preview'
+        self.api_version = '2018-03-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage = UsageOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)

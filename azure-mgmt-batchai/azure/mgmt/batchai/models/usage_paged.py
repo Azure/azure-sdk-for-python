@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .usage_operations import UsageOperations
-from .clusters_operations import ClustersOperations
-from .jobs_operations import JobsOperations
-from .file_servers_operations import FileServersOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'Operations',
-    'UsageOperations',
-    'ClustersOperations',
-    'JobsOperations',
-    'FileServersOperations',
-]
+
+class UsagePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Usage <azure.mgmt.batchai.models.Usage>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Usage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(UsagePaged, self).__init__(*args, **kwargs)

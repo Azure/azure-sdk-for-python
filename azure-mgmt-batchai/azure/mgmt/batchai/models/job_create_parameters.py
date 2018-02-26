@@ -29,6 +29,11 @@ class JobCreateParameters(Model):
     :param cluster: Specifies the Id of the cluster on which this job will
      run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
+    :param mount_volumes: Information on shared volumes to be used by the job.
+     These volumes will be mounted before the job execution and will be
+     unmouted after the job completion. The volumes will be mounted at location
+     specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
+    :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
     :param node_count: Number of compute nodes to run the job on. The job will
      be gang scheduled on that many compute nodes
     :type node_count: int
@@ -40,6 +45,8 @@ class JobCreateParameters(Model):
     :param cntk_settings: Specifies the settings for CNTK (aka Microsoft
      Cognitive Toolkit) job.
     :type cntk_settings: ~azure.mgmt.batchai.models.CNTKsettings
+    :param py_torch_settings: Specifies the settings for pyTorch job.
+    :type py_torch_settings: ~azure.mgmt.batchai.models.PyTorchSettings
     :param tensor_flow_settings: Specifies the settings for Tensor Flow job.
     :type tensor_flow_settings: ~azure.mgmt.batchai.models.TensorFlowSettings
     :param caffe_settings: Specifies the settings for Caffe job.
@@ -62,17 +69,18 @@ class JobCreateParameters(Model):
     :param input_directories: Specifies the list of input directories for the
      Job.
     :type input_directories: list[~azure.mgmt.batchai.models.InputDirectory]
-    :param output_directories: Specifies the list of output directories where
-     the models will be created. .
+    :param output_directories: Specifies the list of output directories.
     :type output_directories: list[~azure.mgmt.batchai.models.OutputDirectory]
     :param environment_variables: Additional environment variables to set on
-     the job. Batch AI service sets the following environment variables for all
-     jobs: AZ_BATCHAI_INPUT_id, AZ_BATCHAI_OUTPUT_id,
-     AZ_BATCHAI_NUM_GPUS_PER_NODE. For distributed TensorFlow jobs, following
-     additional environment variables are set by the Batch AI Service:
-     AZ_BATCHAI_PS_HOSTS, AZ_BATCHAI_WORKER_HOSTS
+     the job. Batch AI will setup these additional environment variables for
+     the job.
     :type environment_variables:
-     list[~azure.mgmt.batchai.models.EnvironmentSetting]
+     list[~azure.mgmt.batchai.models.EnvironmentVariable]
+    :param secrets: Additional environment variables with secret values to set
+     on the job. Batch AI will setup these additional environment variables for
+     the job. Server will never report values of these variables back.
+    :type secrets:
+     list[~azure.mgmt.batchai.models.EnvironmentVariableWithSecretValue]
     :param constraints: Constraints associated with the Job.
     :type constraints: ~azure.mgmt.batchai.models.JobBasePropertiesConstraints
     """
@@ -90,9 +98,11 @@ class JobCreateParameters(Model):
         'experiment_name': {'key': 'properties.experimentName', 'type': 'str'},
         'priority': {'key': 'properties.priority', 'type': 'int'},
         'cluster': {'key': 'properties.cluster', 'type': 'ResourceId'},
+        'mount_volumes': {'key': 'properties.mountVolumes', 'type': 'MountVolumes'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'container_settings': {'key': 'properties.containerSettings', 'type': 'ContainerSettings'},
         'cntk_settings': {'key': 'properties.cntkSettings', 'type': 'CNTKsettings'},
+        'py_torch_settings': {'key': 'properties.pyTorchSettings', 'type': 'PyTorchSettings'},
         'tensor_flow_settings': {'key': 'properties.tensorFlowSettings', 'type': 'TensorFlowSettings'},
         'caffe_settings': {'key': 'properties.caffeSettings', 'type': 'CaffeSettings'},
         'caffe2_settings': {'key': 'properties.caffe2Settings', 'type': 'Caffe2Settings'},
@@ -102,20 +112,23 @@ class JobCreateParameters(Model):
         'std_out_err_path_prefix': {'key': 'properties.stdOutErrPathPrefix', 'type': 'str'},
         'input_directories': {'key': 'properties.inputDirectories', 'type': '[InputDirectory]'},
         'output_directories': {'key': 'properties.outputDirectories', 'type': '[OutputDirectory]'},
-        'environment_variables': {'key': 'properties.environmentVariables', 'type': '[EnvironmentSetting]'},
+        'environment_variables': {'key': 'properties.environmentVariables', 'type': '[EnvironmentVariable]'},
+        'secrets': {'key': 'properties.secrets', 'type': '[EnvironmentVariableWithSecretValue]'},
         'constraints': {'key': 'properties.constraints', 'type': 'JobBasePropertiesConstraints'},
     }
 
-    def __init__(self, location, cluster, node_count, std_out_err_path_prefix, tags=None, experiment_name=None, priority=0, container_settings=None, cntk_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, constraints=None):
+    def __init__(self, location, cluster, node_count, std_out_err_path_prefix, tags=None, experiment_name=None, priority=0, mount_volumes=None, container_settings=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None):
         super(JobCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.experiment_name = experiment_name
         self.priority = priority
         self.cluster = cluster
+        self.mount_volumes = mount_volumes
         self.node_count = node_count
         self.container_settings = container_settings
         self.cntk_settings = cntk_settings
+        self.py_torch_settings = py_torch_settings
         self.tensor_flow_settings = tensor_flow_settings
         self.caffe_settings = caffe_settings
         self.caffe2_settings = caffe2_settings
@@ -126,4 +139,5 @@ class JobCreateParameters(Model):
         self.input_directories = input_directories
         self.output_directories = output_directories
         self.environment_variables = environment_variables
+        self.secrets = secrets
         self.constraints = constraints

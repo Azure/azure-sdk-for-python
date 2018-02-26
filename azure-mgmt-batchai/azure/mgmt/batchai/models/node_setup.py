@@ -24,15 +24,24 @@ class NodeSetup(Model):
      all jobs that run on the cluster VMs or to download/install software.
     :type setup_task: ~azure.mgmt.batchai.models.SetupTask
     :param mount_volumes: Information on shared volumes to be used by jobs.
+     Specified mount volumes will be available to all jobs executing on the
+     cluster. The volumes will be mounted at location specified by
+     $AZ_BATCHAI_MOUNT_ROOT environment variable.
     :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
+    :param performance_counters_settings: Specifies settings for performance
+     counters collecting and uploading.
+    :type performance_counters_settings:
+     ~azure.mgmt.batchai.models.PerformanceCountersSettings
     """
 
     _attribute_map = {
         'setup_task': {'key': 'setupTask', 'type': 'SetupTask'},
         'mount_volumes': {'key': 'mountVolumes', 'type': 'MountVolumes'},
+        'performance_counters_settings': {'key': 'performanceCountersSettings', 'type': 'PerformanceCountersSettings'},
     }
 
-    def __init__(self, setup_task=None, mount_volumes=None):
+    def __init__(self, setup_task=None, mount_volumes=None, performance_counters_settings=None):
         super(NodeSetup, self).__init__()
         self.setup_task = setup_task
         self.mount_volumes = mount_volumes
+        self.performance_counters_settings = performance_counters_settings

@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class UsageOperations(object):
+    """UsageOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,17 +38,20 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists available operations for the Microsoft.BatchAI provider.
+            self, location, custom_headers=None, raw=False, **operation_config):
+        """Gets the current usage information as well as limits for Batch AI
+        resources for given subscription.
 
+        :param location: The location for which resource usage is queried.
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of Usage
         :rtype:
-         ~azure.mgmt.batchai.models.OperationPaged[~azure.mgmt.batchai.models.Operation]
+         ~azure.mgmt.batchai.models.UsagePaged[~azure.mgmt.batchai.models.Usage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -56,6 +59,11 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -88,12 +96,12 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.BatchAI/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/locations/{location}/usages'}

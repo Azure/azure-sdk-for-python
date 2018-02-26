@@ -25,7 +25,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Specifies the version of API used for this request. Constant value: "2017-09-01-preview".
+    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01-preview"
+        self.api_version = "2018-03-01"
 
         self.config = config
 
@@ -43,7 +43,7 @@ class ClustersOperations(object):
     def _create_initial(
             self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -160,6 +160,7 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
     def update(
             self, resource_group_name, cluster_name, tags=None, scale_settings=None, custom_headers=None, raw=False, **operation_config):
@@ -190,7 +191,7 @@ class ClustersOperations(object):
         parameters = models.ClusterUpdateParameters(tags=tags, scale_settings=scale_settings)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -235,12 +236,13 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
 
     def _delete_initial(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -337,6 +339,7 @@ class ClustersOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
     def get(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
@@ -361,7 +364,7 @@ class ClustersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -402,6 +405,7 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
     def list_remote_login_information(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
@@ -429,7 +433,7 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}/listRemoteLoginInformation'
+                url = self.list_remote_login_information.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -476,6 +480,7 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_remote_login_information.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}/listRemoteLoginInformation'}
 
     def list(
             self, clusters_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -508,7 +513,7 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/clusters'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -559,6 +564,7 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/clusters'}
 
     def list_by_resource_group(
             self, resource_group_name, clusters_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
@@ -596,7 +602,7 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -648,3 +654,4 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters'}
