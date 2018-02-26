@@ -28,10 +28,11 @@ class ImportDevicesRequest(Model):
     }
 
     _attribute_map = {
-        'input_blob_container_uri': {'key': 'InputBlobContainerUri', 'type': 'str'},
-        'output_blob_container_uri': {'key': 'OutputBlobContainerUri', 'type': 'str'},
+        'input_blob_container_uri': {'key': 'inputBlobContainerUri', 'type': 'str'},
+        'output_blob_container_uri': {'key': 'outputBlobContainerUri', 'type': 'str'},
     }
 
     def __init__(self, input_blob_container_uri, output_blob_container_uri):
+        super(ImportDevicesRequest, self).__init__()
         self.input_blob_container_uri = input_blob_container_uri
         self.output_blob_container_uri = output_blob_container_uri

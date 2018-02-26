@@ -46,6 +46,7 @@ class RoutingServiceBusQueueEndpointProperties(Model):
     }
 
     def __init__(self, connection_string, name, subscription_id=None, resource_group=None):
+        super(RoutingServiceBusQueueEndpointProperties, self).__init__()
         self.connection_string = connection_string
         self.name = name
         self.subscription_id = subscription_id

@@ -27,22 +27,15 @@ class IotHubDescription(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
-    :param subscriptionid: The subscription identifier.
-    :type subscriptionid: str
-    :param resourcegroup: The name of the resource group that contains the IoT
-     hub. A resource group name uniquely identifies the resource group within
-     the subscription.
-    :type resourcegroup: str
+    :type tags: dict[str, str]
     :param etag: The Etag field is *not* required. If it is provided in the
      response body, it must also be provided as a header per the normal ETag
      convention.
     :type etag: str
     :param properties:
-    :type properties: :class:`IotHubProperties
-     <azure.mgmt.iothub.models.IotHubProperties>`
+    :type properties: ~azure.mgmt.iothub.models.IotHubProperties
     :param sku:
-    :type sku: :class:`IotHubSkuInfo <azure.mgmt.iothub.models.IotHubSkuInfo>`
+    :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
     """
 
     _validation = {
@@ -50,8 +43,6 @@ class IotHubDescription(Resource):
         'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'type': {'readonly': True},
         'location': {'required': True},
-        'subscriptionid': {'required': True},
-        'resourcegroup': {'required': True},
         'sku': {'required': True},
     }
 
@@ -61,17 +52,13 @@ class IotHubDescription(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'subscriptionid': {'key': 'subscriptionid', 'type': 'str'},
-        'resourcegroup': {'key': 'resourcegroup', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'IotHubProperties'},
         'sku': {'key': 'sku', 'type': 'IotHubSkuInfo'},
     }
 
-    def __init__(self, location, subscriptionid, resourcegroup, sku, tags=None, etag=None, properties=None):
+    def __init__(self, location, sku, tags=None, etag=None, properties=None):
         super(IotHubDescription, self).__init__(location=location, tags=tags)
-        self.subscriptionid = subscriptionid
-        self.resourcegroup = resourcegroup
         self.etag = etag
         self.properties = properties
         self.sku = sku

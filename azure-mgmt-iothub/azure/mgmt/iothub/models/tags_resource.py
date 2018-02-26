@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class CertificateVerificationDescription(Model):
-    """The JSON-serialized leaf certificate.
+class TagsResource(Model):
+    """A container holding only the Tags for a resource, allowing the user to
+    update the tags on an IoT Hub instance.
 
-    :param certificate: base-64 representation of X509 certificate .cer file
-     or just .pem file content.
-    :type certificate: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'certificate': {'key': 'certificate', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, certificate=None):
-        super(CertificateVerificationDescription, self).__init__()
-        self.certificate = certificate
+    def __init__(self, tags=None):
+        super(TagsResource, self).__init__()
+        self.tags = tags
