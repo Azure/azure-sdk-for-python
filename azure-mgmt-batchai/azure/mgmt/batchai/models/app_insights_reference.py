@@ -12,26 +12,37 @@
 from msrest.serialization import Model
 
 
-class AppInsightsDestination(Model):
-    """AppInsightsDestination.
+class AppInsightsReference(Model):
+    """Specifies Azure Application Insights information for performance counters
+    reporting.
 
-    :param instrumentation_key: Value of the App Insight instrumentation key.
+    :param component: Specifies the Azure Application Insights component
+     resource id.
+    :type component: ~azure.mgmt.batchai.models.ResourceId
+    :param instrumentation_key: Value of the Azure Application Insights
+     instrumentation key.
     :type instrumentation_key: str
     :param instrumentation_key_secret_reference: Specifies a KeyVault Secret
-     containing Application Insights instrumentation key. Specifies KeyVault
-     Store and Secret which contains Application Insights instrumentation key.
-     One of instumentationKey or instrumentationKeySecretReference must be
-     specified.
+     containing Azure Application Insights instrumentation key. Specifies
+     KeyVault Store and Secret which contains Azure Application Insights
+     instrumentation key. One of instumentationKey or
+     instrumentationKeySecretReference must be specified.
     :type instrumentation_key_secret_reference:
      ~azure.mgmt.batchai.models.KeyVaultSecretReference
     """
 
+    _validation = {
+        'component': {'required': True},
+    }
+
     _attribute_map = {
+        'component': {'key': 'component', 'type': 'ResourceId'},
         'instrumentation_key': {'key': 'instrumentationKey', 'type': 'str'},
         'instrumentation_key_secret_reference': {'key': 'instrumentationKeySecretReference', 'type': 'KeyVaultSecretReference'},
     }
 
-    def __init__(self, instrumentation_key=None, instrumentation_key_secret_reference=None):
-        super(AppInsightsDestination, self).__init__()
+    def __init__(self, component, instrumentation_key=None, instrumentation_key_secret_reference=None):
+        super(AppInsightsReference, self).__init__()
+        self.component = component
         self.instrumentation_key = instrumentation_key
         self.instrumentation_key_secret_reference = instrumentation_key_secret_reference

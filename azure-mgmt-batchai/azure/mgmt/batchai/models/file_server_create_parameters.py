@@ -23,7 +23,7 @@ class FileServerCreateParameters(Model):
      information about available VM sizes for fileservers from the Virtual
      Machines Marketplace, see Sizes for Virtual Machines (Linux).
     :type vm_size: str
-    :param ssh_configuration: SSH settings for the file server.
+    :param ssh_configuration: SSH configuration for the file server.
     :type ssh_configuration: ~azure.mgmt.batchai.models.SshConfiguration
     :param data_disks: Settings for the data disk which would be created for
      the file server.

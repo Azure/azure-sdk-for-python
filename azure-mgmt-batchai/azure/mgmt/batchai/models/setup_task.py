@@ -16,6 +16,9 @@ class SetupTask(Model):
     """Specifies a setup task which can be used to customize the compute nodes of
     the cluster.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param command_line: Command Line to start Setup process.
     :type command_line: str
     :param environment_variables: Collection of environment variables to be
@@ -27,17 +30,27 @@ class SetupTask(Model):
      back.
     :type secrets:
      list[~azure.mgmt.batchai.models.EnvironmentVariableWithSecretValue]
-    :param run_elevated: Specifies whether to run the setup task in elevated
-     mode. The default value is false.  Default value: False .
+    :param run_elevated: Specifies whether to run the setup task under root
+     account. The default value is false. Note. Non-elevated tasks are run
+     under an account added into sudoer list and can perform sudo when
+     required. Default value: False .
     :type run_elevated: bool
-    :param std_out_err_path_prefix: The path where the Batch AI service will
-     upload the stdout and stderror of setup task.
+    :param std_out_err_path_prefix: The prefix of a path where the Batch AI
+     service will upload the stdout and stderr of the setup task.
     :type std_out_err_path_prefix: str
+    :ivar std_out_err_path_suffix: A path segment appended by Batch AI to
+     stdOutErrPathPrefix to form a path where stdout and stderr of the setup
+     task will be uploaded. Batch AI creates the setup task output directories
+     under an unique path to avoid conflicts between different clusters. You
+     can concatinate stdOutErrPathPrefix and stdOutErrPathSuffix to get the
+     full path to the output directory.
+    :vartype std_out_err_path_suffix: str
     """
 
     _validation = {
         'command_line': {'required': True},
         'std_out_err_path_prefix': {'required': True},
+        'std_out_err_path_suffix': {'readonly': True},
     }
 
     _attribute_map = {
@@ -46,6 +59,7 @@ class SetupTask(Model):
         'secrets': {'key': 'secrets', 'type': '[EnvironmentVariableWithSecretValue]'},
         'run_elevated': {'key': 'runElevated', 'type': 'bool'},
         'std_out_err_path_prefix': {'key': 'stdOutErrPathPrefix', 'type': 'str'},
+        'std_out_err_path_suffix': {'key': 'stdOutErrPathSuffix', 'type': 'str'},
     }
 
     def __init__(self, command_line, std_out_err_path_prefix, environment_variables=None, secrets=None, run_elevated=False):
@@ -55,3 +69,4 @@ class SetupTask(Model):
         self.secrets = secrets
         self.run_elevated = run_elevated
         self.std_out_err_path_prefix = std_out_err_path_prefix
+        self.std_out_err_path_suffix = None

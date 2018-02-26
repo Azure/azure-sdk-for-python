@@ -13,20 +13,24 @@ from msrest.serialization import Model
 
 
 class PerformanceCountersSettings(Model):
-    """PerformanceCountersSettings.
+    """Performance counters reporting settings.
 
-    :param app_insights_destination: Specifies Azure Application Insights
-     instrumentation key for performance counters reporting. If provided, Batch
-     AI will upload node performance counters to the corresponding Application
+    :param app_insights_reference: Specifies Azure Application Insights
+     information for performance counters reporting. If provided, Batch AI will
+     upload node performance counters to the corresponding Azure Application
      Insights account.
-    :type app_insights_destination:
-     ~azure.mgmt.batchai.models.AppInsightsDestination
+    :type app_insights_reference:
+     ~azure.mgmt.batchai.models.AppInsightsReference
     """
 
-    _attribute_map = {
-        'app_insights_destination': {'key': 'appInsightsDestination', 'type': 'AppInsightsDestination'},
+    _validation = {
+        'app_insights_reference': {'required': True},
     }
 
-    def __init__(self, app_insights_destination=None):
+    _attribute_map = {
+        'app_insights_reference': {'key': 'appInsightsReference', 'type': 'AppInsightsReference'},
+    }
+
+    def __init__(self, app_insights_reference):
         super(PerformanceCountersSettings, self).__init__()
-        self.app_insights_destination = app_insights_destination
+        self.app_insights_reference = app_insights_reference

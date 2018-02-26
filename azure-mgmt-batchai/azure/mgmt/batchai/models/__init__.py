@@ -34,7 +34,7 @@ from .azure_blob_file_system_reference import AzureBlobFileSystemReference
 from .file_server_reference import FileServerReference
 from .unmanaged_file_system_reference import UnmanagedFileSystemReference
 from .mount_volumes import MountVolumes
-from .app_insights_destination import AppInsightsDestination
+from .app_insights_reference import AppInsightsReference
 from .performance_counters_settings import PerformanceCountersSettings
 from .node_setup import NodeSetup
 from .node_state_counts import NodeStateCounts
@@ -121,7 +121,7 @@ __all__ = [
     'FileServerReference',
     'UnmanagedFileSystemReference',
     'MountVolumes',
-    'AppInsightsDestination',
+    'AppInsightsReference',
     'PerformanceCountersSettings',
     'NodeSetup',
     'NodeStateCounts',
