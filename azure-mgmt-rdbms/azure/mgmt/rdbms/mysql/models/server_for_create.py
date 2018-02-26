@@ -38,6 +38,7 @@ class ServerForCreate(Model):
     }
 
     def __init__(self, properties, location, sku=None, tags=None):
+        super(ServerForCreate, self).__init__()
         self.sku = sku
         self.properties = properties
         self.location = location

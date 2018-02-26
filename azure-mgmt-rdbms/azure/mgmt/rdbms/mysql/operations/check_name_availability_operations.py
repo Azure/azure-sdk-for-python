@@ -22,16 +22,18 @@ class CheckNameAvailabilityOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2017-04-30-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for the request. Constant value: "2017-12-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-30-preview"
+        self.api_version = "2017-12-01-preview"
 
         self.config = config
 
@@ -56,7 +58,7 @@ class CheckNameAvailabilityOperations(object):
         name_availability_request = models.NameAvailabilityRequest(name=name, type=type)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/checkNameAvailability'
+        url = self.execute.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -82,7 +84,7 @@ class CheckNameAvailabilityOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -99,3 +101,4 @@ class CheckNameAvailabilityOperations(object):
             return client_raw_response
 
         return deserialized
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/checkNameAvailability'}
