@@ -19,6 +19,10 @@ class FallbackRouteProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param name: The name of the route. The name can only include alphanumeric
+     characters, periods, underscores, hyphens, has a maximum length of 64
+     characters, and must be unique.
+    :type name: str
     :ivar source: The source to which the routing rule is to be applied to.
      For example, DeviceMessages. Default value: "DeviceMessages" .
     :vartype source: str
@@ -29,7 +33,7 @@ class FallbackRouteProperties(Model):
     :type condition: str
     :param endpoint_names: The list of endpoints to which the messages that
      satisfy the condition are routed to. Currently only 1 endpoint is allowed.
-    :type endpoint_names: list of str
+    :type endpoint_names: list[str]
     :param is_enabled: Used to specify whether the fallback route is enabled.
     :type is_enabled: bool
     """
@@ -41,6 +45,7 @@ class FallbackRouteProperties(Model):
     }
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
         'condition': {'key': 'condition', 'type': 'str'},
         'endpoint_names': {'key': 'endpointNames', 'type': '[str]'},
@@ -49,7 +54,9 @@ class FallbackRouteProperties(Model):
 
     source = "DeviceMessages"
 
-    def __init__(self, endpoint_names, is_enabled, condition=None):
+    def __init__(self, endpoint_names, is_enabled, name=None, condition=None):
+        super(FallbackRouteProperties, self).__init__()
+        self.name = name
         self.condition = condition
         self.endpoint_names = endpoint_names
         self.is_enabled = is_enabled

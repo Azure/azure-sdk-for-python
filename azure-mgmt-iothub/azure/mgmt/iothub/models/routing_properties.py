@@ -17,21 +17,18 @@ class RoutingProperties(Model):
     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging.
 
     :param endpoints:
-    :type endpoints: :class:`RoutingEndpoints
-     <azure.mgmt.iothub.models.RoutingEndpoints>`
+    :type endpoints: ~azure.mgmt.iothub.models.RoutingEndpoints
     :param routes: The list of user-provided routing rules that the IoT hub
      uses to route messages to built-in and custom endpoints. A maximum of 100
      routing rules are allowed for paid hubs and a maximum of 5 routing rules
      are allowed for free hubs.
-    :type routes: list of :class:`RouteProperties
-     <azure.mgmt.iothub.models.RouteProperties>`
+    :type routes: list[~azure.mgmt.iothub.models.RouteProperties]
     :param fallback_route: The properties of the route that is used as a
      fall-back route when none of the conditions specified in the 'routes'
      section are met. This is an optional parameter. When this property is not
      set, the messages which do not meet any of the conditions specified in the
      'routes' section get routed to the built-in eventhub endpoint.
-    :type fallback_route: :class:`FallbackRouteProperties
-     <azure.mgmt.iothub.models.FallbackRouteProperties>`
+    :type fallback_route: ~azure.mgmt.iothub.models.FallbackRouteProperties
     """
 
     _attribute_map = {
@@ -41,6 +38,7 @@ class RoutingProperties(Model):
     }
 
     def __init__(self, endpoints=None, routes=None, fallback_route=None):
+        super(RoutingProperties, self).__init__()
         self.endpoints = endpoints
         self.routes = routes
         self.fallback_route = fallback_route

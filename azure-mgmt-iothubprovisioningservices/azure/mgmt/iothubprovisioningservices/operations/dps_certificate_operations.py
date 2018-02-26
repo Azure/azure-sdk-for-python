@@ -21,8 +21,8 @@ class DpsCertificateOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-11-15".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2018-01-22".
     """
 
     models = models
@@ -32,7 +32,7 @@ class DpsCertificateOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-15"
+        self.api_version = "2018-01-22"
 
         self.config = config
 
@@ -62,7 +62,7 @@ class DpsCertificateOperations(object):
          :class:`ErrorDetailsException<azure.mgmt.iothubprovisioningservices.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -104,6 +104,7 @@ class DpsCertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}
 
     def create_or_update(
             self, resource_group_name, provisioning_service_name, certificate_name, if_match=None, certificate=None, custom_headers=None, raw=False, **operation_config):
@@ -140,7 +141,7 @@ class DpsCertificateOperations(object):
         certificate_description = models.CertificateBodyDescription(certificate=certificate)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -186,6 +187,7 @@ class DpsCertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}
 
     def delete(
             self, resource_group_name, if_match, provisioning_service_name, certificate_name, certificatename=None, certificateraw_bytes=None, certificateis_verified=None, certificatepurpose=None, certificatecreated=None, certificatelast_updated=None, certificatehas_private_key=None, certificatenonce=None, custom_headers=None, raw=False, **operation_config):
@@ -238,7 +240,7 @@ class DpsCertificateOperations(object):
          :class:`ErrorDetailsException<azure.mgmt.iothubprovisioningservices.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -288,6 +290,7 @@ class DpsCertificateOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}
 
     def generate_verification_code(
             self, certificate_name, if_match, resource_group_name, provisioning_service_name, certificatename=None, certificateraw_bytes=None, certificateis_verified=None, certificatepurpose=None, certificatecreated=None, certificatelast_updated=None, certificatehas_private_key=None, certificatenonce=None, custom_headers=None, raw=False, **operation_config):
@@ -339,7 +342,7 @@ class DpsCertificateOperations(object):
          :class:`ErrorDetailsException<azure.mgmt.iothubprovisioningservices.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/generateVerificationCode'
+        url = self.generate_verification_code.metadata['url']
         path_format_arguments = {
             'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -396,6 +399,7 @@ class DpsCertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    generate_verification_code.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/generateVerificationCode'}
 
     def verify_certificate(
             self, certificate_name, if_match, resource_group_name, provisioning_service_name, certificatename=None, certificateraw_bytes=None, certificateis_verified=None, certificatepurpose=None, certificatecreated=None, certificatelast_updated=None, certificatehas_private_key=None, certificatenonce=None, certificate=None, custom_headers=None, raw=False, **operation_config):
@@ -453,7 +457,7 @@ class DpsCertificateOperations(object):
         request = models.VerificationCodeRequest(certificate=certificate)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/verify'
+        url = self.verify_certificate.metadata['url']
         path_format_arguments = {
             'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -514,3 +518,4 @@ class DpsCertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    verify_certificate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}/verify'}

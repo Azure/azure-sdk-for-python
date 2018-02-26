@@ -31,8 +31,7 @@ class SharedAccessSignatureAuthorizationRule(Model):
      'RegistryRead, ServiceConnect, DeviceConnect', 'RegistryWrite,
      ServiceConnect, DeviceConnect', 'RegistryRead, RegistryWrite,
      ServiceConnect, DeviceConnect'
-    :type rights: str or :class:`AccessRights
-     <azure.mgmt.iothub.models.AccessRights>`
+    :type rights: str or ~azure.mgmt.iothub.models.AccessRights
     """
 
     _validation = {
@@ -48,6 +47,7 @@ class SharedAccessSignatureAuthorizationRule(Model):
     }
 
     def __init__(self, key_name, rights, primary_key=None, secondary_key=None):
+        super(SharedAccessSignatureAuthorizationRule, self).__init__()
         self.key_name = key_name
         self.primary_key = primary_key
         self.secondary_key = secondary_key

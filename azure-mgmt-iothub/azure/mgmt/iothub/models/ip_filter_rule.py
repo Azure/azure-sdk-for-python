@@ -19,8 +19,7 @@ class IpFilterRule(Model):
     :type filter_name: str
     :param action: The desired action for requests captured by this rule.
      Possible values include: 'Accept', 'Reject'
-    :type action: str or :class:`IpFilterActionType
-     <azure.mgmt.iothub.models.IpFilterActionType>`
+    :type action: str or ~azure.mgmt.iothub.models.IpFilterActionType
     :param ip_mask: A string that contains the IP address range in CIDR
      notation for the rule.
     :type ip_mask: str
@@ -39,6 +38,7 @@ class IpFilterRule(Model):
     }
 
     def __init__(self, filter_name, action, ip_mask):
+        super(IpFilterRule, self).__init__()
         self.filter_name = filter_name
         self.action = action
         self.ip_mask = ip_mask

@@ -21,8 +21,8 @@ class DpsCertificatesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-11-15".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2018-01-22".
     """
 
     models = models
@@ -32,7 +32,7 @@ class DpsCertificatesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-15"
+        self.api_version = "2018-01-22"
 
         self.config = config
 
@@ -58,7 +58,7 @@ class DpsCertificatesOperations(object):
          :class:`ErrorDetailsException<azure.mgmt.iothubprovisioningservices.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -97,3 +97,4 @@ class DpsCertificatesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates'}

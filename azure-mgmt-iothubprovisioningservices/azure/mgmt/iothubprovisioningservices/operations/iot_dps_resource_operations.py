@@ -24,8 +24,8 @@ class IotDpsResourceOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-11-15".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The version of the API. Constant value: "2018-01-22".
     """
 
     models = models
@@ -35,7 +35,7 @@ class IotDpsResourceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-11-15"
+        self.api_version = "2018-01-22"
 
         self.config = config
 
@@ -64,7 +64,7 @@ class IotDpsResourceOperations(object):
          :class:`ErrorDetailsException<azure.mgmt.iothubprovisioningservices.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -103,12 +103,13 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, provisioning_service_name, iot_dps_description, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -227,6 +228,7 @@ class IotDpsResourceOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'}
 
 
     def _update_initial(
@@ -234,7 +236,7 @@ class IotDpsResourceOperations(object):
         provisioning_service_tags = models.TagsResource(tags=tags)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -350,12 +352,13 @@ class IotDpsResourceOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'}
 
 
     def _delete_initial(
             self, provisioning_service_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -448,6 +451,7 @@ class IotDpsResourceOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}'}
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
@@ -470,7 +474,7 @@ class IotDpsResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/provisioningServices'
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -513,6 +517,7 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/provisioningServices'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -535,7 +540,7 @@ class IotDpsResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -579,6 +584,7 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices'}
 
     def get_operation_result(
             self, operation_id, resource_group_name, provisioning_service_name, asyncinfo="true", custom_headers=None, raw=False, **operation_config):
@@ -609,7 +615,7 @@ class IotDpsResourceOperations(object):
          :class:`ErrorDetailsException<azure.mgmt.iothubprovisioningservices.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/operationresults/{operationId}'
+        url = self.get_operation_result.metadata['url']
         path_format_arguments = {
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -650,6 +656,7 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    get_operation_result.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/operationresults/{operationId}'}
 
     def list_valid_skus(
             self, provisioning_service_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -676,7 +683,7 @@ class IotDpsResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/skus'
+                url = self.list_valid_skus.metadata['url']
                 path_format_arguments = {
                     'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -721,6 +728,7 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_valid_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/skus'}
 
     def check_provisioning_service_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
@@ -746,7 +754,7 @@ class IotDpsResourceOperations(object):
         arguments = models.OperationInputs(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/checkProvisioningServiceNameAvailability'
+        url = self.check_provisioning_service_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -787,6 +795,7 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    check_provisioning_service_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/checkProvisioningServiceNameAvailability'}
 
     def list_keys(
             self, provisioning_service_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -815,7 +824,7 @@ class IotDpsResourceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/listkeys'
+                url = self.list_keys.metadata['url']
                 path_format_arguments = {
                     'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -860,6 +869,7 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/listkeys'}
 
     def list_keys_for_key_name(
             self, provisioning_service_name, key_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -888,7 +898,7 @@ class IotDpsResourceOperations(object):
          :class:`ErrorDetailsException<azure.mgmt.iothubprovisioningservices.models.ErrorDetailsException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/keys/{keyName}/listkeys'
+        url = self.list_keys_for_key_name.metadata['url']
         path_format_arguments = {
             'provisioningServiceName': self._serialize.url("provisioning_service_name", provisioning_service_name, 'str'),
             'keyName': self._serialize.url("key_name", key_name, 'str'),
@@ -928,3 +938,4 @@ class IotDpsResourceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_keys_for_key_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/keys/{keyName}/listkeys'}
