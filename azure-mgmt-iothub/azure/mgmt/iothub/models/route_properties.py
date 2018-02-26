@@ -23,8 +23,7 @@ class RouteProperties(Model):
     :param source: The source that the routing rule is to be applied to, such
      as DeviceMessages. Possible values include: 'DeviceMessages',
      'TwinChangeEvents', 'DeviceLifecycleEvents', 'DeviceJobLifecycleEvents'
-    :type source: str or :class:`RoutingSource
-     <azure.mgmt.iothub.models.RoutingSource>`
+    :type source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param condition: The condition that is evaluated to apply the routing
      rule. If no condition is provided, it evaluates to true by default. For
      grammar, see:
@@ -32,7 +31,7 @@ class RouteProperties(Model):
     :type condition: str
     :param endpoint_names: The list of endpoints to which messages that
      satisfy the condition are routed. Currently only one endpoint is allowed.
-    :type endpoint_names: list of str
+    :type endpoint_names: list[str]
     :param is_enabled: Used to specify whether a route is enabled.
     :type is_enabled: bool
     """
@@ -53,6 +52,7 @@ class RouteProperties(Model):
     }
 
     def __init__(self, name, source, endpoint_names, is_enabled, condition=None):
+        super(RouteProperties, self).__init__()
         self.name = name
         self.source = source
         self.condition = condition

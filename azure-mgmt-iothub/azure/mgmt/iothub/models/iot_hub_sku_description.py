@@ -20,11 +20,10 @@ class IotHubSkuDescription(Model):
 
     :ivar resource_type: The type of the resource.
     :vartype resource_type: str
-    :param sku:
-    :type sku: :class:`IotHubSkuInfo <azure.mgmt.iothub.models.IotHubSkuInfo>`
+    :param sku: The type of the resource.
+    :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
     :param capacity:
-    :type capacity: :class:`IotHubCapacity
-     <azure.mgmt.iothub.models.IotHubCapacity>`
+    :type capacity: ~azure.mgmt.iothub.models.IotHubCapacity
     """
 
     _validation = {
@@ -40,6 +39,7 @@ class IotHubSkuDescription(Model):
     }
 
     def __init__(self, sku, capacity):
+        super(IotHubSkuDescription, self).__init__()
         self.resource_type = None
         self.sku = sku
         self.capacity = capacity

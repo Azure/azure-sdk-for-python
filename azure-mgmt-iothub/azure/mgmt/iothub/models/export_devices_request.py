@@ -29,10 +29,11 @@ class ExportDevicesRequest(Model):
     }
 
     _attribute_map = {
-        'export_blob_container_uri': {'key': 'ExportBlobContainerUri', 'type': 'str'},
-        'exclude_keys': {'key': 'ExcludeKeys', 'type': 'bool'},
+        'export_blob_container_uri': {'key': 'exportBlobContainerUri', 'type': 'str'},
+        'exclude_keys': {'key': 'excludeKeys', 'type': 'bool'},
     }
 
     def __init__(self, export_blob_container_uri, exclude_keys):
+        super(ExportDevicesRequest, self).__init__()
         self.export_blob_container_uri = export_blob_container_uri
         self.exclude_keys = exclude_keys

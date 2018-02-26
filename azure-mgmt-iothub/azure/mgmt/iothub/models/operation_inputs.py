@@ -24,8 +24,9 @@ class OperationInputs(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
     def __init__(self, name):
+        super(OperationInputs, self).__init__()
         self.name = name

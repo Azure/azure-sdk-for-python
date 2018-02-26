@@ -44,6 +44,7 @@ from .registry_statistics import RegistryStatistics
 from .job_response import JobResponse
 from .iot_hub_capacity import IotHubCapacity
 from .iot_hub_sku_description import IotHubSkuDescription
+from .tags_resource import TagsResource
 from .event_hub_consumer_group_info import EventHubConsumerGroupInfo
 from .operation_inputs import OperationInputs
 from .iot_hub_name_availability_info import IotHubNameAvailabilityInfo
@@ -52,7 +53,7 @@ from .import_devices_request import ImportDevicesRequest
 from .operation_paged import OperationPaged
 from .iot_hub_description_paged import IotHubDescriptionPaged
 from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
-from .str_paged import StrPaged
+from .event_hub_consumer_group_info_paged import EventHubConsumerGroupInfoPaged
 from .job_response_paged import JobResponsePaged
 from .iot_hub_quota_metric_info_paged import IotHubQuotaMetricInfoPaged
 from .shared_access_signature_authorization_rule_paged import SharedAccessSignatureAuthorizationRulePaged
@@ -106,6 +107,7 @@ __all__ = [
     'JobResponse',
     'IotHubCapacity',
     'IotHubSkuDescription',
+    'TagsResource',
     'EventHubConsumerGroupInfo',
     'OperationInputs',
     'IotHubNameAvailabilityInfo',
@@ -114,7 +116,7 @@ __all__ = [
     'OperationPaged',
     'IotHubDescriptionPaged',
     'IotHubSkuDescriptionPaged',
-    'StrPaged',
+    'EventHubConsumerGroupInfoPaged',
     'JobResponsePaged',
     'IotHubQuotaMetricInfoPaged',
     'SharedAccessSignatureAuthorizationRulePaged',

@@ -42,6 +42,7 @@ class RegistryStatistics(Model):
     }
 
     def __init__(self):
+        super(RegistryStatistics, self).__init__()
         self.total_device_count = None
         self.enabled_device_count = None
         self.disabled_device_count = None

@@ -20,11 +20,10 @@ class IotHubSkuInfo(Model):
 
     :param name: The name of the SKU. Possible values include: 'F1', 'S1',
      'S2', 'S3'
-    :type name: str or :class:`IotHubSku <azure.mgmt.iothub.models.IotHubSku>`
+    :type name: str or ~azure.mgmt.iothub.models.IotHubSku
     :ivar tier: The billing tier for the IoT hub. Possible values include:
      'Free', 'Standard'
-    :vartype tier: str or :class:`IotHubSkuTier
-     <azure.mgmt.iothub.models.IotHubSkuTier>`
+    :vartype tier: str or ~azure.mgmt.iothub.models.IotHubSkuTier
     :param capacity: The number of provisioned IoT Hub units. See:
      https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits.
     :type capacity: long
@@ -33,7 +32,6 @@ class IotHubSkuInfo(Model):
     _validation = {
         'name': {'required': True},
         'tier': {'readonly': True},
-        'capacity': {'required': True},
     }
 
     _attribute_map = {
@@ -42,7 +40,8 @@ class IotHubSkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'long'},
     }
 
-    def __init__(self, name, capacity):
+    def __init__(self, name, capacity=None):
+        super(IotHubSkuInfo, self).__init__()
         self.name = name
         self.tier = None
         self.capacity = capacity

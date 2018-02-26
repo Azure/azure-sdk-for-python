@@ -19,8 +19,7 @@ class CertificateDescription(Model):
     sending a request.
 
     :param properties:
-    :type properties: :class:`CertificateProperties
-     <azure.mgmt.iothub.models.CertificateProperties>`
+    :type properties: ~azure.mgmt.iothub.models.CertificateProperties
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The name of the certificate.
@@ -47,6 +46,7 @@ class CertificateDescription(Model):
     }
 
     def __init__(self, properties=None):
+        super(CertificateDescription, self).__init__()
         self.properties = properties
         self.id = None
         self.name = None
