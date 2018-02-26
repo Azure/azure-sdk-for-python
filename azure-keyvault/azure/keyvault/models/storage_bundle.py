@@ -32,10 +32,9 @@ class StorageBundle(Model):
      ISO-8601 format.
     :vartype regeneration_period: str
     :ivar attributes: The storage account attributes.
-    :vartype attributes: :class:`StorageAccountAttributes
-     <azure.keyvault.models.StorageAccountAttributes>`
+    :vartype attributes: ~azure.keyvault.models.StorageAccountAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs
-    :vartype tags: dict
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -59,6 +58,7 @@ class StorageBundle(Model):
     }
 
     def __init__(self):
+        super(StorageBundle, self).__init__()
         self.id = None
         self.resource_id = None
         self.active_key_name = None

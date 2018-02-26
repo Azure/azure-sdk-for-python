@@ -18,8 +18,7 @@ class OrganizationDetails(Model):
     :param id: Id of the organization.
     :type id: str
     :param admin_details: Details of the organization administrator.
-    :type admin_details: list of :class:`AdministratorDetails
-     <azure.keyvault.models.AdministratorDetails>`
+    :type admin_details: list[~azure.keyvault.models.AdministratorDetails]
     """
 
     _attribute_map = {
@@ -28,5 +27,6 @@ class OrganizationDetails(Model):
     }
 
     def __init__(self, id=None, admin_details=None):
+        super(OrganizationDetails, self).__init__()
         self.id = id
         self.admin_details = admin_details
