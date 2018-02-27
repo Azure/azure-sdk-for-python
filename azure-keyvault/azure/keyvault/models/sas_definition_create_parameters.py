@@ -17,12 +17,12 @@ class SasDefinitionCreateParameters(Model):
 
     :param parameters: Sas definition creation metadata in the form of
      key-value pairs.
-    :type parameters: dict
+    :type parameters: dict[str, str]
     :param sas_definition_attributes: The attributes of the SAS definition.
-    :type sas_definition_attributes: :class:`SasDefinitionAttributes
-     <azure.keyvault.models.SasDefinitionAttributes>`
+    :type sas_definition_attributes:
+     ~azure.keyvault.models.SasDefinitionAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {

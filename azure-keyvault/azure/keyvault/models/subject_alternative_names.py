@@ -16,11 +16,11 @@ class SubjectAlternativeNames(Model):
     """The subject alternate names of a X509 object.
 
     :param emails: Email addresses.
-    :type emails: list of str
+    :type emails: list[str]
     :param dns_names: Domain names.
-    :type dns_names: list of str
+    :type dns_names: list[str]
     :param upns: User principal names.
-    :type upns: list of str
+    :type upns: list[str]
     """
 
     _attribute_map = {

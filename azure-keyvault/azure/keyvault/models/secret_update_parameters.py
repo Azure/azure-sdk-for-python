@@ -18,10 +18,9 @@ class SecretUpdateParameters(Model):
     :param content_type: Type of the secret value such as a password.
     :type content_type: str
     :param secret_attributes: The secret management attributes.
-    :type secret_attributes: :class:`SecretAttributes
-     <azure.keyvault.models.SecretAttributes>`
+    :type secret_attributes: ~azure.keyvault.models.SecretAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {

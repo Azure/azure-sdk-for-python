@@ -17,9 +17,9 @@ class LifetimeAction(Model):
     lifetime of a certificate.
 
     :param trigger: The condition that will execute the action.
-    :type trigger: :class:`Trigger <azure.keyvault.models.Trigger>`
+    :type trigger: ~azure.keyvault.models.Trigger
     :param action: The action that will be executed.
-    :type action: :class:`Action <azure.keyvault.models.Action>`
+    :type action: ~azure.keyvault.models.Action
     """
 
     _attribute_map = {
