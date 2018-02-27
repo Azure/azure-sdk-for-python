@@ -22,7 +22,7 @@ class VirtualMachineRunCommandsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-03-30".
     """
 
@@ -57,7 +57,7 @@ class VirtualMachineRunCommandsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/runCommands'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -103,6 +103,7 @@ class VirtualMachineRunCommandsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/runCommands'}
 
     def get(
             self, location, command_id, custom_headers=None, raw=False, **operation_config):
@@ -123,7 +124,7 @@ class VirtualMachineRunCommandsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/runCommands/{commandId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
             'commandId': self._serialize.url("command_id", command_id, 'str'),
@@ -164,3 +165,4 @@ class VirtualMachineRunCommandsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/runCommands/{commandId}'}

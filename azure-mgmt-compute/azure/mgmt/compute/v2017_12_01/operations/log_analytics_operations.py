@@ -24,7 +24,7 @@ class LogAnalyticsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-12-01".
     """
 
@@ -43,7 +43,7 @@ class LogAnalyticsOperations(object):
     def _export_request_rate_by_interval_initial(
             self, parameters, location, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getRequestRateByInterval'
+        url = self.export_request_rate_by_interval.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -155,12 +155,13 @@ class LogAnalyticsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    export_request_rate_by_interval.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getRequestRateByInterval'}
 
 
     def _export_throttled_requests_initial(
             self, parameters, location, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getThrottledRequests'
+        url = self.export_throttled_requests.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -272,3 +273,4 @@ class LogAnalyticsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    export_throttled_requests.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/logAnalytics/apiAccess/getThrottledRequests'}

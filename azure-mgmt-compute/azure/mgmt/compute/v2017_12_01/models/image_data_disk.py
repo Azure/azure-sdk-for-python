@@ -52,7 +52,7 @@ class ImageDataDisk(Model):
         'blob_uri': {'key': 'blobUri', 'type': 'str'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
     }
 
     def __init__(self, lun, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None, storage_account_type=None):
