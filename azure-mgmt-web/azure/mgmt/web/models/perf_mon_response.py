@@ -30,6 +30,7 @@ class PerfMonResponse(Model):
     }
 
     def __init__(self, code=None, message=None, data=None):
+        super(PerfMonResponse, self).__init__()
         self.code = code
         self.message = message
         self.data = data

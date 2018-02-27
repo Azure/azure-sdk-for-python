@@ -32,5 +32,6 @@ class CsmMoveResourceEnvelope(Model):
     }
 
     def __init__(self, target_resource_group=None, resources=None):
+        super(CsmMoveResourceEnvelope, self).__init__()
         self.target_resource_group = target_resource_group
         self.resources = resources

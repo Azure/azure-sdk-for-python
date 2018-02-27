@@ -30,6 +30,7 @@ class Capability(Model):
     }
 
     def __init__(self, name=None, value=None, reason=None):
+        super(Capability, self).__init__()
         self.name = name
         self.value = value
         self.reason = reason

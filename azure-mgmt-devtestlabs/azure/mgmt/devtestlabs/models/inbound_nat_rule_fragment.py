@@ -36,6 +36,7 @@ class InboundNatRuleFragment(Model):
     }
 
     def __init__(self, transport_protocol=None, frontend_port=None, backend_port=None):
+        super(InboundNatRuleFragment, self).__init__()
         self.transport_protocol = transport_protocol
         self.frontend_port = frontend_port
         self.backend_port = backend_port

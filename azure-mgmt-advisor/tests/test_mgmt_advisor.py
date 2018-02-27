@@ -141,7 +141,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         response = self.client.configurations.create_in_subscription(input)
 
         # retrieve the configurations
-        output = list(self.client.configurations.list_by_subscription().value)[0]
+        output = list(self.client.configurations.list_by_subscription())[0]
 
         # it should be identical to what we just set
         self.assertEqual(output.properties.low_cpu_threshold, "20")
@@ -151,7 +151,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
         response = self.client.configurations.create_in_subscription(input)
 
         # retrieve the configurations
-        output = list(self.client.configurations.list_by_subscription().value)[0]
+        output = list(self.client.configurations.list_by_subscription())[0]
 
         # it should be identical to what we just set
         self.assertEqual(output.properties.low_cpu_threshold, "5")
@@ -170,7 +170,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
             resource_group = resourceGroupName)
 
         # retrieve the configurations
-        output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName).value)[0]
+        output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName))[0]
 
         # it should be identical to what we just set
         self.assertEqual(output.properties.exclude, True)
@@ -182,7 +182,7 @@ class MgmtAdvisorTest(AzureMgmtTestCase):
             resource_group = resourceGroupName)
 
         # retrieve the configurations
-        output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName).value)[0]
+        output = list(self.client.configurations.list_by_resource_group(resource_group = resourceGroupName))[0]
 
         # it should be identical to what we just set
         self.assertEqual(output.properties.exclude, False)

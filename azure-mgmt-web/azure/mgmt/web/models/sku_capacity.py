@@ -33,6 +33,7 @@ class SkuCapacity(Model):
     }
 
     def __init__(self, minimum=None, maximum=None, default=None, scale_type=None):
+        super(SkuCapacity, self).__init__()
         self.minimum = minimum
         self.maximum = maximum
         self.default = default

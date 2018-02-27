@@ -36,6 +36,7 @@ class GenerateArmTemplateRequest(Model):
     }
 
     def __init__(self, virtual_machine_name=None, parameters=None, location=None, file_upload_options=None):
+        super(GenerateArmTemplateRequest, self).__init__()
         self.virtual_machine_name = virtual_machine_name
         self.parameters = parameters
         self.location = location

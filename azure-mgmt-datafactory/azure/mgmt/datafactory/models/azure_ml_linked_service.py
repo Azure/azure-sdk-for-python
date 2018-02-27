@@ -29,7 +29,7 @@ class AzureMLLinkedService(LinkedService):
      Service endpoint. Type: string (or Expression with resultType string).
     :type ml_endpoint: object
     :param api_key: The API key for accessing the Azure ML model endpoint.
-    :type api_key: ~azure.mgmt.datafactory.models.SecureString
+    :type api_key: ~azure.mgmt.datafactory.models.SecretBase
     :param update_resource_endpoint: The Update Resource REST URL for an Azure
      ML Web Service endpoint. Type: string (or Expression with resultType
      string).
@@ -41,7 +41,7 @@ class AzureMLLinkedService(LinkedService):
     :param service_principal_key: The key of the service principal used to
      authenticate against the ARM-based updateResourceEndpoint of an Azure ML
      web service.
-    :type service_principal_key: ~azure.mgmt.datafactory.models.SecureString
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal
      belongs. Type: string (or Expression with resultType string).
     :type tenant: object
@@ -63,10 +63,10 @@ class AzureMLLinkedService(LinkedService):
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'ml_endpoint': {'key': 'typeProperties.mlEndpoint', 'type': 'object'},
-        'api_key': {'key': 'typeProperties.apiKey', 'type': 'SecureString'},
+        'api_key': {'key': 'typeProperties.apiKey', 'type': 'SecretBase'},
         'update_resource_endpoint': {'key': 'typeProperties.updateResourceEndpoint', 'type': 'object'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
-        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecureString'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }

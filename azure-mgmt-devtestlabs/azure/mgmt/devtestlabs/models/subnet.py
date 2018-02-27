@@ -33,6 +33,7 @@ class Subnet(Model):
     }
 
     def __init__(self, resource_id=None, lab_subnet_name=None, allow_public_ip=None):
+        super(Subnet, self).__init__()
         self.resource_id = resource_id
         self.lab_subnet_name = lab_subnet_name
         self.allow_public_ip = allow_public_ip

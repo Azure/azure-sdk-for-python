@@ -32,7 +32,7 @@ class HDInsightLinkedService(LinkedService):
      with resultType string).
     :type user_name: object
     :param password: HDInsight cluster password.
-    :type password: ~azure.mgmt.datafactory.models.SecureString
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param linked_service_name: The Azure Storage linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -58,7 +58,7 @@ class HDInsightLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'cluster_uri': {'key': 'typeProperties.clusterUri', 'type': 'object'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecureString'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'linked_service_name': {'key': 'typeProperties.linkedServiceName', 'type': 'LinkedServiceReference'},
         'hcatalog_linked_service_name': {'key': 'typeProperties.hcatalogLinkedServiceName', 'type': 'LinkedServiceReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},

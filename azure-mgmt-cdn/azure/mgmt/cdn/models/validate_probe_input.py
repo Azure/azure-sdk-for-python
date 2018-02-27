@@ -28,4 +28,5 @@ class ValidateProbeInput(Model):
     }
 
     def __init__(self, probe_url):
+        super(ValidateProbeInput, self).__init__()
         self.probe_url = probe_url

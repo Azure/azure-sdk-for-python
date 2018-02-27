@@ -38,4 +38,5 @@ class CheckNameAvailabilityInput(Model):
     type = "Microsoft.Cdn/Profiles/Endpoints"
 
     def __init__(self, name):
+        super(CheckNameAvailabilityInput, self).__init__()
         self.name = name

@@ -41,6 +41,7 @@ class ValidateCustomDomainOutput(Model):
     }
 
     def __init__(self):
+        super(ValidateCustomDomainOutput, self).__init__()
         self.custom_domain_validated = None
         self.reason = None
         self.message = None

@@ -42,6 +42,7 @@ class DeepCreatedOrigin(Model):
     }
 
     def __init__(self, name, host_name, http_port=None, https_port=None):
+        super(DeepCreatedOrigin, self).__init__()
         self.name = name
         self.host_name = host_name
         self.http_port = http_port

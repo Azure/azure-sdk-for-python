@@ -24,4 +24,5 @@ class Experiments(Model):
     }
 
     def __init__(self, ramp_up_rules=None):
+        super(Experiments, self).__init__()
         self.ramp_up_rules = ramp_up_rules

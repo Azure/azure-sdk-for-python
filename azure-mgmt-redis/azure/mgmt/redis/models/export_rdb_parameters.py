@@ -35,6 +35,7 @@ class ExportRDBParameters(Model):
     }
 
     def __init__(self, prefix, container, format=None):
+        super(ExportRDBParameters, self).__init__()
         self.format = format
         self.prefix = prefix
         self.container = container

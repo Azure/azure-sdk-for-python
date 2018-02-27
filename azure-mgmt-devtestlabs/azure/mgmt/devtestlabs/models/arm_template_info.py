@@ -27,5 +27,6 @@ class ArmTemplateInfo(Model):
     }
 
     def __init__(self, template=None, parameters=None):
+        super(ArmTemplateInfo, self).__init__()
         self.template = template
         self.parameters = parameters

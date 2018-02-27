@@ -18,7 +18,7 @@ class RecurringCharge(OfferTermInfo):
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Polymorphic Discriminator
+    :param name: Constant filled by server.
     :type name: str
     :param recurring_charge: The amount of recurring charge as per the offer
      term.

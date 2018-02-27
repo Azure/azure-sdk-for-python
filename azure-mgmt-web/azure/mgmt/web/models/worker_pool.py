@@ -45,6 +45,7 @@ class WorkerPool(Model):
     }
 
     def __init__(self, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None):
+        super(WorkerPool, self).__init__()
         self.worker_size_id = worker_size_id
         self.compute_mode = compute_mode
         self.worker_size = worker_size

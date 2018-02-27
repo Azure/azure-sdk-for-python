@@ -29,4 +29,5 @@ class CustomDomainParameters(Model):
     }
 
     def __init__(self, host_name):
+        super(CustomDomainParameters, self).__init__()
         self.host_name = host_name

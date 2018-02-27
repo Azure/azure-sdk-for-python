@@ -2,6 +2,44 @@
 
 Release History
 ===============
+0.4.0 (2018-02-12)
+++++++++++++++++++
+
+**Breaking changes**
+
+- The account operations object has been changed from "account" to "accounts"
+    - E.g., account.get(...) to accounts.get(...)
+- When creating or updating resources (accounts, compute policies, etc.), explicit parameter objects are now required:
+    - Account creation:
+        - "DataLakeAnalyticsAccount" to "CreateDataLakeAnalyticsAccountParameters"
+            - List of "DataLakeStoreInfo" to "AddDataLakeStoreWithAccountParameters"
+            - List of "StorageAccountInfo" to "AddStorageAccountWithAccountParameters"
+            - List of "FirewallRule" to "CreateFirewallRuleWithAccountParameters"
+            - List of "ComputePolicy" to "CreateComputePolicyWithAccountParameters"
+    - Account update:
+        - "DataLakeAnalyticsUpdateParameters" to "UpdateDataLakeAnalyticsParameters"
+            - List of "DataLakeStoreInfo" to "UpdateDataLakeStoreWithAccountParameters"
+            - List of "StorageAccountInfo" to "UpdateStorageAccountWithAccountParameters"
+            - List of "FirewallRule" to "UpdateFirewallRuleWithAccountParameters"
+            - List of "ComputePolicy" to "UpdateComputePolicyWithAccountParameters"
+    - Data Lake Store account addition:
+        - "DataLakeStoreAccountInfo" to "AddDataLakeStoreParameters"
+    - Storage account addition and update:
+        - "StorageAccountInfo" to "AddStorageAccountParameters"
+        - "StorageAccountInfo" to "UpdateStorageAccountParameters"
+    - Compute policy creation and update:
+        - "ComputePolicy" to "CreateOrUpdateComputePolicyParameters"
+        - "ComputePolicy" to "UpdateComputePolicyParameters"
+    - Firewall rule creation and update:
+        - "FirewallRule" to "CreateOrUpdateFirewallRuleParameters"
+        - "FirewallRule" to "UpdateFirewallRuleParameters"
+- When retrieving resources, all the properties are now read-only and the following object names have been changed:
+    - Changed "DataLakeStoreAccountInfo" to "DataLakeStoreAccountInformation"
+    - Changed "StorageAccountInfo" to "StorageAccountInformation"
+- Added paging extension for the returned list for these APIs:
+    - Catalog_ListAclsByDatabase
+    - Catalog_ListAcls
+
 0.3.0 (2018-01-09)
 ++++++++++++++++++
 

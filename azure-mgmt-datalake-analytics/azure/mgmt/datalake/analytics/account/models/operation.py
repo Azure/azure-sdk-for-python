@@ -18,12 +18,12 @@ class Operation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: the name of the operation.
+    :ivar name: The name of the operation.
     :vartype name: str
-    :param display: the display information for the operation.
-    :type display:
+    :ivar display: The display information for the operation.
+    :vartype display:
      ~azure.mgmt.datalake.analytics.account.models.OperationDisplay
-    :ivar origin: the intended executor of the operation. Possible values
+    :ivar origin: The intended executor of the operation. Possible values
      include: 'user', 'system', 'user,system'
     :vartype origin: str or
      ~azure.mgmt.datalake.analytics.account.models.OperationOrigin
@@ -31,6 +31,7 @@ class Operation(Model):
 
     _validation = {
         'name': {'readonly': True},
+        'display': {'readonly': True},
         'origin': {'readonly': True},
     }
 
@@ -40,8 +41,8 @@ class Operation(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, display=None):
+    def __init__(self):
         super(Operation, self).__init__()
         self.name = None
-        self.display = display
+        self.display = None
         self.origin = None

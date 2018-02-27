@@ -33,5 +33,6 @@ class AzureTableStorageApplicationLogsConfig(Model):
     }
 
     def __init__(self, sas_url, level=None):
+        super(AzureTableStorageApplicationLogsConfig, self).__init__()
         self.level = level
         self.sas_url = sas_url

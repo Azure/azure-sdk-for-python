@@ -12,7 +12,6 @@ from .resources import ResourceManagementClient
 from .subscriptions import SubscriptionClient
 from .links import ManagementLinkClient
 from .managedapplications import ApplicationClient
-from .managementgroups import ManagementGroupsAPI
 
 from .version import VERSION
 
@@ -25,5 +24,4 @@ __all__ = [
     'SubscriptionClient',
     'ManagementLinkClient',
     'ApplicationClient',
-    'ManagementGroupsAPI'
 ]
