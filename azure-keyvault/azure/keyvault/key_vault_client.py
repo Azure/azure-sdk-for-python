@@ -37,7 +37,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
 
         super(KeyVaultClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-keyvault/{}'.format(VERSION))
+        self.add_user_agent('azure-keyvault,/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -112,7 +112,7 @@ class KeyVaultClient(object):
         parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags, curve=curve)
 
         # Construct URL
-        url = '/keys/{key-name}/create'
+        url = self.create_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
@@ -154,6 +154,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    create_key.metadata = {'url': '/keys/{key-name}/create'}
 
     def import_key(
             self, vault_base_url, key_name, key, hsm=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -193,7 +194,7 @@ class KeyVaultClient(object):
         parameters = models.KeyImportParameters(hsm=hsm, key=key, key_attributes=key_attributes, tags=tags)
 
         # Construct URL
-        url = '/keys/{key-name}'
+        url = self.import_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
@@ -235,6 +236,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    import_key.metadata = {'url': '/keys/{key-name}'}
 
     def delete_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
@@ -263,7 +265,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/keys/{key-name}'
+        url = self.delete_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -301,6 +303,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_key.metadata = {'url': '/keys/{key-name}'}
 
     def update_key(
             self, vault_base_url, key_name, key_version, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -341,7 +344,7 @@ class KeyVaultClient(object):
         parameters = models.KeyUpdateParameters(key_ops=key_ops, key_attributes=key_attributes, tags=tags)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}'
+        url = self.update_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -384,6 +387,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_key.metadata = {'url': '/keys/{key-name}/{key-version}'}
 
     def get_key(
             self, vault_base_url, key_name, key_version, custom_headers=None, raw=False, **operation_config):
@@ -413,7 +417,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/keys/{key-name}/{key-version}'
+        url = self.get_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -452,6 +456,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_key.metadata = {'url': '/keys/{key-name}/{key-version}'}
 
     def get_key_versions(
             self, vault_base_url, key_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -483,7 +488,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/keys/{key-name}/versions'
+                url = self.get_key_versions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -529,6 +534,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_key_versions.metadata = {'url': '/keys/{key-name}/versions'}
 
     def get_keys(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -562,7 +568,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/keys'
+                url = self.get_keys.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -607,6 +613,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_keys.metadata = {'url': '/keys'}
 
     def backup_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
@@ -645,7 +652,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/keys/{key-name}/backup'
+        url = self.backup_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -683,6 +690,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    backup_key.metadata = {'url': '/keys/{key-name}/backup'}
 
     def restore_key(
             self, vault_base_url, key_bundle_backup, custom_headers=None, raw=False, **operation_config):
@@ -723,7 +731,7 @@ class KeyVaultClient(object):
         parameters = models.KeyRestoreParameters(key_bundle_backup=key_bundle_backup)
 
         # Construct URL
-        url = '/keys/restore'
+        url = self.restore_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -764,6 +772,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    restore_key.metadata = {'url': '/keys/restore'}
 
     def encrypt(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -808,7 +817,7 @@ class KeyVaultClient(object):
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/encrypt'
+        url = self.encrypt.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -851,6 +860,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    encrypt.metadata = {'url': '/keys/{key-name}/{key-version}/encrypt'}
 
     def decrypt(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -892,7 +902,7 @@ class KeyVaultClient(object):
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/decrypt'
+        url = self.decrypt.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -935,6 +945,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    decrypt.metadata = {'url': '/keys/{key-name}/{key-version}/decrypt'}
 
     def sign(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -974,7 +985,7 @@ class KeyVaultClient(object):
         parameters = models.KeySignParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/sign'
+        url = self.sign.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -1017,6 +1028,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    sign.metadata = {'url': '/keys/{key-name}/{key-version}/sign'}
 
     def verify(
             self, vault_base_url, key_name, key_version, algorithm, digest, signature, custom_headers=None, raw=False, **operation_config):
@@ -1062,7 +1074,7 @@ class KeyVaultClient(object):
         parameters = models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/verify'
+        url = self.verify.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -1105,6 +1117,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    verify.metadata = {'url': '/keys/{key-name}/{key-version}/verify'}
 
     def wrap_key(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -1146,7 +1159,7 @@ class KeyVaultClient(object):
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/wrapkey'
+        url = self.wrap_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -1189,6 +1202,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    wrap_key.metadata = {'url': '/keys/{key-name}/{key-version}/wrapkey'}
 
     def unwrap_key(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -1228,7 +1242,7 @@ class KeyVaultClient(object):
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/unwrapkey'
+        url = self.unwrap_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -1271,6 +1285,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    unwrap_key.metadata = {'url': '/keys/{key-name}/{key-version}/unwrapkey'}
 
     def get_deleted_keys(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -1305,7 +1320,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/deletedkeys'
+                url = self.get_deleted_keys.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -1350,6 +1365,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_keys.metadata = {'url': '/deletedkeys'}
 
     def get_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
@@ -1377,7 +1393,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedkeys/{key-name}'
+        url = self.get_deleted_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -1415,6 +1431,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_key.metadata = {'url': '/deletedkeys/{key-name}'}
 
     def purge_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
@@ -1441,7 +1458,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedkeys/{key-name}'
+        url = self.purge_deleted_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -1472,6 +1489,7 @@ class KeyVaultClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    purge_deleted_key.metadata = {'url': '/deletedkeys/{key-name}'}
 
     def recover_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
@@ -1501,7 +1519,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedkeys/{key-name}/recover'
+        url = self.recover_deleted_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -1539,6 +1557,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_key.metadata = {'url': '/deletedkeys/{key-name}/recover'}
 
     def set_secret(
             self, vault_base_url, secret_name, value, tags=None, content_type=None, secret_attributes=None, custom_headers=None, raw=False, **operation_config):
@@ -1576,7 +1595,7 @@ class KeyVaultClient(object):
         parameters = models.SecretSetParameters(value=value, tags=tags, content_type=content_type, secret_attributes=secret_attributes)
 
         # Construct URL
-        url = '/secrets/{secret-name}'
+        url = self.set_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
@@ -1618,6 +1637,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_secret.metadata = {'url': '/secrets/{secret-name}'}
 
     def delete_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -1644,7 +1664,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/secrets/{secret-name}'
+        url = self.delete_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -1682,6 +1702,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_secret.metadata = {'url': '/secrets/{secret-name}'}
 
     def update_secret(
             self, vault_base_url, secret_name, secret_version, content_type=None, secret_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -1721,7 +1742,7 @@ class KeyVaultClient(object):
         parameters = models.SecretUpdateParameters(content_type=content_type, secret_attributes=secret_attributes, tags=tags)
 
         # Construct URL
-        url = '/secrets/{secret-name}/{secret-version}'
+        url = self.update_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str'),
@@ -1764,6 +1785,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_secret.metadata = {'url': '/secrets/{secret-name}/{secret-version}'}
 
     def get_secret(
             self, vault_base_url, secret_name, secret_version, custom_headers=None, raw=False, **operation_config):
@@ -1791,7 +1813,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/secrets/{secret-name}/{secret-version}'
+        url = self.get_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str'),
@@ -1830,6 +1852,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_secret.metadata = {'url': '/secrets/{secret-name}/{secret-version}'}
 
     def get_secrets(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -1861,7 +1884,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/secrets'
+                url = self.get_secrets.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -1906,6 +1929,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_secrets.metadata = {'url': '/secrets'}
 
     def get_secret_versions(
             self, vault_base_url, secret_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -1938,7 +1962,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/secrets/{secret-name}/versions'
+                url = self.get_secret_versions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -1984,6 +2008,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_secret_versions.metadata = {'url': '/secrets/{secret-name}/versions'}
 
     def get_deleted_secrets(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -2014,7 +2039,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/deletedsecrets'
+                url = self.get_deleted_secrets.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -2059,6 +2084,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_secrets.metadata = {'url': '/deletedsecrets'}
 
     def get_deleted_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -2085,7 +2111,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedsecrets/{secret-name}'
+        url = self.get_deleted_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2123,6 +2149,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_secret.metadata = {'url': '/deletedsecrets/{secret-name}'}
 
     def purge_deleted_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -2149,7 +2176,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedsecrets/{secret-name}'
+        url = self.purge_deleted_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2180,6 +2207,7 @@ class KeyVaultClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    purge_deleted_secret.metadata = {'url': '/deletedsecrets/{secret-name}'}
 
     def recover_deleted_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -2206,7 +2234,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedsecrets/{secret-name}/recover'
+        url = self.recover_deleted_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2244,6 +2272,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_secret.metadata = {'url': '/deletedsecrets/{secret-name}/recover'}
 
     def backup_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -2270,7 +2299,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/secrets/{secret-name}/backup'
+        url = self.backup_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2308,6 +2337,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    backup_secret.metadata = {'url': '/secrets/{secret-name}/backup'}
 
     def restore_secret(
             self, vault_base_url, secret_bundle_backup, custom_headers=None, raw=False, **operation_config):
@@ -2336,7 +2366,7 @@ class KeyVaultClient(object):
         parameters = models.SecretRestoreParameters(secret_bundle_backup=secret_bundle_backup)
 
         # Construct URL
-        url = '/secrets/restore'
+        url = self.restore_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2377,9 +2407,10 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    restore_secret.metadata = {'url': '/secrets/restore'}
 
     def get_certificates(
-            self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, maxresults=None, include_pending=None, custom_headers=None, raw=False, **operation_config):
         """List certificates in a specified key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -2392,6 +2423,9 @@ class KeyVaultClient(object):
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
         :type maxresults: int
+        :param include_pending: Specifies whether to include certificates
+         which are not completely provisioned.
+        :type include_pending: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2407,7 +2441,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/certificates'
+                url = self.get_certificates.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -2417,6 +2451,8 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                if include_pending is not None:
+                    query_parameters['includePending'] = self._serialize.query("include_pending", include_pending, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -2452,6 +2488,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificates.metadata = {'url': '/certificates'}
 
     def delete_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -2479,7 +2516,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}'
+        url = self.delete_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -2517,6 +2554,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate.metadata = {'url': '/certificates/{certificate-name}'}
 
     def set_certificate_contacts(
             self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
@@ -2544,7 +2582,7 @@ class KeyVaultClient(object):
         contacts = models.Contacts(contact_list=contact_list)
 
         # Construct URL
-        url = '/certificates/contacts'
+        url = self.set_certificate_contacts.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2585,6 +2623,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_certificate_contacts.metadata = {'url': '/certificates/contacts'}
 
     def get_certificate_contacts(
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
@@ -2609,7 +2648,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/contacts'
+        url = self.get_certificate_contacts.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2646,6 +2685,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_contacts.metadata = {'url': '/certificates/contacts'}
 
     def delete_certificate_contacts(
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
@@ -2669,7 +2709,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/contacts'
+        url = self.delete_certificate_contacts.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2706,6 +2746,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate_contacts.metadata = {'url': '/certificates/contacts'}
 
     def get_certificate_issuers(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -2736,7 +2777,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/certificates/issuers'
+                url = self.get_certificate_issuers.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -2781,6 +2822,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_issuers.metadata = {'url': '/certificates/issuers'}
 
     def set_certificate_issuer(
             self, vault_base_url, issuer_name, provider, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
@@ -2818,7 +2860,7 @@ class KeyVaultClient(object):
         parameter = models.CertificateIssuerSetParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
 
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.set_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -2860,6 +2902,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def update_certificate_issuer(
             self, vault_base_url, issuer_name, provider=None, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
@@ -2897,7 +2940,7 @@ class KeyVaultClient(object):
         parameter = models.CertificateIssuerUpdateParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
 
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.update_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -2939,6 +2982,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def get_certificate_issuer(
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
@@ -2965,7 +3009,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.get_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -3003,6 +3047,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def delete_certificate_issuer(
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
@@ -3029,7 +3074,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.delete_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -3067,6 +3112,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def create_certificate(
             self, vault_base_url, certificate_name, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -3103,7 +3149,7 @@ class KeyVaultClient(object):
         parameters = models.CertificateCreateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/create'
+        url = self.create_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
@@ -3145,6 +3191,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    create_certificate.metadata = {'url': '/certificates/{certificate-name}/create'}
 
     def import_certificate(
             self, vault_base_url, certificate_name, base64_encoded_certificate, password=None, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -3191,7 +3238,7 @@ class KeyVaultClient(object):
         parameters = models.CertificateImportParameters(base64_encoded_certificate=base64_encoded_certificate, password=password, certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/import'
+        url = self.import_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
@@ -3233,6 +3280,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    import_certificate.metadata = {'url': '/certificates/{certificate-name}/import'}
 
     def get_certificate_versions(
             self, vault_base_url, certificate_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -3265,7 +3313,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/certificates/{certificate-name}/versions'
+                url = self.get_certificate_versions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3311,6 +3359,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_versions.metadata = {'url': '/certificates/{certificate-name}/versions'}
 
     def get_certificate_policy(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -3338,7 +3387,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/policy'
+        url = self.get_certificate_policy.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3376,6 +3425,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_policy.metadata = {'url': '/certificates/{certificate-name}/policy'}
 
     def update_certificate_policy(
             self, vault_base_url, certificate_name, certificate_policy, custom_headers=None, raw=False, **operation_config):
@@ -3404,7 +3454,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/policy'
+        url = self.update_certificate_policy.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3446,6 +3496,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate_policy.metadata = {'url': '/certificates/{certificate-name}/policy'}
 
     def update_certificate(
             self, vault_base_url, certificate_name, certificate_version, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -3486,7 +3537,7 @@ class KeyVaultClient(object):
         parameters = models.CertificateUpdateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/{certificate-version}'
+        url = self.update_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
@@ -3529,6 +3580,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate.metadata = {'url': '/certificates/{certificate-name}/{certificate-version}'}
 
     def get_certificate(
             self, vault_base_url, certificate_name, certificate_version, custom_headers=None, raw=False, **operation_config):
@@ -3557,7 +3609,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/{certificate-version}'
+        url = self.get_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
@@ -3596,6 +3648,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate.metadata = {'url': '/certificates/{certificate-name}/{certificate-version}'}
 
     def update_certificate_operation(
             self, vault_base_url, certificate_name, cancellation_requested, custom_headers=None, raw=False, **operation_config):
@@ -3626,7 +3679,7 @@ class KeyVaultClient(object):
         certificate_operation = models.CertificateOperationUpdateParameter(cancellation_requested=cancellation_requested)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/pending'
+        url = self.update_certificate_operation.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3668,6 +3721,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}
 
     def get_certificate_operation(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -3693,7 +3747,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/pending'
+        url = self.get_certificate_operation.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3731,6 +3785,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}
 
     def delete_certificate_operation(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -3757,7 +3812,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/pending'
+        url = self.delete_certificate_operation.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3795,6 +3850,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}
 
     def merge_certificate(
             self, vault_base_url, certificate_name, x509_certificates, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -3834,7 +3890,7 @@ class KeyVaultClient(object):
         parameters = models.CertificateMergeParameters(x509_certificates=x509_certificates, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/pending/merge'
+        url = self.merge_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3876,9 +3932,10 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    merge_certificate.metadata = {'url': '/certificates/{certificate-name}/pending/merge'}
 
     def get_deleted_certificates(
-            self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, maxresults=None, include_pending=None, custom_headers=None, raw=False, **operation_config):
         """Lists the deleted certificates in the specified vault currently
         available for recovery.
 
@@ -3894,6 +3951,9 @@ class KeyVaultClient(object):
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
         :type maxresults: int
+        :param include_pending: Specifies whether to include certificates
+         which are not completely provisioned.
+        :type include_pending: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3909,7 +3969,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/deletedcertificates'
+                url = self.get_deleted_certificates.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -3919,6 +3979,8 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                if include_pending is not None:
+                    query_parameters['includePending'] = self._serialize.query("include_pending", include_pending, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -3954,6 +4016,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_certificates.metadata = {'url': '/deletedcertificates'}
 
     def get_deleted_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -3981,7 +4044,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedcertificates/{certificate-name}'
+        url = self.get_deleted_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -4019,6 +4082,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}'}
 
     def purge_deleted_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -4045,7 +4109,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedcertificates/{certificate-name}'
+        url = self.purge_deleted_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -4076,6 +4140,7 @@ class KeyVaultClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    purge_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}'}
 
     def recover_deleted_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -4105,7 +4170,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedcertificates/{certificate-name}/recover'
+        url = self.recover_deleted_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -4143,6 +4208,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}/recover'}
 
     def get_storage_accounts(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -4170,7 +4236,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/storage'
+                url = self.get_storage_accounts.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -4215,11 +4281,214 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_storage_accounts.metadata = {'url': '/storage'}
 
-    def delete_storage_account(
+    def get_deleted_storage_accounts(
+            self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        """Lists deleted storage accounts for the specified vault.
+
+        The Get Deleted Storage Accounts operation returns the storage accounts
+        that have been deleted for a vault enabled for soft-delete. This
+        operation requires the storage/list permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param maxresults: Maximum number of results to return in a page. If
+         not specified the service will return up to 25 results.
+        :type maxresults: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DeletedStorageAccountItem
+        :rtype:
+         ~azure.keyvault.models.DeletedStorageAccountItemPaged[~azure.keyvault.models.DeletedStorageAccountItem]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.get_deleted_storage_accounts.metadata['url']
+                path_format_arguments = {
+                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if maxresults is not None:
+                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.KeyVaultErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeletedStorageAccountItemPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.DeletedStorageAccountItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    get_deleted_storage_accounts.metadata = {'url': '/deletedstorage'}
+
+    def get_deleted_storage_account(
             self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a storage account. This operation requires the storage/delete
-        permission.
+        """Gets the specified deleted storage account.
+
+        The Get Deleted Storage Account operation returns the specified deleted
+        storage account along with its attributes. This operation requires the
+        storage/get permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeletedStorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedStorageBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.get_deleted_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeletedStorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deleted_storage_account.metadata = {'url': '/deletedstorage/{storage-account-name}'}
+
+    def purge_deleted_storge_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Permanently deletes the specified storage account.
+
+        The purge deleted storage account operation removes the secret
+        permanently, without the possibility of recovery. This operation can
+        only be performed on a soft-delete enabled vault. This operation
+        requires the storage/purge permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.purge_deleted_storge_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    purge_deleted_storge_account.metadata = {'url': '/deletedstorage/{storage-account-name}'}
+
+    def recover_deleted_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Recovers the deleted storage account.
+
+        Recovers the deleted storage account in the specified vault. This
+        operation can only be performed on a soft-delete enabled vault. This
+        operation requires the storage/recover permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4238,7 +4507,203 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/storage/{storage-account-name}'
+        url = self.recover_deleted_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    recover_deleted_storage_account.metadata = {'url': '/deletedstorage/{storage-account-name}/recover'}
+
+    def backup_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Backs up the specified storage account.
+
+        Requests that a backup of the specified storage account be downloaded
+        to the client. This operation requires the storage/backup permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BackupStorageResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.BackupStorageResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.backup_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupStorageResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    backup_storage_account.metadata = {'url': '/storage/{storage-account-name}/backup'}
+
+    def restore_storage_account(
+            self, vault_base_url, storage_bundle_backup, custom_headers=None, raw=False, **operation_config):
+        """Restores a backed up storage account to a vault.
+
+        Restores a backed up storage account to a vault. This operation
+        requires the storage/restore permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_bundle_backup: The backup blob associated with a
+         storage account.
+        :type storage_bundle_backup: bytes
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters = models.StorageRestoreParameters(storage_bundle_backup=storage_bundle_backup)
+
+        # Construct URL
+        url = self.restore_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'StorageRestoreParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    restore_storage_account.metadata = {'url': '/storage/restore'}
+
+    def delete_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a storage account. This operation requires the storage/delete
+        permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeletedStorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedStorageBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.delete_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
@@ -4269,13 +4734,14 @@ class KeyVaultClient(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('StorageBundle', response)
+            deserialized = self._deserialize('DeletedStorageBundle', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    delete_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
 
     def get_storage_account(
             self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
@@ -4299,7 +4765,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/storage/{storage-account-name}'
+        url = self.get_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
@@ -4337,6 +4803,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
 
     def set_storage_account(
             self, vault_base_url, storage_account_name, resource_id, active_key_name, auto_regenerate_key, regeneration_period=None, storage_account_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -4379,7 +4846,7 @@ class KeyVaultClient(object):
         parameters = models.StorageAccountCreateParameters(resource_id=resource_id, active_key_name=active_key_name, auto_regenerate_key=auto_regenerate_key, regeneration_period=regeneration_period, storage_account_attributes=storage_account_attributes, tags=tags)
 
         # Construct URL
-        url = '/storage/{storage-account-name}'
+        url = self.set_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
@@ -4421,6 +4888,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
 
     def update_storage_account(
             self, vault_base_url, storage_account_name, active_key_name=None, auto_regenerate_key=None, regeneration_period=None, storage_account_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -4461,7 +4929,7 @@ class KeyVaultClient(object):
         parameters = models.StorageAccountUpdateParameters(active_key_name=active_key_name, auto_regenerate_key=auto_regenerate_key, regeneration_period=regeneration_period, storage_account_attributes=storage_account_attributes, tags=tags)
 
         # Construct URL
-        url = '/storage/{storage-account-name}'
+        url = self.update_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
@@ -4503,6 +4971,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
 
     def regenerate_storage_account_key(
             self, vault_base_url, storage_account_name, key_name, custom_headers=None, raw=False, **operation_config):
@@ -4530,7 +4999,7 @@ class KeyVaultClient(object):
         parameters = models.StorageAccountRegenerteKeyParameters(key_name=key_name)
 
         # Construct URL
-        url = '/storage/{storage-account-name}/regeneratekey'
+        url = self.regenerate_storage_account_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
@@ -4572,6 +5041,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    regenerate_storage_account_key.metadata = {'url': '/storage/{storage-account-name}/regeneratekey'}
 
     def get_sas_definitions(
             self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -4601,7 +5071,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/storage/{storage-account-name}/sas'
+                url = self.get_sas_definitions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
@@ -4647,11 +5117,163 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_sas_definitions.metadata = {'url': '/storage/{storage-account-name}/sas'}
 
-    def delete_sas_definition(
+    def get_deleted_sas_definitions(
+            self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        """Lists deleted SAS definitions for the specified vault and storage
+        account.
+
+        The Get Deleted Sas Definitions operation returns the SAS definitions
+        that have been deleted for a vault enabled for soft-delete. This
+        operation requires the storage/listsas permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param maxresults: Maximum number of results to return in a page. If
+         not specified the service will return up to 25 results.
+        :type maxresults: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DeletedSasDefinitionItem
+        :rtype:
+         ~azure.keyvault.models.DeletedSasDefinitionItemPaged[~azure.keyvault.models.DeletedSasDefinitionItem]
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.get_deleted_sas_definitions.metadata['url']
+                path_format_arguments = {
+                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if maxresults is not None:
+                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.KeyVaultErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeletedSasDefinitionItemPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.DeletedSasDefinitionItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    get_deleted_sas_definitions.metadata = {'url': '/deletedstorage/{storage-account-name}/sas'}
+
+    def get_deleted_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a SAS definition from a specified storage account. This
-        operation requires the storage/deletesas permission.
+        """Gets the specified deleted sas definition.
+
+        The Get Deleted SAS Definition operation returns the specified deleted
+        SAS definition along with its attributes. This operation requires the
+        storage/getsas permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeletedSasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.get_deleted_sas_definition.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeletedSasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deleted_sas_definition.metadata = {'url': '/deletedstorage/{storage-account-name}/sas/{sas-definition-name}'}
+
+    def recover_deleted_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Recovers the deleted SAS definition.
+
+        Recovers the deleted SAS definition for the specified storage account.
+        This operation can only be performed on a soft-delete enabled vault.
+        This operation requires the storage/recover permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4672,7 +5294,72 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        url = self.recover_deleted_sas_definition.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    recover_deleted_sas_definition.metadata = {'url': '/deletedstorage/{storage-account-name}/sas/{sas-definition-name}/recover'}
+
+    def delete_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a SAS definition from a specified storage account. This
+        operation requires the storage/deletesas permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeletedSasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.delete_sas_definition.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
@@ -4704,13 +5391,14 @@ class KeyVaultClient(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SasDefinitionBundle', response)
+            deserialized = self._deserialize('DeletedSasDefinitionBundle', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    delete_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}
 
     def get_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -4736,7 +5424,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        url = self.get_sas_definition.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
@@ -4775,6 +5463,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}
 
     def set_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, template_uri, sas_type, validity_period, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -4819,7 +5508,7 @@ class KeyVaultClient(object):
         parameters = models.SasDefinitionCreateParameters(template_uri=template_uri, sas_type=sas_type, validity_period=validity_period, sas_definition_attributes=sas_definition_attributes, tags=tags)
 
         # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        url = self.set_sas_definition.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
@@ -4862,6 +5551,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}
 
     def update_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, template_uri=None, sas_type=None, validity_period=None, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -4906,7 +5596,7 @@ class KeyVaultClient(object):
         parameters = models.SasDefinitionUpdateParameters(template_uri=template_uri, sas_type=sas_type, validity_period=validity_period, sas_definition_attributes=sas_definition_attributes, tags=tags)
 
         # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        url = self.update_sas_definition.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
@@ -4949,3 +5639,4 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}
