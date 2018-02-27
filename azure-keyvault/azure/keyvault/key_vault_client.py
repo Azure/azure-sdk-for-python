@@ -37,7 +37,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
 
         super(KeyVaultClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('keyvaultclient/{}'.format(VERSION))
+        self.add_user_agent('azure-keyvault/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -67,7 +67,7 @@ class KeyVaultClient(object):
 
 
     def create_key(
-            self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, curve=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new key, stores it, then returns key parameters and
         attributes to the client.
 
@@ -81,41 +81,41 @@ class KeyVaultClient(object):
         :param key_name: The name for the new key. The system will generate
          the version name for the new key.
         :type key_name: str
-        :param kty: The type of key to create. For valid key types, see
-         JsonWebKeyType. Supported JsonWebKey key types (kty) for Elliptic
-         Curve, RSA, HSM, Octet. Possible values include: 'EC', 'RSA',
+        :param kty: The type of key to create. For valid values, see
+         JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
          'RSA-HSM', 'oct'
-        :type kty: str or :class:`JsonWebKeyType
-         <azure.keyvault.models.JsonWebKeyType>`
+        :type kty: str or ~azure.keyvault.models.JsonWebKeyType
         :param key_size: The key size in bytes. For example, 1024 or 2048.
         :type key_size: int
         :param key_ops:
-        :type key_ops: list of str or :class:`JsonWebKeyOperation
-         <azure.keyvault.models.JsonWebKeyOperation>`
+        :type key_ops: list[str or ~azure.keyvault.models.JsonWebKeyOperation]
         :param key_attributes:
-        :type key_attributes: :class:`KeyAttributes
-         <azure.keyvault.models.KeyAttributes>`
+        :type key_attributes: ~azure.keyvault.models.KeyAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
+        :param curve: Elliptic curve name. For valid values, see
+         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
+         'P-521', 'SECP256K1'
+        :type curve: str or ~azure.keyvault.models.JsonWebKeyCurveName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags)
+        parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags, curve=curve)
 
         # Construct URL
         url = '/keys/{key-name}/create'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'key-name': self._serialize.url("key_name", key_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'key-name': self._serialize.url("key_name", key_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -170,23 +170,22 @@ class KeyVaultClient(object):
         :param key_name: Name for the imported key.
         :type key_name: str
         :param key: The Json web key
-        :type key: :class:`JsonWebKey <azure.keyvault.models.JsonWebKey>`
+        :type key: ~azure.keyvault.models.JsonWebKey
         :param hsm: Whether to import as a hardware key (HSM) or software key.
         :type hsm: bool
         :param key_attributes: The key management attributes.
-        :type key_attributes: :class:`KeyAttributes
-         <azure.keyvault.models.KeyAttributes>`
+        :type key_attributes: ~azure.keyvault.models.KeyAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -196,7 +195,7 @@ class KeyVaultClient(object):
         url = '/keys/{key-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'key-name': self._serialize.url("key_name", key_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'key-name': self._serialize.url("key_name", key_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -255,10 +254,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedKeyBundle
-         <azure.keyvault.models.DeletedKeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedKeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedKeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -321,22 +319,20 @@ class KeyVaultClient(object):
         :type key_version: str
         :param key_ops: Json web key operations. For more information on
          possible key operations, see JsonWebKeyOperation.
-        :type key_ops: list of str or :class:`JsonWebKeyOperation
-         <azure.keyvault.models.JsonWebKeyOperation>`
+        :type key_ops: list[str or ~azure.keyvault.models.JsonWebKeyOperation]
         :param key_attributes:
-        :type key_attributes: :class:`KeyAttributes
-         <azure.keyvault.models.KeyAttributes>`
+        :type key_attributes: ~azure.keyvault.models.KeyAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -407,9 +403,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -474,7 +470,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyItemPaged <azure.keyvault.models.KeyItemPaged>`
+        :return: An iterator like instance of KeyItem
+        :rtype:
+         ~azure.keyvault.models.KeyItemPaged[~azure.keyvault.models.KeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -551,7 +549,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyItemPaged <azure.keyvault.models.KeyItemPaged>`
+        :return: An iterator like instance of KeyItem
+        :rtype:
+         ~azure.keyvault.models.KeyItemPaged[~azure.keyvault.models.KeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -634,10 +634,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupKeyResult
-         <azure.keyvault.models.BackupKeyResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: BackupKeyResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.BackupKeyResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -710,9 +709,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -785,8 +784,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -794,10 +793,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -869,8 +867,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -878,10 +876,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -950,9 +947,10 @@ class KeyVaultClient(object):
         :param algorithm: The signing/verification algorithm identifier. For
          more information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
-         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL'
-        :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
-         <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
+         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
+         'ES384', 'ES512', 'ECDSA256'
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -960,10 +958,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1035,9 +1032,10 @@ class KeyVaultClient(object):
         :param algorithm: The signing/verification algorithm. For more
          information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
-         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL'
-        :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
-         <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
+         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
+         'ES384', 'ES512', 'ECDSA256'
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
         :param digest: The digest used for signing.
         :type digest: bytes
         :param signature: The signature to be verified.
@@ -1047,10 +1045,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyVerifyResult
-         <azure.keyvault.models.KeyVerifyResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyVerifyResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyVerifyResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1122,8 +1119,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -1131,10 +1128,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1205,8 +1201,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -1214,10 +1210,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1270,8 +1265,14 @@ class KeyVaultClient(object):
 
     def get_deleted_keys(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List deleted keys in the specified vault. Authorization: Requires the
-        keys/list permission.
+        """Lists the deleted keys in the specified vault.
+
+        Retrieves a list of the keys in the Key Vault as JSON Web Key
+        structures that contain the public part of a deleted key. The Get
+        Deleted Keys operation is applicable for soft-delete enabled vaults. It
+        requires the keys/list permission to be enabled on this vault. While
+        the operation can be invoked on any vault, it will return an error if
+        invoked on a non soft-delete enabled vault.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1284,8 +1285,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedKeyItemPaged
-         <azure.keyvault.models.DeletedKeyItemPaged>`
+        :return: An iterator like instance of DeletedKeyItem
+        :rtype:
+         ~azure.keyvault.models.DeletedKeyItemPaged[~azure.keyvault.models.DeletedKeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1341,23 +1343,26 @@ class KeyVaultClient(object):
 
     def get_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the deleted key information plus its attributes.
-        Authorization: Requires the keys/get permission.
+        """Gets the public part of a deleted key.
+
+        The Get Deleted Key operation is applicable for soft-delete enabled
+        vaults. It requires the keys/list permission to be enabled on this
+        vault. While the operation can be invoked on any vault, it will return
+        an error if invoked on a non soft-delete enabled vault.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedKeyBundle
-         <azure.keyvault.models.DeletedKeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedKeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedKeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1403,8 +1408,12 @@ class KeyVaultClient(object):
 
     def purge_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Permanently deletes the specified key. aka purges the key.
-        Authorization: Requires the keys/purge permission.
+        """Permanently deletes the specified key.
+
+        The Purge Deleted Key operation is applicable for soft-delete enabled
+        vaults. It requires the keys/purge permission to be enabled on this
+        vault. While the operation can be invoked on any vault, it will return
+        an error if invoked on a non soft-delete enabled vault.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1416,9 +1425,8 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1457,22 +1465,28 @@ class KeyVaultClient(object):
 
     def recover_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Recovers the deleted key back to its current version under /keys.
-        Authorization: Requires the keys/recover permission.
+        """Recovers the deleted key to its latest version.
+
+        The Recover Deleted Key operation is applicable for deleted keys in
+        soft-delete enabled vaults. It recovers the deleted key back to its
+        latest version under /keys. It requires the keys/recover permissions to
+        be enabled on this vault. An attempt to recover an non-deleted key will
+        return an error. Consider this the inverse of the delete operation on
+        soft-delete enabled vaults.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the deleted key
+        :param key_name: The name of the deleted key.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1533,20 +1547,19 @@ class KeyVaultClient(object):
         :type value: str
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param content_type: Type of the secret value such as a password.
         :type content_type: str
         :param secret_attributes: The secret management attributes.
-        :type secret_attributes: :class:`SecretAttributes
-         <azure.keyvault.models.SecretAttributes>`
+        :type secret_attributes: ~azure.keyvault.models.SecretAttributes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1556,7 +1569,7 @@ class KeyVaultClient(object):
         url = '/secrets/{secret-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'secret-name': self._serialize.url("secret_name", secret_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'secret-name': self._serialize.url("secret_name", secret_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1613,10 +1626,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedSecretBundle
-         <azure.keyvault.models.DeletedSecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedSecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1679,19 +1691,18 @@ class KeyVaultClient(object):
         :param content_type: Type of the secret value such as a password.
         :type content_type: str
         :param secret_attributes: The secret management attributes.
-        :type secret_attributes: :class:`SecretAttributes
-         <azure.keyvault.models.SecretAttributes>`
+        :type secret_attributes: ~azure.keyvault.models.SecretAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1761,9 +1772,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1827,8 +1838,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretItemPaged
-         <azure.keyvault.models.SecretItemPaged>`
+        :return: An iterator like instance of SecretItem
+        :rtype:
+         ~azure.keyvault.models.SecretItemPaged[~azure.keyvault.models.SecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1904,8 +1916,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretItemPaged
-         <azure.keyvault.models.SecretItemPaged>`
+        :return: An iterator like instance of SecretItem
+        :rtype:
+         ~azure.keyvault.models.SecretItemPaged[~azure.keyvault.models.SecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1976,8 +1989,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedSecretItemPaged
-         <azure.keyvault.models.DeletedSecretItemPaged>`
+        :return: An iterator like instance of DeletedSecretItem
+        :rtype:
+         ~azure.keyvault.models.DeletedSecretItemPaged[~azure.keyvault.models.DeletedSecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2046,10 +2060,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedSecretBundle
-         <azure.keyvault.models.DeletedSecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedSecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2108,9 +2121,8 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2162,9 +2174,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2223,10 +2235,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupSecretResult
-         <azure.keyvault.models.BackupSecretResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: BackupSecretResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.BackupSecretResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2286,9 +2297,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2355,8 +2366,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateItemPaged
-         <azure.keyvault.models.CertificateItemPaged>`
+        :return: An iterator like instance of CertificateItem
+        :rtype:
+         ~azure.keyvault.models.CertificateItemPaged[~azure.keyvault.models.CertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2428,10 +2440,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedCertificateBundle
-         <azure.keyvault.models.DeletedCertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedCertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedCertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2486,16 +2497,15 @@ class KeyVaultClient(object):
          https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param contact_list: The contact list for the vault certificates.
-        :type contact_list: list of :class:`Contact
-         <azure.keyvault.models.Contact>`
+        :type contact_list: list[~azure.keyvault.models.Contact]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Contacts or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.Contacts or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2559,9 +2569,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Contacts or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.Contacts or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2619,9 +2629,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Contacts or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.Contacts or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2682,8 +2692,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateIssuerItemPaged
-         <azure.keyvault.models.CertificateIssuerItemPaged>`
+        :return: An iterator like instance of CertificateIssuerItem
+        :rtype:
+         ~azure.keyvault.models.CertificateIssuerItemPaged[~azure.keyvault.models.CertificateIssuerItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2752,23 +2763,20 @@ class KeyVaultClient(object):
         :param provider: The issuer provider.
         :type provider: str
         :param credentials: The credentials to be used for the issuer.
-        :type credentials: :class:`IssuerCredentials
-         <azure.keyvault.models.IssuerCredentials>`
+        :type credentials: ~azure.keyvault.models.IssuerCredentials
         :param organization_details: Details of the organization as provided
          to the issuer.
-        :type organization_details: :class:`OrganizationDetails
-         <azure.keyvault.models.OrganizationDetails>`
+        :type organization_details: ~azure.keyvault.models.OrganizationDetails
         :param attributes: Attributes of the issuer object.
-        :type attributes: :class:`IssuerAttributes
-         <azure.keyvault.models.IssuerAttributes>`
+        :type attributes: ~azure.keyvault.models.IssuerAttributes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2833,23 +2841,20 @@ class KeyVaultClient(object):
         :param provider: The issuer provider.
         :type provider: str
         :param credentials: The credentials to be used for the issuer.
-        :type credentials: :class:`IssuerCredentials
-         <azure.keyvault.models.IssuerCredentials>`
+        :type credentials: ~azure.keyvault.models.IssuerCredentials
         :param organization_details: Details of the organization as provided
          to the issuer.
-        :type organization_details: :class:`OrganizationDetails
-         <azure.keyvault.models.OrganizationDetails>`
+        :type organization_details: ~azure.keyvault.models.OrganizationDetails
         :param attributes: Attributes of the issuer object.
-        :type attributes: :class:`IssuerAttributes
-         <azure.keyvault.models.IssuerAttributes>`
+        :type attributes: ~azure.keyvault.models.IssuerAttributes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2916,9 +2921,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2979,9 +2984,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3037,24 +3042,22 @@ class KeyVaultClient(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3064,7 +3067,7 @@ class KeyVaultClient(object):
         url = '/certificates/{certificate-name}/create'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3126,24 +3129,22 @@ class KeyVaultClient(object):
          encrypted, the password used for encryption.
         :type password: str
         :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3153,7 +3154,7 @@ class KeyVaultClient(object):
         url = '/certificates/{certificate-name}/import'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3213,8 +3214,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateItemPaged
-         <azure.keyvault.models.CertificateItemPaged>`
+        :return: An iterator like instance of CertificateItem
+        :rtype:
+         ~azure.keyvault.models.CertificateItemPaged[~azure.keyvault.models.CertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3287,10 +3289,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificatePolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificatePolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3347,17 +3348,15 @@ class KeyVaultClient(object):
          vault.
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificatePolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificatePolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3422,24 +3421,22 @@ class KeyVaultClient(object):
         :param certificate_version: The version of the certificate.
         :type certificate_version: str
         :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3508,10 +3505,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3574,10 +3570,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3642,10 +3637,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3704,10 +3698,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3767,23 +3760,22 @@ class KeyVaultClient(object):
         :type certificate_name: str
         :param x509_certificates: The certificate or the certificate chain to
          merge.
-        :type x509_certificates: list of bytearray
+        :type x509_certificates: list[bytearray]
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3853,8 +3845,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedCertificateItemPaged
-         <azure.keyvault.models.DeletedCertificateItemPaged>`
+        :return: An iterator like instance of DeletedCertificateItem
+        :rtype:
+         ~azure.keyvault.models.DeletedCertificateItemPaged[~azure.keyvault.models.DeletedCertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3926,10 +3919,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedCertificateBundle
-         <azure.keyvault.models.DeletedCertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedCertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedCertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3992,9 +3984,8 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4051,10 +4042,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4113,8 +4103,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageAccountItemPaged
-         <azure.keyvault.models.StorageAccountItemPaged>`
+        :return: An iterator like instance of StorageAccountItem
+        :rtype:
+         ~azure.keyvault.models.StorageAccountItemPaged[~azure.keyvault.models.StorageAccountItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4182,9 +4173,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4192,7 +4183,7 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4242,9 +4233,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4252,7 +4243,7 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4309,19 +4300,19 @@ class KeyVaultClient(object):
         :type regeneration_period: str
         :param storage_account_attributes: The attributes of the storage
          account.
-        :type storage_account_attributes: :class:`StorageAccountAttributes
-         <azure.keyvault.models.StorageAccountAttributes>`
+        :type storage_account_attributes:
+         ~azure.keyvault.models.StorageAccountAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4331,7 +4322,7 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4391,19 +4382,19 @@ class KeyVaultClient(object):
         :type regeneration_period: str
         :param storage_account_attributes: The attributes of the storage
          account.
-        :type storage_account_attributes: :class:`StorageAccountAttributes
-         <azure.keyvault.models.StorageAccountAttributes>`
+        :type storage_account_attributes:
+         ~azure.keyvault.models.StorageAccountAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4413,7 +4404,7 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4463,16 +4454,15 @@ class KeyVaultClient(object):
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
         :param key_name: The storage account key name.
-
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4482,7 +4472,7 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}/regeneratekey'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4525,7 +4515,7 @@ class KeyVaultClient(object):
     def get_sas_definitions(
             self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List storage SAS definitions for the given storage account.
-        
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -4539,8 +4529,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionItemPaged
-         <azure.keyvault.models.SasDefinitionItemPaged>`
+        :return: An iterator like instance of SasDefinitionItem
+        :rtype:
+         ~azure.keyvault.models.SasDefinitionItemPaged[~azure.keyvault.models.SasDefinitionItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4551,7 +4542,7 @@ class KeyVaultClient(object):
                 url = '/storage/{storage-account-name}/sas'
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-                    'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+                    'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -4597,7 +4588,6 @@ class KeyVaultClient(object):
 
     def delete_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
-
         """Deletes a SAS definition from a specified storage account.
 
         :param vault_base_url: The vault name, for example
@@ -4612,10 +4602,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4623,8 +4612,8 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4662,7 +4651,6 @@ class KeyVaultClient(object):
 
     def get_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
-
         """Gets information about a SAS definition for the specified storage
         account.
 
@@ -4678,10 +4666,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4689,8 +4676,8 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4740,23 +4727,22 @@ class KeyVaultClient(object):
         :type sas_definition_name: str
         :param parameters: Sas definition creation metadata in the form of
          key-value pairs.
-        :type parameters: dict
+        :type parameters: dict[str, str]
         :param sas_definition_attributes: The attributes of the SAS
          definition.
-        :type sas_definition_attributes: :class:`SasDefinitionAttributes
-         <azure.keyvault.models.SasDefinitionAttributes>`
+        :type sas_definition_attributes:
+         ~azure.keyvault.models.SasDefinitionAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4766,8 +4752,8 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4821,23 +4807,22 @@ class KeyVaultClient(object):
         :type sas_definition_name: str
         :param parameters: Sas definition update metadata in the form of
          key-value pairs.
-        :type parameters: dict
+        :type parameters: dict[str, str]
         :param sas_definition_attributes: The attributes of the SAS
          definition.
-        :type sas_definition_attributes: :class:`SasDefinitionAttributes
-         <azure.keyvault.models.SasDefinitionAttributes>`
+        :type sas_definition_attributes:
+         ~azure.keyvault.models.SasDefinitionAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4847,8 +4832,8 @@ class KeyVaultClient(object):
         url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

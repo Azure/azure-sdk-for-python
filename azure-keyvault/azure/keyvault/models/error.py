@@ -23,7 +23,7 @@ class Error(Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error:
-    :vartype inner_error: :class:`Error <azure.keyvault.models.Error>`
+    :vartype inner_error: ~azure.keyvault.models.Error
     """
 
     _validation = {

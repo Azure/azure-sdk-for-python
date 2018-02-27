@@ -19,12 +19,11 @@ class KeyBundle(Model):
     sending a request.
 
     :param key: The Json web key.
-    :type key: :class:`JsonWebKey <azure.keyvault.models.JsonWebKey>`
+    :type key: ~azure.keyvault.models.JsonWebKey
     :param attributes: The key management attributes.
-    :type attributes: :class:`KeyAttributes
-     <azure.keyvault.models.KeyAttributes>`
+    :type attributes: ~azure.keyvault.models.KeyAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this
      is a key backing a certificate, then managed will be true.
     :vartype managed: bool
