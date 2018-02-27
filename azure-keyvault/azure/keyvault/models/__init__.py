@@ -22,6 +22,7 @@ from .secret_item import SecretItem
 from .deleted_secret_bundle import DeletedSecretBundle
 from .deleted_secret_item import DeletedSecretItem
 from .secret_restore_parameters import SecretRestoreParameters
+from .storage_restore_parameters import StorageRestoreParameters
 from .certificate_attributes import CertificateAttributes
 from .certificate_item import CertificateItem
 from .certificate_issuer_item import CertificateIssuerItem
@@ -66,16 +67,21 @@ from .key_operation_result import KeyOperationResult
 from .key_verify_result import KeyVerifyResult
 from .backup_key_result import BackupKeyResult
 from .backup_secret_result import BackupSecretResult
+from .backup_storage_result import BackupStorageResult
 from .pending_certificate_signing_request_result import PendingCertificateSigningRequestResult
 from .storage_account_attributes import StorageAccountAttributes
 from .storage_bundle import StorageBundle
+from .deleted_storage_bundle import DeletedStorageBundle
 from .storage_account_create_parameters import StorageAccountCreateParameters
 from .storage_account_update_parameters import StorageAccountUpdateParameters
 from .storage_account_regenerte_key_parameters import StorageAccountRegenerteKeyParameters
 from .storage_account_item import StorageAccountItem
+from .deleted_storage_account_item import DeletedStorageAccountItem
 from .sas_definition_attributes import SasDefinitionAttributes
 from .sas_definition_bundle import SasDefinitionBundle
+from .deleted_sas_definition_bundle import DeletedSasDefinitionBundle
 from .sas_definition_item import SasDefinitionItem
+from .deleted_sas_definition_item import DeletedSasDefinitionItem
 from .sas_definition_create_parameters import SasDefinitionCreateParameters
 from .sas_definition_update_parameters import SasDefinitionUpdateParameters
 from .key_vault_error import KeyVaultError, KeyVaultErrorException
@@ -87,7 +93,9 @@ from .certificate_item_paged import CertificateItemPaged
 from .certificate_issuer_item_paged import CertificateIssuerItemPaged
 from .deleted_certificate_item_paged import DeletedCertificateItemPaged
 from .storage_account_item_paged import StorageAccountItemPaged
+from .deleted_storage_account_item_paged import DeletedStorageAccountItemPaged
 from .sas_definition_item_paged import SasDefinitionItemPaged
+from .deleted_sas_definition_item_paged import DeletedSasDefinitionItemPaged
 from .key_vault_client_enums import (
     JsonWebKeyType,
     JsonWebKeyCurveName,
@@ -114,6 +122,7 @@ __all__ = [
     'DeletedSecretBundle',
     'DeletedSecretItem',
     'SecretRestoreParameters',
+    'StorageRestoreParameters',
     'CertificateAttributes',
     'CertificateItem',
     'CertificateIssuerItem',
@@ -158,16 +167,21 @@ __all__ = [
     'KeyVerifyResult',
     'BackupKeyResult',
     'BackupSecretResult',
+    'BackupStorageResult',
     'PendingCertificateSigningRequestResult',
     'StorageAccountAttributes',
     'StorageBundle',
+    'DeletedStorageBundle',
     'StorageAccountCreateParameters',
     'StorageAccountUpdateParameters',
     'StorageAccountRegenerteKeyParameters',
     'StorageAccountItem',
+    'DeletedStorageAccountItem',
     'SasDefinitionAttributes',
     'SasDefinitionBundle',
+    'DeletedSasDefinitionBundle',
     'SasDefinitionItem',
+    'DeletedSasDefinitionItem',
     'SasDefinitionCreateParameters',
     'SasDefinitionUpdateParameters',
     'KeyVaultError', 'KeyVaultErrorException',
@@ -179,7 +193,9 @@ __all__ = [
     'CertificateIssuerItemPaged',
     'DeletedCertificateItemPaged',
     'StorageAccountItemPaged',
+    'DeletedStorageAccountItemPaged',
     'SasDefinitionItemPaged',
+    'DeletedSasDefinitionItemPaged',
     'JsonWebKeyType',
     'JsonWebKeyCurveName',
     'DeletionRecoveryLevel',
