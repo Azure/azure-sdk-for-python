@@ -22,7 +22,7 @@ class MarketplaceAgreementsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2015-06-01".
     :ivar offer_type: Offer Type, currently only virtualmachine type is supported. Constant value: "virtualmachine".
     """
@@ -61,7 +61,7 @@ class MarketplaceAgreementsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'offerType': self._serialize.url("self.offer_type", self.offer_type, 'str'),
@@ -104,6 +104,7 @@ class MarketplaceAgreementsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'}
 
     def create(
             self, publisher_id, offer_id, plan_id, parameters, custom_headers=None, raw=False, **operation_config):
@@ -132,7 +133,7 @@ class MarketplaceAgreementsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.marketplaceordering.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'offerType': self._serialize.url("self.offer_type", self.offer_type, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -177,3 +178,4 @@ class MarketplaceAgreementsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MarketplaceOrdering/offerTypes/{offerType}/publishers/{publisherId}/offers/{offerId}/plans/{planId}/agreements/current'}
