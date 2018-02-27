@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class Sku(Model):
     """Billing information related properties of a server.
 
-    :param name: The name of the sku, typically, a letter + Number code, e.g.
-     P3.
+    :param name: The name of the sku, typically, tier + family + cores, e.g.
+     B_Gen4_1, GP_Gen5_8.
     :type name: str
     :param tier: The tier of the particular SKU, e.g. Basic. Possible values
      include: 'Basic', 'Standard'
@@ -43,6 +43,7 @@ class Sku(Model):
     }
 
     def __init__(self, name=None, tier=None, capacity=None, size=None, family=None):
+        super(Sku, self).__init__()
         self.name = name
         self.tier = tier
         self.capacity = capacity
