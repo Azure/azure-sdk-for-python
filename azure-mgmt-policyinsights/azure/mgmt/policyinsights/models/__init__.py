@@ -13,9 +13,6 @@ from .policy_event import PolicyEvent
 from .policy_events_query_results import PolicyEventsQueryResults
 from .query_failure_error import QueryFailureError
 from .query_failure import QueryFailure, QueryFailureException
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .operations import Operations
 from .policy_state import PolicyState
 from .policy_states_query_results import PolicyStatesQueryResults
 from .summary_results import SummaryResults
@@ -23,6 +20,9 @@ from .policy_definition_summary import PolicyDefinitionSummary
 from .policy_assignment_summary import PolicyAssignmentSummary
 from .summary import Summary
 from .summarize_results import SummarizeResults
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operations import Operations
 from .query_options import QueryOptions
 from .policy_insights_client_enums import (
     PolicyStatesResource,
@@ -33,9 +33,6 @@ __all__ = [
     'PolicyEventsQueryResults',
     'QueryFailureError',
     'QueryFailure', 'QueryFailureException',
-    'OperationDisplay',
-    'Operation',
-    'Operations',
     'PolicyState',
     'PolicyStatesQueryResults',
     'SummaryResults',
@@ -43,6 +40,9 @@ __all__ = [
     'PolicyAssignmentSummary',
     'Summary',
     'SummarizeResults',
+    'OperationDisplay',
+    'Operation',
+    'Operations',
     'QueryOptions',
     'PolicyStatesResource',
 ]

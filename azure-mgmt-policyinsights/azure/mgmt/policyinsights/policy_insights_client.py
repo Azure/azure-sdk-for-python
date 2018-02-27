@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.policy_events_operations import PolicyEventsOperations
-from .operations.policy_insights_operations import PolicyInsightsOperations
 from .operations.policy_states_operations import PolicyStatesOperations
+from .operations.policy_insights_operations import PolicyInsightsOperations
 from . import models
 
 
@@ -54,10 +54,10 @@ class PolicyInsightsClient(object):
 
     :ivar policy_events: PolicyEvents operations
     :vartype policy_events: azure.mgmt.policyinsights.operations.PolicyEventsOperations
-    :ivar policy_insights: PolicyInsights operations
-    :vartype policy_insights: azure.mgmt.policyinsights.operations.PolicyInsightsOperations
     :ivar policy_states: PolicyStates operations
     :vartype policy_states: azure.mgmt.policyinsights.operations.PolicyStatesOperations
+    :ivar policy_insights: PolicyInsights operations
+    :vartype policy_insights: azure.mgmt.policyinsights.operations.PolicyInsightsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -78,7 +78,7 @@ class PolicyInsightsClient(object):
 
         self.policy_events = PolicyEventsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.policy_insights = PolicyInsightsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.policy_states = PolicyStatesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_insights = PolicyInsightsOperations(
             self._client, self.config, self._serialize, self._deserialize)

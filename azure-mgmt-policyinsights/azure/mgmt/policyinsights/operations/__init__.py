@@ -10,11 +10,11 @@
 # --------------------------------------------------------------------------
 
 from .policy_events_operations import PolicyEventsOperations
-from .policy_insights_operations import PolicyInsightsOperations
 from .policy_states_operations import PolicyStatesOperations
+from .policy_insights_operations import PolicyInsightsOperations
 
 __all__ = [
     'PolicyEventsOperations',
-    'PolicyInsightsOperations',
     'PolicyStatesOperations',
+    'PolicyInsightsOperations',
 ]
