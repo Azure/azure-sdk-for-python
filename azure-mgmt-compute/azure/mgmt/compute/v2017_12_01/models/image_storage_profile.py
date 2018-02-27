@@ -26,9 +26,9 @@ class ImageStorageProfile(Model):
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type data_disks:
      list[~azure.mgmt.compute.v2017_12_01.models.ImageDataDisk]
-    :param zone_resilient: An optional property that specifies whether an
-     image is zone resilient or not. Default is false. Zone resilient images
-     can be created only in regions that provide Zone Redundant Storage (ZRS).
+    :param zone_resilient: Specifies whether an image is zone resilient or
+     not. Default is false. Zone resilient images can be created only in
+     regions that provide Zone Redundant Storage (ZRS).
     :type zone_resilient: bool
     """
 
