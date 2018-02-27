@@ -37,6 +37,7 @@ class Destination(Model):
     }
 
     def __init__(self, name=None, storage_account_resource_id=None, blob_container=None, archive_name_format=None):
+        super(Destination, self).__init__()
         self.name = name
         self.storage_account_resource_id = storage_account_resource_id
         self.blob_container = blob_container

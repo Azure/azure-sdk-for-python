@@ -25,4 +25,5 @@ class DetachDataDiskProperties(Model):
     }
 
     def __init__(self, existing_lab_disk_id=None):
+        super(DetachDataDiskProperties, self).__init__()
         self.existing_lab_disk_id = existing_lab_disk_id

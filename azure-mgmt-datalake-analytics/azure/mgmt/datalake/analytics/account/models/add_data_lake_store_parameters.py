@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class AddDataLakeStoreParameters(Model):
-    """Additional Data Lake Store parameters.
+    """The parameters used to add a new Data Lake Store account.
 
-    :param suffix: the optional suffix for the Data Lake Store account.
+    :param suffix: The optional suffix for the Data Lake Store account.
     :type suffix: str
     """
 

@@ -41,6 +41,7 @@ class ValidateProbeOutput(Model):
     }
 
     def __init__(self):
+        super(ValidateProbeOutput, self).__init__()
         self.is_valid = None
         self.error_code = None
         self.message = None

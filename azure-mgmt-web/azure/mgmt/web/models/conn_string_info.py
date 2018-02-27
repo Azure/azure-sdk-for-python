@@ -32,6 +32,7 @@ class ConnStringInfo(Model):
     }
 
     def __init__(self, name=None, connection_string=None, type=None):
+        super(ConnStringInfo, self).__init__()
         self.name = name
         self.connection_string = connection_string
         self.type = type

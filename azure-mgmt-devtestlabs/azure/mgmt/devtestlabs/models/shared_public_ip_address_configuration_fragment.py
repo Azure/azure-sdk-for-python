@@ -26,4 +26,5 @@ class SharedPublicIpAddressConfigurationFragment(Model):
     }
 
     def __init__(self, inbound_nat_rules=None):
+        super(SharedPublicIpAddressConfigurationFragment, self).__init__()
         self.inbound_nat_rules = inbound_nat_rules

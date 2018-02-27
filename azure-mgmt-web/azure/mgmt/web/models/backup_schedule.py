@@ -59,6 +59,7 @@ class BackupSchedule(Model):
     }
 
     def __init__(self, frequency_interval=7, frequency_unit="Day", keep_at_least_one_backup=True, retention_period_in_days=30, start_time=None):
+        super(BackupSchedule, self).__init__()
         self.frequency_interval = frequency_interval
         self.frequency_unit = frequency_unit
         self.keep_at_least_one_backup = keep_at_least_one_backup

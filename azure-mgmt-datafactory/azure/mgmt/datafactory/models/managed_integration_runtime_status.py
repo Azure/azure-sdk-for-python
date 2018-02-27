@@ -21,6 +21,9 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
+    :ivar data_factory_name: The data factory name which the integration
+     runtime belong to.
+    :vartype data_factory_name: str
     :ivar state: The state of integration runtime. Possible values include:
      'Initial', 'Stopped', 'Started', 'Starting', 'Stopping',
      'NeedRegistration', 'Online', 'Limited', 'Offline'
@@ -44,6 +47,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     """
 
     _validation = {
+        'data_factory_name': {'readonly': True},
         'state': {'readonly': True},
         'type': {'required': True},
         'create_time': {'readonly': True},
@@ -54,6 +58,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
+        'data_factory_name': {'key': 'dataFactoryName', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},

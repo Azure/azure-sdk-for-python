@@ -34,7 +34,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
     :type service_principal_id: object
     :param service_principal_key: The Key of the application used to
      authenticate against the Azure Data Lake Analytics account.
-    :type service_principal_key: ~azure.mgmt.datafactory.models.SecureString
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
     :param tenant: The name or ID of the tenant to which the service principal
      belongs. Type: string (or Expression with resultType string).
     :type tenant: object
@@ -68,7 +68,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'account_name': {'key': 'typeProperties.accountName', 'type': 'object'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
-        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecureString'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'subscription_id': {'key': 'typeProperties.subscriptionId', 'type': 'object'},
         'resource_group_name': {'key': 'typeProperties.resourceGroupName', 'type': 'object'},

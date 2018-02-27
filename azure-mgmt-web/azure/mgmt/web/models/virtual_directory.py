@@ -27,5 +27,6 @@ class VirtualDirectory(Model):
     }
 
     def __init__(self, virtual_path=None, physical_path=None):
+        super(VirtualDirectory, self).__init__()
         self.virtual_path = virtual_path
         self.physical_path = physical_path

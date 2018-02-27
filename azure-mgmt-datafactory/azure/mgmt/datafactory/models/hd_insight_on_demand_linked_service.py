@@ -48,7 +48,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
      hostSubscriptionId. Type: string (or Expression with resultType string).
     :type service_principal_id: object
     :param service_principal_key: The key for the service principal id.
-    :type service_principal_key: ~azure.mgmt.datafactory.models.SecureString
+    :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
     :param tenant: The Tenant id/name to which the service principal belongs.
      Type: string (or Expression with resultType string).
     :type tenant: object
@@ -63,14 +63,14 @@ class HDInsightOnDemandLinkedService(LinkedService):
      (or Expression with resultType string).
     :type cluster_user_name: object
     :param cluster_password: The password to access the cluster.
-    :type cluster_password: ~azure.mgmt.datafactory.models.SecureString
+    :type cluster_password: ~azure.mgmt.datafactory.models.SecretBase
     :param cluster_ssh_user_name: The username to SSH remotely connect to
      cluster’s node (for Linux). Type: string (or Expression with resultType
      string).
     :type cluster_ssh_user_name: object
     :param cluster_ssh_password: The password to SSH remotely connect
      cluster’s node (for Linux).
-    :type cluster_ssh_password: ~azure.mgmt.datafactory.models.SecureString
+    :type cluster_ssh_password: ~azure.mgmt.datafactory.models.SecretBase
     :param additional_linked_service_names: Specifies additional storage
      accounts for the HDInsight linked service so that the Data Factory service
      can register them on your behalf.
@@ -139,14 +139,14 @@ class HDInsightOnDemandLinkedService(LinkedService):
         'linked_service_name': {'key': 'typeProperties.linkedServiceName', 'type': 'LinkedServiceReference'},
         'host_subscription_id': {'key': 'typeProperties.hostSubscriptionId', 'type': 'object'},
         'service_principal_id': {'key': 'typeProperties.servicePrincipalId', 'type': 'object'},
-        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecureString'},
+        'service_principal_key': {'key': 'typeProperties.servicePrincipalKey', 'type': 'SecretBase'},
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
         'cluster_resource_group': {'key': 'typeProperties.clusterResourceGroup', 'type': 'object'},
         'cluster_name_prefix': {'key': 'typeProperties.clusterNamePrefix', 'type': 'object'},
         'cluster_user_name': {'key': 'typeProperties.clusterUserName', 'type': 'object'},
-        'cluster_password': {'key': 'typeProperties.clusterPassword', 'type': 'SecureString'},
+        'cluster_password': {'key': 'typeProperties.clusterPassword', 'type': 'SecretBase'},
         'cluster_ssh_user_name': {'key': 'typeProperties.clusterSshUserName', 'type': 'object'},
-        'cluster_ssh_password': {'key': 'typeProperties.clusterSshPassword', 'type': 'SecureString'},
+        'cluster_ssh_password': {'key': 'typeProperties.clusterSshPassword', 'type': 'SecretBase'},
         'additional_linked_service_names': {'key': 'typeProperties.additionalLinkedServiceNames', 'type': '[LinkedServiceReference]'},
         'hcatalog_linked_service_name': {'key': 'typeProperties.hcatalogLinkedServiceName', 'type': 'LinkedServiceReference'},
         'cluster_type': {'key': 'typeProperties.clusterType', 'type': 'object'},

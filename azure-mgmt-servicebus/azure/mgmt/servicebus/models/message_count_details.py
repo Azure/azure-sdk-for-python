@@ -51,6 +51,7 @@ class MessageCountDetails(Model):
     }
 
     def __init__(self):
+        super(MessageCountDetails, self).__init__()
         self.active_message_count = None
         self.dead_letter_message_count = None
         self.scheduled_message_count = None

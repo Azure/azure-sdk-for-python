@@ -19,23 +19,23 @@ class PerformanceTierServiceLevelObjectives(Model):
     :type id: str
     :param edition: Edition of the performance tier.
     :type edition: str
-    :param dtu: Database throughput unit associated with the service level
-     objective
-    :type dtu: int
-    :param storage_mb: Maximum storage in MB associated with the service level
-     objective
-    :type storage_mb: int
+    :param v_core: vCore associated with the service level objective
+    :type v_core: int
+    :param hardware_generation: Hardware generation associated with the
+     service level objective
+    :type hardware_generation: str
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'edition': {'key': 'edition', 'type': 'str'},
-        'dtu': {'key': 'dtu', 'type': 'int'},
-        'storage_mb': {'key': 'storageMB', 'type': 'int'},
+        'v_core': {'key': 'vCore', 'type': 'int'},
+        'hardware_generation': {'key': 'hardwareGeneration', 'type': 'str'},
     }
 
-    def __init__(self, id=None, edition=None, dtu=None, storage_mb=None):
+    def __init__(self, id=None, edition=None, v_core=None, hardware_generation=None):
+        super(PerformanceTierServiceLevelObjectives, self).__init__()
         self.id = id
         self.edition = edition
-        self.dtu = dtu
-        self.storage_mb = storage_mb
+        self.v_core = v_core
+        self.hardware_generation = hardware_generation

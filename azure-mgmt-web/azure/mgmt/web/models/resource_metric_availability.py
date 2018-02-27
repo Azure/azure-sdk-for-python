@@ -35,5 +35,6 @@ class ResourceMetricAvailability(Model):
     }
 
     def __init__(self):
+        super(ResourceMetricAvailability, self).__init__()
         self.time_grain = None
         self.retention = None

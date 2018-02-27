@@ -18,10 +18,13 @@ from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
+from .operations.certificate_registration_provider_operations import CertificateRegistrationProviderOperations
 from .operations.domains_operations import DomainsOperations
 from .operations.top_level_domains_operations import TopLevelDomainsOperations
+from .operations.domain_registration_provider_operations import DomainRegistrationProviderOperations
 from .operations.certificates_operations import CertificatesOperations
 from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
+from .operations.diagnostics_operations import DiagnosticsOperations
 from .operations.provider_operations import ProviderOperations
 from .operations.recommendations_operations import RecommendationsOperations
 from .operations.web_apps_operations import WebAppsOperations
@@ -56,7 +59,7 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
 
         super(WebSiteManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('websitemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-web/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -71,14 +74,20 @@ class WebSiteManagementClient(object):
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrders operations
     :vartype app_service_certificate_orders: azure.mgmt.web.operations.AppServiceCertificateOrdersOperations
+    :ivar certificate_registration_provider: CertificateRegistrationProvider operations
+    :vartype certificate_registration_provider: azure.mgmt.web.operations.CertificateRegistrationProviderOperations
     :ivar domains: Domains operations
     :vartype domains: azure.mgmt.web.operations.DomainsOperations
     :ivar top_level_domains: TopLevelDomains operations
     :vartype top_level_domains: azure.mgmt.web.operations.TopLevelDomainsOperations
+    :ivar domain_registration_provider: DomainRegistrationProvider operations
+    :vartype domain_registration_provider: azure.mgmt.web.operations.DomainRegistrationProviderOperations
     :ivar certificates: Certificates operations
     :vartype certificates: azure.mgmt.web.operations.CertificatesOperations
     :ivar deleted_web_apps: DeletedWebApps operations
     :vartype deleted_web_apps: azure.mgmt.web.operations.DeletedWebAppsOperations
+    :ivar diagnostics: Diagnostics operations
+    :vartype diagnostics: azure.mgmt.web.operations.DiagnosticsOperations
     :ivar provider: Provider operations
     :vartype provider: azure.mgmt.web.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
@@ -111,13 +120,19 @@ class WebSiteManagementClient(object):
 
         self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.certificate_registration_provider = CertificateRegistrationProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.domains = DomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.top_level_domains = TopLevelDomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.domain_registration_provider = DomainRegistrationProviderOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.deleted_web_apps = DeletedWebAppsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.diagnostics = DiagnosticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -149,7 +164,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/publishingUsers/web'
+        url = self.get_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -167,7 +182,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -184,6 +199,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    get_publishing_user.metadata = {'url': '/providers/Microsoft.Web/publishingUsers/web'}
 
     def update_publishing_user(
             self, user_details, custom_headers=None, raw=False, **operation_config):
@@ -206,7 +222,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/publishingUsers/web'
+        url = self.update_publishing_user.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -228,7 +244,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -245,6 +261,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    update_publishing_user.metadata = {'url': '/providers/Microsoft.Web/publishingUsers/web'}
 
     def list_source_controls(
             self, custom_headers=None, raw=False, **operation_config):
@@ -268,7 +285,7 @@ class WebSiteManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Web/sourcecontrols'
+                url = self.list_source_controls.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -291,7 +308,7 @@ class WebSiteManagementClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -309,6 +326,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_source_controls.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols'}
 
     def get_source_control(
             self, source_control_type, custom_headers=None, raw=False, **operation_config):
@@ -331,7 +349,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
+        url = self.get_source_control.metadata['url']
         path_format_arguments = {
             'sourceControlType': self._serialize.url("source_control_type", source_control_type, 'str')
         }
@@ -353,7 +371,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -370,6 +388,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    get_source_control.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'}
 
     def update_source_control(
             self, source_control_type, request_message, custom_headers=None, raw=False, **operation_config):
@@ -394,7 +413,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
+        url = self.update_source_control.metadata['url']
         path_format_arguments = {
             'sourceControlType': self._serialize.url("source_control_type", source_control_type, 'str')
         }
@@ -420,7 +439,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -437,6 +456,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    update_source_control.metadata = {'url': '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'}
 
     def check_name_availability(
             self, name, type, is_fqdn=None, custom_headers=None, raw=False, **operation_config):
@@ -447,7 +467,9 @@ class WebSiteManagementClient(object):
         :param name: Resource name to verify.
         :type name: str
         :param type: Resource type used for verification. Possible values
-         include: 'Site', 'Slot', 'HostingEnvironment'
+         include: 'Site', 'Slot', 'HostingEnvironment', 'PublishingUser',
+         'Microsoft.Web/sites', 'Microsoft.Web/sites/slots',
+         'Microsoft.Web/hostingEnvironments', 'Microsoft.Web/publishingUsers'
         :type type: str or ~azure.mgmt.web.models.CheckNameResourceTypes
         :param is_fqdn: Is fully qualified domain name.
         :type is_fqdn: bool
@@ -466,7 +488,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/checknameavailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -492,7 +514,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -509,6 +531,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/checknameavailability'}
 
     def get_subscription_deployment_locations(
             self, custom_headers=None, raw=False, **operation_config):
@@ -529,7 +552,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deploymentLocations'
+        url = self.get_subscription_deployment_locations.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -551,7 +574,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -568,6 +591,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    get_subscription_deployment_locations.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/deploymentLocations'}
 
     def list_geo_regions(
             self, sku=None, linux_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
@@ -598,7 +622,7 @@ class WebSiteManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/geoRegions'
+                url = self.list_geo_regions.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -629,7 +653,7 @@ class WebSiteManagementClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -647,6 +671,83 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_geo_regions.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/geoRegions'}
+
+    def list_site_identifiers_assigned_to_host_name(
+            self, name=None, custom_headers=None, raw=False, **operation_config):
+        """List all apps that are assigned to a hostname.
+
+        List all apps that are assigned to a hostname.
+
+        :param name: Name of the object.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Identifier
+        :rtype:
+         ~azure.mgmt.web.models.IdentifierPaged[~azure.mgmt.web.models.Identifier]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        name_identifier = models.NameIdentifier(name=name)
+
+        api_version = "2016-03-01"
+
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_site_identifiers_assigned_to_host_name.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct body
+            body_content = self._serialize.body(name_identifier, 'NameIdentifier')
+
+            # Construct and send request
+            request = self._client.post(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, body_content, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.IdentifierPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.IdentifierPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_site_identifiers_assigned_to_host_name.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/listSitesAssignedToHostName'}
 
     def list_premier_add_on_offers(
             self, custom_headers=None, raw=False, **operation_config):
@@ -670,7 +771,7 @@ class WebSiteManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/premieraddonoffers'
+                url = self.list_premier_add_on_offers.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -697,7 +798,7 @@ class WebSiteManagementClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -715,6 +816,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_premier_add_on_offers.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/premieraddonoffers'}
 
     def list_skus(
             self, custom_headers=None, raw=False, **operation_config):
@@ -735,7 +837,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/skus'
+        url = self.list_skus.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -757,7 +859,7 @@ class WebSiteManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -774,6 +876,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/skus'}
 
     def verify_hosting_environment_vnet(
             self, parameters, custom_headers=None, raw=False, **operation_config):
@@ -798,7 +901,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/verifyHostingEnvironmentVnet'
+        url = self.verify_hosting_environment_vnet.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -824,7 +927,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -841,6 +944,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    verify_hosting_environment_vnet.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Web/verifyHostingEnvironmentVnet'}
 
     def move(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
@@ -869,7 +973,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'
+        url = self.move.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -896,7 +1000,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -906,6 +1010,7 @@ class WebSiteManagementClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    move.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'}
 
     def validate(
             self, resource_group_name, validate_request, custom_headers=None, raw=False, **operation_config):
@@ -931,7 +1036,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'
+        url = self.validate.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -958,7 +1063,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -975,6 +1080,7 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
         return deserialized
+    validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'}
 
     def validate_move(
             self, resource_group_name, target_resource_group=None, resources=None, custom_headers=None, raw=False, **operation_config):
@@ -1003,7 +1109,7 @@ class WebSiteManagementClient(object):
         api_version = "2016-03-01"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/validateMoveResources'
+        url = self.validate_move.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -1030,7 +1136,7 @@ class WebSiteManagementClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             exp = CloudError(response)
@@ -1040,3 +1146,4 @@ class WebSiteManagementClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    validate_move.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/validateMoveResources'}

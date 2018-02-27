@@ -28,5 +28,6 @@ class HttpLogsConfig(Model):
     }
 
     def __init__(self, file_system=None, azure_blob_storage=None):
+        super(HttpLogsConfig, self).__init__()
         self.file_system = file_system
         self.azure_blob_storage = azure_blob_storage

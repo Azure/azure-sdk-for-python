@@ -15,14 +15,14 @@ from .server_properties_for_create import ServerPropertiesForCreate
 class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     """The properties used to create a new server.
 
-    :param storage_mb: The maximum storage allowed for a server.
-    :type storage_mb: long
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
+    :param storage_profile: Storage profile of a server.
+    :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
     :param create_mode: Constant filled by server.
     :type create_mode: str
     :param administrator_login: The administrator's login name of a server.
@@ -35,23 +35,22 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     """
 
     _validation = {
-        'storage_mb': {'minimum': 1024},
         'create_mode': {'required': True},
         'administrator_login': {'required': True},
         'administrator_login_password': {'required': True},
     }
 
     _attribute_map = {
-        'storage_mb': {'key': 'storageMB', 'type': 'long'},
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
     }
 
-    def __init__(self, administrator_login, administrator_login_password, storage_mb=None, version=None, ssl_enforcement=None):
-        super(ServerPropertiesForDefaultCreate, self).__init__(storage_mb=storage_mb, version=version, ssl_enforcement=ssl_enforcement)
+    def __init__(self, administrator_login, administrator_login_password, version=None, ssl_enforcement=None, storage_profile=None):
+        super(ServerPropertiesForDefaultCreate, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile)
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.create_mode = 'Default'

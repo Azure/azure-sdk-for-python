@@ -60,6 +60,7 @@ class ValidateRequest(Model):
     }
 
     def __init__(self, name, type, location, server_farm_id=None, sku_name=None, need_linux_workers=None, is_spot=None, capacity=None, hosting_environment=None):
+        super(ValidateRequest, self).__init__()
         self.name = name
         self.type = type
         self.location = location

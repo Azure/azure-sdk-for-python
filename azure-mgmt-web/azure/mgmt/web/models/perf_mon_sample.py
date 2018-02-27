@@ -33,6 +33,7 @@ class PerfMonSample(Model):
     }
 
     def __init__(self, time=None, instance_name=None, value=None, core_count=None):
+        super(PerfMonSample, self).__init__()
         self.time = time
         self.instance_name = instance_name
         self.value = value
