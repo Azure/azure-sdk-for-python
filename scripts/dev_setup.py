@@ -24,15 +24,6 @@ def pip_command(command):
         print(err, file=sys.stderr)
         sys.exit(1)
 
-def exec_command(command):
-    try:
-        print('Executing: ' + command)
-        check_call(command.split(), cwd=root_dir)
-        print()
-    except CalledProcessError as err:
-        print(err, file=sys.stderr)
-        sys.exit(1)
-
 packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 
 # Extract nspkg and sort nspkg by number of "-"
