@@ -31,19 +31,16 @@ class ServerState(Enum):
     disabled = "Disabled"
 
 
+class GeoRedundantBackup(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class SkuTier(Enum):
 
     basic = "Basic"
     standard = "Standard"
-
-
-class VirtualNetworkRuleState(Enum):
-
-    initializing = "Initializing"
-    in_progress = "InProgress"
-    ready = "Ready"
-    deleting = "Deleting"
-    unknown = "Unknown"
 
 
 class OperationOrigin(Enum):

@@ -24,4 +24,5 @@ class OperationListResult(Model):
     }
 
     def __init__(self, value=None):
+        super(OperationListResult, self).__init__()
         self.value = value
