@@ -225,6 +225,7 @@ from .diagnostic_category_paged import DiagnosticCategoryPaged
 from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
 from .application_stack_paged import ApplicationStackPaged
+from .recommendation_paged import RecommendationPaged
 from .source_control_paged import SourceControlPaged
 from .geo_region_paged import GeoRegionPaged
 from .identifier_paged import IdentifierPaged
@@ -537,6 +538,7 @@ __all__ = [
     'AnalysisDefinitionPaged',
     'DetectorDefinitionPaged',
     'ApplicationStackPaged',
+    'RecommendationPaged',
     'SourceControlPaged',
     'GeoRegionPaged',
     'IdentifierPaged',
