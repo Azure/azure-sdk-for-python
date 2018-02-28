@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class BillingPeriod(Resource):
-    """A billing period resource.
+class BillingAccountResult(Resource):
+    """A billing account resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,36 +24,24 @@ class BillingPeriod(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar billing_period_start_date: The start of the date range covered by
-     the billing period.
-    :vartype billing_period_start_date: date
-    :ivar billing_period_end_date: The end of the date range covered by the
-     billing period.
-    :vartype billing_period_end_date: date
-    :ivar invoice_ids: Array of invoice ids that associated with.
-    :vartype invoice_ids: list[str]
+    :ivar principal_name: The account owner's principal name.
+    :vartype principal_name: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'billing_period_start_date': {'readonly': True},
-        'billing_period_end_date': {'readonly': True},
-        'invoice_ids': {'readonly': True},
+        'principal_name': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'billing_period_start_date': {'key': 'properties.billingPeriodStartDate', 'type': 'date'},
-        'billing_period_end_date': {'key': 'properties.billingPeriodEndDate', 'type': 'date'},
-        'invoice_ids': {'key': 'properties.invoiceIds', 'type': '[str]'},
+        'principal_name': {'key': 'properties.principalName', 'type': 'str'},
     }
 
     def __init__(self):
-        super(BillingPeriod, self).__init__()
-        self.billing_period_start_date = None
-        self.billing_period_end_date = None
-        self.invoice_ids = None
+        super(BillingAccountResult, self).__init__()
+        self.principal_name = None

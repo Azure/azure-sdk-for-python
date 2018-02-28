@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .billing_account_result import BillingAccountResult
+from .billing_account_list_result import BillingAccountListResult
 from .billing_period import BillingPeriod
 from .download_url import DownloadUrl
 from .error_details import ErrorDetails
@@ -22,6 +24,8 @@ from .invoice_paged import InvoicePaged
 from .operation_paged import OperationPaged
 
 __all__ = [
+    'BillingAccountResult',
+    'BillingAccountListResult',
     'BillingPeriod',
     'DownloadUrl',
     'ErrorDetails',
