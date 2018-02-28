@@ -145,6 +145,7 @@ class JobManagerTask(Model):
     }
 
     def __init__(self, id, command_line, display_name=None, container_settings=None, resource_files=None, output_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None, allow_low_priority_node=None):
+        super(JobManagerTask, self).__init__()
         self.id = id
         self.display_name = display_name
         self.command_line = command_line

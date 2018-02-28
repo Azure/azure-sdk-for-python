@@ -22,40 +22,15 @@ class ComputeNode(Model):
     :type id: str
     :param url: The URL of the compute node.
     :type url: str
-    :param state: The current state of the compute node. Values are:
-     idle - The node is not currently running a task.
-     rebooting - The node is rebooting.
-     reimaging - The node is reimaging.
-     running - The node is running one or more tasks (other than a start task).
-     unusable - The node cannot be used for task execution due to errors.
-     creating - The Batch service has obtained the underlying virtual machine
-     from Azure Compute, but it has not yet started to join the pool.
-     starting - the Batch service is starting on the underlying virtual
-     machine.
-     waitingforstarttask - The start task has started running on the compute
-     node, but waitForSuccess is set and the start task has not yet completed.
-     starttaskfailed - The start task has failed on the compute node (and
-     exhausted all retries), and waitForSuccess is set. The node is not usable
-     for running tasks.
-     unknown - The Batch service has lost contact with the node, and does not
-     know its true state.
-     leavingpool - The node is leaving the pool, either because the user
-     explicitly removed it or because the pool is resizing or autoscaling down.
-     offline - The node is not currently running a task, and scheduling of new
-     tasks to the node is disabled.
-     preempted - The low-priority node has been preempted. Tasks which were
-     running on the node when it was pre-empted will be rescheduled when
-     another node becomes available. Possible values include: 'idle',
-     'rebooting', 'reimaging', 'running', 'unusable', 'creating', 'starting',
-     'waitingForStartTask', 'startTaskFailed', 'unknown', 'leavingPool',
-     'offline', 'preempted'
+    :param state: The current state of the compute node. The low-priority node
+     has been preempted. Tasks which were running on the node when it was
+     pre-empted will be rescheduled when another node becomes available.
+     Possible values include: 'idle', 'rebooting', 'reimaging', 'running',
+     'unusable', 'creating', 'starting', 'waitingForStartTask',
+     'startTaskFailed', 'unknown', 'leavingPool', 'offline', 'preempted'
     :type state: str or ~azure.batch.models.ComputeNodeState
     :param scheduling_state: Whether the compute node is available for task
-     scheduling. Values are:
-     enabled - Tasks can be scheduled on the node.
-     disabled - No new tasks will be scheduled on the node. Tasks already
-     running on the node may still run to completion. All nodes start with
-     scheduling enabled. Possible values include: 'enabled', 'disabled'
+     scheduling. Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str or ~azure.batch.models.SchedulingState
     :param state_transition_time: The time at which the compute node entered
      its current state.
@@ -162,6 +137,7 @@ class ComputeNode(Model):
     }
 
     def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated=None, endpoint_configuration=None):
+        super(ComputeNode, self).__init__()
         self.id = id
         self.url = url
         self.state = state

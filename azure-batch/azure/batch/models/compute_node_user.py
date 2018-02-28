@@ -52,6 +52,7 @@ class ComputeNodeUser(Model):
     }
 
     def __init__(self, name, is_admin=None, expiry_time=None, password=None, ssh_public_key=None):
+        super(ComputeNodeUser, self).__init__()
         self.name = name
         self.is_admin = is_admin
         self.expiry_time = expiry_time
