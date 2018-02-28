@@ -9,11 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .billing_accounts_operations import BillingAccountsOperations
 from .billing_periods_operations import BillingPeriodsOperations
 from .invoices_operations import InvoicesOperations
 from .operations import Operations
 
 __all__ = [
+    'BillingAccountsOperations',
     'BillingPeriodsOperations',
     'InvoicesOperations',
     'Operations',

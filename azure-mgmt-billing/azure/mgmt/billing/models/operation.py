@@ -21,8 +21,7 @@ class Operation(Model):
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :param display: The object that represents the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.billing.models.OperationDisplay>`
+    :type display: ~azure.mgmt.billing.models.OperationDisplay
     """
 
     _validation = {
@@ -35,5 +34,6 @@ class Operation(Model):
     }
 
     def __init__(self, display=None):
+        super(Operation, self).__init__()
         self.name = None
         self.display = display

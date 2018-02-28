@@ -12,30 +12,24 @@
 from msrest.serialization import Model
 
 
-class DownloadUrl(Model):
-    """A secure URL that can be used to download a PDF invoice until the URL
-    expires.
+class BillingAccountListResult(Model):
+    """Result of listing billing accounts.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar expiry_time: The time in UTC at which this download URL will expire.
-    :vartype expiry_time: datetime
-    :ivar url: The URL to the PDF file.
-    :vartype url: str
+    :ivar value: The list of billing accounts.
+    :vartype value: list[~azure.mgmt.billing.models.BillingAccountResult]
     """
 
     _validation = {
-        'expiry_time': {'readonly': True},
-        'url': {'readonly': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'url': {'key': 'url', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[BillingAccountResult]'},
     }
 
     def __init__(self):
-        super(DownloadUrl, self).__init__()
-        self.expiry_time = None
-        self.url = None
+        super(BillingAccountListResult, self).__init__()
+        self.value = None
