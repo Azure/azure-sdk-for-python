@@ -47,7 +47,6 @@ class Zone(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'max_number_of_record_sets': {'readonly': True},
         'number_of_record_sets': {'readonly': True},
         'name_servers': {'readonly': True},
@@ -65,7 +64,7 @@ class Zone(Resource):
         'name_servers': {'key': 'properties.nameServers', 'type': '[str]'},
     }
 
-    def __init__(self, location, tags=None, etag=None):
+    def __init__(self, location=None, tags=None, etag=None):
         super(Zone, self).__init__(location=location, tags=tags)
         self.etag = etag
         self.max_number_of_record_sets = None

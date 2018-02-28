@@ -33,6 +33,7 @@ class SrvRecord(Model):
     }
 
     def __init__(self, priority=None, weight=None, port=None, target=None):
+        super(SrvRecord, self).__init__()
         self.priority = priority
         self.weight = weight
         self.port = port
