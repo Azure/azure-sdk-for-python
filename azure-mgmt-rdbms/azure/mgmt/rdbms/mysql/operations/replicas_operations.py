@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class LocationBasedPerformanceTierOperations(object):
-    """LocationBasedPerformanceTierOperations operations.
+class ReplicasOperations(object):
+    """ReplicasOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,31 +37,35 @@ class LocationBasedPerformanceTierOperations(object):
 
         self.config = config
 
-    def list(
-            self, location_name, custom_headers=None, raw=False, **operation_config):
-        """List all the performance tiers at specified location in a given
-        subscription.
+    def list_by_server(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        """List all the replicas for a given server.
 
-        :param location_name: The name of the location.
-        :type location_name: str
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of PerformanceTierProperties
+        :return: An iterator like instance of Server
         :rtype:
-         ~azure.mgmt.rdbms.mysql.models.PerformanceTierPropertiesPaged[~azure.mgmt.rdbms.mysql.models.PerformanceTierProperties]
+         ~azure.mgmt.rdbms.mysql.models.ServerPaged[~azure.mgmt.rdbms.mysql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_server.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'locationName': self._serialize.url("location_name", location_name, 'str')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serverName': self._serialize.url("server_name", server_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -96,12 +100,12 @@ class LocationBasedPerformanceTierOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PerformanceTierPropertiesPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ServerPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PerformanceTierPropertiesPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ServerPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/locations/{locationName}/performanceTiers'}
+    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/Replicas'}
