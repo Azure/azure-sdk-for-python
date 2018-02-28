@@ -42,6 +42,7 @@ class NodeUpdateUserParameter(Model):
     }
 
     def __init__(self, password=None, expiry_time=None, ssh_public_key=None):
+        super(NodeUpdateUserParameter, self).__init__()
         self.password = password
         self.expiry_time = expiry_time
         self.ssh_public_key = ssh_public_key

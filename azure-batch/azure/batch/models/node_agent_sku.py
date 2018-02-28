@@ -39,6 +39,7 @@ class NodeAgentSku(Model):
     }
 
     def __init__(self, id=None, verified_image_references=None, os_type=None):
+        super(NodeAgentSku, self).__init__()
         self.id = id
         self.verified_image_references = verified_image_references
         self.os_type = os_type
