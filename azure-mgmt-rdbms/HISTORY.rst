@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.3.1 (2018-02-28)
+++++++++++++++++++
+
+* Remove GeoRestore option that is not available yet.
+
 0.3.0 (2018-02-26)
 ++++++++++++++++++
 
