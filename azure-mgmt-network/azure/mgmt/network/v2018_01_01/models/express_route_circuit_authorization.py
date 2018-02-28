@@ -30,15 +30,16 @@ class ExpressRouteCircuitAuthorization(SubResource):
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
+    :ivar name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
-    :type name: str
+    :vartype name: str
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
     """
 
     _validation = {
+        'name': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -51,10 +52,10 @@ class ExpressRouteCircuitAuthorization(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, authorization_key=None, authorization_use_status=None, provisioning_state=None, name=None):
+    def __init__(self, id=None, authorization_key=None, authorization_use_status=None, provisioning_state=None):
         super(ExpressRouteCircuitAuthorization, self).__init__(id=id)
         self.authorization_key = authorization_key
         self.authorization_use_status = authorization_use_status
         self.provisioning_state = provisioning_state
-        self.name = name
+        self.name = None
         self.etag = None

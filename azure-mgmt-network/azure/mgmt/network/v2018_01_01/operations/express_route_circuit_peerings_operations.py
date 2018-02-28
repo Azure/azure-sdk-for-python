@@ -144,8 +144,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def get(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified authorization from the specified express route
-        circuit.
+        """Gets the specified peering for the express route circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
