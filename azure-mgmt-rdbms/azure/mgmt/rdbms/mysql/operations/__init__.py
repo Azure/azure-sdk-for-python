@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .servers_operations import ServersOperations
+from .replicas_operations import ReplicasOperations
 from .firewall_rules_operations import FirewallRulesOperations
 from .databases_operations import DatabasesOperations
 from .configurations_operations import ConfigurationsOperations
@@ -20,6 +21,7 @@ from .operations import Operations
 
 __all__ = [
     'ServersOperations',
+    'ReplicasOperations',
     'FirewallRulesOperations',
     'DatabasesOperations',
     'ConfigurationsOperations',

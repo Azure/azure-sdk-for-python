@@ -52,6 +52,13 @@ class Server(TrackedResource):
     :type earliest_restore_date: datetime
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
+    :param replication_role: The replication role of the server.
+    :type replication_role: str
+    :param primary_server_id: The primary server id of a relica server.
+    :type primary_server_id: str
+    :param replica_capacity: The maximum number of replicas that a primary
+     server can have.
+    :type replica_capacity: int
     """
 
     _validation = {
@@ -59,6 +66,7 @@ class Server(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'replica_capacity': {'minimum': 0},
     }
 
     _attribute_map = {
@@ -75,9 +83,12 @@ class Server(TrackedResource):
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
+        'primary_server_id': {'key': 'properties.primaryServerId', 'type': 'str'},
+        'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
     }
 
-    def __init__(self, location, tags=None, sku=None, administrator_login=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name=None, earliest_restore_date=None, storage_profile=None):
+    def __init__(self, location, tags=None, sku=None, administrator_login=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name=None, earliest_restore_date=None, storage_profile=None, replication_role=None, primary_server_id=None, replica_capacity=None):
         super(Server, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.administrator_login = administrator_login
@@ -87,3 +98,6 @@ class Server(TrackedResource):
         self.fully_qualified_domain_name = fully_qualified_domain_name
         self.earliest_restore_date = earliest_restore_date
         self.storage_profile = storage_profile
+        self.replication_role = replication_role
+        self.primary_server_id = primary_server_id
+        self.replica_capacity = replica_capacity
