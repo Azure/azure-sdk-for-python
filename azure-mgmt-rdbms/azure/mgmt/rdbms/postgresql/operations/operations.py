@@ -22,7 +22,7 @@ class Operations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2017-12-01-preview".
     """
 
@@ -52,7 +52,7 @@ class Operations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.DBforPostgreSQL/operations'
+        url = self.list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -87,3 +87,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.DBforPostgreSQL/operations'}

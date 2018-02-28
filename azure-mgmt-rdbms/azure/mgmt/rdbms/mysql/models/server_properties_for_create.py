@@ -17,7 +17,7 @@ class ServerPropertiesForCreate(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ServerPropertiesForDefaultCreate,
-    ServerPropertiesForRestore, ServerPropertiesForGeoRestore
+    ServerPropertiesForRestore
 
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
@@ -43,7 +43,7 @@ class ServerPropertiesForCreate(Model):
     }
 
     _subtype_map = {
-        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore'}
+        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore'}
     }
 
     def __init__(self, version=None, ssl_enforcement=None, storage_profile=None):
