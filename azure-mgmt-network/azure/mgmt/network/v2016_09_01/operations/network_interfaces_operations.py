@@ -24,7 +24,7 @@ class NetworkInterfacesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2016-09-01".
     """
 
@@ -65,7 +65,7 @@ class NetworkInterfacesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces'
+                url = self.list_virtual_machine_scale_set_vm_network_interfaces.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'virtualMachineScaleSetName': self._serialize.url("virtual_machine_scale_set_name", virtual_machine_scale_set_name, 'str'),
@@ -113,6 +113,7 @@ class NetworkInterfacesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_virtual_machine_scale_set_vm_network_interfaces.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces'}
 
     def list_virtual_machine_scale_set_network_interfaces(
             self, resource_group_name, virtual_machine_scale_set_name, custom_headers=None, raw=False, **operation_config):
@@ -137,7 +138,7 @@ class NetworkInterfacesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/networkInterfaces'
+                url = self.list_virtual_machine_scale_set_network_interfaces.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'virtualMachineScaleSetName': self._serialize.url("virtual_machine_scale_set_name", virtual_machine_scale_set_name, 'str'),
@@ -184,6 +185,7 @@ class NetworkInterfacesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_virtual_machine_scale_set_network_interfaces.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/networkInterfaces'}
 
     def get_virtual_machine_scale_set_network_interface(
             self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
@@ -211,7 +213,7 @@ class NetworkInterfacesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}'
+        url = self.get_virtual_machine_scale_set_network_interface.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualMachineScaleSetName': self._serialize.url("virtual_machine_scale_set_name", virtual_machine_scale_set_name, 'str'),
@@ -256,12 +258,13 @@ class NetworkInterfacesOperations(object):
             return client_raw_response
 
         return deserialized
+    get_virtual_machine_scale_set_network_interface.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}'}
 
 
     def _delete_initial(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
@@ -335,6 +338,7 @@ class NetworkInterfacesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'}
 
     def get(
             self, resource_group_name, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
@@ -357,7 +361,7 @@ class NetworkInterfacesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
@@ -400,12 +404,13 @@ class NetworkInterfacesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, network_interface_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
@@ -503,6 +508,7 @@ class NetworkInterfacesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'}
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
@@ -522,7 +528,7 @@ class NetworkInterfacesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkInterfaces'
+                url = self.list_all.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -567,6 +573,7 @@ class NetworkInterfacesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkInterfaces'}
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -588,7 +595,7 @@ class NetworkInterfacesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -634,12 +641,13 @@ class NetworkInterfacesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces'}
 
 
     def _get_effective_route_table_initial(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveRouteTable'
+        url = self.get_effective_route_table.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
@@ -727,12 +735,13 @@ class NetworkInterfacesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    get_effective_route_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveRouteTable'}
 
 
     def _list_effective_network_security_groups_initial(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveNetworkSecurityGroups'
+        url = self.list_effective_network_security_groups.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'networkInterfaceName': self._serialize.url("network_interface_name", network_interface_name, 'str'),
@@ -821,3 +830,4 @@ class NetworkInterfacesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    list_effective_network_security_groups.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveNetworkSecurityGroups'}

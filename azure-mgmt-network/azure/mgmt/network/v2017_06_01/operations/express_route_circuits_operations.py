@@ -24,7 +24,7 @@ class ExpressRouteCircuitsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-06-01".
     """
 
@@ -43,7 +43,7 @@ class ExpressRouteCircuitsOperations(object):
     def _delete_initial(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -117,6 +117,7 @@ class ExpressRouteCircuitsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'}
 
     def get(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
@@ -137,7 +138,7 @@ class ExpressRouteCircuitsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -178,12 +179,13 @@ class ExpressRouteCircuitsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, circuit_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -281,12 +283,13 @@ class ExpressRouteCircuitsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'}
 
 
     def _list_arp_table_initial(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/arpTables/{devicePath}'
+        url = self.list_arp_table.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -383,12 +386,13 @@ class ExpressRouteCircuitsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    list_arp_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/arpTables/{devicePath}'}
 
 
     def _list_routes_table_initial(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTables/{devicePath}'
+        url = self.list_routes_table.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -486,12 +490,13 @@ class ExpressRouteCircuitsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    list_routes_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTables/{devicePath}'}
 
 
     def _list_routes_table_summary_initial(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTablesSummary/{devicePath}'
+        url = self.list_routes_table_summary.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -589,6 +594,7 @@ class ExpressRouteCircuitsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    list_routes_table_summary.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTablesSummary/{devicePath}'}
 
     def get_stats(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
@@ -610,7 +616,7 @@ class ExpressRouteCircuitsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/stats'
+        url = self.get_stats.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -651,6 +657,7 @@ class ExpressRouteCircuitsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_stats.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/stats'}
 
     def get_peering_stats(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
@@ -674,7 +681,7 @@ class ExpressRouteCircuitsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/stats'
+        url = self.get_peering_stats.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
@@ -716,6 +723,7 @@ class ExpressRouteCircuitsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_peering_stats.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/stats'}
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -737,7 +745,7 @@ class ExpressRouteCircuitsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -783,6 +791,7 @@ class ExpressRouteCircuitsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits'}
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
@@ -802,7 +811,7 @@ class ExpressRouteCircuitsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteCircuits'
+                url = self.list_all.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -847,3 +856,4 @@ class ExpressRouteCircuitsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteCircuits'}

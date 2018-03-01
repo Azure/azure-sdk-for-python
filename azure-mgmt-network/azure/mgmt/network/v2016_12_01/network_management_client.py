@@ -227,7 +227,7 @@ class NetworkManagementClient(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'
+        url = self.check_dns_name_availability.metadata['url']
         path_format_arguments = {
             'location': self._serialize.url("location", location, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -269,3 +269,4 @@ class NetworkManagementClient(object):
             return client_raw_response
 
         return deserialized
+    check_dns_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'}
