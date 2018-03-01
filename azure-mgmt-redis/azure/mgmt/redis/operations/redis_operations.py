@@ -83,7 +83,7 @@ class RedisOperations(object):
         body_content = self._serialize.body(parameters, 'CheckNameAvailabilityParameters')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
+        request = self._client.post(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
