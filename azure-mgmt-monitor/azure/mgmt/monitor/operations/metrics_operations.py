@@ -37,7 +37,7 @@ class MetricsOperations(object):
         self.config = config
 
     def list(
-            self, resource_uri, timespan=None, interval=None, metric=None, aggregation=None, top=None, orderby=None, filter=None, result_type=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_uri, timespan=None, interval=None, metric=None, aggregation=None, top=None, orderby=None, filter=None, result_type=None, metricnamespace=None, custom_headers=None, raw=False, **operation_config):
         """**Lists the metric values for a resource**.
 
         :param resource_uri: The identifier of the resource.
@@ -76,6 +76,9 @@ class MetricsOperations(object):
          allowed depends on the operation. See the operation's description for
          details. Possible values include: 'Data', 'Metadata'
         :type result_type: str or ~azure.mgmt.monitor.models.ResultType
+        :param metricnamespace: Metric namespace to query metric definitions
+         for.
+        :type metricnamespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -113,8 +116,8 @@ class MetricsOperations(object):
         if result_type is not None:
             query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'ResultType')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if self.config.metricnamespace is not None:
-            query_parameters['metricnamespace'] = self._serialize.query("self.config.metricnamespace", self.config.metricnamespace, 'str')
+        if metricnamespace is not None:
+            query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
 
         # Construct headers
         header_parameters = {}
