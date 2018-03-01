@@ -2,7 +2,7 @@
   "meta": {
     "autorest_options": {
       "version": "preview",
-      "use": "@microsoft.azure/autorest.python@~3.0",
+      "use": "git+https://github.com/Azure/autorest.python#async",
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": ".",
