@@ -532,7 +532,7 @@ class RecordSetsOperations(object):
     list_by_dns_zone.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}/recordsets'}
 
     def list_all_by_dns_zone(
-            self, resource_group_name, zone_name, top=None, recordsetnamesuffix=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, zone_name, top=None, record_set_name_suffix=None, custom_headers=None, raw=False, **operation_config):
         """Lists all record sets in a DNS zone.
 
         :param resource_group_name: The name of the resource group.
@@ -543,11 +543,11 @@ class RecordSetsOperations(object):
         :param top: The maximum number of record sets to return. If not
          specified, returns up to 100 record sets.
         :type top: int
-        :param recordsetnamesuffix: The suffix label of the record set name
+        :param record_set_name_suffix: The suffix label of the record set name
          that has to be used to filter the record set enumerations. If this
          parameter is specified, Enumeration will return only records that end
          with .<recordSetNameSuffix>
-        :type recordsetnamesuffix: str
+        :type record_set_name_suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -574,8 +574,8 @@ class RecordSetsOperations(object):
                 query_parameters = {}
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if recordsetnamesuffix is not None:
-                    query_parameters['$recordsetnamesuffix'] = self._serialize.query("recordsetnamesuffix", recordsetnamesuffix, 'str')
+                if record_set_name_suffix is not None:
+                    query_parameters['$recordsetnamesuffix'] = self._serialize.query("record_set_name_suffix", record_set_name_suffix, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
