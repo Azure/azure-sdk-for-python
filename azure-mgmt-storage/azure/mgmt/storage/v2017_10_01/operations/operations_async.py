@@ -14,52 +14,29 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 
 from .. import models
+from .operations import Operations as _Operations
 
 
-class SkusOperations(object):
-    """SkusOperations operations.
-
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-06-01".
-    """
-
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2017-06-01"
-
-        self.config = config
+class Operations(_Operations):
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists the available SKUs supported by Microsoft.Storage for given
-        subscription.
+            self, *, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the available Storage Rest API operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Sku
+        :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.storage.v2017_06_01.models.SkuPaged[~azure.mgmt.storage.v2017_06_01.models.Sku]
+         ~azure.mgmt.storage.v2017_10_01.models.OperationPaged[~azure.mgmt.storage.v2017_10_01.models.Operation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -96,11 +73,25 @@ class SkusOperations(object):
 
             return response
 
+        async def internal_paging_async(next_link=None):
+            request, header_parameters = prepare_request(next_link)
+
+            response = await self._client.async_send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
         # Deserialize response
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.OperationPaged(
+            internal_paging, self._deserialize.dependencies, header_dict, async_command=internal_paging_async)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/skus'}
+    list.metadata = {'url': '/providers/Microsoft.Storage/operations'}

@@ -14,31 +14,13 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 
 from .. import models
+from .skus_operations import SkusOperations as _SkusOperations
 
 
-class SkusOperations(object):
-    """SkusOperations operations.
-
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-06-01".
-    """
-
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2017-06-01"
-
-        self.config = config
+class SkusOperations(_SkusOperations):
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, *, custom_headers=None, raw=False, **operation_config):
         """Lists the available SKUs supported by Microsoft.Storage for given
         subscription.
 
@@ -96,11 +78,25 @@ class SkusOperations(object):
 
             return response
 
+        async def internal_paging_async(next_link=None):
+            request, header_parameters = prepare_request(next_link)
+
+            response = await self._client.async_send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
         # Deserialize response
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.SkuPaged(
+            internal_paging, self._deserialize.dependencies, header_dict, async_command=internal_paging_async)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/skus'}
