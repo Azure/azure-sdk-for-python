@@ -37,11 +37,14 @@ class MetricDefinitionsOperations(object):
         self.config = config
 
     def list(
-            self, resource_uri, custom_headers=None, raw=False, **operation_config):
+            self, resource_uri, metricnamespace=None, custom_headers=None, raw=False, **operation_config):
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
+        :param metricnamespace: Metric namespace to query metric definitions
+         for.
+        :type metricnamespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,8 +69,8 @@ class MetricDefinitionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if self.config.metricnamespace is not None:
-                    query_parameters['metricnamespace'] = self._serialize.query("self.config.metricnamespace", self.config.metricnamespace, 'str')
+                if metricnamespace is not None:
+                    query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
 
             else:
                 url = next_link

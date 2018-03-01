@@ -15,62 +15,66 @@ from msrest.serialization import Model
 class EventData(Model):
     """The Azure event log entries are of type EventData.
 
-    :param authorization:
-    :type authorization: ~azure.mgmt.monitor.models.SenderAuthorization
-    :param claims: key value pairs to identify ARM permissions.
-    :type claims: dict[str, str]
-    :param caller: the email address of the user who has performed the
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar authorization:
+    :vartype authorization: ~azure.mgmt.monitor.models.SenderAuthorization
+    :ivar claims: key value pairs to identify ARM permissions.
+    :vartype claims: dict[str, str]
+    :ivar caller: the email address of the user who has performed the
      operation, the UPN claim or SPN claim based on availability.
-    :type caller: str
-    :param description: the description of the event.
-    :type description: str
-    :param id: the Id of this event as required by ARM for RBAC. It contains
+    :vartype caller: str
+    :ivar description: the description of the event.
+    :vartype description: str
+    :ivar id: the Id of this event as required by ARM for RBAC. It contains
      the EventDataID and a timestamp information.
-    :type id: str
-    :param event_data_id: the event data Id. This is a unique identifier for
-     an event.
-    :type event_data_id: str
-    :param correlation_id: the correlation Id, usually a GUID in the string
+    :vartype id: str
+    :ivar event_data_id: the event data Id. This is a unique identifier for an
+     event.
+    :vartype event_data_id: str
+    :ivar correlation_id: the correlation Id, usually a GUID in the string
      format. The correlation Id is shared among the events that belong to the
      same uber operation.
-    :type correlation_id: str
-    :param event_name: the event name. This value should not be confused with
+    :vartype correlation_id: str
+    :ivar event_name: the event name. This value should not be confused with
      OperationName. For practical purposes, OperationName might be more
      appealing to end users.
-    :type event_name: ~azure.mgmt.monitor.models.LocalizableString
-    :param category: the event category.
-    :type category: ~azure.mgmt.monitor.models.LocalizableString
-    :param http_request: the HTTP request info. Usually includes the
+    :vartype event_name: ~azure.mgmt.monitor.models.LocalizableString
+    :ivar category: the event category.
+    :vartype category: ~azure.mgmt.monitor.models.LocalizableString
+    :ivar http_request: the HTTP request info. Usually includes the
      'clientRequestId', 'clientIpAddress' (IP address of the user who initiated
      the event) and 'method' (HTTP method e.g. PUT).
-    :type http_request: ~azure.mgmt.monitor.models.HttpRequestInfo
-    :param level: the event level. Possible values include: 'Critical',
+    :vartype http_request: ~azure.mgmt.monitor.models.HttpRequestInfo
+    :ivar level: the event level. Possible values include: 'Critical',
      'Error', 'Warning', 'Informational', 'Verbose'
-    :type level: str or ~azure.mgmt.monitor.models.EventLevel
-    :param resource_group_name: the resource group name of the impacted
+    :vartype level: str or ~azure.mgmt.monitor.models.EventLevel
+    :ivar resource_group_name: the resource group name of the impacted
      resource.
-    :type resource_group_name: str
-    :param resource_provider_name: the resource provider name of the impacted
+    :vartype resource_group_name: str
+    :ivar resource_provider_name: the resource provider name of the impacted
      resource.
-    :type resource_provider_name: ~azure.mgmt.monitor.models.LocalizableString
-    :param resource_id: the resource uri that uniquely identifies the resource
+    :vartype resource_provider_name:
+     ~azure.mgmt.monitor.models.LocalizableString
+    :ivar resource_id: the resource uri that uniquely identifies the resource
      that caused this event.
-    :type resource_id: str
-    :param resource_type: the resource type
-    :type resource_type: ~azure.mgmt.monitor.models.LocalizableString
-    :param operation_id: It is usually a GUID shared among the events
+    :vartype resource_id: str
+    :ivar resource_type: the resource type
+    :vartype resource_type: ~azure.mgmt.monitor.models.LocalizableString
+    :ivar operation_id: It is usually a GUID shared among the events
      corresponding to single operation. This value should not be confused with
      EventName.
-    :type operation_id: str
-    :param operation_name: the operation name.
-    :type operation_name: ~azure.mgmt.monitor.models.LocalizableString
-    :param properties: the set of <Key, Value> pairs (usually a
+    :vartype operation_id: str
+    :ivar operation_name: the operation name.
+    :vartype operation_name: ~azure.mgmt.monitor.models.LocalizableString
+    :ivar properties: the set of <Key, Value> pairs (usually a
      Dictionary<String, String>) that includes details about the event.
-    :type properties: dict[str, str]
-    :param status: a string describing the status of the operation. Some
+    :vartype properties: dict[str, str]
+    :ivar status: a string describing the status of the operation. Some
      typical values are: Started, In progress, Succeeded, Failed, Resolved.
-    :type status: ~azure.mgmt.monitor.models.LocalizableString
-    :param sub_status: the event sub status. Most of the time, when included,
+    :vartype status: ~azure.mgmt.monitor.models.LocalizableString
+    :ivar sub_status: the event sub status. Most of the time, when included,
      this captures the HTTP status code of the REST call. Common values are: OK
      (HTTP Status Code: 200), Created (HTTP Status Code: 201), Accepted (HTTP
      Status Code: 202), No Content (HTTP Status Code: 204), Bad Request(HTTP
@@ -78,27 +82,48 @@ class EventData(Model):
      Status Code: 409), Internal Server Error (HTTP Status Code: 500), Service
      Unavailable (HTTP Status Code:503), Gateway Timeout (HTTP Status Code:
      504)
-    :type sub_status: ~azure.mgmt.monitor.models.LocalizableString
-    :param event_timestamp: the timestamp of when the event was generated by
+    :vartype sub_status: ~azure.mgmt.monitor.models.LocalizableString
+    :ivar event_timestamp: the timestamp of when the event was generated by
      the Azure service processing the request corresponding the event. It in
      ISO 8601 format.
-    :type event_timestamp: datetime
-    :param submission_timestamp: the timestamp of when the event became
+    :vartype event_timestamp: datetime
+    :ivar submission_timestamp: the timestamp of when the event became
      available for querying via this API. It is in ISO 8601 format. This value
      should not be confused eventTimestamp. As there might be a delay between
      the occurrence time of the event, and the time that the event is submitted
      to the Azure logging infrastructure.
-    :type submission_timestamp: datetime
-    :param subscription_id: the Azure subscription Id usually a GUID.
-    :type subscription_id: str
-    :param tenant_id: the Azure tenant Id
-    :type tenant_id: str
+    :vartype submission_timestamp: datetime
+    :ivar subscription_id: the Azure subscription Id usually a GUID.
+    :vartype subscription_id: str
+    :ivar tenant_id: the Azure tenant Id
+    :vartype tenant_id: str
     """
 
     _validation = {
-        'level': {'required': True},
-        'event_timestamp': {'required': True},
-        'submission_timestamp': {'required': True},
+        'authorization': {'readonly': True},
+        'claims': {'readonly': True},
+        'caller': {'readonly': True},
+        'description': {'readonly': True},
+        'id': {'readonly': True},
+        'event_data_id': {'readonly': True},
+        'correlation_id': {'readonly': True},
+        'event_name': {'readonly': True},
+        'category': {'readonly': True},
+        'http_request': {'readonly': True},
+        'level': {'readonly': True},
+        'resource_group_name': {'readonly': True},
+        'resource_provider_name': {'readonly': True},
+        'resource_id': {'readonly': True},
+        'resource_type': {'readonly': True},
+        'operation_id': {'readonly': True},
+        'operation_name': {'readonly': True},
+        'properties': {'readonly': True},
+        'status': {'readonly': True},
+        'sub_status': {'readonly': True},
+        'event_timestamp': {'readonly': True},
+        'submission_timestamp': {'readonly': True},
+        'subscription_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -128,29 +153,29 @@ class EventData(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, level, event_timestamp, submission_timestamp, authorization=None, claims=None, caller=None, description=None, id=None, event_data_id=None, correlation_id=None, event_name=None, category=None, http_request=None, resource_group_name=None, resource_provider_name=None, resource_id=None, resource_type=None, operation_id=None, operation_name=None, properties=None, status=None, sub_status=None, subscription_id=None, tenant_id=None):
+    def __init__(self):
         super(EventData, self).__init__()
-        self.authorization = authorization
-        self.claims = claims
-        self.caller = caller
-        self.description = description
-        self.id = id
-        self.event_data_id = event_data_id
-        self.correlation_id = correlation_id
-        self.event_name = event_name
-        self.category = category
-        self.http_request = http_request
-        self.level = level
-        self.resource_group_name = resource_group_name
-        self.resource_provider_name = resource_provider_name
-        self.resource_id = resource_id
-        self.resource_type = resource_type
-        self.operation_id = operation_id
-        self.operation_name = operation_name
-        self.properties = properties
-        self.status = status
-        self.sub_status = sub_status
-        self.event_timestamp = event_timestamp
-        self.submission_timestamp = submission_timestamp
-        self.subscription_id = subscription_id
-        self.tenant_id = tenant_id
+        self.authorization = None
+        self.claims = None
+        self.caller = None
+        self.description = None
+        self.id = None
+        self.event_data_id = None
+        self.correlation_id = None
+        self.event_name = None
+        self.category = None
+        self.http_request = None
+        self.level = None
+        self.resource_group_name = None
+        self.resource_provider_name = None
+        self.resource_id = None
+        self.resource_type = None
+        self.operation_id = None
+        self.operation_name = None
+        self.properties = None
+        self.status = None
+        self.sub_status = None
+        self.event_timestamp = None
+        self.submission_timestamp = None
+        self.subscription_id = None
+        self.tenant_id = None

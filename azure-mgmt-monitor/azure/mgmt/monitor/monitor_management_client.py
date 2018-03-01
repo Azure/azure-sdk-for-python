@@ -41,13 +41,11 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
-    :param metricnamespace: Metric namespace to query metric definitions for.
-    :type metricnamespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, metricnamespace=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -63,7 +61,6 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.metricnamespace = metricnamespace
 
 
 class MonitorManagementClient(object):
@@ -108,15 +105,13 @@ class MonitorManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
-    :param metricnamespace: Metric namespace to query metric definitions for.
-    :type metricnamespace: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, metricnamespace=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, metricnamespace, base_url)
+        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
