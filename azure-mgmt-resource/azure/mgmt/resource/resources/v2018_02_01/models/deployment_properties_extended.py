@@ -56,7 +56,7 @@ class DeploymentPropertiesExtended(Model):
      ~azure.mgmt.resource.resources.v2018_02_01.models.DebugSetting
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment:
-     ~azure.mgmt.resource.resources.v2018_02_01.models.OnErrorDeployment
+     ~azure.mgmt.resource.resources.v2018_02_01.models.OnErrorDeploymentExtended
     """
 
     _validation = {
@@ -78,7 +78,7 @@ class DeploymentPropertiesExtended(Model):
         'parameters_link': {'key': 'parametersLink', 'type': 'ParametersLink'},
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
-        'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeploymentExtended'},
     }
 
     def __init__(self, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, on_error_deployment=None):

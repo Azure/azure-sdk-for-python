@@ -26,6 +26,7 @@ from .provider_resource_type import ProviderResourceType
 from .provider import Provider
 from .basic_dependency import BasicDependency
 from .dependency import Dependency
+from .on_error_deployment_extended import OnErrorDeploymentExtended
 from .deployment_properties_extended import DeploymentPropertiesExtended
 from .deployment_validate_result import DeploymentValidateResult
 from .deployment_extended import DeploymentExtended
@@ -79,6 +80,7 @@ __all__ = [
     'Provider',
     'BasicDependency',
     'Dependency',
+    'OnErrorDeploymentExtended',
     'DeploymentPropertiesExtended',
     'DeploymentValidateResult',
     'DeploymentExtended',
