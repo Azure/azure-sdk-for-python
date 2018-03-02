@@ -37,7 +37,7 @@ class MetricsOperations(object):
         self.config = config
 
     def list(
-            self, resource_uri, timespan=None, interval=None, metric=None, aggregation=None, top=None, orderby=None, filter=None, result_type=None, metricnamespace=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_uri, timespan=None, interval=None, metricnames=None, aggregation=None, top=None, orderby=None, filter=None, result_type=None, metricnamespace=None, custom_headers=None, raw=False, **operation_config):
         """**Lists the metric values for a resource**.
 
         :param resource_uri: The identifier of the resource.
@@ -47,8 +47,9 @@ class MetricsOperations(object):
         :type timespan: str
         :param interval: The interval (i.e. timegrain) of the query.
         :type interval: timedelta
-        :param metric: The name of the metric to retrieve.
-        :type metric: str
+        :param metricnames: The names of the metrics (comma separated) to
+         retrieve.
+        :type metricnames: str
         :param aggregation: The list of aggregation types (comma separated) to
          retrieve.
         :type aggregation: str
@@ -103,8 +104,8 @@ class MetricsOperations(object):
             query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
         if interval is not None:
             query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        if metric is not None:
-            query_parameters['metric'] = self._serialize.query("metric", metric, 'str')
+        if metricnames is not None:
+            query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
         if aggregation is not None:
             query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
         if top is not None:
