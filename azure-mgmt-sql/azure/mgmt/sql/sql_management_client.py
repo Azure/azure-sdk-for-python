@@ -51,6 +51,7 @@ from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.database_operations import DatabaseOperations
+from .operations.data_warehouse_user_activities_operations import DataWarehouseUserActivitiesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
@@ -172,6 +173,8 @@ class SqlManagementClient(object):
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
+    :ivar data_warehouse_user_activities: DataWarehouseUserActivities operations
+    :vartype data_warehouse_user_activities: azure.mgmt.sql.operations.DataWarehouseUserActivitiesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
@@ -273,6 +276,8 @@ class SqlManagementClient(object):
         self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_warehouse_user_activities = DataWarehouseUserActivitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)

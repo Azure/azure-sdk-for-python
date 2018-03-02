@@ -47,6 +47,7 @@ from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .database_operations import DatabaseOperations
+from .data_warehouse_user_activities_operations import DataWarehouseUserActivitiesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .restore_points_operations import RestorePointsOperations
@@ -90,6 +91,7 @@ __all__ = [
     'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
     'DatabaseOperations',
+    'DataWarehouseUserActivitiesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
     'RestorePointsOperations',

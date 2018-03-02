@@ -93,6 +93,7 @@ from .sync_member import SyncMember
 from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
+from .data_warehouse_user_activities import DataWarehouseUserActivities
 from .resource_move_definition import ResourceMoveDefinition
 from .automatic_tuning_server_options import AutomaticTuningServerOptions
 from .server_automatic_tuning import ServerAutomaticTuning
@@ -283,6 +284,7 @@ __all__ = [
     'SubscriptionUsage',
     'VirtualNetworkRule',
     'DatabaseOperation',
+    'DataWarehouseUserActivities',
     'ResourceMoveDefinition',
     'AutomaticTuningServerOptions',
     'ServerAutomaticTuning',
