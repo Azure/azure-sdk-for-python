@@ -9,20 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .activity import Activity
+from .execution_activity import ExecutionActivity
 
 
-class ExecutionActivity(Activity):
-    """Base class for all execution activities.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DatabricksNotebookActivity, DataLakeAnalyticsUSQLActivity,
-    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
-    GetMetadataActivity, WebActivity, LookupActivity,
-    SqlServerStoredProcedureActivity, CustomActivity,
-    ExecuteSSISPackageActivity, HDInsightSparkActivity,
-    HDInsightStreamingActivity, HDInsightMapReduceActivity,
-    HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
+class DatabricksNotebookActivity(ExecutionActivity):
+    """DatabricksNotebook activity.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -40,11 +31,20 @@ class ExecutionActivity(Activity):
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param notebook_path: The absolute path of the notebook to be run in the
+     Databricks Workspace. This path must begin with a slash. Type: string (or
+     Expression with resultType string).
+    :type notebook_path: object
+    :param base_parameters: Base parameters to be used for each run of this
+     job.If the notebook takes a parameter that is not specified, the default
+     value from the notebook will be used.
+    :type base_parameters: dict[str, object]
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
+        'notebook_path': {'required': True},
     }
 
     _attribute_map = {
@@ -55,14 +55,12 @@ class ExecutionActivity(Activity):
         'type': {'key': 'type', 'type': 'str'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
+        'notebook_path': {'key': 'typeProperties.notebookPath', 'type': 'object'},
+        'base_parameters': {'key': 'typeProperties.baseParameters', 'type': '{object}'},
     }
 
-    _subtype_map = {
-        'type': {'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
-    }
-
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None):
-        super(ExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
-        self.linked_service_name = linked_service_name
-        self.policy = policy
-        self.type = 'Execution'
+    def __init__(self, name, notebook_path, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, base_parameters=None):
+        super(DatabricksNotebookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
+        self.notebook_path = notebook_path
+        self.base_parameters = base_parameters
+        self.type = 'DatabricksNotebook'
