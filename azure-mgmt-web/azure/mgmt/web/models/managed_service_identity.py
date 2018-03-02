@@ -18,8 +18,9 @@ class ManagedServiceIdentity(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param type: Type of managed service identity.
-    :type type: object
+    :param type: Type of managed service identity. Possible values include:
+     'SystemAssigned'
+    :type type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
     :ivar principal_id: Principal Id of managed service identity.
@@ -32,7 +33,7 @@ class ManagedServiceIdentity(Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
     }
