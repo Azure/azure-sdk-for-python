@@ -26,9 +26,8 @@ class PoolUsageMetrics(Model):
     :type end_time: datetime
     :param vm_size: The size of virtual machines in the pool. All VMs in a
      pool are the same size. For information about available sizes of virtual
-     machines for Cloud Services pools (pools created with
-     cloudServiceConfiguration), see Sizes for Cloud Services
-     (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
+     machines in pools, see Choose a VM size for compute nodes in an Azure
+     Batch pool (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
      Batch supports all Cloud Services VM sizes except ExtraSmall,
      STANDARD_A1_V2 and STANDARD_A2_V2. For information about available VM
      sizes for pools using images from the Virtual Machines Marketplace (pools

@@ -1023,7 +1023,8 @@ class ComputeNodeOperations(object):
 
     def upload_batch_service_logs(
             self, pool_id, node_id, upload_batch_service_logs_configuration, compute_node_upload_batch_service_logs_options=None, custom_headers=None, raw=False, **operation_config):
-        """Upload Azure Batch service log files from the specified compute node.
+        """Upload Azure Batch service log files from the specified compute node to
+        Azure Blob Storage.
 
         This is for gathering Azure Batch service log files in an automated
         fashion from nodes if you are experiencing an error and wish to

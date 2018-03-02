@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UploadBatchServiceLogsResult(Model):
-    """The result of uploading batch service log files from a specific compute
+    """The result of uploading Batch service log files from a specific compute
     node.
 
     :param virtual_directory_name: The virtual directory within Azure Blob

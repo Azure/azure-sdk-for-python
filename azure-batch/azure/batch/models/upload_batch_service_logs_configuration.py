@@ -25,14 +25,14 @@ class UploadBatchServiceLogsConfiguration(Model):
      Service log file(s). Any log file containing a log message in the time
      range will be uploaded. This means that the operation might retrieve more
      logs than have been requested since the entire log file is always
-     uploaded, but the operation should not retrieve less logs than have been
+     uploaded, but the operation should not retrieve fewer logs than have been
      requested.
     :type start_time: datetime
     :param end_time: The end of the time range from which to upload Batch
      Service log file(s). Any log file containing a log message in the time
      range will be uploaded. This means that the operation might retrieve more
      logs than have been requested since the entire log file is always
-     uploaded, but the operation should not retrieve less logs than have been
+     uploaded, but the operation should not retrieve fewer logs than have been
      requested. If omitted, the default is to upload all logs available after
      the startTime.
     :type end_time: datetime

@@ -15,30 +15,31 @@ from msrest.serialization import Model
 class NodeCounts(Model):
     """The number of nodes in each node state.
 
-    :param creating: The number of nodes in creating state.
+    :param creating: The number of nodes in the creating state.
     :type creating: int
-    :param idle: The number of nodes in idle state.
+    :param idle: The number of nodes in the idle state.
     :type idle: int
-    :param offline: The number of nodes in offline state.
+    :param offline: The number of nodes in the offline state.
     :type offline: int
-    :param preempted: The number of nodes in preempted state.
+    :param preempted: The number of nodes in the preempted state.
     :type preempted: int
-    :param rebooting: The count of nodes in rebooting state.
+    :param rebooting: The count of nodes in the rebooting state.
     :type rebooting: int
-    :param reimaging: The number of nodes in reimaging state.
+    :param reimaging: The number of nodes in the reimaging state.
     :type reimaging: int
-    :param running: The number of nodes in running state.
+    :param running: The number of nodes in the running state.
     :type running: int
-    :param starting: The number of nodes in starting state.
+    :param starting: The number of nodes in the starting state.
     :type starting: int
-    :param start_task_failed: The number of nodes in startTaskFailed state.
-    :type start_task_failed: int
-    :param unknown: The number of nodes in unknown state.
-    :type unknown: int
-    :param unusable: The number of nodes in unusable state.
-    :type unusable: int
-    :param waiting_for_start_task: The number of nodes in waitingForStartTask
+    :param start_task_failed: The number of nodes in the startTaskFailed
      state.
+    :type start_task_failed: int
+    :param unknown: The number of nodes in the unknown state.
+    :type unknown: int
+    :param unusable: The number of nodes in the unusable state.
+    :type unusable: int
+    :param waiting_for_start_task: The number of nodes in the
+     waitingForStartTask state.
     :type waiting_for_start_task: int
     :param total: The total number of nodes.
     :type total: int
