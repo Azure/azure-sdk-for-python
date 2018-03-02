@@ -31,6 +31,9 @@ from .redis_linked_server_with_properties import RedisLinkedServerWithProperties
 from .redis_linked_server_create_parameters import RedisLinkedServerCreateParameters
 from .operation_display import OperationDisplay
 from .operation import Operation
+from .check_name_availability_parameters import CheckNameAvailabilityParameters
+from .upgrade_notification import UpgradeNotification
+from .notification_list_response import NotificationListResponse
 from .operation_paged import OperationPaged
 from .redis_resource_paged import RedisResourcePaged
 from .redis_firewall_rule_paged import RedisFirewallRulePaged
@@ -67,6 +70,9 @@ __all__ = [
     'RedisLinkedServerCreateParameters',
     'OperationDisplay',
     'Operation',
+    'CheckNameAvailabilityParameters',
+    'UpgradeNotification',
+    'NotificationListResponse',
     'OperationPaged',
     'RedisResourcePaged',
     'RedisFirewallRulePaged',

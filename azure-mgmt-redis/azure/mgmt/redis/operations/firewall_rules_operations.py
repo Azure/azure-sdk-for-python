@@ -22,7 +22,7 @@ class FirewallRulesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-10-01".
     """
 
@@ -59,7 +59,7 @@ class FirewallRulesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules'
+                url = self.list_by_redis_resource.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -106,6 +106,7 @@ class FirewallRulesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules'}
 
     def create_or_update(
             self, resource_group_name, cache_name, rule_name, start_ip, end_ip, custom_headers=None, raw=False, **operation_config):
@@ -134,7 +135,7 @@ class FirewallRulesOperations(object):
         parameters = models.RedisFirewallRuleCreateParameters(start_ip=start_ip, end_ip=end_ip)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'cacheName': self._serialize.url("cache_name", cache_name, 'str'),
@@ -182,6 +183,7 @@ class FirewallRulesOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
 
     def get(
             self, resource_group_name, cache_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -204,7 +206,7 @@ class FirewallRulesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'cacheName': self._serialize.url("cache_name", cache_name, 'str'),
@@ -246,6 +248,7 @@ class FirewallRulesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
 
     def delete(
             self, resource_group_name, cache_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -267,7 +270,7 @@ class FirewallRulesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'cacheName': self._serialize.url("cache_name", cache_name, 'str'),
@@ -302,3 +305,4 @@ class FirewallRulesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
