@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class BackupLongTermRetentionPolicyState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
 class CapabilityStatus(Enum):
 
     visible = "Visible"
@@ -496,3 +490,10 @@ class RestorePointType(Enum):
 
     continuous = "CONTINUOUS"
     discrete = "DISCRETE"
+
+
+class DatabaseState(Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"
