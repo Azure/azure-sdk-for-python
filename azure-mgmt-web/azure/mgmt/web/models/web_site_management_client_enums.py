@@ -81,6 +81,11 @@ class RouteType(Enum):
     static = "STATIC"
 
 
+class ManagedServiceIdentityType(Enum):
+
+    system_assigned = "SystemAssigned"
+
+
 class AutoHealActionType(Enum):
 
     recycle = "Recycle"
