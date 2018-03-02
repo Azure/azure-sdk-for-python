@@ -41,6 +41,7 @@ from .redis_linked_server_with_properties_paged import RedisLinkedServerWithProp
 from .redis_management_client_enums import (
     SkuName,
     SkuFamily,
+    ProvisioningState,
     RedisKeyType,
     RebootType,
     DayOfWeek,
@@ -79,6 +80,7 @@ __all__ = [
     'RedisLinkedServerWithPropertiesPaged',
     'SkuName',
     'SkuFamily',
+    'ProvisioningState',
     'RedisKeyType',
     'RebootType',
     'DayOfWeek',

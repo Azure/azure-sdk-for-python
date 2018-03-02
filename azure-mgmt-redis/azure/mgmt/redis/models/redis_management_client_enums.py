@@ -25,6 +25,26 @@ class SkuFamily(Enum):
     p = "P"
 
 
+class ProvisioningState(Enum):
+
+    creating = "Creating"
+    deleting = "Deleting"
+    disabled = "Disabled"
+    failed = "Failed"
+    linking = "Linking"
+    provisioning = "Provisioning"
+    recovering_scale_failure = "RecoveringScaleFailure"
+    scaling = "Scaling"
+    scaling_failed = "ScalingFailed"
+    stopped = "Stopped"
+    stopping = "Stopping"
+    starting = "Starting"
+    succeeded = "Succeeded"
+    unlinking = "Unlinking"
+    updating = "Updating"
+    unprovisioning = "Unprovisioning"
+
+
 class RedisKeyType(Enum):
 
     primary = "Primary"
