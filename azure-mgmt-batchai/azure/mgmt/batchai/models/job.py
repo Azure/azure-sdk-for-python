@@ -38,6 +38,11 @@ class Job(Resource):
     :param cluster: Specifies the Id of the cluster on which this job will
      run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
+    :param mount_volumes: Information on mount volumes to be used by the job.
+     These volumes will be mounted before the job execution and will be
+     unmouted after the job completion. The volumes will be mounted at location
+     specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
+    :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
     :param job_output_directory_path_segment: A segment of job's output
      directories path created by BatchAI. Batch AI creates job's output
      directories under an unique path to avoid conflicts between jobs. This
@@ -152,6 +157,7 @@ class Job(Resource):
         'experiment_name': {'key': 'properties.experimentName', 'type': 'str'},
         'priority': {'key': 'properties.priority', 'type': 'int'},
         'cluster': {'key': 'properties.cluster', 'type': 'ResourceId'},
+        'mount_volumes': {'key': 'properties.mountVolumes', 'type': 'MountVolumes'},
         'job_output_directory_path_segment': {'key': 'properties.jobOutputDirectoryPathSegment', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'container_settings': {'key': 'properties.containerSettings', 'type': 'ContainerSettings'},
@@ -177,11 +183,12 @@ class Job(Resource):
         'execution_info': {'key': 'properties.executionInfo', 'type': 'JobPropertiesExecutionInfo'},
     }
 
-    def __init__(self, experiment_name=None, priority=0, cluster=None, job_output_directory_path_segment=None, node_count=None, container_settings=None, tool_type=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, std_out_err_path_prefix=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, execution_state=None, execution_info=None):
+    def __init__(self, experiment_name=None, priority=0, cluster=None, mount_volumes=None, job_output_directory_path_segment=None, node_count=None, container_settings=None, tool_type=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, std_out_err_path_prefix=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, execution_state=None, execution_info=None):
         super(Job, self).__init__()
         self.experiment_name = experiment_name
         self.priority = priority
         self.cluster = cluster
+        self.mount_volumes = mount_volumes
         self.job_output_directory_path_segment = job_output_directory_path_segment
         self.node_count = node_count
         self.container_settings = container_settings

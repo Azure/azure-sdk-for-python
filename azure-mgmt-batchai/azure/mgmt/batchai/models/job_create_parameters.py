@@ -29,7 +29,7 @@ class JobCreateParameters(Model):
     :param cluster: Specifies the Id of the cluster on which this job will
      run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
-    :param mount_volumes: Information on shared volumes to be used by the job.
+    :param mount_volumes: Information on mount volumes to be used by the job.
      These volumes will be mounted before the job execution and will be
      unmouted after the job completion. The volumes will be mounted at location
      specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
