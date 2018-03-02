@@ -59,6 +59,9 @@ from .operation import Operation
 from .operation_list_response import OperationListResponse
 from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
 from .hd_insight_on_demand_linked_service import HDInsightOnDemandLinkedService
+from .salesforce_marketing_cloud_linked_service import SalesforceMarketingCloudLinkedService
+from .netezza_linked_service import NetezzaLinkedService
+from .vertica_linked_service import VerticaLinkedService
 from .zoho_linked_service import ZohoLinkedService
 from .xero_linked_service import XeroLinkedService
 from .square_linked_service import SquareLinkedService
@@ -126,6 +129,9 @@ from .azure_sql_database_linked_service import AzureSqlDatabaseLinkedService
 from .sql_server_linked_service import SqlServerLinkedService
 from .azure_sql_dw_linked_service import AzureSqlDWLinkedService
 from .azure_storage_linked_service import AzureStorageLinkedService
+from .salesforce_marketing_cloud_object_dataset import SalesforceMarketingCloudObjectDataset
+from .vertica_table_dataset import VerticaTableDataset
+from .netezza_table_dataset import NetezzaTableDataset
 from .zoho_object_dataset import ZohoObjectDataset
 from .xero_object_dataset import XeroObjectDataset
 from .square_object_dataset import SquareObjectDataset
@@ -204,6 +210,9 @@ from .web_activity_authentication import WebActivityAuthentication
 from .web_activity import WebActivity
 from .redshift_unload_settings import RedshiftUnloadSettings
 from .amazon_redshift_source import AmazonRedshiftSource
+from .salesforce_marketing_cloud_source import SalesforceMarketingCloudSource
+from .vertica_source import VerticaSource
+from .netezza_source import NetezzaSource
 from .zoho_source import ZohoSource
 from .xero_source import XeroSource
 from .square_source import SquareSource
@@ -435,6 +444,9 @@ __all__ = [
     'OperationListResponse',
     'AzureDataLakeAnalyticsLinkedService',
     'HDInsightOnDemandLinkedService',
+    'SalesforceMarketingCloudLinkedService',
+    'NetezzaLinkedService',
+    'VerticaLinkedService',
     'ZohoLinkedService',
     'XeroLinkedService',
     'SquareLinkedService',
@@ -502,6 +514,9 @@ __all__ = [
     'SqlServerLinkedService',
     'AzureSqlDWLinkedService',
     'AzureStorageLinkedService',
+    'SalesforceMarketingCloudObjectDataset',
+    'VerticaTableDataset',
+    'NetezzaTableDataset',
     'ZohoObjectDataset',
     'XeroObjectDataset',
     'SquareObjectDataset',
@@ -580,6 +595,9 @@ __all__ = [
     'WebActivity',
     'RedshiftUnloadSettings',
     'AmazonRedshiftSource',
+    'SalesforceMarketingCloudSource',
+    'VerticaSource',
+    'NetezzaSource',
     'ZohoSource',
     'XeroSource',
     'SquareSource',

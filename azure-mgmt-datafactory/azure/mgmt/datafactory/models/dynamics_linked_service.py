@@ -43,6 +43,10 @@ class DynamicsLinkedService(LinkedService):
      required for on-prem and not allowed for online. Default is 443. Type:
      integer (or Expression with resultType integer), minimum: 0.
     :type port: object
+    :param service_uri: The URL to the Microsoft Dynamics server. The property
+     is required for on-line and not allowed for on-prem. Type: string (or
+     Expression with resultType string).
+    :type service_uri: object
     :param organization_name: The organization name of the Dynamics instance.
      The property is required for on-prem and required for online when there
      are more than one Dynamics instances associated with the user. Type:
@@ -80,6 +84,7 @@ class DynamicsLinkedService(LinkedService):
         'deployment_type': {'key': 'typeProperties.deploymentType', 'type': 'object'},
         'host_name': {'key': 'typeProperties.hostName', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
+        'service_uri': {'key': 'typeProperties.serviceUri', 'type': 'object'},
         'organization_name': {'key': 'typeProperties.organizationName', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
@@ -87,11 +92,12 @@ class DynamicsLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, deployment_type, authentication_type, username, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, host_name=None, port=None, organization_name=None, password=None, encrypted_credential=None):
+    def __init__(self, deployment_type, authentication_type, username, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, host_name=None, port=None, service_uri=None, organization_name=None, password=None, encrypted_credential=None):
         super(DynamicsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
+        self.service_uri = service_uri
         self.organization_name = organization_name
         self.authentication_type = authentication_type
         self.username = username
