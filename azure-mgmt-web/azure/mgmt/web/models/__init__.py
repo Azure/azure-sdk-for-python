@@ -123,6 +123,7 @@ from .stack_major_version import StackMajorVersion
 from .application_stack import ApplicationStack
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
+from .resource_health_metadata import ResourceHealthMetadata
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
 from .geo_region import GeoRegion
 from .hosting_environment_deployment_info import HostingEnvironmentDeploymentInfo
@@ -226,6 +227,7 @@ from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
 from .application_stack_paged import ApplicationStackPaged
 from .recommendation_paged import RecommendationPaged
+from .resource_health_metadata_paged import ResourceHealthMetadataPaged
 from .source_control_paged import SourceControlPaged
 from .geo_region_paged import GeoRegionPaged
 from .identifier_paged import IdentifierPaged
@@ -437,6 +439,7 @@ __all__ = [
     'ApplicationStack',
     'Recommendation',
     'RecommendationRule',
+    'ResourceHealthMetadata',
     'CsmMoveResourceEnvelope',
     'GeoRegion',
     'HostingEnvironmentDeploymentInfo',
@@ -540,6 +543,7 @@ __all__ = [
     'DetectorDefinitionPaged',
     'ApplicationStackPaged',
     'RecommendationPaged',
+    'ResourceHealthMetadataPaged',
     'SourceControlPaged',
     'GeoRegionPaged',
     'IdentifierPaged',
