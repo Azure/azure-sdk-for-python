@@ -24,4 +24,5 @@ class PtrRecord(Model):
     }
 
     def __init__(self, ptrdname=None):
+        super(PtrRecord, self).__init__()
         self.ptrdname = ptrdname

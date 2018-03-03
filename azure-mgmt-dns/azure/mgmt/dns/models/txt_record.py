@@ -24,4 +24,5 @@ class TxtRecord(Model):
     }
 
     def __init__(self, value=None):
+        super(TxtRecord, self).__init__()
         self.value = value

@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class ARecord(Model):
-    """An A record.
+class SubResource(Model):
+    """A reference to a another resource.
 
-    :param ipv4_address: The IPv4 address of this A record.
-    :type ipv4_address: str
+    :param id: Resource Id.
+    :type id: str
     """
 
     _attribute_map = {
-        'ipv4_address': {'key': 'ipv4Address', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, ipv4_address=None):
-        super(ARecord, self).__init__()
-        self.ipv4_address = ipv4_address
+    def __init__(self, id=None):
+        super(SubResource, self).__init__()
+        self.id = id
