@@ -27,6 +27,10 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :param vm_agent: The VM Agent running on the virtual machine.
     :type vm_agent:
      ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineAgentInstanceView
+    :param maintenance_redeploy_status: The Maintenance Operation status on
+     the virtual machine.
+    :type maintenance_redeploy_status:
+     ~azure.mgmt.compute.v2017_12_01.models.MaintenanceRedeployStatus
     :param disks: The disks information.
     :type disks: list[~azure.mgmt.compute.v2017_12_01.models.DiskInstanceView]
     :param extensions: The extensions information.
@@ -59,6 +63,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         'platform_fault_domain': {'key': 'platformFaultDomain', 'type': 'int'},
         'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
         'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
+        'maintenance_redeploy_status': {'key': 'maintenanceRedeployStatus', 'type': 'MaintenanceRedeployStatus'},
         'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
         'vm_health': {'key': 'vmHealth', 'type': 'VirtualMachineHealthStatus'},
@@ -67,12 +72,13 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         'placement_group_id': {'key': 'placementGroupId', 'type': 'str'},
     }
 
-    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, placement_group_id=None):
+    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, placement_group_id=None):
         super(VirtualMachineScaleSetVMInstanceView, self).__init__()
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
         self.rdp_thumb_print = rdp_thumb_print
         self.vm_agent = vm_agent
+        self.maintenance_redeploy_status = maintenance_redeploy_status
         self.disks = disks
         self.extensions = extensions
         self.vm_health = None
