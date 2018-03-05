@@ -46,10 +46,11 @@ from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .database_operations import DatabaseOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .restore_points_operations import RestorePointsOperations
+from .database_operations import DatabaseOperations
+from .elastic_pool_operations import ElasticPoolOperations
 
 __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
@@ -89,8 +90,9 @@ __all__ = [
     'SyncMembersOperations',
     'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
-    'DatabaseOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
     'RestorePointsOperations',
+    'DatabaseOperations',
+    'ElasticPoolOperations',
 ]
