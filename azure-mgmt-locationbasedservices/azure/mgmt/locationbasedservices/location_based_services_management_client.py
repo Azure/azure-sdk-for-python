@@ -17,8 +17,8 @@ from .operations.accounts_operations import AccountsOperations
 from . import models
 
 
-class ClientConfiguration(AzureConfiguration):
-    """Configuration for Client
+class LocationBasedServicesManagementClientConfiguration(AzureConfiguration):
+    """Configuration for LocationBasedServicesManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -42,7 +42,7 @@ class ClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(ClientConfiguration, self).__init__(base_url)
+        super(LocationBasedServicesManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-locationbasedservices/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -51,11 +51,11 @@ class ClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class Client(object):
+class LocationBasedServicesManagementClient(object):
     """Resource Provider
 
     :ivar config: Configuration for client.
-    :vartype config: ClientConfiguration
+    :vartype config: LocationBasedServicesManagementClientConfiguration
 
     :ivar accounts: Accounts operations
     :vartype accounts: azure.mgmt.locationbasedservices.operations.AccountsOperations
@@ -73,7 +73,7 @@ class Client(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = ClientConfiguration(credentials, subscription_id, base_url)
+        self.config = LocationBasedServicesManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

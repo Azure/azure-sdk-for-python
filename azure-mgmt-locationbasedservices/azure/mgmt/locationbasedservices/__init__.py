@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .client import Client
+from .location_based_services_management_client import LocationBasedServicesManagementClient
 from .version import VERSION
 
-__all__ = ['Client']
+__all__ = ['LocationBasedServicesManagementClient']
 
 __version__ = VERSION
 
