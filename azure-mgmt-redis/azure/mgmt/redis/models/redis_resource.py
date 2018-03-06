@@ -56,9 +56,8 @@ class RedisResource(TrackedResource):
     :vartype redis_version: str
     :ivar provisioning_state: Redis instance provisioning status. Possible
      values include: 'Creating', 'Deleting', 'Disabled', 'Failed', 'Linking',
-     'Provisioning', 'RecoveringScaleFailure', 'Scaling', 'ScalingFailed',
-     'Stopped', 'Stopping', 'Starting', 'Succeeded', 'Unlinking', 'Updating',
-     'Unprovisioning'
+     'Provisioning', 'RecoveringScaleFailure', 'Scaling', 'Succeeded',
+     'Unlinking', 'Updating', 'Unprovisioning'
     :vartype provisioning_state: str or
      ~azure.mgmt.redis.models.ProvisioningState
     :ivar host_name: Redis host name.
