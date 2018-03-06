@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.vaults_operations import VaultsOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -25,9 +26,9 @@ class KeyVaultManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -39,14 +40,12 @@ class KeyVaultManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(KeyVaultManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('keyvaultmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-keyvault/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -61,13 +60,15 @@ class KeyVaultManagementClient(object):
 
     :ivar vaults: Vaults operations
     :vartype vaults: azure.mgmt.keyvault.operations.VaultsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.keyvault.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -79,9 +80,11 @@ class KeyVaultManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-10-01'
+        self.api_version = '2018-02-14-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.vaults = VaultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
