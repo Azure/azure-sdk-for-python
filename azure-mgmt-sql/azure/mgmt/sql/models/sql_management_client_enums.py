@@ -468,6 +468,16 @@ class VirtualNetworkRuleState(Enum):
     unknown = "Unknown"
 
 
+class ManagementOperationState(Enum):
+
+    pending = "Pending"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancel_in_progress = "CancelInProgress"
+    cancelled = "Cancelled"
+
+
 class AutomaticTuningServerMode(Enum):
 
     custom = "Custom"
@@ -486,13 +496,3 @@ class RestorePointType(Enum):
 
     continuous = "CONTINUOUS"
     discrete = "DISCRETE"
-
-
-class ManagementOperationState(Enum):
-
-    pending = "Pending"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancel_in_progress = "CancelInProgress"
-    cancelled = "Cancelled"
