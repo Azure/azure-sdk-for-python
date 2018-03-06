@@ -39,9 +39,9 @@ class VpnClientRootCertificate(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, public_cert_data=None, provisioning_state=None, name=None, etag=None):
-        super(VpnClientRootCertificate, self).__init__(id=id)
-        self.public_cert_data = public_cert_data
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(VpnClientRootCertificate, self).__init__(**kwargs)
+        self.public_cert_data = kwargs.get('public_cert_data', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

@@ -35,10 +35,10 @@ class Error(Model):
         'inner_error': {'key': 'innerError', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None, target=None, details=None, inner_error=None):
-        super(Error, self).__init__()
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-        self.inner_error = inner_error
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
+        self.inner_error = kwargs.get('inner_error', None)

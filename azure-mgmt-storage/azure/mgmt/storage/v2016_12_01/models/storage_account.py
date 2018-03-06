@@ -136,8 +136,8 @@ class StorageAccount(Resource):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
     }
 
-    def __init__(self, location=None, tags=None, enable_https_traffic_only=False):
-        super(StorageAccount, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(StorageAccount, self).__init__(**kwargs)
         self.sku = None
         self.kind = None
         self.provisioning_state = None
@@ -152,4 +152,4 @@ class StorageAccount(Resource):
         self.secondary_endpoints = None
         self.encryption = None
         self.access_tier = None
-        self.enable_https_traffic_only = enable_https_traffic_only
+        self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)

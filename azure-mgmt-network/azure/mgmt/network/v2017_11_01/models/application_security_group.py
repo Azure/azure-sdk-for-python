@@ -61,8 +61,8 @@ class ApplicationSecurityGroup(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None):
-        super(ApplicationSecurityGroup, self).__init__(id=id, location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(ApplicationSecurityGroup, self).__init__(**kwargs)
         self.resource_guid = None
         self.provisioning_state = None
         self.etag = None
