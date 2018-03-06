@@ -9,7 +9,65 @@ import unittest
 
 import azure.mgmt.dns
 import azure.mgmt.network
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import (
+    AzureMgmtTestCase, ResourceGroupPreparer,
+    AzureMgmtPreparer, FakeResource
+)
+
+class VirtualNetworkPreparer(AzureMgmtPreparer):
+    def __init__(self, name_prefix='pvtzonevnet'):
+        super(VirtualNetworkPreparer, self).__init__(name_prefix, 24)
+
+    def create_resource(self, name, **kwargs):
+        registration_virtual_network_name = name + 'reg'
+        resolution_virtual_network_name = name + 'res'
+
+        if self.is_live:
+            resource_group_name = kwargs['resource_group'].name
+            location_name = kwargs['location']
+
+            registration_network = self.test_class_instance.network_client.virtual_networks.create_or_update(
+                resource_group_name,
+                registration_virtual_network_name,
+                {
+                    'location': location_name,
+                    'address_space': {
+                        'address_prefixes': ['10.0.0.0/8']
+                    },
+                    'subnets': [
+                        {
+                            'name': 'default',
+                            'address_prefix': '10.0.0.0/24'
+                        }
+                    ]
+                }
+            ).result()
+
+            resolution_network = self.test_class_instance.network_client.virtual_networks.create_or_update(
+                resource_group_name,
+                resolution_virtual_network_name,
+                {
+                    'location': location_name,
+                    'address_space': {
+                        'address_prefixes': ['10.0.0.0/8']
+                    },
+                    'subnets': [
+                        {
+                            'name': 'default',
+                            'address_prefix': '10.0.0.0/24'
+                        }
+                    ]
+                }
+            ).result()
+
+        else:
+            registration_network = FakeResource(name=registration_virtual_network_name, id='')
+            resolution_network = FakeResource(name=resolution_virtual_network_name, id='')
+
+        return {
+            'registration_virtual_network': registration_network,
+            'resolution_virtual_network': resolution_network
+        }
 
 class MgmtDnsTest(AzureMgmtTestCase):
 
@@ -17,6 +75,11 @@ class MgmtDnsTest(AzureMgmtTestCase):
         super(MgmtDnsTest, self).setUp()
         self.dns_client = self.create_mgmt_client(
             azure.mgmt.dns.DnsManagementClient,
+            base_url='https://api-dogfood.resources.windows-int.net/'
+        )
+        self.network_client = self.create_mgmt_client(
+            azure.mgmt.network.NetworkManagementClient,
+            api_version='2017-09-01',
             base_url='https://api-dogfood.resources.windows-int.net/'
         )
 
@@ -120,50 +183,9 @@ class MgmtDnsTest(AzureMgmtTestCase):
         async_delete.wait()
 
     @ResourceGroupPreparer(client_kwargs={'base_url':'https://api-dogfood.resources.windows-int.net/'})
-    def test_private_zone(self, resource_group, location):
+    @VirtualNetworkPreparer()
+    def test_private_zone(self, resource_group, location, registration_virtual_network, resolution_virtual_network):
         zone_name = self.get_resource_name('pydns.com')
-
-        network_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient,
-            api_version='2017-09-01',
-            base_url='https://api-dogfood.resources.windows-int.net/'
-        )
-
-        registration_virtual_network_name = self.get_resource_name('pvtzoneregvnet')
-        registration_network = network_client.virtual_networks.create_or_update(
-            resource_group.name,
-            registration_virtual_network_name,
-            {
-                'location': location,
-                'address_space': {
-                    'address_prefixes': ['10.0.0.0/8']
-                },
-                'subnets': [
-                    {
-                        'name': 'default',
-                        'address_prefix': '10.0.0.0/24'
-                    }
-                ]
-            }
-        ).result()
-
-        resolution_virtual_network_name = self.get_resource_name('pvtzoneresvnet')
-        resolution_network = network_client.virtual_networks.create_or_update(
-            resource_group.name,
-            resolution_virtual_network_name,
-            {
-                'location': location,
-                'address_space': {
-                    'address_prefixes': ['10.0.0.0/8']
-                },
-                'subnets': [
-                    {
-                        'name': 'default',
-                        'address_prefix': '10.0.0.0/24'
-                    }
-                ]
-            }
-        ).result()
 
         # Zones are a 'global' resource.
         zone = self.dns_client.zones.create_or_update(
@@ -172,8 +194,8 @@ class MgmtDnsTest(AzureMgmtTestCase):
             {
                 'zone_type': 'Private',
                 'location': 'global',
-                'registration_virtual_networks': [ { 'id': registration_network.id } ],
-                'resolution_virtual_networks': [ { 'id': resolution_network.id } ]
+                'registration_virtual_networks': [ { 'id': registration_virtual_network.id } ],
+                'resolution_virtual_networks': [ { 'id': resolution_virtual_network.id } ]
             }
         )
         self.assertEqual(zone.name, zone_name)
