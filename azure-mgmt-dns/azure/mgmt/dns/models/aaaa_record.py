@@ -24,4 +24,5 @@ class AaaaRecord(Model):
     }
 
     def __init__(self, ipv6_address=None):
+        super(AaaaRecord, self).__init__()
         self.ipv6_address = ipv6_address
