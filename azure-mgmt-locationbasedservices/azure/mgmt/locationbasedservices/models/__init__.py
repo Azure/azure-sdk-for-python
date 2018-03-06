@@ -23,7 +23,7 @@ from .location_based_services_operations_value_item_display import LocationBased
 from .location_based_services_operations_value_item import LocationBasedServicesOperationsValueItem
 from .location_based_services_account_paged import LocationBasedServicesAccountPaged
 from .location_based_services_operations_value_item_paged import LocationBasedServicesOperationsValueItemPaged
-from .client_enums import (
+from .location_based_services_management_client_enums import (
     KeyType,
 )
 
