@@ -12,6 +12,9 @@
 from .sku import Sku
 from .permissions import Permissions
 from .access_policy_entry import AccessPolicyEntry
+from .ip_rule import IPRule
+from .virtual_network_rule import VirtualNetworkRule
+from .network_rule_set import NetworkRuleSet
 from .vault_properties import VaultProperties
 from .vault_patch_properties import VaultPatchProperties
 from .vault_access_policy_properties import VaultAccessPolicyProperties
@@ -39,6 +42,8 @@ from .key_vault_management_client_enums import (
     CertificatePermissions,
     StoragePermissions,
     CreateMode,
+    NetworkRuleBypassOptions,
+    NetworkRuleAction,
     Reason,
     AccessPolicyUpdateKind,
 )
@@ -47,6 +52,9 @@ __all__ = [
     'Sku',
     'Permissions',
     'AccessPolicyEntry',
+    'IPRule',
+    'VirtualNetworkRule',
+    'NetworkRuleSet',
     'VaultProperties',
     'VaultPatchProperties',
     'VaultAccessPolicyProperties',
@@ -73,6 +81,8 @@ __all__ = [
     'CertificatePermissions',
     'StoragePermissions',
     'CreateMode',
+    'NetworkRuleBypassOptions',
+    'NetworkRuleAction',
     'Reason',
     'AccessPolicyUpdateKind',
 ]

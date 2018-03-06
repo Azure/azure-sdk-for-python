@@ -35,18 +35,24 @@ class VaultPatchProperties(Model):
     :param enabled_for_template_deployment: Property to specify whether Azure
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
-    :param enable_soft_delete: Property specifying whether recoverable
-     deletion ('soft' delete) is enabled for this key vault. The property may
-     not be set to false.
+    :param enable_soft_delete: Property to specify whether the 'soft delete'
+     functionality is enabled for this key vault. It does not accept false
+     value.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
     :type create_mode: str or ~azure.mgmt.keyvault.models.CreateMode
     :param enable_purge_protection: Property specifying whether protection
-     against purge is enabled for this vault; it is only effective if soft
-     delete is also enabled. Once activated, the property may no longer be
-     reset to false.
+     against purge is enabled for this vault. Setting this property to true
+     activates protection against purge for this vault and its content - only
+     the Key Vault service may initiate a hard, irrecoverable deletion. The
+     setting is effective only if soft delete is also enabled. Enabling this
+     functionality is irreversible - that is, the property does not accept
+     false as its value.
     :type enable_purge_protection: bool
+    :param network_acls: A collection of rules governing the accessibility of
+     the vault from specific network locations.
+    :type network_acls: ~azure.mgmt.keyvault.models.NetworkRuleSet
     """
 
     _attribute_map = {
@@ -59,9 +65,10 @@ class VaultPatchProperties(Model):
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
+        'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, tenant_id=None, sku=None, access_policies=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None, enable_purge_protection=None):
+    def __init__(self, tenant_id=None, sku=None, access_policies=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None, enable_purge_protection=None, network_acls=None):
         super(VaultPatchProperties, self).__init__()
         self.tenant_id = tenant_id
         self.sku = sku
@@ -72,3 +79,4 @@ class VaultPatchProperties(Model):
         self.enable_soft_delete = enable_soft_delete
         self.create_mode = create_mode
         self.enable_purge_protection = enable_purge_protection
+        self.network_acls = network_acls

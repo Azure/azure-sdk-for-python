@@ -92,6 +92,18 @@ class CreateMode(Enum):
     default = "default"
 
 
+class NetworkRuleBypassOptions(Enum):
+
+    azure_services = "AzureServices"
+    none = "None"
+
+
+class NetworkRuleAction(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
 class Reason(Enum):
 
     account_name_invalid = "AccountNameInvalid"

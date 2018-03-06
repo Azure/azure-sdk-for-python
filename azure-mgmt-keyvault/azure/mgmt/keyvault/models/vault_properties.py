@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class VaultProperties(Model):
     """Properties of the vault.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param tenant_id: The Azure Active Directory tenant ID that should be used
      for authenticating requests to the key vault.
     :type tenant_id: str
@@ -24,9 +27,9 @@ class VaultProperties(Model):
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID.
     :type access_policies: list[~azure.mgmt.keyvault.models.AccessPolicyEntry]
-    :param vault_uri: The URI of the vault for performing operations on keys
+    :ivar vault_uri: The URI of the vault for performing operations on keys
      and secrets.
-    :type vault_uri: str
+    :vartype vault_uri: str
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from the
      key vault.
@@ -38,11 +41,9 @@ class VaultProperties(Model):
     :param enabled_for_template_deployment: Property to specify whether Azure
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
-    :param enable_soft_delete: Property specifying whether recoverable
-     deletion is enabled for this key vault. Setting this property to true
-     activates the soft delete feature, whereby vaults or vault entities can be
-     recovered after deletion. Enabling this functionality is irreversible -
-     that is, the property does not accept false as its value.
+    :param enable_soft_delete: Property to specify whether the 'soft delete'
+     functionality is enabled for this key vault. It does not accept false
+     value.
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
@@ -55,11 +56,15 @@ class VaultProperties(Model):
      functionality is irreversible - that is, the property does not accept
      false as its value.
     :type enable_purge_protection: bool
+    :param network_acls: A collection of rules governing the accessibility of
+     the vault from specific network locations.
+    :type network_acls: ~azure.mgmt.keyvault.models.NetworkRuleSet
     """
 
     _validation = {
         'tenant_id': {'required': True},
         'sku': {'required': True},
+        'vault_uri': {'readonly': True},
     }
 
     _attribute_map = {
@@ -73,17 +78,19 @@ class VaultProperties(Model):
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
+        'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, tenant_id, sku, access_policies=None, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None, enable_purge_protection=None):
+    def __init__(self, tenant_id, sku, access_policies=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None, enable_purge_protection=None, network_acls=None):
         super(VaultProperties, self).__init__()
         self.tenant_id = tenant_id
         self.sku = sku
         self.access_policies = access_policies
-        self.vault_uri = vault_uri
+        self.vault_uri = None
         self.enabled_for_deployment = enabled_for_deployment
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
         self.enable_soft_delete = enable_soft_delete
         self.create_mode = create_mode
         self.enable_purge_protection = enable_purge_protection
+        self.network_acls = network_acls
