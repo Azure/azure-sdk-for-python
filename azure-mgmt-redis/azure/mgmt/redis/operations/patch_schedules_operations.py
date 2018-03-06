@@ -24,7 +24,7 @@ class PatchSchedulesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar default: Default string modeled as parameter for auto generation to work correctly. Constant value: "default".
-    :ivar api_version: Client Api Version. Constant value: "2017-10-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-03-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class PatchSchedulesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.default = "default"
-        self.api_version = "2017-10-01"
+        self.api_version = "2018-03-01"
 
         self.config = config
 

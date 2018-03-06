@@ -40,6 +40,9 @@ class RedisResource(TrackedResource):
     :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
     :type shard_count: int
+    :param minimum_tls_version: Optional: requires clients to use a specified
+     TLS version (or higher) to connect (e,g, '1.0', '1.1', '1.2')
+    :type minimum_tls_version: str
     :param sku: The SKU of the Redis cache to deploy.
     :type sku: ~azure.mgmt.redis.models.Sku
     :param subnet_id: The full resource ID of a subnet in a virtual network to
@@ -51,8 +54,12 @@ class RedisResource(TrackedResource):
     :type static_ip: str
     :ivar redis_version: Redis version.
     :vartype redis_version: str
-    :ivar provisioning_state: Redis instance provisioning status.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Redis instance provisioning status. Possible
+     values include: 'Creating', 'Deleting', 'Disabled', 'Failed', 'Linking',
+     'Provisioning', 'RecoveringScaleFailure', 'Scaling', 'Succeeded',
+     'Unlinking', 'Updating', 'Unprovisioning'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.redis.models.ProvisioningState
     :ivar host_name: Redis host name.
     :vartype host_name: str
     :ivar port: Redis non-SSL port.
@@ -96,6 +103,7 @@ class RedisResource(TrackedResource):
         'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
         'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
         'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
@@ -109,12 +117,13 @@ class RedisResource(TrackedResource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, location, sku, tags=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, subnet_id=None, static_ip=None, zones=None):
+    def __init__(self, location, sku, tags=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, minimum_tls_version=None, subnet_id=None, static_ip=None, zones=None):
         super(RedisResource, self).__init__(tags=tags, location=location)
         self.redis_configuration = redis_configuration
         self.enable_non_ssl_port = enable_non_ssl_port
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
+        self.minimum_tls_version = minimum_tls_version
         self.sku = sku
         self.subnet_id = subnet_id
         self.static_ip = static_ip
