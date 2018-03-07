@@ -53,13 +53,13 @@ class RoleDefinition(Model):
         'assignable_scopes': {'key': 'properties.assignableScopes', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, role_name: str=None, description: str=None, role_type: str=None, permissions=None, assignable_scopes=None, **kwargs) -> None:
         super(RoleDefinition, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.role_name = kwargs.get('role_name', None)
-        self.description = kwargs.get('description', None)
-        self.role_type = kwargs.get('role_type', None)
-        self.permissions = kwargs.get('permissions', None)
-        self.assignable_scopes = kwargs.get('assignable_scopes', None)
+        self.role_name = role_name
+        self.description = description
+        self.role_type = role_type
+        self.permissions = permissions
+        self.assignable_scopes = assignable_scopes

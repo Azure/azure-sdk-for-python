@@ -35,10 +35,10 @@ class ClassicAdministrator(Model):
         'role': {'key': 'properties.role', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, email_address: str=None, role: str=None, **kwargs) -> None:
         super(ClassicAdministrator, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.email_address = kwargs.get('email_address', None)
-        self.role = kwargs.get('role', None)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.email_address = email_address
+        self.role = role

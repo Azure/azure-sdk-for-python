@@ -26,7 +26,7 @@ class RoleAssignmentFilter(Model):
         'can_delegate': {'key': 'canDelegate', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, principal_id: str=None, can_delegate: bool=None, **kwargs) -> None:
         super(RoleAssignmentFilter, self).__init__(**kwargs)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.can_delegate = kwargs.get('can_delegate', None)
+        self.principal_id = principal_id
+        self.can_delegate = can_delegate
