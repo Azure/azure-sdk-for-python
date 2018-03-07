@@ -42,7 +42,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [91e99b1a-4ad6-11e7-9729-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzYzOTA5ODgyMjU3MXw1MTg1MTdEOTQ4Mzk0MUFBQjc2NzVFRTAzNDM1OTc3OQ?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzYzOTA5ODgyMjU3MXw1MTg1MTdEOTQ4Mzk0MUFBQjc2NzVFRTAzNDM1OTc3OQ?api-version=2018-02-14-preview
   response:
     body: {string: '{"createdDateTime":"2017-06-06 16:38:28Z","status":"NotStarted"}'}
     headers:
@@ -51,7 +51,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       Date: ['Tue, 06 Jun 2017 16:38:39 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzYzOTA5ODgyMjU3MXw1MTg1MTdEOTQ4Mzk0MUFBQjc2NzVFRTAzNDM1OTc3OQ?api-version=2016-10-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzYzOTA5ODgyMjU3MXw1MTg1MTdEOTQ4Mzk0MUFBQjc2NzVFRTAzNDM1OTc3OQ?api-version=2018-02-14-preview']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]
@@ -248,7 +248,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [22ec1bd2-4ad8-11e7-9407-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault","name":"pytest-shared-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"secrets":["get","list","set","delete","backup","restore","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://pytest-shared-vault.vault.azure.net/"}}'}
     headers:
@@ -283,7 +283,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [1e72a1be-4ad8-11e7-88d8-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NTc1MDE2MjQ2NnwwRTAxREE2Q0JGQkQ0MzFDODFGNUU3NkJDOEExRjFDNw?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NTc1MDE2MjQ2NnwwRTAxREE2Q0JGQkQ0MzFDODFGNUU3NkJDOEExRjFDNw?api-version=2018-02-14-preview
   response:
     body: {string: '{"createdDateTime":"2017-06-06 16:49:34Z","status":"NotStarted"}'}
     headers:
@@ -292,7 +292,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       Date: ['Tue, 06 Jun 2017 16:49:44 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NTc1MDE2MjQ2NnwwRTAxREE2Q0JGQkQ0MzFDODFGNUU3NkJDOEExRjFDNw?api-version=2016-10-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NTc1MDE2MjQ2NnwwRTAxREE2Q0JGQkQ0MzFDODFGNUU3NkJDOEExRjFDNw?api-version=2018-02-14-preview']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]
@@ -318,7 +318,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [1e72a1be-4ad8-11e7-88d8-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NTc1MDE2MjQ2NnwwRTAxREE2Q0JGQkQ0MzFDODFGNUU3NkJDOEExRjFDNw?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NTc1MDE2MjQ2NnwwRTAxREE2Q0JGQkQ0MzFDODFGNUU3NkJDOEExRjFDNw?api-version=2018-02-14-preview
   response:
     body: {string: '{"createdDateTime":"2017-06-06 16:49:34Z","lastActionDateTime":"2017-06-06
         16:49:46Z","status":"Succeeded"}'}

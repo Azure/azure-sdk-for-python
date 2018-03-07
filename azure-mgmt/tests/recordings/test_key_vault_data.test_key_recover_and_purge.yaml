@@ -23,7 +23,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [b9c3e0ba-4ad6-11e7-a231-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec","name":"vault-bddb12ec","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://vault-bddb12ec.vault.azure.net"}}'}
     headers:
@@ -501,7 +501,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d63ead2e-4ad6-11e7-a8e5-5065f34efe31]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2018-02-14-preview
   response:
     body: {string: ''}
     headers:
@@ -534,7 +534,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [dcbd1ada-4ad6-11e7-8ccb-5065f34efe31]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/deletedVaults/vault-bddb12ec/purge?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/deletedVaults/vault-bddb12ec/purge?api-version=2018-02-14-preview
   response:
     body: {string: ''}
     headers:
@@ -542,7 +542,7 @@ interactions:
       Content-Length: ['0']
       Date: ['Tue, 06 Jun 2017 16:40:34 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0MDM1MjMzNzkyOHxEREQyMkRBQUFFQTA0NDdFQUIwMzg2NDNDQ0QzRDIyNg?api-version=2016-10-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0MDM1MjMzNzkyOHxEREQyMkRBQUFFQTA0NDdFQUIwMzg2NDNDQ0QzRDIyNg?api-version=2018-02-14-preview']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]
@@ -580,7 +580,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [2e562c64-4ad8-11e7-a0d1-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec","name":"vault-bddb12ec","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"secrets":["get","list","set","delete","backup","restore","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://vault-bddb12ec.vault.azure.net"}}'}
     headers:
@@ -1058,7 +1058,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4951e498-4ad8-11e7-a508-5065f34efe31]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_key_recover_and_purgebddb12ec/providers/Microsoft.KeyVault/vaults/vault-bddb12ec?api-version=2018-02-14-preview
   response:
     body: {string: ''}
     headers:
@@ -1091,7 +1091,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4fba3362-4ad8-11e7-b769-5065f34efe31]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/deletedVaults/vault-bddb12ec/purge?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/deletedVaults/vault-bddb12ec/purge?api-version=2018-02-14-preview
   response:
     body: {string: ''}
     headers:
@@ -1099,7 +1099,7 @@ interactions:
       Content-Length: ['0']
       Date: ['Tue, 06 Jun 2017 16:50:56 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NjU4MzMyOTc3NnxEQjExRDdBRTc0MUU0MDFDOTZFNENGRTg0QkNGNjlBNw?api-version=2016-10-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY0NjU4MzMyOTc3NnxEQjExRDdBRTc0MUU0MDFDOTZFNENGRTg0QkNGNjlBNw?api-version=2018-02-14-preview']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]
