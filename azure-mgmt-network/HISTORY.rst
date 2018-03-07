@@ -6,7 +6,7 @@ Release History
 2.0.0rc1 (2018-03-07)
 +++++++++++++++++++++
 
-**Breaking changes**
+**General Breaking changes**
 
 This version uses a next-generation code generator that *might* introduce breaking changes.
 
@@ -30,6 +30,10 @@ This version uses a next-generation code generator that *might* introduce breaki
     the response of the initial call will be returned without polling.
   - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
   - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**Network Breaking changes**
+
+- Operation network_watcher.get_topology changed method signature
 
 **Features**
 
