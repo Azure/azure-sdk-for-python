@@ -42,7 +42,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
                     'access_policies': []
                 }
             }
-        )
+        ).result()
         self.assertEqual(vault.name, account_name)
 
         vault = self.keyvault_client.vaults.get(
