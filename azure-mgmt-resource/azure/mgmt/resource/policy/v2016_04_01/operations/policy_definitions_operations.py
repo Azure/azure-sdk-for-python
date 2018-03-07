@@ -22,7 +22,7 @@ class PolicyDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-04-01".
     """
 
@@ -59,7 +59,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -103,6 +103,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'}
 
     def delete(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -121,7 +122,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -154,6 +155,7 @@ class PolicyDefinitionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'}
 
     def get(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -174,7 +176,7 @@ class PolicyDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -214,6 +216,7 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'}
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -235,7 +238,7 @@ class PolicyDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -282,3 +285,4 @@ class PolicyDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions'}
