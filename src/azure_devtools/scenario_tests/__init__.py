@@ -5,9 +5,9 @@
 
 from .base import IntegrationTestBase, ReplayableTest, LiveTest
 from .exceptions import AzureTestError
-from .decorators import live_only, record_only
+from .decorators import live_only, record_only, AllowLargeResponse
 from .patches import mock_in_unit_test, patch_time_sleep_api, patch_long_run_operation_delay
-from .preparers import AbstractPreparer, SingleValueReplacer, AllowLargeResponse
+from .preparers import AbstractPreparer, SingleValueReplacer
 from .recording_processors import (
     RecordingProcessor, SubscriptionRecordingProcessor,
     LargeRequestBodyProcessor, LargeResponseBodyProcessor, LargeResponseBodyReplacer,

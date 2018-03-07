@@ -7,6 +7,7 @@ import hashlib
 import math
 import os
 import base64
+import inspect
 
 
 def create_random_name(prefix='aztest', length=24):
@@ -63,3 +64,18 @@ def is_text_payload(entity):
 
 def is_json_payload(entity):
     return _get_content_type(entity) == 'application/json'
+
+
+def trim_kwargs_from_test_function(fn, kwargs):
+    # the next function is the actual test function. the kwargs need to be trimmed so
+    # that parameters which are not required will not be passed to it.
+    if not is_preparer_func(fn):
+        args, _, kw, _ = inspect.getargspec(fn)  # pylint: disable=deprecated-method
+        if kw is None:
+            args = set(args)
+            for key in [k for k in kwargs if k not in args]:
+                del kwargs[key]
+
+
+def is_preparer_func(fn):
+    return getattr(fn, '__is_preparer', False)

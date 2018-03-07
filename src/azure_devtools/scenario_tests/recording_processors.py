@@ -87,7 +87,7 @@ class LargeResponseBodyProcessor(RecordingProcessor):
             if length > self._max_response_body * 1024:
 
                 if is_json_payload(response):
-                    from .preparers import AllowLargeResponse  # pylint: disable=cyclic-import
+                    from .decorators import AllowLargeResponse  # pylint: disable=cyclic-import
                     raise ValueError("The json response body exceeds the default limit of {}kb. Use '@{}' "
                                      "on your test method to increase the limit or update test logics to avoid "
                                      "big payloads".format(self._max_response_body, AllowLargeResponse.__name__))
