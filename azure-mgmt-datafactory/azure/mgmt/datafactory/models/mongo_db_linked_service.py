@@ -54,10 +54,12 @@ class MongoDbLinkedService(LinkedService):
      Expression with resultType integer), minimum: 0.
     :type port: object
     :param enable_ssl: Specifies whether the connections to the server are
-     encrypted using SSL. The default value is false.
+     encrypted using SSL. The default value is false. Type: boolean (or
+     Expression with resultType boolean).
     :type enable_ssl: object
     :param allow_self_signed_server_cert: Specifies whether to allow
      self-signed certificates from the server. The default value is false.
+     Type: boolean (or Expression with resultType boolean).
     :type allow_self_signed_server_cert: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime

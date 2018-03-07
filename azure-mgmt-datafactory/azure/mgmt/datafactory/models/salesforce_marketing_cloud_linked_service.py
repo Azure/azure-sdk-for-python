@@ -32,20 +32,24 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
     :param type: Constant filled by server.
     :type type: str
     :param client_id: The client ID associated with the Salesforce Marketing
-     Cloud application.
+     Cloud application. Type: string (or Expression with resultType string).
     :type client_id: object
     :param client_secret: The client secret associated with the Salesforce
-     Marketing Cloud application.
+     Marketing Cloud application. Type: string (or Expression with resultType
+     string).
     :type client_secret: ~azure.mgmt.datafactory.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source
-     endpoints are encrypted using HTTPS. The default value is true.
+     endpoints are encrypted using HTTPS. The default value is true. Type:
+     boolean (or Expression with resultType boolean).
     :type use_encrypted_endpoints: object
     :param use_host_verification: Specifies whether to require the host name
      in the server's certificate to match the host name of the server when
-     connecting over SSL. The default value is true.
+     connecting over SSL. The default value is true. Type: boolean (or
+     Expression with resultType boolean).
     :type use_host_verification: object
     :param use_peer_verification: Specifies whether to verify the identity of
-     the server when connecting over SSL. The default value is true.
+     the server when connecting over SSL. The default value is true. Type:
+     boolean (or Expression with resultType boolean).
     :type use_peer_verification: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime

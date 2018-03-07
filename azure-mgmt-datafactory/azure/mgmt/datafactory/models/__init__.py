@@ -57,6 +57,7 @@ from .operation_metric_specification import OperationMetricSpecification
 from .operation_service_specification import OperationServiceSpecification
 from .operation import Operation
 from .operation_list_response import OperationListResponse
+from .azure_databricks_linked_service import AzureDatabricksLinkedService
 from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
 from .hd_insight_on_demand_linked_service import HDInsightOnDemandLinkedService
 from .salesforce_marketing_cloud_linked_service import SalesforceMarketingCloudLinkedService
@@ -201,6 +202,7 @@ from .schedule_trigger_recurrence import ScheduleTriggerRecurrence
 from .schedule_trigger import ScheduleTrigger
 from .multiple_pipeline_trigger import MultiplePipelineTrigger
 from .activity_policy import ActivityPolicy
+from .databricks_notebook_activity import DatabricksNotebookActivity
 from .data_lake_analytics_usql_activity import DataLakeAnalyticsUSQLActivity
 from .azure_ml_update_resource_activity import AzureMLUpdateResourceActivity
 from .azure_ml_web_service_file import AzureMLWebServiceFile
@@ -442,6 +444,7 @@ __all__ = [
     'OperationServiceSpecification',
     'Operation',
     'OperationListResponse',
+    'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
     'HDInsightOnDemandLinkedService',
     'SalesforceMarketingCloudLinkedService',
@@ -586,6 +589,7 @@ __all__ = [
     'ScheduleTrigger',
     'MultiplePipelineTrigger',
     'ActivityPolicy',
+    'DatabricksNotebookActivity',
     'DataLakeAnalyticsUSQLActivity',
     'AzureMLUpdateResourceActivity',
     'AzureMLWebServiceFile',
