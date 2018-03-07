@@ -39,7 +39,7 @@ class AsyncContainerGroupOperationOperations(object):
 
     def get(
             self, location, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Get the usage for a subscription.
+        """Get the container group async operation status.
 
         :param location: The identifier for the physical azure location.
         :type location: str
