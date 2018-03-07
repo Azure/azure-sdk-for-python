@@ -31,22 +31,6 @@ except:
 
 log = logging.getLogger("eventhubs")
 
-class InjectorEvent(EventBase):
-    STOP_CLIENT = EventType("stop_client")
-    SEND = EventType("send")
-
-    def __init__(self, event_type, subject=None):
-        super(InjectorEvent, self).__init__(PN_PYREF, self, event_type)
-        self.subject = subject
-        self.connection = None
-
-    def __repr__(self):
-        return self.type
-
-class ReactorEventInjector(EventInjector):
-    def free(self):
-        os.close(self.pipe[0])
-        os.close(self.pipe[1])
 
 class ClientHandler(Handler):
     def __init__(self, prefix, client):
@@ -261,19 +245,3 @@ class SenderHandler(ClientHandler):
             dlv_event.complete(Delivery.RELEASED, Condition("timeout",\
                 description="Send not complete after %d seconds. ref %s" % (SenderHandler.TIMEOUT, self.client.remote_container)))
         self.on_sendable(None)
-
-class SessionPolicy(object):
-    def __init__(self):
-        self._session = None
-
-    def session(self, context):
-        if not self._session:
-            self._session = context.session()
-            self._session.open()
-        return self._session
-
-    def reset(self):
-        if self._session:
-            self._session.close()
-            self._session.free()
-            self._session = None

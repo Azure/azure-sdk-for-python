@@ -14,14 +14,7 @@ import examples
 logger = examples.get_logger(logging.INFO)
 
 try:
-    ADDRESS = ("amqps://"
-               "<URL-encoded-SAS-policy>"
-               ":"
-               "<URL-encoded-SAS-key>"
-               "@"
-               "<mynamespace>.servicebus.windows.net"
-               "/"
-               "myeventhub")
+    ADDRESS = ("amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub")
 
     sender = Sender()
     client = EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \

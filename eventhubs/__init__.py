@@ -9,29 +9,36 @@ should be implemented in this module.
 
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
-# pylint: disable=line-too-long
-# pylint: disable=W0613
-# pylint: disable=W0702
-# pylint: disable=C0103
 
 import logging
 import datetime
 import sys
 import threading
-from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode, symbol
-from proton import Delivery, Message
-from proton.reactor import dispatch, Container, Selector
-from proton.handlers import Handler, EndpointStateHandler
-from proton.handlers import IncomingMessageHandler
-from proton.handlers import CFlowController, OutgoingMessageHandler
-from ._impl import SenderHandler, ReceiverHandler, SessionPolicy, InjectorEvent
+import uuid
+try:
+    from urllib import urlparse
+except Exception:
+    from urllib.parse import urlparse
 
-if sys.platform.startswith("win"):
-    from ._win import EventInjector
-else:
-    from ._impl import ReactorEventInjector as EventInjector
+import uamqp
+from uamqp import Connection
+from uamqp import SendClient, ReceiveClient
+from uamqp import Message, BatchMessage
+from uamqp import Source, Target
+from uamqp import authentication
+from uamqp import constants
+
+
+#from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode
+#from proton import Delivery, Message
+#from proton.reactor import dispatch, Container, Selector
+#from proton.handlers import Handler, EndpointStateHandler
+#from proton.handlers import IncomingMessageHandler
+#from proton.handlers import CFlowController, OutgoingMessageHandler
+from ._impl import SenderHandler, ReceiverHandler, InjectorEvent
+from ._impl import ReactorEventInjector as EventInjector
 
 log = logging.getLogger("eventhubs")
 
@@ -46,13 +53,18 @@ class EventHubClient(object):
 
         @param address: the full Uri string of the event hub.
         """
-        self.container_id = "eventhubs.pycli-" + str(generate_uuid())[:8]
-        self.address = Url(address)
-        self.injector = EventInjector()
-        self.container = self._create_container(self.address, **kwargs)
+        self.container_id = "eventhubs.pycli-" + str(uuid.uuid4())[:8]
+        self.address = urlparse(address)
+        username = kwargs.get('username', self.address.username)
+        password = kwargs.get('password', self.address.password)
+        if not username or not password:
+            raise ValueError("Missing username and/or password.")
+        auth_uri = "sb://{}/{}".format(self.address.hostname, self.address.path)
+        self.auth = authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
+
         self.daemon = None
         self.connection = None
-        self.session_policy = None
+
         self.clients = []
         self.stopped = False
         log.info("%s: created the event hub client", self.container_id)
@@ -79,8 +91,8 @@ class EventHubClient(object):
         """
         if self.daemon is not None:
             log.info("%s: stopping daemon", self.container_id)
-            self.injector.trigger(InjectorEvent(InjectorEvent.STOP_CLIENT))
-            self.injector.close()
+            #self.injector.trigger(InjectorEvent(InjectorEvent.STOP_CLIENT))
+            #self.injector.close() # TODO: Close clients
             self.daemon.join()
         else:
             self.on_stop_client(None)
@@ -129,7 +141,7 @@ class EventHubClient(object):
         """
         Gets the remote AMQP container id if available.
         """
-        return self.connection.remote_container if self.connection else None
+        return self.connection.hostname if self.connection else None
 
     def on_reactor_init(self, event):
         """ Handles reactor init event. """
@@ -141,11 +153,14 @@ class EventHubClient(object):
             properties["version"] = __version__
             properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
             properties["platform"] = sys.platform
-            self.connection = self.container.connect(self.address, reconnect=False, properties=properties)
-            self.session_policy = SessionPolicy()
-            self.connection.__setattr__("_session_policy", self.session_policy)
+            self.connection = Connection(hostname, sasl,
+                 container_id=self.container_id,
+                 properties=properties,
+                 debug=True)
+                #self.container.connect(self.address, reconnect=False, properties=properties)
+            #self.session_policy = SessionPolicy()
         for client in self.clients:
-            client.start()
+            client.open(connection=self.connection)
 
     def on_reactor_final(self, event):
         """ Handles reactor final event. """
@@ -238,18 +253,6 @@ class EventHubClient(object):
         """ Called when messages are available to send for a sender. """
         event.subject.on_sendable(None)
 
-    def _create_container(self, address, **kwargs):
-        container = Container(self, **kwargs)
-        container.container_id = self.container_id
-        container.allow_insecure_mechs = True
-        container.allowed_mechs = 'PLAIN MSCBS'
-        container.selectable(self.injector)
-        return container
-
-    def _check_client(self, client, message):
-        if client in self.clients:
-            raise EventHubError(message)
-
     def _close_connection(self):
         if self.connection:
             self.connection.close()
@@ -264,23 +267,8 @@ class EventHubClient(object):
         for client in self.clients:
             client.stop(condition)
 
-class Entity(object):
-    """
-    The base class of a L{Sender} or L{Receiver}.
-    """
-    def on_start(self, link, iteration):
-        """
-        Called when the entity is started or restarted.
-        """
-        pass
 
-    def on_stop(self, closed):
-        """
-        Called when the entity is stopped.
-        """
-        pass
-
-class Sender(Entity):
+class Sender:
     """
     Implements an L{EventData} sender.
     """
@@ -299,9 +287,10 @@ class Sender(Entity):
         """
         self._check()
         self._event.clear()
-        self._handler.send(event_data.message, self.on_outcome, None)
+        event_data.message.on_message_sent = self.on_outcome
+        self._handler.queue_message(event_data.message)
         self._event.wait()
-        if self._outcome != Delivery.ACCEPTED:
+        if self._outcome != constants.MessageSendResult.Ok:
             raise Sender._error(self._outcome, self._condition)
 
     def transfer(self, event_data, callback):
@@ -315,18 +304,17 @@ class Sender(Entity):
         result (None on success, or a L{EventHubError} on failure).
         """
         self._check()
-        self._handler.send(event_data.message,
-                           lambda d, o, c: callback(d, Sender._error(o, c)),
-                           event_data)
+        event_data.message.on_message_sent = lambda o, c: callback(d, Sender._error(o, c)
+        self._handler.send(event_data.message)
 
     def handler(self, client, target):
         """
         Creates a protocol handler for this sender.
         """
-        self._handler = SenderHandler(client, self, target)
+        self._handler = SendClient(target, auth=self.auth, debug=True, msg_timeout=0):
         return self._handler
 
-    def on_outcome(self, state, outcome, condition):
+    def on_outcome(self, outcome, condition):
         """
         Called when the outcome is received for a delivery.
         """
@@ -340,7 +328,7 @@ class Sender(Entity):
 
     @staticmethod
     def _error(outcome, condition):
-        return None if outcome == Delivery.ACCEPTED else EventHubError(outcome, condition)
+        return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)
 
 class Receiver(Entity):
     """
@@ -375,43 +363,46 @@ class EventData(object):
     The L{EventData} class is a holder of event content.
     """
 
-    PROP_SEQ_NUMBER = symbol("x-opt-sequence-number")
-    PROP_OFFSET = symbol("x-opt-offset")
-    PROP_PARTITION_KEY = symbol("x-opt-partition-key")
+    PROP_SEQ_NUMBER = b"x-opt-sequence-number"
+    PROP_OFFSET = b"x-opt-offset"
+    PROP_PARTITION_KEY = b"x-opt-partition-key"
+
 
     def __init__(self, body=None):
         """
         @param kwargs: name/value pairs in properties.
         """
         self.message = Message(body)
-        self._local = True
+        self.annotations = {}
+        self.properties = {}
 
     @property
     def sequence_number(self):
         """
         Return the sequence number of the received event data object.
         """
-        return self.message.annotations[EventData.PROP_SEQ_NUMBER]
+        return self.annotations.get(EventData.PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self):
         """
         Return the offset of the received event data object.
         """
-        return self.message.annotations[EventData.PROP_OFFSET]
+        return self.annotations.get(EventData.PROP_OFFSET, None)
 
-    def _get_partition_key(self):
-        return self.message.annotations[EventData.PROP_PARTITION_KEY] if self.message.annotations else None
+    @property
+    def partition_key(self):
+        """
+        Return the partition key of the event data object.
+        """
+        return self.annotations.get(EventData.PROP_PARTITION_KEY, None)
 
-    def _set_partition_key(self, value):
-        if self._local and self.message.annotations is None:
-            self.message.annotations = {}
-        self.message.annotations[EventData.PROP_PARTITION_KEY] = value
-
-    partition_key = property(_get_partition_key, _set_partition_key, doc="""
-        Gets or sets the partition key of the event data object. This property
-        cannot be set on a received event data object.
-        """)
+    @partition_key.setter
+    def partition_key(self, value):
+        """
+        Set the partition key of the event data object.
+        """
+        self.annotations[EventData.PROP_PARTITION_KEY] = value  # TODO
 
     @property
     def properties(self):
@@ -423,15 +414,17 @@ class EventData(object):
     @property
     def body(self):
         """Return the body of the event data object."""
-        return self.message.body
+        return self.message.get_data()
 
     @classmethod
     def create(cls, message):
         """Creates an event data object from an AMQP message."""
         event_data = EventData()
         event_data.message = message
-        event_data._local = False
+        event_data.annotations = message.message_annotations
+        event_data.properties = message.application_properties
         return event_data
+
 
 class Offset(object):
     """
@@ -459,12 +452,13 @@ class Offset(object):
         if isinstance(self.value, datetime.datetime):
             epoch = datetime.datetime.utcfromtimestamp(0)
             milli_seconds = timestamp((self.value - epoch).total_seconds() * 1000.0)
-            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(milli_seconds) + "'")
+            return b"amqp.annotation.x-opt-enqueued-time > '{}'".format(str(milli_seconds).encode('utf-8'))
         elif isinstance(self.value, timestamp):
-            return Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(self.value) + "'")
+            return b"amqp.annotation.x-opt-enqueued-time > '{}'".format(str(self.value).encode('utf-8'))
         else:
-            operator = ">=" if self.inclusive else ">"
-            return Selector(u"amqp.annotation.x-opt-offset " + operator + " '" + utf82unicode(self.value) + "'")
+            operator = b">=" if self.inclusive else b">"
+            return b"amqp.annotation.x-opt-offset {} '{}'".format(operator, str(self.value).encode('utf-8'))
+
 
 class EventHubError(Exception):
     """
