@@ -199,10 +199,7 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
         parameters = VaultCreateOrUpdateParameters(location='westus',
                                                    properties=properties)
 
-        vault = self.mgmt_client.vaults.create_or_update(group_name, vault_name, parameters)
-
-        if not self.is_playback():
-            self.sleep(10)
+        vault = self.mgmt_client.vaults.create_or_update(group_name, vault_name, parameters).result()
 
         return vault
 
