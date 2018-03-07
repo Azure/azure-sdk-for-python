@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ContainerLogsOperations(object):
-    """ContainerLogsOperations operations.
+class StartContainerOperations(object):
+    """StartContainerOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,12 +37,12 @@ class ContainerLogsOperations(object):
 
         self.config = config
 
-    def list(
-            self, resource_group_name, container_group_name, container_name, tail=None, custom_headers=None, raw=False, **operation_config):
-        """Get the logs for a specified container instance.
+    def exec_method(
+            self, resource_group_name, container_group_name, container_name, command=None, terminal_size=None, custom_headers=None, raw=False, **operation_config):
+        """Starts the exec command for a specific container instance.
 
-        Get the logs for a specified container instance in a specified resource
-        group and container group.
+        Starts the exec command for a specified container instance in a
+        specified resource group and container group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -50,22 +50,25 @@ class ContainerLogsOperations(object):
         :type container_group_name: str
         :param container_name: The name of the container instance.
         :type container_name: str
-        :param tail: The number of lines to show from the tail of the
-         container instance log. If not provided, all available logs are shown
-         up to 4mb.
-        :type tail: int
+        :param command: The command to be executed.
+        :type command: str
+        :param terminal_size: The size of the terminal.
+        :type terminal_size:
+         ~azure.mgmt.containerinstance.models.ContainerExecRequestTerminalSize
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Logs or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.containerinstance.models.Logs or
+        :return: ContainerExecResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerinstance.models.ContainerExecResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        container_exec_request = models.ContainerExecRequest(command=command, terminal_size=terminal_size)
+
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.exec_method.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -77,8 +80,6 @@ class ContainerLogsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if tail is not None:
-            query_parameters['tail'] = self._serialize.query("tail", tail, 'int')
 
         # Construct headers
         header_parameters = {}
@@ -90,9 +91,13 @@ class ContainerLogsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(container_exec_request, 'ContainerExecRequest')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -102,11 +107,11 @@ class ContainerLogsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Logs', response)
+            deserialized = self._deserialize('ContainerExecResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/logs'}
+    exec_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/exec'}

@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ContainerLogsOperations(object):
-    """ContainerLogsOperations operations.
+class AsyncContainerGroupOperationOperations(object):
+    """AsyncContainerGroupOperationOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,48 +37,36 @@ class ContainerLogsOperations(object):
 
         self.config = config
 
-    def list(
-            self, resource_group_name, container_group_name, container_name, tail=None, custom_headers=None, raw=False, **operation_config):
-        """Get the logs for a specified container instance.
+    def get(
+            self, location, operation_id, custom_headers=None, raw=False, **operation_config):
+        """Get the usage for a subscription.
 
-        Get the logs for a specified container instance in a specified resource
-        group and container group.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param container_group_name: The name of the container group.
-        :type container_group_name: str
-        :param container_name: The name of the container instance.
-        :type container_name: str
-        :param tail: The number of lines to show from the tail of the
-         container instance log. If not provided, all available logs are shown
-         up to 4mb.
-        :type tail: int
+        :param location: The identifier for the physical azure location.
+        :type location: str
+        :param operation_id: The operation Id.
+        :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Logs or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.containerinstance.models.Logs or
+        :return: AsyncOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.containerinstance.models.AsyncOperation or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'containerGroupName': self._serialize.url("container_group_name", container_group_name, 'str'),
-            'containerName': self._serialize.url("container_name", container_name, 'str')
+            'location': self._serialize.url("location", location, 'str'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if tail is not None:
-            query_parameters['tail'] = self._serialize.query("tail", tail, 'int')
 
         # Construct headers
         header_parameters = {}
@@ -102,11 +90,11 @@ class ContainerLogsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Logs', response)
+            deserialized = self._deserialize('AsyncOperation', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/logs'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerInstance/locations/{location}/operations/{operationId}'}
