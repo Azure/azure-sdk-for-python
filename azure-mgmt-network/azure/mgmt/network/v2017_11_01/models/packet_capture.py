@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class PacketCapture(Model):
     """Parameters that define the create packet capture operation.
 
-    :param target: The ID of the targeted resource, only VM is currently
-     supported.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target: Required. The ID of the targeted resource, only VM is
+     currently supported.
     :type target: str
     :param bytes_to_capture_per_packet: Number of bytes captured per packet,
      the remaining bytes are truncated. Default value: 0 .
@@ -27,7 +29,7 @@ class PacketCapture(Model):
     :param time_limit_in_seconds: Maximum duration of the capture session in
      seconds. Default value: 18000 .
     :type time_limit_in_seconds: int
-    :param storage_location:
+    :param storage_location: Required.
     :type storage_location:
      ~azure.mgmt.network.v2017_11_01.models.PacketCaptureStorageLocation
     :param filters:
@@ -49,11 +51,11 @@ class PacketCapture(Model):
         'filters': {'key': 'properties.filters', 'type': '[PacketCaptureFilter]'},
     }
 
-    def __init__(self, target, storage_location, bytes_to_capture_per_packet=0, total_bytes_per_session=1073741824, time_limit_in_seconds=18000, filters=None):
-        super(PacketCapture, self).__init__()
-        self.target = target
-        self.bytes_to_capture_per_packet = bytes_to_capture_per_packet
-        self.total_bytes_per_session = total_bytes_per_session
-        self.time_limit_in_seconds = time_limit_in_seconds
-        self.storage_location = storage_location
-        self.filters = filters
+    def __init__(self, **kwargs):
+        super(PacketCapture, self).__init__(**kwargs)
+        self.target = kwargs.get('target', None)
+        self.bytes_to_capture_per_packet = kwargs.get('bytes_to_capture_per_packet', 0)
+        self.total_bytes_per_session = kwargs.get('total_bytes_per_session', 1073741824)
+        self.time_limit_in_seconds = kwargs.get('time_limit_in_seconds', 18000)
+        self.storage_location = kwargs.get('storage_location', None)
+        self.filters = kwargs.get('filters', None)

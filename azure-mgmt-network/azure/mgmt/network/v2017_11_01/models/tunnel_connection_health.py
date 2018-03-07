@@ -52,8 +52,8 @@ class TunnelConnectionHealth(Model):
         'last_connection_established_utc_time': {'key': 'lastConnectionEstablishedUtcTime', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(TunnelConnectionHealth, self).__init__()
+    def __init__(self, **kwargs):
+        super(TunnelConnectionHealth, self).__init__(**kwargs)
         self.tunnel = None
         self.connection_status = None
         self.ingress_bytes_transferred = None

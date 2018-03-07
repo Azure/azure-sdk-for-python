@@ -53,7 +53,7 @@ class NetworkWatcher(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, etag="A unique read-only string that changes whenever the resource is updated."):
-        super(NetworkWatcher, self).__init__(id=id, location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(NetworkWatcher, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', "A unique read-only string that changes whenever the resource is updated.")
         self.provisioning_state = None

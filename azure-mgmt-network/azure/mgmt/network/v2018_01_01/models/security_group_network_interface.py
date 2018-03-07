@@ -27,7 +27,7 @@ class SecurityGroupNetworkInterface(Model):
         'security_rule_associations': {'key': 'securityRuleAssociations', 'type': 'SecurityRuleAssociations'},
     }
 
-    def __init__(self, id=None, security_rule_associations=None):
-        super(SecurityGroupNetworkInterface, self).__init__()
-        self.id = id
-        self.security_rule_associations = security_rule_associations
+    def __init__(self, **kwargs):
+        super(SecurityGroupNetworkInterface, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.security_rule_associations = kwargs.get('security_rule_associations', None)

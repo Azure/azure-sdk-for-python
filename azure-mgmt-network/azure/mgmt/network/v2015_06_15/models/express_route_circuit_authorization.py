@@ -44,10 +44,10 @@ class ExpressRouteCircuitAuthorization(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, authorization_key=None, authorization_use_status=None, provisioning_state=None, name=None, etag=None):
-        super(ExpressRouteCircuitAuthorization, self).__init__(id=id)
-        self.authorization_key = authorization_key
-        self.authorization_use_status = authorization_use_status
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitAuthorization, self).__init__(**kwargs)
+        self.authorization_key = kwargs.get('authorization_key', None)
+        self.authorization_use_status = kwargs.get('authorization_use_status', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)

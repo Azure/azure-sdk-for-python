@@ -27,7 +27,7 @@ class IpTag(Model):
         'tag': {'key': 'tag', 'type': 'str'},
     }
 
-    def __init__(self, ip_tag_type=None, tag=None):
-        super(IpTag, self).__init__()
-        self.ip_tag_type = ip_tag_type
-        self.tag = tag
+    def __init__(self, **kwargs):
+        super(IpTag, self).__init__(**kwargs)
+        self.ip_tag_type = kwargs.get('ip_tag_type', None)
+        self.tag = kwargs.get('tag', None)

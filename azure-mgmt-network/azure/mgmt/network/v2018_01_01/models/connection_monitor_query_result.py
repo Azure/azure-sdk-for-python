@@ -24,6 +24,6 @@ class ConnectionMonitorQueryResult(Model):
         'states': {'key': 'states', 'type': '[ConnectionStateSnapshot]'},
     }
 
-    def __init__(self, states=None):
-        super(ConnectionMonitorQueryResult, self).__init__()
-        self.states = states
+    def __init__(self, **kwargs):
+        super(ConnectionMonitorQueryResult, self).__init__(**kwargs)
+        self.states = kwargs.get('states', None)

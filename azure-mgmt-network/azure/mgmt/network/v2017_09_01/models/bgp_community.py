@@ -42,11 +42,11 @@ class BGPCommunity(Model):
         'service_group': {'key': 'serviceGroup', 'type': 'str'},
     }
 
-    def __init__(self, service_supported_region=None, community_name=None, community_value=None, community_prefixes=None, is_authorized_to_use=None, service_group=None):
-        super(BGPCommunity, self).__init__()
-        self.service_supported_region = service_supported_region
-        self.community_name = community_name
-        self.community_value = community_value
-        self.community_prefixes = community_prefixes
-        self.is_authorized_to_use = is_authorized_to_use
-        self.service_group = service_group
+    def __init__(self, **kwargs):
+        super(BGPCommunity, self).__init__(**kwargs)
+        self.service_supported_region = kwargs.get('service_supported_region', None)
+        self.community_name = kwargs.get('community_name', None)
+        self.community_value = kwargs.get('community_value', None)
+        self.community_prefixes = kwargs.get('community_prefixes', None)
+        self.is_authorized_to_use = kwargs.get('is_authorized_to_use', None)
+        self.service_group = kwargs.get('service_group', None)
