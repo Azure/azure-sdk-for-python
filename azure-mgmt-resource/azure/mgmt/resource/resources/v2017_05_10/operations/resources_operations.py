@@ -24,7 +24,7 @@ class ResourcesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2017-05-10".
     """
 
@@ -67,7 +67,7 @@ class ResourcesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/resources'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -119,6 +119,7 @@ class ResourcesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/resources'}
 
 
     def _move_resources_initial(
@@ -126,7 +127,7 @@ class ResourcesOperations(object):
         parameters = models.ResourcesMoveInfo(resources=resources, target_resource_group=target_resource_group)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources'
+        url = self.move_resources.metadata['url']
         path_format_arguments = {
             'sourceResourceGroupName': self._serialize.url("source_resource_group_name", source_resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -232,6 +233,7 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    move_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/moveResources'}
 
 
     def _validate_move_resources_initial(
@@ -239,7 +241,7 @@ class ResourcesOperations(object):
         parameters = models.ResourcesMoveInfo(resources=resources, target_resource_group=target_resource_group)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources'
+        url = self.validate_move_resources.metadata['url']
         path_format_arguments = {
             'sourceResourceGroupName': self._serialize.url("source_resource_group_name", source_resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -348,6 +350,7 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    validate_move_resources.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{sourceResourceGroupName}/validateMoveResources'}
 
     def list(
             self, filter=None, expand=None, top=None, custom_headers=None, raw=False, **operation_config):
@@ -374,7 +377,7 @@ class ResourcesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resources'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -425,6 +428,7 @@ class ResourcesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resources'}
 
     def check_existence(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
@@ -455,7 +459,7 @@ class ResourcesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
+        url = self.check_existence.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -494,12 +498,13 @@ class ResourcesOperations(object):
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
         return deserialized
+    check_existence.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}
 
 
     def _delete_initial(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -609,12 +614,13 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -746,12 +752,13 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}
 
 
     def _update_initial(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -881,6 +888,7 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}
 
     def get(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
@@ -912,7 +920,7 @@ class ResourcesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -956,6 +964,7 @@ class ResourcesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'}
 
     def check_existence_by_id(
             self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
@@ -977,7 +986,7 @@ class ResourcesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{resourceId}'
+        url = self.check_existence_by_id.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
         }
@@ -1011,12 +1020,13 @@ class ResourcesOperations(object):
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
         return deserialized
+    check_existence_by_id.metadata = {'url': '/{resourceId}'}
 
 
     def _delete_by_id_initial(
             self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/{resourceId}'
+        url = self.delete_by_id.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
         }
@@ -1109,12 +1119,13 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete_by_id.metadata = {'url': '/{resourceId}'}
 
 
     def _create_or_update_by_id_initial(
             self, resource_id, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/{resourceId}'
+        url = self.create_or_update_by_id.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
         }
@@ -1229,12 +1240,13 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update_by_id.metadata = {'url': '/{resourceId}'}
 
 
     def _update_by_id_initial(
             self, resource_id, api_version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/{resourceId}'
+        url = self.update_by_id.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
         }
@@ -1347,6 +1359,7 @@ class ResourcesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update_by_id.metadata = {'url': '/{resourceId}'}
 
     def get_by_id(
             self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
@@ -1370,7 +1383,7 @@ class ResourcesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{resourceId}'
+        url = self.get_by_id.metadata['url']
         path_format_arguments = {
             'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
         }
@@ -1409,3 +1422,4 @@ class ResourcesOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_id.metadata = {'url': '/{resourceId}'}
