@@ -72,13 +72,13 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -158,13 +158,13 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -244,13 +244,13 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -327,13 +327,13 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -412,13 +412,98 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
+          },
+          "file": "/tmp/_tmp_.autorest.lock"
+        },
+        "dotnetPath": "/root/.dotnet"
+      },
+      "installationPath": "/tmp/.autorest"
+    },
+    {
+      "resolvedInfo": null,
+      "packageMetadata": {
+        "name": "@microsoft.azure/autorest.modeler",
+        "version": "2.3.44",
+        "dependencies": {
+          "dotnet-2.0.0": "^1.4.4"
+        },
+        "optionalDependencies": {},
+        "devDependencies": {
+          "@microsoft.azure/autorest.testserver": "2.3.17",
+          "autorest": "^2.0.4225",
+          "coffee-script": "^1.11.1",
+          "dotnet-sdk-2.0.0": "^1.4.4",
+          "gulp": "^3.9.1",
+          "gulp-filter": "^5.0.0",
+          "gulp-line-ending-corrector": "^1.0.1",
+          "iced-coffee-script": "^108.0.11",
+          "marked": "^0.3.6",
+          "marked-terminal": "^2.0.0",
+          "moment": "^2.17.1",
+          "run-sequence": "*",
+          "shx": "^0.2.2",
+          "through2-parallel": "^0.1.3",
+          "yargs": "^8.0.2",
+          "yarn": "^1.0.2"
+        },
+        "bundleDependencies": false,
+        "peerDependencies": {},
+        "deprecated": false,
+        "_resolved": "/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+        "_integrity": null,
+        "_shasum": "9b5a880a77467be33a77f002f03230d3ccc21266",
+        "_shrinkwrap": null,
+        "bin": null,
+        "_id": "@microsoft.azure/autorest.modeler@2.3.44",
+        "_from": "file:/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+        "_requested": {
+          "type": "directory",
+          "where": "/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+          "raw": "/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+          "rawSpec": "/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+          "saveSpec": "file:/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+          "fetchSpec": "/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler"
+        },
+        "_spec": "/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler",
+        "_where": "/tmp/.autorest/@microsoft.azure_autorest.modeler@2.3.44/node_modules/@microsoft.azure/autorest.modeler"
+      },
+      "extensionManager": {
+        "installationPath": "/tmp/.autorest",
+        "sharedLock": {
+          "name": "/tmp/.autorest",
+          "exclusiveLock": {
+            "name": "_tmp_.autorest.exclusive-lock",
+            "options": {
+              "port": 5245,
+              "host": "2130716018",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__tmp_.autorest.exclusive-lock:5245"
+          },
+          "busyLock": {
+            "name": "_tmp_.autorest.busy-lock",
+            "options": {
+              "port": 46071,
+              "host": "2130735832",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
+          },
+          "personalLock": {
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
+            "options": {
+              "port": 7747,
+              "host": "2130766868",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -497,13 +582,13 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -582,13 +667,98 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
+          },
+          "file": "/tmp/_tmp_.autorest.lock"
+        },
+        "dotnetPath": "/root/.dotnet"
+      },
+      "installationPath": "/tmp/.autorest"
+    },
+    {
+      "resolvedInfo": null,
+      "packageMetadata": {
+        "name": "@microsoft.azure/autorest.python",
+        "version": "2.1.40",
+        "dependencies": {
+          "dotnet-2.0.0": "^1.4.4"
+        },
+        "optionalDependencies": {},
+        "devDependencies": {
+          "@microsoft.azure/autorest.testserver": "^2.4.0",
+          "autorest": "^2.0.4203",
+          "coffee-script": "^1.11.1",
+          "dotnet-sdk-2.0.0": "^1.4.4",
+          "gulp": "^3.9.1",
+          "gulp-filter": "^5.0.0",
+          "gulp-line-ending-corrector": "^1.0.1",
+          "iced-coffee-script": "^108.0.11",
+          "marked": "^0.3.6",
+          "marked-terminal": "^2.0.0",
+          "moment": "^2.17.1",
+          "run-sequence": "*",
+          "shx": "^0.2.2",
+          "through2-parallel": "^0.1.3",
+          "yargs": "^8.0.2",
+          "yarn": "^1.0.2"
+        },
+        "bundleDependencies": false,
+        "peerDependencies": {},
+        "deprecated": false,
+        "_resolved": "/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python",
+        "_integrity": null,
+        "_shasum": "9b3f08c892d725ac571b3a7dc8f781d76da64397",
+        "_shrinkwrap": null,
+        "bin": null,
+        "_id": "@microsoft.azure/autorest.python@2.1.40",
+        "_from": "file:/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python",
+        "_requested": {
+          "type": "directory",
+          "where": "/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python",
+          "raw": "/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python",
+          "rawSpec": "/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python",
+          "saveSpec": "file:/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python",
+          "fetchSpec": "/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python"
+        },
+        "_spec": "/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python",
+        "_where": "/tmp/.autorest/@microsoft.azure_autorest.python@2.1.40/node_modules/@microsoft.azure/autorest.python"
+      },
+      "extensionManager": {
+        "installationPath": "/tmp/.autorest",
+        "sharedLock": {
+          "name": "/tmp/.autorest",
+          "exclusiveLock": {
+            "name": "_tmp_.autorest.exclusive-lock",
+            "options": {
+              "port": 5245,
+              "host": "2130716018",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__tmp_.autorest.exclusive-lock:5245"
+          },
+          "busyLock": {
+            "name": "_tmp_.autorest.busy-lock",
+            "options": {
+              "port": 46071,
+              "host": "2130735832",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
+          },
+          "personalLock": {
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
+            "options": {
+              "port": 7747,
+              "host": "2130766868",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -652,13 +822,13 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
@@ -735,13 +905,13 @@
             "pipe": "/tmp/pipe__tmp_.autorest.busy-lock:46071"
           },
           "personalLock": {
-            "name": "_tmp_.autorest.4023.0923679230714.personal-lock",
+            "name": "_tmp_.autorest.6826.130494995402.personal-lock",
             "options": {
-              "port": 45556,
-              "host": "2130737852",
+              "port": 7747,
+              "host": "2130766868",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__tmp_.autorest.4023.0923679230714.personal-lock:45556"
+            "pipe": "/tmp/pipe__tmp_.autorest.6826.130494995402.personal-lock:7747"
           },
           "file": "/tmp/_tmp_.autorest.lock"
         },
