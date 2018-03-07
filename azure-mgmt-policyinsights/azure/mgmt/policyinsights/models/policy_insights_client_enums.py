@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class PolicyStatesResource(Enum):
+class PolicyStatesResource(str, Enum):
 
     default = "default"
     latest = "latest"

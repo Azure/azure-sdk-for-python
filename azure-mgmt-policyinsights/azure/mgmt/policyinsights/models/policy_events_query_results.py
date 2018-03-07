@@ -35,8 +35,8 @@ class PolicyEventsQueryResults(Model):
         'value': {'key': 'value', 'type': '[PolicyEvent]'},
     }
 
-    def __init__(self, odatacontext=None, odatacount=None, value=None):
-        super(PolicyEventsQueryResults, self).__init__()
-        self.odatacontext = odatacontext
-        self.odatacount = odatacount
-        self.value = value
+    def __init__(self, **kwargs):
+        super(PolicyEventsQueryResults, self).__init__(**kwargs)
+        self.odatacontext = kwargs.get('odatacontext', None)
+        self.odatacount = kwargs.get('odatacount', None)
+        self.value = kwargs.get('value', None)

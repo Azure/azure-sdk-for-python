@@ -35,8 +35,8 @@ class PolicyStatesQueryResults(Model):
         'value': {'key': 'value', 'type': '[PolicyState]'},
     }
 
-    def __init__(self, odatacontext=None, odatacount=None, value=None):
-        super(PolicyStatesQueryResults, self).__init__()
-        self.odatacontext = odatacontext
-        self.odatacount = odatacount
-        self.value = value
+    def __init__(self, **kwargs):
+        super(PolicyStatesQueryResults, self).__init__(**kwargs)
+        self.odatacontext = kwargs.get('odatacontext', None)
+        self.odatacount = kwargs.get('odatacount', None)
+        self.value = kwargs.get('value', None)

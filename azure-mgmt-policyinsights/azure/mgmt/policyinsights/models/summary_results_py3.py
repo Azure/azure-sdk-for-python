@@ -36,8 +36,8 @@ class SummaryResults(Model):
         'non_compliant_policies': {'key': 'nonCompliantPolicies', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, query_results_uri: str=None, non_compliant_resources: int=None, non_compliant_policies: int=None, **kwargs) -> None:
         super(SummaryResults, self).__init__(**kwargs)
-        self.query_results_uri = kwargs.get('query_results_uri', None)
-        self.non_compliant_resources = kwargs.get('non_compliant_resources', None)
-        self.non_compliant_policies = kwargs.get('non_compliant_policies', None)
+        self.query_results_uri = query_results_uri
+        self.non_compliant_resources = non_compliant_resources
+        self.non_compliant_policies = non_compliant_policies

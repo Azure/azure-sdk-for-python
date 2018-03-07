@@ -12,31 +12,31 @@
 from msrest.serialization import Model
 
 
-class SummarizeResults(Model):
-    """Summarize action results.
+class PolicyStatesQueryResults(Model):
+    """Query results.
 
     :param odatacontext: OData context string; used by OData clients to
      resolve type information based on metadata.
     :type odatacontext: str
-    :param odatacount: OData entity count; represents the number of summaries
-     returned; always set to 1.
+    :param odatacount: OData entity count; represents the number of policy
+     state records returned.
     :type odatacount: int
-    :param value: Summarize action results.
-    :type value: list[~azure.mgmt.policyinsights.models.Summary]
+    :param value: Query results.
+    :type value: list[~azure.mgmt.policyinsights.models.PolicyState]
     """
 
     _validation = {
-        'odatacount': {'maximum': 1, 'minimum': 1},
+        'odatacount': {'minimum': 0},
     }
 
     _attribute_map = {
         'odatacontext': {'key': '@odata\\.context', 'type': 'str'},
         'odatacount': {'key': '@odata\\.count', 'type': 'int'},
-        'value': {'key': 'value', 'type': '[Summary]'},
+        'value': {'key': 'value', 'type': '[PolicyState]'},
     }
 
-    def __init__(self, **kwargs):
-        super(SummarizeResults, self).__init__(**kwargs)
-        self.odatacontext = kwargs.get('odatacontext', None)
-        self.odatacount = kwargs.get('odatacount', None)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *, odatacontext: str=None, odatacount: int=None, value=None, **kwargs) -> None:
+        super(PolicyStatesQueryResults, self).__init__(**kwargs)
+        self.odatacontext = odatacontext
+        self.odatacount = odatacount
+        self.value = value

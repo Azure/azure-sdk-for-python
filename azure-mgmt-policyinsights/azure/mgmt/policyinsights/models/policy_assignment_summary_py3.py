@@ -34,9 +34,9 @@ class PolicyAssignmentSummary(Model):
         'policy_definitions': {'key': 'policyDefinitions', 'type': '[PolicyDefinitionSummary]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, policy_assignment_id: str=None, policy_set_definition_id: str=None, results=None, policy_definitions=None, **kwargs) -> None:
         super(PolicyAssignmentSummary, self).__init__(**kwargs)
-        self.policy_assignment_id = kwargs.get('policy_assignment_id', None)
-        self.policy_set_definition_id = kwargs.get('policy_set_definition_id', None)
-        self.results = kwargs.get('results', None)
-        self.policy_definitions = kwargs.get('policy_definitions', None)
+        self.policy_assignment_id = policy_assignment_id
+        self.policy_set_definition_id = policy_set_definition_id
+        self.results = results
+        self.policy_definitions = policy_definitions

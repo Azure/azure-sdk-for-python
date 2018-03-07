@@ -9,21 +9,38 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_event import PolicyEvent
-from .policy_events_query_results import PolicyEventsQueryResults
-from .query_failure_error import QueryFailureError
-from .query_failure import QueryFailure, QueryFailureException
-from .policy_state import PolicyState
-from .policy_states_query_results import PolicyStatesQueryResults
-from .summary_results import SummaryResults
-from .policy_definition_summary import PolicyDefinitionSummary
-from .policy_assignment_summary import PolicyAssignmentSummary
-from .summary import Summary
-from .summarize_results import SummarizeResults
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .operations_list_results import OperationsListResults
-from .query_options import QueryOptions
+try:
+    from .policy_event_py3 import PolicyEvent
+    from .policy_events_query_results_py3 import PolicyEventsQueryResults
+    from .query_failure_error_py3 import QueryFailureError
+    from .query_failure_py3 import QueryFailure, QueryFailureException
+    from .policy_state_py3 import PolicyState
+    from .policy_states_query_results_py3 import PolicyStatesQueryResults
+    from .summary_results_py3 import SummaryResults
+    from .policy_definition_summary_py3 import PolicyDefinitionSummary
+    from .policy_assignment_summary_py3 import PolicyAssignmentSummary
+    from .summary_py3 import Summary
+    from .summarize_results_py3 import SummarizeResults
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .operations_list_results_py3 import OperationsListResults
+    from .query_options_py3 import QueryOptions
+except (SyntaxError, ImportError):
+    from .policy_event import PolicyEvent
+    from .policy_events_query_results import PolicyEventsQueryResults
+    from .query_failure_error import QueryFailureError
+    from .query_failure import QueryFailure, QueryFailureException
+    from .policy_state import PolicyState
+    from .policy_states_query_results import PolicyStatesQueryResults
+    from .summary_results import SummaryResults
+    from .policy_definition_summary import PolicyDefinitionSummary
+    from .policy_assignment_summary import PolicyAssignmentSummary
+    from .summary import Summary
+    from .summarize_results import SummarizeResults
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .operations_list_results import OperationsListResults
+    from .query_options import QueryOptions
 from .policy_insights_client_enums import (
     PolicyStatesResource,
 )

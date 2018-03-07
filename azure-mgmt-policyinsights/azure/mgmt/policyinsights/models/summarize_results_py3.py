@@ -35,8 +35,8 @@ class SummarizeResults(Model):
         'value': {'key': 'value', 'type': '[Summary]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, odatacontext: str=None, odatacount: int=None, value=None, **kwargs) -> None:
         super(SummarizeResults, self).__init__(**kwargs)
-        self.odatacontext = kwargs.get('odatacontext', None)
-        self.odatacount = kwargs.get('odatacount', None)
-        self.value = kwargs.get('value', None)
+        self.odatacontext = odatacontext
+        self.odatacount = odatacount
+        self.value = value

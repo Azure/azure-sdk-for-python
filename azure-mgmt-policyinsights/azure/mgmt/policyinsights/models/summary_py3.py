@@ -35,9 +35,9 @@ class Summary(Model):
         'policy_assignments': {'key': 'policyAssignments', 'type': '[PolicyAssignmentSummary]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, odataid: str=None, odatacontext: str=None, results=None, policy_assignments=None, **kwargs) -> None:
         super(Summary, self).__init__(**kwargs)
-        self.odataid = kwargs.get('odataid', None)
-        self.odatacontext = kwargs.get('odatacontext', None)
-        self.results = kwargs.get('results', None)
-        self.policy_assignments = kwargs.get('policy_assignments', None)
+        self.odataid = odataid
+        self.odatacontext = odatacontext
+        self.results = results
+        self.policy_assignments = policy_assignments

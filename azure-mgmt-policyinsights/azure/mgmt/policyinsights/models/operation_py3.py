@@ -12,22 +12,21 @@
 from msrest.serialization import Model
 
 
-class QueryFailureError(Model):
-    """Error definition.
+class Operation(Model):
+    """Operation definition.
 
-    :param code: Service specific error code which serves as the substatus for
-     the HTTP error code.
-    :type code: str
-    :param message: Description of the error.
-    :type message: str
+    :param name: Operation name.
+    :type name: str
+    :param display: Display metadata associated with the operation.
+    :type display: ~azure.mgmt.policyinsights.models.OperationDisplay
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
-        super(QueryFailureError, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = name
+        self.display = display

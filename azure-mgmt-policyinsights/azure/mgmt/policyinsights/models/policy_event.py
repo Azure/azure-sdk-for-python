@@ -125,35 +125,35 @@ class PolicyEvent(Model):
         'principal_oid': {'key': 'principalOid', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, odataid=None, odatacontext=None, timestamp=None, resource_id=None, policy_assignment_id=None, policy_definition_id=None, effective_parameters=None, is_compliant=None, subscription_id=None, resource_type=None, resource_location=None, resource_group=None, resource_tags=None, policy_assignment_name=None, policy_assignment_owner=None, policy_assignment_parameters=None, policy_assignment_scope=None, policy_definition_name=None, policy_definition_action=None, policy_definition_category=None, policy_set_definition_id=None, policy_set_definition_name=None, policy_set_definition_owner=None, policy_set_definition_category=None, policy_set_definition_parameters=None, management_group_ids=None, policy_definition_reference_id=None, tenant_id=None, principal_oid=None):
-        super(PolicyEvent, self).__init__()
-        self.additional_properties = additional_properties
-        self.odataid = odataid
-        self.odatacontext = odatacontext
-        self.timestamp = timestamp
-        self.resource_id = resource_id
-        self.policy_assignment_id = policy_assignment_id
-        self.policy_definition_id = policy_definition_id
-        self.effective_parameters = effective_parameters
-        self.is_compliant = is_compliant
-        self.subscription_id = subscription_id
-        self.resource_type = resource_type
-        self.resource_location = resource_location
-        self.resource_group = resource_group
-        self.resource_tags = resource_tags
-        self.policy_assignment_name = policy_assignment_name
-        self.policy_assignment_owner = policy_assignment_owner
-        self.policy_assignment_parameters = policy_assignment_parameters
-        self.policy_assignment_scope = policy_assignment_scope
-        self.policy_definition_name = policy_definition_name
-        self.policy_definition_action = policy_definition_action
-        self.policy_definition_category = policy_definition_category
-        self.policy_set_definition_id = policy_set_definition_id
-        self.policy_set_definition_name = policy_set_definition_name
-        self.policy_set_definition_owner = policy_set_definition_owner
-        self.policy_set_definition_category = policy_set_definition_category
-        self.policy_set_definition_parameters = policy_set_definition_parameters
-        self.management_group_ids = management_group_ids
-        self.policy_definition_reference_id = policy_definition_reference_id
-        self.tenant_id = tenant_id
-        self.principal_oid = principal_oid
+    def __init__(self, **kwargs):
+        super(PolicyEvent, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.odataid = kwargs.get('odataid', None)
+        self.odatacontext = kwargs.get('odatacontext', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.policy_assignment_id = kwargs.get('policy_assignment_id', None)
+        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.effective_parameters = kwargs.get('effective_parameters', None)
+        self.is_compliant = kwargs.get('is_compliant', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.resource_location = kwargs.get('resource_location', None)
+        self.resource_group = kwargs.get('resource_group', None)
+        self.resource_tags = kwargs.get('resource_tags', None)
+        self.policy_assignment_name = kwargs.get('policy_assignment_name', None)
+        self.policy_assignment_owner = kwargs.get('policy_assignment_owner', None)
+        self.policy_assignment_parameters = kwargs.get('policy_assignment_parameters', None)
+        self.policy_assignment_scope = kwargs.get('policy_assignment_scope', None)
+        self.policy_definition_name = kwargs.get('policy_definition_name', None)
+        self.policy_definition_action = kwargs.get('policy_definition_action', None)
+        self.policy_definition_category = kwargs.get('policy_definition_category', None)
+        self.policy_set_definition_id = kwargs.get('policy_set_definition_id', None)
+        self.policy_set_definition_name = kwargs.get('policy_set_definition_name', None)
+        self.policy_set_definition_owner = kwargs.get('policy_set_definition_owner', None)
+        self.policy_set_definition_category = kwargs.get('policy_set_definition_category', None)
+        self.policy_set_definition_parameters = kwargs.get('policy_set_definition_parameters', None)
+        self.management_group_ids = kwargs.get('management_group_ids', None)
+        self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.principal_oid = kwargs.get('principal_oid', None)

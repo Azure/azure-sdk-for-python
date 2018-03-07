@@ -29,8 +29,8 @@ class PolicyDefinitionSummary(Model):
         'results': {'key': 'results', 'type': 'SummaryResults'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, policy_definition_id: str=None, effect: str=None, results=None, **kwargs) -> None:
         super(PolicyDefinitionSummary, self).__init__(**kwargs)
-        self.policy_definition_id = kwargs.get('policy_definition_id', None)
-        self.effect = kwargs.get('effect', None)
-        self.results = kwargs.get('results', None)
+        self.policy_definition_id = policy_definition_id
+        self.effect = effect
+        self.results = results

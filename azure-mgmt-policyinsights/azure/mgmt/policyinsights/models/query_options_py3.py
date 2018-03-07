@@ -48,12 +48,12 @@ class QueryOptions(Model):
         'apply': {'key': '', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, top: int=None, order_by: str=None, select: str=None, from_property=None, to=None, filter: str=None, apply: str=None, **kwargs) -> None:
         super(QueryOptions, self).__init__(**kwargs)
-        self.top = kwargs.get('top', None)
-        self.order_by = kwargs.get('order_by', None)
-        self.select = kwargs.get('select', None)
-        self.from_property = kwargs.get('from_property', None)
-        self.to = kwargs.get('to', None)
-        self.filter = kwargs.get('filter', None)
-        self.apply = kwargs.get('apply', None)
+        self.top = top
+        self.order_by = order_by
+        self.select = select
+        self.from_property = from_property
+        self.to = to
+        self.filter = filter
+        self.apply = apply

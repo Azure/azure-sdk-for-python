@@ -24,9 +24,9 @@ class QueryFailure(Model):
         'error': {'key': 'error', 'type': 'QueryFailureError'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(QueryFailure, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
 
 
 class QueryFailureException(HttpOperationError):
