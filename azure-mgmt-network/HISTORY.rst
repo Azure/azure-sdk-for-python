@@ -3,11 +3,36 @@
 Release History
 ===============
 
-1.8.0a1 (2017-XX-XX)
-++++++++++++++++++++
+2.0.0rc1 (2018-03-07)
++++++++++++++++++++++
+
+**Breaking changes**
+
+This version introduces a new generation of code generator that *might* introduce breaking changes. 
+
+- Model signatures are now using only keywords-arguments syntax. Every positional arguments are required to be rewritten as keywords-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum type are now using the "str" mixin (`class AzureEnum(str, Enum)`) to improve experiences when unkown enum are met. This is not a breaking change,
+  but documentation about mixin enum should be known:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, whatever the optional parameters.
+  - `raw=True` changes behavior. Instead of not polling and returning the initial call as `ClientRawResponse`, now this returns a LROPoller as well and the final 
+    resource is returned as a `ClientRawResponse`.
+  - Adding `polling` parameter. Polling=True is the default and poll using ARM algorithm. Polling=False does not poll and return the initial call reponse.
+  - Polling parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` now does not fail if poller is done, but execute the callback right away.
 
 **Features**
 
+- Add API Version 2018-01-01. Not default yet in this version.
 - Add ConnectionMonitor operation group (2017-10/11-01)
 - Add target_virtual_network / target_subet to topology_parameter (2017-10/11-01)
 - Add idle_timeout_in_minutes / enable_floating_ip to inbound_nat_pool (2017-11-01)
