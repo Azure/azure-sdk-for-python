@@ -38,11 +38,11 @@ class ProviderOperation(Model):
         'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display_name: str=None, description: str=None, origin: str=None, properties=None, is_data_action: bool=None, **kwargs) -> None:
         super(ProviderOperation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.description = kwargs.get('description', None)
-        self.origin = kwargs.get('origin', None)
-        self.properties = kwargs.get('properties', None)
-        self.is_data_action = kwargs.get('is_data_action', None)
+        self.name = name
+        self.display_name = display_name
+        self.description = description
+        self.origin = origin
+        self.properties = properties
+        self.is_data_action = is_data_action
