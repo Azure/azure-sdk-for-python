@@ -33,8 +33,8 @@ class RoleAssignmentCreateParameters(Model):
         'can_delegate': {'key': 'properties.canDelegate', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, role_definition_id: str=None, principal_id: str=None, can_delegate: bool=None, **kwargs) -> None:
         super(RoleAssignmentCreateParameters, self).__init__(**kwargs)
-        self.role_definition_id = kwargs.get('role_definition_id', None)
-        self.principal_id = kwargs.get('principal_id', None)
-        self.can_delegate = kwargs.get('can_delegate', None)
+        self.role_definition_id = role_definition_id
+        self.principal_id = principal_id
+        self.can_delegate = can_delegate

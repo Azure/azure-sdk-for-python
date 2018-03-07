@@ -26,7 +26,7 @@ class RoleDefinitionFilter(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, role_name: str=None, type: str=None, **kwargs) -> None:
         super(RoleDefinitionFilter, self).__init__(**kwargs)
-        self.role_name = kwargs.get('role_name', None)
-        self.type = kwargs.get('type', None)
+        self.role_name = role_name
+        self.type = type
