@@ -51,7 +51,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e578e7cc-4ad6-11e7-8da8-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1496767249,"updated":1496767249,"recoverylevel":"Purgeable"}}'}
     headers:
@@ -84,7 +84,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e61dfa5e-4ad6-11e7-8d70-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/wrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/wrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac","value":"br9yEMudqNTDk2OVzKQ8zAKPuOdDI5f1Qvryvv2g-rPwk8vhKWUl46jbkAkpHGdNmbyKr0jPhayfRJ-OBtcjEA3-EkjD4CTVXdhw6tSPhLgnSE2l5jjRwz47_-nBJa1OXo9KZxe5fNMiDMO-uV8_i_z2TC-MC1G8htDJceyb8KgQ8xpAWBXJpb3i1q_SMaDx0HzwpuInmzsKfUJFAphPUSp4JFS36Y0y9qASF7RAAk-h8f6WMc7f3tdMD4Whx7n3PYWJvwEwa0XJ5ZlLynGsr7XZIsVfO1wlebPNNzTI8qyS8OgJjLoUwhTiSKxouLPPznC8iuk5LbBUavaSBF9VhA"}'}
     headers:
@@ -117,7 +117,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e6a00b3a-4ad6-11e7-a388-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/unwrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/unwrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac","value":"NDFmMDdkM2M3MGYxOWVmMGYyZGY5OTIxMDUxODUyYTVkOTY5MGQyNDNlOWZiYzVkZDQyOGYxODI3OWY5ZDVmODBkMzhiZmVjZjlhNTgwMWQzMTBkZjVkN2Y4NTI5YTFiZDIwYmNmYzNlMGFjZWY2MjhlOGFjNmFmNGZiYjkwMmNkYmVjNjU4Y2UxNDcwMTdkZDQyM2IwODRhYjQ4ODkwNGJiZTNjMDI1MWI1NjU3YmUwY2ZlZTYxMWZiMzc0OTc0Yjg5YzQyMjQ"}'}
     headers:
@@ -150,7 +150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e704037e-4ad6-11e7-b1a7-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac/wrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac/wrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac","value":"bEBlvusbXLETCO-zNLow3OiGTx_gcEAugNSel2R9fuDuaQLumWBNq3ZsPh37Pi0No3YN-2H8O7AmtnJgCHsgw_utAGGrvUdtbTosp7HDOXH40s8dpzHMHeOGkYijBGhec1xpQB9QT8PmrODsX_wyvjh9LpUj02c-rQKRzOLwnzmhYQYYuDV3PpUsK4LKDwqA1RJdtnR1pwRGjIahTYyIAJf6vLxQOQ3SWnIvn0htlTySTnEB1v0UK-9kpY1eAqvJFKQgmYNR2DoF5T2YcayKDnwx9z9Dvk-1RV-2xUgIJ92XzKhhSkI2OSgkBjVuuYQeUsZFx9bHhYC3_9uQJZ2P2Q"}'}
     headers:
@@ -183,7 +183,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e787eab4-4ad6-11e7-89d9-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac/unwrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac/unwrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/eb1325e5c5454a1b881ab151d6b083ac","value":"NDFmMDdkM2M3MGYxOWVmMGYyZGY5OTIxMDUxODUyYTVkOTY5MGQyNDNlOWZiYzVkZDQyOGYxODI3OWY5ZDVmODBkMzhiZmVjZjlhNTgwMWQzMTBkZjVkN2Y4NTI5YTFiZDIwYmNmYzNlMGFjZWY2MjhlOGFjNmFmNGZiYjkwMmNkYmVjNjU4Y2UxNDcwMTdkZDQyM2IwODRhYjQ4ODkwNGJiZTNjMDI1MWI1NjU3YmUwY2ZlZTYxMWZiMzc0OTc0Yjg5YzQyMjQ"}'}
     headers:
@@ -288,7 +288,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c2c07c14-4add-11e7-af6e-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault","name":"pytest-shared-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://pytest-shared-vault.vault.azure.net/"}}'}
     headers:
@@ -323,7 +323,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [bf9fa062-4add-11e7-a7b8-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2018-02-14-preview
   response:
     body: {string: '{"createdDateTime":"2017-06-06 17:29:51Z","status":"NotStarted"}'}
     headers:
@@ -332,7 +332,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       Date: ['Tue, 06 Jun 2017 17:29:57 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2016-10-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2018-02-14-preview']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]
@@ -358,7 +358,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [bf9fa062-4add-11e7-a7b8-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2018-02-14-preview
   response:
     body: {string: '{"createdDateTime":"2017-06-06 17:29:51Z","status":"NotStarted"}'}
     headers:
@@ -367,7 +367,7 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       Date: ['Tue, 06 Jun 2017 17:30:02 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2016-10-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzY2OTkyODkxMjU2Nnw2QUU5Nzg3M0QwREY0RDU5ODhBMzQ5NzcwNjcyREU3OA?api-version=2018-02-14-preview']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]
@@ -402,7 +402,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c902baba-4add-11e7-82fa-5065f34efe31]
     method: PUT
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a?api-version=7.0-preview
   response:
     body: {string: '{"key":{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"AKCRTQAjSsaDshtMFdW-2Ie9yVnC5Xr1Suc06PAHINd10nXkVSB-N4TO62ClCkZV3XKnqU0nHo7o95WaZpym53W_DiO62umRtFKdl4UotL2QUh0y3SZWeWuoK2u_x2aMj17rUFN0f9GZMZ0pqEQNCPRBLVJ_-TEe2nGCWSC0exxGsRqz6R1zFkB-icfzQPe4WjQELOUXQ7J9RxhAPTTHtDivYYG-BeTRHrmF04JT1_6b9T_C8bAC0i0teT-nmlBLarQtBJKATXBx1yegbPOoiTqlQrFQP4MrKWNxtnB9Tcbjcvj-Z9je0ckI_eRc4DvAhqcUh_p15Dqg4GeaoNIO_jU","e":"AQAB"},"attributes":{"enabled":true,"created":1496770210,"updated":1496770210,"recoverylevel":"Purgeable"}}'}
     headers:
@@ -435,7 +435,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [ca4389b8-4add-11e7-9c1b-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/wrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/wrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad","value":"gHDXApl0OwLLeDOIL3I1kyTvgov_lVy4DO-w7APZP8-GknLpcfS9_vu-LNdS1JNzPBNzMps3GNouRexWHm03xZTYQHZ1Fcrrd1-Uf6pwIJs5cXSm-JIY0CVFO9fKttB6YG_of2jBfBe2Sr1_xMUO4ZVpLwhlTCXuuqQ8_R-p6KscGk0IrJ0gZmhsYeUAvB_Iey3KeaWIKfzc5WCBf7wY_5_sxVOkq0w4WRgXpfbW_F2c1sFyevT0ONYlNBxU_JJa-Y-TF7LJ_Qbbc4B6oKOfrTttrD6j3DG8F_WDwliYRU2Rj7cT9UVKvVN65VSVjZQ91HdEoEtKFgNPSmTHfYKeFQ"}'}
     headers:
@@ -468,7 +468,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cabcb408-4add-11e7-9075-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/unwrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/unwrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad","value":"MzVhNGMxM2YzYWRhNmI1MDE4MmY3MzdjMzIyZjQ4Njk5OTIwNzUxZmU2NjZkOTY4MTJjYmEwNmM3MzYxZjVkMjZlZGNjYzdiZTc4YTVmYzE0OWMyN2UzNDU4NzM4OWI1MTVjOGU4NGMzMGM5YWViOTJhNTBjY2M0MDNjYWJlZmYwNzQzMWYzZGUxZWU2NDc0MjYwYjVkNGJjMDdiNGZjMzMwZmI5MTkzZjcyMmRiYjgwNDQzYzdkMDUxYjhhZDMwYjQ5MTgzMjE"}'}
     headers:
@@ -501,7 +501,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cb494bba-4add-11e7-8f8e-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad/wrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad/wrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad","value":"gi_z1id4uHpX5f4IRkcg24NtFXPdUU6gPssU3-JRTUCm6y0YTn5Y1sGILE_Tu0jdEtrdmwvHuJFc68qWUBkdJ1MYuC_lkS9xd4wVcGyTbZVO0K1ker-KDox17Kb_oQHj80xcqRbBMNh6b4xDcq8pMnONRONsSPqo1KPUJmAivp1yVYQ_mldb5WIVUY0ZcudXEz0vf9hI8YZY9TJpShwGU4rF1F3pmx2asOmaN0Z7s2i378vNmHQVxpkat6lLU0T4LpgsDXmRZYjzhxCMdWT7MwnDLBh36ka_EcNlzvCAhkssVHH_QJIXLS8YXTHF64c5Eg_gB0_cYaMdnKXsRED8JA"}'}
     headers:
@@ -534,7 +534,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cbcc9e12-4add-11e7-9828-5065f34efe31]
     method: POST
-    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad/unwrapkey?api-version=2016-10-01
+    uri: https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad/unwrapkey?api-version=7.0-preview
   response:
     body: {string: '{"kid":"https://pytest-shared-vault.vault.azure.net/keys/keywrap98c4122a/03acb54ecc5b45148cc7d3161b3da3ad","value":"MzVhNGMxM2YzYWRhNmI1MDE4MmY3MzdjMzIyZjQ4Njk5OTIwNzUxZmU2NjZkOTY4MTJjYmEwNmM3MzYxZjVkMjZlZGNjYzdiZTc4YTVmYzE0OWMyN2UzNDU4NzM4OWI1MTVjOGU4NGMzMGM5YWViOTJhNTBjY2M0MDNjYWJlZmYwNzQzMWYzZGUxZWU2NDc0MjYwYjVkNGJjMDdiNGZjMzMwZmI5MTkzZjcyMmRiYjgwNDQzYzdkMDUxYjhhZDMwYjQ5MTgzMjE"}'}
     headers:

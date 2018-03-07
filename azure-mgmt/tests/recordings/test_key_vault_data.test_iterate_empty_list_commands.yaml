@@ -22,7 +22,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [80bee00c-4bac-11e7-b321-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582","name":"vault-397e1582","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://vault-397e1582.vault.azure.net"}}'}
     headers:
@@ -69,7 +69,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d2914170-4bac-11e7-92a0-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582","name":"vault-397e1582","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://vault-397e1582.vault.azure.net"}}'}
     headers:
@@ -104,7 +104,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d97fb2b4-4bac-11e7-8894-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -147,7 +147,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4be14828-4bad-11e7-96ea-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582","name":"vault-397e1582","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://vault-397e1582.vault.azure.net"}}'}
     headers:
@@ -182,7 +182,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [52ffa810-4bad-11e7-b335-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/keys?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/keys?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -224,7 +224,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [b67af490-4bb0-11e7-a7fb-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_iterate_empty_list_commands397e1582/providers/Microsoft.KeyVault/vaults/vault-397e1582","name":"vault-397e1582","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"secrets":["get","list","set","delete","backup","restore","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://vault-397e1582.vault.azure.net"}}'}
     headers:
@@ -259,7 +259,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c31f402e-4bb0-11e7-8551-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/keys?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/keys?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -290,7 +290,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cfc77aee-4bb0-11e7-bfcc-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/certificates?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:
@@ -321,7 +321,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d1b2d294-4bb0-11e7-b9f0-5065f34efe31]
     method: GET
-    uri: https://vault-397e1582.vault.azure.net/secrets?api-version=2016-10-01
+    uri: https://vault-397e1582.vault.azure.net/secrets?api-version=7.0-preview
   response:
     body: {string: '{"value":null,"nextLink":null}'}
     headers:

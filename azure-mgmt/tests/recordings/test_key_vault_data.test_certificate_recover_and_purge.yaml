@@ -23,7 +23,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e1a37838-4afa-11e7-9197-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_certificate_recover_and_purge626b1626/providers/Microsoft.KeyVault/vaults/vault-626b1626?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_certificate_recover_and_purge626b1626/providers/Microsoft.KeyVault/vaults/vault-626b1626?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_certificate_recover_and_purge626b1626/providers/Microsoft.KeyVault/vaults/vault-626b1626","name":"vault-626b1626","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://vault-626b1626.vault.azure.net"}}'}
     headers:
@@ -61,7 +61,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e89c03cc-4afa-11e7-bddc-5065f34efe31]
     method: POST
-    uri: https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/import?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/import?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","kid":"https://vault-626b1626.vault.azure.net/keys/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782717,"updated":1496782717,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782717,"updated":1496782717}}}'}
     headers:
@@ -95,7 +95,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e9f7b088-4afa-11e7-adfc-5065f34efe31]
     method: POST
-    uri: https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/import?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/import?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","kid":"https://vault-626b1626.vault.azure.net/keys/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782719,"updated":1496782719,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782719,"updated":1496782719}}}'}
     headers:
@@ -129,7 +129,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [eabfbff0-4afa-11e7-b5a0-5065f34efe31]
     method: POST
-    uri: https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626/import?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626/import?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626/616e4bcc0f364bf2b629b8ad95afaac3","kid":"https://vault-626b1626.vault.azure.net/keys/certprg0626b1626/616e4bcc0f364bf2b629b8ad95afaac3","sid":"https://vault-626b1626.vault.azure.net/secrets/certprg0626b1626/616e4bcc0f364bf2b629b8ad95afaac3","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782720,"updated":1496782720,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782720,"updated":1496782720}}}'}
     headers:
@@ -163,7 +163,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [eba83938-4afa-11e7-a4dd-5065f34efe31]
     method: POST
-    uri: https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626/import?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626/import?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626/3adac69ca910427c8fae2bb8589d2aa0","kid":"https://vault-626b1626.vault.azure.net/keys/certprg1626b1626/3adac69ca910427c8fae2bb8589d2aa0","sid":"https://vault-626b1626.vault.azure.net/secrets/certprg1626b1626/3adac69ca910427c8fae2bb8589d2aa0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782722,"updated":1496782722,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782722,"updated":1496782722}}}'}
     headers:
@@ -195,7 +195,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [ec83bdd4-4afa-11e7-b371-5065f34efe31]
     method: DELETE
-    uri: https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certprg0626b1626","deletedDate":1496782723,"scheduledPurgeDate":1504558723,"id":"https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626/616e4bcc0f364bf2b629b8ad95afaac3","kid":"https://vault-626b1626.vault.azure.net/keys/certprg0626b1626/616e4bcc0f364bf2b629b8ad95afaac3","sid":"https://vault-626b1626.vault.azure.net/secrets/certprg0626b1626/616e4bcc0f364bf2b629b8ad95afaac3","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782720,"updated":1496782720,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782720,"updated":1496782720}}}'}
     headers:
@@ -227,7 +227,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [ed23c336-4afa-11e7-8407-5065f34efe31]
     method: DELETE
-    uri: https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certrec0626b1626","deletedDate":1496782724,"scheduledPurgeDate":1504558724,"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","kid":"https://vault-626b1626.vault.azure.net/keys/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782717,"updated":1496782717,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782717,"updated":1496782717}}}'}
     headers:
@@ -259,7 +259,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [eddf9ef6-4afa-11e7-805a-5065f34efe31]
     method: DELETE
-    uri: https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certprg1626b1626","deletedDate":1496782724,"scheduledPurgeDate":1504558724,"id":"https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626/3adac69ca910427c8fae2bb8589d2aa0","kid":"https://vault-626b1626.vault.azure.net/keys/certprg1626b1626/3adac69ca910427c8fae2bb8589d2aa0","sid":"https://vault-626b1626.vault.azure.net/secrets/certprg1626b1626/3adac69ca910427c8fae2bb8589d2aa0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782722,"updated":1496782722,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782722,"updated":1496782722}}}'}
     headers:
@@ -291,7 +291,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [ee756b10-4afa-11e7-933c-5065f34efe31]
     method: DELETE
-    uri: https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626?api-version=7.0-preview
   response:
     body: {string: '{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certrec1626b1626","deletedDate":1496782726,"scheduledPurgeDate":1504558726,"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","kid":"https://vault-626b1626.vault.azure.net/keys/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782719,"updated":1496782719,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782719,"updated":1496782719}}}'}
     headers:
@@ -322,7 +322,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [010f0d28-4afb-11e7-9eea-5065f34efe31]
     method: GET
-    uri: https://vault-626b1626.vault.azure.net/deletedcertificates?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/deletedcertificates?api-version=7.0-preview
   response:
     body: {string: '{"value":[{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certprg0626b1626","deletedDate":1496782723,"scheduledPurgeDate":1504558723,"id":"https://vault-626b1626.vault.azure.net/certificates/certprg0626b1626","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782720,"updated":1496782720,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certprg1626b1626","deletedDate":1496782724,"scheduledPurgeDate":1504558724,"id":"https://vault-626b1626.vault.azure.net/certificates/certprg1626b1626","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782722,"updated":1496782722,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certrec0626b1626","deletedDate":1496782724,"scheduledPurgeDate":1504558724,"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782717,"updated":1496782717,"recoverylevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vault-626b1626.vault.azure.net/deletedcertificates/certrec1626b1626","deletedDate":1496782726,"scheduledPurgeDate":1504558726,"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782719,"updated":1496782719,"recoverylevel":"Recoverable+Purgeable"}}],"nextLink":null}'}
     headers:
@@ -354,7 +354,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [01be0cbe-4afb-11e7-9ad7-5065f34efe31]
     method: POST
-    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certrec0626b1626/recover?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certrec0626b1626/recover?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","kid":"https://vault-626b1626.vault.azure.net/keys/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782717,"updated":1496782717,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782717,"updated":1496782717}}}'}
     headers:
@@ -386,7 +386,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [025797f6-4afb-11e7-bf95-5065f34efe31]
     method: POST
-    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certrec1626b1626/recover?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certrec1626b1626/recover?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","kid":"https://vault-626b1626.vault.azure.net/keys/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782719,"updated":1496782719,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782719,"updated":1496782719}}}'}
     headers:
@@ -418,7 +418,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [030bfb9a-4afb-11e7-a2b0-5065f34efe31]
     method: DELETE
-    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certprg0626b1626?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certprg0626b1626?api-version=7.0-preview
   response:
     body: {string: ''}
     headers:
@@ -448,7 +448,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [03acf498-4afb-11e7-ab63-5065f34efe31]
     method: DELETE
-    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certprg1626b1626?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/deletedcertificates/certprg1626b1626?api-version=7.0-preview
   response:
     body: {string: ''}
     headers:
@@ -477,7 +477,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [16317ee2-4afb-11e7-a763-5065f34efe31]
     method: GET
-    uri: https://vault-626b1626.vault.azure.net/deletedcertificates?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/deletedcertificates?api-version=7.0-preview
   response:
     body: {string: '{"value":[],"nextLink":null}'}
     headers:
@@ -508,7 +508,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [16bed740-4afb-11e7-a0d4-5065f34efe31]
     method: GET
-    uri: https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","kid":"https://vault-626b1626.vault.azure.net/keys/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec0626b1626/abb4e9ac775f4aa1a7ab3fb764c5cd4e","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782717,"updated":1496782717,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec0626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782717,"updated":1496782717}}}'}
     headers:
@@ -539,7 +539,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [175b1eec-4afb-11e7-b684-5065f34efe31]
     method: GET
-    uri: https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/?api-version=2016-10-01
+    uri: https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/?api-version=7.0-preview
   response:
     body: {string: '{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","kid":"https://vault-626b1626.vault.azure.net/keys/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","sid":"https://vault-626b1626.vault.azure.net/secrets/certrec1626b1626/d36fbdeb3c624f7295a5bb11bc39f8c0","x5t":"fLi3U52HunIVNXubkEnf8tP6Wbo","cer":"MIICODCCAeagAwIBAgIQqHmpBAv+CY9IJFoUhlbziTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE1MDQyOTIxNTM0MVoXDTM5MTIzMTIzNTk1OVowFzEVMBMGA1UEAxMMS2V5VmF1bHRUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5bVAT73zr4+N4WVv2+SvTunAw08ksS4BrJW/nNliz3S9XuzMBMXvmYzU5HJ8TtEgluBiZZYd5qsMJD+OXHSNbsLdmMhni0jYX09h3XlC2VJw2sGKeYF+xEaavXm337aZZaZyjrFBrrUl51UePaN+kVFXNlBb3N3TYpqa7KokXenJQuR+i9Gv9a77c0UsSsDSryxppYhKK7HvTZCpKrhVtulF5iPMswWe9np3uggfMamyIsK/0L7X9w9B2qN7993RR0A00nOk4H6CnkuwO77dSsD0KJsk6FyAoZBzRXDZh9+d9R76zCL506NcQy/jl0lCiQYwsUX73PG5pxOh02OwKwIDAQABo0swSTBHBgNVHQEEQDA+gBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc+41KpcNfQwCQYFKw4DAh0FAANBAGqIjo2geVagzuzaZOe1ClGKhZeiCKfWAxklaGN+qlGUbVS4IN4V1lot3VKnzabasmkEHeNxPwLn1qvSD0cX9CE=","attributes":{"enabled":true,"nbf":1430344421,"exp":2208988799,"created":1496782719,"updated":1496782719,"recoverylevel":"Recoverable+Purgeable"},"policy":{"id":"https://vault-626b1626.vault.azure.net/certificates/certrec1626b1626/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=KeyVaultTest","ekus":[],"key_usage":[],"validity_months":297,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown"},"attributes":{"enabled":true,"created":1496782719,"updated":1496782719}}}'}
     headers:
@@ -571,7 +571,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [17de96f4-4afb-11e7-a572-5065f34efe31]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_certificate_recover_and_purge626b1626/providers/Microsoft.KeyVault/vaults/vault-626b1626?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_key_vault_data_test_certificate_recover_and_purge626b1626/providers/Microsoft.KeyVault/vaults/vault-626b1626?api-version=2018-02-14-preview
   response:
     body: {string: ''}
     headers:
@@ -604,7 +604,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [1e75b378-4afb-11e7-8aec-5065f34efe31]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/deletedVaults/vault-626b1626/purge?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/deletedVaults/vault-626b1626/purge?api-version=2018-02-14-preview
   response:
     body: {string: ''}
     headers:
@@ -612,7 +612,7 @@ interactions:
       Content-Length: ['0']
       Date: ['Tue, 06 Jun 2017 21:00:06 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzc5NjA3NTQwNDczMXw3MUI4NDEwM0IxNDU0QTNDOUFGMDdDRUQ2OEIyNkU4RQ?api-version=2016-10-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/westus/operationResults/VVR8MDYzNjMyMzc5NjA3NTQwNDczMXw3MUI4NDEwM0IxNDU0QTNDOUFGMDdDRUQ2OEIyNkU4RQ?api-version=2018-02-14-preview']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]

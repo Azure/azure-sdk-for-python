@@ -13,7 +13,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7a19e2e2-40ce-11e7-a5a5-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net"}}'}
     headers:
@@ -48,7 +48,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7aacb802-40ce-11e7-8cea-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2018-02-14-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net/"}}'}
     headers:
@@ -83,9 +83,9 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7afdfb88-40ce-11e7-b131-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2018-02-14-preview
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net/"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2016-10-01&$skiptoken=cHlrdjY4YjkxMTM4"}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net/"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2018-02-14-preview&$skiptoken=cHlrdjY4YjkxMTM4"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
@@ -118,7 +118,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7b39aa64-40ce-11e7-a799-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2016-10-01&$skiptoken=cHlrdjY4YjkxMTM4
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2018-02-14-preview&$skiptoken=cHlrdjY4YjkxMTM4
   response:
     body: {string: '{"value":[]}'}
     headers:
@@ -183,7 +183,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7b984ca4-40ce-11e7-9cfa-5065f34efe31]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2016-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2018-02-14-preview
   response:
     body: {string: ''}
     headers:

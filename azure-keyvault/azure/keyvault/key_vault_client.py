@@ -37,7 +37,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
 
         super(KeyVaultClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('keyvaultclient/{}'.format(VERSION))
+        self.add_user_agent('azure-keyvault,/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -61,19 +61,19 @@ class KeyVaultClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-10-01'
+        self.api_version = '7.0-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
 
     def create_key(
-            self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, curve=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new key, stores it, then returns key parameters and
         attributes to the client.
 
         The create key operation can be used to create any key type in Azure
         Key Vault. If the named key already exists, Azure Key Vault creates a
-        new version of the key.
+        new version of the key. It requires the keys/create permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -81,41 +81,41 @@ class KeyVaultClient(object):
         :param key_name: The name for the new key. The system will generate
          the version name for the new key.
         :type key_name: str
-        :param kty: The type of key to create. For valid key types, see
-         JsonWebKeyType. Supported JsonWebKey key types (kty) for Elliptic
-         Curve, RSA, HSM, Octet. Possible values include: 'EC', 'RSA',
+        :param kty: The type of key to create. For valid values, see
+         JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
          'RSA-HSM', 'oct'
-        :type kty: str or :class:`JsonWebKeyType
-         <azure.keyvault.models.JsonWebKeyType>`
+        :type kty: str or ~azure.keyvault.models.JsonWebKeyType
         :param key_size: The key size in bytes. For example, 1024 or 2048.
         :type key_size: int
         :param key_ops:
-        :type key_ops: list of str or :class:`JsonWebKeyOperation
-         <azure.keyvault.models.JsonWebKeyOperation>`
+        :type key_ops: list[str or ~azure.keyvault.models.JsonWebKeyOperation]
         :param key_attributes:
-        :type key_attributes: :class:`KeyAttributes
-         <azure.keyvault.models.KeyAttributes>`
+        :type key_attributes: ~azure.keyvault.models.KeyAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
+        :param curve: Elliptic curve name. For valid values, see
+         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
+         'P-521', 'SECP256K1'
+        :type curve: str or ~azure.keyvault.models.JsonWebKeyCurveName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags)
+        parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags, curve=curve)
 
         # Construct URL
-        url = '/keys/{key-name}/create'
+        url = self.create_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'key-name': self._serialize.url("key_name", key_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'key-name': self._serialize.url("key_name", key_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -139,7 +139,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -154,6 +154,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    create_key.metadata = {'url': '/keys/{key-name}/create'}
 
     def import_key(
             self, vault_base_url, key_name, key, hsm=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -162,7 +163,8 @@ class KeyVaultClient(object):
 
         The import key operation may be used to import any key type into an
         Azure Key Vault. If the named key already exists, Azure Key Vault
-        creates a new version of the key.
+        creates a new version of the key. This operation requires the
+        keys/import permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -170,33 +172,32 @@ class KeyVaultClient(object):
         :param key_name: Name for the imported key.
         :type key_name: str
         :param key: The Json web key
-        :type key: :class:`JsonWebKey <azure.keyvault.models.JsonWebKey>`
+        :type key: ~azure.keyvault.models.JsonWebKey
         :param hsm: Whether to import as a hardware key (HSM) or software key.
         :type hsm: bool
         :param key_attributes: The key management attributes.
-        :type key_attributes: :class:`KeyAttributes
-         <azure.keyvault.models.KeyAttributes>`
+        :type key_attributes: ~azure.keyvault.models.KeyAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyImportParameters(hsm=hsm, key=key, key_attributes=key_attributes, tags=tags)
 
         # Construct URL
-        url = '/keys/{key-name}'
+        url = self.import_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'key-name': self._serialize.url("key_name", key_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'key-name': self._serialize.url("key_name", key_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -220,7 +221,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -235,6 +236,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    import_key.metadata = {'url': '/keys/{key-name}'}
 
     def delete_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
@@ -243,7 +245,8 @@ class KeyVaultClient(object):
         The delete key operation cannot be used to remove individual versions
         of a key. This operation removes the cryptographic material associated
         with the key, which means the key is not usable for Sign/Verify,
-        Wrap/Unwrap or Encrypt/Decrypt operations.
+        Wrap/Unwrap or Encrypt/Decrypt operations. This operation requires the
+        keys/delete permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -255,15 +258,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedKeyBundle
-         <azure.keyvault.models.DeletedKeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedKeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedKeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/keys/{key-name}'
+        url = self.delete_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -286,7 +288,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -301,6 +303,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_key.metadata = {'url': '/keys/{key-name}'}
 
     def update_key(
             self, vault_base_url, key_name, key_version, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -310,7 +313,7 @@ class KeyVaultClient(object):
 
         In order to perform this operation, the key must already exist in the
         Key Vault. Note: The cryptographic material of a key itself cannot be
-        changed.
+        changed. This operation requires the keys/update permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -321,29 +324,27 @@ class KeyVaultClient(object):
         :type key_version: str
         :param key_ops: Json web key operations. For more information on
          possible key operations, see JsonWebKeyOperation.
-        :type key_ops: list of str or :class:`JsonWebKeyOperation
-         <azure.keyvault.models.JsonWebKeyOperation>`
+        :type key_ops: list[str or ~azure.keyvault.models.JsonWebKeyOperation]
         :param key_attributes:
-        :type key_attributes: :class:`KeyAttributes
-         <azure.keyvault.models.KeyAttributes>`
+        :type key_attributes: ~azure.keyvault.models.KeyAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyUpdateParameters(key_ops=key_ops, key_attributes=key_attributes, tags=tags)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}'
+        url = self.update_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -371,7 +372,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -386,6 +387,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_key.metadata = {'url': '/keys/{key-name}/{key-version}'}
 
     def get_key(
             self, vault_base_url, key_name, key_version, custom_headers=None, raw=False, **operation_config):
@@ -393,6 +395,7 @@ class KeyVaultClient(object):
 
         The get key operation is applicable to all key types. If the requested
         key is symmetric, then no key material is released in the response.
+        This operation requires the keys/get permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -407,14 +410,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/keys/{key-name}/{key-version}'
+        url = self.get_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -438,7 +441,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -453,13 +456,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_key.metadata = {'url': '/keys/{key-name}/{key-version}'}
 
     def get_key_versions(
             self, vault_base_url, key_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves a list of individual key versions with the same key name.
 
         The full key identifier, attributes, and tags are provided in the
-        response.
+        response. This operation requires the keys/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -474,7 +478,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyItemPaged <azure.keyvault.models.KeyItemPaged>`
+        :return: An iterator like instance of KeyItem
+        :rtype:
+         ~azure.keyvault.models.KeyItemPaged[~azure.keyvault.models.KeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -482,7 +488,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/keys/{key-name}/versions'
+                url = self.get_key_versions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -512,7 +518,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -528,6 +534,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_key_versions.metadata = {'url': '/keys/{key-name}/versions'}
 
     def get_keys(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -536,9 +543,9 @@ class KeyVaultClient(object):
         Retrieves a list of the keys in the Key Vault as JSON Web Key
         structures that contain the public part of a stored key. The LIST
         operation is applicable to all key types, however only the base key
-        identifier,attributes, and tags are provided in the response.
-        Individual versions of a key are not listed in the response.
-        Authorization: Requires the keys/list permission.
+        identifier, attributes, and tags are provided in the response.
+        Individual versions of a key are not listed in the response. This
+        operation requires the keys/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -551,7 +558,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyItemPaged <azure.keyvault.models.KeyItemPaged>`
+        :return: An iterator like instance of KeyItem
+        :rtype:
+         ~azure.keyvault.models.KeyItemPaged[~azure.keyvault.models.KeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -559,7 +568,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/keys'
+                url = self.get_keys.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -588,7 +597,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -604,6 +613,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_keys.metadata = {'url': '/keys'}
 
     def backup_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
@@ -622,7 +632,8 @@ class KeyVaultClient(object):
         BACKUP / RESTORE can be performed within geographical boundaries only;
         meaning that a BACKUP from one geographical area cannot be restored to
         another geographical area. For example, a backup from the US
-        geographical area cannot be restored in an EU geographical area.
+        geographical area cannot be restored in an EU geographical area. This
+        operation requires the key/backup permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -634,15 +645,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupKeyResult
-         <azure.keyvault.models.BackupKeyResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: BackupKeyResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.BackupKeyResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/keys/{key-name}/backup'
+        url = self.backup_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -665,7 +675,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -680,6 +690,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    backup_key.metadata = {'url': '/keys/{key-name}/backup'}
 
     def restore_key(
             self, vault_base_url, key_bundle_backup, custom_headers=None, raw=False, **operation_config):
@@ -697,7 +708,8 @@ class KeyVaultClient(object):
         version identifiers. The RESTORE operation is subject to security
         constraints: The target Key Vault must be owned by the same Microsoft
         Azure Subscription as the source Key Vault The user must have RESTORE
-        permission in the target Key Vault.
+        permission in the target Key Vault. This operation requires the
+        keys/restore permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -710,16 +722,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyRestoreParameters(key_bundle_backup=key_bundle_backup)
 
         # Construct URL
-        url = '/keys/restore'
+        url = self.restore_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -745,7 +757,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -760,6 +772,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    restore_key.metadata = {'url': '/keys/restore'}
 
     def encrypt(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -774,7 +787,8 @@ class KeyVaultClient(object):
         stored in Azure Key Vault since protection with an asymmetric key can
         be performed using public portion of the key. This operation is
         supported for asymmetric keys as a convenience for callers that have a
-        key-reference but do not have access to the public key material.
+        key-reference but do not have access to the public key material. This
+        operation requires the keys/encypt permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -785,8 +799,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -794,17 +808,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/encrypt'
+        url = self.encrypt.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -832,7 +845,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -847,6 +860,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    encrypt.metadata = {'url': '/keys/{key-name}/{key-version}/encrypt'}
 
     def decrypt(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -858,7 +872,8 @@ class KeyVaultClient(object):
         be decrypted, the size of this block is dependent on the target key and
         the algorithm to be used. The DECRYPT operation applies to asymmetric
         and symmetric keys stored in Azure Key Vault since it uses the private
-        portion of the key.
+        portion of the key. This operation requires the keys/decrypt
+        permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -869,8 +884,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -878,17 +893,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/decrypt'
+        url = self.decrypt.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -916,7 +930,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -931,6 +945,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    decrypt.metadata = {'url': '/keys/{key-name}/{key-version}/decrypt'}
 
     def sign(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -938,7 +953,7 @@ class KeyVaultClient(object):
 
         The SIGN operation is applicable to asymmetric and symmetric keys
         stored in Azure Key Vault since this operation uses the private portion
-        of the key.
+        of the key. This operation requires the keys/sign permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -950,9 +965,10 @@ class KeyVaultClient(object):
         :param algorithm: The signing/verification algorithm identifier. For
          more information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
-         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL'
-        :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
-         <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
+         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
+         'ES384', 'ES512', 'ECDSA256'
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -960,17 +976,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeySignParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/sign'
+        url = self.sign.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -998,7 +1013,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1013,6 +1028,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    sign.metadata = {'url': '/keys/{key-name}/{key-version}/sign'}
 
     def verify(
             self, vault_base_url, key_name, key_version, algorithm, digest, signature, custom_headers=None, raw=False, **operation_config):
@@ -1023,7 +1039,8 @@ class KeyVaultClient(object):
         in Azure Key Vault since signature verification can be performed using
         the public portion of the key but this operation is supported as a
         convenience for callers that only have a key-reference and not the
-        public portion of the key.
+        public portion of the key. This operation requires the keys/verify
+        permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1035,9 +1052,10 @@ class KeyVaultClient(object):
         :param algorithm: The signing/verification algorithm. For more
          information on possible algorithm types, see
          JsonWebKeySignatureAlgorithm. Possible values include: 'PS256',
-         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL'
-        :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
-         <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
+         'PS384', 'PS512', 'RS256', 'RS384', 'RS512', 'RSNULL', 'ES256',
+         'ES384', 'ES512', 'ECDSA256'
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeySignatureAlgorithm
         :param digest: The digest used for signing.
         :type digest: bytes
         :param signature: The signature to be verified.
@@ -1047,17 +1065,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyVerifyResult
-         <azure.keyvault.models.KeyVerifyResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyVerifyResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyVerifyResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/verify'
+        url = self.verify.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -1085,7 +1102,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1100,6 +1117,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    verify.metadata = {'url': '/keys/{key-name}/{key-version}/verify'}
 
     def wrap_key(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -1111,7 +1129,8 @@ class KeyVaultClient(object):
         in Azure Key Vault since protection with an asymmetric key can be
         performed using the public portion of the key. This operation is
         supported for asymmetric keys as a convenience for callers that have a
-        key-reference but do not have access to the public key material.
+        key-reference but do not have access to the public key material. This
+        operation requires the keys/wrapKey permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1122,8 +1141,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -1131,17 +1150,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/wrapkey'
+        url = self.wrap_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -1169,7 +1187,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1184,6 +1202,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    wrap_key.metadata = {'url': '/keys/{key-name}/{key-version}/wrapkey'}
 
     def unwrap_key(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
@@ -1194,7 +1213,7 @@ class KeyVaultClient(object):
         target key encryption key. This operation is the reverse of the WRAP
         operation. The UNWRAP operation applies to asymmetric and symmetric
         keys stored in Azure Key Vault since it uses the private portion of the
-        key.
+        key. This operation requires the keys/unwrapKey permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1205,8 +1224,8 @@ class KeyVaultClient(object):
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-         <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+        :type algorithm: str or
+         ~azure.keyvault.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param dict custom_headers: headers that will be added to the request
@@ -1214,17 +1233,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyOperationResult
-         <azure.keyvault.models.KeyOperationResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyOperationResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyOperationResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
         # Construct URL
-        url = '/keys/{key-name}/{key-version}/unwrapkey'
+        url = self.unwrap_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str'),
@@ -1252,7 +1270,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1267,10 +1285,18 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    unwrap_key.metadata = {'url': '/keys/{key-name}/{key-version}/unwrapkey'}
 
     def get_deleted_keys(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List deleted keys in the specified vault. Authorization: Requires the
+        """Lists the deleted keys in the specified vault.
+
+        Retrieves a list of the keys in the Key Vault as JSON Web Key
+        structures that contain the public part of a deleted key. This
+        operation includes deletion-specific information. The Get Deleted Keys
+        operation is applicable for vaults enabled for soft-delete. While the
+        operation can be invoked on any vault, it will return an error if
+        invoked on a non soft-delete enabled vault. This operation requires the
         keys/list permission.
 
         :param vault_base_url: The vault name, for example
@@ -1284,8 +1310,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedKeyItemPaged
-         <azure.keyvault.models.DeletedKeyItemPaged>`
+        :return: An iterator like instance of DeletedKeyItem
+        :rtype:
+         ~azure.keyvault.models.DeletedKeyItemPaged[~azure.keyvault.models.DeletedKeyItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1293,7 +1320,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/deletedkeys'
+                url = self.get_deleted_keys.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -1322,7 +1349,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1338,31 +1365,35 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_keys.metadata = {'url': '/deletedkeys'}
 
     def get_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the deleted key information plus its attributes.
-        Authorization: Requires the keys/get permission.
+        """Gets the public part of a deleted key.
+
+        The Get Deleted Key operation is applicable for soft-delete enabled
+        vaults. While the operation can be invoked on any vault, it will return
+        an error if invoked on a non soft-delete enabled vault. This operation
+        requires the keys/get permission. .
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedKeyBundle
-         <azure.keyvault.models.DeletedKeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedKeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedKeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedkeys/{key-name}'
+        url = self.get_deleted_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -1385,7 +1416,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1400,11 +1431,16 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_key.metadata = {'url': '/deletedkeys/{key-name}'}
 
     def purge_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Permanently deletes the specified key. aka purges the key.
-        Authorization: Requires the keys/purge permission.
+        """Permanently deletes the specified key.
+
+        The Purge Deleted Key operation is applicable for soft-delete enabled
+        vaults. While the operation can be invoked on any vault, it will return
+        an error if invoked on a non soft-delete enabled vault. This operation
+        requires the keys/purge permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1416,14 +1452,13 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedkeys/{key-name}'
+        url = self.purge_deleted_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -1446,7 +1481,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1454,30 +1489,37 @@ class KeyVaultClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    purge_deleted_key.metadata = {'url': '/deletedkeys/{key-name}'}
 
     def recover_deleted_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Recovers the deleted key back to its current version under /keys.
-        Authorization: Requires the keys/recover permission.
+        """Recovers the deleted key to its latest version.
+
+        The Recover Deleted Key operation is applicable for deleted keys in
+        soft-delete enabled vaults. It recovers the deleted key back to its
+        latest version under /keys. An attempt to recover an non-deleted key
+        will return an error. Consider this the inverse of the delete operation
+        on soft-delete enabled vaults. This operation requires the keys/recover
+        permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the deleted key
+        :param key_name: The name of the deleted key.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: KeyBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.KeyBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedkeys/{key-name}/recover'
+        url = self.recover_deleted_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'key-name': self._serialize.url("key_name", key_name, 'str')
@@ -1500,7 +1542,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1515,6 +1557,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_key.metadata = {'url': '/deletedkeys/{key-name}/recover'}
 
     def set_secret(
             self, vault_base_url, secret_name, value, tags=None, content_type=None, secret_attributes=None, custom_headers=None, raw=False, **operation_config):
@@ -1522,7 +1565,7 @@ class KeyVaultClient(object):
 
         The SET operation adds a secret to the Azure Key Vault. If the named
         secret already exists, Azure Key Vault creates a new version of that
-        secret.
+        secret. This operation requires the secrets/set permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1533,30 +1576,29 @@ class KeyVaultClient(object):
         :type value: str
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param content_type: Type of the secret value such as a password.
         :type content_type: str
         :param secret_attributes: The secret management attributes.
-        :type secret_attributes: :class:`SecretAttributes
-         <azure.keyvault.models.SecretAttributes>`
+        :type secret_attributes: ~azure.keyvault.models.SecretAttributes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.SecretSetParameters(value=value, tags=tags, content_type=content_type, secret_attributes=secret_attributes)
 
         # Construct URL
-        url = '/secrets/{secret-name}'
+        url = self.set_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'secret-name': self._serialize.url("secret_name", secret_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'secret-name': self._serialize.url("secret_name", secret_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1580,7 +1622,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1595,13 +1637,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_secret.metadata = {'url': '/secrets/{secret-name}'}
 
     def delete_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a secret from a specified key vault.
 
         The DELETE operation applies to any secret stored in Azure Key Vault.
-        DELETE cannot be applied to an individual version of a secret.
+        DELETE cannot be applied to an individual version of a secret. This
+        operation requires the secrets/delete permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1613,15 +1657,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedSecretBundle
-         <azure.keyvault.models.DeletedSecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedSecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/secrets/{secret-name}'
+        url = self.delete_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -1644,7 +1687,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1659,6 +1702,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_secret.metadata = {'url': '/secrets/{secret-name}'}
 
     def update_secret(
             self, vault_base_url, secret_name, secret_version, content_type=None, secret_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -1667,7 +1711,8 @@ class KeyVaultClient(object):
 
         The UPDATE operation changes specified attributes of an existing stored
         secret. Attributes that are not specified in the request are left
-        unchanged. The value of a secret itself cannot be changed.
+        unchanged. The value of a secret itself cannot be changed. This
+        operation requires the secrets/set permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1679,26 +1724,25 @@ class KeyVaultClient(object):
         :param content_type: Type of the secret value such as a password.
         :type content_type: str
         :param secret_attributes: The secret management attributes.
-        :type secret_attributes: :class:`SecretAttributes
-         <azure.keyvault.models.SecretAttributes>`
+        :type secret_attributes: ~azure.keyvault.models.SecretAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.SecretUpdateParameters(content_type=content_type, secret_attributes=secret_attributes, tags=tags)
 
         # Construct URL
-        url = '/secrets/{secret-name}/{secret-version}'
+        url = self.update_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str'),
@@ -1726,7 +1770,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1741,13 +1785,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_secret.metadata = {'url': '/secrets/{secret-name}/{secret-version}'}
 
     def get_secret(
             self, vault_base_url, secret_name, secret_version, custom_headers=None, raw=False, **operation_config):
         """Get a specified secret from a given key vault.
 
         The GET operation is applicable to any secret stored in Azure Key
-        Vault.
+        Vault. This operation requires the secrets/get permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1761,14 +1806,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/secrets/{secret-name}/{secret-version}'
+        url = self.get_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str'),
@@ -1792,7 +1837,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1807,28 +1852,31 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_secret.metadata = {'url': '/secrets/{secret-name}/{secret-version}'}
 
     def get_secrets(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List secrets in a specified key vault.
 
-        The LIST operation is applicable to the entire vault, however only the
-        base secret identifier and attributes are provided in the response.
-        Individual secret versions are not listed in the response.
+        The Get Secrets operation is applicable to the entire vault. However,
+        only the base secret identifier and its attributes are provided in the
+        response. Individual secret versions are not listed in the response.
+        This operation requires the secrets/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If
-         not specified the service will return up to 25 results.
+         not specified, the service will return up to 25 results.
         :type maxresults: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretItemPaged
-         <azure.keyvault.models.SecretItemPaged>`
+        :return: An iterator like instance of SecretItem
+        :rtype:
+         ~azure.keyvault.models.SecretItemPaged[~azure.keyvault.models.SecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1836,7 +1884,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/secrets'
+                url = self.get_secrets.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -1865,7 +1913,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1881,15 +1929,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_secrets.metadata = {'url': '/secrets'}
 
     def get_secret_versions(
             self, vault_base_url, secret_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List the versions of the specified secret.
+        """List all versions of the specified secret.
 
-        The LIST VERSIONS operation can be applied to all versions having the
-        same secret name in the same key vault. The full secret identifier and
-        attributes are provided in the response. No values are returned for the
-        secrets and only current versions of a secret are listed.
+        The full secret identifier and attributes are provided in the response.
+        No values are returned for the secrets. This operations requires the
+        secrets/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1897,15 +1945,16 @@ class KeyVaultClient(object):
         :param secret_name: The name of the secret.
         :type secret_name: str
         :param maxresults: Maximum number of results to return in a page. If
-         not specified the service will return up to 25 results.
+         not specified, the service will return up to 25 results.
         :type maxresults: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretItemPaged
-         <azure.keyvault.models.SecretItemPaged>`
+        :return: An iterator like instance of SecretItem
+        :rtype:
+         ~azure.keyvault.models.SecretItemPaged[~azure.keyvault.models.SecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1913,7 +1962,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/secrets/{secret-name}/versions'
+                url = self.get_secret_versions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -1943,7 +1992,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -1959,10 +2008,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_secret_versions.metadata = {'url': '/secrets/{secret-name}/versions'}
 
     def get_deleted_secrets(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List deleted secrets in the specified vault. Authorization: requires
+        """Lists deleted secrets for the specified vault.
+
+        The Get Deleted Secrets operation returns the secrets that have been
+        deleted for a vault enabled for soft-delete. This operation requires
         the secrets/list permission.
 
         :param vault_base_url: The vault name, for example
@@ -1976,8 +2029,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedSecretItemPaged
-         <azure.keyvault.models.DeletedSecretItemPaged>`
+        :return: An iterator like instance of DeletedSecretItem
+        :rtype:
+         ~azure.keyvault.models.DeletedSecretItemPaged[~azure.keyvault.models.DeletedSecretItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -1985,7 +2039,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/deletedsecrets'
+                url = self.get_deleted_secrets.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -2014,7 +2068,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2030,31 +2084,34 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_secrets.metadata = {'url': '/deletedsecrets'}
 
     def get_deleted_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the deleted secret information plus its attributes.
-        Authorization: requires the secrets/get permission.
+        """Gets the specified deleted secret.
+
+        The Get Deleted Secret operation returns the specified deleted secret
+        along with its attributes. This operation requires the secrets/get
+        permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the secret
+        :param secret_name: The name of the secret.
         :type secret_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedSecretBundle
-         <azure.keyvault.models.DeletedSecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedSecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedsecrets/{secret-name}'
+        url = self.get_deleted_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2077,7 +2134,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2092,30 +2149,34 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_secret.metadata = {'url': '/deletedsecrets/{secret-name}'}
 
     def purge_deleted_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Permanently deletes the specified secret. aka purges the secret.
-        Authorization: requires the secrets/purge permission.
+        """Permanently deletes the specified secret.
+
+        The purge deleted secret operation removes the secret permanently,
+        without the possibility of recovery. This operation can only be enabled
+        on a soft-delete enabled vault. This operation requires the
+        secrets/purge permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the secret
+        :param secret_name: The name of the secret.
         :type secret_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedsecrets/{secret-name}'
+        url = self.purge_deleted_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2138,7 +2199,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2146,30 +2207,34 @@ class KeyVaultClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    purge_deleted_secret.metadata = {'url': '/deletedsecrets/{secret-name}'}
 
     def recover_deleted_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Recovers the deleted secret back to its current version under /secrets.
-        Authorization: requires the secrets/recover permission.
+        """Recovers the deleted secret to the latest version.
+
+        Recovers the deleted secret in the specified vault. This operation can
+        only be performed on a soft-delete enabled vault. This operation
+        requires the secrets/recover permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the deleted secret
+        :param secret_name: The name of the deleted secret.
         :type secret_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedsecrets/{secret-name}/recover'
+        url = self.recover_deleted_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2192,7 +2257,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2207,11 +2272,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_secret.metadata = {'url': '/deletedsecrets/{secret-name}/recover'}
 
     def backup_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Requests that a backup of the specified secret be downloaded to the
-        client. Authorization: requires the secrets/backup permission.
+        """Backs up the specified secret.
+
+        Requests that a backup of the specified secret be downloaded to the
+        client. All versions of the secret will be downloaded. This operation
+        requires the secrets/backup permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2223,15 +2292,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupSecretResult
-         <azure.keyvault.models.BackupSecretResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: BackupSecretResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.BackupSecretResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/secrets/{secret-name}/backup'
+        url = self.backup_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'secret-name': self._serialize.url("secret_name", secret_name, 'str')
@@ -2254,7 +2322,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2269,11 +2337,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    backup_secret.metadata = {'url': '/secrets/{secret-name}/backup'}
 
     def restore_secret(
             self, vault_base_url, secret_bundle_backup, custom_headers=None, raw=False, **operation_config):
-        """Restores a backed up secret to a vault. Authorization: requires the
-        secrets/restore permission.
+        """Restores a backed up secret to a vault.
+
+        Restores a backed up secret, and all its versions, to a vault. This
+        operation requires the secrets/restore permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2286,16 +2357,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SecretBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SecretBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.SecretRestoreParameters(secret_bundle_backup=secret_bundle_backup)
 
         # Construct URL
-        url = '/secrets/restore'
+        url = self.restore_secret.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2321,7 +2392,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2336,13 +2407,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    restore_secret.metadata = {'url': '/secrets/restore'}
 
     def get_certificates(
-            self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, maxresults=None, include_pending=None, custom_headers=None, raw=False, **operation_config):
         """List certificates in a specified key vault.
 
         The GetCertificates operation returns the set of certificates resources
-        in the specified key vault.
+        in the specified key vault. This operation requires the
+        certificates/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2350,13 +2423,17 @@ class KeyVaultClient(object):
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
         :type maxresults: int
+        :param include_pending: Specifies whether to include certificates
+         which are not completely provisioned.
+        :type include_pending: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateItemPaged
-         <azure.keyvault.models.CertificateItemPaged>`
+        :return: An iterator like instance of CertificateItem
+        :rtype:
+         ~azure.keyvault.models.CertificateItemPaged[~azure.keyvault.models.CertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2364,7 +2441,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/certificates'
+                url = self.get_certificates.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -2374,6 +2451,8 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                if include_pending is not None:
+                    query_parameters['includePending'] = self._serialize.query("include_pending", include_pending, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -2393,7 +2472,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2409,6 +2488,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificates.metadata = {'url': '/certificates'}
 
     def delete_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -2416,7 +2496,8 @@ class KeyVaultClient(object):
 
         Deletes all versions of a certificate object along with its associated
         policy. Delete certificate cannot be used to remove individual versions
-        of a certificate object.
+        of a certificate object. This operation requires the
+        certificates/delete permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2428,15 +2509,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedCertificateBundle
-         <azure.keyvault.models.DeletedCertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedCertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedCertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}'
+        url = self.delete_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -2459,7 +2539,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2474,35 +2554,35 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate.metadata = {'url': '/certificates/{certificate-name}'}
 
     def set_certificate_contacts(
             self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
         """Sets the certificate contacts for the specified key vault.
 
-        Sets the certificate contacts for the specified key vault.
-        Authorization: requires the certificates/managecontacts permission.
+        Sets the certificate contacts for the specified key vault. This
+        operation requires the certificates/managecontacts permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param contact_list: The contact list for the vault certificates.
-        :type contact_list: list of :class:`Contact
-         <azure.keyvault.models.Contact>`
+        :type contact_list: list[~azure.keyvault.models.Contact]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Contacts or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.Contacts or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         contacts = models.Contacts(contact_list=contact_list)
 
         # Construct URL
-        url = '/certificates/contacts'
+        url = self.set_certificate_contacts.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2528,7 +2608,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2543,13 +2623,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_certificate_contacts.metadata = {'url': '/certificates/contacts'}
 
     def get_certificate_contacts(
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
         """Lists the certificate contacts for a specified key vault.
 
         The GetCertificateContacts operation returns the set of certificate
-        contact resources in the specified key vault.
+        contact resources in the specified key vault. This operation requires
+        the certificates/managecontacts permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2559,14 +2641,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Contacts or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.Contacts or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/contacts'
+        url = self.get_certificate_contacts.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2588,7 +2670,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2603,13 +2685,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_contacts.metadata = {'url': '/certificates/contacts'}
 
     def delete_certificate_contacts(
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
         """Deletes the certificate contacts for a specified key vault.
 
         Deletes the certificate contacts for a specified key vault certificate.
-        Authorization: requires the certificates/managecontacts permission.
+        This operation requires the certificates/managecontacts permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2619,14 +2702,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Contacts or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.Contacts or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/contacts'
+        url = self.delete_certificate_contacts.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
         }
@@ -2648,7 +2731,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2663,13 +2746,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate_contacts.metadata = {'url': '/certificates/contacts'}
 
     def get_certificate_issuers(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List certificate issuers for a specified key vault.
 
         The GetCertificateIssuers operation returns the set of certificate
-        issuer resources in the specified key vault.
+        issuer resources in the specified key vault. This operation requires
+        the certificates/manageissuers/getissuers permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2682,8 +2767,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateIssuerItemPaged
-         <azure.keyvault.models.CertificateIssuerItemPaged>`
+        :return: An iterator like instance of CertificateIssuerItem
+        :rtype:
+         ~azure.keyvault.models.CertificateIssuerItemPaged[~azure.keyvault.models.CertificateIssuerItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -2691,7 +2777,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/certificates/issuers'
+                url = self.get_certificate_issuers.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -2720,7 +2806,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2736,13 +2822,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_issuers.metadata = {'url': '/certificates/issuers'}
 
     def set_certificate_issuer(
             self, vault_base_url, issuer_name, provider, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
         """Sets the specified certificate issuer.
 
         The SetCertificateIssuer operation adds or updates the specified
-        certificate issuer.
+        certificate issuer. This operation requires the certificates/setissuers
+        permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2752,30 +2840,27 @@ class KeyVaultClient(object):
         :param provider: The issuer provider.
         :type provider: str
         :param credentials: The credentials to be used for the issuer.
-        :type credentials: :class:`IssuerCredentials
-         <azure.keyvault.models.IssuerCredentials>`
+        :type credentials: ~azure.keyvault.models.IssuerCredentials
         :param organization_details: Details of the organization as provided
          to the issuer.
-        :type organization_details: :class:`OrganizationDetails
-         <azure.keyvault.models.OrganizationDetails>`
+        :type organization_details: ~azure.keyvault.models.OrganizationDetails
         :param attributes: Attributes of the issuer object.
-        :type attributes: :class:`IssuerAttributes
-         <azure.keyvault.models.IssuerAttributes>`
+        :type attributes: ~azure.keyvault.models.IssuerAttributes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameter = models.CertificateIssuerSetParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
 
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.set_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -2802,7 +2887,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2817,13 +2902,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def update_certificate_issuer(
             self, vault_base_url, issuer_name, provider=None, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified certificate issuer.
 
         The UpdateCertificateIssuer operation performs an update on the
-        specified certificate issuer entity.
+        specified certificate issuer entity. This operation requires the
+        certificates/setissuers permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2833,30 +2920,27 @@ class KeyVaultClient(object):
         :param provider: The issuer provider.
         :type provider: str
         :param credentials: The credentials to be used for the issuer.
-        :type credentials: :class:`IssuerCredentials
-         <azure.keyvault.models.IssuerCredentials>`
+        :type credentials: ~azure.keyvault.models.IssuerCredentials
         :param organization_details: Details of the organization as provided
          to the issuer.
-        :type organization_details: :class:`OrganizationDetails
-         <azure.keyvault.models.OrganizationDetails>`
+        :type organization_details: ~azure.keyvault.models.OrganizationDetails
         :param attributes: Attributes of the issuer object.
-        :type attributes: :class:`IssuerAttributes
-         <azure.keyvault.models.IssuerAttributes>`
+        :type attributes: ~azure.keyvault.models.IssuerAttributes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameter = models.CertificateIssuerUpdateParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
 
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.update_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -2883,7 +2967,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2898,13 +2982,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def get_certificate_issuer(
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
         """Lists the specified certificate issuer.
 
         The GetCertificateIssuer operation returns the specified certificate
-        issuer resources in the specified key vault.
+        issuer resources in the specified key vault. This operation requires
+        the certificates/manageissuers/getissuers permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2916,14 +3002,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.get_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -2946,7 +3032,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -2961,13 +3047,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def delete_certificate_issuer(
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified certificate issuer.
 
         The DeleteCertificateIssuer operation permanently removes the specified
-        certificate issuer from the vault.
+        certificate issuer from the vault. This operation requires the
+        certificates/manageissuers/deleteissuers permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2979,14 +3067,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: IssuerBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.IssuerBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/issuers/{issuer-name}'
+        url = self.delete_certificate_issuer.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'issuer-name': self._serialize.url("issuer_name", issuer_name, 'str')
@@ -3009,7 +3097,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3024,12 +3112,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate_issuer.metadata = {'url': '/certificates/issuers/{issuer-name}'}
 
     def create_certificate(
             self, vault_base_url, certificate_name, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new certificate. .
+        """Creates a new certificate.
 
-        If this is the first version, the certificate resource is created.
+        If this is the first version, the certificate resource is created. This
+        operation requires the certificates/create permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3037,34 +3127,32 @@ class KeyVaultClient(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateCreateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/create'
+        url = self.create_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3088,7 +3176,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3103,6 +3191,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    create_certificate.metadata = {'url': '/certificates/{certificate-name}/create'}
 
     def import_certificate(
             self, vault_base_url, certificate_name, base64_encoded_certificate, password=None, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -3111,7 +3200,8 @@ class KeyVaultClient(object):
         Imports an existing valid certificate, containing a private key, into
         Azure Key Vault. The certificate to be imported can be in either PFX or
         PEM format. If the certificate is in PEM format the PEM file must
-        contain the key as well as x509 certificates.
+        contain the key as well as x509 certificates. This operation requires
+        the certificates/import permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3126,34 +3216,32 @@ class KeyVaultClient(object):
          encrypted, the password used for encryption.
         :type password: str
         :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateImportParameters(base64_encoded_certificate=base64_encoded_certificate, password=password, certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/import'
+        url = self.import_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern='^[0-9a-zA-Z-]+$')
+            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str', pattern=r'^[0-9a-zA-Z-]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3177,7 +3265,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3192,13 +3280,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    import_certificate.metadata = {'url': '/certificates/{certificate-name}/import'}
 
     def get_certificate_versions(
             self, vault_base_url, certificate_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
-        certificate in the specified key vault.
+        certificate in the specified key vault. This operation requires the
+        certificates/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3213,8 +3303,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateItemPaged
-         <azure.keyvault.models.CertificateItemPaged>`
+        :return: An iterator like instance of CertificateItem
+        :rtype:
+         ~azure.keyvault.models.CertificateItemPaged[~azure.keyvault.models.CertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3222,7 +3313,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/certificates/{certificate-name}/versions'
+                url = self.get_certificate_versions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
                     'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3252,7 +3343,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3268,13 +3359,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_versions.metadata = {'url': '/certificates/{certificate-name}/versions'}
 
     def get_certificate_policy(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Lists the policy for a certificate.
 
         The GetCertificatePolicy operation returns the specified certificate
-        policy resources in the specified key vault.
+        policy resources in the specified key vault. This operation requires
+        the certificates/get permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3287,15 +3380,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificatePolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificatePolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/policy'
+        url = self.get_certificate_policy.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3318,7 +3410,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3333,12 +3425,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_policy.metadata = {'url': '/certificates/{certificate-name}/policy'}
 
     def update_certificate_policy(
             self, vault_base_url, certificate_name, certificate_policy, custom_headers=None, raw=False, **operation_config):
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leave others as null.
+        This operation requires the certificates/update permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3347,22 +3441,20 @@ class KeyVaultClient(object):
          vault.
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificatePolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificatePolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/policy'
+        url = self.update_certificate_policy.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3389,7 +3481,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3404,14 +3496,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate_policy.metadata = {'url': '/certificates/{certificate-name}/policy'}
 
     def update_certificate(
             self, vault_base_url, certificate_name, certificate_version, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified attributes associated with the given certificate.
 
         The UpdateCertificate operation applies the specified update on the
-        given certificate; note the only elements being updated are the
-        certificate's attributes.
+        given certificate; the only elements updated are the certificate's
+        attributes. This operation requires the certificates/update permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3422,31 +3515,29 @@ class KeyVaultClient(object):
         :param certificate_version: The version of the certificate.
         :type certificate_version: str
         :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: :class:`CertificatePolicy
-         <azure.keyvault.models.CertificatePolicy>`
+        :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateUpdateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/{certificate-version}'
+        url = self.update_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
@@ -3474,7 +3565,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3489,10 +3580,13 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate.metadata = {'url': '/certificates/{certificate-name}/{certificate-version}'}
 
     def get_certificate(
             self, vault_base_url, certificate_name, certificate_version, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a specified certificate. Authorization: requires
+        """Gets information about a certificate.
+
+        Gets information about a specific certificate. This operation requires
         the certificates/get permission.
 
         :param vault_base_url: The vault name, for example
@@ -3508,15 +3602,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/{certificate-version}'
+        url = self.get_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str'),
@@ -3540,7 +3633,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3555,11 +3648,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate.metadata = {'url': '/certificates/{certificate-name}/{certificate-version}'}
 
     def update_certificate_operation(
             self, vault_base_url, certificate_name, cancellation_requested, custom_headers=None, raw=False, **operation_config):
-        """Updates a certificate operation. Authorization: requires the
-        certificates/update permission.
+        """Updates a certificate operation.
+
+        Updates a certificate creation operation that is already in progress.
+        This operation requires the certificates/update permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3574,17 +3670,16 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         certificate_operation = models.CertificateOperationUpdateParameter(cancellation_requested=cancellation_requested)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/pending'
+        url = self.update_certificate_operation.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3611,7 +3706,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3626,11 +3721,14 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}
 
     def get_certificate_operation(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the operation associated with a specified certificate.
-        Authorization: requires the certificates/get permission.
+        """Gets the creation operation of a certificate.
+
+        Gets the creation operation associated with a specified certificate.
+        This operation requires the certificates/get permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3642,15 +3740,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/pending'
+        url = self.get_certificate_operation.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3673,7 +3770,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3688,11 +3785,15 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}
 
     def delete_certificate_operation(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the operation for a specified certificate. Authorization:
-        requires the certificates/update permission.
+        """Deletes the creation operation for a specific certificate.
+
+        Deletes the creation operation for a specified certificate that is in
+        the process of being created. The certificate is no longer created.
+        This operation requires the certificates/update permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3704,15 +3805,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateOperation
-         <azure.keyvault.models.CertificateOperation>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateOperation or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateOperation or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/certificates/{certificate-name}/pending'
+        url = self.delete_certificate_operation.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3735,7 +3835,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3750,6 +3850,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    delete_certificate_operation.metadata = {'url': '/certificates/{certificate-name}/pending'}
 
     def merge_certificate(
             self, vault_base_url, certificate_name, x509_certificates, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -3758,7 +3859,7 @@ class KeyVaultClient(object):
 
         The MergeCertificate operation performs the merging of a certificate or
         certificate chain with a key pair currently available in the service.
-        Authorization: requires the certificates/update permission.
+        This operation requires the certificates/create permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3767,30 +3868,29 @@ class KeyVaultClient(object):
         :type certificate_name: str
         :param x509_certificates: The certificate or the certificate chain to
          merge.
-        :type x509_certificates: list of bytearray
+        :type x509_certificates: list[bytearray]
         :param certificate_attributes: The attributes of the certificate
          (optional).
-        :type certificate_attributes: :class:`CertificateAttributes
-         <azure.keyvault.models.CertificateAttributes>`
+        :type certificate_attributes:
+         ~azure.keyvault.models.CertificateAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateMergeParameters(x509_certificates=x509_certificates, certificate_attributes=certificate_attributes, tags=tags)
 
         # Construct URL
-        url = '/certificates/{certificate-name}/pending/merge'
+        url = self.merge_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3817,7 +3917,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3832,15 +3932,18 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    merge_certificate.metadata = {'url': '/certificates/{certificate-name}/pending/merge'}
 
     def get_deleted_certificates(
-            self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the deleted certificates in the specified vault, currently
+            self, vault_base_url, maxresults=None, include_pending=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the deleted certificates in the specified vault currently
         available for recovery.
 
         The GetDeletedCertificates operation retrieves the certificates in the
         current vault which are in a deleted state and ready for recovery or
-        purging.
+        purging. This operation includes deletion-specific information. This
+        operation requires the certificates/get/list permission. This operation
+        can only be enabled on soft-delete enabled vaults.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3848,13 +3951,17 @@ class KeyVaultClient(object):
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
         :type maxresults: int
+        :param include_pending: Specifies whether to include certificates
+         which are not completely provisioned.
+        :type include_pending: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedCertificateItemPaged
-         <azure.keyvault.models.DeletedCertificateItemPaged>`
+        :return: An iterator like instance of DeletedCertificateItem
+        :rtype:
+         ~azure.keyvault.models.DeletedCertificateItemPaged[~azure.keyvault.models.DeletedCertificateItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -3862,7 +3969,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/deletedcertificates'
+                url = self.get_deleted_certificates.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -3872,6 +3979,8 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                if include_pending is not None:
+                    query_parameters['includePending'] = self._serialize.query("include_pending", include_pending, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -3891,7 +4000,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3907,6 +4016,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_certificates.metadata = {'url': '/deletedcertificates'}
 
     def get_deleted_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -3914,7 +4024,8 @@ class KeyVaultClient(object):
 
         The GetDeletedCertificate operation retrieves the deleted certificate
         information plus its attributes, such as retention interval, scheduled
-        permanent deletion and the current deletion recovery level.
+        permanent deletion and the current deletion recovery level. This
+        operation requires the certificates/get permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3926,15 +4037,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedCertificateBundle
-         <azure.keyvault.models.DeletedCertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedCertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedCertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedcertificates/{certificate-name}'
+        url = self.get_deleted_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -3957,7 +4067,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -3972,6 +4082,7 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}'}
 
     def purge_deleted_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -3980,7 +4091,7 @@ class KeyVaultClient(object):
         The PurgeDeletedCertificate operation performs an irreversible deletion
         of the specified certificate, without possibility for recovery. The
         operation is not available if the recovery level does not specify
-        'Purgeable'. Requires the explicit granting of the 'purge' permission.
+        'Purgeable'. This operation requires the certificate/purge permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3992,14 +4103,13 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedcertificates/{certificate-name}'
+        url = self.purge_deleted_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -4022,7 +4132,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [204]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4030,6 +4140,7 @@ class KeyVaultClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    purge_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}'}
 
     def recover_deleted_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -4039,7 +4150,8 @@ class KeyVaultClient(object):
         The RecoverDeletedCertificate operation performs the reversal of the
         Delete operation. The operation is applicable in vaults enabled for
         soft-delete, and must be issued during the retention interval
-        (available in the deleted certificate's attributes).
+        (available in the deleted certificate's attributes). This operation
+        requires the certificates/recover permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4051,15 +4163,14 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CertificateBundle
-         <azure.keyvault.models.CertificateBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/deletedcertificates/{certificate-name}/recover'
+        url = self.recover_deleted_certificate.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
@@ -4082,7 +4193,7 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4097,10 +4208,12 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_certificate.metadata = {'url': '/deletedcertificates/{certificate-name}/recover'}
 
     def get_storage_accounts(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List storage accounts managed by specified key vault.
+        """List storage accounts managed by the specified key vault. This
+        operation requires the storage/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4113,8 +4226,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageAccountItemPaged
-         <azure.keyvault.models.StorageAccountItemPaged>`
+        :return: An iterator like instance of StorageAccountItem
+        :rtype:
+         ~azure.keyvault.models.StorageAccountItemPaged[~azure.keyvault.models.StorageAccountItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4122,7 +4236,7 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/storage'
+                url = self.get_storage_accounts.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
                 }
@@ -4151,7 +4265,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4167,70 +4281,91 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_storage_accounts.metadata = {'url': '/storage'}
 
-    def delete_storage_account(
-            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a storage account.
+    def get_deleted_storage_accounts(
+            self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        """Lists deleted storage accounts for the specified vault.
+
+        The Get Deleted Storage Accounts operation returns the storage accounts
+        that have been deleted for a vault enabled for soft-delete. This
+        operation requires the storage/list permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param storage_account_name: The name of the storage account.
-        :type storage_account_name: str
+        :param maxresults: Maximum number of results to return in a page. If
+         not specified the service will return up to 25 results.
+        :type maxresults: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An iterator like instance of DeletedStorageAccountItem
+        :rtype:
+         ~azure.keyvault.models.DeletedStorageAccountItemPaged[~azure.keyvault.models.DeletedStorageAccountItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        # Construct URL
-        url = '/storage/{storage-account-name}'
-        path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.get_deleted_storage_accounts.metadata['url']
+                path_format_arguments = {
+                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if maxresults is not None:
+                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.KeyVaultErrorException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('StorageBundle', response)
+            if response.status_code not in [200]:
+                raise models.KeyVaultErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeletedStorageAccountItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeletedStorageAccountItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    get_deleted_storage_accounts.metadata = {'url': '/deletedstorage'}
 
-    def get_storage_account(
+    def get_deleted_storage_account(
             self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a specified storage account.
+        """Gets the specified deleted storage account.
+
+        The Get Deleted Storage Account operation returns the specified deleted
+        storage account along with its attributes. This operation requires the
+        storage/get permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4242,17 +4377,17 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedStorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedStorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/storage/{storage-account-name}'
+        url = self.get_deleted_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4272,7 +4407,130 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeletedStorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deleted_storage_account.metadata = {'url': '/deletedstorage/{storage-account-name}'}
+
+    def purge_deleted_storge_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Permanently deletes the specified storage account.
+
+        The purge deleted storage account operation removes the secret
+        permanently, without the possibility of recovery. This operation can
+        only be performed on a soft-delete enabled vault. This operation
+        requires the storage/purge permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.purge_deleted_storge_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    purge_deleted_storge_account.metadata = {'url': '/deletedstorage/{storage-account-name}'}
+
+    def recover_deleted_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Recovers the deleted storage account.
+
+        Recovers the deleted storage account in the specified vault. This
+        operation can only be performed on a soft-delete enabled vault. This
+        operation requires the storage/recover permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.recover_deleted_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4287,10 +4545,270 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_storage_account.metadata = {'url': '/deletedstorage/{storage-account-name}/recover'}
+
+    def backup_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Backs up the specified storage account.
+
+        Requests that a backup of the specified storage account be downloaded
+        to the client. This operation requires the storage/backup permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BackupStorageResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.BackupStorageResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.backup_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupStorageResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    backup_storage_account.metadata = {'url': '/storage/{storage-account-name}/backup'}
+
+    def restore_storage_account(
+            self, vault_base_url, storage_bundle_backup, custom_headers=None, raw=False, **operation_config):
+        """Restores a backed up storage account to a vault.
+
+        Restores a backed up storage account to a vault. This operation
+        requires the storage/restore permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_bundle_backup: The backup blob associated with a
+         storage account.
+        :type storage_bundle_backup: bytes
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters = models.StorageRestoreParameters(storage_bundle_backup=storage_bundle_backup)
+
+        # Construct URL
+        url = self.restore_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'StorageRestoreParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    restore_storage_account.metadata = {'url': '/storage/restore'}
+
+    def delete_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a storage account. This operation requires the storage/delete
+        permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeletedStorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedStorageBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.delete_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeletedStorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    delete_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
+
+    def get_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Gets information about a specified storage account. This operation
+        requires the storage/get permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.get_storage_account.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
 
     def set_storage_account(
             self, vault_base_url, storage_account_name, resource_id, active_key_name, auto_regenerate_key, regeneration_period=None, storage_account_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a new storage account.
+        """Creates or updates a new storage account. This operation requires the
+        storage/set permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4309,29 +4827,29 @@ class KeyVaultClient(object):
         :type regeneration_period: str
         :param storage_account_attributes: The attributes of the storage
          account.
-        :type storage_account_attributes: :class:`StorageAccountAttributes
-         <azure.keyvault.models.StorageAccountAttributes>`
+        :type storage_account_attributes:
+         ~azure.keyvault.models.StorageAccountAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.StorageAccountCreateParameters(resource_id=resource_id, active_key_name=active_key_name, auto_regenerate_key=auto_regenerate_key, regeneration_period=regeneration_period, storage_account_attributes=storage_account_attributes, tags=tags)
 
         # Construct URL
-        url = '/storage/{storage-account-name}'
+        url = self.set_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4355,7 +4873,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4370,11 +4888,12 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
 
     def update_storage_account(
             self, vault_base_url, storage_account_name, active_key_name=None, auto_regenerate_key=None, regeneration_period=None, storage_account_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified attributes associated with the given storage
-        account.
+        account. This operation requires the storage/set/update permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4391,29 +4910,29 @@ class KeyVaultClient(object):
         :type regeneration_period: str
         :param storage_account_attributes: The attributes of the storage
          account.
-        :type storage_account_attributes: :class:`StorageAccountAttributes
-         <azure.keyvault.models.StorageAccountAttributes>`
+        :type storage_account_attributes:
+         ~azure.keyvault.models.StorageAccountAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.StorageAccountUpdateParameters(active_key_name=active_key_name, auto_regenerate_key=auto_regenerate_key, regeneration_period=regeneration_period, storage_account_attributes=storage_account_attributes, tags=tags)
 
         # Construct URL
-        url = '/storage/{storage-account-name}'
+        url = self.update_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4437,7 +4956,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4452,10 +4971,12 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_storage_account.metadata = {'url': '/storage/{storage-account-name}'}
 
     def regenerate_storage_account_key(
             self, vault_base_url, storage_account_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the specified key value for the given storage account.
+        """Regenerates the specified key value for the given storage account. This
+        operation requires the storage/regeneratekey permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4463,26 +4984,25 @@ class KeyVaultClient(object):
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
         :param key_name: The storage account key name.
-
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: StorageBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.StorageBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.StorageAccountRegenerteKeyParameters(key_name=key_name)
 
         # Construct URL
-        url = '/storage/{storage-account-name}/regeneratekey'
+        url = self.regenerate_storage_account_key.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4506,7 +5026,7 @@ class KeyVaultClient(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4521,11 +5041,13 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    regenerate_storage_account_key.metadata = {'url': '/storage/{storage-account-name}/regeneratekey'}
 
     def get_sas_definitions(
             self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List storage SAS definitions for the given storage account.
-        
+        """List storage SAS definitions for the given storage account. This
+        operation requires the storage/listsas permission.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -4539,8 +5061,9 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionItemPaged
-         <azure.keyvault.models.SasDefinitionItemPaged>`
+        :return: An iterator like instance of SasDefinitionItem
+        :rtype:
+         ~azure.keyvault.models.SasDefinitionItemPaged[~azure.keyvault.models.SasDefinitionItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
@@ -4548,10 +5071,10 @@ class KeyVaultClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/storage/{storage-account-name}/sas'
+                url = self.get_sas_definitions.metadata['url']
                 path_format_arguments = {
                     'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-                    'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+                    'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -4578,7 +5101,7 @@ class KeyVaultClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4594,77 +5117,95 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    get_sas_definitions.metadata = {'url': '/storage/{storage-account-name}/sas'}
 
-    def delete_sas_definition(
-            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+    def get_deleted_sas_definitions(
+            self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        """Lists deleted SAS definitions for the specified vault and storage
+        account.
 
-        """Deletes a SAS definition from a specified storage account.
+        The Get Deleted Sas Definitions operation returns the SAS definitions
+        that have been deleted for a vault enabled for soft-delete. This
+        operation requires the storage/listsas permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param sas_definition_name: The name of the SAS definition.
-        :type sas_definition_name: str
+        :param maxresults: Maximum number of results to return in a page. If
+         not specified the service will return up to 25 results.
+        :type maxresults: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: An iterator like instance of DeletedSasDefinitionItem
+        :rtype:
+         ~azure.keyvault.models.DeletedSasDefinitionItemPaged[~azure.keyvault.models.DeletedSasDefinitionItem]
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
-        path_format_arguments = {
-            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.get_deleted_sas_definitions.metadata['url']
+                path_format_arguments = {
+                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if maxresults is not None:
+                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.KeyVaultErrorException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SasDefinitionBundle', response)
+            if response.status_code not in [200]:
+                raise models.KeyVaultErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeletedSasDefinitionItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeletedSasDefinitionItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
+    get_deleted_sas_definitions.metadata = {'url': '/deletedstorage/{storage-account-name}/sas'}
 
-    def get_sas_definition(
+    def get_deleted_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified deleted sas definition.
 
-        """Gets information about a SAS definition for the specified storage
-        account.
+        The Get Deleted SAS Definition operation returns the specified deleted
+        SAS definition along with its attributes. This operation requires the
+        storage/getsas permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4678,19 +5219,18 @@ class KeyVaultClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedSasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        url = self.get_deleted_sas_definition.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4710,7 +5250,75 @@ class KeyVaultClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeletedSasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_deleted_sas_definition.metadata = {'url': '/deletedstorage/{storage-account-name}/sas/{sas-definition-name}'}
+
+    def recover_deleted_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Recovers the deleted SAS definition.
+
+        Recovers the deleted SAS definition for the specified storage account.
+        This operation can only be performed on a soft-delete enabled vault.
+        This operation requires the storage/recover permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.recover_deleted_sas_definition.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4725,11 +5333,12 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    recover_deleted_sas_definition.metadata = {'url': '/deletedstorage/{storage-account-name}/sas/{sas-definition-name}/recover'}
 
-    def set_sas_definition(
-            self, vault_base_url, storage_account_name, sas_definition_name, parameters, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a new SAS definition for the specified storage
-        account.
+    def delete_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a SAS definition from a specified storage account. This
+        operation requires the storage/deletesas permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4738,36 +5347,172 @@ class KeyVaultClient(object):
         :type storage_account_name: str
         :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
-        :param parameters: Sas definition creation metadata in the form of
-         key-value pairs.
-        :type parameters: dict
-        :param sas_definition_attributes: The attributes of the SAS
-         definition.
-        :type sas_definition_attributes: :class:`SasDefinitionAttributes
-         <azure.keyvault.models.SasDefinitionAttributes>`
-        :param tags: Application specific metadata in the form of key-value
-         pairs.
-        :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: DeletedSasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.DeletedSasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        parameters1 = models.SasDefinitionCreateParameters(parameters=parameters, sas_definition_attributes=sas_definition_attributes, tags=tags)
-
         # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        url = self.delete_sas_definition.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DeletedSasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    delete_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}
+
+    def get_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Gets information about a SAS definition for the specified storage
+        account. This operation requires the storage/getsas permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.get_sas_definition.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}
+
+    def set_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, template_uri, sas_type, validity_period, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a new SAS definition for the specified storage
+        account. This operation requires the storage/setsas permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param template_uri: The SAS definition token template signed with an
+         arbitrary key.  Tokens created according to the SAS definition will
+         have the same properties as the template.
+        :type template_uri: str
+        :param sas_type: The type of SAS token the SAS definition will create.
+         Possible values include: 'account', 'service'
+        :type sas_type: str or ~azure.keyvault.models.SasTokenType
+        :param validity_period: The validity period of SAS tokens created
+         according to the SAS definition.
+        :type validity_period: str
+        :param sas_definition_attributes: The attributes of the SAS
+         definition.
+        :type sas_definition_attributes:
+         ~azure.keyvault.models.SasDefinitionAttributes
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters = models.SasDefinitionCreateParameters(template_uri=template_uri, sas_type=sas_type, validity_period=validity_period, sas_definition_attributes=sas_definition_attributes, tags=tags)
+
+        # Construct URL
+        url = self.set_sas_definition.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4786,12 +5531,12 @@ class KeyVaultClient(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters1, 'SasDefinitionCreateParameters')
+        body_content = self._serialize.body(parameters, 'SasDefinitionCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4806,11 +5551,12 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    set_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}
 
     def update_sas_definition(
-            self, vault_base_url, storage_account_name, sas_definition_name, parameters=None, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, storage_account_name, sas_definition_name, template_uri=None, sas_type=None, validity_period=None, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified attributes associated with the given SAS
-        definition.
+        definition. This operation requires the storage/setsas permission.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -4819,36 +5565,42 @@ class KeyVaultClient(object):
         :type storage_account_name: str
         :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
-        :param parameters: Sas definition update metadata in the form of
-         key-value pairs.
-        :type parameters: dict
+        :param template_uri: The SAS definition token template signed with an
+         arbitrary key.  Tokens created according to the SAS definition will
+         have the same properties as the template.
+        :type template_uri: str
+        :param sas_type: The type of SAS token the SAS definition will create.
+         Possible values include: 'account', 'service'
+        :type sas_type: str or ~azure.keyvault.models.SasTokenType
+        :param validity_period: The validity period of SAS tokens created
+         according to the SAS definition.
+        :type validity_period: str
         :param sas_definition_attributes: The attributes of the SAS
          definition.
-        :type sas_definition_attributes: :class:`SasDefinitionAttributes
-         <azure.keyvault.models.SasDefinitionAttributes>`
+        :type sas_definition_attributes:
+         ~azure.keyvault.models.SasDefinitionAttributes
         :param tags: Application specific metadata in the form of key-value
          pairs.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SasDefinitionBundle
-         <azure.keyvault.models.SasDefinitionBundle>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SasDefinitionBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.SasDefinitionBundle or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        parameters1 = models.SasDefinitionUpdateParameters(parameters=parameters, sas_definition_attributes=sas_definition_attributes, tags=tags)
+        parameters = models.SasDefinitionUpdateParameters(template_uri=template_uri, sas_type=sas_type, validity_period=validity_period, sas_definition_attributes=sas_definition_attributes, tags=tags)
 
         # Construct URL
-        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        url = self.update_sas_definition.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
-            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
-            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4867,12 +5619,12 @@ class KeyVaultClient(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters1, 'SasDefinitionUpdateParameters')
+        body_content = self._serialize.body(parameters, 'SasDefinitionUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.KeyVaultErrorException(self._deserialize, response)
@@ -4887,3 +5639,4 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+    update_sas_definition.metadata = {'url': '/storage/{storage-account-name}/sas/{sas-definition-name}'}

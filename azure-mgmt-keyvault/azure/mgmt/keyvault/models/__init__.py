@@ -12,15 +12,29 @@
 from .sku import Sku
 from .permissions import Permissions
 from .access_policy_entry import AccessPolicyEntry
+from .ip_rule import IPRule
+from .virtual_network_rule import VirtualNetworkRule
+from .network_rule_set import NetworkRuleSet
 from .vault_properties import VaultProperties
+from .vault_patch_properties import VaultPatchProperties
+from .vault_access_policy_properties import VaultAccessPolicyProperties
 from .deleted_vault_properties import DeletedVaultProperties
 from .vault_create_or_update_parameters import VaultCreateOrUpdateParameters
+from .vault_patch_parameters import VaultPatchParameters
+from .vault_access_policy_parameters import VaultAccessPolicyParameters
 from .vault import Vault
 from .deleted_vault import DeletedVault
 from .resource import Resource
+from .vault_check_name_availability_parameters import VaultCheckNameAvailabilityParameters
+from .check_name_availability_result import CheckNameAvailabilityResult
+from .operation_display import OperationDisplay
+from .log_specification import LogSpecification
+from .service_specification import ServiceSpecification
+from .operation import Operation
 from .vault_paged import VaultPaged
 from .deleted_vault_paged import DeletedVaultPaged
 from .resource_paged import ResourcePaged
+from .operation_paged import OperationPaged
 from .key_vault_management_client_enums import (
     SkuName,
     KeyPermissions,
@@ -28,25 +42,47 @@ from .key_vault_management_client_enums import (
     CertificatePermissions,
     StoragePermissions,
     CreateMode,
+    NetworkRuleBypassOptions,
+    NetworkRuleAction,
+    Reason,
+    AccessPolicyUpdateKind,
 )
 
 __all__ = [
     'Sku',
     'Permissions',
     'AccessPolicyEntry',
+    'IPRule',
+    'VirtualNetworkRule',
+    'NetworkRuleSet',
     'VaultProperties',
+    'VaultPatchProperties',
+    'VaultAccessPolicyProperties',
     'DeletedVaultProperties',
     'VaultCreateOrUpdateParameters',
+    'VaultPatchParameters',
+    'VaultAccessPolicyParameters',
     'Vault',
     'DeletedVault',
     'Resource',
+    'VaultCheckNameAvailabilityParameters',
+    'CheckNameAvailabilityResult',
+    'OperationDisplay',
+    'LogSpecification',
+    'ServiceSpecification',
+    'Operation',
     'VaultPaged',
     'DeletedVaultPaged',
     'ResourcePaged',
+    'OperationPaged',
     'SkuName',
     'KeyPermissions',
     'SecretPermissions',
     'CertificatePermissions',
     'StoragePermissions',
     'CreateMode',
+    'NetworkRuleBypassOptions',
+    'NetworkRuleAction',
+    'Reason',
+    'AccessPolicyUpdateKind',
 ]

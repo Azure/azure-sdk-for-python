@@ -13,7 +13,7 @@ from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import \
     (VaultCreateOrUpdateParameters, VaultProperties, Sku, AccessPolicyEntry, Permissions, KeyPermissions, SecretPermissions, SkuName,
      CertificatePermissions, StoragePermissions)
-from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, KeyVaultAuthBase, HttpBearerChallenge
+from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, KeyVaultAuthBase, HttpChallenge
 
 from azure.common.exceptions import (
     CloudError
@@ -124,8 +124,8 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
         super(AzureKeyVaultTestCase, self).setUp()
 
         def mock_key_vault_auth_base(self, request):
-            challenge = HttpBearerChallenge(request.url, 'Bearer authorization=fake-url,resource=https://vault.azure.net')
-            self.set_authorization_header(request, challenge)
+            challenge = HttpChallenge(request.url, 'Bearer authorization=fake-url,resource=https://vault.azure.net')
+            security = self._get_message_security(request, challenge)
             return request
 
         self.fake_settings = fake_settings
@@ -199,10 +199,7 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
         parameters = VaultCreateOrUpdateParameters(location='westus',
                                                    properties=properties)
 
-        vault = self.mgmt_client.vaults.create_or_update(group_name, vault_name, parameters)
-
-        if not self.is_playback():
-            self.sleep(10)
+        vault = self.mgmt_client.vaults.create_or_update(group_name, vault_name, parameters).result()
 
         return vault
 
