@@ -82,7 +82,7 @@ class VirtualMachine(Resource):
      [Azure Hybrid Use Benefit for Windows
      Server](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Minimum api-version: 2015-06-15
-    :type license_type: str
+    :type license_type: int
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
@@ -123,7 +123,7 @@ class VirtualMachine(Resource):
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
-        'license_type': {'key': 'properties.licenseType', 'type': 'str'},
+        'license_type': {'key': 'properties.licenseType', 'type': 'int'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
