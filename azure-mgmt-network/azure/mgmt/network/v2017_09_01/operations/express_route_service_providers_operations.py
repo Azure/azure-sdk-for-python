@@ -22,7 +22,7 @@ class ExpressRouteServiceProvidersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-09-01".
     """
 
@@ -55,7 +55,7 @@ class ExpressRouteServiceProvidersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteServiceProviders'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -100,3 +100,4 @@ class ExpressRouteServiceProvidersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteServiceProviders'}

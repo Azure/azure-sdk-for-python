@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class QueryTroubleshootingParameters(Model):
     """Parameters that define the resource to query the troubleshooting result.
 
-    :param target_resource_id: The target resource ID to query the
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. The target resource ID to query the
      troubleshooting result.
     :type target_resource_id: str
     """
@@ -28,6 +30,6 @@ class QueryTroubleshootingParameters(Model):
         'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
     }
 
-    def __init__(self, target_resource_id):
-        super(QueryTroubleshootingParameters, self).__init__()
-        self.target_resource_id = target_resource_id
+    def __init__(self, **kwargs):
+        super(QueryTroubleshootingParameters, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)

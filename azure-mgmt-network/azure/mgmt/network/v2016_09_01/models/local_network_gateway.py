@@ -18,6 +18,8 @@ class LocalNetworkGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource ID.
     :type id: str
     :ivar name: Resource name.
@@ -28,7 +30,8 @@ class LocalNetworkGateway(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param local_network_address_space: Local network site address space.
+    :param local_network_address_space: Required. Local network site address
+     space.
     :type local_network_address_space:
      ~azure.mgmt.network.v2016_09_01.models.AddressSpace
     :param gateway_ip_address: IP address of local network gateway.
@@ -68,11 +71,11 @@ class LocalNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, local_network_address_space, id=None, location=None, tags=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, etag=None):
-        super(LocalNetworkGateway, self).__init__(id=id, location=location, tags=tags)
-        self.local_network_address_space = local_network_address_space
-        self.gateway_ip_address = gateway_ip_address
-        self.bgp_settings = bgp_settings
-        self.resource_guid = resource_guid
+    def __init__(self, **kwargs):
+        super(LocalNetworkGateway, self).__init__(**kwargs)
+        self.local_network_address_space = kwargs.get('local_network_address_space', None)
+        self.gateway_ip_address = kwargs.get('gateway_ip_address', None)
+        self.bgp_settings = kwargs.get('bgp_settings', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = None
-        self.etag = etag
+        self.etag = kwargs.get('etag', None)

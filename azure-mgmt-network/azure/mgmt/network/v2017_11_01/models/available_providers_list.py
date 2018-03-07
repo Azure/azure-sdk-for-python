@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class AvailableProvidersList(Model):
     """List of available countries with details.
 
-    :param countries: List of available countries.
+    All required parameters must be populated in order to send to Azure.
+
+    :param countries: Required. List of available countries.
     :type countries:
      list[~azure.mgmt.network.v2017_11_01.models.AvailableProvidersListCountry]
     """
@@ -28,6 +30,6 @@ class AvailableProvidersList(Model):
         'countries': {'key': 'countries', 'type': '[AvailableProvidersListCountry]'},
     }
 
-    def __init__(self, countries):
-        super(AvailableProvidersList, self).__init__()
-        self.countries = countries
+    def __init__(self, **kwargs):
+        super(AvailableProvidersList, self).__init__(**kwargs)
+        self.countries = kwargs.get('countries', None)

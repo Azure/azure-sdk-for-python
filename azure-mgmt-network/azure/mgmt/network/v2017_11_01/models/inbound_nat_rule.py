@@ -77,15 +77,15 @@ class InboundNatRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None):
-        super(InboundNatRule, self).__init__(id=id)
-        self.frontend_ip_configuration = frontend_ip_configuration
+    def __init__(self, **kwargs):
+        super(InboundNatRule, self).__init__(**kwargs)
+        self.frontend_ip_configuration = kwargs.get('frontend_ip_configuration', None)
         self.backend_ip_configuration = None
-        self.protocol = protocol
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
-        self.idle_timeout_in_minutes = idle_timeout_in_minutes
-        self.enable_floating_ip = enable_floating_ip
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+        self.protocol = kwargs.get('protocol', None)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.backend_port = kwargs.get('backend_port', None)
+        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
+        self.enable_floating_ip = kwargs.get('enable_floating_ip', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
