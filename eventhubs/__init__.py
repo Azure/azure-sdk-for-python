@@ -182,89 +182,74 @@ class EventHubClient(object):
         """Handles on_session_remote_open event."""
         log.info("%s: session remote open", self.container_id)
 
-    def on_connection_remote_close(self, event):
-        """Handles on_connection_remote_close event."""
-        if self.stopped or event.connection != self.connection:
-            return DELEGATED
-        if EndpointStateHandler.is_local_closed(event.connection):
-            return DELEGATED
-        condition = event.connection.remote_condition
-        if condition:
-            log.error("%s: connection closed by peer %s:%s %s",
-                      self.container_id,
-                      condition.name,
-                      condition.description,
-                      event.connection.remote_container)
-        else:
-            log.error("%s: connection closed by peer %s",
-                      self.container_id,
-                      event.connection.remote_container)
-        self._close_clients(condition)
-        self._close_session()
-        self._close_connection()
-        self.container.schedule(1.0, self)
+    # def on_connection_remote_close(self, event):
+    #     """Handles on_connection_remote_close event."""
+    #     if self.stopped or event.connection != self.connection:
+    #         return DELEGATED
+    #     if EndpointStateHandler.is_local_closed(event.connection):
+    #         return DELEGATED
+    #     condition = event.connection.remote_condition
+    #     if condition:
+    #         log.error("%s: connection closed by peer %s:%s %s",
+    #                   self.container_id,
+    #                   condition.name,
+    #                   condition.description,
+    #                   event.connection.remote_container)
+    #     else:
+    #         log.error("%s: connection closed by peer %s",
+    #                   self.container_id,
+    #                   event.connection.remote_container)
+    #     self._close_clients(condition)
+    #     self._close_session()
+    #     self._close_connection()
+    #     self.container.schedule(1.0, self)
 
-    def on_session_remote_close(self, event):
-        """Handles on_session_remote_close event."""
-        if EndpointStateHandler.is_local_closed(event.session):
-            return DELEGATED
-        condition = event.session.remote_condition
-        if condition:
-            log.error("%s: session close %s:%s %s",
-                      self.container_id,
-                      condition.name,
-                      condition.description,
-                      self.connection.remote_container)
-        else:
-            log.error("%s, session close %s",
-                      self.container_id,
-                      self.connection.remote_container)
-        self._close_clients(condition)
-        self._close_session()
-        self.container.schedule(1.0, self)
+    # def on_session_remote_close(self, event):
+    #     """Handles on_session_remote_close event."""
+    #     if EndpointStateHandler.is_local_closed(event.session):
+    #         return DELEGATED
+    #     condition = event.session.remote_condition
+    #     if condition:
+    #         log.error("%s: session close %s:%s %s",
+    #                   self.container_id,
+    #                   condition.name,
+    #                   condition.description,
+    #                   self.connection.remote_container)
+    #     else:
+    #         log.error("%s, session close %s",
+    #                   self.container_id,
+    #                   self.connection.remote_container)
+    #     self._close_clients(condition)
+    #     self._close_session()
+    #     self.container.schedule(1.0, self)
 
-    def on_transport_closed(self, event):
-        """ Handles on_transport_closed event. """
-        if event.connection != self.connection:
-            return DELEGATED
-        if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
-            return DELEGATED
-        log.error("%s: transport close, condition %s", self.container_id, event.transport.condition)
-        self._close_clients(event.transport.condition)
-        self._close_session()
-        self._close_connection()
-        self.on_reactor_init(None)
-
-    def on_timer_task(self, event):
-        """ Handles on_timer_task event. """
-        if not self.stopped:
-            self.on_reactor_init(None)
+    # def on_transport_closed(self, event):
+    #     """ Handles on_transport_closed event. """
+    #     if event.connection != self.connection:
+    #         return DELEGATED
+    #     if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
+    #         return DELEGATED
+    #     log.error("%s: transport close, condition %s", self.container_id, event.transport.condition)
+    #     self._close_clients(event.transport.condition)
+    #     self._close_session()
+    #     self._close_connection()
+    #     self.on_reactor_init(None)
 
     def on_stop_client(self, event):
         """ Handles on_stop_client event. """
         log.info("%s: on_stop_client", self.container_id)
         self.stopped = True
         self._close_clients(None)
-        self._close_session()
         self._close_connection()
-
-    def on_send(self, event):
-        """ Called when messages are available to send for a sender. """
-        event.subject.on_sendable(None)
 
     def _close_connection(self):
         if self.connection:
-            self.connection.close()
-            self.connection.free()
+            self.connection.destroy()
             self.connection = None
 
-    def _close_session(self):
-        if self.session_policy:
-            self.session_policy.reset()
-
-    def _close_clients(self, condition):
+    def _close_clients(self):
         for client in self.clients:
-            client.stop(condition)
+            client.close()
 
 
 class Sender:
@@ -305,14 +290,14 @@ class Sender:
         result (None on success, or a L{EventHubError} on failure).
         """
         self._check()
-        event_data.message.on_message_sent = lambda o, c: callback(d, Sender._error(o, c)
+        event_data.message.on_message_sent = lambda o, c: callback(d, Sender._error(o, c))
         self._handler.send(event_data.message)
 
     def handler(self, client, target):
         """
         Creates a protocol handler for this sender.
         """
-        self._handler = SendClient(target, auth=self.auth, debug=True, msg_timeout=Sender.TIMEOUT):
+        self._handler = SendClient(target, auth=client.auth, debug=True, msg_timeout=Sender.TIMEOUT):
         return self._handler
 
     def on_outcome(self, outcome, condition):
@@ -342,6 +327,13 @@ class Receiver:
     def __init__(self, prefetch=300):
         self.offset = None
         self.prefetch = prefetch
+
+    def handler(self, client, source):
+        """
+        Creates a protocol handler for this sender.
+        """
+        self._handler = ReceiveClient(source, auth=client.auth, debug=True, on_message_received=self.on_message)
+        return self._handler
 
     def on_message(self, event):
         """ Proess message received event. """
