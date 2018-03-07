@@ -48,14 +48,7 @@ class AbstractPreparer(object):
             if parameter_update:
                 kwargs.update(parameter_update)
 
-            if not is_preparer_func(fn):
-                # the next function is the actual test function. the kwargs need to be trimmed so
-                # that parameters which are not required will not be passed to it.
-                args, _, kw, _ = inspect.getargspec(fn)  # pylint: disable=deprecated-method
-                if kw is None:
-                    args = set(args)
-                    for key in [k for k in kwargs if k not in args]:
-                        del kwargs[key]
+            _trim_kwargs_from_test_function(fn, kwargs)
 
             fn(test_class_instance, **kwargs)
 
@@ -129,21 +122,39 @@ class SingleValueReplacer(RecordingProcessor):
         return response
 
 
-# Function wise, enabling large payload recording has nothing to do with resource preparers
-# We still base on it so that this decorator can chain with other preparers w/o too much hacks
-class AllowLargeResponse(AbstractPreparer):
+class AllowLargeResponse(object):  # pylint: disable=too-few-public-methods
+
     def __init__(self, size_kb=1024):
         self.size_kb = size_kb
-        super(AllowLargeResponse, self).__init__('nanana', 20)
 
-    def create_resource(self, _, **kwargs):
-        from azure_devtools.scenario_tests import LargeResponseBodyProcessor
-        large_resp_body = next((r for r in self.test_class_instance.recording_processors
-                                if isinstance(r, LargeResponseBodyProcessor)), None)
-        if large_resp_body:
-            large_resp_body._max_response_body = self.size_kb  # pylint: disable=protected-access
+    def __call__(self, fn):
+        def _preparer_wrapper(test_class_instance, **kwargs):
+            from azure_devtools.scenario_tests import LargeResponseBodyProcessor
+            large_resp_body = next((r for r in test_class_instance.recording_processors
+                                    if isinstance(r, LargeResponseBodyProcessor)), None)
+            if large_resp_body:
+                large_resp_body._max_response_body = self.size_kb  # pylint: disable=protected-access
+
+            _trim_kwargs_from_test_function(fn, kwargs)
+
+            fn(test_class_instance, **kwargs)
+
+        setattr(_preparer_wrapper, '__is_preparer', True)
+        functools.update_wrapper(_preparer_wrapper, fn)
+        return _preparer_wrapper
 
 # Utility
+
+def _trim_kwargs_from_test_function(fn, kwargs):
+    # the next function is the actual test function. the kwargs need to be trimmed so
+    # that parameters which are not required will not be passed to it.
+    if not is_preparer_func(fn):
+        args, _, kw, _ = inspect.getargspec(fn)  # pylint: disable=deprecated-method
+        if kw is None:
+            args = set(args)
+            for key in [k for k in kwargs if k not in args]:
+                del kwargs[key]
+
 
 def is_preparer_func(fn):
     return getattr(fn, '__is_preparer', False)
