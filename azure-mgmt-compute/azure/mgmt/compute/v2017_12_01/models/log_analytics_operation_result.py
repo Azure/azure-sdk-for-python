@@ -51,6 +51,6 @@ class LogAnalyticsOperationResult(OperationStatusResponse):
         'properties': {'key': 'properties', 'type': 'LogAnalyticsOutput'},
     }
 
-    def __init__(self):
-        super(LogAnalyticsOperationResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(LogAnalyticsOperationResult, self).__init__(**kwargs)
         self.properties = None

@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class CreationData(Model):
     """Data used when creating a disk.
 
-    :param create_option: This enumerates the possible sources of a disk's
-     creation. Possible values include: 'Empty', 'Attach', 'FromImage',
+    All required parameters must be populated in order to send to Azure.
+
+    :param create_option: Required. This enumerates the possible sources of a
+     disk's creation. Possible values include: 'Empty', 'Attach', 'FromImage',
      'Import', 'Copy', 'Restore'
     :type create_option: str or
      ~azure.mgmt.compute.v2016_04_30_preview.models.DiskCreateOption
@@ -50,10 +52,10 @@ class CreationData(Model):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
     }
 
-    def __init__(self, create_option, storage_account_id=None, image_reference=None, source_uri=None, source_resource_id=None):
-        super(CreationData, self).__init__()
-        self.create_option = create_option
-        self.storage_account_id = storage_account_id
-        self.image_reference = image_reference
-        self.source_uri = source_uri
-        self.source_resource_id = source_resource_id
+    def __init__(self, **kwargs):
+        super(CreationData, self).__init__(**kwargs)
+        self.create_option = kwargs.get('create_option', None)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
+        self.image_reference = kwargs.get('image_reference', None)
+        self.source_uri = kwargs.get('source_uri', None)
+        self.source_resource_id = kwargs.get('source_resource_id', None)

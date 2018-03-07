@@ -29,6 +29,6 @@ class ManagedDiskParameters(SubResource):
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, storage_account_type=None):
-        super(ManagedDiskParameters, self).__init__(id=id)
-        self.storage_account_type = storage_account_type
+    def __init__(self, **kwargs):
+        super(ManagedDiskParameters, self).__init__(**kwargs)
+        self.storage_account_type = kwargs.get('storage_account_type', None)

@@ -32,6 +32,6 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
         'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
     }
 
-    def __init__(self):
-        super(VirtualMachineScaleSetInstanceViewStatusesSummary, self).__init__()
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetInstanceViewStatusesSummary, self).__init__(**kwargs)
         self.statuses_summary = None
