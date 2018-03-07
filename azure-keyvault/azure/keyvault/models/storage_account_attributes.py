@@ -24,17 +24,28 @@ class StorageAccountAttributes(Model):
     :vartype created: datetime
     :ivar updated: Last updated time in UTC.
     :vartype updated: datetime
+    :ivar recovery_level: Reflects the deletion recovery level currently in
+     effect for storage accounts in the current vault. If it contains
+     'Purgeable' the storage account can be permanently deleted by a privileged
+     user; otherwise, only the system can purge the storage account, at the end
+     of the retention interval. Possible values include: 'Purgeable',
+     'Recoverable+Purgeable', 'Recoverable',
+     'Recoverable+ProtectedSubscription'
+    :vartype recovery_level: str or
+     ~azure.keyvault.models.DeletionRecoveryLevel
     """
 
     _validation = {
         'created': {'readonly': True},
         'updated': {'readonly': True},
+        'recovery_level': {'readonly': True},
     }
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'created': {'key': 'created', 'type': 'unix-time'},
         'updated': {'key': 'updated', 'type': 'unix-time'},
+        'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
     }
 
     def __init__(self, enabled=None):
@@ -42,3 +53,4 @@ class StorageAccountAttributes(Model):
         self.enabled = enabled
         self.created = None
         self.updated = None
+        self.recovery_level = None

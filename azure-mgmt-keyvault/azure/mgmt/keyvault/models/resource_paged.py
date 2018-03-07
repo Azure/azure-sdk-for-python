@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ResourcePaged(Paged):
     """
-    A paging container for iterating over a list of Resource object
+    A paging container for iterating over a list of :class:`Resource <azure.mgmt.keyvault.models.Resource>` object
     """
 
     _attribute_map = {
