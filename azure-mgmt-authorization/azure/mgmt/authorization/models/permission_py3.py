@@ -32,9 +32,9 @@ class Permission(Model):
         'not_data_actions': {'key': 'notDataActions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, actions=None, not_actions=None, data_actions=None, not_data_actions=None, **kwargs) -> None:
         super(Permission, self).__init__(**kwargs)
-        self.actions = kwargs.get('actions', None)
-        self.not_actions = kwargs.get('not_actions', None)
-        self.data_actions = kwargs.get('data_actions', None)
-        self.not_data_actions = kwargs.get('not_data_actions', None)
+        self.actions = actions
+        self.not_actions = not_actions
+        self.data_actions = data_actions
+        self.not_data_actions = not_data_actions
