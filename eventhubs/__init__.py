@@ -28,7 +28,7 @@ from uamqp import SendClient, ReceiveClient
 from uamqp import Message, BatchMessage
 from uamqp import Source, Target
 from uamqp import authentication
-from uamqp import constants
+from uamqp import constants, utils
 
 
 #from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode
@@ -110,12 +110,12 @@ class EventHubClient(object):
 
         @param offset: the initial L{Offset} to receive events.
         """
-        self._check_client(receiver, "Receiver already registered")
-        source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
-        selector = None
+        source_url = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+            self.address.hostname, self.address.path, consumer_group, partition)
+        source = Source(source_url)
         if offset is not None:
-            selector = offset.selector()
-        handler = ReceiverHandler(self, receiver, source, selector)
+            source.set_filter(offset.selector())
+        handler = ReceiverHandler(self, receiver, source)
         self.clients.append(handler)
         return self
 
@@ -128,8 +128,7 @@ class EventHubClient(object):
         @param partition: the id of the destination event hub partition. If not specified, events will
         be distributed across partitions based on the default distribution logic.
         """
-        self._check_client(sender, "Sender already registered")
-        target = self.address.path
+        target = "amqps://{}/{}".format(self.address.hostname, self.address.path)
         if partition:
             target += "/Partitions/" + partition
         handler = sender.handler(self, target)
@@ -272,6 +271,8 @@ class Sender:
     """
     Implements an L{EventData} sender.
     """
+    TIMEOUT = 60.0
+
     def __init__(self):
         self._handler = None
         self._event = threading.Event()
@@ -311,7 +312,7 @@ class Sender:
         """
         Creates a protocol handler for this sender.
         """
-        self._handler = SendClient(target, auth=self.auth, debug=True, msg_timeout=0):
+        self._handler = SendClient(target, auth=self.auth, debug=True, msg_timeout=Sender.TIMEOUT):
         return self._handler
 
     def on_outcome(self, outcome, condition):
@@ -330,7 +331,7 @@ class Sender:
     def _error(outcome, condition):
         return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)
 
-class Receiver(Entity):
+class Receiver:
     """
     Implements an L{EventData} receiver.
 
@@ -402,7 +403,10 @@ class EventData(object):
         """
         Set the partition key of the event data object.
         """
-        self.annotations[EventData.PROP_PARTITION_KEY] = value  # TODO
+        annotations = dict(self.annotations)
+        annotations[utils.AMQPSymbol(EventData.PROP_PARTITION_KEY] = value
+        self.message.message_annotations = annotations
+        self.annotations = annotations
 
     @property
     def properties(self):
