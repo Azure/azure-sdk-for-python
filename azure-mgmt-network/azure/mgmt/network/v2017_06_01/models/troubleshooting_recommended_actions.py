@@ -34,9 +34,9 @@ class TroubleshootingRecommendedActions(Model):
         'action_uri_text': {'key': 'actionUriText', 'type': 'str'},
     }
 
-    def __init__(self, action_id=None, action_text=None, action_uri=None, action_uri_text=None):
-        super(TroubleshootingRecommendedActions, self).__init__()
-        self.action_id = action_id
-        self.action_text = action_text
-        self.action_uri = action_uri
-        self.action_uri_text = action_uri_text
+    def __init__(self, **kwargs):
+        super(TroubleshootingRecommendedActions, self).__init__(**kwargs)
+        self.action_id = kwargs.get('action_id', None)
+        self.action_text = kwargs.get('action_text', None)
+        self.action_uri = kwargs.get('action_uri', None)
+        self.action_uri_text = kwargs.get('action_uri_text', None)

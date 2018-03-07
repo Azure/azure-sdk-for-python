@@ -26,7 +26,7 @@ class ExpressRouteCircuitStats(Model):
         'bytes_out': {'key': 'bytesOut', 'type': 'int'},
     }
 
-    def __init__(self, bytes_in=None, bytes_out=None):
-        super(ExpressRouteCircuitStats, self).__init__()
-        self.bytes_in = bytes_in
-        self.bytes_out = bytes_out
+    def __init__(self, **kwargs):
+        super(ExpressRouteCircuitStats, self).__init__(**kwargs)
+        self.bytes_in = kwargs.get('bytes_in', None)
+        self.bytes_out = kwargs.get('bytes_out', None)

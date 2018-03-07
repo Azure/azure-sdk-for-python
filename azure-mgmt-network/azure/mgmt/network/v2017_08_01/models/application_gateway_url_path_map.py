@@ -58,13 +58,13 @@ class ApplicationGatewayUrlPathMap(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, default_backend_address_pool=None, default_backend_http_settings=None, default_redirect_configuration=None, path_rules=None, provisioning_state=None, name=None, etag=None, type=None):
-        super(ApplicationGatewayUrlPathMap, self).__init__(id=id)
-        self.default_backend_address_pool = default_backend_address_pool
-        self.default_backend_http_settings = default_backend_http_settings
-        self.default_redirect_configuration = default_redirect_configuration
-        self.path_rules = path_rules
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayUrlPathMap, self).__init__(**kwargs)
+        self.default_backend_address_pool = kwargs.get('default_backend_address_pool', None)
+        self.default_backend_http_settings = kwargs.get('default_backend_http_settings', None)
+        self.default_redirect_configuration = kwargs.get('default_redirect_configuration', None)
+        self.path_rules = kwargs.get('path_rules', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
+        self.type = kwargs.get('type', None)
