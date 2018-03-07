@@ -22,7 +22,7 @@ class DeploymentOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-02-01".
     """
 
@@ -60,7 +60,7 @@ class DeploymentOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
@@ -102,6 +102,7 @@ class DeploymentOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}'}
 
     def list(
             self, resource_group_name, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
@@ -128,7 +129,7 @@ class DeploymentOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
@@ -177,3 +178,4 @@ class DeploymentOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations'}
