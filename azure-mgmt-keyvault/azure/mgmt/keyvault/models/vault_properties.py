@@ -19,12 +19,11 @@ class VaultProperties(Model):
      for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: SKU details
-    :type sku: :class:`Sku <azure.mgmt.keyvault.models.Sku>`
+    :type sku: ~azure.mgmt.keyvault.models.Sku
     :param access_policies: An array of 0 to 16 identities that have access to
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID.
-    :type access_policies: list of :class:`AccessPolicyEntry
-     <azure.mgmt.keyvault.models.AccessPolicyEntry>`
+    :type access_policies: list[~azure.mgmt.keyvault.models.AccessPolicyEntry]
     :param vault_uri: The URI of the vault for performing operations on keys
      and secrets.
     :type vault_uri: str
@@ -45,14 +44,23 @@ class VaultProperties(Model):
     :type enable_soft_delete: bool
     :param create_mode: The vault's create mode to indicate whether the vault
      need to be recovered or not. Possible values include: 'recover', 'default'
-    :type create_mode: str or :class:`CreateMode
-     <azure.mgmt.keyvault.models.CreateMode>`
+    :type create_mode: str or ~azure.mgmt.keyvault.models.CreateMode
+    :param enable_purge_protection: Property specifying whether protection
+     against purge is enabled for this vault. Setting this property to true
+     activates protection against purge for this vault and its content - only
+     the Key Vault service may initiate a hard, irrecoverable deletion. The
+     setting is effective only if soft delete is also enabled. Enabling this
+     functionality is irreversible - that is, the property does not accept
+     false as its value.
+    :type enable_purge_protection: bool
+    :param network_acls: A collection of rules governing the accessibility of
+     the vault from specific network locations.
+    :type network_acls: ~azure.mgmt.keyvault.models.NetworkRuleSet
     """
 
     _validation = {
         'tenant_id': {'required': True},
         'sku': {'required': True},
-        'access_policies': {'max_items': 16},
     }
 
     _attribute_map = {
@@ -65,9 +73,12 @@ class VaultProperties(Model):
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
         'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
+        'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
+        'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, tenant_id, sku, access_policies=None, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None):
+    def __init__(self, tenant_id, sku, access_policies=None, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None, enable_purge_protection=None, network_acls=None):
+        super(VaultProperties, self).__init__()
         self.tenant_id = tenant_id
         self.sku = sku
         self.access_policies = access_policies
@@ -77,3 +88,5 @@ class VaultProperties(Model):
         self.enabled_for_template_deployment = enabled_for_template_deployment
         self.enable_soft_delete = enable_soft_delete
         self.create_mode = create_mode
+        self.enable_purge_protection = enable_purge_protection
+        self.network_acls = network_acls
