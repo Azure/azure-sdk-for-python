@@ -9,24 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ZoneType(str, Enum):
+class ARecord(Model):
+    """An A record.
 
-    public = "Public"
-    private = "Private"
+    :param ipv4_address: The IPv4 address of this A record.
+    :type ipv4_address: str
+    """
 
+    _attribute_map = {
+        'ipv4_address': {'key': 'ipv4Address', 'type': 'str'},
+    }
 
-class RecordType(str, Enum):
-
-    a = "A"
-    aaaa = "AAAA"
-    caa = "CAA"
-    cname = "CNAME"
-    mx = "MX"
-    ns = "NS"
-    ptr = "PTR"
-    soa = "SOA"
-    srv = "SRV"
-    txt = "TXT"
+    def __init__(self, *, ipv4_address: str=None, **kwargs) -> None:
+        super(ARecord, self).__init__(**kwargs)
+        self.ipv4_address = ipv4_address

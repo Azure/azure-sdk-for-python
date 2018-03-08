@@ -25,7 +25,7 @@ class ZonesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Specifies the API version. Constant value: "2017-10-01".
+    :ivar api_version: Specifies the API version. Constant value: "2018-03-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class ZonesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-10-01"
+        self.api_version = "2018-03-01-preview"
 
         self.config = config
 
@@ -124,7 +124,6 @@ class ZonesOperations(object):
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'}
 
-
     def _delete_initial(
             self, resource_group_name, zone_name, if_match=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
@@ -147,8 +146,6 @@ class ZonesOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -213,16 +210,18 @@ class ZonesOperations(object):
             return self._client.send(
                 request, header_parameters, stream=False, **operation_config)
 
-        def get_long_running_output(response):
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
             if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
+        if response.status_code == 200:
+            deserialized = self._deserialize('Zone', response)
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -232,16 +231,21 @@ class ZonesOperations(object):
             get_long_running_status, long_running_operation_timeout)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'}
 
-    def get(
-            self, resource_group_name, zone_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a DNS zone. Retrieves the zone properties, but not the record sets
-        within the zone.
+    def update(
+            self, resource_group_name, zone_name, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+        """Updates a DNS zone. Does not modify DNS records within the zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
         :type zone_name: str
+        :param parameters: Parameters supplied to the Update operation.
+        :type parameters: ~azure.mgmt.dns.models.Zone
+        :param if_match: The etag of the DNS zone. Omit this value to always
+         overwrite the current zone. Specify the last-seen etag value to
+         prevent accidentally overwritting any concurrent changes.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -272,8 +276,13 @@ class ZonesOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'Zone')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)

@@ -80,12 +80,12 @@ class Zone(Resource):
         'resolution_virtual_networks': {'key': 'properties.resolutionVirtualNetworks', 'type': '[SubResource]'},
     }
 
-    def __init__(self, location=None, tags=None, etag=None):
-        super(Zone, self).__init__(location=location, tags=tags)
+    def __init__(self, *, location: str=None, tags=None, etag: str=None, zone_type="Public", registration_virtual_networks=None, resolution_virtual_networks=None, **kwargs) -> None:
+        super(Zone, self).__init__(location=location, tags=tags, **kwargs)
         self.etag = etag
         self.max_number_of_record_sets = None
         self.number_of_record_sets = None
         self.name_servers = None
-        self.zone_type = kwargs.get('zone_type', "Public")
-        self.registration_virtual_networks = kwargs.get('registration_virtual_networks', None)
-        self.resolution_virtual_networks = kwargs.get('resolution_virtual_networks', None)
+        self.zone_type = zone_type
+        self.registration_virtual_networks = registration_virtual_networks
+        self.resolution_virtual_networks = resolution_virtual_networks
