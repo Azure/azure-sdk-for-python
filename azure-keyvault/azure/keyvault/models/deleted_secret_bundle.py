@@ -65,8 +65,8 @@ class DeletedSecretBundle(SecretBundle):
         'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, value=None, id=None, content_type=None, attributes=None, tags=None, recovery_id=None):
-        super(DeletedSecretBundle, self).__init__(value=value, id=id, content_type=content_type, attributes=attributes, tags=tags)
-        self.recovery_id = recovery_id
+    def __init__(self, **kwargs):
+        super(DeletedSecretBundle, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None

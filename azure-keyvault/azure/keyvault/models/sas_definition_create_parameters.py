@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class SasDefinitionCreateParameters(Model):
     """The SAS definition create parameters.
 
-    :param parameters: Sas definition creation metadata in the form of
-     key-value pairs.
+    All required parameters must be populated in order to send to Azure.
+
+    :param parameters: Required. Sas definition creation metadata in the form
+     of key-value pairs.
     :type parameters: dict[str, str]
     :param sas_definition_attributes: The attributes of the SAS definition.
     :type sas_definition_attributes:
@@ -35,8 +37,8 @@ class SasDefinitionCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, parameters, sas_definition_attributes=None, tags=None):
-        super(SasDefinitionCreateParameters, self).__init__()
-        self.parameters = parameters
-        self.sas_definition_attributes = sas_definition_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SasDefinitionCreateParameters, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
+        self.sas_definition_attributes = kwargs.get('sas_definition_attributes', None)
+        self.tags = kwargs.get('tags', None)

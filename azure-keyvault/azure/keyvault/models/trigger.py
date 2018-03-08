@@ -34,7 +34,7 @@ class Trigger(Model):
         'days_before_expiry': {'key': 'days_before_expiry', 'type': 'int'},
     }
 
-    def __init__(self, lifetime_percentage=None, days_before_expiry=None):
-        super(Trigger, self).__init__()
-        self.lifetime_percentage = lifetime_percentage
-        self.days_before_expiry = days_before_expiry
+    def __init__(self, **kwargs):
+        super(Trigger, self).__init__(**kwargs)
+        self.lifetime_percentage = kwargs.get('lifetime_percentage', None)
+        self.days_before_expiry = kwargs.get('days_before_expiry', None)

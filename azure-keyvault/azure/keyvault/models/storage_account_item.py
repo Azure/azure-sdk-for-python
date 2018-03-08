@@ -42,8 +42,8 @@ class StorageAccountItem(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
-        super(StorageAccountItem, self).__init__()
+    def __init__(self, **kwargs):
+        super(StorageAccountItem, self).__init__(**kwargs)
         self.id = None
         self.resource_id = None
         self.attributes = None
