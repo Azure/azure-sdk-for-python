@@ -24,6 +24,6 @@ class ActivityLogAlertActionList(Model):
         'action_groups': {'key': 'actionGroups', 'type': '[ActivityLogAlertActionGroup]'},
     }
 
-    def __init__(self, action_groups=None):
-        super(ActivityLogAlertActionList, self).__init__()
-        self.action_groups = action_groups
+    def __init__(self, **kwargs):
+        super(ActivityLogAlertActionList, self).__init__(**kwargs)
+        self.action_groups = kwargs.get('action_groups', None)
