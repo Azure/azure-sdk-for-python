@@ -42,6 +42,6 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
         'category_type': {'key': 'properties.categoryType', 'type': 'CategoryType'},
     }
 
-    def __init__(self, category_type=None):
-        super(DiagnosticSettingsCategoryResource, self).__init__()
-        self.category_type = category_type
+    def __init__(self, **kwargs):
+        super(DiagnosticSettingsCategoryResource, self).__init__(**kwargs)
+        self.category_type = kwargs.get('category_type', None)

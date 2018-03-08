@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class Response(Model):
     """The response to a metrics query.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param cost: The integer value representing the cost of the query, for
      data case.
     :type cost: float
-    :param timespan: The timespan for which the data was retrieved. Its value
-     consists of two datatimes concatenated, separated by '/'.  This may be
-     adjusted in the future and returned back from what was originally
+    :param timespan: Required. The timespan for which the data was retrieved.
+     Its value consists of two datatimes concatenated, separated by '/'.  This
+     may be adjusted in the future and returned back from what was originally
      requested.
     :type timespan: str
     :param interval: The interval (window size) for which the metric data was
@@ -33,7 +35,7 @@ class Response(Model):
     :param resourceregion: The region of the resource been queried for
      metrics.
     :type resourceregion: str
-    :param value: the value of the collection.
+    :param value: Required. the value of the collection.
     :type value: list[~azure.mgmt.monitor.models.Metric]
     """
 
@@ -52,11 +54,11 @@ class Response(Model):
         'value': {'key': 'value', 'type': '[Metric]'},
     }
 
-    def __init__(self, timespan, value, cost=None, interval=None, namespace=None, resourceregion=None):
-        super(Response, self).__init__()
-        self.cost = cost
-        self.timespan = timespan
-        self.interval = interval
-        self.namespace = namespace
-        self.resourceregion = resourceregion
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Response, self).__init__(**kwargs)
+        self.cost = kwargs.get('cost', None)
+        self.timespan = kwargs.get('timespan', None)
+        self.interval = kwargs.get('interval', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.resourceregion = kwargs.get('resourceregion', None)
+        self.value = kwargs.get('value', None)

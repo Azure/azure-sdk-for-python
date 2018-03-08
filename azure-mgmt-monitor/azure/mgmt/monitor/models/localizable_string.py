@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class LocalizableString(Model):
     """The localizable string class.
 
-    :param value: the invariant value.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. the invariant value.
     :type value: str
     :param localized_value: the locale specific value.
     :type localized_value: str
@@ -30,7 +32,7 @@ class LocalizableString(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, value, localized_value=None):
-        super(LocalizableString, self).__init__()
-        self.value = value
-        self.localized_value = localized_value
+    def __init__(self, **kwargs):
+        super(LocalizableString, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.localized_value = kwargs.get('localized_value', None)
