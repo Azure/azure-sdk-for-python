@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -87,7 +87,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def reimage(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Reimages (upgrade the operating system) a specific virtual machine in a
         VM scale set.
 
@@ -98,13 +98,16 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         OperationStatusResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._reimage_initial(
@@ -115,30 +118,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
@@ -147,12 +128,13 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     reimage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimage'}
 
 
@@ -203,7 +185,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def reimage_all(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Allows you to re-image all the disks ( including data disks ) in the a
         VM scale set instance. This operation is only supported for managed
         disks.
@@ -215,13 +197,16 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         OperationStatusResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._reimage_all_initial(
@@ -232,30 +217,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
@@ -264,12 +227,13 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     reimage_all.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/reimageall'}
 
 
@@ -320,7 +284,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def deallocate(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deallocates a specific virtual machine in a VM scale set. Shuts down
         the virtual machine and releases the compute resources it uses. You are
         not billed for the compute resources of this virtual machine once it is
@@ -333,13 +297,16 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         OperationStatusResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._deallocate_initial(
@@ -350,30 +317,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
@@ -382,12 +327,13 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     deallocate.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/deallocate'}
 
 
@@ -444,7 +390,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, vm_scale_set_name, instance_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a virtual machine of a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -459,13 +405,17 @@ class VirtualMachineScaleSetVMsOperations(object):
         :type parameters:
          ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetVM
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         VirtualMachineScaleSetVM or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         VirtualMachineScaleSetVM or
+         ClientRawResponse<VirtualMachineScaleSetVM> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetVM]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetVM]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -477,30 +427,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('VirtualMachineScaleSetVM', response)
 
             if raw:
@@ -509,12 +437,13 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}'}
 
 
@@ -565,7 +494,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a virtual machine from a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -575,13 +504,16 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         OperationStatusResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
@@ -592,30 +524,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
@@ -624,12 +534,13 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}'}
 
     def get(
@@ -896,7 +807,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def power_off(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Power off (stop) a virtual machine in a VM scale set. Note that
         resources are still attached and you are getting charged for the
         resources. Instead, use deallocate to release resources and avoid
@@ -909,13 +820,16 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         OperationStatusResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._power_off_initial(
@@ -926,30 +840,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
@@ -958,12 +850,13 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     power_off.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/poweroff'}
 
 
@@ -1014,7 +907,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def restart(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Restarts a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1024,13 +917,16 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         OperationStatusResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._restart_initial(
@@ -1041,30 +937,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
@@ -1073,12 +947,13 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/restart'}
 
 
@@ -1129,7 +1004,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         return deserialized
 
     def start(
-            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Starts a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1139,13 +1014,16 @@ class VirtualMachineScaleSetVMsOperations(object):
         :param instance_id: The instance ID of the virtual machine.
         :type instance_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         OperationStatusResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._start_initial(
@@ -1156,30 +1034,8 @@ class VirtualMachineScaleSetVMsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('OperationStatusResponse', response)
 
             if raw:
@@ -1188,10 +1044,205 @@ class VirtualMachineScaleSetVMsOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/start'}
+
+
+    def _redeploy_initial(
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.redeploy.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def redeploy(
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Redeploys a virtual machine in a VM scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance ID of the virtual machine.
+        :type instance_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._redeploy_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    redeploy.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/redeploy'}
+
+
+    def _perform_maintenance_initial(
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.perform_maintenance.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def perform_maintenance(
+            self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Performs maintenance on a virtual machine in a VM scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance ID of the virtual machine.
+        :type instance_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns OperationStatusResponse
+         or ClientRawResponse<OperationStatusResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2017_12_01.models.OperationStatusResponse]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._perform_maintenance_initial(
+            resource_group_name=resource_group_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('OperationStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    perform_maintenance.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualmachines/{instanceId}/performMaintenance'}

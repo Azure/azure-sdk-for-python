@@ -32,8 +32,8 @@ class DiskInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, name=None, encryption_settings=None, statuses=None):
-        super(DiskInstanceView, self).__init__()
-        self.name = name
-        self.encryption_settings = encryption_settings
-        self.statuses = statuses
+    def __init__(self, **kwargs):
+        super(DiskInstanceView, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.encryption_settings = kwargs.get('encryption_settings', None)
+        self.statuses = kwargs.get('statuses', None)

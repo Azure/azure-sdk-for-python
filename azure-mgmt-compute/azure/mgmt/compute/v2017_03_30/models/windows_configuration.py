@@ -45,10 +45,10 @@ class WindowsConfiguration(Model):
         'win_rm': {'key': 'winRM', 'type': 'WinRMConfiguration'},
     }
 
-    def __init__(self, provision_vm_agent=None, enable_automatic_updates=None, time_zone=None, additional_unattend_content=None, win_rm=None):
-        super(WindowsConfiguration, self).__init__()
-        self.provision_vm_agent = provision_vm_agent
-        self.enable_automatic_updates = enable_automatic_updates
-        self.time_zone = time_zone
-        self.additional_unattend_content = additional_unattend_content
-        self.win_rm = win_rm
+    def __init__(self, **kwargs):
+        super(WindowsConfiguration, self).__init__(**kwargs)
+        self.provision_vm_agent = kwargs.get('provision_vm_agent', None)
+        self.enable_automatic_updates = kwargs.get('enable_automatic_updates', None)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.additional_unattend_content = kwargs.get('additional_unattend_content', None)
+        self.win_rm = kwargs.get('win_rm', None)

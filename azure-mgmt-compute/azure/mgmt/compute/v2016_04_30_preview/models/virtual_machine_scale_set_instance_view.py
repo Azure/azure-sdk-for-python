@@ -41,8 +41,8 @@ class VirtualMachineScaleSetInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, statuses=None):
-        super(VirtualMachineScaleSetInstanceView, self).__init__()
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetInstanceView, self).__init__(**kwargs)
         self.virtual_machine = None
         self.extensions = None
-        self.statuses = statuses
+        self.statuses = kwargs.get('statuses', None)

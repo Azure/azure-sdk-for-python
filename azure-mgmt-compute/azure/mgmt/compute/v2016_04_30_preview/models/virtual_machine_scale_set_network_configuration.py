@@ -16,13 +16,16 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     """Describes a virtual machine scale set network profile's network
     configurations.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource Id
     :type id: str
-    :param name: The network configuration name.
+    :param name: Required. The network configuration name.
     :type name: str
     :param primary: Whether this is a primary NIC on a virtual machine.
     :type primary: bool
-    :param ip_configurations: The virtual machine scale set IP Configuration.
+    :param ip_configurations: Required. The virtual machine scale set IP
+     Configuration.
     :type ip_configurations:
      list[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineScaleSetIPConfiguration]
     """
@@ -39,8 +42,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[VirtualMachineScaleSetIPConfiguration]'},
     }
 
-    def __init__(self, name, ip_configurations, id=None, primary=None):
-        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id)
-        self.name = name
-        self.primary = primary
-        self.ip_configurations = ip_configurations
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.primary = kwargs.get('primary', None)
+        self.ip_configurations = kwargs.get('ip_configurations', None)

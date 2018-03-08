@@ -69,17 +69,17 @@ class VirtualMachineInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, platform_update_domain=None, platform_fault_domain=None, computer_name=None, os_name=None, os_version=None, rdp_thumb_print=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None):
-        super(VirtualMachineInstanceView, self).__init__()
-        self.platform_update_domain = platform_update_domain
-        self.platform_fault_domain = platform_fault_domain
-        self.computer_name = computer_name
-        self.os_name = os_name
-        self.os_version = os_version
-        self.rdp_thumb_print = rdp_thumb_print
-        self.vm_agent = vm_agent
-        self.maintenance_redeploy_status = maintenance_redeploy_status
-        self.disks = disks
-        self.extensions = extensions
-        self.boot_diagnostics = boot_diagnostics
-        self.statuses = statuses
+    def __init__(self, **kwargs):
+        super(VirtualMachineInstanceView, self).__init__(**kwargs)
+        self.platform_update_domain = kwargs.get('platform_update_domain', None)
+        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
+        self.computer_name = kwargs.get('computer_name', None)
+        self.os_name = kwargs.get('os_name', None)
+        self.os_version = kwargs.get('os_version', None)
+        self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
+        self.vm_agent = kwargs.get('vm_agent', None)
+        self.maintenance_redeploy_status = kwargs.get('maintenance_redeploy_status', None)
+        self.disks = kwargs.get('disks', None)
+        self.extensions = kwargs.get('extensions', None)
+        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
+        self.statuses = kwargs.get('statuses', None)
