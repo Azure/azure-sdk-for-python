@@ -1222,10 +1222,10 @@ class VirtualMachineScaleSetsOperations(object):
 
 
     def _redeploy_initial(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
-            vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
+            vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
 
         # Construct URL
         url = self.redeploy.metadata['url']
@@ -1252,7 +1252,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct body
         if vm_instance_ids is not None:
-            body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
+            body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceIDs')
         else:
             body_content = None
 
@@ -1278,7 +1278,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def redeploy(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Redeploy one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1286,6 +1286,9 @@ class VirtualMachineScaleSetsOperations(object):
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: The virtual machine scale set instance ids.
+         Omitting the virtual machine scale set instance ids will result in the
+         operation being performed on all virtual machines in the virtual
+         machine scale set.
         :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -1329,10 +1332,10 @@ class VirtualMachineScaleSetsOperations(object):
 
 
     def _perform_maintenance_initial(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         vm_instance_ids = None
         if instance_ids is not None:
-            vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
+            vm_instance_ids = models.VirtualMachineScaleSetVMInstanceIDs(instance_ids=instance_ids)
 
         # Construct URL
         url = self.perform_maintenance.metadata['url']
@@ -1359,7 +1362,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct body
         if vm_instance_ids is not None:
-            body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
+            body_content = self._serialize.body(vm_instance_ids, 'VirtualMachineScaleSetVMInstanceIDs')
         else:
             body_content = None
 
@@ -1385,7 +1388,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def perform_maintenance(
-            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Perform maintenance on one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1393,6 +1396,9 @@ class VirtualMachineScaleSetsOperations(object):
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: The virtual machine scale set instance ids.
+         Omitting the virtual machine scale set instance ids will result in the
+         operation being performed on all virtual machines in the virtual
+         machine scale set.
         :type instance_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
