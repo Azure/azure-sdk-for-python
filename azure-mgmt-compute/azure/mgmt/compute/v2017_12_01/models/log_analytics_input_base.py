@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class LogAnalyticsInputBase(Model):
     """Api input base class for LogAnalytics Api.
 
-    :param blob_container_sas_uri: SAS Uri of the logging blob container to
-     which LogAnalytics Api writes output logs to.
+    All required parameters must be populated in order to send to Azure.
+
+    :param blob_container_sas_uri: Required. SAS Uri of the logging blob
+     container to which LogAnalytics Api writes output logs to.
     :type blob_container_sas_uri: str
-    :param from_time: From time of the query
+    :param from_time: Required. From time of the query
     :type from_time: datetime
-    :param to_time: To time of the query
+    :param to_time: Required. To time of the query
     :type to_time: datetime
     :param group_by_throttle_policy: Group query result by Throttle Policy
      applied.
@@ -46,11 +48,11 @@ class LogAnalyticsInputBase(Model):
         'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
     }
 
-    def __init__(self, blob_container_sas_uri, from_time, to_time, group_by_throttle_policy=None, group_by_operation_name=None, group_by_resource_name=None):
-        super(LogAnalyticsInputBase, self).__init__()
-        self.blob_container_sas_uri = blob_container_sas_uri
-        self.from_time = from_time
-        self.to_time = to_time
-        self.group_by_throttle_policy = group_by_throttle_policy
-        self.group_by_operation_name = group_by_operation_name
-        self.group_by_resource_name = group_by_resource_name
+    def __init__(self, **kwargs):
+        super(LogAnalyticsInputBase, self).__init__(**kwargs)
+        self.blob_container_sas_uri = kwargs.get('blob_container_sas_uri', None)
+        self.from_time = kwargs.get('from_time', None)
+        self.to_time = kwargs.get('to_time', None)
+        self.group_by_throttle_policy = kwargs.get('group_by_throttle_policy', None)
+        self.group_by_operation_name = kwargs.get('group_by_operation_name', None)
+        self.group_by_resource_name = kwargs.get('group_by_resource_name', None)

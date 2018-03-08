@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class DataDisk(Model):
     """Describes a data disk.
 
-    :param lun: Specifies the logical unit number of the data disk. This value
-     is used to identify data disks within the VM and therefore must be unique
-     for each data disk attached to a VM.
+    All required parameters must be populated in order to send to Azure.
+
+    :param lun: Required. Specifies the logical unit number of the data disk.
+     This value is used to identify data disks within the VM and therefore must
+     be unique for each data disk attached to a VM.
     :type lun: int
     :param name: The disk name.
     :type name: str
@@ -36,8 +38,8 @@ class DataDisk(Model):
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
-    :param create_option: Specifies how the virtual machine should be
-     created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
+    :param create_option: Required. Specifies how the virtual machine should
+     be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
      value is used when you are using a specialized disk to create the virtual
      machine.<br><br> **FromImage** \\u2013 This value is used when you are
      using an image to create the virtual machine. If you are using a platform
@@ -67,19 +69,19 @@ class DataDisk(Model):
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
+        'create_option': {'key': 'createOption', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
     }
 
-    def __init__(self, lun, create_option, name=None, vhd=None, image=None, caching=None, write_accelerator_enabled=None, disk_size_gb=None, managed_disk=None):
-        super(DataDisk, self).__init__()
-        self.lun = lun
-        self.name = name
-        self.vhd = vhd
-        self.image = image
-        self.caching = caching
-        self.write_accelerator_enabled = write_accelerator_enabled
-        self.create_option = create_option
-        self.disk_size_gb = disk_size_gb
-        self.managed_disk = managed_disk
+    def __init__(self, **kwargs):
+        super(DataDisk, self).__init__(**kwargs)
+        self.lun = kwargs.get('lun', None)
+        self.name = kwargs.get('name', None)
+        self.vhd = kwargs.get('vhd', None)
+        self.image = kwargs.get('image', None)
+        self.caching = kwargs.get('caching', None)
+        self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
+        self.create_option = kwargs.get('create_option', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.managed_disk = kwargs.get('managed_disk', None)

@@ -72,16 +72,16 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         'placement_group_id': {'key': 'placementGroupId', 'type': 'str'},
     }
 
-    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, placement_group_id=None):
-        super(VirtualMachineScaleSetVMInstanceView, self).__init__()
-        self.platform_update_domain = platform_update_domain
-        self.platform_fault_domain = platform_fault_domain
-        self.rdp_thumb_print = rdp_thumb_print
-        self.vm_agent = vm_agent
-        self.maintenance_redeploy_status = maintenance_redeploy_status
-        self.disks = disks
-        self.extensions = extensions
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetVMInstanceView, self).__init__(**kwargs)
+        self.platform_update_domain = kwargs.get('platform_update_domain', None)
+        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
+        self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
+        self.vm_agent = kwargs.get('vm_agent', None)
+        self.maintenance_redeploy_status = kwargs.get('maintenance_redeploy_status', None)
+        self.disks = kwargs.get('disks', None)
+        self.extensions = kwargs.get('extensions', None)
         self.vm_health = None
-        self.boot_diagnostics = boot_diagnostics
-        self.statuses = statuses
-        self.placement_group_id = placement_group_id
+        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
+        self.statuses = kwargs.get('statuses', None)
+        self.placement_group_id = kwargs.get('placement_group_id', None)

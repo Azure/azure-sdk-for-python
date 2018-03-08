@@ -18,13 +18,15 @@ class Disk(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -41,8 +43,8 @@ class Disk(Resource):
      'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2017_03_30.models.OperatingSystemTypes
-    :param creation_data: Disk source information. CreationData information
-     cannot be changed after the disk has been created.
+    :param creation_data: Required. Disk source information. CreationData
+     information cannot be changed after the disk has been created.
     :type creation_data: ~azure.mgmt.compute.v2017_03_30.models.CreationData
     :param disk_size_gb: If creationData.createOption is Empty, this field is
      mandatory and it indicates the size of the VHD to create. If this field is
@@ -85,14 +87,14 @@ class Disk(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, creation_data, tags=None, sku=None, zones=None, os_type=None, disk_size_gb=None, encryption_settings=None):
-        super(Disk, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(Disk, self).__init__(**kwargs)
         self.managed_by = None
-        self.sku = sku
-        self.zones = zones
+        self.sku = kwargs.get('sku', None)
+        self.zones = kwargs.get('zones', None)
         self.time_created = None
-        self.os_type = os_type
-        self.creation_data = creation_data
-        self.disk_size_gb = disk_size_gb
-        self.encryption_settings = encryption_settings
+        self.os_type = kwargs.get('os_type', None)
+        self.creation_data = kwargs.get('creation_data', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.encryption_settings = kwargs.get('encryption_settings', None)
         self.provisioning_state = None
