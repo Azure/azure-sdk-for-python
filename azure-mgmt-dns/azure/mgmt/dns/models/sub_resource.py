@@ -9,24 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ZoneType(Enum):
+class SubResource(Model):
+    """A reference to a another resource.
 
-    public = "Public"
-    private = "Private"
+    :param id: Resource Id.
+    :type id: str
+    """
 
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
 
-class RecordType(Enum):
-
-    a = "A"
-    aaaa = "AAAA"
-    caa = "CAA"
-    cname = "CNAME"
-    mx = "MX"
-    ns = "NS"
-    ptr = "PTR"
-    soa = "SOA"
-    srv = "SRV"
-    txt = "TXT"
+    def __init__(self, id=None):
+        super(SubResource, self).__init__()
+        self.id = id

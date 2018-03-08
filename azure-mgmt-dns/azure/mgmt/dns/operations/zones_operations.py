@@ -25,7 +25,7 @@ class ZonesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Specifies the API version. Constant value: "2017-10-01".
+    :ivar api_version: Specifies the API version. Constant value: "2018-03-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class ZonesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-10-01"
+        self.api_version = "2018-03-01-preview"
 
         self.config = config
 
