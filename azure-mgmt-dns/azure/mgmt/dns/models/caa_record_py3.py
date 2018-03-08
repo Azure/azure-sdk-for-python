@@ -30,8 +30,8 @@ class CaaRecord(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, flags: int=None, tag: str=None, value: str=None, **kwargs) -> None:
         super(CaaRecord, self).__init__(**kwargs)
-        self.flags = kwargs.get('flags', None)
-        self.tag = kwargs.get('tag', None)
-        self.value = kwargs.get('value', None)
+        self.flags = flags
+        self.tag = tag
+        self.value = value
