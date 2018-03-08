@@ -153,8 +153,8 @@ class EventData(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(EventData, self).__init__()
+    def __init__(self, **kwargs):
+        super(EventData, self).__init__(**kwargs)
         self.authorization = None
         self.claims = None
         self.caller = None

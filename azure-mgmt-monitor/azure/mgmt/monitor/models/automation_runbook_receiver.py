@@ -15,16 +15,18 @@ from msrest.serialization import Model
 class AutomationRunbookReceiver(Model):
     """The Azure Automation Runbook notification receiver.
 
-    :param automation_account_id: The Azure automation account Id which holds
-     this runbook and authenticate to Azure resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param automation_account_id: Required. The Azure automation account Id
+     which holds this runbook and authenticate to Azure resource.
     :type automation_account_id: str
-    :param runbook_name: The name for this runbook.
+    :param runbook_name: Required. The name for this runbook.
     :type runbook_name: str
-    :param webhook_resource_id: The resource id for webhook linked to this
-     runbook.
+    :param webhook_resource_id: Required. The resource id for webhook linked
+     to this runbook.
     :type webhook_resource_id: str
-    :param is_global_runbook: Indicates whether this instance is global
-     runbook.
+    :param is_global_runbook: Required. Indicates whether this instance is
+     global runbook.
     :type is_global_runbook: bool
     :param name: Indicates name of the webhook.
     :type name: str
@@ -48,11 +50,11 @@ class AutomationRunbookReceiver(Model):
         'service_uri': {'key': 'serviceUri', 'type': 'str'},
     }
 
-    def __init__(self, automation_account_id, runbook_name, webhook_resource_id, is_global_runbook, name=None, service_uri=None):
-        super(AutomationRunbookReceiver, self).__init__()
-        self.automation_account_id = automation_account_id
-        self.runbook_name = runbook_name
-        self.webhook_resource_id = webhook_resource_id
-        self.is_global_runbook = is_global_runbook
-        self.name = name
-        self.service_uri = service_uri
+    def __init__(self, **kwargs):
+        super(AutomationRunbookReceiver, self).__init__(**kwargs)
+        self.automation_account_id = kwargs.get('automation_account_id', None)
+        self.runbook_name = kwargs.get('runbook_name', None)
+        self.webhook_resource_id = kwargs.get('webhook_resource_id', None)
+        self.is_global_runbook = kwargs.get('is_global_runbook', None)
+        self.name = kwargs.get('name', None)
+        self.service_uri = kwargs.get('service_uri', None)

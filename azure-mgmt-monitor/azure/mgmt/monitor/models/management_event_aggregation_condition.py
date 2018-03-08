@@ -32,8 +32,8 @@ class ManagementEventAggregationCondition(Model):
         'window_size': {'key': 'windowSize', 'type': 'duration'},
     }
 
-    def __init__(self, operator=None, threshold=None, window_size=None):
-        super(ManagementEventAggregationCondition, self).__init__()
-        self.operator = operator
-        self.threshold = threshold
-        self.window_size = window_size
+    def __init__(self, **kwargs):
+        super(ManagementEventAggregationCondition, self).__init__(**kwargs)
+        self.operator = kwargs.get('operator', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.window_size = kwargs.get('window_size', None)
