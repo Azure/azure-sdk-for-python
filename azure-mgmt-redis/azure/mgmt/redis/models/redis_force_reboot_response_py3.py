@@ -12,21 +12,24 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityParameters(Model):
-    """Parameters body to pass for  name availability check.
+class RedisForceRebootResponse(Model):
+    """Response to force reboot for Redis cache.
 
-    :param name: Resource name.
-    :type name: str
-    :param type: Resource type.
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar message: Status message
+    :vartype message: str
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+    _validation = {
+        'message': {'readonly': True},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+    _attribute_map = {
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(RedisForceRebootResponse, self).__init__(**kwargs)
+        self.message = None

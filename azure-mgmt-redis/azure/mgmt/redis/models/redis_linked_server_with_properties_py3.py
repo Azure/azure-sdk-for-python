@@ -60,9 +60,9 @@ class RedisLinkedServerWithProperties(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RedisLinkedServerWithProperties, self).__init__(**kwargs)
-        self.linked_redis_cache_id = kwargs.get('linked_redis_cache_id', None)
-        self.linked_redis_cache_location = kwargs.get('linked_redis_cache_location', None)
-        self.server_role = kwargs.get('server_role', None)
+    def __init__(self, *, linked_redis_cache_id: str, linked_redis_cache_location: str, server_role, **kwargs) -> None:
+        super(RedisLinkedServerWithProperties, self).__init__(, **kwargs)
+        self.linked_redis_cache_id = linked_redis_cache_id
+        self.linked_redis_cache_location = linked_redis_cache_location
+        self.server_role = server_role
         self.provisioning_state = None

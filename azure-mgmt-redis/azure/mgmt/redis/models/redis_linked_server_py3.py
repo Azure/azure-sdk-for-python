@@ -9,35 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+class RedisLinkedServer(Model):
+    """Linked server Id.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Linked server Id.
     :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(RedisLinkedServer, self).__init__(**kwargs)
+        self.id = None

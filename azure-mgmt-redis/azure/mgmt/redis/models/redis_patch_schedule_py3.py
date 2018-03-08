@@ -9,15 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+class RedisPatchSchedule(ProxyResource):
+    """Response to put/get patch schedules for Redis cache.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -25,19 +26,25 @@ class ProxyResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param schedule_entries: Required. List of patch schedules for a Redis
+     cache.
+    :type schedule_entries: list[~azure.mgmt.redis.models.ScheduleEntry]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'schedule_entries': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'schedule_entries': {'key': 'properties.scheduleEntries', 'type': '[ScheduleEntry]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, *, schedule_entries, **kwargs) -> None:
+        super(RedisPatchSchedule, self).__init__(, **kwargs)
+        self.schedule_entries = schedule_entries

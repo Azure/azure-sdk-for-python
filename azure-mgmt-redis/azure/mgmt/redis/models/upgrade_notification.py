@@ -38,8 +38,8 @@ class UpgradeNotification(Model):
         'upsell_notification': {'key': 'upsellNotification', 'type': '{str}'},
     }
 
-    def __init__(self):
-        super(UpgradeNotification, self).__init__()
+    def __init__(self, **kwargs):
+        super(UpgradeNotification, self).__init__(**kwargs)
         self.name = None
         self.timestamp = None
         self.upsell_notification = None

@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityParameters(Model):
-    """Parameters body to pass for  name availability check.
+class Operation(Model):
+    """REST API operation.
 
-    :param name: Resource name.
+    :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
-    :param type: Resource type.
-    :type type: str
+    :param display: The object that describes the operation.
+    :type display: ~azure.mgmt.redis.models.OperationDisplay
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = name
+        self.display = display

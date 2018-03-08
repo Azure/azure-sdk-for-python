@@ -120,16 +120,16 @@ class RedisResource(TrackedResource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(RedisResource, self).__init__(**kwargs)
-        self.redis_configuration = kwargs.get('redis_configuration', None)
-        self.enable_non_ssl_port = kwargs.get('enable_non_ssl_port', None)
-        self.tenant_settings = kwargs.get('tenant_settings', None)
-        self.shard_count = kwargs.get('shard_count', None)
-        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
-        self.sku = kwargs.get('sku', None)
-        self.subnet_id = kwargs.get('subnet_id', None)
-        self.static_ip = kwargs.get('static_ip', None)
+    def __init__(self, *, location: str, sku, tags=None, redis_configuration=None, enable_non_ssl_port: bool=None, tenant_settings=None, shard_count: int=None, minimum_tls_version=None, subnet_id: str=None, static_ip: str=None, zones=None, **kwargs) -> None:
+        super(RedisResource, self).__init__(tags=tags, location=location, **kwargs)
+        self.redis_configuration = redis_configuration
+        self.enable_non_ssl_port = enable_non_ssl_port
+        self.tenant_settings = tenant_settings
+        self.shard_count = shard_count
+        self.minimum_tls_version = minimum_tls_version
+        self.sku = sku
+        self.subnet_id = subnet_id
+        self.static_ip = static_ip
         self.redis_version = None
         self.provisioning_state = None
         self.host_name = None
@@ -137,4 +137,4 @@ class RedisResource(TrackedResource):
         self.ssl_port = None
         self.access_keys = None
         self.linked_servers = None
-        self.zones = kwargs.get('zones', None)
+        self.zones = zones

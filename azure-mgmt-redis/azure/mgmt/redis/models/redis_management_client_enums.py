@@ -12,20 +12,27 @@
 from enum import Enum
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
 
 
-class SkuFamily(Enum):
+class SkuFamily(str, Enum):
 
     c = "C"
     p = "P"
 
 
-class ProvisioningState(Enum):
+class TlsVersion(str, Enum):
+
+    one_full_stop_zero = "1.0"
+    one_full_stop_one = "1.1"
+    one_full_stop_two = "1.2"
+
+
+class ProvisioningState(str, Enum):
 
     creating = "Creating"
     deleting = "Deleting"
@@ -37,24 +44,24 @@ class ProvisioningState(Enum):
     scaling = "Scaling"
     succeeded = "Succeeded"
     unlinking = "Unlinking"
-    updating = "Updating"
     unprovisioning = "Unprovisioning"
+    updating = "Updating"
 
 
-class RedisKeyType(Enum):
+class RedisKeyType(str, Enum):
 
     primary = "Primary"
     secondary = "Secondary"
 
 
-class RebootType(Enum):
+class RebootType(str, Enum):
 
     primary_node = "PrimaryNode"
     secondary_node = "SecondaryNode"
     all_nodes = "AllNodes"
 
 
-class DayOfWeek(Enum):
+class DayOfWeek(str, Enum):
 
     monday = "Monday"
     tuesday = "Tuesday"
@@ -67,7 +74,7 @@ class DayOfWeek(Enum):
     weekend = "Weekend"
 
 
-class ReplicationRole(Enum):
+class ReplicationRole(str, Enum):
 
     primary = "Primary"
     secondary = "Secondary"

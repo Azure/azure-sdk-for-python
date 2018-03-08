@@ -9,23 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class RedisLinkedServerWithProperties(ProxyResource):
-    """Response to put/get linked server (with properties) for Redis cache.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class RedisLinkedServerCreateParameters(Model):
+    """Parameter required for creating a linked server to redis cache.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param linked_redis_cache_id: Required. Fully qualified resourceId of the
      linked redis cache.
     :type linked_redis_cache_id: str
@@ -35,34 +26,22 @@ class RedisLinkedServerWithProperties(ProxyResource):
     :param server_role: Required. Role of the linked server. Possible values
      include: 'Primary', 'Secondary'
     :type server_role: str or ~azure.mgmt.redis.models.ReplicationRole
-    :ivar provisioning_state: Terminal state of the link between primary and
-     secondary redis cache.
-    :vartype provisioning_state: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'linked_redis_cache_id': {'required': True},
         'linked_redis_cache_location': {'required': True},
         'server_role': {'required': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'linked_redis_cache_id': {'key': 'properties.linkedRedisCacheId', 'type': 'str'},
         'linked_redis_cache_location': {'key': 'properties.linkedRedisCacheLocation', 'type': 'str'},
         'server_role': {'key': 'properties.serverRole', 'type': 'ReplicationRole'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RedisLinkedServerWithProperties, self).__init__(**kwargs)
-        self.linked_redis_cache_id = kwargs.get('linked_redis_cache_id', None)
-        self.linked_redis_cache_location = kwargs.get('linked_redis_cache_location', None)
-        self.server_role = kwargs.get('server_role', None)
-        self.provisioning_state = None
+    def __init__(self, *, linked_redis_cache_id: str, linked_redis_cache_location: str, server_role, **kwargs) -> None:
+        super(RedisLinkedServerCreateParameters, self).__init__(**kwargs)
+        self.linked_redis_cache_id = linked_redis_cache_id
+        self.linked_redis_cache_location = linked_redis_cache_location
+        self.server_role = server_role

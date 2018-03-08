@@ -39,5 +39,5 @@ class ProxyResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(ProxyResource, self).__init__(, **kwargs)
