@@ -12,20 +12,20 @@
 from enum import Enum
 
 
-class StatusLevelTypes(Enum):
+class StatusLevelTypes(str, Enum):
 
     info = "Info"
     warning = "Warning"
     error = "Error"
 
 
-class OperatingSystemTypes(Enum):
+class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"
     linux = "Linux"
 
 
-class VirtualMachineSizeTypes(Enum):
+class VirtualMachineSizeTypes(str, Enum):
 
     basic_a0 = "Basic_A0"
     basic_a1 = "Basic_A1"
@@ -195,49 +195,49 @@ class VirtualMachineSizeTypes(Enum):
     standard_nv24 = "Standard_NV24"
 
 
-class CachingTypes(Enum):
+class CachingTypes(str, Enum):
 
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
 
 
-class DiskCreateOptionTypes(Enum):
+class DiskCreateOptionTypes(str, Enum):
 
     from_image = "FromImage"
     empty = "Empty"
     attach = "Attach"
 
 
-class StorageAccountTypes(Enum):
+class StorageAccountTypes(str, Enum):
 
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
 
 
-class PassNames(Enum):
+class PassNames(str, Enum):
 
     oobe_system = "OobeSystem"
 
 
-class ComponentNames(Enum):
+class ComponentNames(str, Enum):
 
     microsoft_windows_shell_setup = "Microsoft-Windows-Shell-Setup"
 
 
-class SettingNames(Enum):
+class SettingNames(str, Enum):
 
     auto_logon = "AutoLogon"
     first_logon_commands = "FirstLogonCommands"
 
 
-class ProtocolTypes(Enum):
+class ProtocolTypes(str, Enum):
 
     http = "Http"
     https = "Https"
 
 
-class ResourceIdentityType(Enum):
+class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
     user_assigned = "UserAssigned"
@@ -245,7 +245,7 @@ class ResourceIdentityType(Enum):
     none = "None"
 
 
-class MaintenanceOperationResultCodeTypes(Enum):
+class MaintenanceOperationResultCodeTypes(str, Enum):
 
     none = "None"
     retry_later = "RetryLater"
@@ -253,38 +253,38 @@ class MaintenanceOperationResultCodeTypes(Enum):
     maintenance_completed = "MaintenanceCompleted"
 
 
-class UpgradeMode(Enum):
+class UpgradeMode(str, Enum):
 
     automatic = "Automatic"
     manual = "Manual"
     rolling = "Rolling"
 
 
-class OperatingSystemStateTypes(Enum):
+class OperatingSystemStateTypes(str, Enum):
 
     generalized = "Generalized"
     specialized = "Specialized"
 
 
-class IPVersion(Enum):
+class IPVersion(str, Enum):
 
     ipv4 = "IPv4"
     ipv6 = "IPv6"
 
 
-class VirtualMachinePriorityTypes(Enum):
+class VirtualMachinePriorityTypes(str, Enum):
 
     regular = "Regular"
     low = "Low"
 
 
-class VirtualMachineScaleSetSkuScaleType(Enum):
+class VirtualMachineScaleSetSkuScaleType(str, Enum):
 
     automatic = "Automatic"
     none = "None"
 
 
-class RollingUpgradeStatusCode(Enum):
+class RollingUpgradeStatusCode(str, Enum):
 
     rolling_forward = "RollingForward"
     cancelled = "Cancelled"
@@ -292,13 +292,13 @@ class RollingUpgradeStatusCode(Enum):
     faulted = "Faulted"
 
 
-class RollingUpgradeActionType(Enum):
+class RollingUpgradeActionType(str, Enum):
 
     start = "Start"
     cancel = "Cancel"
 
 
-class IntervalInMins(Enum):
+class IntervalInMins(str, Enum):
 
     three_mins = "ThreeMins"
     five_mins = "FiveMins"
@@ -306,6 +306,6 @@ class IntervalInMins(Enum):
     sixty_mins = "SixtyMins"
 
 
-class InstanceViewTypes(Enum):
+class InstanceViewTypes(str, Enum):
 
     instance_view = "instanceView"

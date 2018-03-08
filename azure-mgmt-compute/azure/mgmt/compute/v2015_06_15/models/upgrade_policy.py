@@ -28,6 +28,6 @@ class UpgradePolicy(Model):
         'mode': {'key': 'mode', 'type': 'UpgradeMode'},
     }
 
-    def __init__(self, mode=None):
-        super(UpgradePolicy, self).__init__()
-        self.mode = mode
+    def __init__(self, **kwargs):
+        super(UpgradePolicy, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)

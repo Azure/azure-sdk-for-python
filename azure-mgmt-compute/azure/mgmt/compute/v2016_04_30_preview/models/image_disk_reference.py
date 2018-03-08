@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ImageDiskReference(Model):
     """The source image used for creating the disk.
 
-    :param id: A relative uri containing either a Platform Imgage Repository
-     or user image reference.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A relative uri containing either a Platform Imgage
+     Repository or user image reference.
     :type id: str
     :param lun: If the disk is created from an image's data disk, this is an
      index that indicates which of the data disks in the image to use. For OS
@@ -33,7 +35,7 @@ class ImageDiskReference(Model):
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, id, lun=None):
-        super(ImageDiskReference, self).__init__()
-        self.id = id
-        self.lun = lun
+    def __init__(self, **kwargs):
+        super(ImageDiskReference, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.lun = kwargs.get('lun', None)

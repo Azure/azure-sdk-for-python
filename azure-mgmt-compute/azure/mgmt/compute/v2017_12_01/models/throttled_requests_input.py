@@ -15,12 +15,14 @@ from .log_analytics_input_base import LogAnalyticsInputBase
 class ThrottledRequestsInput(LogAnalyticsInputBase):
     """Api request input for LogAnalytics getThrottledRequests Api.
 
-    :param blob_container_sas_uri: SAS Uri of the logging blob container to
-     which LogAnalytics Api writes output logs to.
+    All required parameters must be populated in order to send to Azure.
+
+    :param blob_container_sas_uri: Required. SAS Uri of the logging blob
+     container to which LogAnalytics Api writes output logs to.
     :type blob_container_sas_uri: str
-    :param from_time: From time of the query
+    :param from_time: Required. From time of the query
     :type from_time: datetime
-    :param to_time: To time of the query
+    :param to_time: Required. To time of the query
     :type to_time: datetime
     :param group_by_throttle_policy: Group query result by Throttle Policy
      applied.
@@ -37,5 +39,14 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         'to_time': {'required': True},
     }
 
-    def __init__(self, blob_container_sas_uri, from_time, to_time, group_by_throttle_policy=None, group_by_operation_name=None, group_by_resource_name=None):
-        super(ThrottledRequestsInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name)
+    _attribute_map = {
+        'blob_container_sas_uri': {'key': 'blobContainerSasUri', 'type': 'str'},
+        'from_time': {'key': 'fromTime', 'type': 'iso-8601'},
+        'to_time': {'key': 'toTime', 'type': 'iso-8601'},
+        'group_by_throttle_policy': {'key': 'groupByThrottlePolicy', 'type': 'bool'},
+        'group_by_operation_name': {'key': 'groupByOperationName', 'type': 'bool'},
+        'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ThrottledRequestsInput, self).__init__(**kwargs)

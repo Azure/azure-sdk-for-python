@@ -30,6 +30,6 @@ class SubResourceReadOnly(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SubResourceReadOnly, self).__init__()
+    def __init__(self, **kwargs):
+        super(SubResourceReadOnly, self).__init__(**kwargs)
         self.id = None

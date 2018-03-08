@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ImageDataDisk(Model):
     """Describes a data disk.
 
-    :param lun: Specifies the logical unit number of the data disk. This value
-     is used to identify data disks within the VM and therefore must be unique
-     for each data disk attached to a VM.
+    All required parameters must be populated in order to send to Azure.
+
+    :param lun: Required. Specifies the logical unit number of the data disk.
+     This value is used to identify data disks within the VM and therefore must
+     be unique for each data disk attached to a VM.
     :type lun: int
     :param snapshot: The snapshot.
     :type snapshot: ~azure.mgmt.compute.v2017_12_01.models.SubResource
@@ -55,12 +57,12 @@ class ImageDataDisk(Model):
         'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
     }
 
-    def __init__(self, lun, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None, storage_account_type=None):
-        super(ImageDataDisk, self).__init__()
-        self.lun = lun
-        self.snapshot = snapshot
-        self.managed_disk = managed_disk
-        self.blob_uri = blob_uri
-        self.caching = caching
-        self.disk_size_gb = disk_size_gb
-        self.storage_account_type = storage_account_type
+    def __init__(self, **kwargs):
+        super(ImageDataDisk, self).__init__(**kwargs)
+        self.lun = kwargs.get('lun', None)
+        self.snapshot = kwargs.get('snapshot', None)
+        self.managed_disk = kwargs.get('managed_disk', None)
+        self.blob_uri = kwargs.get('blob_uri', None)
+        self.caching = kwargs.get('caching', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)
