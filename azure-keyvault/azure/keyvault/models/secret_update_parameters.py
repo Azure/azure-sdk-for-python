@@ -29,8 +29,8 @@ class SecretUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, content_type=None, secret_attributes=None, tags=None):
-        super(SecretUpdateParameters, self).__init__()
-        self.content_type = content_type
-        self.secret_attributes = secret_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SecretUpdateParameters, self).__init__(**kwargs)
+        self.content_type = kwargs.get('content_type', None)
+        self.secret_attributes = kwargs.get('secret_attributes', None)
+        self.tags = kwargs.get('tags', None)

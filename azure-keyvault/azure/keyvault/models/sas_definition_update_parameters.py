@@ -31,8 +31,8 @@ class SasDefinitionUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, parameters=None, sas_definition_attributes=None, tags=None):
-        super(SasDefinitionUpdateParameters, self).__init__()
-        self.parameters = parameters
-        self.sas_definition_attributes = sas_definition_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SasDefinitionUpdateParameters, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
+        self.sas_definition_attributes = kwargs.get('sas_definition_attributes', None)
+        self.tags = kwargs.get('tags', None)
