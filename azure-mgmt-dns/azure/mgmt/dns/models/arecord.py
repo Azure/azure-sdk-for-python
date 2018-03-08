@@ -23,6 +23,6 @@ class ARecord(Model):
         'ipv4_address': {'key': 'ipv4Address', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ARecord, self).__init__(**kwargs)
-        self.ipv4_address = kwargs.get('ipv4_address', None)
+    def __init__(self, ipv4_address=None):
+        super(ARecord, self).__init__()
+        self.ipv4_address = ipv4_address

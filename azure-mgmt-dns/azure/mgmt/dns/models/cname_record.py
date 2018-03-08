@@ -23,6 +23,6 @@ class CnameRecord(Model):
         'cname': {'key': 'cname', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(CnameRecord, self).__init__(**kwargs)
-        self.cname = kwargs.get('cname', None)
+    def __init__(self, cname=None):
+        super(CnameRecord, self).__init__()
+        self.cname = cname

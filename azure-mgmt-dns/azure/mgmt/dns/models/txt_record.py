@@ -23,6 +23,6 @@ class TxtRecord(Model):
         'value': {'key': 'value', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(TxtRecord, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, value=None):
+        super(TxtRecord, self).__init__()
+        self.value = value

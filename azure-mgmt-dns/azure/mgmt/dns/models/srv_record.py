@@ -32,9 +32,9 @@ class SrvRecord(Model):
         'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SrvRecord, self).__init__(**kwargs)
-        self.priority = kwargs.get('priority', None)
-        self.weight = kwargs.get('weight', None)
-        self.port = kwargs.get('port', None)
-        self.target = kwargs.get('target', None)
+    def __init__(self, priority=None, weight=None, port=None, target=None):
+        super(SrvRecord, self).__init__()
+        self.priority = priority
+        self.weight = weight
+        self.port = port
+        self.target = target

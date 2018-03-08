@@ -44,8 +44,8 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, location=None, tags=None):
+        super(Resource, self).__init__()
         self.id = None
         self.name = None
         self.type = None

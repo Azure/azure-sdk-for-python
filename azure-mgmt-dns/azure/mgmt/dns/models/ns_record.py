@@ -23,6 +23,6 @@ class NsRecord(Model):
         'nsdname': {'key': 'nsdname', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(NsRecord, self).__init__(**kwargs)
-        self.nsdname = kwargs.get('nsdname', None)
+    def __init__(self, nsdname=None):
+        super(NsRecord, self).__init__()
+        self.nsdname = nsdname

@@ -23,6 +23,6 @@ class PtrRecord(Model):
         'ptrdname': {'key': 'ptrdname', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(PtrRecord, self).__init__(**kwargs)
-        self.ptrdname = kwargs.get('ptrdname', None)
+    def __init__(self, ptrdname=None):
+        super(PtrRecord, self).__init__()
+        self.ptrdname = ptrdname

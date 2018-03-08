@@ -26,7 +26,7 @@ class MxRecord(Model):
         'exchange': {'key': 'exchange', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(MxRecord, self).__init__(**kwargs)
-        self.preference = kwargs.get('preference', None)
-        self.exchange = kwargs.get('exchange', None)
+    def __init__(self, preference=None, exchange=None):
+        super(MxRecord, self).__init__()
+        self.preference = preference
+        self.exchange = exchange

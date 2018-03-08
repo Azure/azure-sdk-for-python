@@ -15,7 +15,6 @@ from .storage_profile import StorageProfile
 from .server_properties_for_create import ServerPropertiesForCreate
 from .server_properties_for_default_create import ServerPropertiesForDefaultCreate
 from .server_properties_for_restore import ServerPropertiesForRestore
-from .server_properties_for_geo_restore import ServerPropertiesForGeoRestore
 from .sku import Sku
 from .server import Server
 from .server_for_create import ServerForCreate
@@ -53,7 +52,6 @@ __all__ = [
     'ServerPropertiesForCreate',
     'ServerPropertiesForDefaultCreate',
     'ServerPropertiesForRestore',
-    'ServerPropertiesForGeoRestore',
     'Sku',
     'Server',
     'ServerForCreate',

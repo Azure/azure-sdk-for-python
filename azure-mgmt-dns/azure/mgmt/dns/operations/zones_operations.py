@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.polling import LROPoller, NoPolling
-from msrestazure.polling.arm_polling import ARMPolling
+from msrest.exceptions import DeserializationError
+from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
 
@@ -124,7 +124,6 @@ class ZonesOperations(object):
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'}
 
-
     def _delete_initial(
             self, resource_group_name, zone_name, if_match=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
@@ -147,8 +146,6 @@ class ZonesOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -166,7 +163,7 @@ class ZonesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, zone_name, if_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, zone_name, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a DNS zone. WARNING: All DNS records in the zone will also be
         deleted. This operation cannot be undone.
 
@@ -180,14 +177,12 @@ class ZonesOperations(object):
          accidentally deleting any concurrent changes.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns None or
+         ClientRawResponse if raw=true
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
@@ -198,31 +193,59 @@ class ZonesOperations(object):
             raw=True,
             **operation_config
         )
+        if raw:
+            return raw_result
 
-        def get_long_running_output(response):
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
 
-        lro_delay = operation_config.get(
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+            if response.status_code not in [200, 202, 204]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Zone', response)
+
+        long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'}
 
-    def get(
-            self, resource_group_name, zone_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a DNS zone. Retrieves the zone properties, but not the record sets
-        within the zone.
+    def update(
+            self, resource_group_name, zone_name, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+        """Updates a DNS zone. Does not modify DNS records within the zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
         :type zone_name: str
+        :param parameters: Parameters supplied to the Update operation.
+        :type parameters: ~azure.mgmt.dns.models.Zone
+        :param if_match: The etag of the DNS zone. Omit this value to always
+         overwrite the current zone. Specify the last-seen etag value to
+         prevent accidentally overwritting any concurrent changes.
+        :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -253,8 +276,13 @@ class ZonesOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'Zone')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
