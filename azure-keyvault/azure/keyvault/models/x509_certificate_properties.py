@@ -19,13 +19,12 @@ class X509CertificateProperties(Model):
      Name.
     :type subject: str
     :param ekus: The enhanced key usage.
-    :type ekus: list of str
+    :type ekus: list[str]
     :param subject_alternative_names: The subject alternative names.
-    :type subject_alternative_names: :class:`SubjectAlternativeNames
-     <azure.keyvault.models.SubjectAlternativeNames>`
+    :type subject_alternative_names:
+     ~azure.keyvault.models.SubjectAlternativeNames
     :param key_usage: List of key usages.
-    :type key_usage: list of str or :class:`KeyUsageType
-     <azure.keyvault.models.KeyUsageType>`
+    :type key_usage: list[str or ~azure.keyvault.models.KeyUsageType]
     :param validity_in_months: The duration that the ceritifcate is valid in
      months.
     :type validity_in_months: int
@@ -44,6 +43,7 @@ class X509CertificateProperties(Model):
     }
 
     def __init__(self, subject=None, ekus=None, subject_alternative_names=None, key_usage=None, validity_in_months=None):
+        super(X509CertificateProperties, self).__init__()
         self.subject = subject
         self.ekus = ekus
         self.subject_alternative_names = subject_alternative_names

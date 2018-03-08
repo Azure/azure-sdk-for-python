@@ -17,13 +17,11 @@ class KeyUpdateParameters(Model):
 
     :param key_ops: Json web key operations. For more information on possible
      key operations, see JsonWebKeyOperation.
-    :type key_ops: list of str or :class:`JsonWebKeyOperation
-     <azure.keyvault.models.JsonWebKeyOperation>`
+    :type key_ops: list[str or ~azure.keyvault.models.JsonWebKeyOperation]
     :param key_attributes:
-    :type key_attributes: :class:`KeyAttributes
-     <azure.keyvault.models.KeyAttributes>`
+    :type key_attributes: ~azure.keyvault.models.KeyAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -33,6 +31,7 @@ class KeyUpdateParameters(Model):
     }
 
     def __init__(self, key_ops=None, key_attributes=None, tags=None):
+        super(KeyUpdateParameters, self).__init__()
         self.key_ops = key_ops
         self.key_attributes = key_attributes
         self.tags = tags
