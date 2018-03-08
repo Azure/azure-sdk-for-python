@@ -22,6 +22,7 @@ from .caa_record import CaaRecord
 from .record_set import RecordSet
 from .record_set_update_parameters import RecordSetUpdateParameters
 from .zone import Zone
+from .zone_update import ZoneUpdate
 from .resource import Resource
 from .record_set_paged import RecordSetPaged
 from .zone_paged import ZonePaged
@@ -43,6 +44,7 @@ __all__ = [
     'RecordSet',
     'RecordSetUpdateParameters',
     'Zone',
+    'ZoneUpdate',
     'Resource',
     'RecordSetPaged',
     'ZonePaged',
