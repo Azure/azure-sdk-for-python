@@ -30,6 +30,6 @@ class LogAnalyticsOutput(Model):
         'output': {'key': 'output', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(LogAnalyticsOutput, self).__init__()
+    def __init__(self, **kwargs):
+        super(LogAnalyticsOutput, self).__init__(**kwargs)
         self.output = None

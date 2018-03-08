@@ -18,23 +18,26 @@ class VirtualMachineExtensionImage(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param operating_system: The operating system this extension supports.
-    :type operating_system: str
-    :param compute_role: The type of role (IaaS or PaaS) this extension
+    :param operating_system: Required. The operating system this extension
      supports.
+    :type operating_system: str
+    :param compute_role: Required. The type of role (IaaS or PaaS) this
+     extension supports.
     :type compute_role: str
-    :param handler_schema: The schema defined by publisher, where extension
-     consumers should provide settings in a matching schema.
+    :param handler_schema: Required. The schema defined by publisher, where
+     extension consumers should provide settings in a matching schema.
     :type handler_schema: str
     :param vm_scale_set_enabled: Whether the extension can be used on xRP
      VMScaleSets. By default existing extensions are usable on scalesets, but
@@ -69,10 +72,10 @@ class VirtualMachineExtensionImage(Resource):
         'supports_multiple_extensions': {'key': 'properties.supportsMultipleExtensions', 'type': 'bool'},
     }
 
-    def __init__(self, location, operating_system, compute_role, handler_schema, tags=None, vm_scale_set_enabled=None, supports_multiple_extensions=None):
-        super(VirtualMachineExtensionImage, self).__init__(location=location, tags=tags)
-        self.operating_system = operating_system
-        self.compute_role = compute_role
-        self.handler_schema = handler_schema
-        self.vm_scale_set_enabled = vm_scale_set_enabled
-        self.supports_multiple_extensions = supports_multiple_extensions
+    def __init__(self, **kwargs):
+        super(VirtualMachineExtensionImage, self).__init__(**kwargs)
+        self.operating_system = kwargs.get('operating_system', None)
+        self.compute_role = kwargs.get('compute_role', None)
+        self.handler_schema = kwargs.get('handler_schema', None)
+        self.vm_scale_set_enabled = kwargs.get('vm_scale_set_enabled', None)
+        self.supports_multiple_extensions = kwargs.get('supports_multiple_extensions', None)

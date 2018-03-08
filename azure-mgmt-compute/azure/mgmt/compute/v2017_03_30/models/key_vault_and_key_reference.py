@@ -16,10 +16,12 @@ class KeyVaultAndKeyReference(Model):
     """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is
     used to unwrap the encryptionKey.
 
-    :param source_vault: Resource id of the KeyVault containing the key or
-     secret
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_vault: Required. Resource id of the KeyVault containing the
+     key or secret
     :type source_vault: ~azure.mgmt.compute.v2017_03_30.models.SourceVault
-    :param key_url: Url pointing to a key or secret in KeyVault
+    :param key_url: Required. Url pointing to a key or secret in KeyVault
     :type key_url: str
     """
 
@@ -33,7 +35,7 @@ class KeyVaultAndKeyReference(Model):
         'key_url': {'key': 'keyUrl', 'type': 'str'},
     }
 
-    def __init__(self, source_vault, key_url):
-        super(KeyVaultAndKeyReference, self).__init__()
-        self.source_vault = source_vault
-        self.key_url = key_url
+    def __init__(self, **kwargs):
+        super(KeyVaultAndKeyReference, self).__init__(**kwargs)
+        self.source_vault = kwargs.get('source_vault', None)
+        self.key_url = kwargs.get('key_url', None)

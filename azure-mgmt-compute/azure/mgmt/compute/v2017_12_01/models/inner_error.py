@@ -26,7 +26,7 @@ class InnerError(Model):
         'errordetail': {'key': 'errordetail', 'type': 'str'},
     }
 
-    def __init__(self, exceptiontype=None, errordetail=None):
-        super(InnerError, self).__init__()
-        self.exceptiontype = exceptiontype
-        self.errordetail = errordetail
+    def __init__(self, **kwargs):
+        super(InnerError, self).__init__(**kwargs)
+        self.exceptiontype = kwargs.get('exceptiontype', None)
+        self.errordetail = kwargs.get('errordetail', None)

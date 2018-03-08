@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class RunCommandInput(Model):
     """Capture Virtual Machine parameters.
 
-    :param command_id: The run command id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param command_id: Required. The run command id.
     :type command_id: str
     :param script: Optional. The script to be executed.  When this value is
      given, the given script will override the default script of the command.
@@ -35,8 +37,8 @@ class RunCommandInput(Model):
         'parameters': {'key': 'parameters', 'type': '[RunCommandInputParameter]'},
     }
 
-    def __init__(self, command_id, script=None, parameters=None):
-        super(RunCommandInput, self).__init__()
-        self.command_id = command_id
-        self.script = script
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(RunCommandInput, self).__init__(**kwargs)
+        self.command_id = kwargs.get('command_id', None)
+        self.script = kwargs.get('script', None)
+        self.parameters = kwargs.get('parameters', None)

@@ -18,13 +18,15 @@ class VirtualMachine(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -86,7 +88,7 @@ class VirtualMachine(Resource):
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
-    :vartype vm_id: str
+    :vartype vm_id: int
     :ivar resources: The virtual machine child extension resources.
     :vartype resources:
      list[~azure.mgmt.compute.v2017_03_30.models.VirtualMachineExtension]
@@ -124,25 +126,25 @@ class VirtualMachine(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'int'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
+        'vm_id': {'key': 'properties.vmId', 'type': 'int'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None, identity=None, zones=None):
-        super(VirtualMachine, self).__init__(location=location, tags=tags)
-        self.plan = plan
-        self.hardware_profile = hardware_profile
-        self.storage_profile = storage_profile
-        self.os_profile = os_profile
-        self.network_profile = network_profile
-        self.diagnostics_profile = diagnostics_profile
-        self.availability_set = availability_set
+    def __init__(self, **kwargs):
+        super(VirtualMachine, self).__init__(**kwargs)
+        self.plan = kwargs.get('plan', None)
+        self.hardware_profile = kwargs.get('hardware_profile', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.os_profile = kwargs.get('os_profile', None)
+        self.network_profile = kwargs.get('network_profile', None)
+        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
+        self.availability_set = kwargs.get('availability_set', None)
         self.provisioning_state = None
         self.instance_view = None
-        self.license_type = license_type
+        self.license_type = kwargs.get('license_type', None)
         self.vm_id = None
         self.resources = None
-        self.identity = identity
-        self.zones = zones
+        self.identity = kwargs.get('identity', None)
+        self.zones = kwargs.get('zones', None)

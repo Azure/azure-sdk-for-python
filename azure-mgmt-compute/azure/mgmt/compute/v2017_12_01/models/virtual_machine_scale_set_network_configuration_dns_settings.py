@@ -24,6 +24,6 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(Model):
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
     }
 
-    def __init__(self, dns_servers=None):
-        super(VirtualMachineScaleSetNetworkConfigurationDnsSettings, self).__init__()
-        self.dns_servers = dns_servers
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetNetworkConfigurationDnsSettings, self).__init__(**kwargs)
+        self.dns_servers = kwargs.get('dns_servers', None)

@@ -15,12 +15,14 @@ from .log_analytics_input_base import LogAnalyticsInputBase
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
     """Api request input for LogAnalytics getRequestRateByInterval Api.
 
-    :param blob_container_sas_uri: SAS Uri of the logging blob container to
-     which LogAnalytics Api writes output logs to.
+    All required parameters must be populated in order to send to Azure.
+
+    :param blob_container_sas_uri: Required. SAS Uri of the logging blob
+     container to which LogAnalytics Api writes output logs to.
     :type blob_container_sas_uri: str
-    :param from_time: From time of the query
+    :param from_time: Required. From time of the query
     :type from_time: datetime
-    :param to_time: To time of the query
+    :param to_time: Required. To time of the query
     :type to_time: datetime
     :param group_by_throttle_policy: Group query result by Throttle Policy
      applied.
@@ -29,7 +31,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
     :type group_by_operation_name: bool
     :param group_by_resource_name: Group query result by Resource Name.
     :type group_by_resource_name: bool
-    :param interval_length: Interval value in minutes used to create
+    :param interval_length: Required. Interval value in minutes used to create
      LogAnalytics call rate logs. Possible values include: 'ThreeMins',
      'FiveMins', 'ThirtyMins', 'SixtyMins'
     :type interval_length: str or
@@ -53,6 +55,6 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         'interval_length': {'key': 'intervalLength', 'type': 'IntervalInMins'},
     }
 
-    def __init__(self, blob_container_sas_uri, from_time, to_time, interval_length, group_by_throttle_policy=None, group_by_operation_name=None, group_by_resource_name=None):
-        super(RequestRateByIntervalInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name)
-        self.interval_length = interval_length
+    def __init__(self, **kwargs):
+        super(RequestRateByIntervalInput, self).__init__(**kwargs)
+        self.interval_length = kwargs.get('interval_length', None)

@@ -46,8 +46,8 @@ class RollingUpgradeRunningStatus(Model):
         'last_action_time': {'key': 'lastActionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(RollingUpgradeRunningStatus, self).__init__()
+    def __init__(self, **kwargs):
+        super(RollingUpgradeRunningStatus, self).__init__(**kwargs)
         self.code = None
         self.start_time = None
         self.last_action = None

@@ -35,7 +35,7 @@ class RecoveryWalkResponse(Model):
         'next_platform_update_domain': {'key': 'nextPlatformUpdateDomain', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(RecoveryWalkResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecoveryWalkResponse, self).__init__(**kwargs)
         self.walk_performed = None
         self.next_platform_update_domain = None
