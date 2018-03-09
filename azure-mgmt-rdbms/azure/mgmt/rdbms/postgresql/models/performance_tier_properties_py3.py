@@ -42,11 +42,11 @@ class PerformanceTierProperties(Model):
         'service_level_objectives': {'key': 'serviceLevelObjectives', 'type': '[PerformanceTierServiceLevelObjectives]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, max_backup_retention_days: int=None, min_backup_retention_days: int=None, max_storage_mb: int=None, min_storage_mb: int=None, service_level_objectives=None, **kwargs) -> None:
         super(PerformanceTierProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.max_backup_retention_days = kwargs.get('max_backup_retention_days', None)
-        self.min_backup_retention_days = kwargs.get('min_backup_retention_days', None)
-        self.max_storage_mb = kwargs.get('max_storage_mb', None)
-        self.min_storage_mb = kwargs.get('min_storage_mb', None)
-        self.service_level_objectives = kwargs.get('service_level_objectives', None)
+        self.id = id
+        self.max_backup_retention_days = max_backup_retention_days
+        self.min_backup_retention_days = min_backup_retention_days
+        self.max_storage_mb = max_storage_mb
+        self.min_storage_mb = min_storage_mb
+        self.service_level_objectives = service_level_objectives

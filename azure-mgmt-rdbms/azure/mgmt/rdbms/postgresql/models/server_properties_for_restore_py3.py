@@ -49,8 +49,8 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
         'restore_point_in_time': {'key': 'restorePointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServerPropertiesForRestore, self).__init__(**kwargs)
-        self.source_server_id = kwargs.get('source_server_id', None)
-        self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
+    def __init__(self, *, source_server_id: str, restore_point_in_time, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
+        super(ServerPropertiesForRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile, **kwargs)
+        self.source_server_id = source_server_id
+        self.restore_point_in_time = restore_point_in_time
         self.create_mode = 'PointInTimeRestore'

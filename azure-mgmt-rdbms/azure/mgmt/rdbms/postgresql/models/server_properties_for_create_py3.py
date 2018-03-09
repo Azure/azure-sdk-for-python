@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_properties_for_create import ServerPropertiesForCreate
+from msrest.serialization import Model
 
 
-class ServerPropertiesForRestore(ServerPropertiesForCreate):
-    """The properties to a new server by restoring from a backup.
+class ServerPropertiesForCreate(Model):
+    """The properties used to create a new server.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ServerPropertiesForDefaultCreate,
+    ServerPropertiesForRestore
 
     All required parameters must be populated in order to send to Azure.
 
@@ -27,17 +31,10 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
     :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
-    :param source_server_id: Required. The source server id to restore from.
-    :type source_server_id: str
-    :param restore_point_in_time: Required. Restore point creation time
-     (ISO8601 format), specifying the time to restore from.
-    :type restore_point_in_time: datetime
     """
 
     _validation = {
         'create_mode': {'required': True},
-        'source_server_id': {'required': True},
-        'restore_point_in_time': {'required': True},
     }
 
     _attribute_map = {
@@ -45,12 +42,15 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
-        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
-        'restore_point_in_time': {'key': 'restorePointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServerPropertiesForRestore, self).__init__(**kwargs)
-        self.source_server_id = kwargs.get('source_server_id', None)
-        self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
-        self.create_mode = 'PointInTimeRestore'
+    _subtype_map = {
+        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore'}
+    }
+
+    def __init__(self, *, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
+        super(ServerPropertiesForCreate, self).__init__(**kwargs)
+        self.version = version
+        self.ssl_enforcement = ssl_enforcement
+        self.storage_profile = storage_profile
+        self.create_mode = None

@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class TrackedResource(ProxyResource):
-    """Resource properties including location and tags for track resources.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class ServerForCreate(Model):
+    """Represents a server to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :param sku: The SKU (pricing tier) of the server.
+    :type sku: ~azure.mgmt.rdbms.postgresql.models.Sku
+    :param properties: Required. Properties of the server.
+    :type properties:
+     ~azure.mgmt.rdbms.postgresql.models.ServerPropertiesForCreate
     :param location: Required. The location the resource resides in.
     :type location: str
     :param tags: Application-specific metadata in the form of key-value pairs.
@@ -33,21 +29,20 @@ class TrackedResource(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'properties': {'required': True},
         'location': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'properties': {'key': 'properties', 'type': 'ServerPropertiesForCreate'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, properties, location: str, sku=None, tags=None, **kwargs) -> None:
+        super(ServerForCreate, self).__init__(**kwargs)
+        self.sku = sku
+        self.properties = properties
+        self.location = location
+        self.tags = tags

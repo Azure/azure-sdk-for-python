@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class ProxyResource(Model):
-    """Resource properties.
+class Database(ProxyResource):
+    """Represents a Database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,6 +24,10 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param charset: The charset of the database.
+    :type charset: str
+    :param collation: The collation of the database.
+    :type collation: str
     """
 
     _validation = {
@@ -36,10 +40,11 @@ class ProxyResource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'charset': {'key': 'properties.charset', 'type': 'str'},
+        'collation': {'key': 'properties.collation', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, *, charset: str=None, collation: str=None, **kwargs) -> None:
+        super(Database, self).__init__(, **kwargs)
+        self.charset = charset
+        self.collation = collation
