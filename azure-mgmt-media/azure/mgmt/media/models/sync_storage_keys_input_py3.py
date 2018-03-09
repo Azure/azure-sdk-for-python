@@ -12,17 +12,23 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeyOutput(Model):
-    """The response body for a RegenerateKey API.
+class SyncStorageKeysInput(Model):
+    """The request  body for a SyncStorageKeys API.
 
-    :param key: The new value of either the primary or secondary key.
-    :type key: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The id of the storage account resource.
+    :type id: str
     """
 
-    _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
+    _validation = {
+        'id': {'required': True},
     }
 
-    def __init__(self, **kwargs):
-        super(RegenerateKeyOutput, self).__init__(**kwargs)
-        self.key = kwargs.get('key', None)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, **kwargs) -> None:
+        super(SyncStorageKeysInput, self).__init__(**kwargs)
+        self.id = id

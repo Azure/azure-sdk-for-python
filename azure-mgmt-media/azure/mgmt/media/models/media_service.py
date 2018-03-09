@@ -29,15 +29,13 @@ class MediaService(Resource):
      East US, Southeast Asia, and so forth).
     :type location: str
     :param tags: Tags to help categorize the resource in the Azure portal.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar api_endpoints: Read-only property that lists the Media Services REST
      API endpoints for this resource. If supplied on a PUT or PATCH, the value
      will be ignored.
-    :vartype api_endpoints: list of :class:`ApiEndpoint
-     <azure.mgmt.media.models.ApiEndpoint>`
+    :vartype api_endpoints: list[~azure.mgmt.media.models.ApiEndpoint]
     :param storage_accounts: The storage accounts for this resource.
-    :type storage_accounts: list of :class:`StorageAccount
-     <azure.mgmt.media.models.StorageAccount>`
+    :type storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
     """
 
     _validation = {
@@ -57,7 +55,7 @@ class MediaService(Resource):
         'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
     }
 
-    def __init__(self, location=None, tags=None, storage_accounts=None):
-        super(MediaService, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(MediaService, self).__init__(**kwargs)
         self.api_endpoints = None
-        self.storage_accounts = storage_accounts
+        self.storage_accounts = kwargs.get('storage_accounts', None)

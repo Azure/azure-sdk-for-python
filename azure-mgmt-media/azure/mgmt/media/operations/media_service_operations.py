@@ -21,9 +21,11 @@ class MediaServiceOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. The current version is 2015-10-01. Constant value: "2015-10-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -46,20 +48,16 @@ class MediaServiceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`CheckNameAvailabilityOutput
-         <azure.mgmt.media.models.CheckNameAvailabilityOutput>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`CheckNameAvailabilityOutput
-         <azure.mgmt.media.models.CheckNameAvailabilityOutput>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: CheckNameAvailabilityOutput or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.CheckNameAvailabilityOutput or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         parameters = models.CheckNameAvailabilityInput(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Media/CheckNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -85,7 +83,7 @@ class MediaServiceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -100,6 +98,7 @@ class MediaServiceOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/CheckNameAvailability'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -113,10 +112,9 @@ class MediaServiceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`MediaService
-         <azure.mgmt.media.models.MediaService>`
-        :rtype: :class:`MediaServicePaged
-         <azure.mgmt.media.models.MediaServicePaged>`
+        :return: An iterator like instance of MediaService
+        :rtype:
+         ~azure.mgmt.media.models.MediaServicePaged[~azure.mgmt.media.models.MediaService]
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
@@ -124,7 +122,7 @@ class MediaServiceOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
@@ -152,7 +150,7 @@ class MediaServiceOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ApiErrorException(self._deserialize, response)
@@ -168,6 +166,7 @@ class MediaServiceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices'}
 
     def get(
             self, resource_group_name, media_service_name, custom_headers=None, raw=False, **operation_config):
@@ -183,16 +182,14 @@ class MediaServiceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MediaService <azure.mgmt.media.models.MediaService>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MediaService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.MediaService or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -216,7 +213,7 @@ class MediaServiceOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -231,6 +228,7 @@ class MediaServiceOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'}
 
     def create(
             self, resource_group_name, media_service_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -242,23 +240,20 @@ class MediaServiceOperations(object):
         :param media_service_name: Name of the Media Service.
         :type media_service_name: str
         :param parameters: Media Service properties needed for creation.
-        :type parameters: :class:`MediaService
-         <azure.mgmt.media.models.MediaService>`
+        :type parameters: ~azure.mgmt.media.models.MediaService
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MediaService <azure.mgmt.media.models.MediaService>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MediaService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.MediaService or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -286,7 +281,7 @@ class MediaServiceOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -301,6 +296,7 @@ class MediaServiceOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'}
 
     def delete(
             self, resource_group_name, media_service_name, custom_headers=None, raw=False, **operation_config):
@@ -316,16 +312,13 @@ class MediaServiceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -349,7 +342,7 @@ class MediaServiceOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -357,6 +350,7 @@ class MediaServiceOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'}
 
     def update(
             self, resource_group_name, media_service_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -368,23 +362,20 @@ class MediaServiceOperations(object):
         :param media_service_name: Name of the Media Service.
         :type media_service_name: str
         :param parameters: Media Service properties needed for update.
-        :type parameters: :class:`MediaService
-         <azure.mgmt.media.models.MediaService>`
+        :type parameters: ~azure.mgmt.media.models.MediaService
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`MediaService <azure.mgmt.media.models.MediaService>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: MediaService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.MediaService or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -412,7 +403,7 @@ class MediaServiceOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -427,6 +418,7 @@ class MediaServiceOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'}
 
     def regenerate_key(
             self, resource_group_name, media_service_name, key_type, custom_headers=None, raw=False, **operation_config):
@@ -440,27 +432,22 @@ class MediaServiceOperations(object):
         :param key_type: The keyType indicating which key you want to
          regenerate, Primary or Secondary. Possible values include: 'Primary',
          'Secondary'
-        :type key_type: str or :class:`KeyType
-         <azure.mgmt.media.models.KeyType>`
+        :type key_type: str or ~azure.mgmt.media.models.KeyType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`RegenerateKeyOutput
-         <azure.mgmt.media.models.RegenerateKeyOutput>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`RegenerateKeyOutput
-         <azure.mgmt.media.models.RegenerateKeyOutput>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: RegenerateKeyOutput or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.RegenerateKeyOutput or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         parameters = models.RegenerateKeyInput(key_type=key_type)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}/regenerateKey'
+        url = self.regenerate_key.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -488,7 +475,7 @@ class MediaServiceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -503,6 +490,7 @@ class MediaServiceOperations(object):
             return client_raw_response
 
         return deserialized
+    regenerate_key.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}/regenerateKey'}
 
     def list_keys(
             self, resource_group_name, media_service_name, custom_headers=None, raw=False, **operation_config):
@@ -518,16 +506,14 @@ class MediaServiceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`ServiceKeys <azure.mgmt.media.models.ServiceKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`ServiceKeys <azure.mgmt.media.models.ServiceKeys>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: ServiceKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.ServiceKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}/listKeys'
+        url = self.list_keys.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -551,7 +537,7 @@ class MediaServiceOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -566,6 +552,7 @@ class MediaServiceOperations(object):
             return client_raw_response
 
         return deserialized
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}/listKeys'}
 
     def sync_storage_keys(
             self, resource_group_name, media_service_name, id, custom_headers=None, raw=False, **operation_config):
@@ -584,18 +571,15 @@ class MediaServiceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         parameters = models.SyncStorageKeysInput(id=id)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}/syncStorageKeys'
+        url = self.sync_storage_keys.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -623,7 +607,7 @@ class MediaServiceOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -631,3 +615,4 @@ class MediaServiceOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    sync_storage_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}/syncStorageKeys'}

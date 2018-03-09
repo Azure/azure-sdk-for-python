@@ -39,7 +39,7 @@ class StorageAccount(Model):
         'is_primary': {'key': 'isPrimary', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str, is_primary: bool, **kwargs) -> None:
         super(StorageAccount, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.is_primary = kwargs.get('is_primary', None)
+        self.id = id
+        self.is_primary = is_primary

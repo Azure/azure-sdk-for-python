@@ -40,6 +40,6 @@ class CheckNameAvailabilityInput(Model):
 
     type = "mediaservices"
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, **kwargs) -> None:
         super(CheckNameAvailabilityInput, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name

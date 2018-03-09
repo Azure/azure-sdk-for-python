@@ -26,7 +26,7 @@ class ApiEndpoint(Model):
         'major_version': {'key': 'majorVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, endpoint: str=None, major_version: str=None, **kwargs) -> None:
         super(ApiEndpoint, self).__init__(**kwargs)
-        self.endpoint = kwargs.get('endpoint', None)
-        self.major_version = kwargs.get('major_version', None)
+        self.endpoint = endpoint
+        self.major_version = major_version

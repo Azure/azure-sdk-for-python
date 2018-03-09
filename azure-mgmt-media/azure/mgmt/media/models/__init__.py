@@ -9,20 +9,36 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .api_endpoint import ApiEndpoint
-from .api_error import ApiError, ApiErrorException
-from .check_name_availability_input import CheckNameAvailabilityInput
-from .check_name_availability_output import CheckNameAvailabilityOutput
-from .storage_account import StorageAccount
-from .media_service import MediaService
-from .regenerate_key_input import RegenerateKeyInput
-from .regenerate_key_output import RegenerateKeyOutput
-from .resource import Resource
-from .service_keys import ServiceKeys
-from .sync_storage_keys_input import SyncStorageKeysInput
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .operation_list_result import OperationListResult
+try:
+    from .api_endpoint_py3 import ApiEndpoint
+    from .api_error_py3 import ApiError, ApiErrorException
+    from .check_name_availability_input_py3 import CheckNameAvailabilityInput
+    from .check_name_availability_output_py3 import CheckNameAvailabilityOutput
+    from .storage_account_py3 import StorageAccount
+    from .media_service_py3 import MediaService
+    from .regenerate_key_input_py3 import RegenerateKeyInput
+    from .regenerate_key_output_py3 import RegenerateKeyOutput
+    from .resource_py3 import Resource
+    from .service_keys_py3 import ServiceKeys
+    from .sync_storage_keys_input_py3 import SyncStorageKeysInput
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .operation_list_result_py3 import OperationListResult
+except (SyntaxError, ImportError):
+    from .api_endpoint import ApiEndpoint
+    from .api_error import ApiError, ApiErrorException
+    from .check_name_availability_input import CheckNameAvailabilityInput
+    from .check_name_availability_output import CheckNameAvailabilityOutput
+    from .storage_account import StorageAccount
+    from .media_service import MediaService
+    from .regenerate_key_input import RegenerateKeyInput
+    from .regenerate_key_output import RegenerateKeyOutput
+    from .resource import Resource
+    from .service_keys import ServiceKeys
+    from .sync_storage_keys_input import SyncStorageKeysInput
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .operation_list_result import OperationListResult
 from .media_service_paged import MediaServicePaged
 from .media_services_management_client_enums import (
     ResourceType,

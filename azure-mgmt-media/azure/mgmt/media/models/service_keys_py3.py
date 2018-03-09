@@ -35,10 +35,10 @@ class ServiceKeys(Model):
         'scope': {'key': 'scope', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, primary_auth_endpoint: str=None, secondary_auth_endpoint: str=None, primary_key: str=None, secondary_key: str=None, scope: str=None, **kwargs) -> None:
         super(ServiceKeys, self).__init__(**kwargs)
-        self.primary_auth_endpoint = kwargs.get('primary_auth_endpoint', None)
-        self.secondary_auth_endpoint = kwargs.get('secondary_auth_endpoint', None)
-        self.primary_key = kwargs.get('primary_key', None)
-        self.secondary_key = kwargs.get('secondary_key', None)
-        self.scope = kwargs.get('scope', None)
+        self.primary_auth_endpoint = primary_auth_endpoint
+        self.secondary_auth_endpoint = secondary_auth_endpoint
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
+        self.scope = scope

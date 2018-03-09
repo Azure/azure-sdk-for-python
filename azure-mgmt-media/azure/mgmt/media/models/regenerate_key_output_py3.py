@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2015-10-01"
+from msrest.serialization import Model
 
+
+class RegenerateKeyOutput(Model):
+    """The response body for a RegenerateKey API.
+
+    :param key: The new value of either the primary or secondary key.
+    :type key: str
+    """
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+    }
+
+    def __init__(self, *, key: str=None, **kwargs) -> None:
+        super(RegenerateKeyOutput, self).__init__(**kwargs)
+        self.key = key
