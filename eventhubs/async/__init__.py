@@ -11,9 +11,12 @@ import logging
 import queue
 import asyncio
 from threading import Lock
-from eventhubs import Sender, Receiver, EventData, EventHubError
+from eventhubs import Sender, Receiver, EventHubClient, EventData, EventHubError
+
+from uamqp import SendClientAsync, ReceiveClientAsync
 
 log = logging.getLogger("eventhubs")
+
 
 class AsyncSender(Sender):
     """
@@ -30,10 +33,22 @@ class AsyncSender(Sender):
         """
         self._check()
         task = self.loop.create_future()
-        self._handler.send(event_data.message, self.on_result, task)
+        event_data.message.on_send_complete = lambda o, c: self.on_result(task, o, c)
+        self._handler.queue_message(event_data.message)
         error = await task
         if error:
             raise error
+
+    async def wait(self):
+        await self._handler.wait_async()
+
+    def handler(self, client, target):
+        """
+        Creates a protocol handler for this sender.
+        """
+        self._handler = SendClientAsync(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
+        return self._handler
+
 
     def on_result(self, task, outcome, condition):
         """

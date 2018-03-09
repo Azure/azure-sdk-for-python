@@ -17,6 +17,7 @@ import datetime
 import sys
 import threading
 import uuid
+import time
 try:
     from urllib import urlparse
     from urllib import unquote_plus
@@ -33,9 +34,6 @@ from uamqp import authentication
 from uamqp import constants, utils
 
 
-#from proton import DELEGATED
-#from proton.handlers import EndpointStateHandler
-
 log = logging.getLogger("eventhubs")
 
 class EventHubClient(object):
@@ -51,8 +49,8 @@ class EventHubClient(object):
         """
         self.container_id = "eventhubs.pycli-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
-        username = kwargs.get('username', unquote_plus(self.address.username))
-        password = kwargs.get('password', unquote_plus(self.address.password))
+        username = kwargs.get('username', self.address.username)  # TODO: needs unquoting
+        password = kwargs.get('password', self.address.password)
         if not username or not password:
             raise ValueError("Missing username and/or password.")
         auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
@@ -160,59 +158,6 @@ class EventHubClient(object):
         self.clients.append(handler)
         return self
 
-    # def on_connection_remote_close(self, event):
-    #     """Handles on_connection_remote_close event."""
-    #     if self.stopped or event.connection != self.connection:
-    #         return DELEGATED
-    #     if EndpointStateHandler.is_local_closed(event.connection):
-    #         return DELEGATED
-    #     condition = event.connection.remote_condition
-    #     if condition:
-    #         log.error("%s: connection closed by peer %s:%s %s",
-    #                   self.container_id,
-    #                   condition.name,
-    #                   condition.description,
-    #                   event.connection.remote_container)
-    #     else:
-    #         log.error("%s: connection closed by peer %s",
-    #                   self.container_id,
-    #                   event.connection.remote_container)
-    #     self._close_clients(condition)
-    #     self._close_session()
-    #     self._close_connection()
-    #     self.container.schedule(1.0, self)
-
-    # def on_session_remote_close(self, event):
-    #     """Handles on_session_remote_close event."""
-    #     if EndpointStateHandler.is_local_closed(event.session):
-    #         return DELEGATED
-    #     condition = event.session.remote_condition
-    #     if condition:
-    #         log.error("%s: session close %s:%s %s",
-    #                   self.container_id,
-    #                   condition.name,
-    #                   condition.description,
-    #                   self.connection.remote_container)
-    #     else:
-    #         log.error("%s, session close %s",
-    #                   self.container_id,
-    #                   self.connection.remote_container)
-    #     self._close_clients(condition)
-    #     self._close_session()
-    #     self.container.schedule(1.0, self)
-
-    # def on_transport_closed(self, event):
-    #     """ Handles on_transport_closed event. """
-    #     if event.connection != self.connection:
-    #         return DELEGATED
-    #     if self.connection is None or EndpointStateHandler.is_local_closed(self.connection):
-    #         return DELEGATED
-    #     log.error("%s: transport close, condition %s", self.container_id, event.transport.condition)
-    #     self._close_clients(event.transport.condition)
-    #     self._close_session()
-    #     self._close_connection()
-    #     self.on_reactor_init(None)
-
 
 class Sender:
     """
@@ -237,9 +182,11 @@ class Sender:
         self._event.clear()
         event_data.message.on_send_complete = self.on_outcome
         self._handler.queue_message(event_data.message)
-        while self._handler._daemon.is_alive():
+        while self._handler.is_running_daemon():
             if self._event.is_set():
                 break
+        else:
+            self._handler.wait()
         if self._outcome != constants.MessageSendResult.Ok:
             if not self._event.is_set():
                 raise Sender._error(constants.MessageSendResult.Error,
@@ -262,7 +209,10 @@ class Sender:
         self._handler.queue_message(event_data.message)
 
     def wait(self):
-        self._handler.wait()
+        while self._handler.messages_pending():
+            time.sleep(1)
+        #     if self._error:
+        #         raise self._error
 
     def handler(self, client, target):
         """
@@ -333,12 +283,14 @@ class EventData(object):
     PROP_OFFSET = b"x-opt-offset"
     PROP_PARTITION_KEY = b"x-opt-partition-key"
 
-
-    def __init__(self, body=None):
+    def __init__(self, body=None, batch=None):
         """
         @param kwargs: name/value pairs in properties.
         """
-        self.message = Message(body)
+        if batch:
+            self.message = BatchMessage(data=batch, multi_messages=True)
+        elif body:
+            self.message = Message(body)
         self._annotations = {}
         self._properties = {}
 
