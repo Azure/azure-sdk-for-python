@@ -93,6 +93,20 @@ from .sync_member import SyncMember
 from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
+from .job_agent import JobAgent
+from .job_agent_update import JobAgentUpdate
+from .job_credential import JobCredential
+from .job_execution_target import JobExecutionTarget
+from .job_execution import JobExecution
+from .job_schedule import JobSchedule
+from .job import Job
+from .job_step_action import JobStepAction
+from .job_step_output import JobStepOutput
+from .job_step_execution_options import JobStepExecutionOptions
+from .job_step import JobStep
+from .job_target import JobTarget
+from .job_target_group import JobTargetGroup
+from .job_version import JobVersion
 from .resource_move_definition import ResourceMoveDefinition
 from .automatic_tuning_server_options import AutomaticTuningServerOptions
 from .server_automatic_tuning import ServerAutomaticTuning
@@ -138,6 +152,13 @@ from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_operation_paged import DatabaseOperationPaged
+from .job_agent_paged import JobAgentPaged
+from .job_credential_paged import JobCredentialPaged
+from .job_execution_paged import JobExecutionPaged
+from .job_paged import JobPaged
+from .job_step_paged import JobStepPaged
+from .job_target_group_paged import JobTargetGroupPaged
+from .job_version_paged import JobVersionPaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
 from .sql_management_client_enums import (
@@ -193,6 +214,14 @@ from .sql_management_client_enums import (
     SyncMemberState,
     VirtualNetworkRuleState,
     ManagementOperationState,
+    JobExecutionLifecycle,
+    ProvisioningState,
+    JobTargetType,
+    JobScheduleType,
+    JobStepActionType,
+    JobStepActionSource,
+    JobStepOutputType,
+    JobTargetGroupMembershipType,
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
@@ -283,6 +312,20 @@ __all__ = [
     'SubscriptionUsage',
     'VirtualNetworkRule',
     'DatabaseOperation',
+    'JobAgent',
+    'JobAgentUpdate',
+    'JobCredential',
+    'JobExecutionTarget',
+    'JobExecution',
+    'JobSchedule',
+    'Job',
+    'JobStepAction',
+    'JobStepOutput',
+    'JobStepExecutionOptions',
+    'JobStep',
+    'JobTarget',
+    'JobTargetGroup',
+    'JobVersion',
     'ResourceMoveDefinition',
     'AutomaticTuningServerOptions',
     'ServerAutomaticTuning',
@@ -328,6 +371,13 @@ __all__ = [
     'SubscriptionUsagePaged',
     'VirtualNetworkRulePaged',
     'DatabaseOperationPaged',
+    'JobAgentPaged',
+    'JobCredentialPaged',
+    'JobExecutionPaged',
+    'JobPaged',
+    'JobStepPaged',
+    'JobTargetGroupPaged',
+    'JobVersionPaged',
     'ServerDnsAliasPaged',
     'RestorePointPaged',
     'BackupLongTermRetentionPolicyState',
@@ -382,6 +432,14 @@ __all__ = [
     'SyncMemberState',
     'VirtualNetworkRuleState',
     'ManagementOperationState',
+    'JobExecutionLifecycle',
+    'ProvisioningState',
+    'JobTargetType',
+    'JobScheduleType',
+    'JobStepActionType',
+    'JobStepActionSource',
+    'JobStepOutputType',
+    'JobTargetGroupMembershipType',
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',

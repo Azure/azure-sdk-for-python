@@ -51,6 +51,13 @@ from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.database_operations import DatabaseOperations
+from .operations.job_agents_operations import JobAgentsOperations
+from .operations.job_credentials_operations import JobCredentialsOperations
+from .operations.job_executions_operations import JobExecutionsOperations
+from .operations.jobs_operations import JobsOperations
+from .operations.job_steps_operations import JobStepsOperations
+from .operations.job_target_groups_operations import JobTargetGroupsOperations
+from .operations.job_versions_operations import JobVersionsOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
@@ -172,6 +179,20 @@ class SqlManagementClient(object):
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
+    :ivar job_agents: JobAgents operations
+    :vartype job_agents: azure.mgmt.sql.operations.JobAgentsOperations
+    :ivar job_credentials: JobCredentials operations
+    :vartype job_credentials: azure.mgmt.sql.operations.JobCredentialsOperations
+    :ivar job_executions: JobExecutions operations
+    :vartype job_executions: azure.mgmt.sql.operations.JobExecutionsOperations
+    :ivar jobs: Jobs operations
+    :vartype jobs: azure.mgmt.sql.operations.JobsOperations
+    :ivar job_steps: JobSteps operations
+    :vartype job_steps: azure.mgmt.sql.operations.JobStepsOperations
+    :ivar job_target_groups: JobTargetGroups operations
+    :vartype job_target_groups: azure.mgmt.sql.operations.JobTargetGroupsOperations
+    :ivar job_versions: JobVersions operations
+    :vartype job_versions: azure.mgmt.sql.operations.JobVersionsOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
@@ -273,6 +294,20 @@ class SqlManagementClient(object):
         self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_agents = JobAgentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_credentials = JobCredentialsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_executions = JobExecutionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_steps = JobStepsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_target_groups = JobTargetGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_versions = JobVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
