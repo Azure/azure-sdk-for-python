@@ -2,7 +2,7 @@
   "meta": {
     "autorest_options": {
       "version": "preview",
-      "use": "@microsoft.azure/autorest.python@2.1.40",
+      "use": "@microsoft.azure/autorest.python@~3.0",
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": ".",
