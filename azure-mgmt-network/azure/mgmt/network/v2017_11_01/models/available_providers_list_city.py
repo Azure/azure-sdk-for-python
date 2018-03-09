@@ -26,7 +26,7 @@ class AvailableProvidersListCity(Model):
         'providers': {'key': 'providers', 'type': '[str]'},
     }
 
-    def __init__(self, city_name=None, providers=None):
-        super(AvailableProvidersListCity, self).__init__()
-        self.city_name = city_name
-        self.providers = providers
+    def __init__(self, **kwargs):
+        super(AvailableProvidersListCity, self).__init__(**kwargs)
+        self.city_name = kwargs.get('city_name', None)
+        self.providers = kwargs.get('providers', None)

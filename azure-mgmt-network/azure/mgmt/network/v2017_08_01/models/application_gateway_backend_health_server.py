@@ -32,8 +32,8 @@ class ApplicationGatewayBackendHealthServer(Model):
         'health': {'key': 'health', 'type': 'str'},
     }
 
-    def __init__(self, address=None, ip_configuration=None, health=None):
-        super(ApplicationGatewayBackendHealthServer, self).__init__()
-        self.address = address
-        self.ip_configuration = ip_configuration
-        self.health = health
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendHealthServer, self).__init__(**kwargs)
+        self.address = kwargs.get('address', None)
+        self.ip_configuration = kwargs.get('ip_configuration', None)
+        self.health = kwargs.get('health', None)
