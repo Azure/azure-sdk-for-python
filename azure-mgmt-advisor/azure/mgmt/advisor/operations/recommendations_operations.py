@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -24,7 +24,7 @@ class RecommendationsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
     """
 
@@ -55,7 +55,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations'
+        url = self.generate.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -91,12 +91,13 @@ class RecommendationsOperations(object):
                 'Retry-After': 'str',
             })
             return client_raw_response
+    generate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations'}
 
 
     def _get_generate_status_initial(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations/{operationId}'
+        url = self.get_generate_status.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
@@ -131,7 +132,7 @@ class RecommendationsOperations(object):
             return client_raw_response
 
     def get_generate_status(
-            self, operation_id, custom_headers=None, raw=False, **operation_config):
+            self, operation_id, custom_headers=None, raw=False, polling=True, **operation_config):
         """Retrieves the status of the recommendation computation or generation
         process. Invoke this API after calling the generation recommendation.
         The URI of this API is returned in the Location field of the response
@@ -141,12 +142,14 @@ class RecommendationsOperations(object):
          Location field in the generate recommendation response header.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._get_generate_status_initial(
@@ -155,40 +158,20 @@ class RecommendationsOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    get_generate_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/generateRecommendations/{operationId}'}
 
     def list(
             self, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
@@ -217,7 +200,7 @@ class RecommendationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/recommendations'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -268,6 +251,7 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/recommendations'}
 
     def get(
             self, resource_uri, recommendation_id, custom_headers=None, raw=False, **operation_config):
@@ -289,7 +273,7 @@ class RecommendationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
             'recommendationId': self._serialize.url("recommendation_id", recommendation_id, 'str')
@@ -329,3 +313,4 @@ class RecommendationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}'}
