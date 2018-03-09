@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class OracleLinkedService(LinkedService):
     """Oracle database.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,9 @@ class OracleLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: The connection string.
+    :param connection_string: Required. The connection string.
     :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
@@ -55,8 +57,8 @@ class OracleLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, encrypted_credential=None):
-        super(OracleLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.connection_string = connection_string
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(OracleLinkedService, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Oracle'

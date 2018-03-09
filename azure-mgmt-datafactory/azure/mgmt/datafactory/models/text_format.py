@@ -15,6 +15,8 @@ from .dataset_storage_format import DatasetStorageFormat
 class TextFormat(DatasetStorageFormat):
     """The data stored in text format.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -24,7 +26,7 @@ class TextFormat(DatasetStorageFormat):
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param column_delimiter: The column delimiter. Type: string (or Expression
      with resultType string).
@@ -83,15 +85,15 @@ class TextFormat(DatasetStorageFormat):
         'first_row_as_header': {'key': 'firstRowAsHeader', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, serializer=None, deserializer=None, column_delimiter=None, row_delimiter=None, escape_char=None, quote_char=None, null_value=None, encoding_name=None, treat_empty_as_null=None, skip_line_count=None, first_row_as_header=None):
-        super(TextFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer)
-        self.column_delimiter = column_delimiter
-        self.row_delimiter = row_delimiter
-        self.escape_char = escape_char
-        self.quote_char = quote_char
-        self.null_value = null_value
-        self.encoding_name = encoding_name
-        self.treat_empty_as_null = treat_empty_as_null
-        self.skip_line_count = skip_line_count
-        self.first_row_as_header = first_row_as_header
+    def __init__(self, **kwargs):
+        super(TextFormat, self).__init__(**kwargs)
+        self.column_delimiter = kwargs.get('column_delimiter', None)
+        self.row_delimiter = kwargs.get('row_delimiter', None)
+        self.escape_char = kwargs.get('escape_char', None)
+        self.quote_char = kwargs.get('quote_char', None)
+        self.null_value = kwargs.get('null_value', None)
+        self.encoding_name = kwargs.get('encoding_name', None)
+        self.treat_empty_as_null = kwargs.get('treat_empty_as_null', None)
+        self.skip_line_count = kwargs.get('skip_line_count', None)
+        self.first_row_as_header = kwargs.get('first_row_as_header', None)
         self.type = 'TextFormat'

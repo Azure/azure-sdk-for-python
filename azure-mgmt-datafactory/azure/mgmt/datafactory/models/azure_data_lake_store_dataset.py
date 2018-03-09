@@ -15,6 +15,8 @@ from .dataset import Dataset
 class AzureDataLakeStoreDataset(Dataset):
     """Azure Data Lake Store dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,7 +25,7 @@ class AzureDataLakeStoreDataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -32,10 +34,10 @@ class AzureDataLakeStoreDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param folder_path: Path to the folder in the Azure Data Lake Store. Type:
-     string (or Expression with resultType string).
+    :param folder_path: Required. Path to the folder in the Azure Data Lake
+     Store. Type: string (or Expression with resultType string).
     :type folder_path: object
     :param file_name: The name of the file in the Azure Data Lake Store. Type:
      string (or Expression with resultType string).
@@ -67,10 +69,10 @@ class AzureDataLakeStoreDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, folder_path, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, file_name=None, format=None, compression=None):
-        super(AzureDataLakeStoreDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.folder_path = folder_path
-        self.file_name = file_name
-        self.format = format
-        self.compression = compression
+    def __init__(self, **kwargs):
+        super(AzureDataLakeStoreDataset, self).__init__(**kwargs)
+        self.folder_path = kwargs.get('folder_path', None)
+        self.file_name = kwargs.get('file_name', None)
+        self.format = kwargs.get('format', None)
+        self.compression = kwargs.get('compression', None)
         self.type = 'AzureDataLakeStoreFile'
