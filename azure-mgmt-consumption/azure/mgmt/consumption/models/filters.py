@@ -23,7 +23,7 @@ class Filters(Model):
     :param meters: The list of filters on meters, mandatory for budgets of
      usage category.
     :type meters: list[str]
-    :param tags: Dictionary of filters on tags.
+    :param tags: The dictionary of filters on tags.
     :type tags: dict[str, list[str]]
     """
 
