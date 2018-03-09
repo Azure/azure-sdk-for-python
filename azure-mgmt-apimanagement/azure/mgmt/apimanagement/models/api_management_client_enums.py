@@ -36,8 +36,8 @@ class ContentFormat(str, Enum):
 
 class SoapApiType(str, Enum):
 
-    http = "http"
-    soap = "soap"
+    soap_to_rest = "http"
+    soap_pass_through = "soap"
 
 
 class ApiType(str, Enum):

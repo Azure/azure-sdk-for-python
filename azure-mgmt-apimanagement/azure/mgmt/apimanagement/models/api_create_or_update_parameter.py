@@ -75,8 +75,8 @@ class ApiCreateOrUpdateParameter(Model):
      ~azure.mgmt.apimanagement.models.ApiCreateOrUpdatePropertiesWsdlSelector
     :param soap_api_type: Type of Api to create.
      * `http` creates a SOAP to REST API
-     * `soap` creates a SOAP pass-through API. Possible values include: 'http',
-     'soap'
+     * `soap` creates a SOAP pass-through API. Possible values include:
+     'SoapToRest', 'SoapPassThrough'
     :type soap_api_type: str or ~azure.mgmt.apimanagement.models.SoapApiType
     """
 
