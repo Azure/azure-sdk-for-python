@@ -19,7 +19,9 @@ import threading
 import uuid
 try:
     from urllib import urlparse
+    from urllib import unquote_plus
 except Exception:
+    from urllib.parse import unquote_plus
     from urllib.parse import urlparse
 
 import uamqp
@@ -31,14 +33,8 @@ from uamqp import authentication
 from uamqp import constants, utils
 
 
-#from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode
-#from proton import Delivery, Message
-#from proton.reactor import dispatch, Container, Selector
-#from proton.handlers import Handler, EndpointStateHandler
-#from proton.handlers import IncomingMessageHandler
-#from proton.handlers import CFlowController, OutgoingMessageHandler
-from ._impl import SenderHandler, ReceiverHandler, InjectorEvent
-from ._impl import ReactorEventInjector as EventInjector
+#from proton import DELEGATED
+#from proton.handlers import EndpointStateHandler
 
 log = logging.getLogger("eventhubs")
 
@@ -55,47 +51,76 @@ class EventHubClient(object):
         """
         self.container_id = "eventhubs.pycli-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
-        username = kwargs.get('username', self.address.username)
-        password = kwargs.get('password', self.address.password)
+        username = kwargs.get('username', unquote_plus(self.address.username))
+        password = kwargs.get('password', unquote_plus(self.address.password))
         if not username or not password:
             raise ValueError("Missing username and/or password.")
-        auth_uri = "sb://{}/{}".format(self.address.hostname, self.address.path)
+        auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
+        print("Auth uri: {}".format(auth_uri))
+        print("user/pass: {}, {}".format(username, password))
         self.auth = authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
 
         self.daemon = None
         self.connection = None
+        self.debug = kwargs.get('debug', False)
 
         self.clients = []
         self.stopped = False
         log.info("%s: created the event hub client", self.container_id)
 
+    def _create_connection(self):
+        if not self.connection:
+            log.info("%s: client starts address=%s", self.container_id, self.address)
+            properties = {}
+            properties["product"] = "eventhubs.python"
+            properties["version"] = __version__
+            properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
+            properties["platform"] = sys.platform
+            self.connection = Connection(
+                self.address.hostname,
+                self.auth,
+                container_id=self.container_id,
+                properties=properties,
+                debug=self.debug)
+
+    def _close_connection(self):
+        if self.connection:
+            self.connection.destroy()
+            self.connection = None
+
+    def _close_clients(self):
+        for client in self.clients:
+            client.close()
+
     def run(self):
         """
         Run the L{EventHubClient} in blocking mode.
         """
-        self.container.run()
+        log.info("%s: Starting", self.container_id)
+        self._create_connection()
+        for client in self.clients:
+            client.open(connection=self.connection)
+        return self
 
     def run_daemon(self):
         """
         Run the L{EventHubClient} in non-blocking mode.
         """
         log.info("%s: starting the daemon", self.container_id)
-        self.daemon = threading.Thread(target=self.run)
-        self.daemon.daemon = True
-        self.daemon.start()
+        self._create_connection()
+        for client in self.clients:
+            client.run_daemon(connection=self.connection)
+        log.info("started")
         return self
 
     def stop(self):
         """
         Stop the client.
         """
-        if self.daemon is not None:
-            log.info("%s: stopping daemon", self.container_id)
-            #self.injector.trigger(InjectorEvent(InjectorEvent.STOP_CLIENT))
-            #self.injector.close() # TODO: Close clients
-            self.daemon.join()
-        else:
-            self.on_stop_client(None)
+        log.info("%s: on_stop_client", self.container_id)
+        self.stopped = True
+        self._close_clients()
+        self._close_connection()
 
     def subscribe(self, receiver, consumer_group, partition, offset=None):
         """
@@ -115,7 +140,7 @@ class EventHubClient(object):
         source = Source(source_url)
         if offset is not None:
             source.set_filter(offset.selector())
-        handler = ReceiverHandler(self, receiver, source)
+        handler = receiver.handler(self, source)
         self.clients.append(handler)
         return self
 
@@ -134,53 +159,6 @@ class EventHubClient(object):
         handler = sender.handler(self, target)
         self.clients.append(handler)
         return self
-
-    @property
-    def remote_container(self):
-        """
-        Gets the remote AMQP container id if available.
-        """
-        return self.connection.hostname if self.connection else None
-
-    def on_reactor_init(self, event):
-        """ Handles reactor init event. """
-        log.info("%s: on_reactor_init", self.container_id)
-        if not self.connection:
-            log.info("%s: client starts address=%s", self.container_id, self.address)
-            properties = {}
-            properties["product"] = "eventhubs.python"
-            properties["version"] = __version__
-            properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
-            properties["platform"] = sys.platform
-            self.connection = Connection(hostname, sasl,
-                 container_id=self.container_id,
-                 properties=properties,
-                 debug=True)
-                #self.container.connect(self.address, reconnect=False, properties=properties)
-            #self.session_policy = SessionPolicy()
-        for client in self.clients:
-            client.open(connection=self.connection)
-
-    def on_reactor_final(self, event):
-        """ Handles reactor final event. """
-        log.info("%s: reactor final", self.container_id)
-        self.injector.free()
-
-    def on_connection_local_open(self, event):
-        """Handles on_connection_local_open event."""
-        log.info("%s: connection local open", event.connection.container)
-
-    def on_connection_remote_open(self, event):
-        """Handles on_connection_remote_open event."""
-        log.info("%s: connection remote open %s", self.container_id, event.connection.remote_container)
-
-    def on_session_local_open(self, event):
-        """Handles on_session_local_open event."""
-        log.info("%s: session local open", self.container_id)
-
-    def on_session_remote_open(self, event):
-        """Handles on_session_remote_open event."""
-        log.info("%s: session remote open", self.container_id)
 
     # def on_connection_remote_close(self, event):
     #     """Handles on_connection_remote_close event."""
@@ -235,22 +213,6 @@ class EventHubClient(object):
     #     self._close_connection()
     #     self.on_reactor_init(None)
 
-    def on_stop_client(self, event):
-        """ Handles on_stop_client event. """
-        log.info("%s: on_stop_client", self.container_id)
-        self.stopped = True
-        self._close_clients(None)
-        self._close_connection()
-
-    def _close_connection(self):
-        if self.connection:
-            self.connection.destroy()
-            self.connection = None
-
-    def _close_clients(self):
-        for client in self.clients:
-            client.close()
-
 
 class Sender:
     """
@@ -273,13 +235,18 @@ class Sender:
         """
         self._check()
         self._event.clear()
-        event_data.message.on_message_sent = self.on_outcome
+        event_data.message.on_send_complete = self.on_outcome
         self._handler.queue_message(event_data.message)
-        self._event.wait()
+        while self._handler._daemon.is_alive():
+            if self._event.is_set():
+                break
         if self._outcome != constants.MessageSendResult.Ok:
+            if not self._event.is_set():
+                raise Sender._error(constants.MessageSendResult.Error,
+                "Message was not sent.")
             raise Sender._error(self._outcome, self._condition)
 
-    def transfer(self, event_data, callback):
+    def transfer(self, event_data, callback=None):
         """
         Transfers an event data and notifies the callback when the operation is done.
 
@@ -290,14 +257,18 @@ class Sender:
         result (None on success, or a L{EventHubError} on failure).
         """
         self._check()
-        event_data.message.on_message_sent = lambda o, c: callback(d, Sender._error(o, c))
-        self._handler.send(event_data.message)
+        if callback:
+            event_data.message.on_send_complete = lambda o, c: callback(o, Sender._error(o, c))
+        self._handler.queue_message(event_data.message)
+
+    def wait(self):
+        self._handler.wait()
 
     def handler(self, client, target):
         """
         Creates a protocol handler for this sender.
         """
-        self._handler = SendClient(target, auth=client.auth, debug=True, msg_timeout=Sender.TIMEOUT):
+        self._handler = SendClient(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
         return self._handler
 
     def on_outcome(self, outcome, condition):
@@ -316,6 +287,7 @@ class Sender:
     def _error(outcome, condition):
         return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)
 
+
 class Receiver:
     """
     Implements an L{EventData} receiver.
@@ -332,7 +304,7 @@ class Receiver:
         """
         Creates a protocol handler for this sender.
         """
-        self._handler = ReceiveClient(source, auth=client.auth, debug=True, on_message_received=self.on_message)
+        self._handler = ReceiveClient(source, auth=client.auth, debug=client.debug, prefetch=self.prefetch, on_message_received=self.on_message)
         return self._handler
 
     def on_message(self, event):
@@ -351,6 +323,7 @@ class Receiver:
             return Offset(self.offset).selector()
         return default
 
+
 class EventData(object):
     """
     The L{EventData} class is a holder of event content.
@@ -366,46 +339,44 @@ class EventData(object):
         @param kwargs: name/value pairs in properties.
         """
         self.message = Message(body)
-        self.annotations = {}
-        self.properties = {}
+        self._annotations = {}
+        self._properties = {}
 
     @property
     def sequence_number(self):
         """
         Return the sequence number of the received event data object.
         """
-        return self.annotations.get(EventData.PROP_SEQ_NUMBER, None)
+        return self._annotations.get(EventData.PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self):
         """
         Return the offset of the received event data object.
         """
-        return self.annotations.get(EventData.PROP_OFFSET, None)
+        return self._annotations.get(EventData.PROP_OFFSET, None)
 
     @property
     def partition_key(self):
         """
         Return the partition key of the event data object.
         """
-        return self.annotations.get(EventData.PROP_PARTITION_KEY, None)
+        return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
     @partition_key.setter
     def partition_key(self, value):
         """
         Set the partition key of the event data object.
         """
-        annotations = dict(self.annotations)
-        annotations[utils.AMQPSymbol(EventData.PROP_PARTITION_KEY] = value
+        annotations = dict(self._annotations)
+        annotations[utils.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
         self.message.message_annotations = annotations
-        self.annotations = annotations
+        self._annotations = annotations
 
     @property
     def properties(self):
         """Application defined properties (dict)."""
-        if self._local and self.message.properties is None:
-            self.message.properties = {}
-        return self.message.properties
+        return self._properties
 
     @property
     def body(self):
@@ -417,8 +388,8 @@ class EventData(object):
         """Creates an event data object from an AMQP message."""
         event_data = EventData()
         event_data.message = message
-        event_data.annotations = message.message_annotations
-        event_data.properties = message.application_properties
+        event_data._annotations = message.message_annotations
+        event_data._properties = message.application_properties
         return event_data
 
 

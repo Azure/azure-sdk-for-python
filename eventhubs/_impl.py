@@ -41,24 +41,6 @@ class ClientHandler(Handler):
         self.iteration = 0
         self.fatal_conditions = ["amqp:unauthorized-access", "amqp:not-found"]
 
-    def start(self):
-        self.iteration += 1
-        self.on_start()
-
-    def stop(self, condition):
-        self.on_stop(condition)
-        if self.link:
-            self.link.close()
-            self.link.free()
-            self.link = None
-
-    def _get_link_name(self):
-        return "%s:%d" % (self.name, self.iteration)
-
-    def on_start(self):
-        assert False, "Subclass must override this!"
-
-
     def on_link_remote_close(self, event):
         link = event.link
         if EndpointStateHandler.is_local_closed(link):
