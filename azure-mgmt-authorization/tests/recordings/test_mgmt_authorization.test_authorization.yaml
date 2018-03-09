@@ -6,23 +6,27 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
-          msrest_azure/0.4.16 azure-mgmt-authorization/0.40.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.3 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.27
+          msrest_azure/0.4.22 azure-mgmt-authorization/0.40.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_authorization_test_authorization7af511a3/providers/Microsoft.Authorization/permissions?api-version=2018-01-01-preview
   response:
-    body: {string: '{"error":{"code":"InvalidResourceType","message":"The resource
-        type ''permissions'' could not be found in the namespace ''Microsoft.Authorization''
-        for api version ''2018-01-01-preview''. The supported api-versions are ''2014-04-01-preview,2014-07-01-preview,2014-10-01-preview,2015-05-01-preview,2015-06-01,2015-07-01,2016-07-01,2017-05-01''."}}'}
+    body: {string: '{"value":[{"actions":["*"],"notActions":[],"dataActions":[],"notDataActions":[]}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['338']
+      content-length: ['82']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 21 Feb 2018 19:17:10 GMT']
+      date: ['Fri, 09 Mar 2018 01:04:11 GMT']
       expires: ['-1']
       pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      set-cookie: [x-ms-gateway-slice=productionb; path=/; secure; HttpOnly]
       strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-failure-cause: [gateway]
-    status: {code: 404, message: Not Found}
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-request-charge: ['1']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
 version: 1
