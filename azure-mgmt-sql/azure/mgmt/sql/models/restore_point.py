@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class RestorePoint(ProxyResource):
-    """Database restore points.
+    """A database restore point.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,48 +24,38 @@ class RestorePoint(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar restore_point_type: The type of restore point. Possible values
-     include: 'CONTINUOUS', 'DISCRETE'
+    :ivar restore_point_type: The restore point type of the database restore
+     point. Possible values include: 'DISCRETE', 'CONTINUOUS'
     :vartype restore_point_type: str or
      ~azure.mgmt.sql.models.RestorePointType
-    :ivar earliest_restore_date: The earliest time to which this database can
-     be restored
-    :vartype earliest_restore_date: datetime
-    :ivar restore_point_creation_date: The time the backup was taken
+    :ivar restore_point_creation_date: Restore point creation time (ISO8601
+     format). Populated when restorePointType = CONTINUOUS. Null otherwise.
     :vartype restore_point_creation_date: datetime
-    :ivar restore_point_label: The label of restore point for backup request
-     by user
-    :vartype restore_point_label: str
+    :ivar earliest_restore_date: Earliest restore time (ISO8601 format).
+     Populated when restorePointType = DISCRETE. Null otherwise.
+    :vartype earliest_restore_date: datetime
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
         'restore_point_type': {'readonly': True},
-        'earliest_restore_date': {'readonly': True},
         'restore_point_creation_date': {'readonly': True},
-        'restore_point_label': {'readonly': True},
+        'earliest_restore_date': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'restore_point_type': {'key': 'properties.restorePointType', 'type': 'RestorePointType'},
-        'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'restore_point_creation_date': {'key': 'properties.restorePointCreationDate', 'type': 'iso-8601'},
-        'restore_point_label': {'key': 'properties.restorePointLabel', 'type': 'str'},
+        'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
     }
 
     def __init__(self):
         super(RestorePoint, self).__init__()
-        self.location = None
         self.restore_point_type = None
-        self.earliest_restore_date = None
         self.restore_point_creation_date = None
-        self.restore_point_label = None
+        self.earliest_restore_date = None

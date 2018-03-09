@@ -11,6 +11,7 @@
 
 from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
+from .restore_points_operations import RestorePointsOperations
 from .recoverable_databases_operations import RecoverableDatabasesOperations
 from .restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .capabilities_operations import CapabilitiesOperations
@@ -50,11 +51,11 @@ from .database_operations import DatabaseOperations
 from .data_warehouse_user_activities_operations import DataWarehouseUserActivitiesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
-from .restore_points_operations import RestorePointsOperations
 
 __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
     'BackupLongTermRetentionVaultsOperations',
+    'RestorePointsOperations',
     'RecoverableDatabasesOperations',
     'RestorableDroppedDatabasesOperations',
     'CapabilitiesOperations',
@@ -94,5 +95,4 @@ __all__ = [
     'DataWarehouseUserActivitiesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
-    'RestorePointsOperations',
 ]
