@@ -24,7 +24,7 @@ class Sku(Model):
      partitions and 12 replicas (or up to 3 partitions with more indexes if you
      also set the hostingMode property to 'highDensity'). Possible values
      include: 'free', 'basic', 'standard', 'standard2', 'standard3'
-    :type name: str or :class:`SkuName <azure.mgmt.search.models.SkuName>`
+    :type name: str or ~azure.mgmt.search.models.SkuName
     """
 
     _attribute_map = {
@@ -32,4 +32,5 @@ class Sku(Model):
     }
 
     def __init__(self, name=None):
+        super(Sku, self).__init__()
         self.name = name
