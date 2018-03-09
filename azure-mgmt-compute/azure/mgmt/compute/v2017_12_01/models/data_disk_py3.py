@@ -69,7 +69,7 @@ class DataDisk(Model):
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
+        'create_option': {'key': 'createOption', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
     }

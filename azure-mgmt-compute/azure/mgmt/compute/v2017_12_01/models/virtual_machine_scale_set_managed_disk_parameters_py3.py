@@ -23,7 +23,7 @@ class VirtualMachineScaleSetManagedDiskParameters(Model):
     """
 
     _attribute_map = {
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
     }
 
     def __init__(self, *, storage_account_type=None, **kwargs) -> None:

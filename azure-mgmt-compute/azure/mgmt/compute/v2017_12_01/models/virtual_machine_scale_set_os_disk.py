@@ -61,7 +61,7 @@ class VirtualMachineScaleSetOSDisk(Model):
         'name': {'key': 'name', 'type': 'str'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
+        'create_option': {'key': 'createOption', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'OperatingSystemTypes'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},

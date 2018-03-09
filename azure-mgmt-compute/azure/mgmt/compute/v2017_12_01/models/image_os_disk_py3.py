@@ -62,7 +62,7 @@ class ImageOSDisk(Model):
         'blob_uri': {'key': 'blobUri', 'type': 'str'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
     }
 
     def __init__(self, *, os_type, os_state, snapshot=None, managed_disk=None, blob_uri: str=None, caching=None, disk_size_gb: int=None, storage_account_type=None, **kwargs) -> None:
