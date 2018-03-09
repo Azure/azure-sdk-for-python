@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingAccountsOperations(object):
-    """BillingAccountsOperations operations.
+class EnrollmentAccountsOperations(object):
+    """EnrollmentAccountsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,15 +38,15 @@ class BillingAccountsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists the billing accounts the caller has access to.
+        """Lists the enrollment accounts the caller has access to.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BillingAccountListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.BillingAccountListResult or
+        :return: EnrollmentAccountListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.EnrollmentAccountListResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -78,28 +78,28 @@ class BillingAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BillingAccountListResult', response)
+            deserialized = self._deserialize('EnrollmentAccountListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts'}
 
     def get(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """Gets a billing account by name.
+        """Gets a enrollment account by name.
 
-        :param name: Billing Account name.
+        :param name: Enrollment Account name.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BillingAccountResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.BillingAccountResult or
+        :return: EnrollmentAccountResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.EnrollmentAccountResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -135,11 +135,11 @@ class BillingAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BillingAccountResult', response)
+            deserialized = self._deserialize('EnrollmentAccountResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{name}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{name}'}
