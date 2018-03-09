@@ -17,7 +17,17 @@ from .supported_optimization_types_list_result import SupportedOptimizationTypes
 from .deep_created_origin import DeepCreatedOrigin
 from .endpoint import Endpoint
 from .geo_filter import GeoFilter
+from .delivery_rule_action import DeliveryRuleAction
+from .delivery_rule_condition import DeliveryRuleCondition
+from .delivery_rule import DeliveryRule
+from .endpoint_properties_update_parameters_delivery_policy import EndpointPropertiesUpdateParametersDeliveryPolicy
 from .endpoint_update_parameters import EndpointUpdateParameters
+from .url_path_condition_parameters import UrlPathConditionParameters
+from .delivery_rule_url_path_condition import DeliveryRuleUrlPathCondition
+from .url_file_extension_condition_parameters import UrlFileExtensionConditionParameters
+from .delivery_rule_url_file_extension_condition import DeliveryRuleUrlFileExtensionCondition
+from .cache_expiration_action_parameters import CacheExpirationActionParameters
+from .delivery_rule_cache_expiration_action import DeliveryRuleCacheExpirationAction
 from .purge_parameters import PurgeParameters
 from .load_parameters import LoadParameters
 from .origin import Origin
@@ -70,7 +80,17 @@ __all__ = [
     'DeepCreatedOrigin',
     'Endpoint',
     'GeoFilter',
+    'DeliveryRuleAction',
+    'DeliveryRuleCondition',
+    'DeliveryRule',
+    'EndpointPropertiesUpdateParametersDeliveryPolicy',
     'EndpointUpdateParameters',
+    'UrlPathConditionParameters',
+    'DeliveryRuleUrlPathCondition',
+    'UrlFileExtensionConditionParameters',
+    'DeliveryRuleUrlFileExtensionCondition',
+    'CacheExpirationActionParameters',
+    'DeliveryRuleCacheExpirationAction',
     'PurgeParameters',
     'LoadParameters',
     'Origin',
