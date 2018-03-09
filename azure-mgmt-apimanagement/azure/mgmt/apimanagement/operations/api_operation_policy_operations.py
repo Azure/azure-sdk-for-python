@@ -117,8 +117,9 @@ class ApiOperationPolicyOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API identifier. Must be unique in the current API
-         Management service instance.
+        :param api_id: API revision identifier. Must be unique in the current
+         API Management service instance. Non-current revision has ;rev=n as a
+         suffix where n is the revision number.
         :type api_id: str
         :param operation_id: Operation identifier within an API. Must be
          unique in the current API Management service instance.
@@ -138,7 +139,7 @@ class ApiOperationPolicyOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
             'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -349,8 +350,9 @@ class ApiOperationPolicyOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API identifier. Must be unique in the current API
-         Management service instance.
+        :param api_id: API revision identifier. Must be unique in the current
+         API Management service instance. Non-current revision has ;rev=n as a
+         suffix where n is the revision number.
         :type api_id: str
         :param operation_id: Operation identifier within an API. Must be
          unique in the current API Management service instance.
@@ -374,7 +376,7 @@ class ApiOperationPolicyOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
             'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
