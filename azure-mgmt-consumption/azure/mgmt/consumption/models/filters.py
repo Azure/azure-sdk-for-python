@@ -20,8 +20,8 @@ class Filters(Model):
     :type resource_groups: list[str]
     :param resources: The list of filters on resources.
     :type resources: list[str]
-    :param meters: The list of filters on meters, mandatory for budgets of
-     usage category.
+    :param meters: The list of filters on meters (GUID), mandatory for budgets
+     of usage category.
     :type meters: list[str]
     :param tags: The dictionary of filters on tags.
     :type tags: dict[str, list[str]]
