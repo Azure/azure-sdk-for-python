@@ -12,12 +12,12 @@
 from msrest.service_client import ServiceClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
-from .operations.news_operations import NewsOperations
+from .operations.auto_operations import AutoOperations
 from . import models
 
 
-class NewsSearchAPIConfiguration(Configuration):
-    """Configuration for NewsSearchAPI
+class AutoSuggestAPIConfiguration(Configuration):
+    """Configuration for AutoSuggestAPI
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -35,21 +35,21 @@ class NewsSearchAPIConfiguration(Configuration):
         if not base_url:
             base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
 
-        super(NewsSearchAPIConfiguration, self).__init__(base_url)
+        super(AutoSuggestAPIConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-cognitiveservices-search-newssearch/{}'.format(VERSION))
+        self.add_user_agent('azure-cognitiveservices-search-autosuggest/{}'.format(VERSION))
 
         self.credentials = credentials
 
 
-class NewsSearchAPI(object):
-    """The News Search API lets you send a search query to Bing and get back a list of news that are relevant to the search query. This section provides technical details about the query parameters and headers that you use to request news and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the web for news](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/search-the-web).
+class AutoSuggestAPI(object):
+    """The Auto Suggest API lets you send a search query to Bing and get back a list of auto suggestions that are relevant to the search query. This section provides technical details about the query parameters and headers that you use to request news and the JSON response objects that contain them.
 
     :ivar config: Configuration for client.
-    :vartype config: NewsSearchAPIConfiguration
+    :vartype config: AutoSuggestAPIConfiguration
 
-    :ivar news: News operations
-    :vartype news: azure.cognitiveservices.search.newssearch.operations.NewsOperations
+    :ivar auto: Auto operations
+    :vartype auto: azure.cognitiveservices.search.autosuggest.operations.AutoOperations
 
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -60,7 +60,7 @@ class NewsSearchAPI(object):
     def __init__(
             self, credentials, base_url=None):
 
-        self.config = NewsSearchAPIConfiguration(credentials, base_url)
+        self.config = AutoSuggestAPIConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -68,5 +68,5 @@ class NewsSearchAPI(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.news = NewsOperations(
+        self.auto = AutoOperations(
             self._client, self.config, self._serialize, self._deserialize)

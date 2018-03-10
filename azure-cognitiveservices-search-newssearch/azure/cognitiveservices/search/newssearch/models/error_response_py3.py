@@ -9,14 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response_base import ResponseBase
+from .response import Response
+from msrest.exceptions import HttpOperationError
 
 
-class Identifiable(ResponseBase):
-    """Defines the identity of a resource.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Response
+class ErrorResponse(Response):
+    """The top-level response that represents a failed request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,23 +25,37 @@ class Identifiable(ResponseBase):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
+    :param errors: Required. A list of errors that describe the reasons why
+     the request failed.
+    :type errors:
+     list[~azure.cognitiveservices.search.autosuggest.models.Error]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
+        'errors': {'required': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'errors': {'key': 'errors', 'type': '[Error]'},
     }
 
-    _subtype_map = {
-        '_type': {'Response': 'Response'}
-    }
+    def __init__(self, *, errors, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(, **kwargs)
+        self.errors = errors
+        self._type = 'ErrorResponse'
 
-    def __init__(self, **kwargs):
-        super(Identifiable, self).__init__(**kwargs)
-        self.id = None
-        self._type = 'Identifiable'
+
+class ErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'ErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)

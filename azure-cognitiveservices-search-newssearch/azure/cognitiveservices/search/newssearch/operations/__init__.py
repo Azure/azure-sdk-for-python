@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .news_operations import NewsOperations
+from .auto_operations import AutoOperations
 
 __all__ = [
-    'NewsOperations',
+    'AutoOperations',
 ]

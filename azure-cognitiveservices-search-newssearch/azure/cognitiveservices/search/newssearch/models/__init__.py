@@ -9,56 +9,41 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .news_article import NewsArticle
-from .news import News
-from .search_results_answer import SearchResultsAnswer
-from .image_object import ImageObject
-from .query import Query
-from .news_topic import NewsTopic
-from .answer import Answer
-from .article import Article
-from .thing import Thing
-from .response import Response
-from .trending_topics import TrendingTopics
-from .video_object import VideoObject
-from .creative_work import CreativeWork
-from .organization import Organization
-from .identifiable import Identifiable
-from .error import Error
-from .error_response import ErrorResponse, ErrorResponseException
-from .media_object import MediaObject
-from .response_base import ResponseBase
-from .news_search_api_enums import (
+try:
+    from .query_py3 import Query
+    from .response_py3 import Response
+    from .query_context_py3 import QueryContext
+    from .suggestions_py3 import Suggestions
+    from .suggestion_group_py3 import SuggestionGroup
+    from .identifiable_py3 import Identifiable
+    from .error_py3 import Error
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .response_base_py3 import ResponseBase
+except (SyntaxError, ImportError):
+    from .query import Query
+    from .response import Response
+    from .query_context import QueryContext
+    from .suggestions import Suggestions
+    from .suggestion_group import SuggestionGroup
+    from .identifiable import Identifiable
+    from .error import Error
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .response_base import ResponseBase
+from .auto_suggest_api_enums import (
     ErrorCode,
     ErrorSubCode,
-    Freshness,
-    SafeSearch,
-    TextFormat,
 )
 
 __all__ = [
-    'NewsArticle',
-    'News',
-    'SearchResultsAnswer',
-    'ImageObject',
     'Query',
-    'NewsTopic',
-    'Answer',
-    'Article',
-    'Thing',
     'Response',
-    'TrendingTopics',
-    'VideoObject',
-    'CreativeWork',
-    'Organization',
+    'QueryContext',
+    'Suggestions',
+    'SuggestionGroup',
     'Identifiable',
     'Error',
     'ErrorResponse', 'ErrorResponseException',
-    'MediaObject',
     'ResponseBase',
     'ErrorCode',
     'ErrorSubCode',
-    'Freshness',
-    'SafeSearch',
-    'TextFormat',
 ]

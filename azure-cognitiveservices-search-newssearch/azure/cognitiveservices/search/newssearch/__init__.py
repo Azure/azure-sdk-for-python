@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .news_search_api import NewsSearchAPI
+from .auto_suggest_api import AutoSuggestAPI
 from .version import VERSION
 
-__all__ = ['NewsSearchAPI']
+__all__ = ['AutoSuggestAPI']
 
 __version__ = VERSION
 

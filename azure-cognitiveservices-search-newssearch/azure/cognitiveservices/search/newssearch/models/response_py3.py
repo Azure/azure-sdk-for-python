@@ -9,48 +9,41 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
+from .identifiable import Identifiable
 
 
-class Answer(Response):
-    """Defines an answer.
+class Response(Identifiable):
+    """Defines a response. All schemas that could be returned at the root of a
+    response should inherit from this.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SearchResultsAnswer, TrendingTopics
+    sub-classes are: ErrorResponse
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
-    :ivar web_search_url: The URL To Bing's search result for this item.
-    :vartype web_search_url: str
-    :ivar follow_up_queries:
-    :vartype follow_up_queries:
-     list[~azure.cognitiveservices.search.newssearch.models.Query]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
-        'web_search_url': {'readonly': True},
-        'follow_up_queries': {'readonly': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
-        'follow_up_queries': {'key': 'followUpQueries', 'type': '[Query]'},
     }
 
     _subtype_map = {
-        '_type': {'SearchResultsAnswer': 'SearchResultsAnswer', 'TrendingTopics': 'TrendingTopics'}
+        '_type': {'ErrorResponse': 'ErrorResponse'}
     }
 
-    def __init__(self):
-        super(Answer, self).__init__()
-        self.follow_up_queries = None
-        self._type = 'Answer'
+    def __init__(self, **kwargs) -> None:
+        super(Response, self).__init__(, **kwargs)
+        self._type = 'Response'

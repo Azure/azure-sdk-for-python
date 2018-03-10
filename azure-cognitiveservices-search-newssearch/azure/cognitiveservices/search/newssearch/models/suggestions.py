@@ -12,24 +12,23 @@
 from msrest.serialization import Model
 
 
-class Query(Model):
-    """Defines a search query.
+class Suggestions(Model):
+    """Defines the query term that Bing used for the request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. The query string. Use this string as the query term
-     in a new auto suggest request.
-    :type text: str
+    :param value: Required. A string term used to generate suggestions.
+    :type value: str
     """
 
     _validation = {
-        'text': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Query, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
+        super(Suggestions, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
