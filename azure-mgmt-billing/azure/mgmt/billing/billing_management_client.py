@@ -13,7 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.billing_accounts_operations import BillingAccountsOperations
+from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.billing_periods_operations import BillingPeriodsOperations
 from .operations.invoices_operations import InvoicesOperations
 from .operations.operations import Operations
@@ -58,8 +58,8 @@ class BillingManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: BillingManagementClientConfiguration
 
-    :ivar billing_accounts: BillingAccounts operations
-    :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
+    :ivar enrollment_accounts: EnrollmentAccounts operations
+    :vartype enrollment_accounts: azure.mgmt.billing.operations.EnrollmentAccountsOperations
     :ivar billing_periods: BillingPeriods operations
     :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
@@ -86,7 +86,7 @@ class BillingManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.billing_accounts = BillingAccountsOperations(
+        self.enrollment_accounts = EnrollmentAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_periods = BillingPeriodsOperations(
             self._client, self.config, self._serialize, self._deserialize)

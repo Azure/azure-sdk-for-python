@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class BillingAccountResult(Resource):
-    """A billing account resource.
+class EnrollmentAccountResult(Resource):
+    """An enrollment account resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -43,5 +43,5 @@ class BillingAccountResult(Resource):
     }
 
     def __init__(self):
-        super(BillingAccountResult, self).__init__()
+        super(EnrollmentAccountResult, self).__init__()
         self.principal_name = None
