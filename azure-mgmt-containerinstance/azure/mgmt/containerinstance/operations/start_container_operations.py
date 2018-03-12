@@ -37,7 +37,7 @@ class StartContainerOperations(object):
 
         self.config = config
 
-    def exec_method(
+    def launch_exec(
             self, resource_group_name, container_group_name, container_name, command=None, terminal_size=None, custom_headers=None, raw=False, **operation_config):
         """Starts the exec command for a specific container instance.
 
@@ -68,7 +68,7 @@ class StartContainerOperations(object):
         container_exec_request = models.ContainerExecRequest(command=command, terminal_size=terminal_size)
 
         # Construct URL
-        url = self.exec_method.metadata['url']
+        url = self.launch_exec.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -114,4 +114,4 @@ class StartContainerOperations(object):
             return client_raw_response
 
         return deserialized
-    exec_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/exec'}
+    launch_exec.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerInstance/containerGroups/{containerGroupName}/containers/{containerName}/exec'}

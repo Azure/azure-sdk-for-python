@@ -33,9 +33,6 @@ from .operation_list_result import OperationListResult
 from .usage_name import UsageName
 from .usage import Usage
 from .usage_list_result import UsageListResult
-from .async_operation_properties import AsyncOperationProperties
-from .azure_resource_extended_error_info import AzureResourceExtendedErrorInfo
-from .async_operation import AsyncOperation
 from .logs import Logs
 from .container_exec_request_terminal_size import ContainerExecRequestTerminalSize
 from .container_exec_request import ContainerExecRequest
@@ -75,9 +72,6 @@ __all__ = [
     'UsageName',
     'Usage',
     'UsageListResult',
-    'AsyncOperationProperties',
-    'AzureResourceExtendedErrorInfo',
-    'AsyncOperation',
     'Logs',
     'ContainerExecRequestTerminalSize',
     'ContainerExecRequest',
