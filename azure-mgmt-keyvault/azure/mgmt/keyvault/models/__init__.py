@@ -9,28 +9,52 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sku import Sku
-from .permissions import Permissions
-from .access_policy_entry import AccessPolicyEntry
-from .ip_rule import IPRule
-from .virtual_network_rule import VirtualNetworkRule
-from .network_rule_set import NetworkRuleSet
-from .vault_properties import VaultProperties
-from .vault_patch_properties import VaultPatchProperties
-from .vault_access_policy_properties import VaultAccessPolicyProperties
-from .deleted_vault_properties import DeletedVaultProperties
-from .vault_create_or_update_parameters import VaultCreateOrUpdateParameters
-from .vault_patch_parameters import VaultPatchParameters
-from .vault_access_policy_parameters import VaultAccessPolicyParameters
-from .vault import Vault
-from .deleted_vault import DeletedVault
-from .resource import Resource
-from .vault_check_name_availability_parameters import VaultCheckNameAvailabilityParameters
-from .check_name_availability_result import CheckNameAvailabilityResult
-from .operation_display import OperationDisplay
-from .log_specification import LogSpecification
-from .service_specification import ServiceSpecification
-from .operation import Operation
+try:
+    from .sku_py3 import Sku
+    from .permissions_py3 import Permissions
+    from .access_policy_entry_py3 import AccessPolicyEntry
+    from .ip_rule_py3 import IPRule
+    from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .network_rule_set_py3 import NetworkRuleSet
+    from .vault_properties_py3 import VaultProperties
+    from .vault_patch_properties_py3 import VaultPatchProperties
+    from .vault_access_policy_properties_py3 import VaultAccessPolicyProperties
+    from .deleted_vault_properties_py3 import DeletedVaultProperties
+    from .vault_create_or_update_parameters_py3 import VaultCreateOrUpdateParameters
+    from .vault_patch_parameters_py3 import VaultPatchParameters
+    from .vault_access_policy_parameters_py3 import VaultAccessPolicyParameters
+    from .vault_py3 import Vault
+    from .deleted_vault_py3 import DeletedVault
+    from .resource_py3 import Resource
+    from .vault_check_name_availability_parameters_py3 import VaultCheckNameAvailabilityParameters
+    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
+    from .operation_display_py3 import OperationDisplay
+    from .log_specification_py3 import LogSpecification
+    from .service_specification_py3 import ServiceSpecification
+    from .operation_py3 import Operation
+except (SyntaxError, ImportError):
+    from .sku import Sku
+    from .permissions import Permissions
+    from .access_policy_entry import AccessPolicyEntry
+    from .ip_rule import IPRule
+    from .virtual_network_rule import VirtualNetworkRule
+    from .network_rule_set import NetworkRuleSet
+    from .vault_properties import VaultProperties
+    from .vault_patch_properties import VaultPatchProperties
+    from .vault_access_policy_properties import VaultAccessPolicyProperties
+    from .deleted_vault_properties import DeletedVaultProperties
+    from .vault_create_or_update_parameters import VaultCreateOrUpdateParameters
+    from .vault_patch_parameters import VaultPatchParameters
+    from .vault_access_policy_parameters import VaultAccessPolicyParameters
+    from .vault import Vault
+    from .deleted_vault import DeletedVault
+    from .resource import Resource
+    from .vault_check_name_availability_parameters import VaultCheckNameAvailabilityParameters
+    from .check_name_availability_result import CheckNameAvailabilityResult
+    from .operation_display import OperationDisplay
+    from .log_specification import LogSpecification
+    from .service_specification import ServiceSpecification
+    from .operation import Operation
 from .vault_paged import VaultPaged
 from .deleted_vault_paged import DeletedVaultPaged
 from .resource_paged import ResourcePaged

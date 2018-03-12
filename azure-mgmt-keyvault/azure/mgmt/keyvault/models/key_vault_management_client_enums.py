@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     standard = "standard"
     premium = "premium"
 
 
-class KeyPermissions(Enum):
+class KeyPermissions(str, Enum):
 
     encrypt = "encrypt"
     decrypt = "decrypt"
@@ -38,7 +38,7 @@ class KeyPermissions(Enum):
     purge = "purge"
 
 
-class SecretPermissions(Enum):
+class SecretPermissions(str, Enum):
 
     get = "get"
     list = "list"
@@ -50,7 +50,7 @@ class SecretPermissions(Enum):
     purge = "purge"
 
 
-class CertificatePermissions(Enum):
+class CertificatePermissions(str, Enum):
 
     get = "get"
     list = "list"
@@ -68,7 +68,7 @@ class CertificatePermissions(Enum):
     purge = "purge"
 
 
-class StoragePermissions(Enum):
+class StoragePermissions(str, Enum):
 
     get = "get"
     list = "list"
@@ -86,31 +86,31 @@ class StoragePermissions(Enum):
     deletesas = "deletesas"
 
 
-class CreateMode(Enum):
+class CreateMode(str, Enum):
 
     recover = "recover"
     default = "default"
 
 
-class NetworkRuleBypassOptions(Enum):
+class NetworkRuleBypassOptions(str, Enum):
 
     azure_services = "AzureServices"
     none = "None"
 
 
-class NetworkRuleAction(Enum):
+class NetworkRuleAction(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
 
 
-class Reason(Enum):
+class Reason(str, Enum):
 
     account_name_invalid = "AccountNameInvalid"
     already_exists = "AlreadyExists"
 
 
-class AccessPolicyUpdateKind(Enum):
+class AccessPolicyUpdateKind(str, Enum):
 
     add = "add"
     replace = "replace"
