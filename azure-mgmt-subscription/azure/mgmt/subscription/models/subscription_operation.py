@@ -12,31 +12,32 @@
 from msrest.serialization import Model
 
 
-class TenantIdDescription(Model):
-    """Tenant Id information.
+class SubscriptionOperation(Model):
+    """status of the subscription POST operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The fully qualified ID of the tenant. For example,
-     /tenants/00000000-0000-0000-0000-000000000000.
+    :ivar id: The operation Id.
     :vartype id: str
-    :ivar tenant_id: The tenant ID. For example,
-     00000000-0000-0000-0000-000000000000.
-    :vartype tenant_id: str
+    :param status: Status of the pending subscription
+    :type status: str
+    :param status_detail: Status Detail of the pending subscription
+    :type status_detail: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'tenant_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'status_detail': {'key': 'statusDetail', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(TenantIdDescription, self).__init__(**kwargs)
+        super(SubscriptionOperation, self).__init__(**kwargs)
         self.id = None
-        self.tenant_id = None
+        self.status = kwargs.get('status', None)
+        self.status_detail = kwargs.get('status_detail', None)

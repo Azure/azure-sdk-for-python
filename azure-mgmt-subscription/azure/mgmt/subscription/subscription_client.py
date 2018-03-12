@@ -13,8 +13,9 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.subscription_definitions_operation_metadata_operations import SubscriptionDefinitionsOperationMetadataOperations
-from .operations.subscription_definitions_operations import SubscriptionDefinitionsOperations
+from .operations.operations import Operations
+from .operations.subscription_operations import SubscriptionOperations
+from .operations.subscription_factory_operations import SubscriptionFactoryOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
 from .operations.tenants_operations import TenantsOperations
 from . import models
@@ -53,10 +54,12 @@ class SubscriptionClient(object):
     :ivar config: Configuration for client.
     :vartype config: SubscriptionClientConfiguration
 
-    :ivar subscription_definitions_operation_metadata: SubscriptionDefinitionsOperationMetadata operations
-    :vartype subscription_definitions_operation_metadata: azure.mgmt.subscription.operations.SubscriptionDefinitionsOperationMetadataOperations
-    :ivar subscription_definitions: SubscriptionDefinitions operations
-    :vartype subscription_definitions: azure.mgmt.subscription.operations.SubscriptionDefinitionsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.subscription.operations.Operations
+    :ivar subscription_operations: SubscriptionOperations operations
+    :vartype subscription_operations: azure.mgmt.subscription.operations.SubscriptionOperations
+    :ivar subscription_factory: SubscriptionFactory operations
+    :vartype subscription_factory: azure.mgmt.subscription.operations.SubscriptionFactoryOperations
     :ivar subscriptions: Subscriptions operations
     :vartype subscriptions: azure.mgmt.subscription.operations.SubscriptionsOperations
     :ivar tenants: Tenants operations
@@ -78,9 +81,11 @@ class SubscriptionClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.subscription_definitions_operation_metadata = SubscriptionDefinitionsOperationMetadataOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.subscription_definitions = SubscriptionDefinitionsOperations(
+        self.subscription_operations = SubscriptionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subscription_factory = SubscriptionFactoryOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.subscriptions = SubscriptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
