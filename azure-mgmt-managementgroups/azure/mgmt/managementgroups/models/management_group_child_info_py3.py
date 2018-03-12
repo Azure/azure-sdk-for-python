@@ -36,9 +36,9 @@ class ManagementGroupChildInfo(Model):
         'children': {'key': 'children', 'type': '[ManagementGroupChildInfo]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, child_type=None, child_id: str=None, display_name: str=None, children=None, **kwargs) -> None:
         super(ManagementGroupChildInfo, self).__init__(**kwargs)
-        self.child_type = kwargs.get('child_type', None)
-        self.child_id = kwargs.get('child_id', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.children = kwargs.get('children', None)
+        self.child_type = child_type
+        self.child_id = child_id
+        self.display_name = display_name
+        self.children = children
