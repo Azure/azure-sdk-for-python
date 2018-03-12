@@ -9,10 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .feature_properties import FeatureProperties
-from .feature_result import FeatureResult
-from .operation_display import OperationDisplay
-from .feature_operation_result import FeatureOperationResult
+try:
+    from .feature_properties_py3 import FeatureProperties
+    from .feature_result_py3 import FeatureResult
+    from .operation_display_py3 import OperationDisplay
+    from .feature_operation_result_py3 import FeatureOperationResult
+except (SyntaxError, ImportError):
+    from .feature_properties import FeatureProperties
+    from .feature_result import FeatureResult
+    from .operation_display import OperationDisplay
+    from .feature_operation_result import FeatureOperationResult
 from .feature_result_paged import FeatureResultPaged
 
 __all__ = [

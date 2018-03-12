@@ -61,14 +61,14 @@ class PolicyDefinition(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, policy_type=None, mode=None, display_name=None, description=None, policy_rule=None, metadata=None, parameters=None):
-        super(PolicyDefinition, self).__init__()
-        self.policy_type = policy_type
-        self.mode = mode
-        self.display_name = display_name
-        self.description = description
-        self.policy_rule = policy_rule
-        self.metadata = metadata
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(PolicyDefinition, self).__init__(**kwargs)
+        self.policy_type = kwargs.get('policy_type', None)
+        self.mode = kwargs.get('mode', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.policy_rule = kwargs.get('policy_rule', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.parameters = kwargs.get('parameters', None)
         self.id = None
         self.name = None

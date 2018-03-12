@@ -27,7 +27,7 @@ class FeatureOperationResult(Model):
         'operations': {'key': 'operations', 'type': '[OperationDisplay]'},
     }
 
-    def __init__(self, name=None, operations=None):
-        super(FeatureOperationResult, self).__init__()
-        self.name = name
-        self.operations = operations
+    def __init__(self, **kwargs):
+        super(FeatureOperationResult, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.operations = kwargs.get('operations', None)

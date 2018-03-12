@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class DeploymentExtended(Model):
     """Deployment information.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: The ID of the deployment.
     :type id: str
-    :param name: The name of the deployment.
+    :param name: Required. The name of the deployment.
     :type name: str
     :param properties: Deployment properties.
     :type properties:
@@ -34,8 +36,8 @@ class DeploymentExtended(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, name, id=None, properties=None):
-        super(DeploymentExtended, self).__init__()
-        self.id = id
-        self.name = name
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(DeploymentExtended, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
