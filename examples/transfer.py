@@ -31,8 +31,9 @@ try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
-    sender = Sender()
-    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY).publish(sender).run()
+    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
+    sender = client.add_sender()
+    client.run()
     try:
         start_time = time.time()
         for i in range(1000):

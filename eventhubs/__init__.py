@@ -32,8 +32,6 @@ from uamqp import SendClient, ReceiveClient
 from uamqp import Message, BatchMessage
 from uamqp import Source, Target
 from uamqp import authentication
-from uamqp.async import SASTokenAsync
-from uamqp.async import ConnectionAsync
 from uamqp import constants, utils
 
 
@@ -59,7 +57,7 @@ class EventHubClient(object):
         if not username or not password:
             raise ValueError("Missing username and/or password.")
         auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.auth = SASTokenAsync.from_shared_access_key(auth_uri, username, password)
+        self.auth = self._create_auth(auth_uri, username, password)
 
         self.daemon = None
         self.connection = None
@@ -69,19 +67,25 @@ class EventHubClient(object):
         self.stopped = False
         log.info("%s: created the event hub client", self.container_id)
 
+    def _create_auth(self, auth_uri, username, password):
+        return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
+
+    def _create_properties(self):
+        properties = {}
+        properties["product"] = "eventhubs.python"
+        properties["version"] = __version__
+        properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
+        properties["platform"] = sys.platform
+        return properties
+
     def _create_connection(self):
         if not self.connection:
             log.info("%s: client starts address=%s", self.container_id, self.address)
-            properties = {}
-            properties["product"] = "eventhubs.python"
-            properties["version"] = __version__
-            properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
-            properties["platform"] = sys.platform
             self.connection = Connection(
                 self.address.hostname,
                 self.auth,
                 container_id=self.container_id,
-                properties=properties,
+                properties=self._create_properties(),
                 debug=self.debug)
 
     def _create_connection_async(self):
@@ -182,7 +186,7 @@ class EventHubClient(object):
         if offset is not None:
             source.set_filter(offset.selector())
         handler = Receiver(self, source)
-        self.clients.append(handler)
+        self.clients.append(handler._handler)
         return handler
 
     def add_sender(self, partition=None):
@@ -198,7 +202,7 @@ class EventHubClient(object):
         if partition:
             target += "/Partitions/" + partition
         handler = Sender(self, target)
-        self.clients.append(handler)
+        self.clients.append(handler._handler)
         return handler
 
 
@@ -220,7 +224,6 @@ class Sender:
 
         @param event_data: the L{EventData} to be sent.
         """
-        self._event.clear()
         event_data.message.on_send_complete = self.on_outcome
         self._handler.send_message(event_data.message)
         if self._outcome != constants.MessageSendResult.Ok:

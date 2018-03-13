@@ -12,8 +12,8 @@ import time
 import asyncio
 import os
 
-from eventhubs import EventHubClient, EventData
-from eventhubs.async import AsyncSender
+from eventhubs import EventData
+from eventhubs.async import EventHubClientAsync, AsyncSender
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -32,8 +32,8 @@ async def run():
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
-    sender = AsyncSender()
-    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY).publish(sender)
+    client = EventHubClientAsync(ADDRESS, debug=False, username=USER, password=KEY)
+    sender = client.add_async_sender()
     await client.run_async()
     await send(sender, 100)
     await client.stop_async()

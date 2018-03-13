@@ -10,6 +10,7 @@ import sys
 import logging
 import datetime
 import time
+import os
 
 from eventhubs import EventHubClient, Sender, EventData
 
@@ -39,8 +40,9 @@ try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
-    sender = Sender()
-    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY).publish(sender).run()
+    client = EventHubClient(ADDRESS, debug=True, username=USER, password=KEY)
+    sender = client.add_sender()
+    client.run()
     try:
         start_time = time.time()
         data = EventData(batch=data_generator())

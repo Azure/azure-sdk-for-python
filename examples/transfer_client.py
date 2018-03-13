@@ -10,6 +10,7 @@ import time
 import threading
 import utils
 import logging
+import os
 from eventhubs import EventHubClient, Sender, EventData
 
 logger = logging.getLogger('transferClientTest')
@@ -65,9 +66,9 @@ try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
-    sender = Sender()
-    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY).publish(sender).run()
-
+    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
+    sender = client.add_sender()
+    client.run()
     if BATCH > 1:
         TransferClient(sender).run()
     else:

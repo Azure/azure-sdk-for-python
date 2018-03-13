@@ -11,20 +11,103 @@ import logging
 import queue
 import asyncio
 from threading import Lock, Event
+import eventhubs
 from eventhubs import Sender, Receiver, EventHubClient, EventData, EventHubError
 
+from uamqp.async import SASTokenAsync
+from uamqp.async import ConnectionAsync
 from uamqp import SendClientAsync, ReceiveClientAsync
 from uamqp import constants
 log = logging.getLogger("eventhubs")
 
 
+class EventHubClientAsync(EventHubClient):
+    """
+    The L{EventHubClient} class defines a high level interface for sending
+    events to and receiving events from the Azure Event Hubs service.
+    """
+    def _create_auth(self, auth_uri, username, password):
+        return SASTokenAsync.from_shared_access_key(auth_uri, username, password)
+
+    def _create_connection_async(self):
+        if not self.connection:
+            log.info("%s: client starts address=%s", self.container_id, self.address)
+            self.connection = ConnectionAsync(
+                self.address.hostname,
+                self.auth,
+                container_id=self.container_id,
+                properties=self._create_properties(),
+                debug=self.debug)
+
+    async def _close_connection_async(self):
+        if self.connection:
+            await self.connection.destroy_async()
+            self.connection = None
+
+    async def _close_clients_async(self):
+        for client in self.clients:
+            await client.close_async()
+
+    async def run_async(self):
+        log.info("%s: Starting", self.container_id)
+        self._create_connection_async()
+        for client in self.clients:
+            await client.open_async(connection=self.connection)
+        return self
+
+    async def stop_async(self):
+        """
+        Stop the client.
+        """
+        log.info("%s: on_stop_client", self.container_id)
+        self.stopped = True
+        await self._close_clients_async()
+        await self._close_connection_async()
+
+    def add_async_receiver(self, consumer_group, partition, offset=None):
+        """
+        Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
+
+        @param receiver: receiver to process the received event data. It must
+        override the 'on_event_data' method to handle incoming events.
+
+        @param consumer_group: the consumer group to which the receiver belongs.
+
+        @param partition: the id of the event hub partition.
+
+        @param offset: the initial L{Offset} to receive events.
+        """
+        source_url = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+            self.address.hostname, self.address.path, consumer_group, partition)
+        source = Source(source_url)
+        if offset is not None:
+            source.set_filter(offset.selector())
+        handler = AsyncReceiver(self, source)
+        self.clients.append(handler._handler)
+        return handler
+
+    def add_async_sender(self, loop=None, partition=None):
+        """
+        Registers a L{Sender} to publish L{EventData} objects to an Event Hub or one of its partitions.
+
+        @param sender: sender to publish event data.
+
+        @param partition: the id of the destination event hub partition. If not specified, events will
+        be distributed across partitions based on the default distribution logic.
+        """
+        target = "amqps://{}/{}".format(self.address.hostname, self.address.path)
+        if partition:
+            target += "/Partitions/" + partition
+        handler = AsyncSender(self, target)
+        self.clients.append(handler._handler)
+        return handler
+
 class AsyncSender(Sender):
     """
     Implements the async API of a L{Sender}.
     """
-    def __init__(self, loop=None):
-        self._handler = None
-        self._event = Event()
+    def __init__(self, client, target, loop=None):
+        self._handler = SendClientAsync(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
         self._outcome = None
         self._condition = None
         self.loop = loop or asyncio.get_event_loop()
@@ -35,20 +118,10 @@ class AsyncSender(Sender):
 
         @param event_data: the L{EventData} to be sent.
         """
-        self._check()
         event_data.message.on_send_complete = self.on_outcome
-        #task = self.loop.create_future()
-        #event_data.message.on_send_complete = lambda o, c: self.on_result(task, o, c)
         await self._handler.send_message_async(event_data.message)
         if self._outcome != constants.MessageSendResult.Ok:
             raise Sender._error(self._outcome, self._condition)
-
-    def handler(self, client, target):
-        """
-        Creates a protocol handler for this sender.
-        """
-        self._handler = SendClientAsync(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
-        return self._handler
 
     def on_result(self, task, outcome, condition):
         """
