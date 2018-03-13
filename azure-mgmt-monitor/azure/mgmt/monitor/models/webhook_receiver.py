@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class WebhookReceiver(Model):
     """A webhook receiver.
 
-    :param name: The name of the webhook receiver. Names must be unique across
-     all receivers within an action group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the webhook receiver. Names must be
+     unique across all receivers within an action group.
     :type name: str
-    :param service_uri: The URI where webhooks should be sent.
+    :param service_uri: Required. The URI where webhooks should be sent.
     :type service_uri: str
     """
 
@@ -32,7 +34,7 @@ class WebhookReceiver(Model):
         'service_uri': {'key': 'serviceUri', 'type': 'str'},
     }
 
-    def __init__(self, name, service_uri):
-        super(WebhookReceiver, self).__init__()
-        self.name = name
-        self.service_uri = service_uri
+    def __init__(self, **kwargs):
+        super(WebhookReceiver, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.service_uri = kwargs.get('service_uri', None)

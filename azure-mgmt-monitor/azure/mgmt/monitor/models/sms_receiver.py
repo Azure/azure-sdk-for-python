@@ -18,12 +18,14 @@ class SmsReceiver(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the SMS receiver. Names must be unique across all
-     receivers within an action group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the SMS receiver. Names must be unique
+     across all receivers within an action group.
     :type name: str
-    :param country_code: The country code of the SMS receiver.
+    :param country_code: Required. The country code of the SMS receiver.
     :type country_code: str
-    :param phone_number: The phone number of the SMS receiver.
+    :param phone_number: Required. The phone number of the SMS receiver.
     :type phone_number: str
     :ivar status: The status of the receiver. Possible values include:
      'NotSpecified', 'Enabled', 'Disabled'
@@ -44,9 +46,9 @@ class SmsReceiver(Model):
         'status': {'key': 'status', 'type': 'ReceiverStatus'},
     }
 
-    def __init__(self, name, country_code, phone_number):
-        super(SmsReceiver, self).__init__()
-        self.name = name
-        self.country_code = country_code
-        self.phone_number = phone_number
+    def __init__(self, **kwargs):
+        super(SmsReceiver, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.country_code = kwargs.get('country_code', None)
+        self.phone_number = kwargs.get('phone_number', None)
         self.status = None

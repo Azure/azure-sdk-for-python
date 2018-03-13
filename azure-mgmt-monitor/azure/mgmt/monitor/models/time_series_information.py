@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class TimeSeriesInformation(Model):
     """The time series info needed for calculating the baseline.
 
-    :param sensitivities: the list of sensitivities for calculating the
-     baseline.
+    All required parameters must be populated in order to send to Azure.
+
+    :param sensitivities: Required. the list of sensitivities for calculating
+     the baseline.
     :type sensitivities: list[str]
-    :param values: The metric values to calculate the baseline.
+    :param values: Required. The metric values to calculate the baseline.
     :type values: list[float]
     :param timestamps: the array of timestamps of the baselines.
     :type timestamps: list[datetime]
@@ -35,8 +37,8 @@ class TimeSeriesInformation(Model):
         'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
     }
 
-    def __init__(self, sensitivities, values, timestamps=None):
-        super(TimeSeriesInformation, self).__init__()
-        self.sensitivities = sensitivities
-        self.values = values
-        self.timestamps = timestamps
+    def __init__(self, **kwargs):
+        super(TimeSeriesInformation, self).__init__(**kwargs)
+        self.sensitivities = kwargs.get('sensitivities', None)
+        self.values = kwargs.get('values', None)
+        self.timestamps = kwargs.get('timestamps', None)

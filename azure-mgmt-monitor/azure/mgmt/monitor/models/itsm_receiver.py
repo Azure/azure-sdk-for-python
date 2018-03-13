@@ -15,18 +15,21 @@ from msrest.serialization import Model
 class ItsmReceiver(Model):
     """An Itsm receiver.
 
-    :param name: The name of the Itsm receiver. Names must be unique across
-     all receivers within an action group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the Itsm receiver. Names must be unique
+     across all receivers within an action group.
     :type name: str
-    :param workspace_id: OMS LA instance identifier.
+    :param workspace_id: Required. OMS LA instance identifier.
     :type workspace_id: str
-    :param connection_id: Unique identification of ITSM connection among
-     multiple defined in above workspace.
+    :param connection_id: Required. Unique identification of ITSM connection
+     among multiple defined in above workspace.
     :type connection_id: str
-    :param ticket_configuration: JSON blob for the configurations of the ITSM
-     action. CreateMultipleWorkItems option will be part of this blob as well.
+    :param ticket_configuration: Required. JSON blob for the configurations of
+     the ITSM action. CreateMultipleWorkItems option will be part of this blob
+     as well.
     :type ticket_configuration: str
-    :param region: Region in which workspace resides. Supported
+    :param region: Required. Region in which workspace resides. Supported
      values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'
     :type region: str
     """
@@ -47,10 +50,10 @@ class ItsmReceiver(Model):
         'region': {'key': 'region', 'type': 'str'},
     }
 
-    def __init__(self, name, workspace_id, connection_id, ticket_configuration, region):
-        super(ItsmReceiver, self).__init__()
-        self.name = name
-        self.workspace_id = workspace_id
-        self.connection_id = connection_id
-        self.ticket_configuration = ticket_configuration
-        self.region = region
+    def __init__(self, **kwargs):
+        super(ItsmReceiver, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.workspace_id = kwargs.get('workspace_id', None)
+        self.connection_id = kwargs.get('connection_id', None)
+        self.ticket_configuration = kwargs.get('ticket_configuration', None)
+        self.region = kwargs.get('region', None)
