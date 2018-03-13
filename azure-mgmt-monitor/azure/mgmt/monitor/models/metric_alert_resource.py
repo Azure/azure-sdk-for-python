@@ -47,12 +47,8 @@ class MetricAlertResource(Resource):
     :param window_size: Required. the period of time (in ISO 8601 duration
      format) that is used to monitor alert activity based on the threshold.
     :type window_size: timedelta
-    :param criteria_schema_id: Required. schema to use to interpret the
-     criteria JSON.
-    :type criteria_schema_id: str
-    :param criteria: Required. json data that follows the schema defined by
-     criteria schema id.
-    :type criteria: str
+    :param criteria: Required. criteria
+    :type criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
     :type actions: list[~azure.mgmt.monitor.models.Action]
@@ -72,7 +68,6 @@ class MetricAlertResource(Resource):
         'enabled': {'required': True},
         'evaluation_frequency': {'required': True},
         'window_size': {'required': True},
-        'criteria_schema_id': {'required': True},
         'criteria': {'required': True},
         'current_status': {'readonly': True},
         'last_updated_time': {'readonly': True},
@@ -90,8 +85,7 @@ class MetricAlertResource(Resource):
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
-        'criteria_schema_id': {'key': 'properties.criteriaSchemaId', 'type': 'str'},
-        'criteria': {'key': 'properties.criteria', 'type': 'str'},
+        'criteria': {'key': 'properties.criteria', 'type': 'MetricAlertCriteria'},
         'actions': {'key': 'properties.actions', 'type': '[Action]'},
         'current_status': {'key': 'properties.currentStatus', 'type': 'AlertStatus'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
@@ -105,7 +99,6 @@ class MetricAlertResource(Resource):
         self.scopes = kwargs.get('scopes', None)
         self.evaluation_frequency = kwargs.get('evaluation_frequency', None)
         self.window_size = kwargs.get('window_size', None)
-        self.criteria_schema_id = kwargs.get('criteria_schema_id', None)
         self.criteria = kwargs.get('criteria', None)
         self.actions = kwargs.get('actions', None)
         self.current_status = None
