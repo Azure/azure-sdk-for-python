@@ -16,7 +16,6 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.dps_certificate_operations import DpsCertificateOperations
 from .operations.iot_dps_resource_operations import IotDpsResourceOperations
-from .operations.dps_certificates_operations import DpsCertificatesOperations
 from . import models
 
 
@@ -64,8 +63,6 @@ class IotDpsClient(object):
     :vartype dps_certificate: azure.mgmt.iothubprovisioningservices.operations.DpsCertificateOperations
     :ivar iot_dps_resource: IotDpsResource operations
     :vartype iot_dps_resource: azure.mgmt.iothubprovisioningservices.operations.IotDpsResourceOperations
-    :ivar dps_certificates: DpsCertificates operations
-    :vartype dps_certificates: azure.mgmt.iothubprovisioningservices.operations.DpsCertificatesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -91,6 +88,4 @@ class IotDpsClient(object):
         self.dps_certificate = DpsCertificateOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_dps_resource = IotDpsResourceOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dps_certificates = DpsCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
