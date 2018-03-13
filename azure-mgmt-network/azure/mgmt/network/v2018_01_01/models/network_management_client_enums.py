@@ -373,20 +373,6 @@ class ConnectionStatus(str, Enum):
     degraded = "Degraded"
 
 
-class ConnectionState(str, Enum):
-
-    reachable = "Reachable"
-    unreachable = "Unreachable"
-    unknown = "Unknown"
-
-
-class EvaluationState(str, Enum):
-
-    not_started = "NotStarted"
-    in_progress = "InProgress"
-    completed = "Completed"
-
-
 class VirtualNetworkPeeringState(str, Enum):
 
     initiated = "Initiated"

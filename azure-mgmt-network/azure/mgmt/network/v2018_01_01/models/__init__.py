@@ -23,7 +23,6 @@ try:
     from .service_endpoint_properties_format_py3 import ServiceEndpointPropertiesFormat
     from .public_ip_address_sku_py3 import PublicIPAddressSku
     from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
-    from .ip_tag_py3 import IpTag
     from .public_ip_address_py3 import PublicIPAddress
     from .ip_configuration_py3 import IPConfiguration
     from .resource_navigation_link_py3 import ResourceNavigationLink
@@ -143,13 +142,6 @@ try:
     from .available_providers_list_state_py3 import AvailableProvidersListState
     from .available_providers_list_country_py3 import AvailableProvidersListCountry
     from .available_providers_list_py3 import AvailableProvidersList
-    from .connection_monitor_source_py3 import ConnectionMonitorSource
-    from .connection_monitor_destination_py3 import ConnectionMonitorDestination
-    from .connection_monitor_parameters_py3 import ConnectionMonitorParameters
-    from .connection_monitor_py3 import ConnectionMonitor
-    from .connection_monitor_result_py3 import ConnectionMonitorResult
-    from .connection_state_snapshot_py3 import ConnectionStateSnapshot
-    from .connection_monitor_query_result_py3 import ConnectionMonitorQueryResult
     from .operation_display_py3 import OperationDisplay
     from .availability_py3 import Availability
     from .dimension_py3 import Dimension
@@ -205,7 +197,6 @@ except (SyntaxError, ImportError):
     from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
     from .public_ip_address_sku import PublicIPAddressSku
     from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
-    from .ip_tag import IpTag
     from .public_ip_address import PublicIPAddress
     from .ip_configuration import IPConfiguration
     from .resource_navigation_link import ResourceNavigationLink
@@ -325,13 +316,6 @@ except (SyntaxError, ImportError):
     from .available_providers_list_state import AvailableProvidersListState
     from .available_providers_list_country import AvailableProvidersListCountry
     from .available_providers_list import AvailableProvidersList
-    from .connection_monitor_source import ConnectionMonitorSource
-    from .connection_monitor_destination import ConnectionMonitorDestination
-    from .connection_monitor_parameters import ConnectionMonitorParameters
-    from .connection_monitor import ConnectionMonitor
-    from .connection_monitor_result import ConnectionMonitorResult
-    from .connection_state_snapshot import ConnectionStateSnapshot
-    from .connection_monitor_query_result import ConnectionMonitorQueryResult
     from .operation_display import OperationDisplay
     from .availability import Availability
     from .dimension import Dimension
@@ -393,7 +377,6 @@ from .network_security_group_paged import NetworkSecurityGroupPaged
 from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
 from .packet_capture_result_paged import PacketCaptureResultPaged
-from .connection_monitor_result_paged import ConnectionMonitorResultPaged
 from .operation_paged import OperationPaged
 from .public_ip_address_paged import PublicIPAddressPaged
 from .route_filter_paged import RouteFilterPaged
@@ -459,8 +442,6 @@ from .network_management_client_enums import (
     Severity,
     IssueType,
     ConnectionStatus,
-    ConnectionState,
-    EvaluationState,
     VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
     VpnType,
@@ -494,7 +475,6 @@ __all__ = [
     'ServiceEndpointPropertiesFormat',
     'PublicIPAddressSku',
     'PublicIPAddressDnsSettings',
-    'IpTag',
     'PublicIPAddress',
     'IPConfiguration',
     'ResourceNavigationLink',
@@ -614,13 +594,6 @@ __all__ = [
     'AvailableProvidersListState',
     'AvailableProvidersListCountry',
     'AvailableProvidersList',
-    'ConnectionMonitorSource',
-    'ConnectionMonitorDestination',
-    'ConnectionMonitorParameters',
-    'ConnectionMonitor',
-    'ConnectionMonitorResult',
-    'ConnectionStateSnapshot',
-    'ConnectionMonitorQueryResult',
     'OperationDisplay',
     'Availability',
     'Dimension',
@@ -682,7 +655,6 @@ __all__ = [
     'SecurityRulePaged',
     'NetworkWatcherPaged',
     'PacketCaptureResultPaged',
-    'ConnectionMonitorResultPaged',
     'OperationPaged',
     'PublicIPAddressPaged',
     'RouteFilterPaged',
@@ -747,8 +719,6 @@ __all__ = [
     'Severity',
     'IssueType',
     'ConnectionStatus',
-    'ConnectionState',
-    'EvaluationState',
     'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',
     'VpnType',

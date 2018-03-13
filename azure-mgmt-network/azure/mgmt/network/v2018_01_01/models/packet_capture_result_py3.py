@@ -20,12 +20,10 @@ class PacketCaptureResult(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Name of the packet capture.
+    :ivar name: Name of the packet capture session.
     :vartype name: str
-    :ivar id: ID of the packet capture.
+    :ivar id: ID of the packet capture operation.
     :vartype id: str
-    :ivar type: Packet capture type.
-    :vartype type: str
     :param etag:  Default value: "A unique read-only string that changes
      whenever the resource is updated." .
     :type etag: str
@@ -57,7 +55,6 @@ class PacketCaptureResult(Model):
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'target': {'required': True},
         'storage_location': {'required': True},
     }
@@ -65,7 +62,6 @@ class PacketCaptureResult(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'target': {'key': 'properties.target', 'type': 'str'},
         'bytes_to_capture_per_packet': {'key': 'properties.bytesToCapturePerPacket', 'type': 'int'},
@@ -80,7 +76,6 @@ class PacketCaptureResult(Model):
         super(PacketCaptureResult, self).__init__(**kwargs)
         self.name = None
         self.id = None
-        self.type = None
         self.etag = etag
         self.target = target
         self.bytes_to_capture_per_packet = bytes_to_capture_per_packet

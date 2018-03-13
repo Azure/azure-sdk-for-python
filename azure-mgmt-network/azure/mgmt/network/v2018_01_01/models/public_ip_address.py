@@ -47,8 +47,6 @@ class PublicIPAddress(Resource):
      IP address.
     :type dns_settings:
      ~azure.mgmt.network.v2018_01_01.models.PublicIPAddressDnsSettings
-    :param ip_tags: The list of tags associated with the public IP address.
-    :type ip_tags: list[~azure.mgmt.network.v2018_01_01.models.IpTag]
     :param ip_address: The IP address associated with the public IP address
      resource.
     :type ip_address: str
@@ -85,7 +83,6 @@ class PublicIPAddress(Resource):
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
         'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
-        'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
@@ -101,7 +98,6 @@ class PublicIPAddress(Resource):
         self.public_ip_address_version = kwargs.get('public_ip_address_version', None)
         self.ip_configuration = None
         self.dns_settings = kwargs.get('dns_settings', None)
-        self.ip_tags = kwargs.get('ip_tags', None)
         self.ip_address = kwargs.get('ip_address', None)
         self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
         self.resource_guid = kwargs.get('resource_guid', None)

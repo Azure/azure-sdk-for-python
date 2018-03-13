@@ -15,17 +15,8 @@ from msrest.serialization import Model
 class PacketCapture(Model):
     """Parameters that define the create packet capture operation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Name of the packet capture.
-    :vartype name: str
-    :ivar id: ID of the packet capture.
-    :vartype id: str
-    :ivar type: Packet capture type.
-    :vartype type: str
     :param target: Required. The ID of the targeted resource, only VM is
      currently supported.
     :type target: str
@@ -47,17 +38,11 @@ class PacketCapture(Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
         'target': {'required': True},
         'storage_location': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'target': {'key': 'properties.target', 'type': 'str'},
         'bytes_to_capture_per_packet': {'key': 'properties.bytesToCapturePerPacket', 'type': 'int'},
         'total_bytes_per_session': {'key': 'properties.totalBytesPerSession', 'type': 'int'},
@@ -68,9 +53,6 @@ class PacketCapture(Model):
 
     def __init__(self, **kwargs):
         super(PacketCapture, self).__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.type = None
         self.target = kwargs.get('target', None)
         self.bytes_to_capture_per_packet = kwargs.get('bytes_to_capture_per_packet', 0)
         self.total_bytes_per_session = kwargs.get('total_bytes_per_session', 1073741824)
