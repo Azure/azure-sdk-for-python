@@ -34,5 +34,6 @@ class ExitCodeMapping(Model):
     }
 
     def __init__(self, code, exit_options):
+        super(ExitCodeMapping, self).__init__()
         self.code = code
         self.exit_options = exit_options

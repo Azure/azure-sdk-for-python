@@ -29,4 +29,5 @@ class AuthenticationTokenSettings(Model):
     }
 
     def __init__(self, access=None):
+        super(AuthenticationTokenSettings, self).__init__()
         self.access = access

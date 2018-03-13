@@ -3,6 +3,13 @@
 Release History
 ===============
 
+5.0.0 (2018-03-07)
+++++++++++++++++++
+
+- Added the ability to query pool node counts by state, via the new `list_pool_node_counts` method.
+- Added the ability to upload Azure Batch node agent logs from a particular node, via the `upload_batch_service_logs` method.
+   - This is intended for use in debugging by Microsoft support when there are problems on a node.
+
 4.0.0 (2017-09-25)
 ++++++++++++++++++
 

@@ -36,6 +36,7 @@ class JobSchedulePatchParameter(Model):
     }
 
     def __init__(self, schedule=None, job_specification=None, metadata=None):
+        super(JobSchedulePatchParameter, self).__init__()
         self.schedule = schedule
         self.job_specification = job_specification
         self.metadata = metadata
