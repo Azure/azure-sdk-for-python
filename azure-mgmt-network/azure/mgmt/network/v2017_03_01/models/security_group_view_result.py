@@ -24,6 +24,6 @@ class SecurityGroupViewResult(Model):
         'network_interfaces': {'key': 'networkInterfaces', 'type': '[SecurityGroupNetworkInterface]'},
     }
 
-    def __init__(self, network_interfaces=None):
-        super(SecurityGroupViewResult, self).__init__()
-        self.network_interfaces = network_interfaces
+    def __init__(self, **kwargs):
+        super(SecurityGroupViewResult, self).__init__(**kwargs)
+        self.network_interfaces = kwargs.get('network_interfaces', None)

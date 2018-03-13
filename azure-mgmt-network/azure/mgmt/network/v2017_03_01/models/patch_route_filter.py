@@ -61,12 +61,12 @@ class PatchRouteFilter(SubResource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, rules=None, tags=None):
-        super(PatchRouteFilter, self).__init__(id=id)
-        self.rules = rules
+    def __init__(self, **kwargs):
+        super(PatchRouteFilter, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
         self.peerings = None
         self.provisioning_state = None
         self.name = None
         self.etag = None
         self.type = None
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)

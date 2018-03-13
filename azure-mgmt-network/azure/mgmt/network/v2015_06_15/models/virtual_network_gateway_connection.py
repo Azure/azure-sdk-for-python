@@ -104,20 +104,20 @@ class VirtualNetworkGatewayConnection(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, authorization_key=None, virtual_network_gateway1=None, virtual_network_gateway2=None, local_network_gateway2=None, connection_type=None, routing_weight=None, shared_key=None, connection_status=None, egress_bytes_transferred=None, ingress_bytes_transferred=None, peer=None, enable_bgp=None, resource_guid=None, provisioning_state=None, etag=None):
-        super(VirtualNetworkGatewayConnection, self).__init__(id=id, location=location, tags=tags)
-        self.authorization_key = authorization_key
-        self.virtual_network_gateway1 = virtual_network_gateway1
-        self.virtual_network_gateway2 = virtual_network_gateway2
-        self.local_network_gateway2 = local_network_gateway2
-        self.connection_type = connection_type
-        self.routing_weight = routing_weight
-        self.shared_key = shared_key
-        self.connection_status = connection_status
-        self.egress_bytes_transferred = egress_bytes_transferred
-        self.ingress_bytes_transferred = ingress_bytes_transferred
-        self.peer = peer
-        self.enable_bgp = enable_bgp
-        self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(VirtualNetworkGatewayConnection, self).__init__(**kwargs)
+        self.authorization_key = kwargs.get('authorization_key', None)
+        self.virtual_network_gateway1 = kwargs.get('virtual_network_gateway1', None)
+        self.virtual_network_gateway2 = kwargs.get('virtual_network_gateway2', None)
+        self.local_network_gateway2 = kwargs.get('local_network_gateway2', None)
+        self.connection_type = kwargs.get('connection_type', None)
+        self.routing_weight = kwargs.get('routing_weight', None)
+        self.shared_key = kwargs.get('shared_key', None)
+        self.connection_status = kwargs.get('connection_status', None)
+        self.egress_bytes_transferred = kwargs.get('egress_bytes_transferred', None)
+        self.ingress_bytes_transferred = kwargs.get('ingress_bytes_transferred', None)
+        self.peer = kwargs.get('peer', None)
+        self.enable_bgp = kwargs.get('enable_bgp', None)
+        self.resource_guid = kwargs.get('resource_guid', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.etag = kwargs.get('etag', None)

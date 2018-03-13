@@ -28,7 +28,7 @@ class OperationPropertiesFormatServiceSpecification(Model):
         'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
     }
 
-    def __init__(self, metric_specifications=None, log_specifications=None):
-        super(OperationPropertiesFormatServiceSpecification, self).__init__()
-        self.metric_specifications = metric_specifications
-        self.log_specifications = log_specifications
+    def __init__(self, **kwargs):
+        super(OperationPropertiesFormatServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = kwargs.get('metric_specifications', None)
+        self.log_specifications = kwargs.get('log_specifications', None)
