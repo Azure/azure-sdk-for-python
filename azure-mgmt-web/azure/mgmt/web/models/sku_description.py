@@ -23,6 +23,9 @@ class SkuDescription(Model):
     :type size: str
     :param family: Family code of the resource SKU.
     :type family: str
+    :param compute_mode: Shared or dedicated app hosting. Possible values
+     include: 'Shared', 'Dedicated', 'Dynamic'
+    :type compute_mode: str or ~azure.mgmt.web.models.ComputeModeOptions
     :param capacity: Current number of instances assigned to the resource.
     :type capacity: int
     :param sku_capacity: Min, max, and default scale values of the SKU.
@@ -39,18 +42,20 @@ class SkuDescription(Model):
         'tier': {'key': 'tier', 'type': 'str'},
         'size': {'key': 'size', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
+        'compute_mode': {'key': 'computeMode', 'type': 'ComputeModeOptions'},
         'capacity': {'key': 'capacity', 'type': 'int'},
         'sku_capacity': {'key': 'skuCapacity', 'type': 'SkuCapacity'},
         'locations': {'key': 'locations', 'type': '[str]'},
         'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, sku_capacity=None, locations=None, capabilities=None):
+    def __init__(self, name=None, tier=None, size=None, family=None, compute_mode=None, capacity=None, sku_capacity=None, locations=None, capabilities=None):
         super(SkuDescription, self).__init__()
         self.name = name
         self.tier = tier
         self.size = size
         self.family = family
+        self.compute_mode = compute_mode
         self.capacity = capacity
         self.sku_capacity = sku_capacity
         self.locations = locations
