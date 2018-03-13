@@ -10,11 +10,11 @@ Async APIs.
 import logging
 import queue
 import asyncio
-from threading import Lock
+from threading import Lock, Event
 from eventhubs import Sender, Receiver, EventHubClient, EventData, EventHubError
 
 from uamqp import SendClientAsync, ReceiveClientAsync
-
+from uamqp import constants
 log = logging.getLogger("eventhubs")
 
 
@@ -23,6 +23,10 @@ class AsyncSender(Sender):
     Implements the async API of a L{Sender}.
     """
     def __init__(self, loop=None):
+        self._handler = None
+        self._event = Event()
+        self._outcome = None
+        self._condition = None
         self.loop = loop or asyncio.get_event_loop()
 
     async def send(self, event_data):
@@ -32,15 +36,12 @@ class AsyncSender(Sender):
         @param event_data: the L{EventData} to be sent.
         """
         self._check()
-        task = self.loop.create_future()
-        event_data.message.on_send_complete = lambda o, c: self.on_result(task, o, c)
-        self._handler.queue_message(event_data.message)
-        error = await task
-        if error:
-            raise error
-
-    async def wait(self):
-        await self._handler.wait_async()
+        event_data.message.on_send_complete = self.on_outcome
+        #task = self.loop.create_future()
+        #event_data.message.on_send_complete = lambda o, c: self.on_result(task, o, c)
+        await self._handler.send_message_async(event_data.message)
+        if self._outcome != constants.MessageSendResult.Ok:
+            raise Sender._error(self._outcome, self._condition)
 
     def handler(self, client, target):
         """
@@ -48,7 +49,6 @@ class AsyncSender(Sender):
         """
         self._handler = SendClientAsync(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
         return self._handler
-
 
     def on_result(self, task, outcome, condition):
         """

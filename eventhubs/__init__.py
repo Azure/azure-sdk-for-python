@@ -18,6 +18,7 @@ import sys
 import threading
 import uuid
 import time
+import asyncio
 try:
     from urllib import urlparse
     from urllib import unquote_plus
@@ -31,6 +32,8 @@ from uamqp import SendClient, ReceiveClient
 from uamqp import Message, BatchMessage
 from uamqp import Source, Target
 from uamqp import authentication
+from uamqp.async import SASTokenAsync
+from uamqp.async import ConnectionAsync
 from uamqp import constants, utils
 
 
@@ -49,14 +52,14 @@ class EventHubClient(object):
         """
         self.container_id = "eventhubs.pycli-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
-        username = kwargs.get('username', self.address.username)  # TODO: needs unquoting
-        password = kwargs.get('password', self.address.password)
+        username = unquote_plus(self.address.username) if self.address.username else None
+        username = kwargs.get('username', username)
+        password = unquote_plus(self.address.password) if self.address.password else None
+        password = kwargs.get('password', password)
         if not username or not password:
             raise ValueError("Missing username and/or password.")
         auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        print("Auth uri: {}".format(auth_uri))
-        print("user/pass: {}, {}".format(username, password))
-        self.auth = authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
+        self.auth = SASTokenAsync.from_shared_access_key(auth_uri, username, password)
 
         self.daemon = None
         self.connection = None
@@ -81,6 +84,21 @@ class EventHubClient(object):
                 properties=properties,
                 debug=self.debug)
 
+    def _create_connection_async(self):
+        if not self.connection:
+            log.info("%s: client starts address=%s", self.container_id, self.address)
+            properties = {}
+            properties["product"] = "eventhubs.python"
+            properties["version"] = __version__
+            properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
+            properties["platform"] = sys.platform
+            self.connection = ConnectionAsync(
+                self.address.hostname,
+                self.auth,
+                container_id=self.container_id,
+                properties=properties,
+                debug=self.debug)
+
     def _close_connection(self):
         if self.connection:
             self.connection.destroy()
@@ -89,6 +107,22 @@ class EventHubClient(object):
     def _close_clients(self):
         for client in self.clients:
             client.close()
+
+    async def _close_connection_async(self):
+        if self.connection:
+            await self.connection.destroy_async()
+            self.connection = None
+
+    async def _close_clients_async(self):
+        for client in self.clients:
+            await client.close_async()
+
+    async def run_async(self):
+        log.info("%s: Starting", self.container_id)
+        self._create_connection_async()
+        for client in self.clients:
+            await client.open_async(connection=self.connection)
+        return self
 
     def run(self):
         """
@@ -100,16 +134,16 @@ class EventHubClient(object):
             client.open(connection=self.connection)
         return self
 
-    def run_daemon(self):
-        """
-        Run the L{EventHubClient} in non-blocking mode.
-        """
-        log.info("%s: starting the daemon", self.container_id)
-        self._create_connection()
-        for client in self.clients:
-            client.run_daemon(connection=self.connection)
-        log.info("started")
-        return self
+    # def run_daemon(self):
+    #     """
+    #     Run the L{EventHubClient} in non-blocking mode.
+    #     """
+    #     log.info("%s: starting the daemon", self.container_id)
+    #     self._create_connection()
+    #     for client in self.clients:
+    #         client.run_daemon(connection=self.connection)
+    #     log.info("started")
+    #     return self
 
     def stop(self):
         """
@@ -120,7 +154,16 @@ class EventHubClient(object):
         self._close_clients()
         self._close_connection()
 
-    def subscribe(self, receiver, consumer_group, partition, offset=None):
+    async def stop_async(self):
+        """
+        Stop the client.
+        """
+        log.info("%s: on_stop_client", self.container_id)
+        self.stopped = True
+        await self._close_clients_async()
+        await self._close_connection_async()
+
+    def add_receiver(self, consumer_group, partition, offset=None):
         """
         Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
 
@@ -138,11 +181,11 @@ class EventHubClient(object):
         source = Source(source_url)
         if offset is not None:
             source.set_filter(offset.selector())
-        handler = receiver.handler(self, source)
+        handler = Receiver(self, source)
         self.clients.append(handler)
-        return self
+        return handler
 
-    def publish(self, sender, partition=None):
+    def add_sender(self, partition=None):
         """
         Registers a L{Sender} to publish L{EventData} objects to an Event Hub or one of its partitions.
 
@@ -154,9 +197,9 @@ class EventHubClient(object):
         target = "amqps://{}/{}".format(self.address.hostname, self.address.path)
         if partition:
             target += "/Partitions/" + partition
-        handler = sender.handler(self, target)
+        handler = Sender(self, target)
         self.clients.append(handler)
-        return self
+        return handler
 
 
 class Sender:
@@ -165,9 +208,8 @@ class Sender:
     """
     TIMEOUT = 60.0
 
-    def __init__(self):
-        self._handler = None
-        self._event = threading.Event()
+    def __init__(self, client, target):
+        self._handler = SendClient(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
         self._outcome = None
         self._condition = None
 
@@ -178,19 +220,10 @@ class Sender:
 
         @param event_data: the L{EventData} to be sent.
         """
-        self._check()
         self._event.clear()
         event_data.message.on_send_complete = self.on_outcome
-        self._handler.queue_message(event_data.message)
-        while self._handler.is_running_daemon():
-            if self._event.is_set():
-                break
-        else:
-            self._handler.wait()
+        self._handler.send_message(event_data.message)
         if self._outcome != constants.MessageSendResult.Ok:
-            if not self._event.is_set():
-                raise Sender._error(constants.MessageSendResult.Error,
-                "Message was not sent.")
             raise Sender._error(self._outcome, self._condition)
 
     def transfer(self, event_data, callback=None):
@@ -203,23 +236,12 @@ class Sender:
         argument to the callback function is the event data and the second item is the
         result (None on success, or a L{EventHubError} on failure).
         """
-        self._check()
         if callback:
             event_data.message.on_send_complete = lambda o, c: callback(o, Sender._error(o, c))
         self._handler.queue_message(event_data.message)
 
     def wait(self):
-        while self._handler.messages_pending():
-            time.sleep(1)
-        #     if self._error:
-        #         raise self._error
-
-    def handler(self, client, target):
-        """
-        Creates a protocol handler for this sender.
-        """
-        self._handler = SendClient(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
-        return self._handler
+        self._handler.wait()
 
     def on_outcome(self, outcome, condition):
         """
@@ -227,11 +249,6 @@ class Sender:
         """
         self._outcome = outcome
         self._condition = condition
-        self._event.set()
-
-    def _check(self):
-        if self._handler is None:
-            raise EventHubError("Call publish to register the sender before using it.")
 
     @staticmethod
     def _error(outcome, condition):
@@ -246,22 +263,20 @@ class Receiver:
     by the library into a local buffer queue.
 
     """
-    def __init__(self, prefetch=300):
+    def __init__(self, client, source, prefetch=300):
         self.offset = None
         self.prefetch = prefetch
-
-    def handler(self, client, source):
-        """
-        Creates a protocol handler for this sender.
-        """
-        self._handler = ReceiveClient(source, auth=client.auth, debug=client.debug, prefetch=self.prefetch, on_message_received=self.on_message)
-        return self._handler
+        self._handler = ReceiveClient(source, auth=client.auth, debug=client.debug, prefetch=self.prefetch)
 
     def on_message(self, event):
         """ Proess message received event. """
         event_data = EventData.create(event.message)
         self.on_event_data(event_data)
         self.offset = event_data.offset
+
+    def receive(self, callback, count=None, timeout=None):
+        messages = self._handler.receive_messages_iter()
+        return messages
 
     def on_event_data(self, event_data):
         """ Proess event data received event. """
