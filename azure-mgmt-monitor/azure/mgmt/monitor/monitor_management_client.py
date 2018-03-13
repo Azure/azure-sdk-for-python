@@ -29,7 +29,6 @@ from .operations.metric_definitions_operations import MetricDefinitionsOperation
 from .operations.metrics_operations import MetricsOperations
 from .operations.metric_baseline_operations import MetricBaselineOperations
 from .operations.metric_alerts_operations import MetricAlertsOperations
-from .operations.metric_alert_operations import MetricAlertOperations
 from .operations.metric_alerts_status_operations import MetricAlertsStatusOperations
 from . import models
 
@@ -104,8 +103,6 @@ class MonitorManagementClient(object):
     :vartype metric_baseline: azure.mgmt.monitor.operations.MetricBaselineOperations
     :ivar metric_alerts: MetricAlerts operations
     :vartype metric_alerts: azure.mgmt.monitor.operations.MetricAlertsOperations
-    :ivar metric_alert: MetricAlert operations
-    :vartype metric_alert: azure.mgmt.monitor.operations.MetricAlertOperations
     :ivar metric_alerts_status: MetricAlertsStatus operations
     :vartype metric_alerts_status: azure.mgmt.monitor.operations.MetricAlertsStatusOperations
 
@@ -158,8 +155,6 @@ class MonitorManagementClient(object):
         self.metric_baseline = MetricBaselineOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_alerts = MetricAlertsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.metric_alert = MetricAlertOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_alerts_status = MetricAlertsStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -25,7 +25,6 @@ from .metric_definitions_operations import MetricDefinitionsOperations
 from .metrics_operations import MetricsOperations
 from .metric_baseline_operations import MetricBaselineOperations
 from .metric_alerts_operations import MetricAlertsOperations
-from .metric_alert_operations import MetricAlertOperations
 from .metric_alerts_status_operations import MetricAlertsStatusOperations
 
 __all__ = [
@@ -45,6 +44,5 @@ __all__ = [
     'MetricsOperations',
     'MetricBaselineOperations',
     'MetricAlertsOperations',
-    'MetricAlertOperations',
     'MetricAlertsStatusOperations',
 ]
