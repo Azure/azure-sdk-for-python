@@ -61,7 +61,7 @@ setup(
     long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -69,17 +69,16 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     install_requires=[
-        'msrestazure~=0.4.7',
-        'azure-common~=1.1.5',
+        'msrestazure>=0.4.20,<2.0.0',
+        'azure-common~=1.1',
     ],
     cmdclass=cmdclass
 )
