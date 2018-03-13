@@ -18,13 +18,15 @@ class Site(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
     :vartype name: str
     :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location.
+    :param location: Required. Resource Location.
     :type location: str
     :ivar type: Resource type.
     :vartype type: str
@@ -204,38 +206,38 @@ class Site(Resource):
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, location, kind=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None, identity=None):
-        super(Site, self).__init__(kind=kind, location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(Site, self).__init__(**kwargs)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
         self.usage_state = None
-        self.enabled = enabled
+        self.enabled = kwargs.get('enabled', None)
         self.enabled_host_names = None
         self.availability_state = None
-        self.host_name_ssl_states = host_name_ssl_states
-        self.server_farm_id = server_farm_id
-        self.reserved = reserved
+        self.host_name_ssl_states = kwargs.get('host_name_ssl_states', None)
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.reserved = kwargs.get('reserved', False)
         self.last_modified_time_utc = None
-        self.site_config = site_config
+        self.site_config = kwargs.get('site_config', None)
         self.traffic_manager_host_names = None
-        self.scm_site_also_stopped = scm_site_also_stopped
+        self.scm_site_also_stopped = kwargs.get('scm_site_also_stopped', False)
         self.target_swap_slot = None
-        self.hosting_environment_profile = hosting_environment_profile
-        self.client_affinity_enabled = client_affinity_enabled
-        self.client_cert_enabled = client_cert_enabled
-        self.host_names_disabled = host_names_disabled
+        self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
+        self.client_affinity_enabled = kwargs.get('client_affinity_enabled', None)
+        self.client_cert_enabled = kwargs.get('client_cert_enabled', None)
+        self.host_names_disabled = kwargs.get('host_names_disabled', None)
         self.outbound_ip_addresses = None
         self.possible_outbound_ip_addresses = None
-        self.container_size = container_size
-        self.daily_memory_time_quota = daily_memory_time_quota
+        self.container_size = kwargs.get('container_size', None)
+        self.daily_memory_time_quota = kwargs.get('daily_memory_time_quota', None)
         self.suspended_till = None
         self.max_number_of_workers = None
-        self.cloning_info = cloning_info
-        self.snapshot_info = snapshot_info
+        self.cloning_info = kwargs.get('cloning_info', None)
+        self.snapshot_info = kwargs.get('snapshot_info', None)
         self.resource_group = None
         self.is_default_container = None
         self.default_host_name = None
         self.slot_swap_status = None
-        self.https_only = https_only
-        self.identity = identity
+        self.https_only = kwargs.get('https_only', None)
+        self.identity = kwargs.get('identity', None)

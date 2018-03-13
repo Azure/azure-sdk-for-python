@@ -34,8 +34,8 @@ class DeploymentLocations(Model):
         'hosting_environment_deployment_infos': {'key': 'hostingEnvironmentDeploymentInfos', 'type': '[HostingEnvironmentDeploymentInfo]'},
     }
 
-    def __init__(self, locations=None, hosting_environments=None, hosting_environment_deployment_infos=None):
-        super(DeploymentLocations, self).__init__()
-        self.locations = locations
-        self.hosting_environments = hosting_environments
-        self.hosting_environment_deployment_infos = hosting_environment_deployment_infos
+    def __init__(self, **kwargs):
+        super(DeploymentLocations, self).__init__(**kwargs)
+        self.locations = kwargs.get('locations', None)
+        self.hosting_environments = kwargs.get('hosting_environments', None)
+        self.hosting_environment_deployment_infos = kwargs.get('hosting_environment_deployment_infos', None)

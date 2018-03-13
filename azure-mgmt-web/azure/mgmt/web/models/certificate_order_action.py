@@ -53,7 +53,7 @@ class CertificateOrderAction(ProxyOnlyResource):
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, kind=None, certificate_order_action_type=None, created_at=None):
-        super(CertificateOrderAction, self).__init__(kind=kind)
-        self.certificate_order_action_type = certificate_order_action_type
-        self.created_at = created_at
+    def __init__(self, **kwargs):
+        super(CertificateOrderAction, self).__init__(**kwargs)
+        self.certificate_order_action_type = kwargs.get('certificate_order_action_type', None)
+        self.created_at = kwargs.get('created_at', None)

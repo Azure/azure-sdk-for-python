@@ -269,9 +269,8 @@ class ResourceHealthMetadataOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceHealthMetadata
-        :rtype:
-         ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
+        :return: An iterator like instance of None
+        :rtype: ~azure.mgmt.web.models.ResourceHealthMetadata[None]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -317,11 +316,11 @@ class ResourceHealthMetadataOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ResourceHealthMetadataPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ResourceHealthMetadata(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ResourceHealthMetadataPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ResourceHealthMetadata(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -426,9 +425,8 @@ class ResourceHealthMetadataOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ResourceHealthMetadata
-        :rtype:
-         ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
+        :return: An iterator like instance of None
+        :rtype: ~azure.mgmt.web.models.ResourceHealthMetadata[None]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -475,11 +473,11 @@ class ResourceHealthMetadataOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ResourceHealthMetadataPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ResourceHealthMetadata(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ResourceHealthMetadataPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ResourceHealthMetadata(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

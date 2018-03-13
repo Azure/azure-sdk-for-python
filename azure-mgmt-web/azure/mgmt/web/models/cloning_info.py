@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class CloningInfo(Model):
     """Information needed for cloning operation.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param correlation_id: Correlation ID of cloning operation. This ID ties
      multiple cloning operations
      together to use the same snapshot.
@@ -28,8 +30,8 @@ class CloningInfo(Model):
     :param clone_source_control: <code>true</code> to clone source control
      from source app; otherwise, <code>false</code>.
     :type clone_source_control: bool
-    :param source_web_app_id: ARM resource ID of the source app. App resource
-     ID is of the form
+    :param source_web_app_id: Required. ARM resource ID of the source app. App
+     resource ID is of the form
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}
      for production slots and
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
@@ -76,16 +78,16 @@ class CloningInfo(Model):
         'ignore_quotas': {'key': 'ignoreQuotas', 'type': 'bool'},
     }
 
-    def __init__(self, source_web_app_id, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None, ignore_quotas=None):
-        super(CloningInfo, self).__init__()
-        self.correlation_id = correlation_id
-        self.overwrite = overwrite
-        self.clone_custom_host_names = clone_custom_host_names
-        self.clone_source_control = clone_source_control
-        self.source_web_app_id = source_web_app_id
-        self.hosting_environment = hosting_environment
-        self.app_settings_overrides = app_settings_overrides
-        self.configure_load_balancing = configure_load_balancing
-        self.traffic_manager_profile_id = traffic_manager_profile_id
-        self.traffic_manager_profile_name = traffic_manager_profile_name
-        self.ignore_quotas = ignore_quotas
+    def __init__(self, **kwargs):
+        super(CloningInfo, self).__init__(**kwargs)
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.overwrite = kwargs.get('overwrite', None)
+        self.clone_custom_host_names = kwargs.get('clone_custom_host_names', None)
+        self.clone_source_control = kwargs.get('clone_source_control', None)
+        self.source_web_app_id = kwargs.get('source_web_app_id', None)
+        self.hosting_environment = kwargs.get('hosting_environment', None)
+        self.app_settings_overrides = kwargs.get('app_settings_overrides', None)
+        self.configure_load_balancing = kwargs.get('configure_load_balancing', None)
+        self.traffic_manager_profile_id = kwargs.get('traffic_manager_profile_id', None)
+        self.traffic_manager_profile_name = kwargs.get('traffic_manager_profile_name', None)
+        self.ignore_quotas = kwargs.get('ignore_quotas', None)

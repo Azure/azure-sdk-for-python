@@ -55,8 +55,8 @@ class MigrateMySqlStatus(ProxyOnlyResource):
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None):
-        super(MigrateMySqlStatus, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(MigrateMySqlStatus, self).__init__(**kwargs)
         self.migration_operation_status = None
         self.operation_id = None
         self.local_my_sql_enabled = None

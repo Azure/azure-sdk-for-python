@@ -48,7 +48,7 @@ class ResourceHealthMetadata(ProxyOnlyResource):
         'signal_availability': {'key': 'properties.signalAvailability', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, category=None, signal_availability=None):
-        super(ResourceHealthMetadata, self).__init__(kind=kind)
-        self.category = category
-        self.signal_availability = signal_availability
+    def __init__(self, **kwargs):
+        super(ResourceHealthMetadata, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.signal_availability = kwargs.get('signal_availability', None)

@@ -91,18 +91,18 @@ class RecommendationRule(ProxyOnlyResource):
         'forward_link': {'key': 'properties.forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, recommendation_rule_name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, level=None, channels=None, tags=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
-        super(RecommendationRule, self).__init__(kind=kind)
-        self.recommendation_rule_name = recommendation_rule_name
-        self.display_name = display_name
-        self.message = message
-        self.recommendation_id = recommendation_id
-        self.description = description
-        self.action_name = action_name
-        self.level = level
-        self.channels = channels
-        self.tags = tags
-        self.is_dynamic = is_dynamic
-        self.extension_name = extension_name
-        self.blade_name = blade_name
-        self.forward_link = forward_link
+    def __init__(self, **kwargs):
+        super(RecommendationRule, self).__init__(**kwargs)
+        self.recommendation_rule_name = kwargs.get('recommendation_rule_name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.message = kwargs.get('message', None)
+        self.recommendation_id = kwargs.get('recommendation_id', None)
+        self.description = kwargs.get('description', None)
+        self.action_name = kwargs.get('action_name', None)
+        self.level = kwargs.get('level', None)
+        self.channels = kwargs.get('channels', None)
+        self.tags = kwargs.get('tags', None)
+        self.is_dynamic = kwargs.get('is_dynamic', None)
+        self.extension_name = kwargs.get('extension_name', None)
+        self.blade_name = kwargs.get('blade_name', None)
+        self.forward_link = kwargs.get('forward_link', None)

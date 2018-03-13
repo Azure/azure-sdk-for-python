@@ -27,7 +27,7 @@ class HttpLogsConfig(Model):
         'azure_blob_storage': {'key': 'azureBlobStorage', 'type': 'AzureBlobStorageHttpLogsConfig'},
     }
 
-    def __init__(self, file_system=None, azure_blob_storage=None):
-        super(HttpLogsConfig, self).__init__()
-        self.file_system = file_system
-        self.azure_blob_storage = azure_blob_storage
+    def __init__(self, **kwargs):
+        super(HttpLogsConfig, self).__init__(**kwargs)
+        self.file_system = kwargs.get('file_system', None)
+        self.azure_blob_storage = kwargs.get('azure_blob_storage', None)

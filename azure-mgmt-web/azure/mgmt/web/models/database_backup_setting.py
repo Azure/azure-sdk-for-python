@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class DatabaseBackupSetting(Model):
     """Database backup settings.
 
-    :param database_type: Database type (e.g. SqlAzure / MySql). Possible
-     values include: 'SqlAzure', 'MySql', 'LocalMySql', 'PostgreSql'
+    All required parameters must be populated in order to send to Azure.
+
+    :param database_type: Required. Database type (e.g. SqlAzure / MySql).
+     Possible values include: 'SqlAzure', 'MySql', 'LocalMySql', 'PostgreSql'
     :type database_type: str or ~azure.mgmt.web.models.DatabaseType
     :param name:
     :type name: str
@@ -41,9 +43,9 @@ class DatabaseBackupSetting(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
-    def __init__(self, database_type, name=None, connection_string_name=None, connection_string=None):
-        super(DatabaseBackupSetting, self).__init__()
-        self.database_type = database_type
-        self.name = name
-        self.connection_string_name = connection_string_name
-        self.connection_string = connection_string
+    def __init__(self, **kwargs):
+        super(DatabaseBackupSetting, self).__init__(**kwargs)
+        self.database_type = kwargs.get('database_type', None)
+        self.name = kwargs.get('name', None)
+        self.connection_string_name = kwargs.get('connection_string_name', None)
+        self.connection_string = kwargs.get('connection_string', None)

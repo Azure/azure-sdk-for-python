@@ -27,7 +27,7 @@ class DomainRecommendationSearchParameters(Model):
         'max_domain_recommendations': {'key': 'maxDomainRecommendations', 'type': 'int'},
     }
 
-    def __init__(self, keywords=None, max_domain_recommendations=None):
-        super(DomainRecommendationSearchParameters, self).__init__()
-        self.keywords = keywords
-        self.max_domain_recommendations = max_domain_recommendations
+    def __init__(self, **kwargs):
+        super(DomainRecommendationSearchParameters, self).__init__(**kwargs)
+        self.keywords = kwargs.get('keywords', None)
+        self.max_domain_recommendations = kwargs.get('max_domain_recommendations', None)

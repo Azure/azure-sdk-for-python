@@ -32,9 +32,9 @@ class PerfMonSample(Model):
         'core_count': {'key': 'coreCount', 'type': 'int'},
     }
 
-    def __init__(self, time=None, instance_name=None, value=None, core_count=None):
-        super(PerfMonSample, self).__init__()
-        self.time = time
-        self.instance_name = instance_name
-        self.value = value
-        self.core_count = core_count
+    def __init__(self, **kwargs):
+        super(PerfMonSample, self).__init__(**kwargs)
+        self.time = kwargs.get('time', None)
+        self.instance_name = kwargs.get('instance_name', None)
+        self.value = kwargs.get('value', None)
+        self.core_count = kwargs.get('core_count', None)

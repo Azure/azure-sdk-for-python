@@ -56,10 +56,10 @@ class SourceControl(ProxyOnlyResource):
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, kind=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None):
-        super(SourceControl, self).__init__(kind=kind)
-        self.source_control_name = source_control_name
-        self.token = token
-        self.token_secret = token_secret
-        self.refresh_token = refresh_token
-        self.expiration_time = expiration_time
+    def __init__(self, **kwargs):
+        super(SourceControl, self).__init__(**kwargs)
+        self.source_control_name = kwargs.get('source_control_name', None)
+        self.token = kwargs.get('token', None)
+        self.token_secret = kwargs.get('token_secret', None)
+        self.refresh_token = kwargs.get('refresh_token', None)
+        self.expiration_time = kwargs.get('expiration_time', None)

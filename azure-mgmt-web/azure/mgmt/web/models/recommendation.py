@@ -119,26 +119,26 @@ class Recommendation(ProxyOnlyResource):
         'forward_link': {'key': 'properties.forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
-        super(Recommendation, self).__init__(kind=kind)
-        self.creation_time = creation_time
-        self.recommendation_id = recommendation_id
-        self.resource_id = resource_id
-        self.resource_scope = resource_scope
-        self.rule_name = rule_name
-        self.display_name = display_name
-        self.message = message
-        self.level = level
-        self.channels = channels
-        self.tags = tags
-        self.action_name = action_name
-        self.start_time = start_time
-        self.end_time = end_time
-        self.next_notification_time = next_notification_time
-        self.notification_expiration_time = notification_expiration_time
-        self.notified_time = notified_time
-        self.score = score
-        self.is_dynamic = is_dynamic
-        self.extension_name = extension_name
-        self.blade_name = blade_name
-        self.forward_link = forward_link
+    def __init__(self, **kwargs):
+        super(Recommendation, self).__init__(**kwargs)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.recommendation_id = kwargs.get('recommendation_id', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.resource_scope = kwargs.get('resource_scope', None)
+        self.rule_name = kwargs.get('rule_name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.message = kwargs.get('message', None)
+        self.level = kwargs.get('level', None)
+        self.channels = kwargs.get('channels', None)
+        self.tags = kwargs.get('tags', None)
+        self.action_name = kwargs.get('action_name', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.next_notification_time = kwargs.get('next_notification_time', None)
+        self.notification_expiration_time = kwargs.get('notification_expiration_time', None)
+        self.notified_time = kwargs.get('notified_time', None)
+        self.score = kwargs.get('score', None)
+        self.is_dynamic = kwargs.get('is_dynamic', None)
+        self.extension_name = kwargs.get('extension_name', None)
+        self.blade_name = kwargs.get('blade_name', None)
+        self.forward_link = kwargs.get('forward_link', None)

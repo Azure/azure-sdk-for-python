@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class AzureTableStorageApplicationLogsConfig(Model):
     """Application logs to Azure table storage configuration.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param level: Log level. Possible values include: 'Off', 'Verbose',
      'Information', 'Warning', 'Error'
     :type level: str or ~azure.mgmt.web.models.LogLevel
-    :param sas_url: SAS URL to an Azure table with add/query/delete
+    :param sas_url: Required. SAS URL to an Azure table with add/query/delete
      permissions.
     :type sas_url: str
     """
@@ -32,7 +34,7 @@ class AzureTableStorageApplicationLogsConfig(Model):
         'sas_url': {'key': 'sasUrl', 'type': 'str'},
     }
 
-    def __init__(self, sas_url, level=None):
-        super(AzureTableStorageApplicationLogsConfig, self).__init__()
-        self.level = level
-        self.sas_url = sas_url
+    def __init__(self, **kwargs):
+        super(AzureTableStorageApplicationLogsConfig, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.sas_url = kwargs.get('sas_url', None)

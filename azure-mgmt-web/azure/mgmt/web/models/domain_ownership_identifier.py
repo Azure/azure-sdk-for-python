@@ -44,6 +44,6 @@ class DomainOwnershipIdentifier(ProxyOnlyResource):
         'ownership_id': {'key': 'properties.ownershipId', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, ownership_id=None):
-        super(DomainOwnershipIdentifier, self).__init__(kind=kind)
-        self.ownership_id = ownership_id
+    def __init__(self, **kwargs):
+        super(DomainOwnershipIdentifier, self).__init__(**kwargs)
+        self.ownership_id = kwargs.get('ownership_id', None)
