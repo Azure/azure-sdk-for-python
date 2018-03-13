@@ -18,12 +18,6 @@ class BackupLongTermRetentionPolicyState(Enum):
     enabled = "Enabled"
 
 
-class RestorePointType(Enum):
-
-    discrete = "DISCRETE"
-    continuous = "CONTINUOUS"
-
-
 class CapabilityStatus(Enum):
 
     visible = "Visible"
@@ -474,16 +468,6 @@ class VirtualNetworkRuleState(Enum):
     unknown = "Unknown"
 
 
-class ManagementOperationState(Enum):
-
-    pending = "Pending"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancel_in_progress = "CancelInProgress"
-    cancelled = "Cancelled"
-
-
 class AutomaticTuningServerMode(Enum):
 
     custom = "Custom"
@@ -496,3 +480,19 @@ class AutomaticTuningServerReason(Enum):
     default = "Default"
     disabled = "Disabled"
     auto_configured = "AutoConfigured"
+
+
+class RestorePointType(Enum):
+
+    continuous = "CONTINUOUS"
+    discrete = "DISCRETE"
+
+
+class ManagementOperationState(Enum):
+
+    pending = "Pending"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancel_in_progress = "CancelInProgress"
+    cancelled = "Cancelled"

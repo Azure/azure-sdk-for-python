@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class DatabaseOperation(ProxyResource):
-    """A database operation.
+class ElasticPoolOperation(ProxyResource):
+    """A elastic pool operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,9 +24,9 @@ class DatabaseOperation(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar database_name: The name of the database the operation is being
-     performed on.
-    :vartype database_name: str
+    :ivar elastic_pool_name: The name of the elastic pool the operation is
+     being performed on.
+    :vartype elastic_pool_name: str
     :ivar operation: The name of operation.
     :vartype operation: str
     :ivar operation_friendly_name: The friendly name of operation.
@@ -37,9 +37,8 @@ class DatabaseOperation(ProxyResource):
     :vartype server_name: str
     :ivar start_time: The operation start time.
     :vartype start_time: datetime
-    :ivar state: The operation state. Possible values include: 'Pending',
-     'InProgress', 'Succeeded', 'Failed', 'CancelInProgress', 'Cancelled'
-    :vartype state: str or ~azure.mgmt.sql.models.ManagementOperationState
+    :ivar state: The operation state.
+    :vartype state: str
     :ivar error_code: The operation error code.
     :vartype error_code: int
     :ivar error_description: The operation error description.
@@ -61,7 +60,7 @@ class DatabaseOperation(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'database_name': {'readonly': True},
+        'elastic_pool_name': {'readonly': True},
         'operation': {'readonly': True},
         'operation_friendly_name': {'readonly': True},
         'percent_complete': {'readonly': True},
@@ -81,7 +80,7 @@ class DatabaseOperation(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'elastic_pool_name': {'key': 'properties.elasticPoolName', 'type': 'str'},
         'operation': {'key': 'properties.operation', 'type': 'str'},
         'operation_friendly_name': {'key': 'properties.operationFriendlyName', 'type': 'str'},
         'percent_complete': {'key': 'properties.percentComplete', 'type': 'int'},
@@ -98,8 +97,8 @@ class DatabaseOperation(ProxyResource):
     }
 
     def __init__(self):
-        super(DatabaseOperation, self).__init__()
-        self.database_name = None
+        super(ElasticPoolOperation, self).__init__()
+        self.elastic_pool_name = None
         self.operation = None
         self.operation_friendly_name = None
         self.percent_complete = None
