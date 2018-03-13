@@ -60,7 +60,7 @@ class Marketplace(Resource):
     :vartype pretax_cost: decimal.Decimal
     :ivar is_estimated: The estimated usage is subject to change.
     :vartype is_estimated: bool
-    :ivar meter_id: The meter id.
+    :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
     :ivar subscription_guid: Subscription guid.
     :vartype subscription_guid: str

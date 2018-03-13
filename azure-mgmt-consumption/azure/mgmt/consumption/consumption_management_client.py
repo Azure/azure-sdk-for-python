@@ -33,16 +33,21 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param grain: Can be daily or monthly. Possible values include:
+     'DailyGrain', 'MonthlyGrain'
+    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, grain, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if grain is None:
+            raise ValueError("Parameter 'grain' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -53,6 +58,7 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.grain = grain
 
 
 class ConsumptionManagementClient(object):
@@ -81,17 +87,20 @@ class ConsumptionManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param grain: Can be daily or monthly. Possible values include:
+     'DailyGrain', 'MonthlyGrain'
+    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, grain, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, grain, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-01-31'
+        self.api_version = '2018-03-31'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
