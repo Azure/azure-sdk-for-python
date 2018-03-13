@@ -33,7 +33,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         empty_volume = Volume(name='empty-volume', empty_dir={})
         volume_mount = VolumeMount(name='empty-volume', mount_path='/mnt/mydir')
 
-        container_group = self.client.container_groups.create_or_update(
+        poller = self.client.container_groups.create_or_update(
             resource_group.name,
             container_group_name,
             {
@@ -54,6 +54,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
                 'volumes': [empty_volume]
             }
         )
+        container_group = poller.result()
 
         self.assertEqual(container_group.name, container_group_name)
         self.assertEqual(container_group.location, location)
