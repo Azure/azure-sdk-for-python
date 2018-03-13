@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-An example to show receiving events from an Event Hub partition.
+An example to show batch sending events to an Event Hub.
 """
 
 # pylint: disable=C0111
@@ -17,7 +17,6 @@ from eventhubs import EventHubClient, Sender, EventData
 import examples
 logger = examples.get_logger(logging.INFO)
 
-
 # Address can be in either of these formats:
 # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
 # "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
@@ -27,16 +26,22 @@ ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
+
+def data_generator():
+    for i in range(15000):
+        yield b"Hello world"
+
+
 try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
     sender = Sender()
-    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY).publish(sender).run()
+    client = EventHubClient(ADDRESS, debug=True, username=USER, password=KEY).publish(sender).run_daemon()
     try:
         start_time = time.time()
-        for i in range(100):
-            sender.send(EventData(str(i)))
+        data = EventData(batch=data_generator())
+        sender.send(data)
     except:
         raise
     finally:

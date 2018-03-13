@@ -8,15 +8,15 @@ An example to show receiving events from an Event Hub partition.
 
 import sys
 import logging
+import datetime
 import time
-import asyncio
 import os
 
-from eventhubs import EventHubClient, EventData
-from eventhubs.async import AsyncSender
+from eventhubs import EventHubClient, Sender, EventData
 
 import examples
 logger = examples.get_logger(logging.INFO)
+
 
 # Address can be in either of these formats:
 # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
@@ -27,31 +27,24 @@ ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-
-async def run():
+try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
-    sender = AsyncSender()
-    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY).publish(sender)
-    await client.run_async()
-    await send(sender, 100)
-    await client.stop_async()
-
-
-async def send(snd, count):
-    for i in range(count):
-        await snd.send(EventData(str(i)))
-
-
-try:
-    loop = asyncio.get_event_loop()
-    start_time = time.time()
-    loop.run_until_complete(run())
-    end_time = time.time()
-    run_time = end_time - start_time
-    logger.info("Runtime: {} seconds".format(run_time))
-    loop.close()
+    sender = Sender()
+    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY).publish(sender).run()
+    try:
+        start_time = time.time()
+        for i in range(1000):
+            sender.transfer(EventData(str(i)))
+        sender.wait()
+    except:
+        raise
+    finally:
+        end_time = time.time()
+        client.stop()
+        run_time = end_time - start_time
+        logger.info("Runtime: {} seconds".format(run_time))
 
 except KeyboardInterrupt:
     pass
