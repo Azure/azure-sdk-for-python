@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class DatabaseOperations(object):
-    """DatabaseOperations operations.
+class ElasticPoolOperations(object):
+    """ElasticPoolOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,8 +38,8 @@ class DatabaseOperations(object):
         self.config = config
 
     def cancel(
-            self, resource_group_name, server_name, database_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Cancels the asynchronous operation on the database.
+            self, resource_group_name, server_name, elastic_pool_name, operation_id, custom_headers=None, raw=False, **operation_config):
+        """Cancels the asynchronous operation on the elastic pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -47,8 +47,8 @@ class DatabaseOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
+        :param elastic_pool_name:
+        :type elastic_pool_name: str
         :param operation_id: The operation identifier.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -65,7 +65,7 @@ class DatabaseOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -97,11 +97,11 @@ class DatabaseOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/operations/{operationId}/cancel'}
+    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/operations/{operationId}/cancel'}
 
-    def list_by_database(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of operations performed on the database.
+    def list_by_elastic_pool(
+            self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of operations performed on the elastic pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -109,27 +109,27 @@ class DatabaseOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database.
-        :type database_name: str
+        :param elastic_pool_name:
+        :type elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of DatabaseOperation
+        :return: An iterator like instance of ElasticPoolOperation
         :rtype:
-         ~azure.mgmt.sql.models.DatabaseOperationPaged[~azure.mgmt.sql.models.DatabaseOperation]
+         ~azure.mgmt.sql.models.ElasticPoolOperationPaged[~azure.mgmt.sql.models.ElasticPoolOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_database.metadata['url']
+                url = self.list_by_elastic_pool.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -165,12 +165,12 @@ class DatabaseOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DatabaseOperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ElasticPoolOperationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.DatabaseOperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ElasticPoolOperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/operations'}
+    list_by_elastic_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/operations'}
