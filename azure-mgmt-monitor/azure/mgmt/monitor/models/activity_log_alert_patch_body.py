@@ -28,7 +28,7 @@ class ActivityLogAlertPatchBody(Model):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, tags=None, enabled=True):
-        super(ActivityLogAlertPatchBody, self).__init__()
-        self.tags = tags
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(ActivityLogAlertPatchBody, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.enabled = kwargs.get('enabled', True)

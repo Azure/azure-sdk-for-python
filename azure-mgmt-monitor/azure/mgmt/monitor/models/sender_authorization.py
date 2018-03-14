@@ -32,8 +32,8 @@ class SenderAuthorization(Model):
         'scope': {'key': 'scope', 'type': 'str'},
     }
 
-    def __init__(self, action=None, role=None, scope=None):
-        super(SenderAuthorization, self).__init__()
-        self.action = action
-        self.role = role
-        self.scope = scope
+    def __init__(self, **kwargs):
+        super(SenderAuthorization, self).__init__(**kwargs)
+        self.action = kwargs.get('action', None)
+        self.role = kwargs.get('role', None)
+        self.scope = kwargs.get('scope', None)
