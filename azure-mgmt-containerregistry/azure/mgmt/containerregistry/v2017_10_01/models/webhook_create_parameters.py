@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class WebhookCreateParameters(Model):
     """The parameters for creating a webhook.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param tags: The tags for the webhook.
     :type tags: dict[str, str]
-    :param location: The location of the webhook. This cannot be changed after
-     the resource is created.
+    :param location: Required. The location of the webhook. This cannot be
+     changed after the resource is created.
     :type location: str
-    :param service_uri: The service URI for the webhook to post notifications.
+    :param service_uri: Required. The service URI for the webhook to post
+     notifications.
     :type service_uri: str
     :param custom_headers: Custom headers that will be added to the webhook
      notifications.
@@ -34,8 +37,8 @@ class WebhookCreateParameters(Model):
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
      'foo:latest'. Empty means all events.
     :type scope: str
-    :param actions: The list of actions that trigger the webhook to post
-     notifications.
+    :param actions: Required. The list of actions that trigger the webhook to
+     post notifications.
     :type actions: list[str or
      ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookAction]
     """
@@ -56,12 +59,12 @@ class WebhookCreateParameters(Model):
         'actions': {'key': 'properties.actions', 'type': '[str]'},
     }
 
-    def __init__(self, location, service_uri, actions, tags=None, custom_headers=None, status=None, scope=None):
-        super(WebhookCreateParameters, self).__init__()
-        self.tags = tags
-        self.location = location
-        self.service_uri = service_uri
-        self.custom_headers = custom_headers
-        self.status = status
-        self.scope = scope
-        self.actions = actions
+    def __init__(self, **kwargs):
+        super(WebhookCreateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)
+        self.service_uri = kwargs.get('service_uri', None)
+        self.custom_headers = kwargs.get('custom_headers', None)
+        self.status = kwargs.get('status', None)
+        self.scope = kwargs.get('scope', None)
+        self.actions = kwargs.get('actions', None)

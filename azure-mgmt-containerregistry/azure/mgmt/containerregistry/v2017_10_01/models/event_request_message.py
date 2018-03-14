@@ -36,10 +36,10 @@ class EventRequestMessage(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, content=None, headers=None, method=None, request_uri=None, version=None):
-        super(EventRequestMessage, self).__init__()
-        self.content = content
-        self.headers = headers
-        self.method = method
-        self.request_uri = request_uri
-        self.version = version
+    def __init__(self, **kwargs):
+        super(EventRequestMessage, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)
+        self.headers = kwargs.get('headers', None)
+        self.method = kwargs.get('method', None)
+        self.request_uri = kwargs.get('request_uri', None)
+        self.version = kwargs.get('version', None)

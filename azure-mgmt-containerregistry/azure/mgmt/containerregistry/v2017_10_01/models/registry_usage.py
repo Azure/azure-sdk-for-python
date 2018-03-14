@@ -34,9 +34,9 @@ class RegistryUsage(Model):
         'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    def __init__(self, name=None, limit=None, current_value=None, unit=None):
-        super(RegistryUsage, self).__init__()
-        self.name = name
-        self.limit = limit
-        self.current_value = current_value
-        self.unit = unit
+    def __init__(self, **kwargs):
+        super(RegistryUsage, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.limit = kwargs.get('limit', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.unit = kwargs.get('unit', None)

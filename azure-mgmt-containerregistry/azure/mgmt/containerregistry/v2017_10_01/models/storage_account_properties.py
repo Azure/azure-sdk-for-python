@@ -16,7 +16,9 @@ class StorageAccountProperties(Model):
     """The properties of a storage account for a container registry. Only
     applicable to Classic SKU.
 
-    :param id: The resource ID of the storage account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The resource ID of the storage account.
     :type id: str
     """
 
@@ -28,6 +30,6 @@ class StorageAccountProperties(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        super(StorageAccountProperties, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(StorageAccountProperties, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

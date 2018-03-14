@@ -18,11 +18,13 @@ class RegistryNameCheckRequest(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the container registry.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the container registry.
     :type name: str
-    :ivar type: The resource type of the container registry. This field must
-     be set to 'Microsoft.ContainerRegistry/registries'. Default value:
-     "Microsoft.ContainerRegistry/registries" .
+    :ivar type: Required. The resource type of the container registry. This
+     field must be set to 'Microsoft.ContainerRegistry/registries'. Default
+     value: "Microsoft.ContainerRegistry/registries" .
     :vartype type: str
     """
 
@@ -38,6 +40,6 @@ class RegistryNameCheckRequest(Model):
 
     type = "Microsoft.ContainerRegistry/registries"
 
-    def __init__(self, name):
-        super(RegistryNameCheckRequest, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(RegistryNameCheckRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

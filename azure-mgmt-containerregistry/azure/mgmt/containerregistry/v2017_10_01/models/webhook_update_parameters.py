@@ -46,11 +46,11 @@ class WebhookUpdateParameters(Model):
         'actions': {'key': 'properties.actions', 'type': '[str]'},
     }
 
-    def __init__(self, tags=None, service_uri=None, custom_headers=None, status=None, scope=None, actions=None):
-        super(WebhookUpdateParameters, self).__init__()
-        self.tags = tags
-        self.service_uri = service_uri
-        self.custom_headers = custom_headers
-        self.status = status
-        self.scope = scope
-        self.actions = actions
+    def __init__(self, **kwargs):
+        super(WebhookUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.service_uri = kwargs.get('service_uri', None)
+        self.custom_headers = kwargs.get('custom_headers', None)
+        self.status = kwargs.get('status', None)
+        self.scope = kwargs.get('scope', None)
+        self.actions = kwargs.get('actions', None)

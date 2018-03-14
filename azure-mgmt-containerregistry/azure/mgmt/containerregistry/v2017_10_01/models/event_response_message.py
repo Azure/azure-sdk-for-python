@@ -35,10 +35,10 @@ class EventResponseMessage(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, content=None, headers=None, reason_phrase=None, status_code=None, version=None):
-        super(EventResponseMessage, self).__init__()
-        self.content = content
-        self.headers = headers
-        self.reason_phrase = reason_phrase
-        self.status_code = status_code
-        self.version = version
+    def __init__(self, **kwargs):
+        super(EventResponseMessage, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)
+        self.headers = kwargs.get('headers', None)
+        self.reason_phrase = kwargs.get('reason_phrase', None)
+        self.status_code = kwargs.get('status_code', None)
+        self.version = kwargs.get('version', None)

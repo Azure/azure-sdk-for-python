@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class StorageAccountParameters(Model):
     """The parameters of a storage account for a container registry.
 
-    :param name: The name of the storage account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the storage account.
     :type name: str
-    :param access_key: The access key to the storage account.
+    :param access_key: Required. The access key to the storage account.
     :type access_key: str
     """
 
@@ -31,7 +33,7 @@ class StorageAccountParameters(Model):
         'access_key': {'key': 'accessKey', 'type': 'str'},
     }
 
-    def __init__(self, name, access_key):
-        super(StorageAccountParameters, self).__init__()
-        self.name = name
-        self.access_key = access_key
+    def __init__(self, **kwargs):
+        super(StorageAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.access_key = kwargs.get('access_key', None)

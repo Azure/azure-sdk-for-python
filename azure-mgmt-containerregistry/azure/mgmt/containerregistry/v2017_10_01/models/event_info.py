@@ -23,6 +23,6 @@ class EventInfo(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(EventInfo, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(EventInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
