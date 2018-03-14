@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class AzureAppPushReceiver(Model):
     """The Azure mobile App push notification receiver.
 
-    :param name: The name of the Azure mobile app push receiver. Names must be
-     unique across all receivers within an action group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the Azure mobile app push receiver.
+     Names must be unique across all receivers within an action group.
     :type name: str
-    :param email_address: The email address registered for the Azure mobile
-     app.
+    :param email_address: Required. The email address registered for the Azure
+     mobile app.
     :type email_address: str
     """
 
@@ -33,7 +35,7 @@ class AzureAppPushReceiver(Model):
         'email_address': {'key': 'emailAddress', 'type': 'str'},
     }
 
-    def __init__(self, name, email_address):
-        super(AzureAppPushReceiver, self).__init__()
-        self.name = name
-        self.email_address = email_address
+    def __init__(self, **kwargs):
+        super(AzureAppPushReceiver, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.email_address = kwargs.get('email_address', None)

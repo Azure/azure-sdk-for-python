@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class CalculateBaselineResponse(Model):
     """The response to a calcualte baseline call.
 
-    :param type: the resource type of the baseline resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. the resource type of the baseline resource.
     :type type: str
     :param timestamps: the array of timestamps of the baselines.
     :type timestamps: list[datetime]
-    :param baseline: the baseline values for each sensitivity.
+    :param baseline: Required. the baseline values for each sensitivity.
     :type baseline: list[~azure.mgmt.monitor.models.Baseline]
     """
 
@@ -34,8 +36,8 @@ class CalculateBaselineResponse(Model):
         'baseline': {'key': 'baseline', 'type': '[Baseline]'},
     }
 
-    def __init__(self, type, baseline, timestamps=None):
-        super(CalculateBaselineResponse, self).__init__()
-        self.type = type
-        self.timestamps = timestamps
-        self.baseline = baseline
+    def __init__(self, **kwargs):
+        super(CalculateBaselineResponse, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.timestamps = kwargs.get('timestamps', None)
+        self.baseline = kwargs.get('baseline', None)

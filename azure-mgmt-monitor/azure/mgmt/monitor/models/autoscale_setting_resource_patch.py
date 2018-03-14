@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class AutoscaleSettingResourcePatch(Model):
     """The autoscale setting object for patch operations.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param profiles: the collection of automatic scaling profiles that specify
-     different scaling parameters for different time periods. A maximum of 20
-     profiles can be specified.
+    :param profiles: Required. the collection of automatic scaling profiles
+     that specify different scaling parameters for different time periods. A
+     maximum of 20 profiles can be specified.
     :type profiles: list[~azure.mgmt.monitor.models.AutoscaleProfile]
     :param notifications: the collection of notifications.
     :type notifications:
@@ -48,11 +50,11 @@ class AutoscaleSettingResourcePatch(Model):
         'target_resource_uri': {'key': 'properties.targetResourceUri', 'type': 'str'},
     }
 
-    def __init__(self, profiles, tags=None, notifications=None, enabled=True, name=None, target_resource_uri=None):
-        super(AutoscaleSettingResourcePatch, self).__init__()
-        self.tags = tags
-        self.profiles = profiles
-        self.notifications = notifications
-        self.enabled = enabled
-        self.name = name
-        self.target_resource_uri = target_resource_uri
+    def __init__(self, **kwargs):
+        super(AutoscaleSettingResourcePatch, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.profiles = kwargs.get('profiles', None)
+        self.notifications = kwargs.get('notifications', None)
+        self.enabled = kwargs.get('enabled', True)
+        self.name = kwargs.get('name', None)
+        self.target_resource_uri = kwargs.get('target_resource_uri', None)

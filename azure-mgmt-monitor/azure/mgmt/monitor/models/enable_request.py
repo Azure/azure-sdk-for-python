@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class EnableRequest(Model):
     """Describes a receiver that should be resubscribed.
 
-    :param receiver_name: The name of the receiver to resubscribe.
+    All required parameters must be populated in order to send to Azure.
+
+    :param receiver_name: Required. The name of the receiver to resubscribe.
     :type receiver_name: str
     """
 
@@ -27,6 +29,6 @@ class EnableRequest(Model):
         'receiver_name': {'key': 'receiverName', 'type': 'str'},
     }
 
-    def __init__(self, receiver_name):
-        super(EnableRequest, self).__init__()
-        self.receiver_name = receiver_name
+    def __init__(self, **kwargs):
+        super(EnableRequest, self).__init__(**kwargs)
+        self.receiver_name = kwargs.get('receiver_name', None)
