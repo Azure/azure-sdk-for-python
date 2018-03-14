@@ -297,7 +297,7 @@ class ZonesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'}
 
     def update(
-            self, resource_group_name, zone_name, if_match=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, zone_name, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Updates a DNS zone. Does not modify DNS records within the zone.
 
         :param resource_group_name: The name of the resource group.
@@ -305,12 +305,12 @@ class ZonesOperations(object):
         :param zone_name: The name of the DNS zone (without a terminating
          dot).
         :type zone_name: str
+        :param parameters: Parameters supplied to the Update operation.
+        :type parameters: ~azure.mgmt.dns.models.Zone
         :param if_match: The etag of the DNS zone. Omit this value to always
          overwrite the current zone. Specify the last-seen etag value to
          prevent accidentally overwritting any concurrent changes.
         :type if_match: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -321,8 +321,6 @@ class ZonesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.ZoneUpdate(tags=tags)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -349,7 +347,7 @@ class ZonesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ZoneUpdate')
+        body_content = self._serialize.body(parameters, 'Zone')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)

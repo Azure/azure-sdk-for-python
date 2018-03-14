@@ -60,7 +60,6 @@ class Zone(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'max_number_of_record_sets': {'readonly': True},
         'number_of_record_sets': {'readonly': True},
         'name_servers': {'readonly': True},
@@ -81,7 +80,7 @@ class Zone(Resource):
         'resolution_virtual_networks': {'key': 'properties.resolutionVirtualNetworks', 'type': '[SubResource]'},
     }
 
-    def __init__(self, location, tags=None, etag=None, zone_type="Public", registration_virtual_networks=None, resolution_virtual_networks=None):
+    def __init__(self, location=None, tags=None, etag=None, zone_type="Public", registration_virtual_networks=None, resolution_virtual_networks=None):
         super(Zone, self).__init__(location=location, tags=tags)
         self.etag = etag
         self.max_number_of_record_sets = None

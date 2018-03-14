@@ -23,7 +23,6 @@ from .record_set import RecordSet
 from .record_set_update_parameters import RecordSetUpdateParameters
 from .sub_resource import SubResource
 from .zone import Zone
-from .zone_update import ZoneUpdate
 from .resource import Resource
 from .record_set_paged import RecordSetPaged
 from .zone_paged import ZonePaged
@@ -47,7 +46,6 @@ __all__ = [
     'RecordSetUpdateParameters',
     'SubResource',
     'Zone',
-    'ZoneUpdate',
     'Resource',
     'RecordSetPaged',
     'ZonePaged',
