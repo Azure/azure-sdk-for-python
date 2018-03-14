@@ -12,33 +12,21 @@
 from msrest.serialization import Model
 
 
-class VaultCreateOrUpdateParameters(Model):
+class VaultPatchParameters(Model):
     """Parameters for creating or updating a vault.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param location: Required. The supported Azure location where the key
-     vault should be created.
-    :type location: str
     :param tags: The tags that will be assigned to the key vault.
     :type tags: dict[str, str]
-    :param properties: Required. Properties of the vault
-    :type properties: ~azure.mgmt.keyvault.models.VaultProperties
+    :param properties: Properties of the vault
+    :type properties: ~azure.mgmt.keyvault.models.VaultPatchProperties
     """
 
-    _validation = {
-        'location': {'required': True},
-        'properties': {'required': True},
-    }
-
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'VaultProperties'},
+        'properties': {'key': 'properties', 'type': 'VaultPatchProperties'},
     }
 
     def __init__(self, **kwargs):
-        super(VaultCreateOrUpdateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+        super(VaultPatchParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.properties = kwargs.get('properties', None)
