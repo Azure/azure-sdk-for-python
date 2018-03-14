@@ -29,7 +29,7 @@ class TimeSeriesElement(Model):
         'data': {'key': 'data', 'type': '[MetricValue]'},
     }
 
-    def __init__(self, metadatavalues=None, data=None):
-        super(TimeSeriesElement, self).__init__()
-        self.metadatavalues = metadatavalues
-        self.data = data
+    def __init__(self, **kwargs):
+        super(TimeSeriesElement, self).__init__(**kwargs)
+        self.metadatavalues = kwargs.get('metadatavalues', None)
+        self.data = kwargs.get('data', None)

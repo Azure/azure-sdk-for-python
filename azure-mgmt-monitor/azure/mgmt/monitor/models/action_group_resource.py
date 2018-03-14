@@ -18,21 +18,23 @@ class ActionGroupResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar name: Azure resource name
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param group_short_name: The short name of the action group. This will be
-     used in SMS messages.
+    :param group_short_name: Required. The short name of the action group.
+     This will be used in SMS messages.
     :type group_short_name: str
-    :param enabled: Indicates whether this action group is enabled. If an
-     action group is not enabled, then none of its receivers will receive
+    :param enabled: Required. Indicates whether this action group is enabled.
+     If an action group is not enabled, then none of its receivers will receive
      communications. Default value: True .
     :type enabled: bool
     :param email_receivers: The list of email receivers that are part of this
@@ -82,13 +84,13 @@ class ActionGroupResource(Resource):
         'automation_runbook_receivers': {'key': 'properties.automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
     }
 
-    def __init__(self, location, group_short_name, tags=None, enabled=True, email_receivers=None, sms_receivers=None, webhook_receivers=None, itsm_receivers=None, azure_app_push_receivers=None, automation_runbook_receivers=None):
-        super(ActionGroupResource, self).__init__(location=location, tags=tags)
-        self.group_short_name = group_short_name
-        self.enabled = enabled
-        self.email_receivers = email_receivers
-        self.sms_receivers = sms_receivers
-        self.webhook_receivers = webhook_receivers
-        self.itsm_receivers = itsm_receivers
-        self.azure_app_push_receivers = azure_app_push_receivers
-        self.automation_runbook_receivers = automation_runbook_receivers
+    def __init__(self, **kwargs):
+        super(ActionGroupResource, self).__init__(**kwargs)
+        self.group_short_name = kwargs.get('group_short_name', None)
+        self.enabled = kwargs.get('enabled', True)
+        self.email_receivers = kwargs.get('email_receivers', None)
+        self.sms_receivers = kwargs.get('sms_receivers', None)
+        self.webhook_receivers = kwargs.get('webhook_receivers', None)
+        self.itsm_receivers = kwargs.get('itsm_receivers', None)
+        self.azure_app_push_receivers = kwargs.get('azure_app_push_receivers', None)
+        self.automation_runbook_receivers = kwargs.get('automation_runbook_receivers', None)

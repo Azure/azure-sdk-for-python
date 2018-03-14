@@ -63,14 +63,14 @@ class BaselineResponse(Model):
         'metadata': {'key': 'properties.metadata', 'type': '[BaselineMetadataValue]'},
     }
 
-    def __init__(self, timespan=None, interval=None, aggregation=None, timestamps=None, baseline=None, metadata=None):
-        super(BaselineResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(BaselineResponse, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
-        self.timespan = timespan
-        self.interval = interval
-        self.aggregation = aggregation
-        self.timestamps = timestamps
-        self.baseline = baseline
-        self.metadata = metadata
+        self.timespan = kwargs.get('timespan', None)
+        self.interval = kwargs.get('interval', None)
+        self.aggregation = kwargs.get('aggregation', None)
+        self.timestamps = kwargs.get('timestamps', None)
+        self.baseline = kwargs.get('baseline', None)
+        self.metadata = kwargs.get('metadata', None)
