@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class Baseline(Model):
     """The baseline values for a single sensitivity value.
 
-    :param sensitivity: the sensitivity of the baseline. Possible values
-     include: 'Low', 'Medium', 'High'
+    All required parameters must be populated in order to send to Azure.
+
+    :param sensitivity: Required. the sensitivity of the baseline. Possible
+     values include: 'Low', 'Medium', 'High'
     :type sensitivity: str or ~azure.mgmt.monitor.models.Sensitivity
-    :param low_thresholds: The low thresholds of the baseline.
+    :param low_thresholds: Required. The low thresholds of the baseline.
     :type low_thresholds: list[float]
-    :param high_thresholds: The high thresholds of the baseline.
+    :param high_thresholds: Required. The high thresholds of the baseline.
     :type high_thresholds: list[float]
     """
 
@@ -36,8 +38,8 @@ class Baseline(Model):
         'high_thresholds': {'key': 'highThresholds', 'type': '[float]'},
     }
 
-    def __init__(self, sensitivity, low_thresholds, high_thresholds):
-        super(Baseline, self).__init__()
-        self.sensitivity = sensitivity
-        self.low_thresholds = low_thresholds
-        self.high_thresholds = high_thresholds
+    def __init__(self, **kwargs):
+        super(Baseline, self).__init__(**kwargs)
+        self.sensitivity = kwargs.get('sensitivity', None)
+        self.low_thresholds = kwargs.get('low_thresholds', None)
+        self.high_thresholds = kwargs.get('high_thresholds', None)
