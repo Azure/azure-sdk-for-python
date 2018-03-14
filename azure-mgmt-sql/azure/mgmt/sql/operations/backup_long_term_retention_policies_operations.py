@@ -18,8 +18,8 @@ from msrestazure.azure_operation import AzureOperationPoller
 from .. import models
 
 
-class LongTermRetentionPoliciesOperations(object):
-    """LongTermRetentionPoliciesOperations operations.
+class BackupLongTermRetentionPoliciesOperations(object):
+    """BackupLongTermRetentionPoliciesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

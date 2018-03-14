@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class BackupLongTermRetentionVaultPaged(Paged):
+class ElasticPoolOperationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`BackupLongTermRetentionVault <azure.mgmt.sql.models.BackupLongTermRetentionVault>` object
+    A paging container for iterating over a list of :class:`ElasticPoolOperation <azure.mgmt.sql.models.ElasticPoolOperation>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[BackupLongTermRetentionVault]'}
+        'current_page': {'key': 'value', 'type': '[ElasticPoolOperation]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(BackupLongTermRetentionVaultPaged, self).__init__(*args, **kwargs)
+        super(ElasticPoolOperationPaged, self).__init__(*args, **kwargs)
