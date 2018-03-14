@@ -52,6 +52,7 @@ from .operations.virtual_network_rules_operations import VirtualNetworkRulesOper
 from .operations.database_operations import DatabaseOperations
 from .operations.long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from .operations.long_term_retention_policies_operations import LongTermRetentionPoliciesOperations
+from .operations.data_warehouse_user_activities_operations import DataWarehouseUserActivitiesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
@@ -175,6 +176,8 @@ class SqlManagementClient(object):
     :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
     :ivar long_term_retention_policies: LongTermRetentionPolicies operations
     :vartype long_term_retention_policies: azure.mgmt.sql.operations.LongTermRetentionPoliciesOperations
+    :ivar data_warehouse_user_activities: DataWarehouseUserActivities operations
+    :vartype data_warehouse_user_activities: azure.mgmt.sql.operations.DataWarehouseUserActivitiesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
@@ -278,6 +281,8 @@ class SqlManagementClient(object):
         self.long_term_retention_backups = LongTermRetentionBackupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.long_term_retention_policies = LongTermRetentionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_warehouse_user_activities = DataWarehouseUserActivitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -94,6 +94,7 @@ from .virtual_network_rule import VirtualNetworkRule
 from .database_operation import DatabaseOperation
 from .long_term_retention_backup import LongTermRetentionBackup
 from .long_term_retention_policy import LongTermRetentionPolicy
+from .data_warehouse_user_activities import DataWarehouseUserActivities
 from .resource_move_definition import ResourceMoveDefinition
 from .automatic_tuning_server_options import AutomaticTuningServerOptions
 from .server_automatic_tuning import ServerAutomaticTuning
@@ -285,6 +286,7 @@ __all__ = [
     'DatabaseOperation',
     'LongTermRetentionBackup',
     'LongTermRetentionPolicy',
+    'DataWarehouseUserActivities',
     'ResourceMoveDefinition',
     'AutomaticTuningServerOptions',
     'ServerAutomaticTuning',
