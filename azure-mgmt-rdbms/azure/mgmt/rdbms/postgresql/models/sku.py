@@ -19,7 +19,7 @@ class Sku(Model):
      B_Gen4_1, GP_Gen5_8.
     :type name: str
     :param tier: The tier of the particular SKU, e.g. Basic. Possible values
-     include: 'Basic', 'Standard'
+     include: 'Basic', 'GeneralPurpose', 'MemoryOptimized'
     :type tier: str or ~azure.mgmt.rdbms.postgresql.models.SkuTier
     :param capacity: The scale up/out capacity, representing server's compute
      units.
@@ -42,10 +42,10 @@ class Sku(Model):
         'family': {'key': 'family', 'type': 'str'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None, size=None, family=None):
-        super(Sku, self).__init__()
-        self.name = name
-        self.tier = tier
-        self.capacity = capacity
-        self.size = size
-        self.family = family
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.size = kwargs.get('size', None)
+        self.family = kwargs.get('family', None)
