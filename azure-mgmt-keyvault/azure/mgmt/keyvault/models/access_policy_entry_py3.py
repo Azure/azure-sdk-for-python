@@ -46,9 +46,9 @@ class AccessPolicyEntry(Model):
         'permissions': {'key': 'permissions', 'type': 'Permissions'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tenant_id: str, object_id: str, permissions, application_id: str=None, **kwargs) -> None:
         super(AccessPolicyEntry, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.object_id = kwargs.get('object_id', None)
-        self.application_id = kwargs.get('application_id', None)
-        self.permissions = kwargs.get('permissions', None)
+        self.tenant_id = tenant_id
+        self.object_id = object_id
+        self.application_id = application_id
+        self.permissions = permissions
