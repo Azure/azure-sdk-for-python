@@ -42,11 +42,11 @@ class ServerUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, sku=None, storage_profile=None, administrator_login_password=None, version=None, ssl_enforcement=None, tags=None):
-        super(ServerUpdateParameters, self).__init__()
-        self.sku = sku
-        self.storage_profile = storage_profile
-        self.administrator_login_password = administrator_login_password
-        self.version = version
-        self.ssl_enforcement = ssl_enforcement
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ServerUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
+        self.version = kwargs.get('version', None)
+        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
+        self.tags = kwargs.get('tags', None)
