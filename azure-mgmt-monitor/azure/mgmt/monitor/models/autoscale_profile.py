@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class AutoscaleProfile(Model):
     """Autoscale profile.
 
-    :param name: the name of the profile.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. the name of the profile.
     :type name: str
-    :param capacity: the number of instances that can be used during this
-     profile.
+    :param capacity: Required. the number of instances that can be used during
+     this profile.
     :type capacity: ~azure.mgmt.monitor.models.ScaleCapacity
-    :param rules: the collection of rules that provide the triggers and
-     parameters for the scaling action. A maximum of 10 rules can be specified.
+    :param rules: Required. the collection of rules that provide the triggers
+     and parameters for the scaling action. A maximum of 10 rules can be
+     specified.
     :type rules: list[~azure.mgmt.monitor.models.ScaleRule]
     :param fixed_date: the specific date-time for the profile. This element is
      not used if the Recurrence element is used.
@@ -45,10 +48,10 @@ class AutoscaleProfile(Model):
         'recurrence': {'key': 'recurrence', 'type': 'Recurrence'},
     }
 
-    def __init__(self, name, capacity, rules, fixed_date=None, recurrence=None):
-        super(AutoscaleProfile, self).__init__()
-        self.name = name
-        self.capacity = capacity
-        self.rules = rules
-        self.fixed_date = fixed_date
-        self.recurrence = recurrence
+    def __init__(self, **kwargs):
+        super(AutoscaleProfile, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.rules = kwargs.get('rules', None)
+        self.fixed_date = kwargs.get('fixed_date', None)
+        self.recurrence = kwargs.get('recurrence', None)

@@ -63,15 +63,15 @@ class MetricDefinition(Model):
         'dimensions': {'key': 'dimensions', 'type': '[LocalizableString]'},
     }
 
-    def __init__(self, is_dimension_required=None, resource_id=None, namespace=None, name=None, unit=None, primary_aggregation_type=None, supported_aggregation_types=None, metric_availabilities=None, id=None, dimensions=None):
-        super(MetricDefinition, self).__init__()
-        self.is_dimension_required = is_dimension_required
-        self.resource_id = resource_id
-        self.namespace = namespace
-        self.name = name
-        self.unit = unit
-        self.primary_aggregation_type = primary_aggregation_type
-        self.supported_aggregation_types = supported_aggregation_types
-        self.metric_availabilities = metric_availabilities
-        self.id = id
-        self.dimensions = dimensions
+    def __init__(self, **kwargs):
+        super(MetricDefinition, self).__init__(**kwargs)
+        self.is_dimension_required = kwargs.get('is_dimension_required', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.name = kwargs.get('name', None)
+        self.unit = kwargs.get('unit', None)
+        self.primary_aggregation_type = kwargs.get('primary_aggregation_type', None)
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.metric_availabilities = kwargs.get('metric_availabilities', None)
+        self.id = kwargs.get('id', None)
+        self.dimensions = kwargs.get('dimensions', None)

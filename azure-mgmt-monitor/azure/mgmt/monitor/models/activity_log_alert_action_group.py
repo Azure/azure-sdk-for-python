@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ActivityLogAlertActionGroup(Model):
     """A pointer to an Azure Action Group.
 
-    :param action_group_id: The resourceId of the action group. This cannot be
-     null or empty.
+    All required parameters must be populated in order to send to Azure.
+
+    :param action_group_id: Required. The resourceId of the action group. This
+     cannot be null or empty.
     :type action_group_id: str
     :param webhook_properties: the dictionary of custom properties to include
      with the post operation. These data are appended to the webhook payload.
@@ -32,7 +34,7 @@ class ActivityLogAlertActionGroup(Model):
         'webhook_properties': {'key': 'webhookProperties', 'type': '{str}'},
     }
 
-    def __init__(self, action_group_id, webhook_properties=None):
-        super(ActivityLogAlertActionGroup, self).__init__()
-        self.action_group_id = action_group_id
-        self.webhook_properties = webhook_properties
+    def __init__(self, **kwargs):
+        super(ActivityLogAlertActionGroup, self).__init__(**kwargs)
+        self.action_group_id = kwargs.get('action_group_id', None)
+        self.webhook_properties = kwargs.get('webhook_properties', None)
