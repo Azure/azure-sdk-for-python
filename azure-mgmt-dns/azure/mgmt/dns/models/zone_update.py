@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2018-03-01-preview"
+from msrest.serialization import Model
 
+
+class ZoneUpdate(Model):
+    """Describes a request to update a DNS zone.
+
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, tags=None):
+        super(ZoneUpdate, self).__init__()
+        self.tags = tags
