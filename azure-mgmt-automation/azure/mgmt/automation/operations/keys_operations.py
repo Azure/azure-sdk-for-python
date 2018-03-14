@@ -38,7 +38,7 @@ class KeysOperations(object):
 
     def list_by_automation_account(
             self, automation_account_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve the automation keys for the account id.
+        """Retrieve the automation keys for an account.
 
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
