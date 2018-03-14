@@ -30,6 +30,6 @@ class Query(Model):
         'text': {'key': 'text', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, text: str, **kwargs) -> None:
         super(Query, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
+        self.text = text

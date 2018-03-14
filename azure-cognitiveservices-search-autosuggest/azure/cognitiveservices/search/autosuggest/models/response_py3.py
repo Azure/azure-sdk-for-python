@@ -9,14 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response_base import ResponseBase
+from .identifiable import Identifiable
 
 
-class Identifiable(ResponseBase):
-    """Defines the identity of a resource.
+class Response(Identifiable):
+    """Defines a response. All schemas that could be returned at the root of a
+    response should inherit from this.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Response
+    sub-classes are: ErrorResponse
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -40,10 +41,9 @@ class Identifiable(ResponseBase):
     }
 
     _subtype_map = {
-        '_type': {'Response': 'Response'}
+        '_type': {'ErrorResponse': 'ErrorResponse'}
     }
 
-    def __init__(self, **kwargs):
-        super(Identifiable, self).__init__(**kwargs)
-        self.id = None
-        self._type = 'Identifiable'
+    def __init__(self, **kwargs) -> None:
+        super(Response, self).__init__(, **kwargs)
+        self._type = 'Response'

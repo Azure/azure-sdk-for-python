@@ -12,24 +12,30 @@
 from msrest.serialization import Model
 
 
-class Query(Model):
-    """Defines a search query.
+class ResponseBase(Model):
+    """Response base.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Identifiable
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. The query string. Use this string as the query term
-     in a new auto suggest request.
-    :type text: str
+    :param _type: Required. Constant filled by server.
+    :type _type: str
     """
 
     _validation = {
-        'text': {'required': True},
+        '_type': {'required': True},
     }
 
     _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
+        '_type': {'key': '_type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Query, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
+    _subtype_map = {
+        '_type': {'Identifiable': 'Identifiable'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ResponseBase, self).__init__(**kwargs)
+        self._type = None
