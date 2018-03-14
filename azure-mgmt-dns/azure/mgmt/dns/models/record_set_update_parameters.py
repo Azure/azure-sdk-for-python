@@ -25,4 +25,5 @@ class RecordSetUpdateParameters(Model):
     }
 
     def __init__(self, record_set=None):
+        super(RecordSetUpdateParameters, self).__init__()
         self.record_set = record_set

@@ -44,6 +44,7 @@ class SoaRecord(Model):
     }
 
     def __init__(self, host=None, email=None, serial_number=None, refresh_time=None, retry_time=None, expire_time=None, minimum_ttl=None):
+        super(SoaRecord, self).__init__()
         self.host = host
         self.email = email
         self.serial_number = serial_number

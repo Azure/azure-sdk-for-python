@@ -27,5 +27,6 @@ class MxRecord(Model):
     }
 
     def __init__(self, preference=None, exchange=None):
+        super(MxRecord, self).__init__()
         self.preference = preference
         self.exchange = exchange
