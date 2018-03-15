@@ -104,13 +104,13 @@ class ContainerServiceMasterProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, dns_prefix: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, first_consecutive_static_ip: str="10.240.255.5", storage_profile=None, **kwargs) -> None:
         super(ContainerServiceMasterProfile, self).__init__(**kwargs)
-        self.count = kwargs.get('count', 1)
-        self.dns_prefix = kwargs.get('dns_prefix', None)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
-        self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
-        self.first_consecutive_static_ip = kwargs.get('first_consecutive_static_ip', "10.240.255.5")
-        self.storage_profile = kwargs.get('storage_profile', None)
+        self.count = count
+        self.dns_prefix = dns_prefix
+        self.vm_size = vm_size
+        self.os_disk_size_gb = os_disk_size_gb
+        self.vnet_subnet_id = vnet_subnet_id
+        self.first_consecutive_static_ip = first_consecutive_static_ip
+        self.storage_profile = storage_profile
         self.fqdn = None

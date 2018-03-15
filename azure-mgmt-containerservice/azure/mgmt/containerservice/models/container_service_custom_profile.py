@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ContainerServiceCustomProfile(Model):
     """Properties to configure a custom container service cluster.
 
-    :param orchestrator: The name of the custom orchestrator to use.
+    All required parameters must be populated in order to send to Azure.
+
+    :param orchestrator: Required. The name of the custom orchestrator to use.
     :type orchestrator: str
     """
 
@@ -27,6 +29,6 @@ class ContainerServiceCustomProfile(Model):
         'orchestrator': {'key': 'orchestrator', 'type': 'str'},
     }
 
-    def __init__(self, orchestrator):
-        super(ContainerServiceCustomProfile, self).__init__()
-        self.orchestrator = orchestrator
+    def __init__(self, **kwargs):
+        super(ContainerServiceCustomProfile, self).__init__(**kwargs)
+        self.orchestrator = kwargs.get('orchestrator', None)

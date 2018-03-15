@@ -40,8 +40,8 @@ class ContainerServiceServicePrincipalProfile(Model):
         'key_vault_secret_ref': {'key': 'keyVaultSecretRef', 'type': 'KeyVaultSecretRef'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, client_id: str, secret: str=None, key_vault_secret_ref=None, **kwargs) -> None:
         super(ContainerServiceServicePrincipalProfile, self).__init__(**kwargs)
-        self.client_id = kwargs.get('client_id', None)
-        self.secret = kwargs.get('secret', None)
-        self.key_vault_secret_ref = kwargs.get('key_vault_secret_ref', None)
+        self.client_id = client_id
+        self.secret = secret
+        self.key_vault_secret_ref = key_vault_secret_ref

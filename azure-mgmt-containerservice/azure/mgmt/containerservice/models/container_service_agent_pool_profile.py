@@ -18,26 +18,28 @@ class ContainerServiceAgentPoolProfile(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: Unique name of the agent pool profile in the context of the
-     subscription and resource group.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Unique name of the agent pool profile in the
+     context of the subscription and resource group.
     :type name: str
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
      1. . Default value: 1 .
     :type count: int
-    :param vm_size: Size of agent VMs. Possible values include: 'Standard_A0',
-     'Standard_A1', 'Standard_A10', 'Standard_A11', 'Standard_A1_v2',
-     'Standard_A2', 'Standard_A2_v2', 'Standard_A2m_v2', 'Standard_A3',
-     'Standard_A4', 'Standard_A4_v2', 'Standard_A4m_v2', 'Standard_A5',
-     'Standard_A6', 'Standard_A7', 'Standard_A8', 'Standard_A8_v2',
-     'Standard_A8m_v2', 'Standard_A9', 'Standard_D1', 'Standard_D11',
-     'Standard_D11_v2', 'Standard_D11_v2_Promo', 'Standard_D12',
-     'Standard_D12_v2', 'Standard_D12_v2_Promo', 'Standard_D13',
-     'Standard_D13_v2', 'Standard_D13_v2_Promo', 'Standard_D14',
-     'Standard_D14_v2', 'Standard_D14_v2_Promo', 'Standard_D15_v2',
-     'Standard_D16_v3', 'Standard_D16s_v3', 'Standard_D1_v2', 'Standard_D2',
-     'Standard_D2_v2', 'Standard_D2_v2_Promo', 'Standard_D2_v3',
-     'Standard_D2s_v3', 'Standard_D3', 'Standard_D3_v2',
+    :param vm_size: Required. Size of agent VMs. Possible values include:
+     'Standard_A0', 'Standard_A1', 'Standard_A10', 'Standard_A11',
+     'Standard_A1_v2', 'Standard_A2', 'Standard_A2_v2', 'Standard_A2m_v2',
+     'Standard_A3', 'Standard_A4', 'Standard_A4_v2', 'Standard_A4m_v2',
+     'Standard_A5', 'Standard_A6', 'Standard_A7', 'Standard_A8',
+     'Standard_A8_v2', 'Standard_A8m_v2', 'Standard_A9', 'Standard_D1',
+     'Standard_D11', 'Standard_D11_v2', 'Standard_D11_v2_Promo',
+     'Standard_D12', 'Standard_D12_v2', 'Standard_D12_v2_Promo',
+     'Standard_D13', 'Standard_D13_v2', 'Standard_D13_v2_Promo',
+     'Standard_D14', 'Standard_D14_v2', 'Standard_D14_v2_Promo',
+     'Standard_D15_v2', 'Standard_D16_v3', 'Standard_D16s_v3',
+     'Standard_D1_v2', 'Standard_D2', 'Standard_D2_v2', 'Standard_D2_v2_Promo',
+     'Standard_D2_v3', 'Standard_D2s_v3', 'Standard_D3', 'Standard_D3_v2',
      'Standard_D3_v2_Promo', 'Standard_D4', 'Standard_D4_v2',
      'Standard_D4_v2_Promo', 'Standard_D4_v3', 'Standard_D4s_v3',
      'Standard_D5_v2', 'Standard_D5_v2_Promo', 'Standard_D8_v3',
@@ -113,15 +115,15 @@ class ContainerServiceAgentPoolProfile(Model):
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, name, vm_size, count=1, os_disk_size_gb=None, dns_prefix=None, ports=None, storage_profile=None, vnet_subnet_id=None, os_type="Linux"):
-        super(ContainerServiceAgentPoolProfile, self).__init__()
-        self.name = name
-        self.count = count
-        self.vm_size = vm_size
-        self.os_disk_size_gb = os_disk_size_gb
-        self.dns_prefix = dns_prefix
+    def __init__(self, **kwargs):
+        super(ContainerServiceAgentPoolProfile, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.count = kwargs.get('count', 1)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
+        self.dns_prefix = kwargs.get('dns_prefix', None)
         self.fqdn = None
-        self.ports = ports
-        self.storage_profile = storage_profile
-        self.vnet_subnet_id = vnet_subnet_id
-        self.os_type = os_type
+        self.ports = kwargs.get('ports', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
+        self.os_type = kwargs.get('os_type', "Linux")

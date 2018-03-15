@@ -12,30 +12,31 @@
 from msrest.serialization import Model
 
 
-class ContainerServiceWindowsProfile(Model):
-    """Profile for Windows VMs in the container service cluster.
+class ContainerServiceLinuxProfile(Model):
+    """Profile for Linux VMs in the container service cluster.
 
     All required parameters must be populated in order to send to Azure.
 
     :param admin_username: Required. The administrator username to use for
-     Windows VMs.
+     Linux VMs.
     :type admin_username: str
-    :param admin_password: Required. The administrator password to use for
-     Windows VMs.
-    :type admin_password: str
+    :param ssh: Required. SSH configuration for Linux-based VMs running on
+     Azure.
+    :type ssh:
+     ~azure.mgmt.containerservice.models.ContainerServiceSshConfiguration
     """
 
     _validation = {
-        'admin_username': {'required': True, 'pattern': r'^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$'},
-        'admin_password': {'required': True, 'pattern': r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%\^&\*\(\)])[a-zA-Z\d!@#$%\^&\*\(\)]{12,123}$'},
+        'admin_username': {'required': True, 'pattern': r'^[a-z][a-z0-9_-]*$'},
+        'ssh': {'required': True},
     }
 
     _attribute_map = {
         'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
+        'ssh': {'key': 'ssh', 'type': 'ContainerServiceSshConfiguration'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerServiceWindowsProfile, self).__init__(**kwargs)
-        self.admin_username = kwargs.get('admin_username', None)
-        self.admin_password = kwargs.get('admin_password', None)
+    def __init__(self, *, admin_username: str, ssh, **kwargs) -> None:
+        super(ContainerServiceLinuxProfile, self).__init__(**kwargs)
+        self.admin_username = admin_username
+        self.ssh = ssh
