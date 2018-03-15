@@ -94,4 +94,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/microsoft.insights/operations'}
+    list.metadata = {'url': '/providers/Microsoft.Insights/operations'}

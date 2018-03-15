@@ -104,7 +104,7 @@ class WebTestsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/webtests'}
 
     def get(
             self, resource_group_name, web_test_name, custom_headers=None, raw=False, **operation_config):
@@ -167,7 +167,7 @@ class WebTestsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/webtests/{webTestName}'}
 
     def create_or_update(
             self, resource_group_name, web_test_name, web_test_definition, custom_headers=None, raw=False, **operation_config):
@@ -238,7 +238,7 @@ class WebTestsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/webtests/{webTestName}'}
 
     def update_tags(
             self, resource_group_name, web_test_name, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -309,7 +309,7 @@ class WebTestsOperations(object):
             return client_raw_response
 
         return deserialized
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
+    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/webtests/{webTestName}'}
 
     def delete(
             self, resource_group_name, web_test_name, custom_headers=None, raw=False, **operation_config):
@@ -364,7 +364,7 @@ class WebTestsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/webtests/{webTestName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/webtests/{webTestName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -430,4 +430,4 @@ class WebTestsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/webtests'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/webtests'}

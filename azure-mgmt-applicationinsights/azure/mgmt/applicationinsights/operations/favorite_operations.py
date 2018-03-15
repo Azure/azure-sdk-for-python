@@ -105,7 +105,7 @@ class FavoriteOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/favorites/{favoriteId}'}
 
     def add(
             self, resource_group_name, resource_name, favorite_id, favorite_properties, custom_headers=None, raw=False, **operation_config):
@@ -182,7 +182,7 @@ class FavoriteOperations(object):
             return client_raw_response
 
         return deserialized
-    add.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
+    add.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/favorites/{favoriteId}'}
 
     def update(
             self, resource_group_name, resource_name, favorite_id, favorite_properties, custom_headers=None, raw=False, **operation_config):
@@ -260,7 +260,7 @@ class FavoriteOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/favorites/{favoriteId}'}
 
     def delete(
             self, resource_group_name, resource_name, favorite_id, custom_headers=None, raw=False, **operation_config):
@@ -320,4 +320,4 @@ class FavoriteOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/favorites/{favoriteId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/favorites/{favoriteId}'}
