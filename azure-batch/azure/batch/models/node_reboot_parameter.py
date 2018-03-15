@@ -26,6 +26,6 @@ class NodeRebootParameter(Model):
         'node_reboot_option': {'key': 'nodeRebootOption', 'type': 'ComputeNodeRebootOption'},
     }
 
-    def __init__(self, node_reboot_option=None):
-        super(NodeRebootParameter, self).__init__()
-        self.node_reboot_option = node_reboot_option
+    def __init__(self, **kwargs):
+        super(NodeRebootParameter, self).__init__(**kwargs)
+        self.node_reboot_option = kwargs.get('node_reboot_option', None)

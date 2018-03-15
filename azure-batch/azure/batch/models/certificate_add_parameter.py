@@ -16,15 +16,17 @@ class CertificateAddParameter(Model):
     """A certificate that can be installed on compute nodes and can be used to
     authenticate operations on the machine.
 
-    :param thumbprint: The X.509 thumbprint of the certificate. This is a
-     sequence of up to 40 hex digits (it may include spaces but these are
+    All required parameters must be populated in order to send to Azure.
+
+    :param thumbprint: Required. The X.509 thumbprint of the certificate. This
+     is a sequence of up to 40 hex digits (it may include spaces but these are
      removed).
     :type thumbprint: str
-    :param thumbprint_algorithm: The algorithm used to derive the thumbprint.
-     This must be sha1.
+    :param thumbprint_algorithm: Required. The algorithm used to derive the
+     thumbprint. This must be sha1.
     :type thumbprint_algorithm: str
-    :param data: The base64-encoded contents of the certificate. The maximum
-     size is 10KB.
+    :param data: Required. The base64-encoded contents of the certificate. The
+     maximum size is 10KB.
     :type data: str
     :param certificate_format: The format of the certificate data. Possible
      values include: 'pfx', 'cer'
@@ -49,10 +51,10 @@ class CertificateAddParameter(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, thumbprint, thumbprint_algorithm, data, certificate_format=None, password=None):
-        super(CertificateAddParameter, self).__init__()
-        self.thumbprint = thumbprint
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.data = data
-        self.certificate_format = certificate_format
-        self.password = password
+    def __init__(self, **kwargs):
+        super(CertificateAddParameter, self).__init__(**kwargs)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.thumbprint_algorithm = kwargs.get('thumbprint_algorithm', None)
+        self.data = kwargs.get('data', None)
+        self.certificate_format = kwargs.get('certificate_format', None)
+        self.password = kwargs.get('password', None)

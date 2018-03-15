@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class PoolNodeCounts(Model):
     """The number of nodes in each state for a pool.
 
-    :param pool_id: The ID of the pool.
+    All required parameters must be populated in order to send to Azure.
+
+    :param pool_id: Required. The ID of the pool.
     :type pool_id: str
     :param dedicated: The number of dedicated nodes in each state.
     :type dedicated: ~azure.batch.models.NodeCounts
@@ -33,8 +35,8 @@ class PoolNodeCounts(Model):
         'low_priority': {'key': 'lowPriority', 'type': 'NodeCounts'},
     }
 
-    def __init__(self, pool_id, dedicated=None, low_priority=None):
-        super(PoolNodeCounts, self).__init__()
-        self.pool_id = pool_id
-        self.dedicated = dedicated
-        self.low_priority = low_priority
+    def __init__(self, **kwargs):
+        super(PoolNodeCounts, self).__init__(**kwargs)
+        self.pool_id = kwargs.get('pool_id', None)
+        self.dedicated = kwargs.get('dedicated', None)
+        self.low_priority = kwargs.get('low_priority', None)

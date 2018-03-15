@@ -945,7 +945,7 @@ class PoolOperations(object):
     disable_auto_scale.metadata = {'url': '/pools/{poolId}/disableautoscale'}
 
     def enable_auto_scale(
-            self, pool_id, pool_enable_auto_scale_options=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, custom_headers=None, raw=False, **operation_config):
+            self, pool_id, auto_scale_formula=None, auto_scale_evaluation_interval=None, pool_enable_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
         """Enables automatic scaling for a pool.
 
         You cannot enable automatic scaling on a pool if a resize operation is
@@ -958,10 +958,6 @@ class PoolOperations(object):
         :param pool_id: The ID of the pool on which to enable automatic
          scaling.
         :type pool_id: str
-        :param pool_enable_auto_scale_options: Additional parameters for the
-         operation
-        :type pool_enable_auto_scale_options:
-         ~azure.batch.models.PoolEnableAutoScaleOptions
         :param auto_scale_formula: The formula for the desired number of
          compute nodes in the pool. The formula is checked for validity before
          it is applied to the pool. If the formula is not valid, the Batch
@@ -982,6 +978,10 @@ class PoolOperations(object):
          be started, with its starting time being the time when this request
          was issued.
         :type auto_scale_evaluation_interval: timedelta
+        :param pool_enable_auto_scale_options: Additional parameters for the
+         operation
+        :type pool_enable_auto_scale_options:
+         ~azure.batch.models.PoolEnableAutoScaleOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

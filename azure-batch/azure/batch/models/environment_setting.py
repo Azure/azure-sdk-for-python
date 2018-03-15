@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class EnvironmentSetting(Model):
     """An environment variable to be set on a task process.
 
-    :param name: The name of the environment variable.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the environment variable.
     :type name: str
     :param value: The value of the environment variable.
     :type value: str
@@ -30,7 +32,7 @@ class EnvironmentSetting(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name, value=None):
-        super(EnvironmentSetting, self).__init__()
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(EnvironmentSetting, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

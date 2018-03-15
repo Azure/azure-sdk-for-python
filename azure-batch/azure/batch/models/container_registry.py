@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class ContainerRegistry(Model):
     """A private container registry.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param registry_server: The registry URL. If omitted, the default is
      "docker.io".
     :type registry_server: str
-    :param user_name: The user name to log into the registry server.
+    :param user_name: Required. The user name to log into the registry server.
     :type user_name: str
-    :param password: The password to log into the registry server.
+    :param password: Required. The password to log into the registry server.
     :type password: str
     """
 
@@ -35,8 +37,8 @@ class ContainerRegistry(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, user_name, password, registry_server=None):
-        super(ContainerRegistry, self).__init__()
-        self.registry_server = registry_server
-        self.user_name = user_name
-        self.password = password
+    def __init__(self, **kwargs):
+        super(ContainerRegistry, self).__init__(**kwargs)
+        self.registry_server = kwargs.get('registry_server', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)

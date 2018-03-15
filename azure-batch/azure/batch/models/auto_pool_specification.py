@@ -16,15 +16,17 @@ class AutoPoolSpecification(Model):
     """Specifies characteristics for a temporary 'auto pool'. The Batch service
     will create this auto pool when the job is submitted.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param auto_pool_id_prefix: A prefix to be added to the unique identifier
      when a pool is automatically created. The Batch service assigns each auto
      pool a unique identifier on creation. To distinguish between pools created
      for different purposes, you can specify this element to add a prefix to
      the ID that is assigned. The prefix can be up to 20 characters long.
     :type auto_pool_id_prefix: str
-    :param pool_lifetime_option: The minimum lifetime of created auto pools,
-     and how multiple jobs on a schedule are assigned to pools. Possible values
-     include: 'jobSchedule', 'job'
+    :param pool_lifetime_option: Required. The minimum lifetime of created
+     auto pools, and how multiple jobs on a schedule are assigned to pools.
+     Possible values include: 'jobSchedule', 'job'
     :type pool_lifetime_option: str or ~azure.batch.models.PoolLifetimeOption
     :param keep_alive: Whether to keep an auto pool alive after its lifetime
      expires. If false, the Batch service deletes the pool once its lifetime
@@ -48,9 +50,9 @@ class AutoPoolSpecification(Model):
         'pool': {'key': 'pool', 'type': 'PoolSpecification'},
     }
 
-    def __init__(self, pool_lifetime_option, auto_pool_id_prefix=None, keep_alive=None, pool=None):
-        super(AutoPoolSpecification, self).__init__()
-        self.auto_pool_id_prefix = auto_pool_id_prefix
-        self.pool_lifetime_option = pool_lifetime_option
-        self.keep_alive = keep_alive
-        self.pool = pool
+    def __init__(self, **kwargs):
+        super(AutoPoolSpecification, self).__init__(**kwargs)
+        self.auto_pool_id_prefix = kwargs.get('auto_pool_id_prefix', None)
+        self.pool_lifetime_option = kwargs.get('pool_lifetime_option', None)
+        self.keep_alive = kwargs.get('keep_alive', None)
+        self.pool = kwargs.get('pool', None)

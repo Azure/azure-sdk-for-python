@@ -26,6 +26,6 @@ class OSDisk(Model):
         'caching': {'key': 'caching', 'type': 'CachingType'},
     }
 
-    def __init__(self, caching=None):
-        super(OSDisk, self).__init__()
-        self.caching = caching
+    def __init__(self, **kwargs):
+        super(OSDisk, self).__init__(**kwargs)
+        self.caching = kwargs.get('caching', None)

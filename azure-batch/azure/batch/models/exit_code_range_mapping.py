@@ -16,12 +16,14 @@ class ExitCodeRangeMapping(Model):
     """A range of exit codes and how the Batch service should respond to exit
     codes within that range.
 
-    :param start: The first exit code in the range.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required. The first exit code in the range.
     :type start: int
-    :param end: The last exit code in the range.
+    :param end: Required. The last exit code in the range.
     :type end: int
-    :param exit_options: How the Batch service should respond if the task
-     exits with an exit code in the range start to end (inclusive).
+    :param exit_options: Required. How the Batch service should respond if the
+     task exits with an exit code in the range start to end (inclusive).
     :type exit_options: ~azure.batch.models.ExitOptions
     """
 
@@ -37,8 +39,8 @@ class ExitCodeRangeMapping(Model):
         'exit_options': {'key': 'exitOptions', 'type': 'ExitOptions'},
     }
 
-    def __init__(self, start, end, exit_options):
-        super(ExitCodeRangeMapping, self).__init__()
-        self.start = start
-        self.end = end
-        self.exit_options = exit_options
+    def __init__(self, **kwargs):
+        super(ExitCodeRangeMapping, self).__init__(**kwargs)
+        self.start = kwargs.get('start', None)
+        self.end = kwargs.get('end', None)
+        self.exit_options = kwargs.get('exit_options', None)

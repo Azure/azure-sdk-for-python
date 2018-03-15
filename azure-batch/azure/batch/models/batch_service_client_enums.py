@@ -12,125 +12,125 @@
 from enum import Enum
 
 
-class OSType(Enum):
+class OSType(str, Enum):
 
     linux = "linux"
     windows = "windows"
 
 
-class AccessScope(Enum):
+class AccessScope(str, Enum):
 
     job = "job"
 
 
-class CertificateState(Enum):
+class CertificateState(str, Enum):
 
     active = "active"
     deleting = "deleting"
     delete_failed = "deletefailed"
 
 
-class CertificateFormat(Enum):
+class CertificateFormat(str, Enum):
 
     pfx = "pfx"
     cer = "cer"
 
 
-class JobAction(Enum):
+class JobAction(str, Enum):
 
     none = "none"
     disable = "disable"
     terminate = "terminate"
 
 
-class DependencyAction(Enum):
+class DependencyAction(str, Enum):
 
     satisfy = "satisfy"
     block = "block"
 
 
-class AutoUserScope(Enum):
+class AutoUserScope(str, Enum):
 
     task = "task"
     pool = "pool"
 
 
-class ElevationLevel(Enum):
+class ElevationLevel(str, Enum):
 
     non_admin = "nonadmin"
     admin = "admin"
 
 
-class OutputFileUploadCondition(Enum):
+class OutputFileUploadCondition(str, Enum):
 
     task_success = "tasksuccess"
     task_failure = "taskfailure"
     task_completion = "taskcompletion"
 
 
-class ComputeNodeFillType(Enum):
+class ComputeNodeFillType(str, Enum):
 
     spread = "spread"
     pack = "pack"
 
 
-class CertificateStoreLocation(Enum):
+class CertificateStoreLocation(str, Enum):
 
     current_user = "currentuser"
     local_machine = "localmachine"
 
 
-class CertificateVisibility(Enum):
+class CertificateVisibility(str, Enum):
 
     start_task = "starttask"
     task = "task"
     remote_user = "remoteuser"
 
 
-class CachingType(Enum):
+class CachingType(str, Enum):
 
     none = "none"
     read_only = "readonly"
     read_write = "readwrite"
 
 
-class StorageAccountType(Enum):
+class StorageAccountType(str, Enum):
 
     standard_lrs = "standard_lrs"
     premium_lrs = "premium_lrs"
 
 
-class InboundEndpointProtocol(Enum):
+class InboundEndpointProtocol(str, Enum):
 
     tcp = "tcp"
     udp = "udp"
 
 
-class NetworkSecurityGroupRuleAccess(Enum):
+class NetworkSecurityGroupRuleAccess(str, Enum):
 
     allow = "allow"
     deny = "deny"
 
 
-class PoolLifetimeOption(Enum):
+class PoolLifetimeOption(str, Enum):
 
     job_schedule = "jobschedule"
     job = "job"
 
 
-class OnAllTasksComplete(Enum):
+class OnAllTasksComplete(str, Enum):
 
     no_action = "noaction"
     terminate_job = "terminatejob"
 
 
-class OnTaskFailure(Enum):
+class OnTaskFailure(str, Enum):
 
     no_action = "noaction"
     perform_exit_options_job_action = "performexitoptionsjobaction"
 
 
-class JobScheduleState(Enum):
+class JobScheduleState(str, Enum):
 
     active = "active"
     completed = "completed"
@@ -139,13 +139,13 @@ class JobScheduleState(Enum):
     deleting = "deleting"
 
 
-class ErrorCategory(Enum):
+class ErrorCategory(str, Enum):
 
     user_error = "usererror"
     server_error = "servererror"
 
 
-class JobState(Enum):
+class JobState(str, Enum):
 
     active = "active"
     disabling = "disabling"
@@ -156,45 +156,45 @@ class JobState(Enum):
     deleting = "deleting"
 
 
-class JobPreparationTaskState(Enum):
+class JobPreparationTaskState(str, Enum):
 
     running = "running"
     completed = "completed"
 
 
-class TaskExecutionResult(Enum):
+class TaskExecutionResult(str, Enum):
 
     success = "success"
     failure = "failure"
 
 
-class JobReleaseTaskState(Enum):
+class JobReleaseTaskState(str, Enum):
 
     running = "running"
     completed = "completed"
 
 
-class TaskCountValidationStatus(Enum):
+class TaskCountValidationStatus(str, Enum):
 
     validated = "validated"
     unvalidated = "unvalidated"
 
 
-class PoolState(Enum):
+class PoolState(str, Enum):
 
     active = "active"
     deleting = "deleting"
     upgrading = "upgrading"
 
 
-class AllocationState(Enum):
+class AllocationState(str, Enum):
 
     steady = "steady"
     resizing = "resizing"
     stopping = "stopping"
 
 
-class TaskState(Enum):
+class TaskState(str, Enum):
 
     active = "active"
     preparing = "preparing"
@@ -202,27 +202,27 @@ class TaskState(Enum):
     completed = "completed"
 
 
-class TaskAddStatus(Enum):
+class TaskAddStatus(str, Enum):
 
     success = "success"
     client_error = "clienterror"
     server_error = "servererror"
 
 
-class SubtaskState(Enum):
+class SubtaskState(str, Enum):
 
     preparing = "preparing"
     running = "running"
     completed = "completed"
 
 
-class StartTaskState(Enum):
+class StartTaskState(str, Enum):
 
     running = "running"
     completed = "completed"
 
 
-class ComputeNodeState(Enum):
+class ComputeNodeState(str, Enum):
 
     idle = "idle"
     rebooting = "rebooting"
@@ -239,20 +239,20 @@ class ComputeNodeState(Enum):
     preempted = "preempted"
 
 
-class SchedulingState(Enum):
+class SchedulingState(str, Enum):
 
     enabled = "enabled"
     disabled = "disabled"
 
 
-class DisableJobOption(Enum):
+class DisableJobOption(str, Enum):
 
     requeue = "requeue"
     terminate = "terminate"
     wait = "wait"
 
 
-class ComputeNodeDeallocationOption(Enum):
+class ComputeNodeDeallocationOption(str, Enum):
 
     requeue = "requeue"
     terminate = "terminate"
@@ -260,7 +260,7 @@ class ComputeNodeDeallocationOption(Enum):
     retained_data = "retaineddata"
 
 
-class ComputeNodeRebootOption(Enum):
+class ComputeNodeRebootOption(str, Enum):
 
     requeue = "requeue"
     terminate = "terminate"
@@ -268,7 +268,7 @@ class ComputeNodeRebootOption(Enum):
     retained_data = "retaineddata"
 
 
-class ComputeNodeReimageOption(Enum):
+class ComputeNodeReimageOption(str, Enum):
 
     requeue = "requeue"
     terminate = "terminate"
@@ -276,7 +276,7 @@ class ComputeNodeReimageOption(Enum):
     retained_data = "retaineddata"
 
 
-class DisableComputeNodeSchedulingOption(Enum):
+class DisableComputeNodeSchedulingOption(str, Enum):
 
     requeue = "requeue"
     terminate = "terminate"

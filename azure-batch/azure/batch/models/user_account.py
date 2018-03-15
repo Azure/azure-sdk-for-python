@@ -16,9 +16,11 @@ class UserAccount(Model):
     """Properties used to create a user used to execute tasks on an Azure Batch
     node.
 
-    :param name: The name of the user account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the user account.
     :type name: str
-    :param password: The password for the user account.
+    :param password: Required. The password for the user account.
     :type password: str
     :param elevation_level: The elevation level of the user account. nonAdmin
      - The auto user is a standard user without elevated access. admin - The
@@ -44,9 +46,9 @@ class UserAccount(Model):
         'linux_user_configuration': {'key': 'linuxUserConfiguration', 'type': 'LinuxUserConfiguration'},
     }
 
-    def __init__(self, name, password, elevation_level=None, linux_user_configuration=None):
-        super(UserAccount, self).__init__()
-        self.name = name
-        self.password = password
-        self.elevation_level = elevation_level
-        self.linux_user_configuration = linux_user_configuration
+    def __init__(self, **kwargs):
+        super(UserAccount, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.password = kwargs.get('password', None)
+        self.elevation_level = kwargs.get('elevation_level', None)
+        self.linux_user_configuration = kwargs.get('linux_user_configuration', None)
