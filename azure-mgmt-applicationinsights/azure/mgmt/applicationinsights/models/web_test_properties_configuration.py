@@ -24,6 +24,6 @@ class WebTestPropertiesConfiguration(Model):
         'web_test': {'key': 'WebTest', 'type': 'str'},
     }
 
-    def __init__(self, web_test=None):
-        super(WebTestPropertiesConfiguration, self).__init__()
-        self.web_test = web_test
+    def __init__(self, **kwargs):
+        super(WebTestPropertiesConfiguration, self).__init__(**kwargs)
+        self.web_test = kwargs.get('web_test', None)

@@ -30,7 +30,7 @@ class ApplicationInsightsComponentBillingFeatures(Model):
         'current_billing_features': {'key': 'CurrentBillingFeatures', 'type': '[str]'},
     }
 
-    def __init__(self, data_volume_cap=None, current_billing_features=None):
-        super(ApplicationInsightsComponentBillingFeatures, self).__init__()
-        self.data_volume_cap = data_volume_cap
-        self.current_billing_features = current_billing_features
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentBillingFeatures, self).__init__(**kwargs)
+        self.data_volume_cap = kwargs.get('data_volume_cap', None)
+        self.current_billing_features = kwargs.get('current_billing_features', None)

@@ -16,6 +16,8 @@ class MetricSettings(Model):
     """Part of MultiTenantDiagnosticSettings. Specifies the settings for a
     particular metric.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param time_grain: the timegrain of the metric in ISO8601 format.
     :type time_grain: timedelta
     :param category: Name of a Diagnostic Metric category for a resource type
@@ -23,7 +25,8 @@ class MetricSettings(Model):
      categories for a resource, first perform a GET diagnostic settings
      operation.
     :type category: str
-    :param enabled: a value indicating whether this category is enabled.
+    :param enabled: Required. a value indicating whether this category is
+     enabled.
     :type enabled: bool
     :param retention_policy: the retention policy for this category.
     :type retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
@@ -40,8 +43,9 @@ class MetricSettings(Model):
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, enabled, time_grain=None, category=None, retention_policy=None):
-        self.time_grain = time_grain
-        self.category = category
-        self.enabled = enabled
-        self.retention_policy = retention_policy
+    def __init__(self, **kwargs):
+        super(MetricSettings, self).__init__(**kwargs)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.category = kwargs.get('category', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.retention_policy = kwargs.get('retention_policy', None)
