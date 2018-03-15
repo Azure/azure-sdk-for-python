@@ -52,10 +52,10 @@ class ManagedClusterUpgradeProfile(Model):
         'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ManagedClusterPoolUpgradeProfile]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, control_plane_profile, agent_pool_profiles, **kwargs) -> None:
         super(ManagedClusterUpgradeProfile, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.control_plane_profile = kwargs.get('control_plane_profile', None)
-        self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)
+        self.control_plane_profile = control_plane_profile
+        self.agent_pool_profiles = agent_pool_profiles

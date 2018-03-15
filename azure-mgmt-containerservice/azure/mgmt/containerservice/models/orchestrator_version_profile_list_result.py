@@ -18,13 +18,15 @@ class OrchestratorVersionProfileListResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Id of the orchestrator version profile list result.
     :vartype id: str
     :ivar name: Name of the orchestrator version profile list result.
     :vartype name: str
     :ivar type: Type of the orchestrator version profile list result.
     :vartype type: str
-    :param orchestrators: List of orchestrator version profiles.
+    :param orchestrators: Required. List of orchestrator version profiles.
     :type orchestrators:
      list[~azure.mgmt.containerservice.models.OrchestratorVersionProfile]
     """
@@ -43,9 +45,9 @@ class OrchestratorVersionProfileListResult(Model):
         'orchestrators': {'key': 'properties.orchestrators', 'type': '[OrchestratorVersionProfile]'},
     }
 
-    def __init__(self, orchestrators):
-        super(OrchestratorVersionProfileListResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(OrchestratorVersionProfileListResult, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.orchestrators = orchestrators
+        self.orchestrators = kwargs.get('orchestrators', None)
