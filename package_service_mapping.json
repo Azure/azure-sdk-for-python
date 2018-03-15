@@ -79,7 +79,8 @@
   "azure-cognitiveservices-vision-customvision": {
     "category": "Client",
     "namespaces": [
-      "azure.cognitiveservices.vision.customvision"
+      "azure.cognitiveservices.vision.customvision.prediction",
+      "azure.cognitiveservices.vision.customvision.training"
     ],
     "service_name": "Cognitive Services Vision CustomVision"
   },
