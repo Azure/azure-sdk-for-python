@@ -22,20 +22,28 @@ class MetricAlertStatus(Model):
     :param type: Possible values include:
      'microsoft.insights/metricalerts/status'
     :type type: str or ~azure.mgmt.monitor.models.enum
-    :param properties: The alert status properties of the metric alert status.
-    :type properties: ~azure.mgmt.monitor.models.MetricAlertStatus
+    :param dimensions:
+    :type dimensions: dict[str, str]
+    :param status: status value
+    :type status: str
+    :param timestamp: UTC time when the status was checked.
+    :type timestamp: datetime
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MetricAlertStatus'},
+        'dimensions': {'key': 'properties.dimensions', 'type': '{str}'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'timestamp': {'key': 'properties.timestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, name: str=None, id: str=None, type=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, id: str=None, type=None, dimensions=None, status: str=None, timestamp=None, **kwargs) -> None:
         super(MetricAlertStatus, self).__init__(**kwargs)
         self.name = name
         self.id = id
         self.type = type
-        self.properties = properties
+        self.dimensions = dimensions
+        self.status = status
+        self.timestamp = timestamp
