@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class CertificateOperationUpdateParameter(Model):
     """The certificate operation update parameters.
 
-    :param cancellation_requested: Indicates if cancellation was requested on
-     the certificate operation.
+    All required parameters must be populated in order to send to Azure.
+
+    :param cancellation_requested: Required. Indicates if cancellation was
+     requested on the certificate operation.
     :type cancellation_requested: bool
     """
 
@@ -28,5 +30,6 @@ class CertificateOperationUpdateParameter(Model):
         'cancellation_requested': {'key': 'cancellation_requested', 'type': 'bool'},
     }
 
-    def __init__(self, cancellation_requested):
-        self.cancellation_requested = cancellation_requested
+    def __init__(self, **kwargs):
+        super(CertificateOperationUpdateParameter, self).__init__(**kwargs)
+        self.cancellation_requested = kwargs.get('cancellation_requested', None)

@@ -20,7 +20,7 @@ class KeyVaultError(Model):
     sending a request.
 
     :ivar error:
-    :vartype error: :class:`Error <azure.keyvault.models.Error>`
+    :vartype error: ~azure.keyvault.models.Error
     """
 
     _validation = {
@@ -31,7 +31,8 @@ class KeyVaultError(Model):
         'error': {'key': 'error', 'type': 'Error'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(KeyVaultError, self).__init__(**kwargs)
         self.error = None
 
 

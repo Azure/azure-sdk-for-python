@@ -16,11 +16,11 @@ class SubjectAlternativeNames(Model):
     """The subject alternate names of a X509 object.
 
     :param emails: Email addresses.
-    :type emails: list of str
+    :type emails: list[str]
     :param dns_names: Domain names.
-    :type dns_names: list of str
+    :type dns_names: list[str]
     :param upns: User principal names.
-    :type upns: list of str
+    :type upns: list[str]
     """
 
     _attribute_map = {
@@ -29,7 +29,8 @@ class SubjectAlternativeNames(Model):
         'upns': {'key': 'upns', 'type': '[str]'},
     }
 
-    def __init__(self, emails=None, dns_names=None, upns=None):
-        self.emails = emails
-        self.dns_names = dns_names
-        self.upns = upns
+    def __init__(self, **kwargs):
+        super(SubjectAlternativeNames, self).__init__(**kwargs)
+        self.emails = kwargs.get('emails', None)
+        self.dns_names = kwargs.get('dns_names', None)
+        self.upns = kwargs.get('upns', None)

@@ -19,16 +19,18 @@ class X509CertificateProperties(Model):
      Name.
     :type subject: str
     :param ekus: The enhanced key usage.
-    :type ekus: list of str
+    :type ekus: list[str]
     :param subject_alternative_names: The subject alternative names.
-    :type subject_alternative_names: :class:`SubjectAlternativeNames
-     <azure.keyvault.models.SubjectAlternativeNames>`
+    :type subject_alternative_names:
+     ~azure.keyvault.models.SubjectAlternativeNames
     :param key_usage: List of key usages.
-    :type key_usage: list of str or :class:`KeyUsageType
-     <azure.keyvault.models.KeyUsageType>`
+    :type key_usage: list[str or ~azure.keyvault.models.KeyUsageType]
     :param validity_in_months: The duration that the ceritifcate is valid in
      months.
     :type validity_in_months: int
+    :param certificate_transparency: Indicates if the certificates generated
+     under this policy should be published to certificate transparency logs.
+    :type certificate_transparency: bool
     """
 
     _validation = {
@@ -41,11 +43,14 @@ class X509CertificateProperties(Model):
         'subject_alternative_names': {'key': 'sans', 'type': 'SubjectAlternativeNames'},
         'key_usage': {'key': 'key_usage', 'type': '[str]'},
         'validity_in_months': {'key': 'validity_months', 'type': 'int'},
+        'certificate_transparency': {'key': 'cert_transparency', 'type': 'bool'},
     }
 
-    def __init__(self, subject=None, ekus=None, subject_alternative_names=None, key_usage=None, validity_in_months=None):
-        self.subject = subject
-        self.ekus = ekus
-        self.subject_alternative_names = subject_alternative_names
-        self.key_usage = key_usage
-        self.validity_in_months = validity_in_months
+    def __init__(self, **kwargs):
+        super(X509CertificateProperties, self).__init__(**kwargs)
+        self.subject = kwargs.get('subject', None)
+        self.ekus = kwargs.get('ekus', None)
+        self.subject_alternative_names = kwargs.get('subject_alternative_names', None)
+        self.key_usage = kwargs.get('key_usage', None)
+        self.validity_in_months = kwargs.get('validity_in_months', None)
+        self.certificate_transparency = kwargs.get('certificate_transparency', None)

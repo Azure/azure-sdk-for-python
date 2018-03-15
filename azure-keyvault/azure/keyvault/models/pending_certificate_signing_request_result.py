@@ -31,5 +31,6 @@ class PendingCertificateSigningRequestResult(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(PendingCertificateSigningRequestResult, self).__init__(**kwargs)
         self.value = None

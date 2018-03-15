@@ -26,6 +26,7 @@ class IssuerCredentials(Model):
         'password': {'key': 'pwd', 'type': 'str'},
     }
 
-    def __init__(self, account_id=None, password=None):
-        self.account_id = account_id
-        self.password = password
+    def __init__(self, **kwargs):
+        super(IssuerCredentials, self).__init__(**kwargs)
+        self.account_id = kwargs.get('account_id', None)
+        self.password = kwargs.get('password', None)
