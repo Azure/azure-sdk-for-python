@@ -21,7 +21,7 @@ class PartnerOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Supported version. Constant value: "2018-02-01".
     """
 
@@ -56,7 +56,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -93,6 +93,7 @@ class PartnerOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}
 
     def create(
             self, partner_id, custom_headers=None, raw=False, **operation_config):
@@ -114,7 +115,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -151,6 +152,7 @@ class PartnerOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}
 
     def update(
             self, partner_id, custom_headers=None, raw=False, **operation_config):
@@ -172,7 +174,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -209,6 +211,7 @@ class PartnerOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}
 
     def delete(
             self, partner_id, custom_headers=None, raw=False, **operation_config):
@@ -229,7 +232,7 @@ class PartnerOperations(object):
          :class:`ErrorException<azure.mgmt.managementpartner.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.ManagementPartner/partners/{partnerId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'partnerId': self._serialize.url("partner_id", partner_id, 'str')
         }
@@ -259,3 +262,4 @@ class PartnerOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/providers/Microsoft.ManagementPartner/partners/{partnerId}'}
