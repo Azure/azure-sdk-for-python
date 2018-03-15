@@ -18,8 +18,10 @@ class IotHubSkuInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the SKU. Possible values include: 'F1', 'S1',
-     'S2', 'S3'
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the SKU. Possible values include: 'F1',
+     'S1', 'S2', 'S3'
     :type name: str or ~azure.mgmt.iothub.models.IotHubSku
     :ivar tier: The billing tier for the IoT hub. Possible values include:
      'Free', 'Standard'
@@ -40,8 +42,8 @@ class IotHubSkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'long'},
     }
 
-    def __init__(self, name, capacity=None):
-        super(IotHubSkuInfo, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(IotHubSkuInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.tier = None
-        self.capacity = capacity
+        self.capacity = kwargs.get('capacity', None)

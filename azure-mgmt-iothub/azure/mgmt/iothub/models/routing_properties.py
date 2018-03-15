@@ -37,8 +37,8 @@ class RoutingProperties(Model):
         'fallback_route': {'key': 'fallbackRoute', 'type': 'FallbackRouteProperties'},
     }
 
-    def __init__(self, endpoints=None, routes=None, fallback_route=None):
-        super(RoutingProperties, self).__init__()
-        self.endpoints = endpoints
-        self.routes = routes
-        self.fallback_route = fallback_route
+    def __init__(self, **kwargs):
+        super(RoutingProperties, self).__init__(**kwargs)
+        self.endpoints = kwargs.get('endpoints', None)
+        self.routes = kwargs.get('routes', None)
+        self.fallback_route = kwargs.get('fallback_route', None)

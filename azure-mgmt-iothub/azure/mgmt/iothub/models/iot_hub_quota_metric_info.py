@@ -38,8 +38,8 @@ class IotHubQuotaMetricInfo(Model):
         'max_value': {'key': 'maxValue', 'type': 'long'},
     }
 
-    def __init__(self):
-        super(IotHubQuotaMetricInfo, self).__init__()
+    def __init__(self, **kwargs):
+        super(IotHubQuotaMetricInfo, self).__init__(**kwargs)
         self.name = None
         self.current_value = None
         self.max_value = None

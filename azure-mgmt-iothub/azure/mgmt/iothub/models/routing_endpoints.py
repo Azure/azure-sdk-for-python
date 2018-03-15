@@ -44,9 +44,9 @@ class RoutingEndpoints(Model):
         'storage_containers': {'key': 'storageContainers', 'type': '[RoutingStorageContainerProperties]'},
     }
 
-    def __init__(self, service_bus_queues=None, service_bus_topics=None, event_hubs=None, storage_containers=None):
-        super(RoutingEndpoints, self).__init__()
-        self.service_bus_queues = service_bus_queues
-        self.service_bus_topics = service_bus_topics
-        self.event_hubs = event_hubs
-        self.storage_containers = storage_containers
+    def __init__(self, **kwargs):
+        super(RoutingEndpoints, self).__init__(**kwargs)
+        self.service_bus_queues = kwargs.get('service_bus_queues', None)
+        self.service_bus_topics = kwargs.get('service_bus_topics', None)
+        self.event_hubs = kwargs.get('event_hubs', None)
+        self.storage_containers = kwargs.get('storage_containers', None)

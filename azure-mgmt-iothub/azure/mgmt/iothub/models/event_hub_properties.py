@@ -50,10 +50,10 @@ class EventHubProperties(Model):
         'endpoint': {'key': 'endpoint', 'type': 'str'},
     }
 
-    def __init__(self, retention_time_in_days=None, partition_count=None):
-        super(EventHubProperties, self).__init__()
-        self.retention_time_in_days = retention_time_in_days
-        self.partition_count = partition_count
+    def __init__(self, **kwargs):
+        super(EventHubProperties, self).__init__(**kwargs)
+        self.retention_time_in_days = kwargs.get('retention_time_in_days', None)
+        self.partition_count = kwargs.get('partition_count', None)
         self.partition_ids = None
         self.path = None
         self.endpoint = None

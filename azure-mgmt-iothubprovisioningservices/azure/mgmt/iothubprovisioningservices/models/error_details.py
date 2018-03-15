@@ -43,8 +43,8 @@ class ErrorDetails(Model):
         'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ErrorDetails, self).__init__()
+    def __init__(self, **kwargs):
+        super(ErrorDetails, self).__init__(**kwargs)
         self.code = None
         self.http_status_code = None
         self.message = None

@@ -43,8 +43,8 @@ class IotHubCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'IotHubScaleType'},
     }
 
-    def __init__(self):
-        super(IotHubCapacity, self).__init__()
+    def __init__(self, **kwargs):
+        super(IotHubCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
         self.default = None

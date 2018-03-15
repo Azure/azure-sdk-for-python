@@ -18,13 +18,15 @@ class IotHubDescription(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The resource name.
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param location: The resource location.
+    :param location: Required. The resource location.
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
@@ -34,7 +36,7 @@ class IotHubDescription(Resource):
     :type etag: str
     :param properties:
     :type properties: ~azure.mgmt.iothub.models.IotHubProperties
-    :param sku:
+    :param sku: Required.
     :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
     """
 
@@ -57,8 +59,8 @@ class IotHubDescription(Resource):
         'sku': {'key': 'sku', 'type': 'IotHubSkuInfo'},
     }
 
-    def __init__(self, location, sku, tags=None, etag=None, properties=None):
-        super(IotHubDescription, self).__init__(location=location, tags=tags)
-        self.etag = etag
-        self.properties = properties
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(IotHubDescription, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
+        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get('sku', None)

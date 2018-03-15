@@ -63,8 +63,8 @@ class JobResponse(Model):
         'parent_job_id': {'key': 'parentJobId', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(JobResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobResponse, self).__init__(**kwargs)
         self.job_id = None
         self.start_time_utc = None
         self.end_time_utc = None

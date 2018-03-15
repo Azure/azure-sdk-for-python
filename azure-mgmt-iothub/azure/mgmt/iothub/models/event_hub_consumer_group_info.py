@@ -45,9 +45,9 @@ class EventHubConsumerGroupInfo(Model):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        super(EventHubConsumerGroupInfo, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(EventHubConsumerGroupInfo, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.id = None
         self.name = None
         self.type = None

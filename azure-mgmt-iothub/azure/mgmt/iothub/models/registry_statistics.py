@@ -41,8 +41,8 @@ class RegistryStatistics(Model):
         'disabled_device_count': {'key': 'disabledDeviceCount', 'type': 'long'},
     }
 
-    def __init__(self):
-        super(RegistryStatistics, self).__init__()
+    def __init__(self, **kwargs):
+        super(RegistryStatistics, self).__init__(**kwargs)
         self.total_device_count = None
         self.enabled_device_count = None
         self.disabled_device_count = None

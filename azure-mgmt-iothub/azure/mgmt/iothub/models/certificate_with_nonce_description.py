@@ -45,9 +45,9 @@ class CertificateWithNonceDescription(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        super(CertificateWithNonceDescription, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(CertificateWithNonceDescription, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.id = None
         self.name = None
         self.etag = None

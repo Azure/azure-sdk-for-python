@@ -88,19 +88,19 @@ class IotHubProperties(Model):
         'features': {'key': 'features', 'type': 'str'},
     }
 
-    def __init__(self, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications=None, cloud_to_device=None, comments=None, operations_monitoring_properties=None, features=None):
-        super(IotHubProperties, self).__init__()
-        self.authorization_policies = authorization_policies
-        self.ip_filter_rules = ip_filter_rules
+    def __init__(self, **kwargs):
+        super(IotHubProperties, self).__init__(**kwargs)
+        self.authorization_policies = kwargs.get('authorization_policies', None)
+        self.ip_filter_rules = kwargs.get('ip_filter_rules', None)
         self.provisioning_state = None
         self.state = None
         self.host_name = None
-        self.event_hub_endpoints = event_hub_endpoints
-        self.routing = routing
-        self.storage_endpoints = storage_endpoints
-        self.messaging_endpoints = messaging_endpoints
-        self.enable_file_upload_notifications = enable_file_upload_notifications
-        self.cloud_to_device = cloud_to_device
-        self.comments = comments
-        self.operations_monitoring_properties = operations_monitoring_properties
-        self.features = features
+        self.event_hub_endpoints = kwargs.get('event_hub_endpoints', None)
+        self.routing = kwargs.get('routing', None)
+        self.storage_endpoints = kwargs.get('storage_endpoints', None)
+        self.messaging_endpoints = kwargs.get('messaging_endpoints', None)
+        self.enable_file_upload_notifications = kwargs.get('enable_file_upload_notifications', None)
+        self.cloud_to_device = kwargs.get('cloud_to_device', None)
+        self.comments = kwargs.get('comments', None)
+        self.operations_monitoring_properties = kwargs.get('operations_monitoring_properties', None)
+        self.features = kwargs.get('features', None)

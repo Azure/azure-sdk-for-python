@@ -18,11 +18,13 @@ class IotHubSkuDescription(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar resource_type: The type of the resource.
     :vartype resource_type: str
-    :param sku: The type of the resource.
+    :param sku: Required. The type of the resource.
     :type sku: ~azure.mgmt.iothub.models.IotHubSkuInfo
-    :param capacity:
+    :param capacity: Required.
     :type capacity: ~azure.mgmt.iothub.models.IotHubCapacity
     """
 
@@ -38,8 +40,8 @@ class IotHubSkuDescription(Model):
         'capacity': {'key': 'capacity', 'type': 'IotHubCapacity'},
     }
 
-    def __init__(self, sku, capacity):
-        super(IotHubSkuDescription, self).__init__()
+    def __init__(self, **kwargs):
+        super(IotHubSkuDescription, self).__init__(**kwargs)
         self.resource_type = None
-        self.sku = sku
-        self.capacity = capacity
+        self.sku = kwargs.get('sku', None)
+        self.capacity = kwargs.get('capacity', None)

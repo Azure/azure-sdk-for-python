@@ -27,6 +27,6 @@ class OperationsMonitoringProperties(Model):
         'events': {'key': 'events', 'type': '{str}'},
     }
 
-    def __init__(self, events=None):
-        super(OperationsMonitoringProperties, self).__init__()
-        self.events = events
+    def __init__(self, **kwargs):
+        super(OperationsMonitoringProperties, self).__init__(**kwargs)
+        self.events = kwargs.get('events', None)
