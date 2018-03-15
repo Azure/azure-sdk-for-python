@@ -15,9 +15,13 @@ from msrest.serialization import Model
 class ContainerServiceLinuxProfile(Model):
     """Profile for Linux VMs in the container service cluster.
 
-    :param admin_username: The administrator username to use for Linux VMs.
+    All required parameters must be populated in order to send to Azure.
+
+    :param admin_username: Required. The administrator username to use for
+     Linux VMs.
     :type admin_username: str
-    :param ssh: SSH configuration for Linux-based VMs running on Azure.
+    :param ssh: Required. SSH configuration for Linux-based VMs running on
+     Azure.
     :type ssh:
      ~azure.mgmt.containerservice.models.ContainerServiceSshConfiguration
     """
@@ -32,7 +36,7 @@ class ContainerServiceLinuxProfile(Model):
         'ssh': {'key': 'ssh', 'type': 'ContainerServiceSshConfiguration'},
     }
 
-    def __init__(self, admin_username, ssh):
-        super(ContainerServiceLinuxProfile, self).__init__()
-        self.admin_username = admin_username
-        self.ssh = ssh
+    def __init__(self, **kwargs):
+        super(ContainerServiceLinuxProfile, self).__init__(**kwargs)
+        self.admin_username = kwargs.get('admin_username', None)
+        self.ssh = kwargs.get('ssh', None)

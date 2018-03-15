@@ -45,9 +45,9 @@ class OrchestratorVersionProfileListResult(Model):
         'orchestrators': {'key': 'properties.orchestrators', 'type': '[OrchestratorVersionProfile]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, orchestrators, **kwargs) -> None:
         super(OrchestratorVersionProfileListResult, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.orchestrators = kwargs.get('orchestrators', None)
+        self.orchestrators = orchestrators

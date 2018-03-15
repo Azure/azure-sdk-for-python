@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class ContainerServiceStorageProfileTypes(Enum):
+class ContainerServiceStorageProfileTypes(str, Enum):
 
     storage_account = "StorageAccount"
     managed_disks = "ManagedDisks"
 
 
-class ContainerServiceVMSizeTypes(Enum):
+class ContainerServiceVMSizeTypes(str, Enum):
 
     standard_a0 = "Standard_A0"
     standard_a1 = "Standard_A1"
@@ -152,7 +152,7 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_nv6 = "Standard_NV6"
 
 
-class ContainerServiceOrchestratorTypes(Enum):
+class ContainerServiceOrchestratorTypes(str, Enum):
 
     kubernetes = "Kubernetes"
     swarm = "Swarm"
@@ -161,7 +161,7 @@ class ContainerServiceOrchestratorTypes(Enum):
     custom = "Custom"
 
 
-class OSType(Enum):
+class OSType(str, Enum):
 
     linux = "Linux"
     windows = "Windows"
