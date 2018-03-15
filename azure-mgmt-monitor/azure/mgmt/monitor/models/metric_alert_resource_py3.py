@@ -52,8 +52,6 @@ class MetricAlertResource(Resource):
     :param actions: the array of actions that are performed when the alert
      rule becomes active, and when an alert condition is resolved.
     :type actions: list[~azure.mgmt.monitor.models.Action]
-    :ivar current_status: the current metric alert status.
-    :vartype current_status: ~azure.mgmt.monitor.models.AlertStatus
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: datetime
     """
@@ -69,7 +67,6 @@ class MetricAlertResource(Resource):
         'evaluation_frequency': {'required': True},
         'window_size': {'required': True},
         'criteria': {'required': True},
-        'current_status': {'readonly': True},
         'last_updated_time': {'readonly': True},
     }
 
@@ -87,7 +84,6 @@ class MetricAlertResource(Resource):
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
         'criteria': {'key': 'properties.criteria', 'type': 'MetricAlertCriteria'},
         'actions': {'key': 'properties.actions', 'type': '[Action]'},
-        'current_status': {'key': 'properties.currentStatus', 'type': 'AlertStatus'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 
@@ -101,5 +97,4 @@ class MetricAlertResource(Resource):
         self.window_size = window_size
         self.criteria = criteria
         self.actions = actions
-        self.current_status = None
         self.last_updated_time = None
