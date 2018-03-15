@@ -12,21 +12,20 @@
 from msrest.serialization import Model
 
 
-class ContainerServiceAgentPoolProfile(Model):
-    """Profile for the container service agent pool.
+class ContainerServiceMasterProfile(Model):
+    """Profile for the container service master.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Unique name of the agent pool profile in the
-     context of the subscription and resource group.
-    :type name: str
-    :param count: Number of agents (VMs) to host docker containers. Allowed
-     values must be in the range of 1 to 100 (inclusive). The default value is
-     1. . Default value: 1 .
+    :param count: Number of masters (VMs) in the container service cluster.
+     Allowed values are 1, 3, and 5. The default value is 1. Default value: 1 .
     :type count: int
+    :param dns_prefix: Required. DNS prefix to be used to create the FQDN for
+     the master pool.
+    :type dns_prefix: str
     :param vm_size: Required. Size of agent VMs. Possible values include:
      'Standard_A0', 'Standard_A1', 'Standard_A10', 'Standard_A11',
      'Standard_A1_v2', 'Standard_A2', 'Standard_A2_v2', 'Standard_A2m_v2',
@@ -85,59 +84,47 @@ class ContainerServiceAgentPoolProfile(Model):
      size for every machine in this master/agent pool. If you specify 0, it
      will apply the default osDisk size according to the vmSize specified.
     :type os_disk_size_gb: int
-    :param dns_prefix: DNS prefix to be used to create the FQDN for the agent
-     pool.
-    :type dns_prefix: str
-    :ivar fqdn: FDQN for the agent pool.
-    :vartype fqdn: str
-    :param ports: Ports number array used to expose on this agent pool. The
-     default opened ports are different based on your choice of orchestrator.
-    :type ports: list[int]
+    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
+     identifier. If you specify either master VNet Subnet, or agent VNet
+     Subnet, you need to specify both. And they have to be in the same VNet.
+    :type vnet_subnet_id: str
+    :param first_consecutive_static_ip: FirstConsecutiveStaticIP used to
+     specify the first static ip of masters. Default value: "10.240.255.5" .
+    :type first_consecutive_static_ip: str
     :param storage_profile: Storage profile specifies what kind of storage
      used. Choose from StorageAccount and ManagedDisks. Leave it empty, we will
      choose for you based on the orchestrator choice. Possible values include:
      'StorageAccount', 'ManagedDisks'
     :type storage_profile: str or
      ~azure.mgmt.containerservice.models.ContainerServiceStorageProfileTypes
-    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
-     identifier. If you specify either master VNet Subnet, or agent VNet
-     Subnet, you need to specify both. And they have to be in the same VNet.
-    :type vnet_subnet_id: str
-    :param os_type: OsType to be used to specify os type. Choose from Linux
-     and Windows. Default to Linux. Possible values include: 'Linux',
-     'Windows'. Default value: "Linux" .
-    :type os_type: str or ~azure.mgmt.containerservice.models.OSType
+    :ivar fqdn: FDQN for the master pool.
+    :vartype fqdn: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'count': {'maximum': 100, 'minimum': 1},
+        'dns_prefix': {'required': True},
         'vm_size': {'required': True},
         'fqdn': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'count': {'key': 'count', 'type': 'int'},
+        'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ports': {'key': 'ports', 'type': '[int]'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'str'},
         'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
+        'first_consecutive_static_ip': {'key': 'firstConsecutiveStaticIP', 'type': 'str'},
+        'storage_profile': {'key': 'storageProfile', 'type': 'str'},
+        'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerServiceAgentPoolProfile, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.count = kwargs.get('count', 1)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
-        self.dns_prefix = kwargs.get('dns_prefix', None)
+    def __init__(self, *, dns_prefix: str, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, first_consecutive_static_ip: str="10.240.255.5", storage_profile=None, **kwargs) -> None:
+        super(ContainerServiceMasterProfile, self).__init__(**kwargs)
+        self.count = count
+        self.dns_prefix = dns_prefix
+        self.vm_size = vm_size
+        self.os_disk_size_gb = os_disk_size_gb
+        self.vnet_subnet_id = vnet_subnet_id
+        self.first_consecutive_static_ip = first_consecutive_static_ip
+        self.storage_profile = storage_profile
         self.fqdn = None
-        self.ports = kwargs.get('ports', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
-        self.os_type = kwargs.get('os_type', "Linux")

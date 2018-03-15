@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ManagedClusterAccessProfile(Resource):
-    """Managed cluster Access Profile.
+class Resource(Model):
+    """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,8 +30,6 @@ class ManagedClusterAccessProfile(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param kube_config: Base64-encoded Kubernetes configuration file.
-    :type kube_config: str
     """
 
     _validation = {
@@ -47,9 +45,12 @@ class ManagedClusterAccessProfile(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'kube_config': {'key': 'properties.kubeConfig', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ManagedClusterAccessProfile, self).__init__(**kwargs)
-        self.kube_config = kwargs.get('kube_config', None)
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags

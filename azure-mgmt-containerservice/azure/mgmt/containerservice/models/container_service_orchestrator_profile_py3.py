@@ -38,7 +38,7 @@ class ContainerServiceOrchestratorProfile(Model):
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, orchestrator_type, orchestrator_version: str=None, **kwargs) -> None:
         super(ContainerServiceOrchestratorProfile, self).__init__(**kwargs)
-        self.orchestrator_type = kwargs.get('orchestrator_type', None)
-        self.orchestrator_version = kwargs.get('orchestrator_version', None)
+        self.orchestrator_type = orchestrator_type
+        self.orchestrator_version = orchestrator_version

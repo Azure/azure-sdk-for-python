@@ -38,7 +38,7 @@ class ContainerServiceVMDiagnostics(Model):
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, enabled: bool, **kwargs) -> None:
         super(ContainerServiceVMDiagnostics, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
+        self.enabled = enabled
         self.storage_uri = None

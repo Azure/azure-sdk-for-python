@@ -129,15 +129,15 @@ class ContainerServiceAgentPoolProfile(Model):
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, vm_size, count: int=1, os_disk_size_gb: int=None, dns_prefix: str=None, ports=None, storage_profile=None, vnet_subnet_id: str=None, os_type="Linux", **kwargs) -> None:
         super(ContainerServiceAgentPoolProfile, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.count = kwargs.get('count', 1)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.os_disk_size_gb = kwargs.get('os_disk_size_gb', None)
-        self.dns_prefix = kwargs.get('dns_prefix', None)
+        self.name = name
+        self.count = count
+        self.vm_size = vm_size
+        self.os_disk_size_gb = os_disk_size_gb
+        self.dns_prefix = dns_prefix
         self.fqdn = None
-        self.ports = kwargs.get('ports', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.vnet_subnet_id = kwargs.get('vnet_subnet_id', None)
-        self.os_type = kwargs.get('os_type', "Linux")
+        self.ports = ports
+        self.storage_profile = storage_profile
+        self.vnet_subnet_id = vnet_subnet_id
+        self.os_type = os_type

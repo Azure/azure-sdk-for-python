@@ -12,25 +12,25 @@
 from msrest.serialization import Model
 
 
-class ContainerServiceDiagnosticsProfile(Model):
-    """Profile for diagnostics on the container service cluster.
+class ContainerServiceSshConfiguration(Model):
+    """SSH configuration for Linux-based VMs running on Azure.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param vm_diagnostics: Required. Profile for diagnostics on the container
-     service VMs.
-    :type vm_diagnostics:
-     ~azure.mgmt.containerservice.models.ContainerServiceVMDiagnostics
+    :param public_keys: Required. The list of SSH public keys used to
+     authenticate with Linux-based VMs. Only expect one key specified.
+    :type public_keys:
+     list[~azure.mgmt.containerservice.models.ContainerServiceSshPublicKey]
     """
 
     _validation = {
-        'vm_diagnostics': {'required': True},
+        'public_keys': {'required': True},
     }
 
     _attribute_map = {
-        'vm_diagnostics': {'key': 'vmDiagnostics', 'type': 'ContainerServiceVMDiagnostics'},
+        'public_keys': {'key': 'publicKeys', 'type': '[ContainerServiceSshPublicKey]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerServiceDiagnosticsProfile, self).__init__(**kwargs)
-        self.vm_diagnostics = kwargs.get('vm_diagnostics', None)
+    def __init__(self, *, public_keys, **kwargs) -> None:
+        super(ContainerServiceSshConfiguration, self).__init__(**kwargs)
+        self.public_keys = public_keys

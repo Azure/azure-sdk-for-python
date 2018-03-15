@@ -31,6 +31,6 @@ class ContainerServiceDiagnosticsProfile(Model):
         'vm_diagnostics': {'key': 'vmDiagnostics', 'type': 'ContainerServiceVMDiagnostics'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, vm_diagnostics, **kwargs) -> None:
         super(ContainerServiceDiagnosticsProfile, self).__init__(**kwargs)
-        self.vm_diagnostics = kwargs.get('vm_diagnostics', None)
+        self.vm_diagnostics = vm_diagnostics

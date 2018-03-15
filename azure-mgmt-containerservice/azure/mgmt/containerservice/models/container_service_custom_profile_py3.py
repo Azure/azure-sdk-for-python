@@ -12,25 +12,23 @@
 from msrest.serialization import Model
 
 
-class ContainerServiceDiagnosticsProfile(Model):
-    """Profile for diagnostics on the container service cluster.
+class ContainerServiceCustomProfile(Model):
+    """Properties to configure a custom container service cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param vm_diagnostics: Required. Profile for diagnostics on the container
-     service VMs.
-    :type vm_diagnostics:
-     ~azure.mgmt.containerservice.models.ContainerServiceVMDiagnostics
+    :param orchestrator: Required. The name of the custom orchestrator to use.
+    :type orchestrator: str
     """
 
     _validation = {
-        'vm_diagnostics': {'required': True},
+        'orchestrator': {'required': True},
     }
 
     _attribute_map = {
-        'vm_diagnostics': {'key': 'vmDiagnostics', 'type': 'ContainerServiceVMDiagnostics'},
+        'orchestrator': {'key': 'orchestrator', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerServiceDiagnosticsProfile, self).__init__(**kwargs)
-        self.vm_diagnostics = kwargs.get('vm_diagnostics', None)
+    def __init__(self, *, orchestrator: str, **kwargs) -> None:
+        super(ContainerServiceCustomProfile, self).__init__(**kwargs)
+        self.orchestrator = orchestrator

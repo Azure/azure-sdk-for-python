@@ -78,12 +78,12 @@ class ManagedCluster(Resource):
         'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ContainerServiceServicePrincipalProfile'},
     }
 
-    def __init__(self, **kwargs):
-        super(ManagedCluster, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags=None, dns_prefix: str=None, kubernetes_version: str=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None, **kwargs) -> None:
+        super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
-        self.dns_prefix = kwargs.get('dns_prefix', None)
+        self.dns_prefix = dns_prefix
         self.fqdn = None
-        self.kubernetes_version = kwargs.get('kubernetes_version', None)
-        self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)
-        self.linux_profile = kwargs.get('linux_profile', None)
-        self.service_principal_profile = kwargs.get('service_principal_profile', None)
+        self.kubernetes_version = kubernetes_version
+        self.agent_pool_profiles = agent_pool_profiles
+        self.linux_profile = linux_profile
+        self.service_principal_profile = service_principal_profile

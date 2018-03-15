@@ -36,8 +36,8 @@ class KeyVaultSecretRef(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, vault_id: str, secret_name: str, version: str=None, **kwargs) -> None:
         super(KeyVaultSecretRef, self).__init__(**kwargs)
-        self.vault_id = kwargs.get('vault_id', None)
-        self.secret_name = kwargs.get('secret_name', None)
-        self.version = kwargs.get('version', None)
+        self.vault_id = vault_id
+        self.secret_name = secret_name
+        self.version = version

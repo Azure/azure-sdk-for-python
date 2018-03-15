@@ -43,9 +43,9 @@ class ManagedClusterPoolUpgradeProfile(Model):
         'upgrades': {'key': 'upgrades', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, kubernetes_version: str, name: str=None, os_type="Linux", upgrades=None, **kwargs) -> None:
         super(ManagedClusterPoolUpgradeProfile, self).__init__(**kwargs)
-        self.kubernetes_version = kwargs.get('kubernetes_version', None)
-        self.name = kwargs.get('name', None)
-        self.os_type = kwargs.get('os_type', "Linux")
-        self.upgrades = kwargs.get('upgrades', None)
+        self.kubernetes_version = kubernetes_version
+        self.name = name
+        self.os_type = os_type
+        self.upgrades = upgrades

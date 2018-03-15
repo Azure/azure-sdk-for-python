@@ -50,6 +50,6 @@ class ManagedClusterAccessProfile(Resource):
         'kube_config': {'key': 'properties.kubeConfig', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ManagedClusterAccessProfile, self).__init__(**kwargs)
-        self.kube_config = kwargs.get('kube_config', None)
+    def __init__(self, *, location: str, tags=None, kube_config: str=None, **kwargs) -> None:
+        super(ManagedClusterAccessProfile, self).__init__(location=location, tags=tags, **kwargs)
+        self.kube_config = kube_config
