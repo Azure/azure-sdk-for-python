@@ -49,13 +49,13 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
         'supports_email_notifications': {'key': 'SupportsEmailNotifications', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, display_name=None, description=None, help_url=None, is_hidden=None, is_enabled_by_default=None, is_in_preview=None, supports_email_notifications=None):
-        super(ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions, self).__init__()
-        self.name = name
-        self.display_name = display_name
-        self.description = description
-        self.help_url = help_url
-        self.is_hidden = is_hidden
-        self.is_enabled_by_default = is_enabled_by_default
-        self.is_in_preview = is_in_preview
-        self.supports_email_notifications = supports_email_notifications
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.help_url = kwargs.get('help_url', None)
+        self.is_hidden = kwargs.get('is_hidden', None)
+        self.is_enabled_by_default = kwargs.get('is_enabled_by_default', None)
+        self.is_in_preview = kwargs.get('is_in_preview', None)
+        self.supports_email_notifications = kwargs.get('supports_email_notifications', None)

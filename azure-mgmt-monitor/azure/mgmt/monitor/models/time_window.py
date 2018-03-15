@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class TimeWindow(Model):
     """A specific date-time for the profile.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param time_zone: the timezone of the start and end times for the profile.
      Some examples of valid timezones are: Dateline Standard Time, UTC-11,
      Hawaiian Standard Time, Alaskan Standard Time, Pacific Standard Time
@@ -54,9 +56,9 @@ class TimeWindow(Model):
      Time, UTC+12, Fiji Standard Time, Kamchatka Standard Time, Tonga Standard
      Time, Samoa Standard Time, Line Islands Standard Time
     :type time_zone: str
-    :param start: the start time for the profile in ISO 8601 format.
+    :param start: Required. the start time for the profile in ISO 8601 format.
     :type start: datetime
-    :param end: the end time for the profile in ISO 8601 format.
+    :param end: Required. the end time for the profile in ISO 8601 format.
     :type end: datetime
     """
 
@@ -71,7 +73,8 @@ class TimeWindow(Model):
         'end': {'key': 'end', 'type': 'iso-8601'},
     }
 
-    def __init__(self, start, end, time_zone=None):
-        self.time_zone = time_zone
-        self.start = start
-        self.end = end
+    def __init__(self, **kwargs):
+        super(TimeWindow, self).__init__(**kwargs)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.start = kwargs.get('start', None)
+        self.end = kwargs.get('end', None)
