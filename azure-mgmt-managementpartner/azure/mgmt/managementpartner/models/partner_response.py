@@ -26,6 +26,8 @@ class PartnerResponse(Model):
     :vartype name: str
     :param partner_id: This is the partner id
     :type partner_id: str
+    :param partner_name: This is the partner name
+    :type partner_name: str
     :param tenant_id: This is the tenant id.
     :type tenant_id: str
     :param object_id: This is the object id.
@@ -54,6 +56,7 @@ class PartnerResponse(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'partner_id': {'key': 'properties.partnerId', 'type': 'str'},
+        'partner_name': {'key': 'properties.partnerName', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'object_id': {'key': 'properties.objectId', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
@@ -63,12 +66,13 @@ class PartnerResponse(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, etag=None, partner_id=None, tenant_id=None, object_id=None, version=None, updated_time=None, created_time=None, state=None):
+    def __init__(self, etag=None, partner_id=None, partner_name=None, tenant_id=None, object_id=None, version=None, updated_time=None, created_time=None, state=None):
         super(PartnerResponse, self).__init__()
         self.etag = etag
         self.id = None
         self.name = None
         self.partner_id = partner_id
+        self.partner_name = partner_name
         self.tenant_id = tenant_id
         self.object_id = object_id
         self.version = version
