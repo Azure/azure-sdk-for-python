@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class ZoneType(Enum):
+class ZoneType(str, Enum):
 
     public = "Public"
     private = "Private"
 
 
-class RecordType(Enum):
+class RecordType(str, Enum):
 
     a = "A"
     aaaa = "AAAA"
