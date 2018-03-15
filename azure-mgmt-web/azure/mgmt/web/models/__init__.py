@@ -100,6 +100,9 @@ try:
     from .localizable_string_py3 import LocalizableString
     from .csm_usage_quota_py3 import CsmUsageQuota
     from .error_entity_py3 import ErrorEntity
+    from .default_error_response_error_details_item_py3 import DefaultErrorResponseErrorDetailsItem
+    from .default_error_response_error_py3 import DefaultErrorResponseError
+    from .default_error_response_py3 import DefaultErrorResponse, DefaultErrorResponseException
     from .operation_py3 import Operation
     from .resource_metric_property_py3 import ResourceMetricProperty
     from .resource_metric_value_py3 import ResourceMetricValue
@@ -304,6 +307,9 @@ except (SyntaxError, ImportError):
     from .localizable_string import LocalizableString
     from .csm_usage_quota import CsmUsageQuota
     from .error_entity import ErrorEntity
+    from .default_error_response_error_details_item import DefaultErrorResponseErrorDetailsItem
+    from .default_error_response_error import DefaultErrorResponseError
+    from .default_error_response import DefaultErrorResponse, DefaultErrorResponseException
     from .operation import Operation
     from .resource_metric_property import ResourceMetricProperty
     from .resource_metric_value import ResourceMetricValue
@@ -620,6 +626,9 @@ __all__ = [
     'LocalizableString',
     'CsmUsageQuota',
     'ErrorEntity',
+    'DefaultErrorResponseErrorDetailsItem',
+    'DefaultErrorResponseError',
+    'DefaultErrorResponse', 'DefaultErrorResponseException',
     'Operation',
     'ResourceMetricProperty',
     'ResourceMetricValue',
