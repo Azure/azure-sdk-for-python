@@ -94,14 +94,14 @@ class ContainerService(Resource):
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'ContainerServiceDiagnosticsProfile'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerService, self).__init__(**kwargs)
+    def __init__(self, *, location: str, orchestrator_profile, master_profile, linux_profile, tags=None, custom_profile=None, service_principal_profile=None, agent_pool_profiles=None, windows_profile=None, diagnostics_profile=None, **kwargs) -> None:
+        super(ContainerService, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
-        self.orchestrator_profile = kwargs.get('orchestrator_profile', None)
-        self.custom_profile = kwargs.get('custom_profile', None)
-        self.service_principal_profile = kwargs.get('service_principal_profile', None)
-        self.master_profile = kwargs.get('master_profile', None)
-        self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)
-        self.windows_profile = kwargs.get('windows_profile', None)
-        self.linux_profile = kwargs.get('linux_profile', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
+        self.orchestrator_profile = orchestrator_profile
+        self.custom_profile = custom_profile
+        self.service_principal_profile = service_principal_profile
+        self.master_profile = master_profile
+        self.agent_pool_profiles = agent_pool_profiles
+        self.windows_profile = windows_profile
+        self.linux_profile = linux_profile
+        self.diagnostics_profile = diagnostics_profile

@@ -35,7 +35,7 @@ class ContainerServiceWindowsProfile(Model):
         'admin_password': {'key': 'adminPassword', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, admin_username: str, admin_password: str, **kwargs) -> None:
         super(ContainerServiceWindowsProfile, self).__init__(**kwargs)
-        self.admin_username = kwargs.get('admin_username', None)
-        self.admin_password = kwargs.get('admin_password', None)
+        self.admin_username = admin_username
+        self.admin_password = admin_password

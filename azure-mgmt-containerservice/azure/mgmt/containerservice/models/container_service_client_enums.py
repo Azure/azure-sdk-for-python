@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class ContainerServiceStorageProfileTypes(Enum):
+class ContainerServiceStorageProfileTypes(str, Enum):
 
     storage_account = "StorageAccount"
     managed_disks = "ManagedDisks"
 
 
-class ContainerServiceVMSizeTypes(Enum):
+class ContainerServiceVMSizeTypes(str, Enum):
 
     standard_a0 = "Standard_A0"
     standard_a1 = "Standard_A1"
@@ -39,6 +39,12 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_a8_v2 = "Standard_A8_v2"
     standard_a8m_v2 = "Standard_A8m_v2"
     standard_a9 = "Standard_A9"
+    standard_b1ms = "Standard_B1ms"
+    standard_b1s = "Standard_B1s"
+    standard_b2ms = "Standard_B2ms"
+    standard_b2s = "Standard_B2s"
+    standard_b4ms = "Standard_B4ms"
+    standard_b8ms = "Standard_B8ms"
     standard_d1 = "Standard_D1"
     standard_d11 = "Standard_D11"
     standard_d11_v2 = "Standard_D11_v2"
@@ -62,6 +68,8 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_d2_v3 = "Standard_D2_v3"
     standard_d2s_v3 = "Standard_D2s_v3"
     standard_d3 = "Standard_D3"
+    standard_d32_v3 = "Standard_D32_v3"
+    standard_d32s_v3 = "Standard_D32s_v3"
     standard_d3_v2 = "Standard_D3_v2"
     standard_d3_v2_promo = "Standard_D3_v2_Promo"
     standard_d4 = "Standard_D4"
@@ -71,6 +79,8 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_d4s_v3 = "Standard_D4s_v3"
     standard_d5_v2 = "Standard_D5_v2"
     standard_d5_v2_promo = "Standard_D5_v2_Promo"
+    standard_d64_v3 = "Standard_D64_v3"
+    standard_d64s_v3 = "Standard_D64s_v3"
     standard_d8_v3 = "Standard_D8_v3"
     standard_d8s_v3 = "Standard_D8s_v3"
     standard_ds1 = "Standard_DS1"
@@ -81,9 +91,13 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_ds12_v2 = "Standard_DS12_v2"
     standard_ds12_v2_promo = "Standard_DS12_v2_Promo"
     standard_ds13 = "Standard_DS13"
+    standard_ds13_2_v2 = "Standard_DS13-2_v2"
+    standard_ds13_4_v2 = "Standard_DS13-4_v2"
     standard_ds13_v2 = "Standard_DS13_v2"
     standard_ds13_v2_promo = "Standard_DS13_v2_Promo"
     standard_ds14 = "Standard_DS14"
+    standard_ds14_4_v2 = "Standard_DS14-4_v2"
+    standard_ds14_8_v2 = "Standard_DS14-8_v2"
     standard_ds14_v2 = "Standard_DS14_v2"
     standard_ds14_v2_promo = "Standard_DS14_v2_Promo"
     standard_ds15_v2 = "Standard_DS15_v2"
@@ -103,10 +117,14 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_e16s_v3 = "Standard_E16s_v3"
     standard_e2_v3 = "Standard_E2_v3"
     standard_e2s_v3 = "Standard_E2s_v3"
+    standard_e32_16s_v3 = "Standard_E32-16s_v3"
+    standard_e32_8s_v3 = "Standard_E32-8s_v3"
     standard_e32_v3 = "Standard_E32_v3"
     standard_e32s_v3 = "Standard_E32s_v3"
     standard_e4_v3 = "Standard_E4_v3"
     standard_e4s_v3 = "Standard_E4s_v3"
+    standard_e64_16s_v3 = "Standard_E64-16s_v3"
+    standard_e64_32s_v3 = "Standard_E64-32s_v3"
     standard_e64_v3 = "Standard_E64_v3"
     standard_e64s_v3 = "Standard_E64s_v3"
     standard_e8_v3 = "Standard_E8_v3"
@@ -114,13 +132,20 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_f1 = "Standard_F1"
     standard_f16 = "Standard_F16"
     standard_f16s = "Standard_F16s"
+    standard_f16s_v2 = "Standard_F16s_v2"
     standard_f1s = "Standard_F1s"
     standard_f2 = "Standard_F2"
     standard_f2s = "Standard_F2s"
+    standard_f2s_v2 = "Standard_F2s_v2"
+    standard_f32s_v2 = "Standard_F32s_v2"
     standard_f4 = "Standard_F4"
     standard_f4s = "Standard_F4s"
+    standard_f4s_v2 = "Standard_F4s_v2"
+    standard_f64s_v2 = "Standard_F64s_v2"
+    standard_f72s_v2 = "Standard_F72s_v2"
     standard_f8 = "Standard_F8"
     standard_f8s = "Standard_F8s"
+    standard_f8s_v2 = "Standard_F8s_v2"
     standard_g1 = "Standard_G1"
     standard_g2 = "Standard_G2"
     standard_g3 = "Standard_G3"
@@ -130,7 +155,11 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_gs2 = "Standard_GS2"
     standard_gs3 = "Standard_GS3"
     standard_gs4 = "Standard_GS4"
+    standard_gs4_4 = "Standard_GS4-4"
+    standard_gs4_8 = "Standard_GS4-8"
     standard_gs5 = "Standard_GS5"
+    standard_gs5_16 = "Standard_GS5-16"
+    standard_gs5_8 = "Standard_GS5-8"
     standard_h16 = "Standard_H16"
     standard_h16m = "Standard_H16m"
     standard_h16mr = "Standard_H16mr"
@@ -141,18 +170,36 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_l32s = "Standard_L32s"
     standard_l4s = "Standard_L4s"
     standard_l8s = "Standard_L8s"
+    standard_m128_32ms = "Standard_M128-32ms"
+    standard_m128_64ms = "Standard_M128-64ms"
+    standard_m128ms = "Standard_M128ms"
     standard_m128s = "Standard_M128s"
+    standard_m64_16ms = "Standard_M64-16ms"
+    standard_m64_32ms = "Standard_M64-32ms"
     standard_m64ms = "Standard_M64ms"
+    standard_m64s = "Standard_M64s"
     standard_nc12 = "Standard_NC12"
+    standard_nc12s_v2 = "Standard_NC12s_v2"
+    standard_nc12s_v3 = "Standard_NC12s_v3"
     standard_nc24 = "Standard_NC24"
     standard_nc24r = "Standard_NC24r"
+    standard_nc24rs_v2 = "Standard_NC24rs_v2"
+    standard_nc24rs_v3 = "Standard_NC24rs_v3"
+    standard_nc24s_v2 = "Standard_NC24s_v2"
+    standard_nc24s_v3 = "Standard_NC24s_v3"
     standard_nc6 = "Standard_NC6"
+    standard_nc6s_v2 = "Standard_NC6s_v2"
+    standard_nc6s_v3 = "Standard_NC6s_v3"
+    standard_nd12s = "Standard_ND12s"
+    standard_nd24rs = "Standard_ND24rs"
+    standard_nd24s = "Standard_ND24s"
+    standard_nd6s = "Standard_ND6s"
     standard_nv12 = "Standard_NV12"
     standard_nv24 = "Standard_NV24"
     standard_nv6 = "Standard_NV6"
 
 
-class ContainerServiceOrchestratorTypes(Enum):
+class ContainerServiceOrchestratorTypes(str, Enum):
 
     kubernetes = "Kubernetes"
     swarm = "Swarm"
@@ -161,7 +208,7 @@ class ContainerServiceOrchestratorTypes(Enum):
     custom = "Custom"
 
 
-class OSType(Enum):
+class OSType(str, Enum):
 
     linux = "Linux"
     windows = "Windows"

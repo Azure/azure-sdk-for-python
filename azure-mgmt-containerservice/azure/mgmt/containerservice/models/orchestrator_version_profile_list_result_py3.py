@@ -9,47 +9,45 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ManagedClusterAccessProfile(Resource):
-    """Managed cluster Access Profile.
+class OrchestratorVersionProfileListResult(Model):
+    """The list of versions for supported orchestrators.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id
+    :ivar id: Id of the orchestrator version profile list result.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Name of the orchestrator version profile list result.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Type of the orchestrator version profile list result.
     :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param kube_config: Base64-encoded Kubernetes configuration file.
-    :type kube_config: str
+    :param orchestrators: Required. List of orchestrator version profiles.
+    :type orchestrators:
+     list[~azure.mgmt.containerservice.models.OrchestratorVersionProfile]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'orchestrators': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kube_config': {'key': 'properties.kubeConfig', 'type': 'str'},
+        'orchestrators': {'key': 'properties.orchestrators', 'type': '[OrchestratorVersionProfile]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ManagedClusterAccessProfile, self).__init__(**kwargs)
-        self.kube_config = kwargs.get('kube_config', None)
+    def __init__(self, *, orchestrators, **kwargs) -> None:
+        super(OrchestratorVersionProfileListResult, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.orchestrators = orchestrators

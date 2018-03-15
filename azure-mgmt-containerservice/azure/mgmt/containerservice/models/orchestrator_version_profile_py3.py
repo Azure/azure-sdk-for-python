@@ -44,9 +44,9 @@ class OrchestratorVersionProfile(Model):
         'upgrades': {'key': 'upgrades', 'type': '[OrchestratorProfile]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, orchestrator_type: str, orchestrator_version: str, default: bool, upgrades, **kwargs) -> None:
         super(OrchestratorVersionProfile, self).__init__(**kwargs)
-        self.orchestrator_type = kwargs.get('orchestrator_type', None)
-        self.orchestrator_version = kwargs.get('orchestrator_version', None)
-        self.default = kwargs.get('default', None)
-        self.upgrades = kwargs.get('upgrades', None)
+        self.orchestrator_type = orchestrator_type
+        self.orchestrator_version = orchestrator_version
+        self.default = default
+        self.upgrades = upgrades

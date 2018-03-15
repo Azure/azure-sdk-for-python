@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ContainerServiceSshConfiguration(Model):
     """SSH configuration for Linux-based VMs running on Azure.
 
-    :param public_keys: The list of SSH public keys used to authenticate with
-     Linux-based VMs. Only expect one key specified.
+    All required parameters must be populated in order to send to Azure.
+
+    :param public_keys: Required. The list of SSH public keys used to
+     authenticate with Linux-based VMs. Only expect one key specified.
     :type public_keys:
      list[~azure.mgmt.containerservice.models.ContainerServiceSshPublicKey]
     """
@@ -29,6 +31,6 @@ class ContainerServiceSshConfiguration(Model):
         'public_keys': {'key': 'publicKeys', 'type': '[ContainerServiceSshPublicKey]'},
     }
 
-    def __init__(self, public_keys):
-        super(ContainerServiceSshConfiguration, self).__init__()
-        self.public_keys = public_keys
+    def __init__(self, **kwargs):
+        super(ContainerServiceSshConfiguration, self).__init__(**kwargs)
+        self.public_keys = kwargs.get('public_keys', None)
