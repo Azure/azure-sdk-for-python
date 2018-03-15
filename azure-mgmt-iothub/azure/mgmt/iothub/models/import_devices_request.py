@@ -16,9 +16,11 @@ class ImportDevicesRequest(Model):
     """Use to provide parameters when requesting an import of all devices in the
     hub.
 
-    :param input_blob_container_uri: The input blob container URI.
+    All required parameters must be populated in order to send to Azure.
+
+    :param input_blob_container_uri: Required. The input blob container URI.
     :type input_blob_container_uri: str
-    :param output_blob_container_uri: The output blob container URI.
+    :param output_blob_container_uri: Required. The output blob container URI.
     :type output_blob_container_uri: str
     """
 
@@ -28,10 +30,11 @@ class ImportDevicesRequest(Model):
     }
 
     _attribute_map = {
-        'input_blob_container_uri': {'key': 'InputBlobContainerUri', 'type': 'str'},
-        'output_blob_container_uri': {'key': 'OutputBlobContainerUri', 'type': 'str'},
+        'input_blob_container_uri': {'key': 'inputBlobContainerUri', 'type': 'str'},
+        'output_blob_container_uri': {'key': 'outputBlobContainerUri', 'type': 'str'},
     }
 
-    def __init__(self, input_blob_container_uri, output_blob_container_uri):
-        self.input_blob_container_uri = input_blob_container_uri
-        self.output_blob_container_uri = output_blob_container_uri
+    def __init__(self, **kwargs):
+        super(ImportDevicesRequest, self).__init__(**kwargs)
+        self.input_blob_container_uri = kwargs.get('input_blob_container_uri', None)
+        self.output_blob_container_uri = kwargs.get('output_blob_container_uri', None)
