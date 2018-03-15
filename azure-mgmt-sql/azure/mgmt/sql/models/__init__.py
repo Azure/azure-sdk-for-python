@@ -91,7 +91,7 @@ from .sync_member import SyncMember
 from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
 from .long_term_retention_backup import LongTermRetentionBackup
-from .long_term_retention_policy import LongTermRetentionPolicy
+from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
 from .resource_move_definition import ResourceMoveDefinition
 from .automatic_tuning_server_options import AutomaticTuningServerOptions
 from .server_automatic_tuning import ServerAutomaticTuning
@@ -282,7 +282,7 @@ __all__ = [
     'SubscriptionUsage',
     'VirtualNetworkRule',
     'LongTermRetentionBackup',
-    'LongTermRetentionPolicy',
+    'BackupLongTermRetentionPolicy',
     'ResourceMoveDefinition',
     'AutomaticTuningServerOptions',
     'ServerAutomaticTuning',

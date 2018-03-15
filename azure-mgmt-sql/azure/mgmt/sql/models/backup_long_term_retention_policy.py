@@ -12,7 +12,7 @@
 from .proxy_resource import ProxyResource
 
 
-class LongTermRetentionPolicy(ProxyResource):
+class BackupLongTermRetentionPolicy(ProxyResource):
     """A long term retention policy.
 
     Variables are only populated by the server, and will be ignored when
@@ -55,7 +55,7 @@ class LongTermRetentionPolicy(ProxyResource):
     }
 
     def __init__(self, weekly_retention=None, monthly_retention=None, yearly_retention=None, week_of_year=None):
-        super(LongTermRetentionPolicy, self).__init__()
+        super(BackupLongTermRetentionPolicy, self).__init__()
         self.weekly_retention = weekly_retention
         self.monthly_retention = monthly_retention
         self.yearly_retention = yearly_retention

@@ -58,8 +58,9 @@ class BackupLongTermRetentionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: LongTermRetentionPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.LongTermRetentionPolicy or
+        :return: BackupLongTermRetentionPolicy or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.sql.models.BackupLongTermRetentionPolicy or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -100,7 +101,7 @@ class BackupLongTermRetentionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LongTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -138,7 +139,7 @@ class BackupLongTermRetentionPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'LongTermRetentionPolicy')
+        body_content = self._serialize.body(parameters, 'BackupLongTermRetentionPolicy')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -153,7 +154,7 @@ class BackupLongTermRetentionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LongTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -174,14 +175,14 @@ class BackupLongTermRetentionPoliciesOperations(object):
         :param database_name: The name of the database.
         :type database_name: str
         :param parameters: The long term retention policy info.
-        :type parameters: ~azure.mgmt.sql.models.LongTermRetentionPolicy
+        :type parameters: ~azure.mgmt.sql.models.BackupLongTermRetentionPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :return: An instance of AzureOperationPoller that returns
-         LongTermRetentionPolicy or ClientRawResponse if raw=true
+         BackupLongTermRetentionPolicy or ClientRawResponse if raw=true
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.LongTermRetentionPolicy]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.BackupLongTermRetentionPolicy]
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -218,7 +219,7 @@ class BackupLongTermRetentionPoliciesOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = self._deserialize('LongTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -251,8 +252,9 @@ class BackupLongTermRetentionPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: LongTermRetentionPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.LongTermRetentionPolicy or
+        :return: BackupLongTermRetentionPolicy or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.sql.models.BackupLongTermRetentionPolicy or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -292,7 +294,7 @@ class BackupLongTermRetentionPoliciesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LongTermRetentionPolicy', response)
+            deserialized = self._deserialize('BackupLongTermRetentionPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
