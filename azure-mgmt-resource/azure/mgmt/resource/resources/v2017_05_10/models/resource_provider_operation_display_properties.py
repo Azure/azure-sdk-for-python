@@ -21,7 +21,7 @@ class ResourceProviderOperationDisplayProperties(Model):
     :type provider: str
     :param resource: Operation resource.
     :type resource: str
-    :param operation: Operation.
+    :param operation: The operation name.
     :type operation: str
     :param description: Operation description.
     :type description: str
