@@ -84,6 +84,15 @@ try:
     from .baseline_response_py3 import BaselineResponse
     from .time_series_information_py3 import TimeSeriesInformation
     from .calculate_baseline_response_py3 import CalculateBaselineResponse
+    from .action_py3 import Action
+    from .metric_alert_criteria_py3 import MetricAlertCriteria
+    from .metric_alert_resource_py3 import MetricAlertResource
+    from .metric_alert_resource_patch_py3 import MetricAlertResourcePatch
+    from .metric_alert_status_py3 import MetricAlertStatus
+    from .metric_alert_status_collection_py3 import MetricAlertStatusCollection
+    from .metric_dimension_py3 import MetricDimension
+    from .metric_criteria_py3 import MetricCriteria
+    from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .scale_capacity import ScaleCapacity
@@ -159,6 +168,15 @@ except (SyntaxError, ImportError):
     from .baseline_response import BaselineResponse
     from .time_series_information import TimeSeriesInformation
     from .calculate_baseline_response import CalculateBaselineResponse
+    from .action import Action
+    from .metric_alert_criteria import MetricAlertCriteria
+    from .metric_alert_resource import MetricAlertResource
+    from .metric_alert_resource_patch import MetricAlertResourcePatch
+    from .metric_alert_status import MetricAlertStatus
+    from .metric_alert_status_collection import MetricAlertStatusCollection
+    from .metric_dimension import MetricDimension
+    from .metric_criteria import MetricCriteria
+    from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -168,6 +186,7 @@ from .activity_log_alert_resource_paged import ActivityLogAlertResourcePaged
 from .event_data_paged import EventDataPaged
 from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
+from .metric_alert_resource_paged import MetricAlertResourcePaged
 from .monitor_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
@@ -261,6 +280,15 @@ __all__ = [
     'BaselineResponse',
     'TimeSeriesInformation',
     'CalculateBaselineResponse',
+    'Action',
+    'MetricAlertCriteria',
+    'MetricAlertResource',
+    'MetricAlertResourcePatch',
+    'MetricAlertStatus',
+    'MetricAlertStatusCollection',
+    'MetricDimension',
+    'MetricCriteria',
+    'MetricAlertSingleResourceMultipleMetricCriteria',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
@@ -270,6 +298,7 @@ __all__ = [
     'EventDataPaged',
     'LocalizableStringPaged',
     'MetricDefinitionPaged',
+    'MetricAlertResourcePaged',
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',
