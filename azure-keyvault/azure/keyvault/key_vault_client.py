@@ -3934,6 +3934,141 @@ class KeyVaultClient(object):
         return deserialized
     merge_certificate.metadata = {'url': '/certificates/{certificate-name}/pending/merge'}
 
+    def backup_certificate(
+            self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
+        """Backs up the specified certificate.
+
+        Requests that a backup of the specified certificate be downloaded to
+        the client. All versions of the certificate will be downloaded. This
+        operation requires the certificates/backup permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param certificate_name: The name of the certificate.
+        :type certificate_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BackupCertificateResult or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.BackupCertificateResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = self.backup_certificate.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'certificate-name': self._serialize.url("certificate_name", certificate_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupCertificateResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    backup_certificate.metadata = {'url': '/certificates/{certificate-name}/backup'}
+
+    def restore_certificate(
+            self, vault_base_url, certificate_bundle_backup, custom_headers=None, raw=False, **operation_config):
+        """Restores a backed up certificate to a vault.
+
+        Restores a backed up certificate, and all its versions, to a vault.
+        This operation requires the certificates/restore permission.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param certificate_bundle_backup: The backup blob associated with a
+         certificate bundle.
+        :type certificate_bundle_backup: bytes
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: CertificateBundle or ClientRawResponse if raw=true
+        :rtype: ~azure.keyvault.models.CertificateBundle or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters = models.CertificateRestoreParameters(certificate_bundle_backup=certificate_bundle_backup)
+
+        # Construct URL
+        url = self.restore_certificate.metadata['url']
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CertificateRestoreParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CertificateBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    restore_certificate.metadata = {'url': '/certificates/restore'}
+
     def get_deleted_certificates(
             self, vault_base_url, maxresults=None, include_pending=None, custom_headers=None, raw=False, **operation_config):
         """Lists the deleted certificates in the specified vault currently

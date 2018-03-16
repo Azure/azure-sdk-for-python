@@ -40,10 +40,10 @@ class SasDefinitionUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, template_uri=None, sas_type=None, validity_period=None, sas_definition_attributes=None, tags=None):
-        super(SasDefinitionUpdateParameters, self).__init__()
-        self.template_uri = template_uri
-        self.sas_type = sas_type
-        self.validity_period = validity_period
-        self.sas_definition_attributes = sas_definition_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SasDefinitionUpdateParameters, self).__init__(**kwargs)
+        self.template_uri = kwargs.get('template_uri', None)
+        self.sas_type = kwargs.get('sas_type', None)
+        self.validity_period = kwargs.get('validity_period', None)
+        self.sas_definition_attributes = kwargs.get('sas_definition_attributes', None)
+        self.tags = kwargs.get('tags', None)

@@ -43,10 +43,10 @@ class SecretItem(Model):
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, attributes=None, tags=None, content_type=None):
-        super(SecretItem, self).__init__()
-        self.id = id
-        self.attributes = attributes
-        self.tags = tags
-        self.content_type = content_type
+    def __init__(self, **kwargs):
+        super(SecretItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
+        self.content_type = kwargs.get('content_type', None)
         self.managed = None
