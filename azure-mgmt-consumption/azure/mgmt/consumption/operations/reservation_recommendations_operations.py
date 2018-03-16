@@ -59,6 +59,10 @@ class ReservationRecommendationsOperations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}

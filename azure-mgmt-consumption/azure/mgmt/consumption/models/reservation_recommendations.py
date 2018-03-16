@@ -48,7 +48,7 @@ class ReservationRecommendations(Model):
     :ivar net_savings: Total estimated savings with reserved instances.
     :vartype net_savings: decimal.Decimal
     :ivar first_usage_date: The usage date for looking back.
-    :vartype first_usage_date: datetime
+    :vartype first_usage_date: date
     :ivar scope: Shared or single recommendation.
     :vartype scope: str
     """
@@ -85,7 +85,7 @@ class ReservationRecommendations(Model):
         'recommended_quantity': {'key': 'properties.recommendedQuantity', 'type': 'decimal'},
         'total_cost_with_reserved_instances': {'key': 'properties.totalCostWithReservedInstances', 'type': 'decimal'},
         'net_savings': {'key': 'properties.netSavings', 'type': 'decimal'},
-        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
+        'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'date'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
     }
 
