@@ -31,7 +31,7 @@ class ManagedClusterAccessProfile(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param kube_config: Base64-encoded Kubernetes configuration file.
-    :type kube_config: str
+    :type kube_config: bytearray
     """
 
     _validation = {
@@ -47,7 +47,7 @@ class ManagedClusterAccessProfile(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'kube_config': {'key': 'properties.kubeConfig', 'type': 'str'},
+        'kube_config': {'key': 'properties.kubeConfig', 'type': 'bytearray'},
     }
 
     def __init__(self, **kwargs):
