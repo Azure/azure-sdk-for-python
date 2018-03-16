@@ -58,14 +58,14 @@ class CertificateBundle(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, cer=None, content_type=None, attributes=None, tags=None):
-        super(CertificateBundle, self).__init__()
+    def __init__(self, **kwargs):
+        super(CertificateBundle, self).__init__(**kwargs)
         self.id = None
         self.kid = None
         self.sid = None
         self.x509_thumbprint = None
         self.policy = None
-        self.cer = cer
-        self.content_type = content_type
-        self.attributes = attributes
-        self.tags = tags
+        self.cer = kwargs.get('cer', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)

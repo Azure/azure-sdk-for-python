@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class SecretSetParameters(Model):
     """The secret set parameters.
 
-    :param value: The value of the secret.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The value of the secret.
     :type value: str
     :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
@@ -36,9 +38,9 @@ class SecretSetParameters(Model):
         'secret_attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
     }
 
-    def __init__(self, value, tags=None, content_type=None, secret_attributes=None):
-        super(SecretSetParameters, self).__init__()
-        self.value = value
-        self.tags = tags
-        self.content_type = content_type
-        self.secret_attributes = secret_attributes
+    def __init__(self, **kwargs):
+        super(SecretSetParameters, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.tags = kwargs.get('tags', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.secret_attributes = kwargs.get('secret_attributes', None)

@@ -56,8 +56,8 @@ class DeletedSecretItem(SecretItem):
         'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, id=None, attributes=None, tags=None, content_type=None, recovery_id=None):
-        super(DeletedSecretItem, self).__init__(id=id, attributes=attributes, tags=tags, content_type=content_type)
-        self.recovery_id = recovery_id
+    def __init__(self, **kwargs):
+        super(DeletedSecretItem, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None

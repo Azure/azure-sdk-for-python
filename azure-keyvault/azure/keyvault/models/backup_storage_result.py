@@ -30,6 +30,6 @@ class BackupStorageResult(Model):
         'value': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self):
-        super(BackupStorageResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(BackupStorageResult, self).__init__(**kwargs)
         self.value = None

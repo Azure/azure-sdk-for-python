@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class SasDefinitionCreateParameters(Model):
     """The SAS definition create parameters.
 
-    :param template_uri: The SAS definition token template signed with an
-     arbitrary key.  Tokens created according to the SAS definition will have
-     the same properties as the template.
+    All required parameters must be populated in order to send to Azure.
+
+    :param template_uri: Required. The SAS definition token template signed
+     with an arbitrary key.  Tokens created according to the SAS definition
+     will have the same properties as the template.
     :type template_uri: str
-    :param sas_type: The type of SAS token the SAS definition will create.
-     Possible values include: 'account', 'service'
+    :param sas_type: Required. The type of SAS token the SAS definition will
+     create. Possible values include: 'account', 'service'
     :type sas_type: str or ~azure.keyvault.models.SasTokenType
-    :param validity_period: The validity period of SAS tokens created
-     according to the SAS definition.
+    :param validity_period: Required. The validity period of SAS tokens
+     created according to the SAS definition.
     :type validity_period: str
     :param sas_definition_attributes: The attributes of the SAS definition.
     :type sas_definition_attributes:
@@ -46,10 +48,10 @@ class SasDefinitionCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, template_uri, sas_type, validity_period, sas_definition_attributes=None, tags=None):
-        super(SasDefinitionCreateParameters, self).__init__()
-        self.template_uri = template_uri
-        self.sas_type = sas_type
-        self.validity_period = validity_period
-        self.sas_definition_attributes = sas_definition_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SasDefinitionCreateParameters, self).__init__(**kwargs)
+        self.template_uri = kwargs.get('template_uri', None)
+        self.sas_type = kwargs.get('sas_type', None)
+        self.validity_period = kwargs.get('validity_period', None)
+        self.sas_definition_attributes = kwargs.get('sas_definition_attributes', None)
+        self.tags = kwargs.get('tags', None)

@@ -48,9 +48,9 @@ class StorageAccountAttributes(Model):
         'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
     }
 
-    def __init__(self, enabled=None):
-        super(StorageAccountAttributes, self).__init__()
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(StorageAccountAttributes, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
         self.created = None
         self.updated = None
         self.recovery_level = None
