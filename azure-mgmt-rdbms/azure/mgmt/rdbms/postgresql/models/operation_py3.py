@@ -46,7 +46,7 @@ class Operation(Model):
         'properties': {'key': 'properties', 'type': '{object}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None

@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class TrackedResource(ProxyResource):
-    """Resource properties including location and tags for track resources.
+class FirewallRule(ProxyResource):
+    """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,28 +26,31 @@ class TrackedResource(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. The location the resource resides in.
-    :type location: str
-    :param tags: Application-specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :param start_ip_address: Required. The start IP address of the server
+     firewall rule. Must be IPv4 format.
+    :type start_ip_address: str
+    :param end_ip_address: Required. The end IP address of the server firewall
+     rule. Must be IPv4 format.
+    :type end_ip_address: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'start_ip_address': {'required': True, 'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
+        'end_ip_address': {'required': True, 'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
+        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs) -> None:
+        super(FirewallRule, self).__init__(, **kwargs)
+        self.start_ip_address = start_ip_address
+        self.end_ip_address = end_ip_address

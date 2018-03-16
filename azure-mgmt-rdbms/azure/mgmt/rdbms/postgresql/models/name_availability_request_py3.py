@@ -12,34 +12,27 @@
 from msrest.serialization import Model
 
 
-class ProxyResource(Model):
-    """Resource properties.
+class NameAvailabilityRequest(Model):
+    """Request from client to check resource name availability.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :param name: Required. Resource name to verify.
+    :type name: str
+    :param type: Resource type used for verification.
+    :type type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, *, name: str, type: str=None, **kwargs) -> None:
+        super(NameAvailabilityRequest, self).__init__(**kwargs)
+        self.name = name
+        self.type = type

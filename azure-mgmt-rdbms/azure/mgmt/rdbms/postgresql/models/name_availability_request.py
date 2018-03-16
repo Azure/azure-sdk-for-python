@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class NameAvailabilityRequest(Model):
     """Request from client to check resource name availability.
 
-    :param name: Resource name to verify.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Resource name to verify.
     :type name: str
     :param type: Resource type used for verification.
     :type type: str
@@ -30,7 +32,7 @@ class NameAvailabilityRequest(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name, type=None):
-        super(NameAvailabilityRequest, self).__init__()
-        self.name = name
-        self.type = type
+    def __init__(self, **kwargs):
+        super(NameAvailabilityRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
