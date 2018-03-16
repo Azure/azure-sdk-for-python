@@ -28,7 +28,7 @@ class CreateManagementGroupRequest(Model):
         'parent_id': {'key': 'parentId', 'type': 'str'},
     }
 
-    def __init__(self, display_name=None, parent_id=None):
-        super(CreateManagementGroupRequest, self).__init__()
-        self.display_name = display_name
-        self.parent_id = parent_id
+    def __init__(self, **kwargs):
+        super(CreateManagementGroupRequest, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.parent_id = kwargs.get('parent_id', None)
