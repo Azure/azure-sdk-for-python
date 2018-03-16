@@ -14,6 +14,7 @@ from .usage_detail import UsageDetail
 from .marketplace import Marketplace
 from .reservation_summaries import ReservationSummaries
 from .reservation_details import ReservationDetails
+from .reservation_recommendations import ReservationRecommendations
 from .budget_time_period import BudgetTimePeriod
 from .filters import Filters
 from .current_spend import CurrentSpend
@@ -24,13 +25,16 @@ from .error_response import ErrorResponse, ErrorResponseException
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .resource import Resource
+from .resource_attributes import ResourceAttributes
 from .proxy_resource import ProxyResource
 from .price_sheet_properties import PriceSheetProperties
 from .price_sheet_result import PriceSheetResult
+from .query_options import QueryOptions
 from .usage_detail_paged import UsageDetailPaged
 from .marketplace_paged import MarketplacePaged
 from .reservation_summaries_paged import ReservationSummariesPaged
 from .reservation_details_paged import ReservationDetailsPaged
+from .reservation_recommendations_paged import ReservationRecommendationsPaged
 from .budget_paged import BudgetPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
@@ -46,6 +50,7 @@ __all__ = [
     'Marketplace',
     'ReservationSummaries',
     'ReservationDetails',
+    'ReservationRecommendations',
     'BudgetTimePeriod',
     'Filters',
     'CurrentSpend',
@@ -56,13 +61,16 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'Resource',
+    'ResourceAttributes',
     'ProxyResource',
     'PriceSheetProperties',
     'PriceSheetResult',
+    'QueryOptions',
     'UsageDetailPaged',
     'MarketplacePaged',
     'ReservationSummariesPaged',
     'ReservationDetailsPaged',
+    'ReservationRecommendationsPaged',
     'BudgetPaged',
     'OperationPaged',
     'CategoryType',

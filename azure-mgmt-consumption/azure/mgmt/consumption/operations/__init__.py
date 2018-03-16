@@ -13,6 +13,7 @@ from .usage_details_operations import UsageDetailsOperations
 from .marketplaces_operations import MarketplacesOperations
 from .reservations_summaries_operations import ReservationsSummariesOperations
 from .reservations_details_operations import ReservationsDetailsOperations
+from .reservation_recommendations_operations import ReservationRecommendationsOperations
 from .budgets_operations import BudgetsOperations
 from .operations import Operations
 from .price_sheet_operations import PriceSheetOperations
@@ -22,6 +23,7 @@ __all__ = [
     'MarketplacesOperations',
     'ReservationsSummariesOperations',
     'ReservationsDetailsOperations',
+    'ReservationRecommendationsOperations',
     'BudgetsOperations',
     'Operations',
     'PriceSheetOperations',
