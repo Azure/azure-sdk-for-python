@@ -18,14 +18,16 @@ class DatabaseAccountCreateUpdateParameters(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
     :ivar name: The name of the database account.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: The location of the resource group to which the resource
-     belongs.
+    :param location: Required. The location of the resource group to which the
+     resource belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -36,10 +38,10 @@ class DatabaseAccountCreateUpdateParameters(Resource):
     :param consistency_policy: The consistency policy for the Cosmos DB
      account.
     :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
-    :param locations: An array that contains the georeplication locations
-     enabled for the Cosmos DB account.
+    :param locations: Required. An array that contains the georeplication
+     locations enabled for the Cosmos DB account.
     :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type:  Default value: "Standard" .
+    :ivar database_account_offer_type: Required.  Default value: "Standard" .
     :vartype database_account_offer_type: str
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
@@ -51,6 +53,8 @@ class DatabaseAccountCreateUpdateParameters(Resource):
      Automatic failover will result in a new write region for the account and
      is chosen based on the failover priorities configured for the account.
     :type enable_automatic_failover: bool
+    :param capabilities: List of Cosmos DB capabilities for the account
+    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
     """
 
     _validation = {
@@ -74,14 +78,16 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
         'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, location, locations, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter=None, enable_automatic_failover=None):
-        super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags)
-        self.kind = kind
-        self.consistency_policy = consistency_policy
-        self.locations = locations
-        self.ip_range_filter = ip_range_filter
-        self.enable_automatic_failover = enable_automatic_failover
+    def __init__(self, **kwargs):
+        super(DatabaseAccountCreateUpdateParameters, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "GlobalDocumentDB")
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.locations = kwargs.get('locations', None)
+        self.ip_range_filter = kwargs.get('ip_range_filter', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.capabilities = kwargs.get('capabilities', None)

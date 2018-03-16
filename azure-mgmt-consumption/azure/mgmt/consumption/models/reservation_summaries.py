@@ -95,8 +95,8 @@ class ReservationSummaries(Resource):
         'max_utilization_percentage': {'key': 'properties.maxUtilizationPercentage', 'type': 'decimal'},
     }
 
-    def __init__(self):
-        super(ReservationSummaries, self).__init__()
+    def __init__(self, **kwargs):
+        super(ReservationSummaries, self).__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None

@@ -14,9 +14,12 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.usage_details_operations import UsageDetailsOperations
+from .operations.marketplaces_operations import MarketplacesOperations
 from .operations.reservations_summaries_operations import ReservationsSummariesOperations
 from .operations.reservations_details_operations import ReservationsDetailsOperations
+from .operations.budgets_operations import BudgetsOperations
 from .operations.operations import Operations
+from .operations.price_sheet_operations import PriceSheetOperations
 from . import models
 
 
@@ -30,16 +33,21 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param grain: Can be daily or monthly. Possible values include:
+     'DailyGrain', 'MonthlyGrain'
+    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, grain, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if grain is None:
+            raise ValueError("Parameter 'grain' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -50,6 +58,7 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.grain = grain
 
 
 class ConsumptionManagementClient(object):
@@ -60,37 +69,52 @@ class ConsumptionManagementClient(object):
 
     :ivar usage_details: UsageDetails operations
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :ivar marketplaces: Marketplaces operations
+    :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
     :ivar reservations_summaries: ReservationsSummaries operations
     :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
     :ivar reservations_details: ReservationsDetails operations
     :vartype reservations_details: azure.mgmt.consumption.operations.ReservationsDetailsOperations
+    :ivar budgets: Budgets operations
+    :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.consumption.operations.Operations
+    :ivar price_sheet: PriceSheet operations
+    :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param grain: Can be daily or monthly. Possible values include:
+     'DailyGrain', 'MonthlyGrain'
+    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, grain, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, grain, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-11-30'
+        self.api_version = '2018-03-31'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.usage_details = UsageDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.marketplaces = MarketplacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.reservations_summaries = ReservationsSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservations_details = ReservationsDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.budgets = BudgetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.price_sheet = PriceSheetOperations(
             self._client, self.config, self._serialize, self._deserialize)

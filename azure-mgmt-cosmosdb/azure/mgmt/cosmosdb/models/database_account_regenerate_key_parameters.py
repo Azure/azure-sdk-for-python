@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class DatabaseAccountRegenerateKeyParameters(Model):
     """Parameters to regenerate the keys within the database account.
 
-    :param key_kind: The access key to regenerate. Possible values include:
-     'primary', 'secondary', 'primaryReadonly', 'secondaryReadonly'
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_kind: Required. The access key to regenerate. Possible values
+     include: 'primary', 'secondary', 'primaryReadonly', 'secondaryReadonly'
     :type key_kind: str or ~azure.mgmt.cosmosdb.models.KeyKind
     """
 
@@ -28,5 +30,6 @@ class DatabaseAccountRegenerateKeyParameters(Model):
         'key_kind': {'key': 'keyKind', 'type': 'str'},
     }
 
-    def __init__(self, key_kind):
-        self.key_kind = key_kind
+    def __init__(self, **kwargs):
+        super(DatabaseAccountRegenerateKeyParameters, self).__init__(**kwargs)
+        self.key_kind = kwargs.get('key_kind', None)

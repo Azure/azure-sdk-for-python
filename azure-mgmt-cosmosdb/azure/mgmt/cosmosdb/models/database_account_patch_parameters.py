@@ -17,11 +17,16 @@ class DatabaseAccountPatchParameters(Model):
 
     :param tags:
     :type tags: dict[str, str]
+    :param capabilities: List of Cosmos DB capabilities for the account
+    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, tags=None):
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(DatabaseAccountPatchParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.capabilities = kwargs.get('capabilities', None)

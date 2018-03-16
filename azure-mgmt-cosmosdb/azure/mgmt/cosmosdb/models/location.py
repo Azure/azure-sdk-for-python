@@ -50,9 +50,10 @@ class Location(Model):
         'failover_priority': {'key': 'failoverPriority', 'type': 'int'},
     }
 
-    def __init__(self, location_name=None, provisioning_state=None, failover_priority=None):
+    def __init__(self, **kwargs):
+        super(Location, self).__init__(**kwargs)
         self.id = None
-        self.location_name = location_name
+        self.location_name = kwargs.get('location_name', None)
         self.document_endpoint = None
-        self.provisioning_state = provisioning_state
-        self.failover_priority = failover_priority
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.failover_priority = kwargs.get('failover_priority', None)

@@ -58,7 +58,7 @@ class UsageDetail(Resource):
     :vartype pretax_cost: decimal.Decimal
     :ivar is_estimated: The estimated usage is subject to change.
     :vartype is_estimated: bool
-    :ivar meter_id: The meter id.
+    :ivar meter_id: The meter id (GUID).
     :vartype meter_id: str
     :ivar meter_details: The details about the meter. By default this is not
      populated, unless it's specified in $expand.
@@ -141,8 +141,8 @@ class UsageDetail(Resource):
         'additional_properties': {'key': 'properties.additionalProperties', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(UsageDetail, self).__init__()
+    def __init__(self, **kwargs):
+        super(UsageDetail, self).__init__(**kwargs)
         self.billing_period_id = None
         self.invoice_id = None
         self.usage_start = None

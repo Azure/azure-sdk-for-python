@@ -18,14 +18,16 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
     :ivar name: The name of the database account.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: The location of the resource group to which the resource
-     belongs.
+    :param location: Required. The location of the resource group to which the
+     resource belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -46,9 +48,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
