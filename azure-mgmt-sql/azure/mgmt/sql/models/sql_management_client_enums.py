@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class BackupLongTermRetentionPolicyState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
 class CapabilityStatus(Enum):
 
     visible = "Visible"
@@ -468,75 +462,6 @@ class VirtualNetworkRuleState(Enum):
     unknown = "Unknown"
 
 
-class ManagementOperationState(Enum):
-
-    pending = "Pending"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    cancel_in_progress = "CancelInProgress"
-    cancelled = "Cancelled"
-
-
-class JobExecutionLifecycle(Enum):
-
-    created = "Created"
-    in_progress = "InProgress"
-    waiting_for_child_job_executions = "WaitingForChildJobExecutions"
-    waiting_for_retry = "WaitingForRetry"
-    succeeded = "Succeeded"
-    succeeded_with_skipped = "SucceededWithSkipped"
-    failed = "Failed"
-    timed_out = "TimedOut"
-    canceled = "Canceled"
-    skipped = "Skipped"
-
-
-class ProvisioningState(Enum):
-
-    created = "Created"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-
-
-class JobTargetType(Enum):
-
-    target_group = "TargetGroup"
-    sql_database = "SqlDatabase"
-    sql_elastic_pool = "SqlElasticPool"
-    sql_shard_map = "SqlShardMap"
-    sql_server = "SqlServer"
-
-
-class JobScheduleType(Enum):
-
-    once = "Once"
-    recurring = "Recurring"
-
-
-class JobStepActionType(Enum):
-
-    tsql = "TSql"
-
-
-class JobStepActionSource(Enum):
-
-    inline = "Inline"
-
-
-class JobStepOutputType(Enum):
-
-    sql_database = "SqlDatabase"
-
-
-class JobTargetGroupMembershipType(Enum):
-
-    include = "Include"
-    exclude = "Exclude"
-
-
 class AutomaticTuningServerMode(Enum):
 
     custom = "Custom"
@@ -555,3 +480,20 @@ class RestorePointType(Enum):
 
     continuous = "CONTINUOUS"
     discrete = "DISCRETE"
+
+
+class ManagementOperationState(Enum):
+
+    pending = "Pending"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    cancel_in_progress = "CancelInProgress"
+    cancelled = "Cancelled"
+
+
+class DatabaseState(Enum):
+
+    all = "All"
+    live = "Live"
+    deleted = "Deleted"

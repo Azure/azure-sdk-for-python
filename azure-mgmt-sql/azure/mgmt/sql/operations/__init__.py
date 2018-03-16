@@ -9,8 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
-from .backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
 from .recoverable_databases_operations import RecoverableDatabasesOperations
 from .restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .capabilities_operations import CapabilitiesOperations
@@ -46,21 +44,15 @@ from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .database_operations import DatabaseOperations
-from .job_agents_operations import JobAgentsOperations
-from .job_credentials_operations import JobCredentialsOperations
-from .job_executions_operations import JobExecutionsOperations
-from .jobs_operations import JobsOperations
-from .job_steps_operations import JobStepsOperations
-from .job_target_groups_operations import JobTargetGroupsOperations
-from .job_versions_operations import JobVersionsOperations
+from .long_term_retention_backups_operations import LongTermRetentionBackupsOperations
+from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .restore_points_operations import RestorePointsOperations
+from .database_operations import DatabaseOperations
+from .elastic_pool_operations import ElasticPoolOperations
 
 __all__ = [
-    'BackupLongTermRetentionPoliciesOperations',
-    'BackupLongTermRetentionVaultsOperations',
     'RecoverableDatabasesOperations',
     'RestorableDroppedDatabasesOperations',
     'CapabilitiesOperations',
@@ -96,15 +88,11 @@ __all__ = [
     'SyncMembersOperations',
     'SubscriptionUsagesOperations',
     'VirtualNetworkRulesOperations',
-    'DatabaseOperations',
-    'JobAgentsOperations',
-    'JobCredentialsOperations',
-    'JobExecutionsOperations',
-    'JobsOperations',
-    'JobStepsOperations',
-    'JobTargetGroupsOperations',
-    'JobVersionsOperations',
+    'LongTermRetentionBackupsOperations',
+    'BackupLongTermRetentionPoliciesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
     'RestorePointsOperations',
+    'DatabaseOperations',
+    'ElasticPoolOperations',
 ]

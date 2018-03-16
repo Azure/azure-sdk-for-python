@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class JobStepPaged(Paged):
+class ElasticPoolOperationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`JobStep <azure.mgmt.sql.models.JobStep>` object
+    A paging container for iterating over a list of :class:`ElasticPoolOperation <azure.mgmt.sql.models.ElasticPoolOperation>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[JobStep]'}
+        'current_page': {'key': 'value', 'type': '[ElasticPoolOperation]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(JobStepPaged, self).__init__(*args, **kwargs)
+        super(ElasticPoolOperationPaged, self).__init__(*args, **kwargs)

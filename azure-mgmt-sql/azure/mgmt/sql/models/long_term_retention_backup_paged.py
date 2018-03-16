@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class JobVersionPaged(Paged):
+class LongTermRetentionBackupPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`JobVersion <azure.mgmt.sql.models.JobVersion>` object
+    A paging container for iterating over a list of :class:`LongTermRetentionBackup <azure.mgmt.sql.models.LongTermRetentionBackup>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[JobVersion]'}
+        'current_page': {'key': 'value', 'type': '[LongTermRetentionBackup]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(JobVersionPaged, self).__init__(*args, **kwargs)
+        super(LongTermRetentionBackupPaged, self).__init__(*args, **kwargs)

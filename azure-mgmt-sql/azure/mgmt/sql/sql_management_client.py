@@ -13,8 +13,6 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
-from .operations.backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
 from .operations.recoverable_databases_operations import RecoverableDatabasesOperations
 from .operations.restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -50,17 +48,13 @@ from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .operations.database_operations import DatabaseOperations
-from .operations.job_agents_operations import JobAgentsOperations
-from .operations.job_credentials_operations import JobCredentialsOperations
-from .operations.job_executions_operations import JobExecutionsOperations
-from .operations.jobs_operations import JobsOperations
-from .operations.job_steps_operations import JobStepsOperations
-from .operations.job_target_groups_operations import JobTargetGroupsOperations
-from .operations.job_versions_operations import JobVersionsOperations
+from .operations.long_term_retention_backups_operations import LongTermRetentionBackupsOperations
+from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
+from .operations.database_operations import DatabaseOperations
+from .operations.elastic_pool_operations import ElasticPoolOperations
 from . import models
 
 
@@ -103,10 +97,6 @@ class SqlManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
 
-    :ivar backup_long_term_retention_policies: BackupLongTermRetentionPolicies operations
-    :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
-    :ivar backup_long_term_retention_vaults: BackupLongTermRetentionVaults operations
-    :vartype backup_long_term_retention_vaults: azure.mgmt.sql.operations.BackupLongTermRetentionVaultsOperations
     :ivar recoverable_databases: RecoverableDatabases operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
@@ -177,28 +167,20 @@ class SqlManagementClient(object):
     :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
-    :ivar database_operations: DatabaseOperations operations
-    :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
-    :ivar job_agents: JobAgents operations
-    :vartype job_agents: azure.mgmt.sql.operations.JobAgentsOperations
-    :ivar job_credentials: JobCredentials operations
-    :vartype job_credentials: azure.mgmt.sql.operations.JobCredentialsOperations
-    :ivar job_executions: JobExecutions operations
-    :vartype job_executions: azure.mgmt.sql.operations.JobExecutionsOperations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.sql.operations.JobsOperations
-    :ivar job_steps: JobSteps operations
-    :vartype job_steps: azure.mgmt.sql.operations.JobStepsOperations
-    :ivar job_target_groups: JobTargetGroups operations
-    :vartype job_target_groups: azure.mgmt.sql.operations.JobTargetGroupsOperations
-    :ivar job_versions: JobVersions operations
-    :vartype job_versions: azure.mgmt.sql.operations.JobVersionsOperations
+    :ivar long_term_retention_backups: LongTermRetentionBackups operations
+    :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
+    :ivar backup_long_term_retention_policies: BackupLongTermRetentionPolicies operations
+    :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
     :ivar restore_points: RestorePoints operations
     :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
+    :ivar database_operations: DatabaseOperations operations
+    :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
+    :ivar elastic_pool_operations: ElasticPoolOperations operations
+    :vartype elastic_pool_operations: azure.mgmt.sql.operations.ElasticPoolOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -219,10 +201,6 @@ class SqlManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_long_term_retention_vaults = BackupLongTermRetentionVaultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
@@ -293,25 +271,17 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.database_operations = DatabaseOperations(
+        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.job_agents = JobAgentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_credentials = JobCredentialsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_executions = JobExecutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_steps = JobStepsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_target_groups = JobTargetGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.job_versions = JobVersionsOperations(
+        self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restore_points = RestorePointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_operations = DatabaseOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.elastic_pool_operations = ElasticPoolOperations(
             self._client, self.config, self._serialize, self._deserialize)
