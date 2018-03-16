@@ -28,7 +28,7 @@ class IssuerParameters(Model):
         'certificate_type': {'key': 'cty', 'type': 'str'},
     }
 
-    def __init__(self, name=None, certificate_type=None):
-        super(IssuerParameters, self).__init__()
-        self.name = name
-        self.certificate_type = certificate_type
+    def __init__(self, **kwargs):
+        super(IssuerParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.certificate_type = kwargs.get('certificate_type', None)

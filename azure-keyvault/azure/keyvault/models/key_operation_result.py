@@ -34,7 +34,7 @@ class KeyOperationResult(Model):
         'result': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self):
-        super(KeyOperationResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(KeyOperationResult, self).__init__(**kwargs)
         self.kid = None
         self.result = None

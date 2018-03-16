@@ -32,9 +32,9 @@ class CertificateItem(Model):
         'x509_thumbprint': {'key': 'x5t', 'type': 'base64'},
     }
 
-    def __init__(self, id=None, attributes=None, tags=None, x509_thumbprint=None):
-        super(CertificateItem, self).__init__()
-        self.id = id
-        self.attributes = attributes
-        self.tags = tags
-        self.x509_thumbprint = x509_thumbprint
+    def __init__(self, **kwargs):
+        super(CertificateItem, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
+        self.x509_thumbprint = kwargs.get('x509_thumbprint', None)

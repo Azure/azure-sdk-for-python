@@ -71,21 +71,21 @@ class JsonWebKey(Model):
         'y': {'key': 'y', 'type': 'base64'},
     }
 
-    def __init__(self, kid=None, kty=None, key_ops=None, n=None, e=None, d=None, dp=None, dq=None, qi=None, p=None, q=None, k=None, t=None, crv=None, x=None, y=None):
-        super(JsonWebKey, self).__init__()
-        self.kid = kid
-        self.kty = kty
-        self.key_ops = key_ops
-        self.n = n
-        self.e = e
-        self.d = d
-        self.dp = dp
-        self.dq = dq
-        self.qi = qi
-        self.p = p
-        self.q = q
-        self.k = k
-        self.t = t
-        self.crv = crv
-        self.x = x
-        self.y = y
+    def __init__(self, **kwargs):
+        super(JsonWebKey, self).__init__(**kwargs)
+        self.kid = kwargs.get('kid', None)
+        self.kty = kwargs.get('kty', None)
+        self.key_ops = kwargs.get('key_ops', None)
+        self.n = kwargs.get('n', None)
+        self.e = kwargs.get('e', None)
+        self.d = kwargs.get('d', None)
+        self.dp = kwargs.get('dp', None)
+        self.dq = kwargs.get('dq', None)
+        self.qi = kwargs.get('qi', None)
+        self.p = kwargs.get('p', None)
+        self.q = kwargs.get('q', None)
+        self.k = kwargs.get('k', None)
+        self.t = kwargs.get('t', None)
+        self.crv = kwargs.get('crv', None)
+        self.x = kwargs.get('x', None)
+        self.y = kwargs.get('y', None)

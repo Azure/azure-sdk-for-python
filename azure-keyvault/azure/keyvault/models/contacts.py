@@ -33,7 +33,7 @@ class Contacts(Model):
         'contact_list': {'key': 'contacts', 'type': '[Contact]'},
     }
 
-    def __init__(self, contact_list=None):
-        super(Contacts, self).__init__()
+    def __init__(self, **kwargs):
+        super(Contacts, self).__init__(**kwargs)
         self.id = None
-        self.contact_list = contact_list
+        self.contact_list = kwargs.get('contact_list', None)

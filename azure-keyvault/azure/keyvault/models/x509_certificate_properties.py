@@ -46,11 +46,11 @@ class X509CertificateProperties(Model):
         'certificate_transparency': {'key': 'cert_transparency', 'type': 'bool'},
     }
 
-    def __init__(self, subject=None, ekus=None, subject_alternative_names=None, key_usage=None, validity_in_months=None, certificate_transparency=None):
-        super(X509CertificateProperties, self).__init__()
-        self.subject = subject
-        self.ekus = ekus
-        self.subject_alternative_names = subject_alternative_names
-        self.key_usage = key_usage
-        self.validity_in_months = validity_in_months
-        self.certificate_transparency = certificate_transparency
+    def __init__(self, **kwargs):
+        super(X509CertificateProperties, self).__init__(**kwargs)
+        self.subject = kwargs.get('subject', None)
+        self.ekus = kwargs.get('ekus', None)
+        self.subject_alternative_names = kwargs.get('subject_alternative_names', None)
+        self.key_usage = kwargs.get('key_usage', None)
+        self.validity_in_months = kwargs.get('validity_in_months', None)
+        self.certificate_transparency = kwargs.get('certificate_transparency', None)

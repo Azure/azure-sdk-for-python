@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class KeyCreateParameters(Model):
     """The key create parameters.
 
-    :param kty: The type of key to create. For valid values, see
+    All required parameters must be populated in order to send to Azure.
+
+    :param kty: Required. The type of key to create. For valid values, see
      JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM',
      'oct'
     :type kty: str or ~azure.keyvault.models.JsonWebKeyType
@@ -46,11 +48,11 @@ class KeyCreateParameters(Model):
         'curve': {'key': 'crv', 'type': 'str'},
     }
 
-    def __init__(self, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, curve=None):
-        super(KeyCreateParameters, self).__init__()
-        self.kty = kty
-        self.key_size = key_size
-        self.key_ops = key_ops
-        self.key_attributes = key_attributes
-        self.tags = tags
-        self.curve = curve
+    def __init__(self, **kwargs):
+        super(KeyCreateParameters, self).__init__(**kwargs)
+        self.kty = kwargs.get('kty', None)
+        self.key_size = kwargs.get('key_size', None)
+        self.key_ops = kwargs.get('key_ops', None)
+        self.key_attributes = kwargs.get('key_attributes', None)
+        self.tags = kwargs.get('tags', None)
+        self.curve = kwargs.get('curve', None)

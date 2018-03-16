@@ -40,9 +40,9 @@ class KeyBundle(Model):
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
-    def __init__(self, key=None, attributes=None, tags=None):
-        super(KeyBundle, self).__init__()
-        self.key = key
-        self.attributes = attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(KeyBundle, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
         self.managed = None

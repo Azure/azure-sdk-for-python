@@ -52,12 +52,12 @@ class CertificatePolicy(Model):
         'attributes': {'key': 'attributes', 'type': 'CertificateAttributes'},
     }
 
-    def __init__(self, key_properties=None, secret_properties=None, x509_certificate_properties=None, lifetime_actions=None, issuer_parameters=None, attributes=None):
-        super(CertificatePolicy, self).__init__()
+    def __init__(self, **kwargs):
+        super(CertificatePolicy, self).__init__(**kwargs)
         self.id = None
-        self.key_properties = key_properties
-        self.secret_properties = secret_properties
-        self.x509_certificate_properties = x509_certificate_properties
-        self.lifetime_actions = lifetime_actions
-        self.issuer_parameters = issuer_parameters
-        self.attributes = attributes
+        self.key_properties = kwargs.get('key_properties', None)
+        self.secret_properties = kwargs.get('secret_properties', None)
+        self.x509_certificate_properties = kwargs.get('x509_certificate_properties', None)
+        self.lifetime_actions = kwargs.get('lifetime_actions', None)
+        self.issuer_parameters = kwargs.get('issuer_parameters', None)
+        self.attributes = kwargs.get('attributes', None)

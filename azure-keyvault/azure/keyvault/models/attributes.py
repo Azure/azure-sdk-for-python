@@ -43,10 +43,10 @@ class Attributes(Model):
         'updated': {'key': 'updated', 'type': 'unix-time'},
     }
 
-    def __init__(self, enabled=None, not_before=None, expires=None):
-        super(Attributes, self).__init__()
-        self.enabled = enabled
-        self.not_before = not_before
-        self.expires = expires
+    def __init__(self, **kwargs):
+        super(Attributes, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.not_before = kwargs.get('not_before', None)
+        self.expires = kwargs.get('expires', None)
         self.created = None
         self.updated = None
