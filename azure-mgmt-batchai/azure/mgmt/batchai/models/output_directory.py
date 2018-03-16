@@ -30,8 +30,7 @@ class OutputDirectory(Model):
      Summary, and Custom. Users can use multiple enums for a single directory.
      Eg. outPutType='Model,Logs, Summary'. Possible values include: 'model',
      'logs', 'summary', 'custom'. Default value: "custom" .
-    :type type: str or :class:`OutputType
-     <azure.mgmt.batchai.models.OutputType>`
+    :type type: str or ~azure.mgmt.batchai.models.OutputType
     :param create_new: True to create new directory. Default is true. If
      false, then the directory is not created and can be any directory path
      that the user specifies. Default value: True .
@@ -52,6 +51,7 @@ class OutputDirectory(Model):
     }
 
     def __init__(self, id, path_prefix, path_suffix=None, type="custom", create_new=True):
+        super(OutputDirectory, self).__init__()
         self.id = id
         self.path_prefix = path_prefix
         self.path_suffix = path_suffix

@@ -39,6 +39,7 @@ class ImageReference(Model):
     }
 
     def __init__(self, publisher, offer, sku, version=None):
+        super(ImageReference, self).__init__()
         self.publisher = publisher
         self.offer = offer
         self.sku = sku

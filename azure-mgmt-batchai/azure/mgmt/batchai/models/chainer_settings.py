@@ -41,6 +41,7 @@ class ChainerSettings(Model):
     }
 
     def __init__(self, python_script_file_path, python_interpreter_path=None, command_line_args=None, process_count=None):
+        super(ChainerSettings, self).__init__()
         self.python_script_file_path = python_script_file_path
         self.python_interpreter_path = python_interpreter_path
         self.command_line_args = command_line_args

@@ -18,7 +18,7 @@ class JobCreateParameters(Model):
     :param location: The region in which to create the job.
     :type location: str
     :param tags: The user specified tags associated with the job.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param experiment_name: Describe the experiment information of the job
     :type experiment_name: str
     :param priority: Priority associated with the job. Priority associated
@@ -28,7 +28,7 @@ class JobCreateParameters(Model):
     :type priority: int
     :param cluster: Specifies the Id of the cluster on which this job will
      run.
-    :type cluster: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
+    :type cluster: ~azure.mgmt.batchai.models.ResourceId
     :param node_count: Number of compute nodes to run the job on. The job will
      be gang scheduled on that many compute nodes
     :type node_count: int
@@ -36,55 +36,45 @@ class JobCreateParameters(Model):
      container. If the container was downloaded as part of cluster setup then
      the same container image will be used. If not provided, the job will run
      on the VM.
-    :type container_settings: :class:`ContainerSettings
-     <azure.mgmt.batchai.models.ContainerSettings>`
+    :type container_settings: ~azure.mgmt.batchai.models.ContainerSettings
     :param cntk_settings: Specifies the settings for CNTK (aka Microsoft
      Cognitive Toolkit) job.
-    :type cntk_settings: :class:`CNTKsettings
-     <azure.mgmt.batchai.models.CNTKsettings>`
+    :type cntk_settings: ~azure.mgmt.batchai.models.CNTKsettings
     :param tensor_flow_settings: Specifies the settings for Tensor Flow job.
-    :type tensor_flow_settings: :class:`TensorFlowSettings
-     <azure.mgmt.batchai.models.TensorFlowSettings>`
+    :type tensor_flow_settings: ~azure.mgmt.batchai.models.TensorFlowSettings
     :param caffe_settings: Specifies the settings for Caffe job.
-    :type caffe_settings: :class:`CaffeSettings
-     <azure.mgmt.batchai.models.CaffeSettings>`
+    :type caffe_settings: ~azure.mgmt.batchai.models.CaffeSettings
     :param caffe2_settings: Specifies the settings for Caffe2 job.
-    :type caffe2_settings: :class:`Caffe2Settings
-     <azure.mgmt.batchai.models.Caffe2Settings>`
+    :type caffe2_settings: ~azure.mgmt.batchai.models.Caffe2Settings
     :param chainer_settings: Specifies the settings for Chainer job.
-    :type chainer_settings: :class:`ChainerSettings
-     <azure.mgmt.batchai.models.ChainerSettings>`
+    :type chainer_settings: ~azure.mgmt.batchai.models.ChainerSettings
     :param custom_toolkit_settings: Specifies the settings for custom tool kit
      job.
-    :type custom_toolkit_settings: :class:`CustomToolkitSettings
-     <azure.mgmt.batchai.models.CustomToolkitSettings>`
+    :type custom_toolkit_settings:
+     ~azure.mgmt.batchai.models.CustomToolkitSettings
     :param job_preparation: Specifies the command line to be executed before
      tool kit is launched. The specified actions will run on all the nodes that
      are part of the job
-    :type job_preparation: :class:`JobPreparation
-     <azure.mgmt.batchai.models.JobPreparation>`
+    :type job_preparation: ~azure.mgmt.batchai.models.JobPreparation
     :param std_out_err_path_prefix: The path where the Batch AI service will
      upload stdout and stderror of the job.
     :type std_out_err_path_prefix: str
     :param input_directories: Specifies the list of input directories for the
      Job.
-    :type input_directories: list of :class:`InputDirectory
-     <azure.mgmt.batchai.models.InputDirectory>`
+    :type input_directories: list[~azure.mgmt.batchai.models.InputDirectory]
     :param output_directories: Specifies the list of output directories where
      the models will be created. .
-    :type output_directories: list of :class:`OutputDirectory
-     <azure.mgmt.batchai.models.OutputDirectory>`
+    :type output_directories: list[~azure.mgmt.batchai.models.OutputDirectory]
     :param environment_variables: Additional environment variables to set on
      the job. Batch AI service sets the following environment variables for all
      jobs: AZ_BATCHAI_INPUT_id, AZ_BATCHAI_OUTPUT_id,
      AZ_BATCHAI_NUM_GPUS_PER_NODE. For distributed TensorFlow jobs, following
      additional environment variables are set by the Batch AI Service:
      AZ_BATCHAI_PS_HOSTS, AZ_BATCHAI_WORKER_HOSTS
-    :type environment_variables: list of :class:`EnvironmentSetting
-     <azure.mgmt.batchai.models.EnvironmentSetting>`
+    :type environment_variables:
+     list[~azure.mgmt.batchai.models.EnvironmentSetting]
     :param constraints: Constraints associated with the Job.
-    :type constraints: :class:`JobBasePropertiesConstraints
-     <azure.mgmt.batchai.models.JobBasePropertiesConstraints>`
+    :type constraints: ~azure.mgmt.batchai.models.JobBasePropertiesConstraints
     """
 
     _validation = {
@@ -117,6 +107,7 @@ class JobCreateParameters(Model):
     }
 
     def __init__(self, location, cluster, node_count, std_out_err_path_prefix, tags=None, experiment_name=None, priority=0, container_settings=None, cntk_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, constraints=None):
+        super(JobCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.experiment_name = experiment_name
