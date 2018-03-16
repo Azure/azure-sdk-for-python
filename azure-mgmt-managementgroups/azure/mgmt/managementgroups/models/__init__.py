@@ -9,16 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .error_details import ErrorDetails
-from .error_response import ErrorResponse, ErrorResponseException
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .management_group_info import ManagementGroupInfo
-from .parent_group_info import ParentGroupInfo
-from .management_group_details import ManagementGroupDetails
-from .management_group_child_info import ManagementGroupChildInfo
-from .management_group import ManagementGroup
-from .create_management_group_request import CreateManagementGroupRequest
+try:
+    from .error_details_py3 import ErrorDetails
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .management_group_info_py3 import ManagementGroupInfo
+    from .parent_group_info_py3 import ParentGroupInfo
+    from .management_group_details_py3 import ManagementGroupDetails
+    from .management_group_child_info_py3 import ManagementGroupChildInfo
+    from .management_group_py3 import ManagementGroup
+    from .create_management_group_request_py3 import CreateManagementGroupRequest
+except (SyntaxError, ImportError):
+    from .error_details import ErrorDetails
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .management_group_info import ManagementGroupInfo
+    from .parent_group_info import ParentGroupInfo
+    from .management_group_details import ManagementGroupDetails
+    from .management_group_child_info import ManagementGroupChildInfo
+    from .management_group import ManagementGroup
+    from .create_management_group_request import CreateManagementGroupRequest
 from .management_group_info_paged import ManagementGroupInfoPaged
 from .operation_paged import OperationPaged
 
