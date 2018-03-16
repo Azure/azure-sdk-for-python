@@ -42,8 +42,6 @@ class RouteFilterRule(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -63,7 +61,6 @@ class RouteFilterRule(SubResource):
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     route_filter_rule_type = "Community"
@@ -76,4 +73,3 @@ class RouteFilterRule(SubResource):
         self.name = kwargs.get('name', None)
         self.location = kwargs.get('location', None)
         self.etag = None
-        self.tags = kwargs.get('tags', None)
