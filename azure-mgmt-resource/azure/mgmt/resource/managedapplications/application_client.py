@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.applications_operations import ApplicationsOperations
 from .operations.application_definitions_operations import ApplicationDefinitionsOperations
+from .operations.solutions_operations import SolutionsOperations
 from . import models
 
 
@@ -60,6 +61,8 @@ class ApplicationClient(object):
     :vartype applications: azure.mgmt.resource.managedapplications.operations.ApplicationsOperations
     :ivar application_definitions: ApplicationDefinitions operations
     :vartype application_definitions: azure.mgmt.resource.managedapplications.operations.ApplicationDefinitionsOperations
+    :ivar solutions: Solutions operations
+    :vartype solutions: azure.mgmt.resource.managedapplications.operations.SolutionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -83,4 +86,6 @@ class ApplicationClient(object):
         self.applications = ApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.application_definitions = ApplicationDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.solutions = SolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
