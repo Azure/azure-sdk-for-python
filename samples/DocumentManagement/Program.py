@@ -84,7 +84,7 @@ class DocumentManagement:
         # NOTE: Use MaxItemCount on Options to control how many documents come back per trip to the server
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
-        documentlist = list(client.ReadDocuments(collection_link), {'maxItemCount':10})
+        documentlist = list(client.ReadDocuments(collection_link, {'maxItemCount':10}))
         
         print('Found {0} documents'.format(documentlist.__len__()))
         
