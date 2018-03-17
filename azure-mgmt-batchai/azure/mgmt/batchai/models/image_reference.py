@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class ImageReference(Model):
     """The image reference.
 
-    :param publisher: Publisher of the image.
+    All required parameters must be populated in order to send to Azure.
+
+    :param publisher: Required. Publisher of the image.
     :type publisher: str
-    :param offer: Offer of the image.
+    :param offer: Required. Offer of the image.
     :type offer: str
-    :param sku: SKU of the image.
+    :param sku: Required. SKU of the image.
     :type sku: str
     :param version: Version of the image.
     :type version: str
@@ -50,10 +52,10 @@ class ImageReference(Model):
         'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'str'},
     }
 
-    def __init__(self, publisher, offer, sku, version=None, virtual_machine_image_id=None):
-        super(ImageReference, self).__init__()
-        self.publisher = publisher
-        self.offer = offer
-        self.sku = sku
-        self.version = version
-        self.virtual_machine_image_id = virtual_machine_image_id
+    def __init__(self, **kwargs):
+        super(ImageReference, self).__init__(**kwargs)
+        self.publisher = kwargs.get('publisher', None)
+        self.offer = kwargs.get('offer', None)
+        self.sku = kwargs.get('sku', None)
+        self.version = kwargs.get('version', None)
+        self.virtual_machine_image_id = kwargs.get('virtual_machine_image_id', None)

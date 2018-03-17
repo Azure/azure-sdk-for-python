@@ -16,8 +16,10 @@ class AppInsightsReference(Model):
     """Specifies Azure Application Insights information for performance counters
     reporting.
 
-    :param component: Specifies the Azure Application Insights component
-     resource id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param component: Required. Specifies the Azure Application Insights
+     component resource id.
     :type component: ~azure.mgmt.batchai.models.ResourceId
     :param instrumentation_key: Value of the Azure Application Insights
      instrumentation key.
@@ -41,8 +43,8 @@ class AppInsightsReference(Model):
         'instrumentation_key_secret_reference': {'key': 'instrumentationKeySecretReference', 'type': 'KeyVaultSecretReference'},
     }
 
-    def __init__(self, component, instrumentation_key=None, instrumentation_key_secret_reference=None):
-        super(AppInsightsReference, self).__init__()
-        self.component = component
-        self.instrumentation_key = instrumentation_key
-        self.instrumentation_key_secret_reference = instrumentation_key_secret_reference
+    def __init__(self, **kwargs):
+        super(AppInsightsReference, self).__init__(**kwargs)
+        self.component = kwargs.get('component', None)
+        self.instrumentation_key = kwargs.get('instrumentation_key', None)
+        self.instrumentation_key_secret_reference = kwargs.get('instrumentation_key_secret_reference', None)

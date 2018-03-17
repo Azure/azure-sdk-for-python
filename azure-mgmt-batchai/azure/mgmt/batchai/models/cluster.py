@@ -130,20 +130,20 @@ class Cluster(Resource):
         'node_state_counts': {'key': 'properties.nodeStateCounts', 'type': 'NodeStateCounts'},
     }
 
-    def __init__(self, vm_size=None, vm_priority="dedicated", scale_settings=None, virtual_machine_configuration=None, node_setup=None, user_account_settings=None, subnet=None, errors=None):
-        super(Cluster, self).__init__()
-        self.vm_size = vm_size
-        self.vm_priority = vm_priority
-        self.scale_settings = scale_settings
-        self.virtual_machine_configuration = virtual_machine_configuration
-        self.node_setup = node_setup
-        self.user_account_settings = user_account_settings
-        self.subnet = subnet
+    def __init__(self, **kwargs):
+        super(Cluster, self).__init__(**kwargs)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.vm_priority = kwargs.get('vm_priority', "dedicated")
+        self.scale_settings = kwargs.get('scale_settings', None)
+        self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)
+        self.node_setup = kwargs.get('node_setup', None)
+        self.user_account_settings = kwargs.get('user_account_settings', None)
+        self.subnet = kwargs.get('subnet', None)
         self.creation_time = None
         self.provisioning_state = None
         self.provisioning_state_transition_time = None
         self.allocation_state = None
         self.allocation_state_transition_time = None
-        self.errors = errors
+        self.errors = kwargs.get('errors', None)
         self.current_node_count = None
         self.node_state_counts = None

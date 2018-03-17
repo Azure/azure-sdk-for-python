@@ -23,6 +23,6 @@ class VirtualMachineConfiguration(Model):
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
     }
 
-    def __init__(self, image_reference=None):
-        super(VirtualMachineConfiguration, self).__init__()
-        self.image_reference = image_reference
+    def __init__(self, **kwargs):
+        super(VirtualMachineConfiguration, self).__init__(**kwargs)
+        self.image_reference = kwargs.get('image_reference', None)

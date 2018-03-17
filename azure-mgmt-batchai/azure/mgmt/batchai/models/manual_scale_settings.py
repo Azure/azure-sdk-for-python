@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ManualScaleSettings(Model):
     """Manual scale settings for the cluster.
 
-    :param target_node_count: The desired number of compute nodes in the
-     Cluster. Default is 0. If autoScaleSettings are not specified, then the
-     Cluster starts with this target. Default value: 0 .
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_node_count: Required. The desired number of compute nodes in
+     the Cluster. Default is 0. If autoScaleSettings are not specified, then
+     the Cluster starts with this target. Default value: 0 .
     :type target_node_count: int
     :param node_deallocation_option: Determines what to do with the job(s)
      running on compute node if the Cluster size is decreasing. The default
@@ -36,7 +38,7 @@ class ManualScaleSettings(Model):
         'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'DeallocationOption'},
     }
 
-    def __init__(self, target_node_count=0, node_deallocation_option="requeue"):
-        super(ManualScaleSettings, self).__init__()
-        self.target_node_count = target_node_count
-        self.node_deallocation_option = node_deallocation_option
+    def __init__(self, **kwargs):
+        super(ManualScaleSettings, self).__init__(**kwargs)
+        self.target_node_count = kwargs.get('target_node_count', 0)
+        self.node_deallocation_option = kwargs.get('node_deallocation_option', "requeue")

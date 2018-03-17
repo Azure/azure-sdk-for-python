@@ -40,8 +40,8 @@ class NodeSetup(Model):
         'performance_counters_settings': {'key': 'performanceCountersSettings', 'type': 'PerformanceCountersSettings'},
     }
 
-    def __init__(self, setup_task=None, mount_volumes=None, performance_counters_settings=None):
-        super(NodeSetup, self).__init__()
-        self.setup_task = setup_task
-        self.mount_volumes = mount_volumes
-        self.performance_counters_settings = performance_counters_settings
+    def __init__(self, **kwargs):
+        super(NodeSetup, self).__init__(**kwargs)
+        self.setup_task = kwargs.get('setup_task', None)
+        self.mount_volumes = kwargs.get('mount_volumes', None)
+        self.performance_counters_settings = kwargs.get('performance_counters_settings', None)

@@ -183,32 +183,32 @@ class Job(Resource):
         'execution_info': {'key': 'properties.executionInfo', 'type': 'JobPropertiesExecutionInfo'},
     }
 
-    def __init__(self, experiment_name=None, priority=0, cluster=None, mount_volumes=None, job_output_directory_path_segment=None, node_count=None, container_settings=None, tool_type=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, std_out_err_path_prefix=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, execution_state=None, execution_info=None):
-        super(Job, self).__init__()
-        self.experiment_name = experiment_name
-        self.priority = priority
-        self.cluster = cluster
-        self.mount_volumes = mount_volumes
-        self.job_output_directory_path_segment = job_output_directory_path_segment
-        self.node_count = node_count
-        self.container_settings = container_settings
-        self.tool_type = tool_type
-        self.cntk_settings = cntk_settings
-        self.py_torch_settings = py_torch_settings
-        self.tensor_flow_settings = tensor_flow_settings
-        self.caffe_settings = caffe_settings
-        self.chainer_settings = chainer_settings
-        self.custom_toolkit_settings = custom_toolkit_settings
-        self.job_preparation = job_preparation
-        self.std_out_err_path_prefix = std_out_err_path_prefix
-        self.input_directories = input_directories
-        self.output_directories = output_directories
-        self.environment_variables = environment_variables
-        self.secrets = secrets
-        self.constraints = constraints
+    def __init__(self, **kwargs):
+        super(Job, self).__init__(**kwargs)
+        self.experiment_name = kwargs.get('experiment_name', None)
+        self.priority = kwargs.get('priority', 0)
+        self.cluster = kwargs.get('cluster', None)
+        self.mount_volumes = kwargs.get('mount_volumes', None)
+        self.job_output_directory_path_segment = kwargs.get('job_output_directory_path_segment', None)
+        self.node_count = kwargs.get('node_count', None)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.tool_type = kwargs.get('tool_type', None)
+        self.cntk_settings = kwargs.get('cntk_settings', None)
+        self.py_torch_settings = kwargs.get('py_torch_settings', None)
+        self.tensor_flow_settings = kwargs.get('tensor_flow_settings', None)
+        self.caffe_settings = kwargs.get('caffe_settings', None)
+        self.chainer_settings = kwargs.get('chainer_settings', None)
+        self.custom_toolkit_settings = kwargs.get('custom_toolkit_settings', None)
+        self.job_preparation = kwargs.get('job_preparation', None)
+        self.std_out_err_path_prefix = kwargs.get('std_out_err_path_prefix', None)
+        self.input_directories = kwargs.get('input_directories', None)
+        self.output_directories = kwargs.get('output_directories', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.secrets = kwargs.get('secrets', None)
+        self.constraints = kwargs.get('constraints', None)
         self.creation_time = None
         self.provisioning_state = None
         self.provisioning_state_transition_time = None
-        self.execution_state = execution_state
+        self.execution_state = kwargs.get('execution_state', None)
         self.execution_state_transition_time = None
-        self.execution_info = execution_info
+        self.execution_info = kwargs.get('execution_info', None)

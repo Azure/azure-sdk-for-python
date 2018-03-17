@@ -23,6 +23,6 @@ class CustomToolkitSettings(Model):
         'command_line': {'key': 'commandLine', 'type': 'str'},
     }
 
-    def __init__(self, command_line=None):
-        super(CustomToolkitSettings, self).__init__()
-        self.command_line = command_line
+    def __init__(self, **kwargs):
+        super(CustomToolkitSettings, self).__init__(**kwargs)
+        self.command_line = kwargs.get('command_line', None)

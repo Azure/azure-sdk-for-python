@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class JobCreateParameters(Model):
     """Parameters supplied to the Create operation.
 
-    :param location: The region in which to create the job.
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The region in which to create the job.
     :type location: str
     :param tags: The user specified tags associated with the job.
     :type tags: dict[str, str]
@@ -26,16 +28,16 @@ class JobCreateParameters(Model):
      being the lowest priority and 1000 being the highest priority. The default
      value is 0. Default value: 0 .
     :type priority: int
-    :param cluster: Specifies the Id of the cluster on which this job will
-     run.
+    :param cluster: Required. Specifies the Id of the cluster on which this
+     job will run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
     :param mount_volumes: Information on mount volumes to be used by the job.
      These volumes will be mounted before the job execution and will be
      unmouted after the job completion. The volumes will be mounted at location
      specified by $AZ_BATCHAI_JOB_MOUNT_ROOT environment variable.
     :type mount_volumes: ~azure.mgmt.batchai.models.MountVolumes
-    :param node_count: Number of compute nodes to run the job on. The job will
-     be gang scheduled on that many compute nodes
+    :param node_count: Required. Number of compute nodes to run the job on.
+     The job will be gang scheduled on that many compute nodes
     :type node_count: int
     :param container_settings: If provided the job will run in the specified
      container. If the container was downloaded as part of cluster setup then
@@ -63,8 +65,8 @@ class JobCreateParameters(Model):
      tool kit is launched. The specified actions will run on all the nodes that
      are part of the job
     :type job_preparation: ~azure.mgmt.batchai.models.JobPreparation
-    :param std_out_err_path_prefix: The path where the Batch AI service will
-     upload stdout and stderror of the job.
+    :param std_out_err_path_prefix: Required. The path where the Batch AI
+     service will upload stdout and stderror of the job.
     :type std_out_err_path_prefix: str
     :param input_directories: Specifies the list of input directories for the
      Job.
@@ -117,27 +119,27 @@ class JobCreateParameters(Model):
         'constraints': {'key': 'properties.constraints', 'type': 'JobBasePropertiesConstraints'},
     }
 
-    def __init__(self, location, cluster, node_count, std_out_err_path_prefix, tags=None, experiment_name=None, priority=0, mount_volumes=None, container_settings=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None):
-        super(JobCreateParameters, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.experiment_name = experiment_name
-        self.priority = priority
-        self.cluster = cluster
-        self.mount_volumes = mount_volumes
-        self.node_count = node_count
-        self.container_settings = container_settings
-        self.cntk_settings = cntk_settings
-        self.py_torch_settings = py_torch_settings
-        self.tensor_flow_settings = tensor_flow_settings
-        self.caffe_settings = caffe_settings
-        self.caffe2_settings = caffe2_settings
-        self.chainer_settings = chainer_settings
-        self.custom_toolkit_settings = custom_toolkit_settings
-        self.job_preparation = job_preparation
-        self.std_out_err_path_prefix = std_out_err_path_prefix
-        self.input_directories = input_directories
-        self.output_directories = output_directories
-        self.environment_variables = environment_variables
-        self.secrets = secrets
-        self.constraints = constraints
+    def __init__(self, **kwargs):
+        super(JobCreateParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.experiment_name = kwargs.get('experiment_name', None)
+        self.priority = kwargs.get('priority', 0)
+        self.cluster = kwargs.get('cluster', None)
+        self.mount_volumes = kwargs.get('mount_volumes', None)
+        self.node_count = kwargs.get('node_count', None)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.cntk_settings = kwargs.get('cntk_settings', None)
+        self.py_torch_settings = kwargs.get('py_torch_settings', None)
+        self.tensor_flow_settings = kwargs.get('tensor_flow_settings', None)
+        self.caffe_settings = kwargs.get('caffe_settings', None)
+        self.caffe2_settings = kwargs.get('caffe2_settings', None)
+        self.chainer_settings = kwargs.get('chainer_settings', None)
+        self.custom_toolkit_settings = kwargs.get('custom_toolkit_settings', None)
+        self.job_preparation = kwargs.get('job_preparation', None)
+        self.std_out_err_path_prefix = kwargs.get('std_out_err_path_prefix', None)
+        self.input_directories = kwargs.get('input_directories', None)
+        self.output_directories = kwargs.get('output_directories', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.secrets = kwargs.get('secrets', None)
+        self.constraints = kwargs.get('constraints', None)

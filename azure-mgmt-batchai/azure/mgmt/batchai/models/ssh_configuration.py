@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class SshConfiguration(Model):
     """SSH configuration settings for the VM.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param public_ips_to_allow: List of source IP ranges to allow SSH
      connection to a node. Default value is '*' can be used to match all source
      IPs. Maximum number of IP ranges that can be specified are 400.
     :type public_ips_to_allow: list[str]
-    :param user_account_settings: Settings for user account to be created on a
-     node.
+    :param user_account_settings: Required. Settings for user account to be
+     created on a node.
     :type user_account_settings:
      ~azure.mgmt.batchai.models.UserAccountSettings
     """
@@ -34,7 +36,7 @@ class SshConfiguration(Model):
         'user_account_settings': {'key': 'userAccountSettings', 'type': 'UserAccountSettings'},
     }
 
-    def __init__(self, user_account_settings, public_ips_to_allow=None):
-        super(SshConfiguration, self).__init__()
-        self.public_ips_to_allow = public_ips_to_allow
-        self.user_account_settings = user_account_settings
+    def __init__(self, **kwargs):
+        super(SshConfiguration, self).__init__(**kwargs)
+        self.public_ips_to_allow = kwargs.get('public_ips_to_allow', None)
+        self.user_account_settings = kwargs.get('user_account_settings', None)

@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class InputDirectory(Model):
     """Input directory for the job.
 
-    :param id: The id for the input directory. The path of the input directory
-     will be available as a value of an environment variable with
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The id for the input directory. The path of the input
+     directory will be available as a value of an environment variable with
      AZ_BATCHAI_INPUT_<id> name, where <id> is the value of id attribute.
     :type id: str
-    :param path: The path to the input directory.
+    :param path: Required. The path to the input directory.
     :type path: str
     """
 
@@ -33,7 +35,7 @@ class InputDirectory(Model):
         'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, id, path):
-        super(InputDirectory, self).__init__()
-        self.id = id
-        self.path = path
+    def __init__(self, **kwargs):
+        super(InputDirectory, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.path = kwargs.get('path', None)

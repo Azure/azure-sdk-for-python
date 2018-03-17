@@ -29,7 +29,7 @@ class ScaleSettings(Model):
         'auto_scale': {'key': 'autoScale', 'type': 'AutoScaleSettings'},
     }
 
-    def __init__(self, manual=None, auto_scale=None):
-        super(ScaleSettings, self).__init__()
-        self.manual = manual
-        self.auto_scale = auto_scale
+    def __init__(self, **kwargs):
+        super(ScaleSettings, self).__init__(**kwargs)
+        self.manual = kwargs.get('manual', None)
+        self.auto_scale = kwargs.get('auto_scale', None)

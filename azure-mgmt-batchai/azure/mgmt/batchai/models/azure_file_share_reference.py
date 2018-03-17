@@ -15,16 +15,18 @@ from msrest.serialization import Model
 class AzureFileShareReference(Model):
     """Details of the Azure File Share to mount on the cluster.
 
-    :param account_name: Name of the storage account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. Name of the storage account.
     :type account_name: str
-    :param azure_file_url: URL to access the Azure File.
+    :param azure_file_url: Required. URL to access the Azure File.
     :type azure_file_url: str
-    :param credentials: Information of the Azure File credentials.
+    :param credentials: Required. Information of the Azure File credentials.
     :type credentials: ~azure.mgmt.batchai.models.AzureStorageCredentialsInfo
-    :param relative_mount_path: Specifies the relative path on the compute
-     node where the Azure file share will be mounted. Note that all cluster
-     level file shares will be mounted under $AZ_BATCHAI_MOUNT_ROOT location
-     and all job level file shares will be mounted under
+    :param relative_mount_path: Required. Specifies the relative path on the
+     compute node where the Azure file share will be mounted. Note that all
+     cluster level file shares will be mounted under $AZ_BATCHAI_MOUNT_ROOT
+     location and all job level file shares will be mounted under
      $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
     :param file_mode: Specifies the file mode. Default value is 0777. Valid
@@ -51,11 +53,11 @@ class AzureFileShareReference(Model):
         'directory_mode': {'key': 'directoryMode', 'type': 'str'},
     }
 
-    def __init__(self, account_name, azure_file_url, credentials, relative_mount_path, file_mode="0777", directory_mode="0777"):
-        super(AzureFileShareReference, self).__init__()
-        self.account_name = account_name
-        self.azure_file_url = azure_file_url
-        self.credentials = credentials
-        self.relative_mount_path = relative_mount_path
-        self.file_mode = file_mode
-        self.directory_mode = directory_mode
+    def __init__(self, **kwargs):
+        super(AzureFileShareReference, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.azure_file_url = kwargs.get('azure_file_url', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.relative_mount_path = kwargs.get('relative_mount_path', None)
+        self.file_mode = kwargs.get('file_mode', "0777")
+        self.directory_mode = kwargs.get('directory_mode', "0777")

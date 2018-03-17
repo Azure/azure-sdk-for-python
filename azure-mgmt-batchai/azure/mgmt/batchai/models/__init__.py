@@ -9,71 +9,138 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_name import UsageName
-from .usage import Usage
-from .user_account_settings import UserAccountSettings
-from .ssh_configuration import SshConfiguration
-from .data_disks import DataDisks
-from .resource_id import ResourceId
-from .mount_settings import MountSettings
-from .file_server import FileServer
-from .key_vault_secret_reference import KeyVaultSecretReference
-from .key_vault_key_reference import KeyVaultKeyReference
-from .file_server_create_parameters import FileServerCreateParameters
-from .manual_scale_settings import ManualScaleSettings
-from .auto_scale_settings import AutoScaleSettings
-from .scale_settings import ScaleSettings
-from .image_reference import ImageReference
-from .virtual_machine_configuration import VirtualMachineConfiguration
-from .environment_variable import EnvironmentVariable
-from .environment_variable_with_secret_value import EnvironmentVariableWithSecretValue
-from .setup_task import SetupTask
-from .azure_storage_credentials_info import AzureStorageCredentialsInfo
-from .azure_file_share_reference import AzureFileShareReference
-from .azure_blob_file_system_reference import AzureBlobFileSystemReference
-from .file_server_reference import FileServerReference
-from .unmanaged_file_system_reference import UnmanagedFileSystemReference
-from .mount_volumes import MountVolumes
-from .app_insights_reference import AppInsightsReference
-from .performance_counters_settings import PerformanceCountersSettings
-from .node_setup import NodeSetup
-from .node_state_counts import NodeStateCounts
-from .cluster_create_parameters import ClusterCreateParameters
-from .cluster_update_parameters import ClusterUpdateParameters
-from .name_value_pair import NameValuePair
-from .batch_ai_error import BatchAIError
-from .cluster import Cluster
-from .private_registry_credentials import PrivateRegistryCredentials
-from .image_source_registry import ImageSourceRegistry
-from .container_settings import ContainerSettings
-from .cnt_ksettings import CNTKsettings
-from .py_torch_settings import PyTorchSettings
-from .tensor_flow_settings import TensorFlowSettings
-from .caffe_settings import CaffeSettings
-from .caffe2_settings import Caffe2Settings
-from .chainer_settings import ChainerSettings
-from .custom_toolkit_settings import CustomToolkitSettings
-from .job_preparation import JobPreparation
-from .input_directory import InputDirectory
-from .output_directory import OutputDirectory
-from .job_base_properties_constraints import JobBasePropertiesConstraints
-from .job_create_parameters import JobCreateParameters
-from .job_properties_constraints import JobPropertiesConstraints
-from .job_properties_execution_info import JobPropertiesExecutionInfo
-from .job import Job
-from .remote_login_information import RemoteLoginInformation
-from .file import File
-from .resource import Resource
-from .local_data_volume import LocalDataVolume
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .clusters_list_options import ClustersListOptions
-from .clusters_list_by_resource_group_options import ClustersListByResourceGroupOptions
-from .jobs_list_options import JobsListOptions
-from .jobs_list_by_resource_group_options import JobsListByResourceGroupOptions
-from .jobs_list_output_files_options import JobsListOutputFilesOptions
-from .file_servers_list_options import FileServersListOptions
-from .file_servers_list_by_resource_group_options import FileServersListByResourceGroupOptions
+try:
+    from .usage_name_py3 import UsageName
+    from .usage_py3 import Usage
+    from .user_account_settings_py3 import UserAccountSettings
+    from .ssh_configuration_py3 import SshConfiguration
+    from .data_disks_py3 import DataDisks
+    from .resource_id_py3 import ResourceId
+    from .mount_settings_py3 import MountSettings
+    from .file_server_py3 import FileServer
+    from .key_vault_secret_reference_py3 import KeyVaultSecretReference
+    from .key_vault_key_reference_py3 import KeyVaultKeyReference
+    from .file_server_create_parameters_py3 import FileServerCreateParameters
+    from .manual_scale_settings_py3 import ManualScaleSettings
+    from .auto_scale_settings_py3 import AutoScaleSettings
+    from .scale_settings_py3 import ScaleSettings
+    from .image_reference_py3 import ImageReference
+    from .virtual_machine_configuration_py3 import VirtualMachineConfiguration
+    from .environment_variable_py3 import EnvironmentVariable
+    from .environment_variable_with_secret_value_py3 import EnvironmentVariableWithSecretValue
+    from .setup_task_py3 import SetupTask
+    from .azure_storage_credentials_info_py3 import AzureStorageCredentialsInfo
+    from .azure_file_share_reference_py3 import AzureFileShareReference
+    from .azure_blob_file_system_reference_py3 import AzureBlobFileSystemReference
+    from .file_server_reference_py3 import FileServerReference
+    from .unmanaged_file_system_reference_py3 import UnmanagedFileSystemReference
+    from .mount_volumes_py3 import MountVolumes
+    from .app_insights_reference_py3 import AppInsightsReference
+    from .performance_counters_settings_py3 import PerformanceCountersSettings
+    from .node_setup_py3 import NodeSetup
+    from .node_state_counts_py3 import NodeStateCounts
+    from .cluster_create_parameters_py3 import ClusterCreateParameters
+    from .cluster_update_parameters_py3 import ClusterUpdateParameters
+    from .name_value_pair_py3 import NameValuePair
+    from .batch_ai_error_py3 import BatchAIError
+    from .cluster_py3 import Cluster
+    from .private_registry_credentials_py3 import PrivateRegistryCredentials
+    from .image_source_registry_py3 import ImageSourceRegistry
+    from .container_settings_py3 import ContainerSettings
+    from .cnt_ksettings_py3 import CNTKsettings
+    from .py_torch_settings_py3 import PyTorchSettings
+    from .tensor_flow_settings_py3 import TensorFlowSettings
+    from .caffe_settings_py3 import CaffeSettings
+    from .caffe2_settings_py3 import Caffe2Settings
+    from .chainer_settings_py3 import ChainerSettings
+    from .custom_toolkit_settings_py3 import CustomToolkitSettings
+    from .job_preparation_py3 import JobPreparation
+    from .input_directory_py3 import InputDirectory
+    from .output_directory_py3 import OutputDirectory
+    from .job_base_properties_constraints_py3 import JobBasePropertiesConstraints
+    from .job_create_parameters_py3 import JobCreateParameters
+    from .job_properties_constraints_py3 import JobPropertiesConstraints
+    from .job_properties_execution_info_py3 import JobPropertiesExecutionInfo
+    from .job_py3 import Job
+    from .remote_login_information_py3 import RemoteLoginInformation
+    from .file_py3 import File
+    from .resource_py3 import Resource
+    from .local_data_volume_py3 import LocalDataVolume
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .clusters_list_options_py3 import ClustersListOptions
+    from .clusters_list_by_resource_group_options_py3 import ClustersListByResourceGroupOptions
+    from .jobs_list_options_py3 import JobsListOptions
+    from .jobs_list_by_resource_group_options_py3 import JobsListByResourceGroupOptions
+    from .jobs_list_output_files_options_py3 import JobsListOutputFilesOptions
+    from .file_servers_list_options_py3 import FileServersListOptions
+    from .file_servers_list_by_resource_group_options_py3 import FileServersListByResourceGroupOptions
+except (SyntaxError, ImportError):
+    from .usage_name import UsageName
+    from .usage import Usage
+    from .user_account_settings import UserAccountSettings
+    from .ssh_configuration import SshConfiguration
+    from .data_disks import DataDisks
+    from .resource_id import ResourceId
+    from .mount_settings import MountSettings
+    from .file_server import FileServer
+    from .key_vault_secret_reference import KeyVaultSecretReference
+    from .key_vault_key_reference import KeyVaultKeyReference
+    from .file_server_create_parameters import FileServerCreateParameters
+    from .manual_scale_settings import ManualScaleSettings
+    from .auto_scale_settings import AutoScaleSettings
+    from .scale_settings import ScaleSettings
+    from .image_reference import ImageReference
+    from .virtual_machine_configuration import VirtualMachineConfiguration
+    from .environment_variable import EnvironmentVariable
+    from .environment_variable_with_secret_value import EnvironmentVariableWithSecretValue
+    from .setup_task import SetupTask
+    from .azure_storage_credentials_info import AzureStorageCredentialsInfo
+    from .azure_file_share_reference import AzureFileShareReference
+    from .azure_blob_file_system_reference import AzureBlobFileSystemReference
+    from .file_server_reference import FileServerReference
+    from .unmanaged_file_system_reference import UnmanagedFileSystemReference
+    from .mount_volumes import MountVolumes
+    from .app_insights_reference import AppInsightsReference
+    from .performance_counters_settings import PerformanceCountersSettings
+    from .node_setup import NodeSetup
+    from .node_state_counts import NodeStateCounts
+    from .cluster_create_parameters import ClusterCreateParameters
+    from .cluster_update_parameters import ClusterUpdateParameters
+    from .name_value_pair import NameValuePair
+    from .batch_ai_error import BatchAIError
+    from .cluster import Cluster
+    from .private_registry_credentials import PrivateRegistryCredentials
+    from .image_source_registry import ImageSourceRegistry
+    from .container_settings import ContainerSettings
+    from .cnt_ksettings import CNTKsettings
+    from .py_torch_settings import PyTorchSettings
+    from .tensor_flow_settings import TensorFlowSettings
+    from .caffe_settings import CaffeSettings
+    from .caffe2_settings import Caffe2Settings
+    from .chainer_settings import ChainerSettings
+    from .custom_toolkit_settings import CustomToolkitSettings
+    from .job_preparation import JobPreparation
+    from .input_directory import InputDirectory
+    from .output_directory import OutputDirectory
+    from .job_base_properties_constraints import JobBasePropertiesConstraints
+    from .job_create_parameters import JobCreateParameters
+    from .job_properties_constraints import JobPropertiesConstraints
+    from .job_properties_execution_info import JobPropertiesExecutionInfo
+    from .job import Job
+    from .remote_login_information import RemoteLoginInformation
+    from .file import File
+    from .resource import Resource
+    from .local_data_volume import LocalDataVolume
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .clusters_list_options import ClustersListOptions
+    from .clusters_list_by_resource_group_options import ClustersListByResourceGroupOptions
+    from .jobs_list_options import JobsListOptions
+    from .jobs_list_by_resource_group_options import JobsListByResourceGroupOptions
+    from .jobs_list_output_files_options import JobsListOutputFilesOptions
+    from .file_servers_list_options import FileServersListOptions
+    from .file_servers_list_by_resource_group_options import FileServersListByResourceGroupOptions
 from .operation_paged import OperationPaged
 from .usage_paged import UsagePaged
 from .remote_login_information_paged import RemoteLoginInformationPaged

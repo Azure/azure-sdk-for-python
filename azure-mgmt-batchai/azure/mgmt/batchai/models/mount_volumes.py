@@ -39,9 +39,9 @@ class MountVolumes(Model):
         'unmanaged_file_systems': {'key': 'unmanagedFileSystems', 'type': '[UnmanagedFileSystemReference]'},
     }
 
-    def __init__(self, azure_file_shares=None, azure_blob_file_systems=None, file_servers=None, unmanaged_file_systems=None):
-        super(MountVolumes, self).__init__()
-        self.azure_file_shares = azure_file_shares
-        self.azure_blob_file_systems = azure_blob_file_systems
-        self.file_servers = file_servers
-        self.unmanaged_file_systems = unmanaged_file_systems
+    def __init__(self, **kwargs):
+        super(MountVolumes, self).__init__(**kwargs)
+        self.azure_file_shares = kwargs.get('azure_file_shares', None)
+        self.azure_blob_file_systems = kwargs.get('azure_blob_file_systems', None)
+        self.file_servers = kwargs.get('file_servers', None)
+        self.unmanaged_file_systems = kwargs.get('unmanaged_file_systems', None)

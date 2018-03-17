@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class UnmanagedFileSystemReference(Model):
     """Details of the file system to mount on the compute cluster nodes.
 
-    :param mount_command: Command used to mount the unmanaged file system.
+    All required parameters must be populated in order to send to Azure.
+
+    :param mount_command: Required. Command used to mount the unmanaged file
+     system.
     :type mount_command: str
-    :param relative_mount_path: Specifies the relative path on the compute
-     cluster node where the file system will be mounted. Note that all cluster
-     level unmanaged file system will be mounted under $AZ_BATCHAI_MOUNT_ROOT
-     location and job level unmanaged file system will be mounted under
-     $AZ_BATCHAI_JOB_MOUNT_ROOT.
+    :param relative_mount_path: Required. Specifies the relative path on the
+     compute cluster node where the file system will be mounted. Note that all
+     cluster level unmanaged file system will be mounted under
+     $AZ_BATCHAI_MOUNT_ROOT location and job level unmanaged file system will
+     be mounted under $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
     """
 
@@ -35,7 +38,7 @@ class UnmanagedFileSystemReference(Model):
         'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
     }
 
-    def __init__(self, mount_command, relative_mount_path):
-        super(UnmanagedFileSystemReference, self).__init__()
-        self.mount_command = mount_command
-        self.relative_mount_path = relative_mount_path
+    def __init__(self, **kwargs):
+        super(UnmanagedFileSystemReference, self).__init__(**kwargs)
+        self.mount_command = kwargs.get('mount_command', None)
+        self.relative_mount_path = kwargs.get('relative_mount_path', None)

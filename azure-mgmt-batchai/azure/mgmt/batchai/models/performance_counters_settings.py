@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class PerformanceCountersSettings(Model):
     """Performance counters reporting settings.
 
-    :param app_insights_reference: Specifies Azure Application Insights
-     information for performance counters reporting. If provided, Batch AI will
-     upload node performance counters to the corresponding Azure Application
-     Insights account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param app_insights_reference: Required. Specifies Azure Application
+     Insights information for performance counters reporting. If provided,
+     Batch AI will upload node performance counters to the corresponding Azure
+     Application Insights account.
     :type app_insights_reference:
      ~azure.mgmt.batchai.models.AppInsightsReference
     """
@@ -31,6 +33,6 @@ class PerformanceCountersSettings(Model):
         'app_insights_reference': {'key': 'appInsightsReference', 'type': 'AppInsightsReference'},
     }
 
-    def __init__(self, app_insights_reference):
-        super(PerformanceCountersSettings, self).__init__()
-        self.app_insights_reference = app_insights_reference
+    def __init__(self, **kwargs):
+        super(PerformanceCountersSettings, self).__init__(**kwargs)
+        self.app_insights_reference = kwargs.get('app_insights_reference', None)

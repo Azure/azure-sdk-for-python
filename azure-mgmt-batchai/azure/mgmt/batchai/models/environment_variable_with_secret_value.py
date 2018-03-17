@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class EnvironmentVariableWithSecretValue(Model):
     """A collection of environment variables with secret values to set.
 
-    :param name: The name of the environment variable to store the secret
-     value.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the environment variable to store the
+     secret value.
     :type name: str
     :param value: The value of the environment variable. This value will never
      be reported back by Batch AI.
@@ -40,8 +42,8 @@ class EnvironmentVariableWithSecretValue(Model):
         'value_secret_reference': {'key': 'valueSecretReference', 'type': 'KeyVaultSecretReference'},
     }
 
-    def __init__(self, name, value=None, value_secret_reference=None):
-        super(EnvironmentVariableWithSecretValue, self).__init__()
-        self.name = name
-        self.value = value
-        self.value_secret_reference = value_secret_reference
+    def __init__(self, **kwargs):
+        super(EnvironmentVariableWithSecretValue, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.value_secret_reference = kwargs.get('value_secret_reference', None)

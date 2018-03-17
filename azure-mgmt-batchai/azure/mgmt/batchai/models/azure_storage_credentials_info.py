@@ -32,7 +32,7 @@ class AzureStorageCredentialsInfo(Model):
         'account_key_secret_reference': {'key': 'accountKeySecretReference', 'type': 'KeyVaultSecretReference'},
     }
 
-    def __init__(self, account_key=None, account_key_secret_reference=None):
-        super(AzureStorageCredentialsInfo, self).__init__()
-        self.account_key = account_key
-        self.account_key_secret_reference = account_key_secret_reference
+    def __init__(self, **kwargs):
+        super(AzureStorageCredentialsInfo, self).__init__(**kwargs)
+        self.account_key = kwargs.get('account_key', None)
+        self.account_key_secret_reference = kwargs.get('account_key_secret_reference', None)

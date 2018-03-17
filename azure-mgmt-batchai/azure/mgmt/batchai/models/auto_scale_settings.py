@@ -17,11 +17,13 @@ class AutoScaleSettings(Model):
     minimumNodeCount and maximumNodeCount) based on the pending and running
     jobs on the cluster.
 
-    :param minimum_node_count: Specifies the minimum number of compute nodes
-     the cluster can have.
+    All required parameters must be populated in order to send to Azure.
+
+    :param minimum_node_count: Required. Specifies the minimum number of
+     compute nodes the cluster can have.
     :type minimum_node_count: int
-    :param maximum_node_count: Specifies the maximum number of compute nodes
-     the cluster can have.
+    :param maximum_node_count: Required. Specifies the maximum number of
+     compute nodes the cluster can have.
     :type maximum_node_count: int
     :param initial_node_count: Specifies the number of compute nodes to
      allocate on cluster creation. Note that this value is used only during
@@ -40,8 +42,8 @@ class AutoScaleSettings(Model):
         'initial_node_count': {'key': 'initialNodeCount', 'type': 'int'},
     }
 
-    def __init__(self, minimum_node_count, maximum_node_count, initial_node_count=0):
-        super(AutoScaleSettings, self).__init__()
-        self.minimum_node_count = minimum_node_count
-        self.maximum_node_count = maximum_node_count
-        self.initial_node_count = initial_node_count
+    def __init__(self, **kwargs):
+        super(AutoScaleSettings, self).__init__(**kwargs)
+        self.minimum_node_count = kwargs.get('minimum_node_count', None)
+        self.maximum_node_count = kwargs.get('maximum_node_count', None)
+        self.initial_node_count = kwargs.get('initial_node_count', 0)
