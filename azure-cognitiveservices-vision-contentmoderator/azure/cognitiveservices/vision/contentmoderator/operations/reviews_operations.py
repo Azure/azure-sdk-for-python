@@ -55,7 +55,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}'
+        url = self.get_review.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -89,6 +89,7 @@ class ReviewsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_review.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}'}
 
     def get_job_details(
             self, team_name, job_id, custom_headers=None, raw=False, **operation_config):
@@ -110,7 +111,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/jobs/{JobId}'
+        url = self.get_job_details.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -144,6 +145,7 @@ class ReviewsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_job_details.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/jobs/{JobId}'}
 
     def create_reviews(
             self, url_content_type, team_name, create_review_body, sub_team=None, custom_headers=None, raw=False, **operation_config):
@@ -193,7 +195,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews'
+        url = self.create_reviews.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
@@ -233,6 +235,7 @@ class ReviewsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_reviews.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews'}
 
     def create_job(
             self, team_name, content_type, content_id, workflow_name, job_content_type, content_value, call_back_endpoint=None, custom_headers=None, raw=False, **operation_config):
@@ -312,7 +315,7 @@ class ReviewsOperations(object):
         content = models.Content(content_value=content_value)
 
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/jobs'
+        url = self.create_job.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
@@ -355,6 +358,7 @@ class ReviewsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_job.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/jobs'}
 
     def add_video_frame(
             self, team_name, review_id, timescale=None, custom_headers=None, raw=False, **operation_config):
@@ -400,7 +404,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
+        url = self.add_video_frame.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -429,6 +433,7 @@ class ReviewsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_video_frame.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'}
 
     def get_video_frames(
             self, team_name, review_id, start_seed=None, no_of_records=None, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -480,7 +485,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
+        url = self.get_video_frames.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -520,6 +525,7 @@ class ReviewsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_video_frames.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'}
 
     def publish_video_review(
             self, team_name, review_id, custom_headers=None, raw=False, **operation_config):
@@ -540,7 +546,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/publish'
+        url = self.publish_video_review.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -567,6 +573,7 @@ class ReviewsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    publish_video_review.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/publish'}
 
     def add_video_transcript_moderation_result(
             self, content_type, team_name, review_id, transcript_moderation_body, custom_headers=None, raw=False, **operation_config):
@@ -596,7 +603,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/transcriptmoderationresult'
+        url = self.add_video_transcript_moderation_result.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -628,6 +635,7 @@ class ReviewsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_video_transcript_moderation_result.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/transcriptmoderationresult'}
 
     def add_video_transcript(
             self, team_name, review_id, vt_tfile, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -657,7 +665,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/transcript'
+        url = self.add_video_transcript.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -689,6 +697,7 @@ class ReviewsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_video_transcript.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/transcript'}
 
     def create_video_reviews(
             self, content_type, team_name, create_video_reviews_body, sub_team=None, custom_headers=None, raw=False, **operation_config):
@@ -738,7 +747,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews'
+        url = self.create_video_reviews.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str')
@@ -778,6 +787,7 @@ class ReviewsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_video_reviews.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews'}
 
     def add_video_frame_url(
             self, content_type, team_name, review_id, video_frame_body, timescale=None, custom_headers=None, raw=False, **operation_config):
@@ -809,7 +819,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
+        url = self.add_video_frame_url.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -843,6 +853,7 @@ class ReviewsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_video_frame_url.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'}
 
     def add_video_frame_stream(
             self, content_type, team_name, review_id, frame_image_zip, frame_metadata, timescale=None, custom_headers=None, raw=False, **operation_config):
@@ -875,7 +886,7 @@ class ReviewsOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'
+        url = self.add_video_frame_stream.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'teamName': self._serialize.url("team_name", team_name, 'str'),
@@ -912,3 +923,4 @@ class ReviewsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    add_video_frame_stream.metadata = {'url': '/contentmoderator/review/v1.0/teams/{teamName}/reviews/{reviewId}/frames'}
