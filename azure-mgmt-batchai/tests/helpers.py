@@ -48,8 +48,14 @@ FAKE_STORAGE = FakeStorageAccount(name='psdk', id='fakeid')
 # ID of output directory containing job's standard output
 STANDARD_OUTPUT_DIRECTORY_ID = 'stdouterr'
 
+# Name of the folder created by BatchAI for storing job's standard output/error folder.
+STDOUTERR_FOLDER_NAME = 'stdouterr'
+
+# Name of the folder created by BatchAI for storing output directories.
+OUTPUT_DIRECTORIES_FOLDER_NAME = 'outputs'
+
 # Location to run tests.
-LOCATION = 'eastus'
+LOCATION = 'westeurope'
 
 # Regular expression to validate IP address (we don't need strict validation, just a smoke test enough).
 RE_ID_ADDRESS = '\d+(?:\.\d+){3}'
@@ -106,7 +112,7 @@ def create_file_server(client, location, resource_group, nfs_name, subnet_id=Non
 
 def create_cluster(client, location, resource_group, cluster_name, vm_size, target_nodes,
                    storage_account, storage_account_key, file_servers=None, file_systems=None,
-                   subnet_id=None, setup_task_cmd=None, setup_task_env=None):
+                   subnet_id=None, setup_task_cmd=None, setup_task_env=None, setup_task_secrets=None):
     """Creates a cluster with given parameters and mounted Azure Files
 
     :param BatchAIManagementClient client: client instance.
@@ -121,6 +127,8 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
     :param list(models.UnmanagedFileServerReference) file_systems: file systems.
     :param str setup_task_cmd: start task cmd line.
     :param dict[str, str] setup_task_env: environment variables for start task.
+    :param dict[str, str] setup_task_secrets: environment variables with secret values for start task, server doesn't
+                                              return values for these environment variables in get cluster responses.
     :param str subnet_id: virtual network subnet id.
     :return models.Cluster: the created cluster
     """
@@ -129,7 +137,8 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
     if setup_task_cmd:
         setup_task = models.SetupTask(
             command_line=setup_task_cmd,
-            environment_variables=[models.EnvironmentSetting(k, v) for k, v in setup_task_env.items()],
+            environment_variables=[models.EnvironmentVariable(k, v) for k, v in setup_task_env.items()],
+            secrets=[models.EnvironmentVariableWithSecretValue(k, v) for k, v in setup_task_secrets.items()],
             std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH))
     return client.clusters.create(
         resource_group,
@@ -160,7 +169,9 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
             user_account_settings=models.UserAccountSettings(
                 admin_user_name=ADMIN_USER_NAME,
                 admin_user_password=ADMIN_USER_PASSWORD
-            ))).result()
+            ),
+            vm_priority='lowpriority'
+        )).result()
 
 
 def create_custom_job(client, resource_group, location, cluster_id, job_name, nodes, cmd, job_preparation_cmd=None,
@@ -338,7 +349,7 @@ def get_node_ids(client, resource_group, cluster_name):
     return [n.node_id for n in list(client.clusters.list_remote_login_information(resource_group, cluster_name))]
 
 
-def assert_job_files_are(test, client, resource_group, job_name, output_directory_id, expected):
+def assert_job_files_in_path_are(test, client, resource_group, job_name, output_directory_id, path, expected):
     """Checks that the given task has expected output
 
     :param AzureMgmtTestCase test: test instance.
@@ -346,22 +357,52 @@ def assert_job_files_are(test, client, resource_group, job_name, output_director
     :param str resource_group: resource group name.
     :param str job_name: job name.
     :param str output_directory_id: output directory id.
-    :param dict(str, str) expected: expected content.
+    :param str path: a path inside of output directory.
+    :param dict(str, str or None) expected: expected content, directories must have None value.
     """
     paged = client.jobs.list_output_files(resource_group, job_name, models.JobsListOutputFilesOptions(
-        output_directory_id))
+        output_directory_id, directory=path))
     files = paged.get(paged.current_page)
     actual = dict()
+    execution_log_found = False
     for f in files:
-        v = requests.get(f.download_url).content
-        actual[f.name] = v if isinstance(v, six.string_types) else v.decode()
+        if (output_directory_id == STANDARD_OUTPUT_DIRECTORY_ID and f.name.startswith('execution') and
+                f.name.endswith('.log')):
+            execution_log_found = True
+            continue
+        actual[f.name] = None
+        if not f.is_directory:
+            v = requests.get(f.download_url).content
+            actual[f.name] = v if isinstance(v, six.string_types) else v.decode()
     test.assertEquals(sorted(actual.keys()), sorted(expected.keys()))
     for k, v in expected.items():
         a = actual[k]
+        if a is None and v is None:
+            # both are directories
+            continue
+        if v is None:
+            test.fail('Expected {0} to be a directory, got a file'.format(k))
+        if a is None:
+            test.fail('Expected {0} to be a file, got a directory'.format(k))
         if isinstance(v, six.string_types):
-            test.assertEquals(a, v, k)
+            test.assertEquals(v, a, k + "expected {0} got {1}".format(v, a))
         else:
             test.assertRegexpMatches(actual.get(k), v, k)
+    if output_directory_id == STANDARD_OUTPUT_DIRECTORY_ID and not execution_log_found:
+        test.fail("No execution log was generated for the job.")
+
+
+def assert_job_files_are(test, client, resource_group, job_name, output_directory_id, expected):
+    """Checks that the given task has expected output in the root of its output directory
+
+    :param AzureMgmtTestCase test: test instance.
+    :param BatchAIManagementClient client: client instance.
+    :param str resource_group: resource group name.
+    :param str job_name: job name.
+    :param str output_directory_id: output directory id.
+    :param dict(str, str) expected: expected content, directories must have None value.
+    """
+    assert_job_files_in_path_are(test, client, resource_group, job_name, output_directory_id, '.', expected)
 
 
 def assert_existing_clusters_are(test, client, resource_group, expected):
@@ -408,7 +449,7 @@ def assert_file_in_file_share(test, storage_account, storage_account_key, direct
 class ClusterPreparer(AzureMgmtPreparer):
     """Batch AI cluster preparer"""
     def __init__(self,
-                 location='eastus',
+                 location=LOCATION,
                  vm_size='STANDARD_D1',
                  target_nodes=1,
                  wait=True,
@@ -429,7 +470,7 @@ class ClusterPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(BatchAIManagementClient)
+            self.client = create_batchai_client(self)
             group = self._get_resource_group(**kwargs)
             self.resource = create_cluster(self.client, self.location, group.name, name, self.vm_size,
                                            self.target_nodes, self._get_storage_account(**kwargs).name,
@@ -469,3 +510,22 @@ class ClusterPreparer(AzureMgmtPreparer):
             template = 'To create a cluster a storage account is required. Please add ' \
                        'decorator @{} in front of this cluster preparer.'
             raise AzureTestError(template.format(StorageAccountPreparer.__name__))
+
+
+def create_batchai_client(preparer):
+    """Creates a Batch AI management client for tests.
+
+    To create a custom version of the client (e.g. for integration environment), create
+    custom_client.py file with create() method returning the instance of the client.
+
+    :param AzureMgmtPreparer preparer: an instance of AzureMgmtPreparer
+    :returns BatchAIManagementClient: an instance of Batch AI management client
+    """
+    try:
+        from . import custom_client
+    except ImportError:
+        custom_client = None
+    if custom_client is not None:
+        return custom_client.create()
+    else:
+        return preparer.create_mgmt_client(BatchAIManagementClient)

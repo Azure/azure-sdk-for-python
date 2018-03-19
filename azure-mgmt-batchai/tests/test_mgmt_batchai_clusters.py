@@ -18,7 +18,7 @@ from . import helpers
 class ClusterTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(ClusterTestCase, self).setUp()
-        self.client = self.create_mgmt_client(BatchAIManagementClient)  # type: BatchAIManagementClient
+        self.client = helpers.create_batchai_client(self)  # type: BatchAIManagementClient
         self.cluster_name = self.get_resource_name('cluster')
 
     @ResourceGroupPreparer(location=helpers.LOCATION)
@@ -62,11 +62,12 @@ class ClusterTestCase(AzureMgmtTestCase):
     def test_setup_task_execution(self, resource_group, location, storage_account, storage_account_key):
         """Tests setup task execution.
         """
-        helpers.create_cluster(
+        cluster = helpers.create_cluster(
             self.client, location, resource_group.name, self.cluster_name, 'STANDARD_D1', 1,
             storage_account.name, storage_account_key,
-            setup_task_cmd='echo $GREETING',
-            setup_task_env={"GREETING": "setup task"})
+            setup_task_cmd='echo $GREETING $SECRET_GREETING',
+            setup_task_env={'GREETING': 'setup task'},
+            setup_task_secrets={'SECRET_GREETING': 'has a secret'})  # type: models.Cluster
 
         # Verify that the cluster is reported in the list of clusters
         helpers.assert_existing_clusters_are(self, self.client, resource_group.name, [self.cluster_name])
@@ -76,14 +77,20 @@ class ClusterTestCase(AzureMgmtTestCase):
             helpers.wait_for_nodes(self.is_live, self.client, resource_group.name, self.cluster_name, 1,
                                    helpers.NODE_STARTUP_TIMEOUT_SEC), 1)
 
-        # Verify that the setup task is completed by checking generated output
-        setup_task_output_path = '{0}/{1}/clusters/{2}'.format(self.client.config.subscription_id,
-                                                               resource_group.name, self.cluster_name)
+        # Check that server doesn't return values for secrets
+        self.assertEqual(len(cluster.node_setup.setup_task.secrets), 1)
+        self.assertEqual(cluster.node_setup.setup_task.secrets[0].name, 'SECRET_GREETING')
+        self.assertIsNone(cluster.node_setup.setup_task.secrets[0].value)
+        # Verify that the setup task is completed by checking generated output. BatchAI reports a path which was auto-
+        # generated for storing setup output logs.
+        setup_task_output_path = cluster.node_setup.setup_task.std_out_err_path_suffix
         nodes = helpers.get_node_ids(self.client, resource_group.name, self.cluster_name)
         self.assertEqual(len(nodes), 1)
         node_id = nodes[0]
         helpers.assert_file_in_file_share(self, storage_account.name, storage_account_key,
-                                          setup_task_output_path, 'stdout-{0}.txt'.format(node_id), u'setup task\n')
+                                          setup_task_output_path,
+                                          'stdout-{0}.txt'.format(node_id),
+                                          u'setup task has a secret\n')
         helpers.assert_file_in_file_share(self, storage_account.name, storage_account_key,
                                           setup_task_output_path, 'stderr-{0}.txt'.format(node_id), u'')
         self.client.clusters.delete(resource_group.name, self.cluster_name).result()

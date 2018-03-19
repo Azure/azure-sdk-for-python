@@ -19,7 +19,7 @@ _FILE_SERVER_CREATION_TIMEOUT_SEC = helpers.MINUTE * 10
 class FileServerTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(FileServerTestCase, self).setUp()
-        self.client = self.create_mgmt_client(BatchAIManagementClient)  # type: BatchAIManagementClient
+        self.client = helpers.create_batchai_client(self)  # type: BatchAIManagementClient
         self.file_server_name = self.get_resource_name('fileserver')
 
     @ResourceGroupPreparer(location=helpers.LOCATION)
