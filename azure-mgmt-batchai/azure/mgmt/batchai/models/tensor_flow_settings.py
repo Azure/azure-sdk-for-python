@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class TensorFlowSettings(Model):
     """Specifies the settings for TensorFlow job.
 
-    :param python_script_file_path: The path and file name of the python
-     script to execute the job.
+    All required parameters must be populated in order to send to Azure.
+
+    :param python_script_file_path: Required. The path and file name of the
+     python script to execute the job.
     :type python_script_file_path: str
     :param python_interpreter_path: The path to python interpreter.
     :type python_interpreter_path: str
@@ -45,7 +47,6 @@ class TensorFlowSettings(Model):
 
     _validation = {
         'python_script_file_path': {'required': True},
-        'master_command_line_args': {'required': True},
     }
 
     _attribute_map = {
@@ -58,11 +59,12 @@ class TensorFlowSettings(Model):
         'parameter_server_count': {'key': 'parameterServerCount', 'type': 'int'},
     }
 
-    def __init__(self, python_script_file_path, master_command_line_args, python_interpreter_path=None, worker_command_line_args=None, parameter_server_command_line_args=None, worker_count=None, parameter_server_count=None):
-        self.python_script_file_path = python_script_file_path
-        self.python_interpreter_path = python_interpreter_path
-        self.master_command_line_args = master_command_line_args
-        self.worker_command_line_args = worker_command_line_args
-        self.parameter_server_command_line_args = parameter_server_command_line_args
-        self.worker_count = worker_count
-        self.parameter_server_count = parameter_server_count
+    def __init__(self, **kwargs):
+        super(TensorFlowSettings, self).__init__(**kwargs)
+        self.python_script_file_path = kwargs.get('python_script_file_path', None)
+        self.python_interpreter_path = kwargs.get('python_interpreter_path', None)
+        self.master_command_line_args = kwargs.get('master_command_line_args', None)
+        self.worker_command_line_args = kwargs.get('worker_command_line_args', None)
+        self.parameter_server_command_line_args = kwargs.get('parameter_server_command_line_args', None)
+        self.worker_count = kwargs.get('worker_count', None)
+        self.parameter_server_count = kwargs.get('parameter_server_count', None)

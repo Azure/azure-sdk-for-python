@@ -4,59 +4,59 @@ interactions:
     headers:
       Connection: [keep-alive]
       Content-Length: ['0']
-      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.5.3; Linux 4.10.0-35-generic)]
-      x-ms-date: ['Wed, 27 Sep 2017 22:38:45 GMT']
+      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.6.4; Linux 4.15.6-300.fc27.x86_64)]
+      x-ms-date: ['Fri, 16 Mar 2018 00:26:20 GMT']
       x-ms-version: ['2017-04-17']
     method: PUT
     uri: https://psdk39da1597.file.core.windows.net/share?restype=share
   response:
-    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The\
-        \ specified share already exists.\nRequestId:eadbc76b-001a-011d-78e1-373e92000000\n\
-        Time:2017-09-27T22:38:45.7945134Z</Message></Error>"}
+    body: {string: ''}
     headers:
-      content-length: ['222']
-      content-type: [application/xml]
-      date: ['Wed, 27 Sep 2017 22:38:45 GMT']
+      date: ['Fri, 16 Mar 2018 00:26:20 GMT']
+      etag: ['"0x8D58AD48AE5FC64"']
+      last-modified: ['Fri, 16 Mar 2018 00:26:21 GMT']
       server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
       x-ms-version: ['2017-04-17']
-    status: {code: 409, message: The specified share already exists.}
+    status: {code: 201, message: Created}
 - request:
-    body: '{"properties": {"userAccountSettings": {"adminUserName": "demoUser", "adminUserPassword":
-      "Dem0Pa$$w0rd"}, "scaleSettings": {"manual": {"nodeDeallocationOption": "requeue",
-      "targetNodeCount": 1}}, "vmSize": "STANDARD_D1", "vmPriority": "dedicated",
-      "nodeSetup": {"setupTask": {"environmentVariables": [{"name": "GREETING", "value":
-      "setup task"}], "runElevated": false, "commandLine": "echo $GREETING", "stdOutErrPathPrefix":
-      "$AZ_BATCHAI_MOUNT_ROOT/azfiles"}, "mountVolumes": {"azureFileShares": [{"azureFileUrl":
-      "https://psdk39da1597.file.core.windows.net/share", "fileMode": "0777", "relativeMountPath":
-      "azfiles", "directoryMode": "0777", "accountName": "psdk39da1597", "credentialsInfo":
-      {"accountKey": "w14z+jAsb2Gz+D9ASTQqaIdkeGNfthVIgK7mlrQugsb8qCBJaLXYYd/IITK9J9Fm90YRdu1gocxkVeZXu9vmYg=="}}]}}},
-      "location": "eastus"}'
+    body: '{"location": "westeurope", "properties": {"vmSize": "STANDARD_D1", "vmPriority":
+      "lowpriority", "scaleSettings": {"manual": {"targetNodeCount": 1, "nodeDeallocationOption":
+      "requeue"}}, "nodeSetup": {"setupTask": {"commandLine": "echo $GREETING $SECRET_GREETING",
+      "environmentVariables": [{"name": "GREETING", "value": "setup task"}], "secrets":
+      [{"name": "SECRET_GREETING", "value": "has a secret"}], "runElevated": false,
+      "stdOutErrPathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/azfiles"}, "mountVolumes": {"azureFileShares":
+      [{"accountName": "psdk39da1597", "azureFileUrl": "https://psdk39da1597.file.core.windows.net/share",
+      "credentials": {"accountKey": "YqXK3UQFbS9Jh6P8BprswmRWJUON+628lTWI1fYNFH9esAH9RiRiwyqolUaXD/kSf05gs4OCdOn/DS7Tq1z8mg=="},
+      "relativeMountPath": "azfiles", "fileMode": "0777", "directoryMode": "0777"}]}},
+      "userAccountSettings": {"adminUserName": "demoUser", "adminUserPassword": "Dem0Pa$$w0rd"}}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['829']
+      Content-Length: ['914']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
     body: {string: ''}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9e49db57-cab5-42f3-bb0a-66e4c2a742ad?api-version=2017-09-01-preview']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/280c66ad-a289-4d20-8d0c-01c5bfa1f3b7?api-version=2018-03-01']
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Wed, 27 Sep 2017 22:38:47 GMT']
+      date: ['Fri, 16 Mar 2018 00:26:23 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9e49db57-cab5-42f3-bb0a-66e4c2a742ad?api-version=2017-09-01-preview']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationstatuses/280c66ad-a289-4d20-8d0c-01c5bfa1f3b7?api-version=2018-03-01']
       pragma: [no-cache]
-      request-id: [f9439d53-c0db-46ee-8da6-0b17a010b129]
+      request-id: [df48db5a-5994-4bea-9363-4c289f5c6f58]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -64,22 +64,52 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9e49db57-cab5-42f3-bb0a-66e4c2a742ad?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/280c66ad-a289-4d20-8d0c-01c5bfa1f3b7?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9e49db57-cab5-42f3-bb0a-66e4c2a742ad","name":"9e49db57-cab5-42f3-bb0a-66e4c2a742ad","status":"Succeeded","startTime":"2017-09-27T22:38:46.644Z","endTime":"2017-09-27T22:38:47.239Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_clusters_test_setup_task_execution39da1597$cluster39da1597"}}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/280c66ad-a289-4d20-8d0c-01c5bfa1f3b7","name":"280c66ad-a289-4d20-8d0c-01c5bfa1f3b7","status":"Succeeded","startTime":"2018-03-16T00:26:23.401Z","endTime":"2018-03-16T00:26:24.058Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_clusters_test_setup_task_execution39da1597$cluster39da1597"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['474']
+      content-length: ['478']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:39:03 GMT']
+      date: ['Fri, 16 Mar 2018 00:26:38 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [10e746a7-1983-4925-a76a-9299bdcad039]
+      request-id: [c6aeb742-510c-4b4a-97b2-4f2f78f0430b]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"resizing","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:26:23.386Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1640']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 16 Mar 2018 00:26:40 GMT']
+      etag: ['"0x8D58AD48C458B92"']
+      expires: ['-1']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
+      pragma: [no-cache]
+      request-id: [7658b85c-a74d-413d-8141-65d38a5809da]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -93,24 +123,24 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Resizing","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:38:47.9Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"resizing","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:26:23.386Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1652']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:39:05 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:26:41 GMT']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
       pragma: [no-cache]
-      request-id: [1d1f023d-6b32-4d09-b1a5-acafcdd9b89c]
+      request-id: [aeedbf78-7942-42cb-b975-e7959c00cc34]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -124,22 +154,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Resizing","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:38:47.9Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}]}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"resizing","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:26:23.386Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1442']
+      content-length: ['1640']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:39:07 GMT']
+      date: ['Fri, 16 Mar 2018 00:26:43 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [6b02c384-5648-476f-8730-0c295620a62f]
+      request-id: [d21b41ed-8241-4828-a09e-fe947d838b72]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -153,24 +187,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Resizing","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:38:47.9Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"resizing","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:26:23.386Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1640']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:39:08 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:27:04 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [36ccc03c-0cc8-4827-8eaf-59db5a358886]
+      request-id: [9781dccc-fb6e-44a1-b836-556aee81b6c5]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -184,24 +220,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Resizing","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:38:47.9Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"resizing","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:26:23.386Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1640']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:39:30 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:27:26 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [180a4dfd-a2b3-4b85-8d08-11911189007e]
+      request-id: [c891ea8b-2a65-415a-a44f-a43ef753cdd8]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -215,24 +253,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Resizing","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:38:47.9Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"resizing","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:26:23.386Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":0,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1640']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:39:51 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:27:47 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [b0752cc6-4623-4edd-9921-f111e2a17db7]
+      request-id: [0673e6db-8742-433a-a2b4-f1dc12abf116]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -246,24 +286,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:40:12 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:28:10 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [0c68fa34-a044-4e69-994e-19fb8c0ee904]
+      request-id: [acb8ba9e-1ff6-4079-905d-63e1365c71c0]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -277,24 +319,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:40:33 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:28:31 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [01a4bdd9-531b-46eb-a47b-eef97a5def21]
+      request-id: [72f330d5-1fff-46c4-8a3a-d23667ceb917]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -308,24 +352,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:40:55 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:28:52 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [e8b86494-abb0-4173-80fb-26261c867ac2]
+      request-id: [f52a2843-fc13-4b0e-8704-165222f32dd9]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -339,24 +385,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:41:16 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:29:15 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [65e5e912-0c04-4b1e-8d15-9760a3c688ec]
+      request-id: [bed062d9-9582-4d28-8c52-47cb9cef4137]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -370,24 +418,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:41:38 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:29:36 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [b220ceaa-6cd4-44d3-9390-b08fd53b81f6]
+      request-id: [9d171277-1a1a-42bb-86fd-1496079f1904]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -401,24 +451,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:41:59 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:29:57 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [207f3938-8769-41c5-ab1d-e404eb879936]
+      request-id: [1af6d4dc-8600-4712-b452-dad5a1ccb95a]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -432,24 +484,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:42:22 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:30:18 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [348e91c0-a162-44c5-9f04-8f1b55f7fae6]
+      request-id: [ee0dd132-877d-4197-9680-68b841da7ae0]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -463,24 +517,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":0,"unusableNodeCount":0,"preparingNodeCount":1,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:42:44 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:30:40 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [c2e92f05-090c-423d-ba17-c590d69091d3]
+      request-id: [85ef09e2-65b9-4e5d-ae77-a7d5e776c287]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -494,24 +550,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"eastus","properties":{"provisioningState":"Succeeded","allocationState":"Steady","creationTime":"2017-09-27T22:38:46.628Z","lastModified":"2017-09-27T22:38:46.628Z","allocationStateTransitionTime":"2017-09-27T22:39:53.296Z","provisioningStateTransitionTime":"2017-09-27T22:38:47.223Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":1,"unusableNodeCount":0,"preparingNodeCount":0},"vmPriority":"Dedicated","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"Requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
-        $GREETING","environmentVariables":[{"name":"GREETING","value":"setup task"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentialsInfo":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}},"subnet":{}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597","name":"cluster39da1597","type":"Microsoft.BatchAI/Clusters","location":"westeurope","properties":{"provisioningState":"succeeded","allocationState":"steady","creationTime":"2018-03-16T00:26:23.386Z","allocationStateTransitionTime":"2018-03-16T00:27:58.91Z","provisioningStateTransitionTime":"2018-03-16T00:26:24.042Z","vmSize":"STANDARD_D1","currentNodeCount":1,"nodeStateCounts":{"runningNodeCount":0,"idleNodeCount":1,"unusableNodeCount":0,"preparingNodeCount":0,"leavingNodeCount":0},"vmPriority":"lowpriority","scaleSettings":{"manual":{"targetNodeCount":1,"nodeDeallocationOption":"requeue"}},"virtualMachineConfiguration":{"imageReference":{"publisher":"Canonical","offer":"UbuntuServer","sku":"16.04-LTS","version":"latest"}},"userAccountSettings":{"adminUserName":"demoUser"},"nodeSetup":{"setupTask":{"commandLine":"echo
+        $GREETING $SECRET_GREETING","environmentVariables":[{"name":"GREETING","value":"setup
+        task"}],"secrets":[{"name":"SECRET_GREETING"}],"runElevated":false,"stdOutErrPathPrefix":"$AZ_BATCHAI_MOUNT_ROOT/azfiles","stdOutErrPathSuffix":"00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910"},"mountVolumes":{"azureFileShares":[{"accountName":"psdk39da1597","azureFileUrl":"https://psdk39da1597.file.core.windows.net/share","credentials":{},"relativeMountPath":"azfiles","fileMode":"0777","directoryMode":"0777"}]}}}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['1430']
+      content-length: ['1637']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:43:06 GMT']
-      etag: ['"0x8D505F883EEC8C7"']
+      date: ['Fri, 16 Mar 2018 00:31:01 GMT']
+      etag: ['"0x8D58AD48C458B92"']
       expires: ['-1']
-      last-modified: ['Wed, 27 Sep 2017 22:38:46 GMT']
+      last-modified: ['Fri, 16 Mar 2018 00:26:23 GMT']
       pragma: [no-cache]
-      request-id: [22991609-2ab8-4950-a9d4-226d5489322b]
+      request-id: [c3337e4b-4b12-40bd-8fe7-f9553454b079]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -526,21 +584,22 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597/listRemoteLoginInformation?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597/listRemoteLoginInformation?api-version=2018-03-01
   response:
-    body: {string: '{"value":[{"nodeId":"tvm-4283973576_1-20170927t223951z","ipAddress":"40.76.219.192","port":50000}]}'}
+    body: {string: '{"value":[{"nodeId":"tvm-3516245985_1-20180316t002758z-p","ipAddress":"52.232.47.117","port":50000}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['99']
+      content-length: ['101']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:43:08 GMT']
+      date: ['Fri, 16 Mar 2018 00:31:03 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [fe0cccd6-d6a1-40d0-b49d-951b845ce05e]
+      request-id: [c44223ec-66d1-4e50-90f9-553bf4de7781]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -551,26 +610,26 @@ interactions:
     body: null
     headers:
       Connection: [keep-alive]
-      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.5.3; Linux 4.10.0-35-generic)]
-      x-ms-date: ['Wed, 27 Sep 2017 22:43:08 GMT']
+      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.6.4; Linux 4.15.6-300.fc27.x86_64)]
+      x-ms-date: ['Fri, 16 Mar 2018 00:31:03 GMT']
       x-ms-range: [bytes=0-33554431]
       x-ms-version: ['2017-04-17']
     method: GET
-    uri: https://psdk39da1597.file.core.windows.net/share/00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/stdout-tvm-4283973576_1-20170927t223951z.txt
+    uri: https://psdk39da1597.file.core.windows.net/share/00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910/stdout-tvm-3516245985_1-20180316t002758z-p.txt
   response:
-    body: {string: 'setup task
+    body: {string: 'setup task has a secret
 
         '}
     headers:
       accept-ranges: [bytes]
-      content-length: ['11']
-      content-range: [bytes 0-10/11]
+      content-length: ['24']
+      content-range: [bytes 0-23/24]
       content-type: [application/octet-stream]
-      date: ['Wed, 27 Sep 2017 22:43:08 GMT']
-      etag: ['"0x8D505F9084DDB79"']
-      last-modified: ['Wed, 27 Sep 2017 22:42:28 GMT']
+      date: ['Fri, 16 Mar 2018 00:31:04 GMT']
+      etag: ['"0x8D58AD525A8A047"']
+      last-modified: ['Fri, 16 Mar 2018 00:30:40 GMT']
       server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
-      x-ms-server-encrypted: ['false']
+      x-ms-server-encrypted: ['true']
       x-ms-type: [File]
       x-ms-version: ['2017-04-17']
     status: {code: 206, message: Partial Content}
@@ -578,21 +637,21 @@ interactions:
     body: null
     headers:
       Connection: [keep-alive]
-      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.5.3; Linux 4.10.0-35-generic)]
-      x-ms-date: ['Wed, 27 Sep 2017 22:43:08 GMT']
+      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.6.4; Linux 4.15.6-300.fc27.x86_64)]
+      x-ms-date: ['Fri, 16 Mar 2018 00:31:04 GMT']
       x-ms-range: [bytes=0-33554431]
       x-ms-version: ['2017-04-17']
     method: GET
-    uri: https://psdk39da1597.file.core.windows.net/share/00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/stderr-tvm-4283973576_1-20170927t223951z.txt
+    uri: https://psdk39da1597.file.core.windows.net/share/00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910/stderr-tvm-3516245985_1-20180316t002758z-p.txt
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:5bbd30c9-001a-0026-57e1-373a99000000\n\
-        Time:2017-09-27T22:43:09.4692984Z</Message></Error>"}
+        \ range specified is invalid for the current size of the resource.\nRequestId:6889ab8b-601a-0049-14be-bc4253000000\n\
+        Time:2018-03-16T00:31:05.2211093Z</Message></Error>"}
     headers:
       content-length: ['249']
       content-range: [bytes */0]
       content-type: [application/xml]
-      date: ['Wed, 27 Sep 2017 22:43:08 GMT']
+      date: ['Fri, 16 Mar 2018 00:31:05 GMT']
       server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
       x-ms-version: ['2017-04-17']
     status: {code: 416, message: The range specified is invalid for the current size
@@ -601,22 +660,22 @@ interactions:
     body: null
     headers:
       Connection: [keep-alive]
-      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.5.3; Linux 4.10.0-35-generic)]
-      x-ms-date: ['Wed, 27 Sep 2017 22:43:09 GMT']
+      User-Agent: [Azure-Storage/0.36.0 (Python CPython 3.6.4; Linux 4.15.6-300.fc27.x86_64)]
+      x-ms-date: ['Fri, 16 Mar 2018 00:31:05 GMT']
       x-ms-version: ['2017-04-17']
     method: GET
-    uri: https://psdk39da1597.file.core.windows.net/share/00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/stderr-tvm-4283973576_1-20170927t223951z.txt
+    uri: https://psdk39da1597.file.core.windows.net/share/00000000-0000-0000-0000-000000000000/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/clusters/cluster39da1597/f601ee14-b1f3-46f8-93c9-39c8937cf910/stderr-tvm-3516245985_1-20180316t002758z-p.txt
   response:
     body: {string: ''}
     headers:
       accept-ranges: [bytes]
       content-length: ['0']
       content-type: [application/octet-stream]
-      date: ['Wed, 27 Sep 2017 22:43:09 GMT']
-      etag: ['"0x8D505F9084ACDAE"']
-      last-modified: ['Wed, 27 Sep 2017 22:42:28 GMT']
+      date: ['Fri, 16 Mar 2018 00:31:05 GMT']
+      etag: ['"0x8D58AD52598254C"']
+      last-modified: ['Fri, 16 Mar 2018 00:30:40 GMT']
       server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
-      x-ms-server-encrypted: ['false']
+      x-ms-server-encrypted: ['true']
       x-ms-type: [File]
       x-ms-version: ['2017-04-17']
     status: {code: 200, message: OK}
@@ -628,22 +687,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_batchai_clusters_test_setup_task_execution39da1597/providers/Microsoft.BatchAI/clusters/cluster39da1597?api-version=2018-03-01
   response:
     body: {string: ''}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01']
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Wed, 27 Sep 2017 22:43:10 GMT']
+      date: ['Fri, 16 Mar 2018 00:31:08 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationstatuses/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01']
       pragma: [no-cache]
-      request-id: [a18c9ee9-b533-4057-a561-763074beadb3]
+      request-id: [d7c61ac9-b458-4bd1-9e35-e92f6ade67c6]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
@@ -655,22 +715,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:43:26 GMT']
+      date: ['Fri, 16 Mar 2018 00:31:23 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [738dec24-0dc7-4126-82be-7ef4041d9f67]
+      request-id: [5f00c170-8342-4b01-b19d-cc11ac1082f8]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -683,22 +742,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:43:58 GMT']
+      date: ['Fri, 16 Mar 2018 00:31:55 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [26775b51-51ae-41b9-b62f-ea14514537fd]
+      request-id: [00e445a3-8622-402b-82fc-54d62dfa3449]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -711,22 +769,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:44:29 GMT']
+      date: ['Fri, 16 Mar 2018 00:32:26 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [95ddac8d-ee1b-4ebe-849d-b952e1e27da3]
+      request-id: [e3a9b59f-266f-4e13-9c8b-b4fa6fbcaa6d]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -739,22 +796,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:45:00 GMT']
+      date: ['Fri, 16 Mar 2018 00:32:57 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [d4d332d0-bb8c-40d8-b54e-9afcebf3398a]
+      request-id: [7fc32838-7302-4ab6-a5c0-d9ddba827a30]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -767,22 +823,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:45:31 GMT']
+      date: ['Fri, 16 Mar 2018 00:33:28 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [9e02ac44-aae0-42fc-95d9-629b6492c88d]
+      request-id: [989c7d40-1fb4-4524-8945-1ddf120d4cae]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -795,22 +850,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:46:03 GMT']
+      date: ['Fri, 16 Mar 2018 00:33:59 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [7efcbec3-5599-4d33-816e-2e2cb28a397c]
+      request-id: [422769de-9326-4ac0-8088-6033b0c43bdc]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -823,22 +877,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:46:34 GMT']
+      date: ['Fri, 16 Mar 2018 00:34:31 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [d3674ef0-417d-4a49-a3fc-f64b800c9794]
+      request-id: [3d221430-d8a0-42ef-a5ef-ecf91091614e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -851,22 +904,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:47:05 GMT']
+      date: ['Fri, 16 Mar 2018 00:35:02 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [6c8db611-480a-4473-8077-b744dfb59d30]
+      request-id: [4b8a2800-36b7-4a10-875f-b1c16ef799b9]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -879,22 +931,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"InProgress","startTime":"2017-09-27T22:43:10.101Z"}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['294']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:47:36 GMT']
+      date: ['Fri, 16 Mar 2018 00:35:34 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [1a84bd22-616e-48d2-9ee9-31f70de4f60a]
+      request-id: [ab83ded6-1b42-42e6-a062-50296566b474]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -907,22 +958,48 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.3 (Linux-4.10.0-35-generic-x86_64-with-Ubuntu-17.04-zesty)
-          requests/2.18.4 msrest/0.4.14 msrest_azure/0.4.14 batchaiclient/0.2.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e?api-version=2017-09-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
   response:
-    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/eastus/operationresults/9125abb6-3496-4a67-affc-2910e8f1ba0e","name":"9125abb6-3496-4a67-affc-2910e8f1ba0e","status":"Succeeded","startTime":"2017-09-27T22:43:10.101Z","endTime":"2017-09-27T22:47:44.023Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_clusters_test_setup_task_execution39da1597$cluster39da1597"}}'}
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"InProgress","startTime":"2018-03-16T00:31:07.501Z"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['474']
+      content-length: ['298']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 27 Sep 2017 22:48:08 GMT']
+      date: ['Fri, 16 Mar 2018 00:36:04 GMT']
       expires: ['-1']
       pragma: [no-cache]
-      request-id: [994a24a1-d0b8-4253-b357-6c6907b40a75]
+      request-id: [19032c44-2ef8-4bbc-9891-b5d7e134642e]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644?api-version=2018-03-01
+  response:
+    body: {string: '{"id":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/operationresults/93b3a5e8-d19b-4d51-98db-735e91e60644","name":"93b3a5e8-d19b-4d51-98db-735e91e60644","status":"Succeeded","startTime":"2018-03-16T00:31:07.501Z","endTime":"2018-03-16T00:36:11.06Z","properties":{"resourceId":"00000000-0000-0000-0000-000000000000$test_mgmt_batchai_clusters_test_setup_task_execution39da1597$cluster39da1597"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['477']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 16 Mar 2018 00:36:36 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [532fc7c7-de57-4829-90fe-cd6cf1b2f44a]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]

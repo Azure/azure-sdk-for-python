@@ -22,8 +22,7 @@ class BatchAIError(Model):
      for display in a user interface.
     :type message: str
     :param details: A list of additional details about the error.
-    :type details: list of :class:`NameValuePair
-     <azure.mgmt.batchai.models.NameValuePair>`
+    :type details: list[~azure.mgmt.batchai.models.NameValuePair]
     """
 
     _attribute_map = {
@@ -32,7 +31,8 @@ class BatchAIError(Model):
         'details': {'key': 'details', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, code=None, message=None, details=None):
-        self.code = code
-        self.message = message
-        self.details = details
+    def __init__(self, **kwargs):
+        super(BatchAIError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)
