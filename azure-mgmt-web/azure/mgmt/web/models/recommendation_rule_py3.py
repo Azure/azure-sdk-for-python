@@ -9,26 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_only_resource import ProxyOnlyResource
+from msrest.serialization import Model
 
 
-class RecommendationRule(ProxyOnlyResource):
+class RecommendationRule(Model):
     """Represents a recommendation rule that the recommendation engine can
     perform.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param recommendation_rule_name: Unique name of the rule.
-    :type recommendation_rule_name: str
+    :param name: Unique name of the rule.
+    :type name: str
     :param display_name: UI friendly name of the rule.
     :type display_name: str
     :param message: Localized name of the rule (Good for UI).
@@ -65,35 +54,25 @@ class RecommendationRule(ProxyOnlyResource):
     :type forward_link: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recommendation_rule_name': {'key': 'properties.name', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'message': {'key': 'properties.message', 'type': 'str'},
-        'recommendation_id': {'key': 'properties.recommendationId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'action_name': {'key': 'properties.actionName', 'type': 'str'},
-        'level': {'key': 'properties.level', 'type': 'NotificationLevel'},
-        'channels': {'key': 'properties.channels', 'type': 'Channels'},
-        'tags': {'key': 'properties.tags', 'type': '[str]'},
-        'is_dynamic': {'key': 'properties.isDynamic', 'type': 'bool'},
-        'extension_name': {'key': 'properties.extensionName', 'type': 'str'},
-        'blade_name': {'key': 'properties.bladeName', 'type': 'str'},
-        'forward_link': {'key': 'properties.forwardLink', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'recommendation_id': {'key': 'recommendationId', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'action_name': {'key': 'actionName', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'NotificationLevel'},
+        'channels': {'key': 'channels', 'type': 'Channels'},
+        'tags': {'key': 'tags', 'type': '[str]'},
+        'is_dynamic': {'key': 'isDynamic', 'type': 'bool'},
+        'extension_name': {'key': 'extensionName', 'type': 'str'},
+        'blade_name': {'key': 'bladeName', 'type': 'str'},
+        'forward_link': {'key': 'forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, recommendation_rule_name: str=None, display_name: str=None, message: str=None, recommendation_id: str=None, description: str=None, action_name: str=None, level=None, channels=None, tags=None, is_dynamic: bool=None, extension_name: str=None, blade_name: str=None, forward_link: str=None, **kwargs) -> None:
-        super(RecommendationRule, self).__init__(kind=kind, **kwargs)
-        self.recommendation_rule_name = recommendation_rule_name
+    def __init__(self, *, name: str=None, display_name: str=None, message: str=None, recommendation_id: str=None, description: str=None, action_name: str=None, level=None, channels=None, tags=None, is_dynamic: bool=None, extension_name: str=None, blade_name: str=None, forward_link: str=None, **kwargs) -> None:
+        super(RecommendationRule, self).__init__(**kwargs)
+        self.name = name
         self.display_name = display_name
         self.message = message
         self.recommendation_id = recommendation_id

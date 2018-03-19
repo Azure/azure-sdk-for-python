@@ -437,7 +437,6 @@ from .diagnostic_category_paged import DiagnosticCategoryPaged
 from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
 from .application_stack_paged import ApplicationStackPaged
-from .recommendation_paged import RecommendationPaged
 from .resource_health_metadata_paged import ResourceHealthMetadataPaged
 from .source_control_paged import SourceControlPaged
 from .geo_region_paged import GeoRegionPaged
@@ -481,7 +480,6 @@ from .web_site_management_client_enums import (
     CertificateOrderStatus,
     CertificateOrderActionType,
     RouteType,
-    ManagedServiceIdentityType,
     AutoHealActionType,
     ConnectionStringType,
     ScmType,
@@ -756,7 +754,6 @@ __all__ = [
     'AnalysisDefinitionPaged',
     'DetectorDefinitionPaged',
     'ApplicationStackPaged',
-    'RecommendationPaged',
     'ResourceHealthMetadataPaged',
     'SourceControlPaged',
     'GeoRegionPaged',
@@ -799,7 +796,6 @@ __all__ = [
     'CertificateOrderStatus',
     'CertificateOrderActionType',
     'RouteType',
-    'ManagedServiceIdentityType',
     'AutoHealActionType',
     'ConnectionStringType',
     'ScmType',
