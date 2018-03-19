@@ -41,21 +41,16 @@ class ApplicationInsightsManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param purge_id: In a purge status request, this is the Id of the
-     operation the status of which is returned.
-    :type purge_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, purge_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if purge_id is None:
-            raise ValueError("Parameter 'purge_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -66,7 +61,6 @@ class ApplicationInsightsManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.purge_id = purge_id
 
 
 class ApplicationInsightsManagementClient(object):
@@ -111,16 +105,13 @@ class ApplicationInsightsManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param purge_id: In a purge status request, this is the Id of the
-     operation the status of which is returned.
-    :type purge_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, purge_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = ApplicationInsightsManagementClientConfiguration(credentials, subscription_id, purge_id, base_url)
+        self.config = ApplicationInsightsManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
