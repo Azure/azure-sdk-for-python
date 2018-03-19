@@ -17,6 +17,7 @@ from .operations.usage_details_operations import UsageDetailsOperations
 from .operations.marketplaces_operations import MarketplacesOperations
 from .operations.reservations_summaries_operations import ReservationsSummariesOperations
 from .operations.reservations_details_operations import ReservationsDetailsOperations
+from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
 from .operations.budgets_operations import BudgetsOperations
 from .operations.operations import Operations
 from .operations.price_sheet_operations import PriceSheetOperations
@@ -75,6 +76,8 @@ class ConsumptionManagementClient(object):
     :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
     :ivar reservations_details: ReservationsDetails operations
     :vartype reservations_details: azure.mgmt.consumption.operations.ReservationsDetailsOperations
+    :ivar reservation_recommendations: ReservationRecommendations operations
+    :vartype reservation_recommendations: azure.mgmt.consumption.operations.ReservationRecommendationsOperations
     :ivar budgets: Budgets operations
     :vartype budgets: azure.mgmt.consumption.operations.BudgetsOperations
     :ivar operations: Operations operations
@@ -111,6 +114,8 @@ class ConsumptionManagementClient(object):
         self.reservations_summaries = ReservationsSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservations_details = ReservationsDetailsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservation_recommendations = ReservationRecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.budgets = BudgetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
