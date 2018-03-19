@@ -40,8 +40,6 @@ class PatchRouteFilterRule(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -61,7 +59,6 @@ class PatchRouteFilterRule(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     route_filter_rule_type = "Community"
@@ -73,4 +70,3 @@ class PatchRouteFilterRule(SubResource):
         self.provisioning_state = None
         self.name = None
         self.etag = None
-        self.tags = kwargs.get('tags', None)

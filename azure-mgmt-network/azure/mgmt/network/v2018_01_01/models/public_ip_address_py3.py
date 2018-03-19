@@ -47,6 +47,8 @@ class PublicIPAddress(Resource):
      IP address.
     :type dns_settings:
      ~azure.mgmt.network.v2018_01_01.models.PublicIPAddressDnsSettings
+    :param ip_tags: The list of tags associated with the public IP address.
+    :type ip_tags: list[~azure.mgmt.network.v2018_01_01.models.IpTag]
     :param ip_address: The IP address associated with the public IP address
      resource.
     :type ip_address: str
@@ -83,6 +85,7 @@ class PublicIPAddress(Resource):
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
         'ip_configuration': {'key': 'properties.ipConfiguration', 'type': 'IPConfiguration'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'PublicIPAddressDnsSettings'},
+        'ip_tags': {'key': 'properties.ipTags', 'type': '[IpTag]'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
@@ -91,13 +94,14 @@ class PublicIPAddress(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_address: str=None, idle_timeout_in_minutes: int=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, public_ip_allocation_method=None, public_ip_address_version=None, dns_settings=None, ip_tags=None, ip_address: str=None, idle_timeout_in_minutes: int=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
         super(PublicIPAddress, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.public_ip_allocation_method = public_ip_allocation_method
         self.public_ip_address_version = public_ip_address_version
         self.ip_configuration = None
         self.dns_settings = dns_settings
+        self.ip_tags = ip_tags
         self.ip_address = ip_address
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.resource_guid = resource_guid
