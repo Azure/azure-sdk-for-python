@@ -21,13 +21,7 @@ from .operations.certificate_operations import CertificateOperations
 from .operations.connection_operations import ConnectionOperations
 from .operations.connection_type_operations import ConnectionTypeOperations
 from .operations.credential_operations import CredentialOperations
-from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
-from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_configuration_operations import DscConfigurationOperations
-from .operations.agent_registration_information_operations import AgentRegistrationInformationOperations
-from .operations.dsc_node_operations import DscNodeOperations
-from .operations.node_reports_operations import NodeReportsOperations
-from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .operations.hybrid_runbook_worker_group_operations import HybridRunbookWorkerGroupOperations
 from .operations.job_schedule_operations import JobScheduleOperations
 from .operations.linked_workspace_operations import LinkedWorkspaceOperations
@@ -49,6 +43,12 @@ from .operations.source_control_operations import SourceControlOperations
 from .operations.source_control_sync_job_operations import SourceControlSyncJobOperations
 from .operations.job_operations import JobOperations
 from .operations.job_stream_operations import JobStreamOperations
+from .operations.agent_registration_information_operations import AgentRegistrationInformationOperations
+from .operations.dsc_node_operations import DscNodeOperations
+from .operations.node_reports_operations import NodeReportsOperations
+from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
+from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
+from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
 from . import models
 
 
@@ -64,26 +64,26 @@ class AutomationClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param resource_group_name: The resource group name.
-    :type resource_group_name: str
-    :param client_request_id: Identifies this specific client request.
-    :type client_request_id: str
     :param automation_account_name: The name of the automation account.
     :type automation_account_name: str
+    :param automation_account_name1: The name of the automation account.
+    :type automation_account_name1: str
+    :param client_request_id: Identifies this specific client request.
+    :type client_request_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, automation_account_name, client_request_id=None, base_url=None):
+            self, credentials, subscription_id, automation_account_name, automation_account_name1, client_request_id=None, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if resource_group_name is None:
-            raise ValueError("Parameter 'resource_group_name' must not be None.")
         if automation_account_name is None:
             raise ValueError("Parameter 'automation_account_name' must not be None.")
+        if automation_account_name1 is None:
+            raise ValueError("Parameter 'automation_account_name1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -94,9 +94,9 @@ class AutomationClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
-        self.client_request_id = client_request_id
         self.automation_account_name = automation_account_name
+        self.automation_account_name1 = automation_account_name1
+        self.client_request_id = client_request_id
 
 
 class AutomationClient(object):
@@ -121,20 +121,8 @@ class AutomationClient(object):
     :vartype connection_type: azure.mgmt.automation.operations.ConnectionTypeOperations
     :ivar credential: Credential operations
     :vartype credential: azure.mgmt.automation.operations.CredentialOperations
-    :ivar dsc_compilation_job: DscCompilationJob operations
-    :vartype dsc_compilation_job: azure.mgmt.automation.operations.DscCompilationJobOperations
-    :ivar dsc_compilation_job_stream: DscCompilationJobStream operations
-    :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
     :ivar dsc_configuration: DscConfiguration operations
     :vartype dsc_configuration: azure.mgmt.automation.operations.DscConfigurationOperations
-    :ivar agent_registration_information: AgentRegistrationInformation operations
-    :vartype agent_registration_information: azure.mgmt.automation.operations.AgentRegistrationInformationOperations
-    :ivar dsc_node: DscNode operations
-    :vartype dsc_node: azure.mgmt.automation.operations.DscNodeOperations
-    :ivar node_reports: NodeReports operations
-    :vartype node_reports: azure.mgmt.automation.operations.NodeReportsOperations
-    :ivar dsc_node_configuration: DscNodeConfiguration operations
-    :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
     :ivar hybrid_runbook_worker_group: HybridRunbookWorkerGroup operations
     :vartype hybrid_runbook_worker_group: azure.mgmt.automation.operations.HybridRunbookWorkerGroupOperations
     :ivar job_schedule: JobSchedule operations
@@ -177,6 +165,18 @@ class AutomationClient(object):
     :vartype job: azure.mgmt.automation.operations.JobOperations
     :ivar job_stream: JobStream operations
     :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
+    :ivar agent_registration_information: AgentRegistrationInformation operations
+    :vartype agent_registration_information: azure.mgmt.automation.operations.AgentRegistrationInformationOperations
+    :ivar dsc_node: DscNode operations
+    :vartype dsc_node: azure.mgmt.automation.operations.DscNodeOperations
+    :ivar node_reports: NodeReports operations
+    :vartype node_reports: azure.mgmt.automation.operations.NodeReportsOperations
+    :ivar dsc_compilation_job: DscCompilationJob operations
+    :vartype dsc_compilation_job: azure.mgmt.automation.operations.DscCompilationJobOperations
+    :ivar dsc_compilation_job_stream: DscCompilationJobStream operations
+    :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
+    :ivar dsc_node_configuration: DscNodeConfiguration operations
+    :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -185,19 +185,19 @@ class AutomationClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param resource_group_name: The resource group name.
-    :type resource_group_name: str
-    :param client_request_id: Identifies this specific client request.
-    :type client_request_id: str
     :param automation_account_name: The name of the automation account.
     :type automation_account_name: str
+    :param automation_account_name1: The name of the automation account.
+    :type automation_account_name1: str
+    :param client_request_id: Identifies this specific client request.
+    :type client_request_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, automation_account_name, client_request_id=None, base_url=None):
+            self, credentials, subscription_id, automation_account_name, automation_account_name1, client_request_id=None, base_url=None):
 
-        self.config = AutomationClientConfiguration(credentials, subscription_id, resource_group_name, automation_account_name, client_request_id, base_url)
+        self.config = AutomationClientConfiguration(credentials, subscription_id, automation_account_name, automation_account_name1, client_request_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -220,19 +220,7 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.credential = CredentialOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_compilation_job = DscCompilationJobOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.dsc_configuration = DscConfigurationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.agent_registration_information = AgentRegistrationInformationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_node = DscNodeOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.node_reports = NodeReportsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_node_configuration = DscNodeConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.hybrid_runbook_worker_group = HybridRunbookWorkerGroupOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -275,4 +263,16 @@ class AutomationClient(object):
         self.job = JobOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job_stream = JobStreamOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.agent_registration_information = AgentRegistrationInformationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_node = DscNodeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.node_reports = NodeReportsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_compilation_job = DscCompilationJobOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_node_configuration = DscNodeConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)

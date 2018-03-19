@@ -104,26 +104,27 @@ from .variable_update_parameters import VariableUpdateParameters
 from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
 from .webhook import Webhook
 from .webhook_update_parameters import WebhookUpdateParameters
+from .job_collection_item import JobCollectionItem
+from .windows_properties import WindowsProperties
+from .linux_properties import LinuxProperties
+from .update_configuration import UpdateConfiguration
+from .software_update_configuration import SoftwareUpdateConfiguration
 from .collection_item_update_configuration import CollectionItemUpdateConfiguration
 from .software_update_configuration_collection_item import SoftwareUpdateConfigurationCollectionItem
 from .software_update_configuration_list_result import SoftwareUpdateConfigurationListResult
-from .linux_properties import LinuxProperties
-from .windows_properties import WindowsProperties
-from .update_configuration import UpdateConfiguration
-from .software_update_configuration import SoftwareUpdateConfiguration
 from .update_configuration_navigation import UpdateConfigurationNavigation
+from .job_navigation import JobNavigation
 from .software_update_configuration_run import SoftwareUpdateConfigurationRun
 from .software_update_configuration_run_list_result import SoftwareUpdateConfigurationRunListResult
-from .job_navigation import JobNavigation
 from .software_update_configuration_machine_run import SoftwareUpdateConfigurationMachineRun
 from .software_update_configuration_machine_run_list_result import SoftwareUpdateConfigurationMachineRunListResult
+from .source_control_create_or_update_parameters import SourceControlCreateOrUpdateParameters
 from .source_control import SourceControl
 from .source_control_update_parameters import SourceControlUpdateParameters
-from .source_control_create_or_update_parameters import SourceControlCreateOrUpdateParameters
 from .source_control_sync_job import SourceControlSyncJob
 from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
 from .source_control_sync_job_by_id import SourceControlSyncJobById
-from .job_collection_item import JobCollectionItem
+from .dsc_node_configuration_create_or_update_parameters_properties import DscNodeConfigurationCreateOrUpdateParametersProperties
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -132,11 +133,7 @@ from .certificate_paged import CertificatePaged
 from .connection_paged import ConnectionPaged
 from .connection_type_paged import ConnectionTypePaged
 from .credential_paged import CredentialPaged
-from .dsc_compilation_job_paged import DscCompilationJobPaged
 from .dsc_configuration_paged import DscConfigurationPaged
-from .dsc_node_paged import DscNodePaged
-from .dsc_node_report_paged import DscNodeReportPaged
-from .dsc_node_configuration_paged import DscNodeConfigurationPaged
 from .hybrid_runbook_worker_group_paged import HybridRunbookWorkerGroupPaged
 from .job_schedule_paged import JobSchedulePaged
 from .activity_paged import ActivityPaged
@@ -150,6 +147,10 @@ from .webhook_paged import WebhookPaged
 from .source_control_paged import SourceControlPaged
 from .source_control_sync_job_paged import SourceControlSyncJobPaged
 from .job_collection_item_paged import JobCollectionItemPaged
+from .dsc_node_paged import DscNodePaged
+from .dsc_node_report_paged import DscNodeReportPaged
+from .dsc_compilation_job_paged import DscCompilationJobPaged
+from .dsc_node_configuration_paged import DscNodeConfigurationPaged
 from .automation_client_enums import (
     RunbookTypeEnum,
     RunbookState,
@@ -167,9 +168,9 @@ from .automation_client_enums import (
     JobStreamType,
     HttpStatusCode,
     ScheduleFrequency,
-    LinuxUpdateClasses,
-    WindowsUpdateClasses,
     OperatingSystemType,
+    WindowsUpdateClasses,
+    LinuxUpdateClasses,
     SourceType,
     ProvisioningState,
 )
@@ -270,26 +271,27 @@ __all__ = [
     'WebhookCreateOrUpdateParameters',
     'Webhook',
     'WebhookUpdateParameters',
+    'JobCollectionItem',
+    'WindowsProperties',
+    'LinuxProperties',
+    'UpdateConfiguration',
+    'SoftwareUpdateConfiguration',
     'CollectionItemUpdateConfiguration',
     'SoftwareUpdateConfigurationCollectionItem',
     'SoftwareUpdateConfigurationListResult',
-    'LinuxProperties',
-    'WindowsProperties',
-    'UpdateConfiguration',
-    'SoftwareUpdateConfiguration',
     'UpdateConfigurationNavigation',
+    'JobNavigation',
     'SoftwareUpdateConfigurationRun',
     'SoftwareUpdateConfigurationRunListResult',
-    'JobNavigation',
     'SoftwareUpdateConfigurationMachineRun',
     'SoftwareUpdateConfigurationMachineRunListResult',
+    'SourceControlCreateOrUpdateParameters',
     'SourceControl',
     'SourceControlUpdateParameters',
-    'SourceControlCreateOrUpdateParameters',
     'SourceControlSyncJob',
     'SourceControlSyncJobByIdErrors',
     'SourceControlSyncJobById',
-    'JobCollectionItem',
+    'DscNodeConfigurationCreateOrUpdateParametersProperties',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',
@@ -298,11 +300,7 @@ __all__ = [
     'ConnectionPaged',
     'ConnectionTypePaged',
     'CredentialPaged',
-    'DscCompilationJobPaged',
     'DscConfigurationPaged',
-    'DscNodePaged',
-    'DscNodeReportPaged',
-    'DscNodeConfigurationPaged',
     'HybridRunbookWorkerGroupPaged',
     'JobSchedulePaged',
     'ActivityPaged',
@@ -316,6 +314,10 @@ __all__ = [
     'SourceControlPaged',
     'SourceControlSyncJobPaged',
     'JobCollectionItemPaged',
+    'DscNodePaged',
+    'DscNodeReportPaged',
+    'DscCompilationJobPaged',
+    'DscNodeConfigurationPaged',
     'RunbookTypeEnum',
     'RunbookState',
     'RunbookProvisioningState',
@@ -332,9 +334,9 @@ __all__ = [
     'JobStreamType',
     'HttpStatusCode',
     'ScheduleFrequency',
-    'LinuxUpdateClasses',
-    'WindowsUpdateClasses',
     'OperatingSystemType',
+    'WindowsUpdateClasses',
+    'LinuxUpdateClasses',
     'SourceType',
     'ProvisioningState',
 ]

@@ -198,12 +198,10 @@ class ScheduleFrequency(Enum):
     month = "Month"
 
 
-class LinuxUpdateClasses(Enum):
+class OperatingSystemType(Enum):
 
-    unclassified = "Unclassified"
-    critical = "Critical"
-    security = "Security"
-    other = "Other"
+    windows = "Windows"
+    linux = "Linux"
 
 
 class WindowsUpdateClasses(Enum):
@@ -219,10 +217,12 @@ class WindowsUpdateClasses(Enum):
     updates = "Updates"
 
 
-class OperatingSystemType(Enum):
+class LinuxUpdateClasses(Enum):
 
-    windows = "Windows"
-    linux = "Linux"
+    unclassified = "Unclassified"
+    critical = "Critical"
+    security = "Security"
+    other = "Other"
 
 
 class SourceType(Enum):

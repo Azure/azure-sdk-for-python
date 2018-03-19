@@ -31,6 +31,13 @@ class DscNodeConfiguration(ProxyResource):
     :param configuration: Gets or sets the configuration of the node.
     :type configuration:
      ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
+    :param last_modified_time1: Gets or sets the last modified time.
+    :type last_modified_time1: datetime
+    :param creation_time1: Gets or sets creation time.
+    :type creation_time1: datetime
+    :param configuration1: Gets or sets the configuration of the node.
+    :type configuration1:
+     ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
     """
 
     _validation = {
@@ -46,10 +53,16 @@ class DscNodeConfiguration(ProxyResource):
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
         'configuration': {'key': 'configuration', 'type': 'DscConfigurationAssociationProperty'},
+        'last_modified_time1': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'creation_time1': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'configuration1': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
     }
 
-    def __init__(self, last_modified_time=None, creation_time=None, configuration=None):
+    def __init__(self, last_modified_time=None, creation_time=None, configuration=None, last_modified_time1=None, creation_time1=None, configuration1=None):
         super(DscNodeConfiguration, self).__init__()
         self.last_modified_time = last_modified_time
         self.creation_time = creation_time
         self.configuration = configuration
+        self.last_modified_time1 = last_modified_time1
+        self.creation_time1 = creation_time1
+        self.configuration1 = configuration1

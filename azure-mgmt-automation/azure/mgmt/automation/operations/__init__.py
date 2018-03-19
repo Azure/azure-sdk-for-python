@@ -17,13 +17,7 @@ from .certificate_operations import CertificateOperations
 from .connection_operations import ConnectionOperations
 from .connection_type_operations import ConnectionTypeOperations
 from .credential_operations import CredentialOperations
-from .dsc_compilation_job_operations import DscCompilationJobOperations
-from .dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .dsc_configuration_operations import DscConfigurationOperations
-from .agent_registration_information_operations import AgentRegistrationInformationOperations
-from .dsc_node_operations import DscNodeOperations
-from .node_reports_operations import NodeReportsOperations
-from .dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .hybrid_runbook_worker_group_operations import HybridRunbookWorkerGroupOperations
 from .job_schedule_operations import JobScheduleOperations
 from .linked_workspace_operations import LinkedWorkspaceOperations
@@ -45,6 +39,12 @@ from .source_control_operations import SourceControlOperations
 from .source_control_sync_job_operations import SourceControlSyncJobOperations
 from .job_operations import JobOperations
 from .job_stream_operations import JobStreamOperations
+from .agent_registration_information_operations import AgentRegistrationInformationOperations
+from .dsc_node_operations import DscNodeOperations
+from .node_reports_operations import NodeReportsOperations
+from .dsc_compilation_job_operations import DscCompilationJobOperations
+from .dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
+from .dsc_node_configuration_operations import DscNodeConfigurationOperations
 
 __all__ = [
     'AutomationAccountOperations',
@@ -55,13 +55,7 @@ __all__ = [
     'ConnectionOperations',
     'ConnectionTypeOperations',
     'CredentialOperations',
-    'DscCompilationJobOperations',
-    'DscCompilationJobStreamOperations',
     'DscConfigurationOperations',
-    'AgentRegistrationInformationOperations',
-    'DscNodeOperations',
-    'NodeReportsOperations',
-    'DscNodeConfigurationOperations',
     'HybridRunbookWorkerGroupOperations',
     'JobScheduleOperations',
     'LinkedWorkspaceOperations',
@@ -83,4 +77,10 @@ __all__ = [
     'SourceControlSyncJobOperations',
     'JobOperations',
     'JobStreamOperations',
+    'AgentRegistrationInformationOperations',
+    'DscNodeOperations',
+    'NodeReportsOperations',
+    'DscCompilationJobOperations',
+    'DscCompilationJobStreamOperations',
+    'DscNodeConfigurationOperations',
 ]

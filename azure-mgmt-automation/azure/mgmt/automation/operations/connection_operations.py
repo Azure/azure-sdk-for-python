@@ -37,9 +37,11 @@ class ConnectionOperations(object):
         self.config = config
 
     def delete(
-            self, automation_account_name, connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, connection_name, custom_headers=None, raw=False, **operation_config):
         """Delete the connection.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param connection_name: The name of connection.
@@ -58,7 +60,7 @@ class ConnectionOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -99,9 +101,11 @@ class ConnectionOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/connections/{connectionName}'}
 
     def get(
-            self, automation_account_name, connection_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, connection_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the connection identified by connection name.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param connection_name: The name of connection.
@@ -120,7 +124,7 @@ class ConnectionOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -161,9 +165,11 @@ class ConnectionOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/connections/{connectionName}'}
 
     def create_or_update(
-            self, automation_account_name, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create or update a connection.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param connection_name: The parameters supplied to the create or
@@ -187,7 +193,7 @@ class ConnectionOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -234,9 +240,11 @@ class ConnectionOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/connections/{connectionName}'}
 
     def update(
-            self, automation_account_name, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, connection_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Update a connection.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param connection_name: The parameters supplied to the update a
@@ -260,7 +268,7 @@ class ConnectionOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'connectionName': self._serialize.url("connection_name", connection_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -305,9 +313,11 @@ class ConnectionOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/connections/{connectionName}'}
 
     def list_by_automation_account(
-            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of connections.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -327,7 +337,7 @@ class ConnectionOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
