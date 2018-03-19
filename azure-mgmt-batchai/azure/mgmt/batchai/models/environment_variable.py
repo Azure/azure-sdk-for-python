@@ -12,21 +12,26 @@
 from msrest.serialization import Model
 
 
-class NameValuePair(Model):
-    """Represents a name-value pair.
+class EnvironmentVariable(Model):
+    """A collection of environment variables to set.
 
-    :param name: The name in the name-value pair.
+    :param name: The name of the environment variable.
     :type name: str
-    :param value: The value in the name-value pair.
+    :param value: The value of the environment variable.
     :type value: str
     """
+
+    _validation = {
+        'name': {'required': True},
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name=None, value=None):
-        super(NameValuePair, self).__init__()
+    def __init__(self, name, value):
+        super(EnvironmentVariable, self).__init__()
         self.name = name
         self.value = value

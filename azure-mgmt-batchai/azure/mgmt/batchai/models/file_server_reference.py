@@ -17,15 +17,15 @@ class FileServerReference(Model):
     FileShare on the cluster nodes.
 
     :param file_server: Reference to the file server resource.
-    :type file_server: :class:`ResourceId
-     <azure.mgmt.batchai.models.ResourceId>`
+    :type file_server: ~azure.mgmt.batchai.models.ResourceId
     :param source_directory: Specifies the source directory in File Server
      that needs to be mounted. If this property is not specified, the entire
      File Server will be mounted.
     :type source_directory: str
     :param relative_mount_path: Specifies the relative path on the compute
-     node where the File Server will be mounted. Note that all file shares will
-     be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
+     node where the File Server will be mounted. Note that all cluster level
+     file servers will be mounted under $AZ_BATCHAI_MOUNT_ROOT location and job
+     level file servers will be mouted under $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
     :param mount_options: Specifies the mount options for File Server.
     :type mount_options: str
@@ -44,6 +44,7 @@ class FileServerReference(Model):
     }
 
     def __init__(self, file_server, relative_mount_path, source_directory=None, mount_options=None):
+        super(FileServerReference, self).__init__()
         self.file_server = file_server
         self.source_directory = source_directory
         self.relative_mount_path = relative_mount_path

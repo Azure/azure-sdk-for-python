@@ -25,4 +25,5 @@ class JobBasePropertiesConstraints(Model):
     }
 
     def __init__(self, max_wall_clock_time="7.00:00:00"):
+        super(JobBasePropertiesConstraints, self).__init__()
         self.max_wall_clock_time = max_wall_clock_time

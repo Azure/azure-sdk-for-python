@@ -12,24 +12,21 @@
 from msrest.serialization import Model
 
 
-class EnvironmentSetting(Model):
-    """A collection of environment variables to set.
+class UsageName(Model):
+    """The Usage Names.
 
-    :param name: The name of the environment variable.
-    :type name: str
-    :param value: The value of the environment variable.
+    :param value: The name of the resource.
     :type value: str
+    :param localized_value: The localized name of the resource.
+    :type localized_value: str
     """
 
-    _validation = {
-        'name': {'required': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, name, value=None):
-        self.name = name
+    def __init__(self, value=None, localized_value=None):
+        super(UsageName, self).__init__()
         self.value = value
+        self.localized_value = localized_value

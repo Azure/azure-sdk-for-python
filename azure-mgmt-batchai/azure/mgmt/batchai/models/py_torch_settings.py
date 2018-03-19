@@ -12,40 +12,42 @@
 from msrest.serialization import Model
 
 
-class CaffeSettings(Model):
-    """Specifies the settings for Caffe job.
+class PyTorchSettings(Model):
+    """Specifies the settings for pyTorch job.
 
-    :param config_file_path: Specifies the path of the config file. This
-     property cannot be specified if pythonScriptFilePath is specified.
-    :type config_file_path: str
     :param python_script_file_path: The path and file name of the python
-     script to execute the job. This property cannot be specified if
-     configFilePath is specified.
+     script to execute the job.
     :type python_script_file_path: str
-    :param python_interpreter_path: The path to python interpreter. This
-     property can be specified only if the pythonScriptFilePath is specified.
+    :param python_interpreter_path: The path to python interpreter.
     :type python_interpreter_path: str
-    :param command_line_args: Command line arguments that needs to be passed
-     to the Caffe job.
+    :param command_line_args: Specifies the command line arguments for the
+     master task.
     :type command_line_args: str
-    :param process_count: Number of processes parameter that is passed to MPI
-     runtime. The default value for this property is equal to nodeCount
-     property
+    :param process_count: Number of processes to launch for the job execution.
+     The default value for this property is equal to nodeCount property.
     :type process_count: int
+    :param communication_backend: Type of the communication backend for
+     distributed jobs. Valid values are 'TCP', 'Gloo' or 'MPI'. Not required
+     for non-distributed jobs.
+    :type communication_backend: str
     """
 
+    _validation = {
+        'python_script_file_path': {'required': True},
+    }
+
     _attribute_map = {
-        'config_file_path': {'key': 'configFilePath', 'type': 'str'},
         'python_script_file_path': {'key': 'pythonScriptFilePath', 'type': 'str'},
         'python_interpreter_path': {'key': 'pythonInterpreterPath', 'type': 'str'},
         'command_line_args': {'key': 'commandLineArgs', 'type': 'str'},
         'process_count': {'key': 'processCount', 'type': 'int'},
+        'communication_backend': {'key': 'communicationBackend', 'type': 'str'},
     }
 
-    def __init__(self, config_file_path=None, python_script_file_path=None, python_interpreter_path=None, command_line_args=None, process_count=None):
-        super(CaffeSettings, self).__init__()
-        self.config_file_path = config_file_path
+    def __init__(self, python_script_file_path, python_interpreter_path=None, command_line_args=None, process_count=None, communication_backend=None):
+        super(PyTorchSettings, self).__init__()
         self.python_script_file_path = python_script_file_path
         self.python_interpreter_path = python_interpreter_path
         self.command_line_args = command_line_args
         self.process_count = process_count
+        self.communication_backend = communication_backend

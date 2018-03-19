@@ -18,8 +18,10 @@ class UnmanagedFileSystemReference(Model):
     :param mount_command: Command used to mount the unmanaged file system.
     :type mount_command: str
     :param relative_mount_path: Specifies the relative path on the compute
-     cluster node where the file system will be mounted. Note that all file
-     shares will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
+     cluster node where the file system will be mounted. Note that all cluster
+     level unmanaged file system will be mounted under $AZ_BATCHAI_MOUNT_ROOT
+     location and job level unmanaged file system will be mounted under
+     $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
     """
 
@@ -34,5 +36,6 @@ class UnmanagedFileSystemReference(Model):
     }
 
     def __init__(self, mount_command, relative_mount_path):
+        super(UnmanagedFileSystemReference, self).__init__()
         self.mount_command = mount_command
         self.relative_mount_path = relative_mount_path

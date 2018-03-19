@@ -18,19 +18,18 @@ class FileServerCreateParameters(Model):
     :param location: The region in which to create the File Server.
     :type location: str
     :param tags: The user specified tags associated with the File Server.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param vm_size: The size of the virtual machine of the file server. For
      information about available VM sizes for fileservers from the Virtual
      Machines Marketplace, see Sizes for Virtual Machines (Linux).
     :type vm_size: str
-    :param ssh_configuration: SSH settings for the file server.
-    :type ssh_configuration: :class:`SshConfiguration
-     <azure.mgmt.batchai.models.SshConfiguration>`
+    :param ssh_configuration: SSH configuration for the file server.
+    :type ssh_configuration: ~azure.mgmt.batchai.models.SshConfiguration
     :param data_disks: Settings for the data disk which would be created for
      the file server.
-    :type data_disks: :class:`DataDisks <azure.mgmt.batchai.models.DataDisks>`
+    :type data_disks: ~azure.mgmt.batchai.models.DataDisks
     :param subnet: Specifies the identifier of the subnet.
-    :type subnet: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
+    :type subnet: ~azure.mgmt.batchai.models.ResourceId
     """
 
     _validation = {
@@ -50,6 +49,7 @@ class FileServerCreateParameters(Model):
     }
 
     def __init__(self, location, vm_size, ssh_configuration, data_disks, tags=None, subnet=None):
+        super(FileServerCreateParameters, self).__init__()
         self.location = location
         self.tags = tags
         self.vm_size = vm_size

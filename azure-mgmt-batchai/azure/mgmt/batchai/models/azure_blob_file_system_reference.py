@@ -23,11 +23,12 @@ class AzureBlobFileSystemReference(Model):
     :type container_name: str
     :param credentials: Information of the Azure Blob Storage account
      credentials.
-    :type credentials: :class:`AzureStorageCredentialsInfo
-     <azure.mgmt.batchai.models.AzureStorageCredentialsInfo>`
+    :type credentials: ~azure.mgmt.batchai.models.AzureStorageCredentialsInfo
     :param relative_mount_path: Specifies the relative path on the compute
-     node where the Azure Blob file system will be mounted. Note that all blob
-     file systems will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
+     node where the Azure Blob file system will be mounted. Note that all
+     cluster level blob file systems will be mounted under
+     $AZ_BATCHAI_MOUNT_ROOT location and all job level blob file systems will
+     be mounted under $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
     :param mount_options: Specifies the various mount options that can be used
      to configure Blob file system.
@@ -50,6 +51,7 @@ class AzureBlobFileSystemReference(Model):
     }
 
     def __init__(self, account_name, container_name, credentials, relative_mount_path, mount_options=None):
+        super(AzureBlobFileSystemReference, self).__init__()
         self.account_name = account_name
         self.container_name = container_name
         self.credentials = credentials

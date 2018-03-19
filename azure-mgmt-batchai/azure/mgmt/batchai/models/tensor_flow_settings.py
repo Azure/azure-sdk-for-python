@@ -45,7 +45,6 @@ class TensorFlowSettings(Model):
 
     _validation = {
         'python_script_file_path': {'required': True},
-        'master_command_line_args': {'required': True},
     }
 
     _attribute_map = {
@@ -58,7 +57,8 @@ class TensorFlowSettings(Model):
         'parameter_server_count': {'key': 'parameterServerCount', 'type': 'int'},
     }
 
-    def __init__(self, python_script_file_path, master_command_line_args, python_interpreter_path=None, worker_command_line_args=None, parameter_server_command_line_args=None, worker_count=None, parameter_server_count=None):
+    def __init__(self, python_script_file_path, python_interpreter_path=None, master_command_line_args=None, worker_command_line_args=None, parameter_server_command_line_args=None, worker_count=None, parameter_server_count=None):
+        super(TensorFlowSettings, self).__init__()
         self.python_script_file_path = python_script_file_path
         self.python_interpreter_path = python_interpreter_path
         self.master_command_line_args = master_command_line_args
