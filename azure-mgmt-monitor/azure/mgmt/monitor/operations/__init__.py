@@ -23,6 +23,7 @@ from .event_categories_operations import EventCategoriesOperations
 from .tenant_activity_logs_operations import TenantActivityLogsOperations
 from .metric_definitions_operations import MetricDefinitionsOperations
 from .metrics_operations import MetricsOperations
+from .metric_baseline_operations import MetricBaselineOperations
 
 __all__ = [
     'AutoscaleSettingsOperations',
@@ -39,4 +40,5 @@ __all__ = [
     'TenantActivityLogsOperations',
     'MetricDefinitionsOperations',
     'MetricsOperations',
+    'MetricBaselineOperations',
 ]

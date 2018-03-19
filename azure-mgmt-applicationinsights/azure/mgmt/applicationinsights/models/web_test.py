@@ -18,13 +18,15 @@ class WebTest(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar name: Azure resource name
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -32,10 +34,10 @@ class WebTest(Resource):
      ping and multistep. Possible values include: 'ping', 'multistep'. Default
      value: "ping" .
     :type kind: str or ~azure.mgmt.applicationinsights.models.WebTestKind
-    :param synthetic_monitor_id: Unique ID of this WebTest. This is typically
-     the same value as the Name field.
+    :param synthetic_monitor_id: Required. Unique ID of this WebTest. This is
+     typically the same value as the Name field.
     :type synthetic_monitor_id: str
-    :param web_test_name: User defined name if this WebTest.
+    :param web_test_name: Required. User defined name if this WebTest.
     :type web_test_name: str
     :param description: Purpose/user defined descriptive test for this
      WebTest.
@@ -48,15 +50,15 @@ class WebTest(Resource):
     :param timeout: Seconds until this WebTest will timeout and fail. Default
      value is 30. Default value: 30 .
     :type timeout: int
-    :param web_test_kind: The kind of web test this is, valid choices are ping
-     and multistep. Possible values include: 'ping', 'multistep'. Default
-     value: "ping" .
+    :param web_test_kind: Required. The kind of web test this is, valid
+     choices are ping and multistep. Possible values include: 'ping',
+     'multistep'. Default value: "ping" .
     :type web_test_kind: str or
      ~azure.mgmt.applicationinsights.models.WebTestKind
     :param retry_enabled: Allow for retries should this WebTest fail.
     :type retry_enabled: bool
-    :param locations: A list of where to physically run the tests from to give
-     global coverage for accessibility of your application.
+    :param locations: Required. A list of where to physically run the tests
+     from to give global coverage for accessibility of your application.
     :type locations:
      list[~azure.mgmt.applicationinsights.models.WebTestGeolocation]
     :param configuration: An XML configuration specification for a WebTest.
@@ -101,17 +103,17 @@ class WebTest(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, synthetic_monitor_id, web_test_name, locations, tags=None, kind="ping", description=None, enabled=None, frequency=300, timeout=30, web_test_kind="ping", retry_enabled=None, configuration=None):
-        super(WebTest, self).__init__(location=location, tags=tags)
-        self.kind = kind
-        self.synthetic_monitor_id = synthetic_monitor_id
-        self.web_test_name = web_test_name
-        self.description = description
-        self.enabled = enabled
-        self.frequency = frequency
-        self.timeout = timeout
-        self.web_test_kind = web_test_kind
-        self.retry_enabled = retry_enabled
-        self.locations = locations
-        self.configuration = configuration
+    def __init__(self, **kwargs):
+        super(WebTest, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "ping")
+        self.synthetic_monitor_id = kwargs.get('synthetic_monitor_id', None)
+        self.web_test_name = kwargs.get('web_test_name', None)
+        self.description = kwargs.get('description', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.frequency = kwargs.get('frequency', 300)
+        self.timeout = kwargs.get('timeout', 30)
+        self.web_test_kind = kwargs.get('web_test_kind', "ping")
+        self.retry_enabled = kwargs.get('retry_enabled', None)
+        self.locations = kwargs.get('locations', None)
+        self.configuration = kwargs.get('configuration', None)
         self.provisioning_state = None

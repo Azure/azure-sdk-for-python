@@ -40,8 +40,8 @@ class ApplicationInsightsComponentQuotaStatus(Model):
         'expiration_time': {'key': 'ExpirationTime', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ApplicationInsightsComponentQuotaStatus, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentQuotaStatus, self).__init__(**kwargs)
         self.app_id = None
         self.should_be_throttled = None
         self.expiration_time = None
