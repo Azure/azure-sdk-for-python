@@ -48,7 +48,7 @@ class EventHubClient(object):
 
         @param address: the full Uri string of the event hub.
         """
-        self.container_id = "eventhubs.pycli-" + str(uuid.uuid4())[:8]
+        self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
         username = unquote_plus(self.address.username) if self.address.username else None
         username = kwargs.get('username', username)
@@ -72,7 +72,7 @@ class EventHubClient(object):
 
     def _create_properties(self):
         properties = {}
-        properties["product"] = "eventhubs.python"
+        properties["product"] = "eventhub.python"
         properties["version"] = __version__
         properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
         properties["platform"] = sys.platform

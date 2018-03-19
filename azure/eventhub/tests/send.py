@@ -9,7 +9,7 @@ import argparse
 import time
 import threading
 import utils
-from eventhubs import EventHubClient, Sender, EventData
+from azure.eventhub import EventHubClient, Sender, EventData
 
 logger = utils.get_logger("send_test.log", logging.INFO)
 

@@ -12,8 +12,8 @@ import queue
 import asyncio
 import time
 
-from azure import eventhubs
-from azure.eventhubs import (
+from azure import eventhub
+from azure.eventhub import (
     Sender,
     Receiver,
     EventHubClient,

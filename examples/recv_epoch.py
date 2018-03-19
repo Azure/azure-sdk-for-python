@@ -14,8 +14,8 @@ import sys
 import time
 import logging
 import asyncio
-from azure.eventhubs import Offset
-from azure.eventhubs.async import EventHubClientAsync, AsyncReceiver
+from azure.eventhub import Offset
+from azure.eventhub.async import EventHubClientAsync, AsyncReceiver
 
 import examples
 logger = examples.get_logger(logging.INFO)

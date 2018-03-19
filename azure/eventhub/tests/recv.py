@@ -14,8 +14,8 @@ import asyncio
 import argparse
 import time
 import utils
-from eventhubs import EventHubClient, Offset
-from eventhubs.async import AsyncReceiver
+from azure.eventhub import EventHubClient, Offset
+from azure.eventhub.async import AsyncReceiver
 
 logger = utils.get_logger("recv_test.log", logging.INFO)
 

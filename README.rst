@@ -19,7 +19,7 @@ Wheels are provided for all major operating systems, so you can install directly
 
 .. code:: shell
 
-    $ pip install azure-eventhubs
+    $ pip install azure-eventhub
 
 
 Examples
@@ -35,7 +35,7 @@ Examples
 Logging
 ++++++++
 
-- enable 'azure.eventhubs' logger to collect traces from the library
+- enable 'azure.eventhub' logger to collect traces from the library
 - enable 'uamqp' logger to collect traces from the underlying uAMQP library
 - enable AMQP frame level trace by setting `debug=True` when creating the Client
 

@@ -5,8 +5,8 @@
 
 import logging
 import asyncio
-from eventhubs import EventHubClient, Offset
-from eventhubs.async import AsyncReceiver
+from azure.eventhub import EventHubClient, Offset
+from azure.eventhub.async import AsyncReceiver
 from eventprocessorhost.partition_pump import PartitionPump
 
 class EventHubPartitionPump(PartitionPump):

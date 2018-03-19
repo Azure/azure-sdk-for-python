@@ -12,8 +12,8 @@ import time
 import asyncio
 import os
 
-from azure.eventhubs import EventData
-from azure.eventhubs.async import EventHubClientAsync, AsyncSender
+from azure.eventhub import EventData
+from azure.eventhub.async import EventHubClientAsync, AsyncSender
 
 import examples
 logger = examples.get_logger(logging.INFO)

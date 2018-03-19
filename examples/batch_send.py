@@ -12,7 +12,7 @@ import datetime
 import time
 import os
 
-from eventhubs import EventHubClient, Sender, EventData
+from azure.eventhub import EventHubClient, Sender, EventData
 
 import examples
 logger = examples.get_logger(logging.INFO)

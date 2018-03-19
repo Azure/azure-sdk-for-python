@@ -11,7 +11,7 @@ import threading
 import utils
 import logging
 import os
-from eventhubs import EventHubClient, Sender, EventData
+from azure.eventhub import EventHubClient, Sender, EventData
 
 logger = logging.getLogger('transferClientTest')
 

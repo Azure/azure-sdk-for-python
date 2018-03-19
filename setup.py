@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-eventhubs"
+PACKAGE_NAME = "azure-eventhub"
 PACKAGE_PPRINT_NAME = "Event Hubs"
 
 # a-b-c => a/b/c

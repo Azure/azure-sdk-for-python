@@ -14,7 +14,7 @@ import os
 import sys
 import logging
 import time
-from eventhubs import EventHubClient, Receiver, Offset
+from azure.eventhub import EventHubClient, Receiver, Offset
 
 import examples
 logger = examples.get_logger(logging.INFO)
