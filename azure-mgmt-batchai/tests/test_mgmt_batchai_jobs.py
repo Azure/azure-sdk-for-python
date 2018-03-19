@@ -30,7 +30,8 @@ class JobTestCase(AzureMgmtTestCase):
         """Tests simple scenario for a job - submit, check results, delete."""
         job = helpers.create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1,
                                         'echo hi | tee {0}/hi.txt'.format(helpers.JOB_OUTPUT_DIRECTORY_PATH_ENV),
-                                        container=models.ContainerSettings(models.ImageSourceRegistry('ubuntu'))
+                                        container=models.ContainerSettings(
+                                            image_source_registry=models.ImageSourceRegistry(image='ubuntu'))
                                         )  # type: models.Job
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name, helpers.MINUTE),
@@ -170,7 +171,8 @@ class JobTestCase(AzureMgmtTestCase):
             self.client, resource_group.name, location, cluster.id, 'job', 1,
             'cat $AZ_BATCHAI_INPUT_INPUT/hi.txt',
             'mkdir -p $AZ_BATCHAI_INPUT_INPUT && echo hello | tee $AZ_BATCHAI_INPUT_INPUT/hi.txt',
-            container=models.ContainerSettings(models.ImageSourceRegistry('ubuntu')))
+            container=models.ContainerSettings(
+                image_source_registry=models.ImageSourceRegistry(image='ubuntu')))
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
                                             helpers.MINUTE),
@@ -214,7 +216,8 @@ class JobTestCase(AzureMgmtTestCase):
         # create a job with failing job preparation
         job = helpers.create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 1, 'true',
                                         'false',
-                                        container=models.ContainerSettings(models.ImageSourceRegistry('ubuntu')))
+                                        container=models.ContainerSettings(
+                                            image_source_registry=models.ImageSourceRegistry(image='ubuntu')))
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
                                             helpers.MINUTE),
@@ -255,7 +258,8 @@ class JobTestCase(AzureMgmtTestCase):
         """Tests if password-less ssh is configured in containers."""
         job = helpers.create_custom_job(self.client, resource_group.name, location, cluster.id, 'job', 2,
                                         'ssh 10.0.0.5 echo done && ssh 10.0.0.5 echo done',
-                                        container=models.ContainerSettings(models.ImageSourceRegistry('ubuntu')))
+                                        container=models.ContainerSettings(
+                                            image_source_registry=models.ImageSourceRegistry(image='ubuntu')))
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job.name,
                                             helpers.MINUTE),
@@ -288,7 +292,7 @@ class JobTestCase(AzureMgmtTestCase):
             job_name,
             parameters=models.JobCreateParameters(
                 location=location,
-                cluster=models.ResourceId(cluster.id),
+                cluster=models.ResourceId(id=cluster.id),
                 node_count=1,
                 mount_volumes=models.MountVolumes(
                     azure_file_shares=[
@@ -378,7 +382,7 @@ class JobTestCase(AzureMgmtTestCase):
             'checker',
             parameters=models.JobCreateParameters(
                 location=location,
-                cluster=models.ResourceId(cluster.id),
+                cluster=models.ResourceId(id=cluster.id),
                 node_count=1,
                 std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(helpers.AZURE_FILES_MOUNTING_PATH),
                 custom_toolkit_settings=models.CustomToolkitSettings(
@@ -407,14 +411,14 @@ class JobTestCase(AzureMgmtTestCase):
             job_name,
             parameters=models.JobCreateParameters(
                 location=location,
-                cluster=models.ResourceId(cluster.id),
+                cluster=models.ResourceId(id=cluster.id),
                 node_count=1,
                 std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(helpers.AZURE_FILES_MOUNTING_PATH),
                 environment_variables=[
-                    models.EnvironmentVariable('VARIABLE', 'VALUE')
+                    models.EnvironmentVariable(name='VARIABLE', value='VALUE')
                 ],
                 secrets=[
-                    models.EnvironmentVariableWithSecretValue('SECRET_VARIABLE', 'SECRET')
+                    models.EnvironmentVariableWithSecretValue(name='SECRET_VARIABLE', value='SECRET')
                 ],
                 # Check that the job preparation has access to env variables and secrets.
                 job_preparation=models.JobPreparation(

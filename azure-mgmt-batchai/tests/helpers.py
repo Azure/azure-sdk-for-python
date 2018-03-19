@@ -137,8 +137,8 @@ def create_cluster(client, location, resource_group, cluster_name, vm_size, targ
     if setup_task_cmd:
         setup_task = models.SetupTask(
             command_line=setup_task_cmd,
-            environment_variables=[models.EnvironmentVariable(k, v) for k, v in setup_task_env.items()],
-            secrets=[models.EnvironmentVariableWithSecretValue(k, v) for k, v in setup_task_secrets.items()],
+            environment_variables=[models.EnvironmentVariable(name=k, value=v) for k, v in setup_task_env.items()],
+            secrets=[models.EnvironmentVariableWithSecretValue(name=k, value=v) for k, v in setup_task_secrets.items()],
             std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH))
     return client.clusters.create(
         resource_group,
@@ -191,13 +191,13 @@ def create_custom_job(client, resource_group, location, cluster_id, job_name, no
     """
     job_preparation = None
     if job_preparation_cmd:
-        job_preparation = models.JobPreparation(job_preparation_cmd)
+        job_preparation = models.JobPreparation(command_line=job_preparation_cmd)
     return client.jobs.create(
         resource_group,
         job_name,
         parameters=models.JobCreateParameters(
             location=location,
-            cluster=models.ResourceId(cluster_id),
+            cluster=models.ResourceId(id=cluster_id),
             node_count=nodes,
             std_out_err_path_prefix='$AZ_BATCHAI_MOUNT_ROOT/{0}'.format(AZURE_FILES_MOUNTING_PATH),
             output_directories=[models.OutputDirectory(
@@ -361,7 +361,7 @@ def assert_job_files_in_path_are(test, client, resource_group, job_name, output_
     :param dict(str, str or None) expected: expected content, directories must have None value.
     """
     paged = client.jobs.list_output_files(resource_group, job_name, models.JobsListOutputFilesOptions(
-        output_directory_id, directory=path))
+        outputdirectoryid=output_directory_id, directory=path))
     files = paged.get(paged.current_page)
     actual = dict()
     execution_log_found = False
@@ -479,7 +479,7 @@ class ClusterPreparer(AzureMgmtPreparer):
                 wait_for_nodes(self.is_live, self.client, group.name, name, self.target_nodes, NODE_STARTUP_TIMEOUT_SEC)
         else:
             self.resource = models.Cluster()
-            self.resource.id = models.ResourceId('fake')
+            self.resource.id = models.ResourceId(id='fake')
         return {self.parameter_name: self.resource}
 
     def remove_resource(self, name, **kwargs):

@@ -144,7 +144,8 @@ class ClusterTestCase(AzureMgmtTestCase):
 
     def assertCanRunJobInContainer(self, resource_group, location, cluster_id, timeout_sec=helpers.MINUTE):
         self.assertCanRunJob(resource_group, location, cluster_id, 'container_job',
-                             models.ContainerSettings(models.ImageSourceRegistry(image="ubuntu")), timeout_sec)
+                             models.ContainerSettings(image_source_registry=models.ImageSourceRegistry(image="ubuntu")),
+                             timeout_sec)
 
     def assertCanRunJobOnHost(self, resource_group, location, cluster_id, timeout_sec=helpers.MINUTE):
         self.assertCanRunJob(resource_group, location, cluster_id, 'host_job', None, timeout_sec)
