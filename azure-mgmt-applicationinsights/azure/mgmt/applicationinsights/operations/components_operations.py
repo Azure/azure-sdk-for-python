@@ -514,7 +514,7 @@ class ComponentsOperations(object):
     purge.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/purge'}
 
     def get_purge_status(
-            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, purge_id, custom_headers=None, raw=False, **operation_config):
         """Gets the status of a previously submitted purge using the id returned
         from the original purge request.
 
@@ -523,6 +523,9 @@ class ComponentsOperations(object):
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
+        :param purge_id: In a purge status request, this is the Id of the
+         operation the status of which is returned.
+        :type purge_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -540,7 +543,7 @@ class ComponentsOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'purgeId': self._serialize.url("self.config.purge_id", self.config.purge_id, 'str')
+            'purgeId': self._serialize.url("purge_id", purge_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
