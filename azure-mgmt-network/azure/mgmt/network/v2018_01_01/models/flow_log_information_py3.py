@@ -29,25 +29,16 @@ class FlowLogInformation(Model):
     :param retention_policy:
     :type retention_policy:
      ~azure.mgmt.network.v2018_01_01.models.RetentionPolicyParameters
-    :param enabled1: Required. Flag to enable/disable traffic analytics.
-    :type enabled1: bool
-    :param workspace_id: Required. The resource guid of the attached workspace
-    :type workspace_id: str
-    :param workspace_region: Required. The location of the attached workspace
-    :type workspace_region: str
-    :param workspace_resource_id: Required. Resource Id of the attached
-     workspace
-    :type workspace_resource_id: str
+    :param network_watcher_flow_analytics_configuration: Required.
+    :type network_watcher_flow_analytics_configuration:
+     ~azure.mgmt.network.v2018_01_01.models.TrafficAnalyticsConfigurationProperties
     """
 
     _validation = {
         'target_resource_id': {'required': True},
         'storage_id': {'required': True},
         'enabled': {'required': True},
-        'enabled1': {'required': True},
-        'workspace_id': {'required': True},
-        'workspace_region': {'required': True},
-        'workspace_resource_id': {'required': True},
+        'network_watcher_flow_analytics_configuration': {'required': True},
     }
 
     _attribute_map = {
@@ -55,19 +46,13 @@ class FlowLogInformation(Model):
         'storage_id': {'key': 'properties.storageId', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
-        'enabled1': {'key': 'flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration.enabled', 'type': 'bool'},
-        'workspace_id': {'key': 'flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration.workspaceId', 'type': 'str'},
-        'workspace_region': {'key': 'flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration.workspaceRegion', 'type': 'str'},
-        'workspace_resource_id': {'key': 'flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration.workspaceResourceId', 'type': 'str'},
+        'network_watcher_flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration', 'type': 'TrafficAnalyticsConfigurationProperties'},
     }
 
-    def __init__(self, *, target_resource_id: str, storage_id: str, enabled: bool, enabled1: bool, workspace_id: str, workspace_region: str, workspace_resource_id: str, retention_policy=None, **kwargs) -> None:
+    def __init__(self, *, target_resource_id: str, storage_id: str, enabled: bool, network_watcher_flow_analytics_configuration, retention_policy=None, **kwargs) -> None:
         super(FlowLogInformation, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
         self.enabled = enabled
         self.retention_policy = retention_policy
-        self.enabled1 = enabled1
-        self.workspace_id = workspace_id
-        self.workspace_region = workspace_region
-        self.workspace_resource_id = workspace_resource_id
+        self.network_watcher_flow_analytics_configuration = network_watcher_flow_analytics_configuration
