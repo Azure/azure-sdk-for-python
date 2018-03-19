@@ -87,12 +87,12 @@ class FileServer(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'FileServerProvisioningState'},
     }
 
-    def __init__(self, vm_size=None, ssh_configuration=None, data_disks=None, subnet=None):
-        super(FileServer, self).__init__()
-        self.vm_size = vm_size
-        self.ssh_configuration = ssh_configuration
-        self.data_disks = data_disks
-        self.subnet = subnet
+    def __init__(self, **kwargs):
+        super(FileServer, self).__init__(**kwargs)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.ssh_configuration = kwargs.get('ssh_configuration', None)
+        self.data_disks = kwargs.get('data_disks', None)
+        self.subnet = kwargs.get('subnet', None)
         self.mount_settings = None
         self.provisioning_state_transition_time = None
         self.creation_time = None

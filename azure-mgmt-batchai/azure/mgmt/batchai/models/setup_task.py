@@ -19,7 +19,9 @@ class SetupTask(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param command_line: Command Line to start Setup process.
+    All required parameters must be populated in order to send to Azure.
+
+    :param command_line: Required. Command Line to start Setup process.
     :type command_line: str
     :param environment_variables: Collection of environment variables to be
      set for setup task.
@@ -35,8 +37,8 @@ class SetupTask(Model):
      under an account added into sudoer list and can perform sudo when
      required. Default value: False .
     :type run_elevated: bool
-    :param std_out_err_path_prefix: The prefix of a path where the Batch AI
-     service will upload the stdout and stderr of the setup task.
+    :param std_out_err_path_prefix: Required. The prefix of a path where the
+     Batch AI service will upload the stdout and stderr of the setup task.
     :type std_out_err_path_prefix: str
     :ivar std_out_err_path_suffix: A path segment appended by Batch AI to
      stdOutErrPathPrefix to form a path where stdout and stderr of the setup
@@ -62,11 +64,11 @@ class SetupTask(Model):
         'std_out_err_path_suffix': {'key': 'stdOutErrPathSuffix', 'type': 'str'},
     }
 
-    def __init__(self, command_line, std_out_err_path_prefix, environment_variables=None, secrets=None, run_elevated=False):
-        super(SetupTask, self).__init__()
-        self.command_line = command_line
-        self.environment_variables = environment_variables
-        self.secrets = secrets
-        self.run_elevated = run_elevated
-        self.std_out_err_path_prefix = std_out_err_path_prefix
+    def __init__(self, **kwargs):
+        super(SetupTask, self).__init__(**kwargs)
+        self.command_line = kwargs.get('command_line', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.secrets = kwargs.get('secrets', None)
+        self.run_elevated = kwargs.get('run_elevated', False)
+        self.std_out_err_path_prefix = kwargs.get('std_out_err_path_prefix', None)
         self.std_out_err_path_suffix = None

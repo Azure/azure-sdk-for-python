@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ChainerSettings(Model):
     """Specifies the settings for Chainer job.
 
-    :param python_script_file_path: The path and file name of the python
-     script to execute the job.
+    All required parameters must be populated in order to send to Azure.
+
+    :param python_script_file_path: Required. The path and file name of the
+     python script to execute the job.
     :type python_script_file_path: str
     :param python_interpreter_path: The path to python interpreter.
     :type python_interpreter_path: str
@@ -40,9 +42,9 @@ class ChainerSettings(Model):
         'process_count': {'key': 'processCount', 'type': 'int'},
     }
 
-    def __init__(self, python_script_file_path, python_interpreter_path=None, command_line_args=None, process_count=None):
-        super(ChainerSettings, self).__init__()
-        self.python_script_file_path = python_script_file_path
-        self.python_interpreter_path = python_interpreter_path
-        self.command_line_args = command_line_args
-        self.process_count = process_count
+    def __init__(self, **kwargs):
+        super(ChainerSettings, self).__init__(**kwargs)
+        self.python_script_file_path = kwargs.get('python_script_file_path', None)
+        self.python_interpreter_path = kwargs.get('python_interpreter_path', None)
+        self.command_line_args = kwargs.get('command_line_args', None)
+        self.process_count = kwargs.get('process_count', None)

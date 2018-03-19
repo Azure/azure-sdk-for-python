@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class LocalDataVolume(Model):
     """Represents mapping of host directories to directories in the container.
 
-    :param host_path: The path on the host that is to be mounted as a
-     directory in the container.
+    All required parameters must be populated in order to send to Azure.
+
+    :param host_path: Required. The path on the host that is to be mounted as
+     a directory in the container.
     :type host_path: str
-    :param local_path: The container local path where the host directory is
-     mounted.
+    :param local_path: Required. The container local path where the host
+     directory is mounted.
     :type local_path: str
     """
 
@@ -33,7 +35,7 @@ class LocalDataVolume(Model):
         'local_path': {'key': 'localPath', 'type': 'str'},
     }
 
-    def __init__(self, host_path, local_path):
-        super(LocalDataVolume, self).__init__()
-        self.host_path = host_path
-        self.local_path = local_path
+    def __init__(self, **kwargs):
+        super(LocalDataVolume, self).__init__(**kwargs)
+        self.host_path = kwargs.get('host_path', None)
+        self.local_path = kwargs.get('local_path', None)

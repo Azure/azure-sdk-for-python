@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class PrivateRegistryCredentials(Model):
     """Credentials to access a container image in a private repository.
 
-    :param username: User name to login.
+    All required parameters must be populated in order to send to Azure.
+
+    :param username: Required. User name to login.
     :type username: str
     :param password: Password to login. One of password or
      passwordSecretReference must be specified.
@@ -38,8 +40,8 @@ class PrivateRegistryCredentials(Model):
         'password_secret_reference': {'key': 'passwordSecretReference', 'type': 'KeyVaultSecretReference'},
     }
 
-    def __init__(self, username, password=None, password_secret_reference=None):
-        super(PrivateRegistryCredentials, self).__init__()
-        self.username = username
-        self.password = password
-        self.password_secret_reference = password_secret_reference
+    def __init__(self, **kwargs):
+        super(PrivateRegistryCredentials, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.password_secret_reference = kwargs.get('password_secret_reference', None)

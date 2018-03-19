@@ -26,7 +26,7 @@ class ClusterUpdateParameters(Model):
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
     }
 
-    def __init__(self, tags=None, scale_settings=None):
-        super(ClusterUpdateParameters, self).__init__()
-        self.tags = tags
-        self.scale_settings = scale_settings
+    def __init__(self, **kwargs):
+        super(ClusterUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.scale_settings = kwargs.get('scale_settings', None)

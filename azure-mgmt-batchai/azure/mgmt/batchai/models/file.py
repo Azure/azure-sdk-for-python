@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class File(Model):
     """Properties of the file or directory.
 
-    :param name: Name of the file.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of the file.
     :type name: str
-    :param is_directory: Indicates if the file is a directory.
+    :param is_directory: Required. Indicates if the file is a directory.
     :type is_directory: bool
     :param download_url: Will contain an URL to download the corresponding
      file. The downloadUrl is not returned for directories.
@@ -42,10 +44,10 @@ class File(Model):
         'content_length': {'key': 'properties.contentLength', 'type': 'long'},
     }
 
-    def __init__(self, name, is_directory, download_url=None, last_modified=None, content_length=None):
-        super(File, self).__init__()
-        self.name = name
-        self.is_directory = is_directory
-        self.download_url = download_url
-        self.last_modified = last_modified
-        self.content_length = content_length
+    def __init__(self, **kwargs):
+        super(File, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.is_directory = kwargs.get('is_directory', None)
+        self.download_url = kwargs.get('download_url', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.content_length = kwargs.get('content_length', None)

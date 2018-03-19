@@ -16,9 +16,11 @@ class JobPropertiesExecutionInfo(Model):
     """Contains information about the execution of a job in the Azure Batch
     service.
 
-    :param start_time: The time at which the job started running. 'Running'
-     corresponds to the running state. If the job has been restarted or
-     retried, this is the most recent time at which the job started running.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_time: Required. The time at which the job started running.
+     'Running' corresponds to the running state. If the job has been restarted
+     or retried, this is the most recent time at which the job started running.
      This property is present only for job that are in the running or completed
      state.
     :type start_time: datetime
@@ -44,9 +46,9 @@ class JobPropertiesExecutionInfo(Model):
         'errors': {'key': 'errors', 'type': '[BatchAIError]'},
     }
 
-    def __init__(self, start_time, end_time=None, exit_code=None, errors=None):
-        super(JobPropertiesExecutionInfo, self).__init__()
-        self.start_time = start_time
-        self.end_time = end_time
-        self.exit_code = exit_code
-        self.errors = errors
+    def __init__(self, **kwargs):
+        super(JobPropertiesExecutionInfo, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.errors = kwargs.get('errors', None)

@@ -16,7 +16,9 @@ class ResourceId(Model):
     """Represents a resource ID. For example, for a subnet, it is the resource URL
     for the subnet.
 
-    :param id: The ID of the resource
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The ID of the resource
     :type id: str
     """
 
@@ -28,6 +30,6 @@ class ResourceId(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        super(ResourceId, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(ResourceId, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
