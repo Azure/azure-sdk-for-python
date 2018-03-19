@@ -38,9 +38,11 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
         self.config = config
 
     def get_by_id(
-            self, software_update_configuration_machine_run_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, software_update_configuration_machine_run_id, custom_headers=None, raw=False, **operation_config):
         """Get a single software update configuration machine run by Id.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param software_update_configuration_machine_run_id: The Id of the
          software update configuration machine run.
         :type software_update_configuration_machine_run_id: str
@@ -60,7 +62,7 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
         url = self.get_by_id.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'softwareUpdateConfigurationMachineRunId': self._serialize.url("software_update_configuration_machine_run_id", software_update_configuration_machine_run_id, 'str')
         }
@@ -104,9 +106,11 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
     get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurationMachineRuns/{softwareUpdateConfigurationMachineRunId}'}
 
     def list(
-            self, filter=None, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Return list of software update configuration machine runs.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param filter: The filter to apply on the operation. You can use the
          following filters: 'properties/osType', 'properties/status',
          'properties/startTime', and
@@ -133,7 +137,7 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
         url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

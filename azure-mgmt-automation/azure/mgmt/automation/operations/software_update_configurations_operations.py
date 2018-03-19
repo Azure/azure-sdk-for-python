@@ -38,10 +38,12 @@ class SoftwareUpdateConfigurationsOperations(object):
         self.config = config
 
     def create(
-            self, software_update_configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, software_update_configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a new software update configuration with the name given in the
         URI.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param software_update_configuration_name: The name of the software
          update configuration to be created.
         :type software_update_configuration_name: str
@@ -62,7 +64,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'softwareUpdateConfigurationName': self._serialize.url("software_update_configuration_name", software_update_configuration_name, 'str')
         }
@@ -112,9 +114,11 @@ class SoftwareUpdateConfigurationsOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurations/{softwareUpdateConfigurationName}'}
 
     def get_by_name(
-            self, software_update_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, software_update_configuration_name, custom_headers=None, raw=False, **operation_config):
         """Get a single software update configuration by name.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param software_update_configuration_name: The name of the software
          update configuration to be created.
         :type software_update_configuration_name: str
@@ -132,7 +136,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.get_by_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'softwareUpdateConfigurationName': self._serialize.url("software_update_configuration_name", software_update_configuration_name, 'str')
         }
@@ -176,9 +180,11 @@ class SoftwareUpdateConfigurationsOperations(object):
     get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurations/{softwareUpdateConfigurationName}'}
 
     def delete(
-            self, software_update_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, software_update_configuration_name, custom_headers=None, raw=False, **operation_config):
         """delete a specific software update configuration.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param software_update_configuration_name: The name of the software
          update configuration to be created.
         :type software_update_configuration_name: str
@@ -195,7 +201,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'softwareUpdateConfigurationName': self._serialize.url("software_update_configuration_name", software_update_configuration_name, 'str')
         }
@@ -232,9 +238,11 @@ class SoftwareUpdateConfigurationsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurations/{softwareUpdateConfigurationName}'}
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get all software update configurations for the account.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -253,7 +261,7 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

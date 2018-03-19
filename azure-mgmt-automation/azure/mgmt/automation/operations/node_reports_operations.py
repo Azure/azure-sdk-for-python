@@ -22,7 +22,7 @@ class NodeReportsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-10-31".
+    :ivar api_version: Client Api Version. Constant value: "2018-01-15".
     """
 
     models = models
@@ -32,16 +32,16 @@ class NodeReportsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-10-31"
+        self.api_version = "2018-01-15"
 
         self.config = config
 
     def list_by_node(
-            self, automation_account_name, node_id, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, node_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc node report list by node id.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param node_id: The parameters supplied to the list operation.
         :type node_id: str
         :param filter: The filter to apply on the operation.
@@ -63,8 +63,8 @@ class NodeReportsOperations(object):
                 # Construct URL
                 url = self.list_by_node.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-                    'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
                     'nodeId': self._serialize.url("node_id", node_id, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -112,11 +112,11 @@ class NodeReportsOperations(object):
     list_by_node.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}/reports'}
 
     def get(
-            self, automation_account_name, node_id, report_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, node_id, report_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc node report data by node id and report id.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param node_id: The Dsc node id.
         :type node_id: str
         :param report_id: The report id.
@@ -135,8 +135,8 @@ class NodeReportsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'reportId': self._serialize.url("report_id", report_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -177,11 +177,11 @@ class NodeReportsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}/reports/{reportId}'}
 
     def get_content(
-            self, automation_account_name, node_id, report_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, node_id, report_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Retrieve the Dsc node reports by node id and report id.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param node_id: The Dsc node id.
         :type node_id: str
         :param report_id: The report id.
@@ -189,18 +189,23 @@ class NodeReportsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
+        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_content.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'reportId': self._serialize.url("report_id", report_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -223,7 +228,7 @@ class NodeReportsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        response = self._client.send(request, header_parameters, stream=True, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -231,7 +236,7 @@ class NodeReportsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._client.stream_download(response, callback)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

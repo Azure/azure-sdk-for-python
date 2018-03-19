@@ -22,7 +22,7 @@ class DscCompilationJobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-10-31".
+    :ivar api_version: Client Api Version. Constant value: "2018-01-15".
     """
 
     models = models
@@ -32,18 +32,18 @@ class DscCompilationJobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-10-31"
+        self.api_version = "2018-01-15"
 
         self.config = config
 
     def create(
-            self, automation_account_name, compilation_job_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, compilation_job_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates the Dsc compilation job of the configuration.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param compilation_job_id: The the DSC configuration Id.
-        :type compilation_job_id: str
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
+        :param compilation_job_name: The the DSC configuration Id.
+        :type compilation_job_name: str
         :param parameters: The parameters supplied to the create compilation
          job operation.
         :type parameters:
@@ -62,9 +62,9 @@ class DscCompilationJobOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'compilationJobId': self._serialize.url("compilation_job_id", compilation_job_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'compilationJobName': self._serialize.url("compilation_job_name", compilation_job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -104,14 +104,14 @@ class DscCompilationJobOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobId}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobName}'}
 
     def get(
-            self, automation_account_name, compilation_job_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, compilation_job_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc configuration compilation job identified by job id.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param compilation_job_id: The Dsc configuration compilation job id.
         :type compilation_job_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -128,8 +128,8 @@ class DscCompilationJobOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'compilationJobId': self._serialize.url("compilation_job_id", compilation_job_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -166,14 +166,14 @@ class DscCompilationJobOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobName}'}
 
     def list_by_automation_account(
-            self, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of dsc compilation jobs.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -193,8 +193,8 @@ class DscCompilationJobOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-                    'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -241,11 +241,11 @@ class DscCompilationJobOperations(object):
     list_by_automation_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs'}
 
     def get_stream(
-            self, automation_account_name, job_id, job_stream_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_id, job_stream_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the job stream identified by job stream id.
 
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_id: The job id.
         :type job_id: str
         :param job_stream_id: The job stream id.
@@ -264,8 +264,8 @@ class DscCompilationJobOperations(object):
         # Construct URL
         url = self.get_stream.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'jobStreamId': self._serialize.url("job_stream_id", job_stream_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')

@@ -38,9 +38,11 @@ class JobOperations(object):
         self.config = config
 
     def get_output(
-            self, job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the job output identified by job name.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_name: The name of the job to be created.
         :type job_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -56,7 +58,7 @@ class JobOperations(object):
         url = self.get_output.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
@@ -100,9 +102,11 @@ class JobOperations(object):
     get_output.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/output'}
 
     def get_runbook_content(
-            self, job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the runbook content of the job identified by job name.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_name: The job name.
         :type job_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -118,7 +122,7 @@ class JobOperations(object):
         url = self.get_runbook_content.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
@@ -162,9 +166,11 @@ class JobOperations(object):
     get_runbook_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/runbookContent'}
 
     def suspend(
-            self, job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Suspend the job identified by job name.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_name: The job name.
         :type job_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -181,7 +187,7 @@ class JobOperations(object):
         url = self.suspend.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
@@ -216,9 +222,11 @@ class JobOperations(object):
     suspend.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/suspend'}
 
     def stop(
-            self, job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Stop the job identified by jobName.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_name: The job name.
         :type job_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -234,7 +242,7 @@ class JobOperations(object):
         # Construct URL
         url = self.stop.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -270,9 +278,11 @@ class JobOperations(object):
     stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/stop'}
 
     def get(
-            self, job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the job identified by job name.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_name: The job name.
         :type job_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -290,7 +300,7 @@ class JobOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
@@ -332,9 +342,11 @@ class JobOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}'}
 
     def create(
-            self, job_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a job of the runbook.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_name: The job name.
         :type job_name: str
         :param parameters: The parameters supplied to the create job
@@ -355,7 +367,7 @@ class JobOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str')
         }
@@ -401,9 +413,11 @@ class JobOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}'}
 
     def list_by_automation_account(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of jobs.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -423,7 +437,7 @@ class JobOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -473,9 +487,11 @@ class JobOperations(object):
     list_by_automation_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs'}
 
     def resume(
-            self, job_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_name, custom_headers=None, raw=False, **operation_config):
         """Resume the job identified by jobName.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param job_name: The job name.
         :type job_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -491,7 +507,7 @@ class JobOperations(object):
         # Construct URL
         url = self.resume.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
