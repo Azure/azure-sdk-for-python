@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Linux-4.15.6-300.fc27.x86_64-x86_64-with-fedora-27-Twenty_Seven)
+          requests/2.18.4 msrest/0.4.27 msrest_azure/0.4.22 azure-mgmt-batchai/1.0.0
+          Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.BatchAI/locations/westeurope/usages?api-version=2018-03-01
+  response:
+    body: {string: '{"value":[{"unit":"Count","currentValue":3,"limit":20,"name":{"value":"Clusters","localizedValue":"Clusters"}},{"unit":"Count","currentValue":3,"limit":24,"name":{"value":"Total
+        Cluster Dedicated Regional vCPUs","localizedValue":"Total Cluster Dedicated
+        Regional vCPUs"}},{"unit":"Count","currentValue":3,"limit":24,"name":{"value":"Standard
+        D Family Cluster Dedicated vCPUs","localizedValue":"Standard D Family Cluster
+        Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        Dv2 Family Cluster Dedicated vCPUs","localizedValue":"Standard Dv2 Family
+        Cluster Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NC Family Cluster Dedicated vCPUs","localizedValue":"Standard NC Family Cluster
+        Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NV Family Cluster Dedicated vCPUs","localizedValue":"Standard NV Family Cluster
+        Dedicated vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Total
+        Cluster LowPriority Regional vCPUs","localizedValue":"Total Cluster Low Priority
+        Regional vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        D Family Cluster LowPriority vCPUs","localizedValue":"Standard D Family Cluster
+        Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        Dv2 Family Cluster LowPriority vCPUs","localizedValue":"Standard Dv2 Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NC Family Cluster LowPriority vCPUs","localizedValue":"Standard NC Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":24,"name":{"value":"Standard
+        NV Family Cluster LowPriority vCPUs","localizedValue":"Standard NV Family
+        Cluster Low Priority vCPUs"}},{"unit":"Count","currentValue":0,"limit":20,"name":{"value":"ActiveJobs","localizedValue":"Active
+        Jobs"}}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1917']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 16 Mar 2018 17:32:50 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [f4ce8722-55d5-48d0-b40c-3f1cffd9feb8]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1
