@@ -12,8 +12,8 @@ import time
 import asyncio
 import os
 
-from eventhubs import EventData
-from eventhubs.async import EventHubClientAsync, AsyncSender
+from azure.eventhubs import EventData
+from azure.eventhubs.async import EventHubClientAsync, AsyncSender
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -28,14 +28,10 @@ USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
 
-async def run():
-    if not ADDRESS:
-        raise ValueError("No EventHubs URL supplied.")
-
-    client = EventHubClientAsync(ADDRESS, debug=False, username=USER, password=KEY)
+async def run(client):
     sender = client.add_async_sender()
     await client.run_async()
-    await send(sender, 100)
+    await send(sender, 4)
     await client.stop_async()
 
 
@@ -43,11 +39,18 @@ async def send(snd, count):
     for i in range(count):
         await snd.send(EventData(str(i)))
 
-
 try:
+    if not ADDRESS:
+        raise ValueError("No EventHubs URL supplied.")
+
     loop = asyncio.get_event_loop()
+    client = EventHubClientAsync(ADDRESS, debug=True, username=USER, password=KEY)
+    tasks = asyncio.gather(
+        run(client),
+        run(client))
     start_time = time.time()
-    loop.run_until_complete(run())
+    loop.run_until_complete(tasks)
+    loop.run_until_complete(client.stop_async())
     end_time = time.time()
     run_time = end_time - start_time
     logger.info("Runtime: {} seconds".format(run_time))

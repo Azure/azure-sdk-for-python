@@ -12,7 +12,7 @@ import datetime
 import time
 import os
 
-from eventhubs import EventHubClient, Sender, EventData
+from azure.eventhubs import EventHubClient, Sender, EventData
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -31,7 +31,7 @@ try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
-    client = EventHubClient(ADDRESS, debug=True, username=USER, password=KEY)
+    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
     sender = client.add_sender()
     client.run()
     try:

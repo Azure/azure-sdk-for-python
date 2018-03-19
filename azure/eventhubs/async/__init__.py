@@ -10,15 +10,22 @@ Async APIs.
 import logging
 import queue
 import asyncio
-from threading import Lock, Event
-import eventhubs
-from eventhubs import Sender, Receiver, EventHubClient, EventData, EventHubError
+import time
+
+from azure import eventhubs
+from azure.eventhubs import (
+    Sender,
+    Receiver,
+    EventHubClient,
+    EventData,
+    EventHubError)
 
 from uamqp.async import SASTokenAsync
 from uamqp.async import ConnectionAsync
-from uamqp import SendClientAsync, ReceiveClientAsync
-from uamqp import constants
-log = logging.getLogger("eventhubs")
+from uamqp import SendClientAsync, ReceiveClientAsync, Source
+from uamqp import constants, types
+
+log = logging.getLogger(__name__)
 
 
 class EventHubClientAsync(EventHubClient):
@@ -31,7 +38,8 @@ class EventHubClientAsync(EventHubClient):
 
     def _create_connection_async(self):
         if not self.connection:
-            log.info("%s: client starts address=%s", self.container_id, self.address)
+            log.info("{}: Creating connection with address={}".format(
+                self.container_id, self.address))
             self.connection = ConnectionAsync(
                 self.address.hostname,
                 self.auth,
@@ -49,7 +57,7 @@ class EventHubClientAsync(EventHubClient):
             await client.close_async()
 
     async def run_async(self):
-        log.info("%s: Starting", self.container_id)
+        log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection_async()
         for client in self.clients:
             await client.open_async(connection=self.connection)
@@ -59,12 +67,12 @@ class EventHubClientAsync(EventHubClient):
         """
         Stop the client.
         """
-        log.info("%s: on_stop_client", self.container_id)
+        log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
         self.stopped = True
         await self._close_clients_async()
         await self._close_connection_async()
 
-    def add_async_receiver(self, consumer_group, partition, offset=None):
+    def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300):
         """
         Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
 
@@ -82,7 +90,26 @@ class EventHubClientAsync(EventHubClient):
         source = Source(source_url)
         if offset is not None:
             source.set_filter(offset.selector())
-        handler = AsyncReceiver(self, source)
+        handler = AsyncReceiver(self, source, prefetch=prefetch)
+        self.clients.append(handler._handler)
+        return handler
+
+    def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300):
+        """
+        Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
+
+        @param receiver: receiver to process the received event data. It must
+        override the 'on_event_data' method to handle incoming events.
+
+        @param consumer_group: the consumer group to which the receiver belongs.
+
+        @param partition: the id of the event hub partition.
+
+        @param offset: the initial L{Offset} to receive events.
+        """
+        source_url = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+            self.address.hostname, self.address.path, consumer_group, partition)
+        handler = AsyncReceiver(self, source_url, prefetch=prefetch, epoch=epoch)
         self.clients.append(handler._handler)
         return handler
 
@@ -107,10 +134,11 @@ class AsyncSender(Sender):
     Implements the async API of a L{Sender}.
     """
     def __init__(self, client, target, loop=None):
-        self._handler = SendClientAsync(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
+        self.loop = loop or asyncio.get_event_loop()
+        self._handler = SendClientAsync(
+            target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT, loop=self.loop)
         self._outcome = None
         self._condition = None
-        self.loop = loop or asyncio.get_event_loop()
 
     async def send(self, event_data):
         """
@@ -123,75 +151,43 @@ class AsyncSender(Sender):
         if self._outcome != constants.MessageSendResult.Ok:
             raise Sender._error(self._outcome, self._condition)
 
-    def on_result(self, task, outcome, condition):
+    def on_result(self, outcome, condition):
         """
         Called when the send task is completed.
         """
-        self.loop.call_soon_threadsafe(task.set_result, self._error(outcome, condition))
+        AsyncSender._error(outcome, condition)
 
 class AsyncReceiver(Receiver):
     """
     Implements the async API of a L{Receiver}.
     """
-    def __init__(self, prefetch=300, loop=None):
-        super(AsyncReceiver, self).__init__(False)
+    def __init__(self, client, source, prefetch=300, epoch=None, loop=None):
         self.loop = loop or asyncio.get_event_loop()
-        self.messages = queue.Queue()
-        self.lock = Lock()
-        self.link = None
-        self.waiter = None
+        self.offset = None
+        self._callback = None
         self.prefetch = prefetch
-        self.credit = 0
-        self.delivered = 0
-        self.closed = False
+        self.epoch = epoch
+        properties = None
+        if epoch:
+            properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
+        self._handler = ReceiveClientAsync(
+            source,
+            auth=client.auth,
+            debug=client.debug,
+            prefetch=self.prefetch,
+            link_properties=properties,
+            timeout=self.timeout,
+            loop=self.loop)
 
-    def on_start(self, link, iteration):
-        """
-        Called when the receiver is started or restarted.
-        """
-        self.link = link
-        self.credit = self.prefetch
-        self.delivered = 0
-        self.link.flow(self.credit)
-
-    def on_stop(self, closed):
-        """
-        Called when the receiver is stopped.
-        """
-        self.closed = closed
-        self.link = None
-        while not self.messages.empty():
-            self.messages.get()
-
-    def on_message(self, event):
+    async def on_message(self, event):
         """ Handle message received event """
-        event_data = EventData.create(event.message)
+        event_data = EventData.create(event)
+        if self._callback:
+            await self._callback(event_data)
         self.offset = event_data.offset
-        waiter = None
-        with self.lock:
-            self.messages.put(event_data)
-            self.credit -= 1
-            self._check_flow()
-            if self.credit == 0:
-                # workaround before having an EventInjector
-                event.reactor.schedule(0.1, self)
-            if self.waiter is None:
-                return
-            waiter = self.waiter
-            self.waiter = None
-        self.loop.call_soon_threadsafe(waiter.set_result, None)
+        return event_data
 
-    def on_event_data(self, event_data):
-        pass
-
-    def on_timer_task(self, event):
-        """ Handle timer event """
-        with self.lock:
-            self._check_flow()
-            if self.waiter is None and self.messages.qsize() > 0:
-                event.reactor.schedule(0.1, self)
-
-    async def receive(self, count):
+    async def _receive_gen(self, batch_size, timeout):
         """
         Receive events asynchronously.
         @param count: max number of events to receive. The result may be less.
@@ -199,26 +195,28 @@ class AsyncReceiver(Receiver):
         Returns a list of L{EventData} objects. An empty list means no data is
         available. None means the receiver is closed (eof).
         """
-        waiter = None
-        batch = []
-        while not self.closed:
-            with self.lock:
-                size = self.messages.qsize()
-                while size > 0 and count > 0:
-                    batch.append(self.messages.get())
-                    size -= 1
-                    count -= 1
-                    self.delivered += 1
-                if batch:
-                    return batch
-                self.waiter = self.loop.create_future()
-                waiter = self.waiter
-            await waiter
-        return None
+        timeout_ms = 1000 * timeout if timeout else 0
+        if batch_size:
+            message_iter = await self._handler.receive_message_batch_async(
+                batch_size=batch_size,
+                on_message_received=self.on_message,
+                timeout=timeout_ms)
+            for event_data in message_iter:
+                yield event_data
+        else:
+            receive_timeout = time.time() + timeout if timeout else None
+            message_iter = await self._handler.receive_message_batch_async(
+                on_message_received=self.on_message,
+                timeout=timeout_ms)
+            while message_iter and (not receive_timeout or time.time() < receive_timeout):
+                for event_data in message_iter:
+                    yield event_data
+                if receive_timeout:
+                    timeout_ms = int((receive_timeout - time.time()) * 1000)
+                message_iter = await self._handler.receive_message_batch_async(
+                    on_message_received=self.on_message,
+                    timeout=timeout_ms)
 
-    def _check_flow(self):
-        if self.delivered >= 100 and self.link:
-            self.link.flow(self.delivered)
-            log.debug("%s: issue link credit %d", self.link.connection.container, self.delivered)
-            self.credit += self.delivered
-            self.delivered = 0
+    def receive(self, batch_size=None, callback=None, timeout=None):
+        self._callback = callback
+        return self._receive_gen(batch_size, timeout)

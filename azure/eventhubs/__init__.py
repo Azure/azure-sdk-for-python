@@ -9,9 +9,6 @@ should be implemented in this module.
 
 """
 
-__version__ = "0.2.0"
-
-
 import logging
 import datetime
 import sys
@@ -32,10 +29,12 @@ from uamqp import SendClient, ReceiveClient
 from uamqp import Message, BatchMessage
 from uamqp import Source, Target
 from uamqp import authentication
-from uamqp import constants, utils
+from uamqp import constants, types
 
 
-log = logging.getLogger("eventhubs")
+
+log = logging.getLogger(__name__)
+
 
 class EventHubClient(object):
     """
@@ -65,7 +64,7 @@ class EventHubClient(object):
 
         self.clients = []
         self.stopped = False
-        log.info("%s: created the event hub client", self.container_id)
+        log.info("{}: Created the Event Hub client".format(self.container_id))
 
     def _create_auth(self, auth_uri, username, password):
         return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
@@ -80,27 +79,12 @@ class EventHubClient(object):
 
     def _create_connection(self):
         if not self.connection:
-            log.info("%s: client starts address=%s", self.container_id, self.address)
+            log.info("{}: Creating connection with address={}".format(self.container_id, self.address))
             self.connection = Connection(
                 self.address.hostname,
                 self.auth,
                 container_id=self.container_id,
                 properties=self._create_properties(),
-                debug=self.debug)
-
-    def _create_connection_async(self):
-        if not self.connection:
-            log.info("%s: client starts address=%s", self.container_id, self.address)
-            properties = {}
-            properties["product"] = "eventhubs.python"
-            properties["version"] = __version__
-            properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
-            properties["platform"] = sys.platform
-            self.connection = ConnectionAsync(
-                self.address.hostname,
-                self.auth,
-                container_id=self.container_id,
-                properties=properties,
                 debug=self.debug)
 
     def _close_connection(self):
@@ -112,62 +96,26 @@ class EventHubClient(object):
         for client in self.clients:
             client.close()
 
-    async def _close_connection_async(self):
-        if self.connection:
-            await self.connection.destroy_async()
-            self.connection = None
-
-    async def _close_clients_async(self):
-        for client in self.clients:
-            await client.close_async()
-
-    async def run_async(self):
-        log.info("%s: Starting", self.container_id)
-        self._create_connection_async()
-        for client in self.clients:
-            await client.open_async(connection=self.connection)
-        return self
-
     def run(self):
         """
         Run the L{EventHubClient} in blocking mode.
         """
-        log.info("%s: Starting", self.container_id)
+        log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection()
         for client in self.clients:
             client.open(connection=self.connection)
         return self
 
-    # def run_daemon(self):
-    #     """
-    #     Run the L{EventHubClient} in non-blocking mode.
-    #     """
-    #     log.info("%s: starting the daemon", self.container_id)
-    #     self._create_connection()
-    #     for client in self.clients:
-    #         client.run_daemon(connection=self.connection)
-    #     log.info("started")
-    #     return self
-
     def stop(self):
         """
         Stop the client.
         """
-        log.info("%s: on_stop_client", self.container_id)
+        log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
         self.stopped = True
         self._close_clients()
         self._close_connection()
 
-    async def stop_async(self):
-        """
-        Stop the client.
-        """
-        log.info("%s: on_stop_client", self.container_id)
-        self.stopped = True
-        await self._close_clients_async()
-        await self._close_connection_async()
-
-    def add_receiver(self, consumer_group, partition, offset=None):
+    def add_receiver(self, consumer_group, partition, offset=None, prefetch=300):
         """
         Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
 
@@ -185,7 +133,26 @@ class EventHubClient(object):
         source = Source(source_url)
         if offset is not None:
             source.set_filter(offset.selector())
-        handler = Receiver(self, source)
+        handler = Receiver(self, source, prefetch=prefetch)
+        self.clients.append(handler._handler)
+        return handler
+
+    def add_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300):
+        """
+        Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
+
+        @param receiver: receiver to process the received event data. It must
+        override the 'on_event_data' method to handle incoming events.
+
+        @param consumer_group: the consumer group to which the receiver belongs.
+
+        @param partition: the id of the event hub partition.
+
+        @param offset: the initial L{Offset} to receive events.
+        """
+        source_url = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+            self.address.hostname, self.address.path, consumer_group, partition)
+        handler = Receiver(self, source_url, prefetch=prefetch, epoch=epoch)
         self.clients.append(handler._handler)
         return handler
 
@@ -255,6 +222,7 @@ class Sender:
 
     @staticmethod
     def _error(outcome, condition):
+        print("setting outcome:", outcome, condition)
         return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)
 
 
@@ -266,24 +234,56 @@ class Receiver:
     by the library into a local buffer queue.
 
     """
-    def __init__(self, client, source, prefetch=300):
+    timeout = 0 #60.0
+    _epoch = b'com.microsoft:epoch'
+
+    def __init__(self, client, source, prefetch=300, epoch=None):
         self.offset = None
+        self._callback = None
         self.prefetch = prefetch
-        self._handler = ReceiveClient(source, auth=client.auth, debug=client.debug, prefetch=self.prefetch)
+        self.epoch = epoch
+        properties = None
+        if epoch:
+            properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
+        self._handler = ReceiveClient(
+            source,
+            auth=client.auth,
+            debug=client.debug,
+            prefetch=self.prefetch,
+            link_properties=properties,
+            timeout=self.timeout)
 
     def on_message(self, event):
         """ Proess message received event. """
-        event_data = EventData.create(event.message)
-        self.on_event_data(event_data)
+        event_data = EventData.create(event)
+        if self._callback:
+            self._callback(event_data)
         self.offset = event_data.offset
+        return event_data
 
-    def receive(self, callback, count=None, timeout=None):
-        messages = self._handler.receive_messages_iter()
-        return messages
-
-    def on_event_data(self, event_data):
-        """ Proess event data received event. """
-        assert False, "Subclass must override this!"
+    def receive(self, batch_size=None, callback=None, timeout=None):
+        timeout_ms = 1000 * timeout if timeout else 0
+        self._callback = callback
+        if batch_size:
+            message_iter = self._handler.receive_message_batch(
+                batch_size=batch_size,
+                on_message_received=self.on_message,
+                timeout=timeout_ms)
+            for event_data in message_iter:
+                yield event_data
+        else:
+            receive_timeout = time.time() + timeout if timeout else None
+            message_iter = self._handler.receive_message_batch(
+                on_message_received=self.on_message,
+                timeout=timeout_ms)
+            while message_iter and (not receive_timeout or time.time() < receive_timeout):
+                for event_data in message_iter:
+                    yield event_data
+                if receive_timeout:
+                    timeout_ms = int((receive_timeout - time.time()) * 1000)
+                message_iter = self._handler.receive_message_batch(
+                    on_message_received=self.on_message,
+                    timeout=timeout_ms)
 
     def selector(self, default):
         """ Create a selector for the current offset if it is set. """
@@ -339,7 +339,7 @@ class EventData(object):
         Set the partition key of the event data object.
         """
         annotations = dict(self._annotations)
-        annotations[utils.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
+        annotations[types.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
         self.message.message_annotations = annotations
         self._annotations = annotations
 
@@ -388,13 +388,13 @@ class Offset(object):
         """ Creates a selector expression of the offset """
         if isinstance(self.value, datetime.datetime):
             epoch = datetime.datetime.utcfromtimestamp(0)
-            milli_seconds = timestamp((self.value - epoch).total_seconds() * 1000.0)
-            return b"amqp.annotation.x-opt-enqueued-time > '{}'".format(str(milli_seconds).encode('utf-8'))
-        elif isinstance(self.value, timestamp):
-            return b"amqp.annotation.x-opt-enqueued-time > '{}'".format(str(self.value).encode('utf-8'))
+            milli_seconds = timestamp((self.value - epoch).total_seconds() * 1000.0)  # TODO
+            return ("amqp.annotation.x-opt-enqueued-time > '{}'".format(milli_seconds)).encode('utf-8')
+        elif isinstance(self.value, int):
+            return ("amqp.annotation.x-opt-enqueued-time > '{}'".format(self.value)).encode('utf-8')
         else:
-            operator = b">=" if self.inclusive else b">"
-            return b"amqp.annotation.x-opt-offset {} '{}'".format(operator, str(self.value).encode('utf-8'))
+            operator = ">=" if self.inclusive else ">"
+            return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
 
 class EventHubError(Exception):

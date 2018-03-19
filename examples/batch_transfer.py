@@ -40,7 +40,7 @@ try:
     if not ADDRESS:
         raise ValueError("No EventHubs URL supplied.")
 
-    client = EventHubClient(ADDRESS, debug=True, username=USER, password=KEY)
+    client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
     sender = client.add_sender()
     client.run()
     try:

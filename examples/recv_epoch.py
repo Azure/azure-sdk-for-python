@@ -6,15 +6,16 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub partition and processing
-the event in on_event_data callback.
-
+An example to show running the EventHubClient in background.
 """
+
 import os
 import sys
-import logging
 import time
-from eventhubs import EventHubClient, Receiver, Offset
+import logging
+import asyncio
+from azure.eventhubs import Offset
+from azure.eventhubs.async import EventHubClientAsync, AsyncReceiver
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -28,29 +29,32 @@ ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 CONSUMER_GROUP = "$default"
-OFFSET = Offset("-1")
+EPOCH = 42
 PARTITION = "0"
 
 
-total = 0
-last_sn = -1
-last_offset = "-1"
-client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-try:
-    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=5000, offset=OFFSET)
-    client.run()
+async def pump(client, epoch):
+    receiver = client.add_async_receiver(CONSUMER_GROUP, PARTITION, prefetch=2)
+    await client.run_async()
+    total = 0
     start_time = time.time()
-    for event_data in receiver.receive(timeout=10):
+    async for event_data in receiver.receive(timeout=5):
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
         total += 1
-
     end_time = time.time()
-    client.stop()
     run_time = end_time - start_time
+    await client.stop_async()
     print("Received {} messages in {} seconds".format(total, run_time))
+
+try:
+    if not ADDRESS:
+        raise ValueError("No EventHubs URL supplied.")
+
+    loop = asyncio.get_event_loop()
+    client = EventHubClientAsync(ADDRESS, debug=False, username=USER, password=KEY)
+    loop.run_until_complete(pump(client, 20))
+    loop.close()
 
 except KeyboardInterrupt:
     pass
-finally:
-    client.stop()

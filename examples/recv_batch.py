@@ -13,7 +13,6 @@ the event in on_event_data callback.
 import os
 import sys
 import logging
-import time
 from eventhubs import EventHubClient, Receiver, Offset
 
 import examples
@@ -37,18 +36,18 @@ last_sn = -1
 last_offset = "-1"
 client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
 try:
-    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=5000, offset=OFFSET)
+    receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=100, offset=OFFSET)
     client.run()
-    start_time = time.time()
-    for event_data in receiver.receive(timeout=10):
+    batched_events = list(receiver.receive(batch_size=10))
+    for event_data in batched_events:
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
         total += 1
-
-    end_time = time.time()
-    client.stop()
-    run_time = end_time - start_time
-    print("Received {} messages in {} seconds".format(total, run_time))
+        print("Partition {}, Received {}, sn={} offset={}".format(
+            PARTITION,
+            total,
+            last_sn,
+            last_offset))
 
 except KeyboardInterrupt:
     pass

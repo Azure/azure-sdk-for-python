@@ -9,53 +9,54 @@
 An example to show running the EventHubClient in background.
 """
 
+import os
 import sys
+import time
 import logging
 import asyncio
-from eventhubs import EventHubClient, Offset
-from eventhubs.async import AsyncReceiver
-
-# pylint: disable=C0301
-# pylint: disable=C0103
-# pylint: disable=C0111
+from azure.eventhubs import Offset
+from azure.eventhubs.async import EventHubClientAsync, AsyncReceiver
 
 import examples
-logger = examples.get_logger(logging.INFO)
+logger = examples.get_logger(logging.DEBUG)
 
-async def pump(recv, count):
+# Address can be in either of these formats:
+# "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"
+# "amqps://<mynamespace>.servicebus.windows.net/myeventhub"
+ADDRESS = os.environ.get('EVENT_HUB_ADDRESS')
+
+# SAS policy and key are not required if they are encoded in the URL
+USER = os.environ.get('EVENT_HUB_SAS_POLICY')
+KEY = os.environ.get('EVENT_HUB_SAS_KEY')
+CONSUMER_GROUP = "$default"
+OFFSET = Offset("-1")
+PARTITION = "0"
+
+
+async def pump(client):
+    receiver = client.add_async_receiver(CONSUMER_GROUP, PARTITION, OFFSET, prefetch=5)
+    await client.run_async()
     total = 0
-    while count < 0 or total < count:
-        try:
-            batch = await asyncio.wait_for(recv.receive(100), 60.0)
-            size = len(batch)
-            total += size
-            logger.info("Received %d events, sn %d, batch %d", total, batch[-1].sequence_number, size)
-            # simulate an async event processing
-            await asyncio.sleep(0.05)
-        except asyncio.TimeoutError:
-            logger.info("No events received, queue size %d, delivered %d", recv.messages.qsize(), recv.delivered)
+    start_time = time.time()
+    async for event_data in receiver.receive(timeout=10):
+        last_offset = event_data.offset
+        last_sn = event_data.sequence_number
+        total += 1
+    end_time = time.time()
+    run_time = end_time - start_time
+    print("Received {} messages in {} seconds".format(total, run_time))
 
 try:
-    ADDRESS = ("amqps://"
-               "<URL-encoded-SAS-policy>"
-               ":"
-               "<URL-encoded-SAS-key>"
-               "@"
-               "<mynamespace>.servicebus.windows.net"
-               "/"
-               "myeventhub")
-    CONSUMER_GROUP = "$default"
-    OFFSET = Offset("-1")
+    if not ADDRESS:
+        raise ValueError("No EventHubs URL supplied.")
 
-    logger.info("starting loop")
     loop = asyncio.get_event_loop()
-    receiver = AsyncReceiver()
-    client = EventHubClient(ADDRESS if len(sys.argv) == 1 else sys.argv[1]) \
-        .subscribe(receiver, CONSUMER_GROUP, "0", OFFSET) \
-        .run_daemon()
-
-    loop.run_until_complete(pump(receiver, 1000))
-    client.stop()
+    client = EventHubClientAsync(ADDRESS, debug=False, username=USER, password=KEY)
+    tasks = [
+        asyncio.ensure_future(pump(client)),
+        asyncio.ensure_future(pump(client))]
+    loop.run_until_complete(asyncio.wait(tasks))
+    loop.run_until_complete(client.stop_async())
     loop.close()
 
 except KeyboardInterrupt:
