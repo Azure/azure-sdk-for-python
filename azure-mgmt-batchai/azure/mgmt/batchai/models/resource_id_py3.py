@@ -12,24 +12,24 @@
 from msrest.serialization import Model
 
 
-class EnvironmentSetting(Model):
-    """A collection of environment variables to set.
+class ResourceId(Model):
+    """Represents a resource ID. For example, for a subnet, it is the resource URL
+    for the subnet.
 
-    :param name: The name of the environment variable.
-    :type name: str
-    :param value: The value of the environment variable.
-    :type value: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The ID of the resource
+    :type id: str
     """
 
     _validation = {
-        'name': {'required': True},
+        'id': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, name, value=None):
-        self.name = name
-        self.value = value
+    def __init__(self, *, id: str, **kwargs) -> None:
+        super(ResourceId, self).__init__(**kwargs)
+        self.id = id

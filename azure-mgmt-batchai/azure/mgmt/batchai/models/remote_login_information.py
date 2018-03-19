@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class RemoteLoginInformation(Model):
     """Contains remote login details to SSH/RDP to a compute node in cluster.
 
-    :param node_id: Id of the compute node
+    All required parameters must be populated in order to send to Azure.
+
+    :param node_id: Required. Id of the compute node
     :type node_id: str
-    :param ip_address: ip address
+    :param ip_address: Required. ip address
     :type ip_address: str
-    :param port: port number.
+    :param port: Required. port number.
     :type port: float
     """
 
@@ -35,7 +37,8 @@ class RemoteLoginInformation(Model):
         'port': {'key': 'port', 'type': 'float'},
     }
 
-    def __init__(self, node_id, ip_address, port):
-        self.node_id = node_id
-        self.ip_address = ip_address
-        self.port = port
+    def __init__(self, **kwargs):
+        super(RemoteLoginInformation, self).__init__(**kwargs)
+        self.node_id = kwargs.get('node_id', None)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.port = kwargs.get('port', None)
