@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class EnrollmentAccountResult(Resource):
+class EnrollmentAccount(Resource):
     """An enrollment account resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -43,5 +43,5 @@ class EnrollmentAccountResult(Resource):
     }
 
     def __init__(self):
-        super(EnrollmentAccountResult, self).__init__()
+        super(EnrollmentAccount, self).__init__()
         self.principal_name = None

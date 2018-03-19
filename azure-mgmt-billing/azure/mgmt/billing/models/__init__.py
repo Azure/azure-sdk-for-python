@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .enrollment_account_result import EnrollmentAccountResult
+from .enrollment_account import EnrollmentAccount
 from .enrollment_account_list_result import EnrollmentAccountListResult
 from .billing_period import BillingPeriod
 from .download_url import DownloadUrl
@@ -24,7 +24,7 @@ from .invoice_paged import InvoicePaged
 from .operation_paged import OperationPaged
 
 __all__ = [
-    'EnrollmentAccountResult',
+    'EnrollmentAccount',
     'EnrollmentAccountListResult',
     'BillingPeriod',
     'DownloadUrl',
