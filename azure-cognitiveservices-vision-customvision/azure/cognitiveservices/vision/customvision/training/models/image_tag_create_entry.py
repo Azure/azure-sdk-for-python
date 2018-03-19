@@ -26,7 +26,7 @@ class ImageTagCreateEntry(Model):
         'tag_id': {'key': 'TagId', 'type': 'str'},
     }
 
-    def __init__(self, image_id=None, tag_id=None):
-        super(ImageTagCreateEntry, self).__init__()
-        self.image_id = image_id
-        self.tag_id = tag_id
+    def __init__(self, **kwargs):
+        super(ImageTagCreateEntry, self).__init__(**kwargs)
+        self.image_id = kwargs.get('image_id', None)
+        self.tag_id = kwargs.get('tag_id', None)
