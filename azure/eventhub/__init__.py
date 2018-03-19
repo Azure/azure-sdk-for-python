@@ -243,6 +243,7 @@ class Receiver:
         self._callback = None
         self.prefetch = prefetch
         self.epoch = epoch
+        self.delivered = 0
         properties = None
         if epoch:
             properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
@@ -254,8 +255,15 @@ class Receiver:
             link_properties=properties,
             timeout=self.timeout)
 
+    @property
+    def queue_size(self):
+        if self._handler._received_messages:
+            return self._handler._received_messages.qsize()
+        return 0
+
     def on_message(self, event):
         """ Proess message received event. """
+        self.delivered += 1
         event_data = EventData.create(event)
         if self._callback:
             self._callback(event_data)

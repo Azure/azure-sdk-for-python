@@ -72,7 +72,7 @@ class EventHubClientAsync(EventHubClient):
         await self._close_clients_async()
         await self._close_connection_async()
 
-    def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300):
+    def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, loop=None):
         """
         Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
 
@@ -90,11 +90,11 @@ class EventHubClientAsync(EventHubClient):
         source = Source(source_url)
         if offset is not None:
             source.set_filter(offset.selector())
-        handler = AsyncReceiver(self, source, prefetch=prefetch)
+        handler = AsyncReceiver(self, source, prefetch=prefetch, loop=loop)
         self.clients.append(handler._handler)
         return handler
 
-    def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300):
+    def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, loop=None):
         """
         Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
 
@@ -109,11 +109,11 @@ class EventHubClientAsync(EventHubClient):
         """
         source_url = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
-        handler = AsyncReceiver(self, source_url, prefetch=prefetch, epoch=epoch)
+        handler = AsyncReceiver(self, source_url, prefetch=prefetch, epoch=epoch, loop=loop)
         self.clients.append(handler._handler)
         return handler
 
-    def add_async_sender(self, loop=None, partition=None):
+    def add_async_sender(self, loop=None, partition=None, loop=None):
         """
         Registers a L{Sender} to publish L{EventData} objects to an Event Hub or one of its partitions.
 
@@ -125,7 +125,7 @@ class EventHubClientAsync(EventHubClient):
         target = "amqps://{}/{}".format(self.address.hostname, self.address.path)
         if partition:
             target += "/Partitions/" + partition
-        handler = AsyncSender(self, target)
+        handler = AsyncSender(self, target, loop=loop)
         self.clients.append(handler._handler)
         return handler
 
@@ -167,6 +167,7 @@ class AsyncReceiver(Receiver):
         self._callback = None
         self.prefetch = prefetch
         self.epoch = epoch
+        self.delivered = 0
         properties = None
         if epoch:
             properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
@@ -181,6 +182,7 @@ class AsyncReceiver(Receiver):
 
     async def on_message(self, event):
         """ Handle message received event """
+        self.delivered += 1
         event_data = EventData.create(event)
         if self._callback:
             await self._callback(event_data)

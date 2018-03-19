@@ -8,7 +8,6 @@ import logging
 import argparse
 import time
 import threading
-import utils
 import logging
 import os
 from azure.eventhub import EventHubClient, Sender, EventData

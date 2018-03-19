@@ -18,7 +18,7 @@ from azure.eventhub import Offset
 from azure.eventhub.async import EventHubClientAsync, AsyncReceiver
 
 import examples
-logger = examples.get_logger(logging.DEBUG)
+logger = examples.get_logger(logging.INFO)
 
 # Address can be in either of these formats:
 # "amqps://<URL-encoded-SAS-policy>:<URL-encoded-SAS-key>@<mynamespace>.servicebus.windows.net/myeventhub"

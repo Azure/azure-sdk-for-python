@@ -5,8 +5,8 @@
 
 import logging
 import asyncio
-from azure.eventhub import EventHubClient, Offset
-from azure.eventhub.async import AsyncReceiver
+from azure.eventhub import Offset
+from azure.eventhub.async import EventHubClientAsync
 from eventprocessorhost.partition_pump import PartitionPump
 
 class EventHubPartitionPump(PartitionPump):
@@ -43,8 +43,8 @@ class EventHubPartitionPump(PartitionPump):
         if self.pump_status == "Opening":
             loop = asyncio.get_event_loop()
             self.set_pump_status("Running")
-            self.eh_client.run_daemon()
-            loop.create_task(self.partition_receiver.run())
+            await self.eh_client.run_async()
+            await self.partition_receiver.run()
 
         if self.pump_status == "OpenFailed":
             self.set_pump_status("Closing")
@@ -58,13 +58,13 @@ class EventHubPartitionPump(PartitionPump):
         """
         await self.partition_context.get_initial_offset_async()
         # Create event hub client and receive handler and set options
-        self.partition_receive_handler = AsyncReceiver(loop=self.loop,
-                                                       prefetch=self.host.eph_options.prefetch_count)
-        self.eh_client = EventHubClient(self.host.eh_config.client_address) \
-                        .subscribe(self.partition_receive_handler,
-                                   self.partition_context.consumer_group_name,
-                                   self.partition_context.partition_id,
-                                   Offset(self.partition_context.offset))
+        self.eh_client = EventHubClientAsync(self.host.eh_config.client_address)
+        self.partition_receive_handler = self.eh_client.add_async_receiver(
+            self.partition_context.consumer_group_name,
+            self.partition_context.partition_id,
+            Offset(self.partition_context.offset),
+            prefetch=self.host.eph_options.prefetch_count,
+            loop=self.loop)
         self.partition_receiver = PartitionReceiver(self)
 
     async def clean_up_clients_async(self):
@@ -73,7 +73,7 @@ class EventHubPartitionPump(PartitionPump):
         """
         if self.partition_receiver:
             if self.eh_client:
-                self.eh_client.stop()
+                await self.eh_client.stop_async()
                 self.partition_receiver = None
                 self.partition_receive_handler = None
                 self.eh_client = None
@@ -102,17 +102,17 @@ class PartitionReceiver:
               or self.eh_partition_pump.pump_status == "Errored":
             try:
                 if self.eh_partition_pump.partition_receive_handler:
-                    msgs = await asyncio.wait_for(self.eh_partition_pump.\
-                                                    partition_receive_handler. \
-                                                    receive(self.max_batch_size),
-                                                self.recieve_timeout,
-                                                loop=self.eh_partition_pump.loop)
-                    await self.process_events_async(msgs)
+                    msgs = await asyncio.wait_for(
+                        list(self.eh_partition_pump.partition_receive_handler.receive(self.max_batch_size)),
+                        timeout=self.recieve_timeout,
+                        loop=self.eh_partition_pump.loop)
+
+                    await self.process_events_async([m async for m in msgs])
             except asyncio.TimeoutError as err:
                 if self.eh_partition_pump.partition_receive_handler:
-                    logging.info("No events received, queue size %d, delivered %d",
-                                self.eh_partition_pump.partition_receive_handler.messages.qsize(),
-                                self.eh_partition_pump.partition_receive_handler.delivered)
+                    logging.info("No events received, queue size {}, delivered {}".format(
+                        self.eh_partition_pump.partition_receive_handler.queue_size,
+                        self.eh_partition_pump.partition_receive_handler.delivered))
                 if self.eh_partition_pump.host.eph_options.release_pump_on_timeout:
                     await self.process_error_async(err)
     

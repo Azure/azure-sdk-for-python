@@ -40,7 +40,7 @@ try:
     receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=5000, offset=OFFSET)
     client.run()
     start_time = time.time()
-    for event_data in receiver.receive(timeout=10):
+    for event_data in receiver.receive(timeout=1000):
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
         total += 1
