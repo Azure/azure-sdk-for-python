@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class JobSpecification(Model):
     """Specifies details of the jobs to be created on a schedule.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param priority: The priority of jobs created under this schedule.
      Priority values can range from -1000 to 1000, with -1000 being the lowest
      priority and 1000 being the highest priority. The default value is 0. This
@@ -34,9 +36,9 @@ class JobSpecification(Model):
      state. Note that if a job contains no tasks, then all tasks are considered
      complete. This option is therefore most commonly used with a Job Manager
      task; if you want to use automatic job termination without a Job Manager,
-     you should initially set onAllTasksComplete to noAction and update the job
-     properties to set onAllTasksComplete to terminateJob once you have
-     finished adding tasks. The default is noAction. Possible values include:
+     you should initially set onAllTasksComplete to noaction and update the job
+     properties to set onAllTasksComplete to terminatejob once you have
+     finished adding tasks. The default is noaction. Possible values include:
      'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
     :param on_task_failure: The action the Batch service should take when any
@@ -44,7 +46,7 @@ class JobSpecification(Model):
      have failed if it have failed if has a failureInfo. A failureInfo is set
      if the task completes with a non-zero exit code after exhausting its retry
      count, or if there was an error starting the task, for example due to a
-     resource file download error. The default is noAction. Possible values
+     resource file download error. The default is noaction. Possible values
      include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param constraints: The execution constraints for jobs created under this
@@ -79,8 +81,8 @@ class JobSpecification(Model):
      different value.
     :type common_environment_settings:
      list[~azure.batch.models.EnvironmentSetting]
-    :param pool_info: The pool on which the Batch service runs the tasks of
-     jobs created under this schedule.
+    :param pool_info: Required. The pool on which the Batch service runs the
+     tasks of jobs created under this schedule.
     :type pool_info: ~azure.batch.models.PoolInformation
     :param metadata: A list of name-value pairs associated with each job
      created under this schedule as metadata. The Batch service does not assign
@@ -107,16 +109,17 @@ class JobSpecification(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, pool_info, priority=None, display_name=None, uses_task_dependencies=None, on_all_tasks_complete=None, on_task_failure=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None):
-        self.priority = priority
-        self.display_name = display_name
-        self.uses_task_dependencies = uses_task_dependencies
-        self.on_all_tasks_complete = on_all_tasks_complete
-        self.on_task_failure = on_task_failure
-        self.constraints = constraints
-        self.job_manager_task = job_manager_task
-        self.job_preparation_task = job_preparation_task
-        self.job_release_task = job_release_task
-        self.common_environment_settings = common_environment_settings
-        self.pool_info = pool_info
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(JobSpecification, self).__init__(**kwargs)
+        self.priority = kwargs.get('priority', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.uses_task_dependencies = kwargs.get('uses_task_dependencies', None)
+        self.on_all_tasks_complete = kwargs.get('on_all_tasks_complete', None)
+        self.on_task_failure = kwargs.get('on_task_failure', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.job_manager_task = kwargs.get('job_manager_task', None)
+        self.job_preparation_task = kwargs.get('job_preparation_task', None)
+        self.job_release_task = kwargs.get('job_release_task', None)
+        self.common_environment_settings = kwargs.get('common_environment_settings', None)
+        self.pool_info = kwargs.get('pool_info', None)
+        self.metadata = kwargs.get('metadata', None)

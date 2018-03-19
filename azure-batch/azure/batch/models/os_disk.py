@@ -15,12 +15,8 @@ from msrest.serialization import Model
 class OSDisk(Model):
     """Settings for the operating system disk of the virtual machine.
 
-    :param caching: The type of caching to enable for the OS disk. Values are:
-     none - The caching mode for the disk is not enabled.
-     readOnly - The caching mode for the disk is read only.
-     readWrite - The caching mode for the disk is read and write.
-     The default value for caching is none. For information about the caching
-     options see:
+    :param caching: The type of caching to enable for the OS disk. The default
+     value for caching is none. For information about the caching options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Possible values include: 'none', 'readOnly', 'readWrite'
     :type caching: str or ~azure.batch.models.CachingType
@@ -30,5 +26,6 @@ class OSDisk(Model):
         'caching': {'key': 'caching', 'type': 'CachingType'},
     }
 
-    def __init__(self, caching=None):
-        self.caching = caching
+    def __init__(self, **kwargs):
+        super(OSDisk, self).__init__(**kwargs)
+        self.caching = kwargs.get('caching', None)

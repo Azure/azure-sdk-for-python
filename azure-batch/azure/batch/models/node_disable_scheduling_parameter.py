@@ -16,18 +16,9 @@ class NodeDisableSchedulingParameter(Model):
     """Options for disabling scheduling on a compute node.
 
     :param node_disable_scheduling_option: What to do with currently running
-     tasks when disabling task scheduling on the compute node. Values are:
-     requeue - Terminate running task processes and requeue the tasks. The
-     tasks may run again on other compute nodes, or when task scheduling is
-     re-enabled on this node. Enter offline state as soon as tasks have been
-     terminated.
-     terminate - Terminate running tasks. The tasks will not run again. Enter
-     offline state as soon as tasks have been terminated.
-     taskcompletion - Allow currently running tasks to complete. Schedule no
-     new tasks while waiting. Enter offline state when all tasks have
-     completed.
-     The default value is requeue. Possible values include: 'requeue',
-     'terminate', 'taskCompletion'
+     tasks when disabling task scheduling on the compute node. The default
+     value is requeue. Possible values include: 'requeue', 'terminate',
+     'taskCompletion'
     :type node_disable_scheduling_option: str or
      ~azure.batch.models.DisableComputeNodeSchedulingOption
     """
@@ -36,5 +27,6 @@ class NodeDisableSchedulingParameter(Model):
         'node_disable_scheduling_option': {'key': 'nodeDisableSchedulingOption', 'type': 'DisableComputeNodeSchedulingOption'},
     }
 
-    def __init__(self, node_disable_scheduling_option=None):
-        self.node_disable_scheduling_option = node_disable_scheduling_option
+    def __init__(self, **kwargs):
+        super(NodeDisableSchedulingParameter, self).__init__(**kwargs)
+        self.node_disable_scheduling_option = kwargs.get('node_disable_scheduling_option', None)

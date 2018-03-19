@@ -81,22 +81,16 @@ class CloudJob(Model):
     :param pool_info: The pool settings associated with the job.
     :type pool_info: ~azure.batch.models.PoolInformation
     :param on_all_tasks_complete: The action the Batch service should take
-     when all tasks in the job are in the completed state. noAction - do
-     nothing. The job remains active unless terminated or disabled by some
-     other means. terminateJob - terminate the job. The job's terminateReason
-     is set to 'AllTasksComplete'. The default is noAction. Possible values
-     include: 'noAction', 'terminateJob'
+     when all tasks in the job are in the completed state. The default is
+     noaction. Possible values include: 'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or ~azure.batch.models.OnAllTasksComplete
     :param on_task_failure: The action the Batch service should take when any
      task in the job fails. A task is considered to have failed if has a
      failureInfo. A failureInfo is set if the task completes with a non-zero
      exit code after exhausting its retry count, or if there was an error
-     starting the task, for example due to a resource file download error.
-     noAction - do nothing. performExitOptionsJobAction - take the action
-     associated with the task exit condition in the task's exitConditions
-     collection. (This may still result in no action being taken, if that is
-     what the task specifies.) The default is noAction. Possible values
-     include: 'noAction', 'performExitOptionsJobAction'
+     starting the task, for example due to a resource file download error. The
+     default is noaction. Possible values include: 'noAction',
+     'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param metadata: A list of name-value pairs associated with the job as
      metadata. The Batch service does not assign any meaning to metadata; it is
@@ -135,27 +129,28 @@ class CloudJob(Model):
         'stats': {'key': 'stats', 'type': 'JobStatistics'},
     }
 
-    def __init__(self, id=None, display_name=None, uses_task_dependencies=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, on_all_tasks_complete=None, on_task_failure=None, metadata=None, execution_info=None, stats=None):
-        self.id = id
-        self.display_name = display_name
-        self.uses_task_dependencies = uses_task_dependencies
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
-        self.priority = priority
-        self.constraints = constraints
-        self.job_manager_task = job_manager_task
-        self.job_preparation_task = job_preparation_task
-        self.job_release_task = job_release_task
-        self.common_environment_settings = common_environment_settings
-        self.pool_info = pool_info
-        self.on_all_tasks_complete = on_all_tasks_complete
-        self.on_task_failure = on_task_failure
-        self.metadata = metadata
-        self.execution_info = execution_info
-        self.stats = stats
+    def __init__(self, **kwargs):
+        super(CloudJob, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.uses_task_dependencies = kwargs.get('uses_task_dependencies', None)
+        self.url = kwargs.get('url', None)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.state = kwargs.get('state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.previous_state = kwargs.get('previous_state', None)
+        self.previous_state_transition_time = kwargs.get('previous_state_transition_time', None)
+        self.priority = kwargs.get('priority', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.job_manager_task = kwargs.get('job_manager_task', None)
+        self.job_preparation_task = kwargs.get('job_preparation_task', None)
+        self.job_release_task = kwargs.get('job_release_task', None)
+        self.common_environment_settings = kwargs.get('common_environment_settings', None)
+        self.pool_info = kwargs.get('pool_info', None)
+        self.on_all_tasks_complete = kwargs.get('on_all_tasks_complete', None)
+        self.on_task_failure = kwargs.get('on_task_failure', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.execution_info = kwargs.get('execution_info', None)
+        self.stats = kwargs.get('stats', None)

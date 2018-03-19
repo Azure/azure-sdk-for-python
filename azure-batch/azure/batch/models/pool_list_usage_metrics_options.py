@@ -48,12 +48,24 @@ class PoolListUsageMetricsOptions(Model):
     :type ocp_date: datetime
     """
 
-    def __init__(self, start_time=None, end_time=None, filter=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
-        self.start_time = start_time
-        self.end_time = end_time
-        self.filter = filter
-        self.max_results = max_results
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
+    _attribute_map = {
+        'start_time': {'key': '', 'type': 'iso-8601'},
+        'end_time': {'key': '', 'type': 'iso-8601'},
+        'filter': {'key': '', 'type': 'str'},
+        'max_results': {'key': '', 'type': 'int'},
+        'timeout': {'key': '', 'type': 'int'},
+        'client_request_id': {'key': '', 'type': 'str'},
+        'return_client_request_id': {'key': '', 'type': 'bool'},
+        'ocp_date': {'key': '', 'type': 'rfc-1123'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PoolListUsageMetricsOptions, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.filter = kwargs.get('filter', None)
+        self.max_results = kwargs.get('max_results', 1000)
+        self.timeout = kwargs.get('timeout', 30)
+        self.client_request_id = kwargs.get('client_request_id', None)
+        self.return_client_request_id = kwargs.get('return_client_request_id', False)
+        self.ocp_date = kwargs.get('ocp_date', None)

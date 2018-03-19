@@ -31,8 +31,16 @@ class JobGetAllLifetimeStatisticsOptions(Model):
     :type ocp_date: datetime
     """
 
-    def __init__(self, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
+    _attribute_map = {
+        'timeout': {'key': '', 'type': 'int'},
+        'client_request_id': {'key': '', 'type': 'str'},
+        'return_client_request_id': {'key': '', 'type': 'bool'},
+        'ocp_date': {'key': '', 'type': 'rfc-1123'},
+    }
+
+    def __init__(self, **kwargs):
+        super(JobGetAllLifetimeStatisticsOptions, self).__init__(**kwargs)
+        self.timeout = kwargs.get('timeout', 30)
+        self.client_request_id = kwargs.get('client_request_id', None)
+        self.return_client_request_id = kwargs.get('return_client_request_id', False)
+        self.ocp_date = kwargs.get('ocp_date', None)

@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class OutputFileBlobContainerDestination(Model):
     """Specifies a file upload destination within an Azure blob storage container.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param path: The destination blob or virtual directory within the Azure
      Storage container. If filePattern refers to a specific file (i.e. contains
      no wildcards), then path is the name of the blob to which to upload that
@@ -24,9 +26,9 @@ class OutputFileBlobContainerDestination(Model):
      omitted, file(s) are uploaded to the root of the container with a blob
      name matching their file name.
     :type path: str
-    :param container_url: The URL of the container within Azure Blob Storage
-     to which to upload the file(s). The URL must include a Shared Access
-     Signature (SAS) granting write permissions to the container.
+    :param container_url: Required. The URL of the container within Azure Blob
+     Storage to which to upload the file(s). The URL must include a Shared
+     Access Signature (SAS) granting write permissions to the container.
     :type container_url: str
     """
 
@@ -39,6 +41,7 @@ class OutputFileBlobContainerDestination(Model):
         'container_url': {'key': 'containerUrl', 'type': 'str'},
     }
 
-    def __init__(self, container_url, path=None):
-        self.path = path
-        self.container_url = container_url
+    def __init__(self, **kwargs):
+        super(OutputFileBlobContainerDestination, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
+        self.container_url = kwargs.get('container_url', None)

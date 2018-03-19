@@ -51,9 +51,10 @@ class ImageReference(Model):
         'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, offer=None, sku=None, version=None, virtual_machine_image_id=None):
-        self.publisher = publisher
-        self.offer = offer
-        self.sku = sku
-        self.version = version
-        self.virtual_machine_image_id = virtual_machine_image_id
+    def __init__(self, **kwargs):
+        super(ImageReference, self).__init__(**kwargs)
+        self.publisher = kwargs.get('publisher', None)
+        self.offer = kwargs.get('offer', None)
+        self.sku = kwargs.get('sku', None)
+        self.version = kwargs.get('version', None)
+        self.virtual_machine_image_id = kwargs.get('virtual_machine_image_id', None)

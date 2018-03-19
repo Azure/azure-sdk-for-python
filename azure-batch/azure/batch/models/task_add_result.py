@@ -15,15 +15,12 @@ from msrest.serialization import Model
 class TaskAddResult(Model):
     """Result for a single task added as part of an add task collection operation.
 
-    :param status: The status of the add task request. Values are:
-     success - Task was added successfully.
-     clienterror - Task failed to add due to a client error and should not be
-     retried without modifying the request as appropriate.
-     servererror - Task failed to add due to a server error and can be retried
-     without modification. Possible values include: 'success', 'clientError',
-     'serverError'
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The status of the add task request. Possible
+     values include: 'success', 'clientError', 'serverError'
     :type status: str or ~azure.batch.models.TaskAddStatus
-    :param task_id: The ID of the task for which this is the result.
+    :param task_id: Required. The ID of the task for which this is the result.
     :type task_id: str
     :param e_tag: The ETag of the task, if the task was successfully added.
      You can use this to detect whether the task has changed between requests.
@@ -53,10 +50,11 @@ class TaskAddResult(Model):
         'error': {'key': 'error', 'type': 'BatchError'},
     }
 
-    def __init__(self, status, task_id, e_tag=None, last_modified=None, location=None, error=None):
-        self.status = status
-        self.task_id = task_id
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.location = location
-        self.error = error
+    def __init__(self, **kwargs):
+        super(TaskAddResult, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.task_id = kwargs.get('task_id', None)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.location = kwargs.get('location', None)
+        self.error = kwargs.get('error', None)

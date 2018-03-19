@@ -58,8 +58,9 @@ class PoolPatchParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, start_task=None, certificate_references=None, application_package_references=None, metadata=None):
-        self.start_task = start_task
-        self.certificate_references = certificate_references
-        self.application_package_references = application_package_references
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(PoolPatchParameter, self).__init__(**kwargs)
+        self.start_task = kwargs.get('start_task', None)
+        self.certificate_references = kwargs.get('certificate_references', None)
+        self.application_package_references = kwargs.get('application_package_references', None)
+        self.metadata = kwargs.get('metadata', None)

@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class TaskAddCollectionParameter(Model):
     """A collection of Azure Batch tasks to add.
 
-    :param value: The collection of tasks to add. The total serialized size of
-     this collection must be less than 4MB. If it is greater than 4MB (for
-     example if each task has 100's of resource files or environment
-     variables), the request will fail with code 'RequestBodyTooLarge' and
-     should be retried again with fewer tasks.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The collection of tasks to add. The total
+     serialized size of this collection must be less than 4MB. If it is greater
+     than 4MB (for example if each task has 100's of resource files or
+     environment variables), the request will fail with code
+     'RequestBodyTooLarge' and should be retried again with fewer tasks.
     :type value: list[~azure.batch.models.TaskAddParameter]
     """
 
@@ -31,5 +33,6 @@ class TaskAddCollectionParameter(Model):
         'value': {'key': 'value', 'type': '[TaskAddParameter]'},
     }
 
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(TaskAddCollectionParameter, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

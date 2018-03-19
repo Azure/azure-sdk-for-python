@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class PoolEndpointConfiguration(Model):
     """The endpoint configuration for a pool.
 
-    :param inbound_nat_pools: A list of inbound NAT pools that can be used to
-     address specific ports on an individual compute node externally. The
-     maximum number of inbound NAT pools per Batch pool is 5. If the maximum
-     number of inbound NAT pools is exceeded the request fails with HTTP status
-     code 400.
+    All required parameters must be populated in order to send to Azure.
+
+    :param inbound_nat_pools: Required. A list of inbound NAT pools that can
+     be used to address specific ports on an individual compute node
+     externally. The maximum number of inbound NAT pools per Batch pool is 5.
+     If the maximum number of inbound NAT pools is exceeded the request fails
+     with HTTP status code 400.
     :type inbound_nat_pools: list[~azure.batch.models.InboundNATPool]
     """
 
@@ -31,5 +33,6 @@ class PoolEndpointConfiguration(Model):
         'inbound_nat_pools': {'key': 'inboundNATPools', 'type': '[InboundNATPool]'},
     }
 
-    def __init__(self, inbound_nat_pools):
-        self.inbound_nat_pools = inbound_nat_pools
+    def __init__(self, **kwargs):
+        super(PoolEndpointConfiguration, self).__init__(**kwargs)
+        self.inbound_nat_pools = kwargs.get('inbound_nat_pools', None)

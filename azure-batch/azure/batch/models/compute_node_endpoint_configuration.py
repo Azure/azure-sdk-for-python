@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ComputeNodeEndpointConfiguration(Model):
     """The endpoint configuration for the compute node.
 
-    :param inbound_endpoints: The list of inbound endpoints that are
+    All required parameters must be populated in order to send to Azure.
+
+    :param inbound_endpoints: Required. The list of inbound endpoints that are
      accessible on the compute node.
     :type inbound_endpoints: list[~azure.batch.models.InboundEndpoint]
     """
@@ -28,5 +30,6 @@ class ComputeNodeEndpointConfiguration(Model):
         'inbound_endpoints': {'key': 'inboundEndpoints', 'type': '[InboundEndpoint]'},
     }
 
-    def __init__(self, inbound_endpoints):
-        self.inbound_endpoints = inbound_endpoints
+    def __init__(self, **kwargs):
+        super(ComputeNodeEndpointConfiguration, self).__init__(**kwargs)
+        self.inbound_endpoints = kwargs.get('inbound_endpoints', None)

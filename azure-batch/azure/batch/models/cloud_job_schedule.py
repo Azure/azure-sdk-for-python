@@ -85,19 +85,20 @@ class CloudJobSchedule(Model):
         'stats': {'key': 'stats', 'type': 'JobScheduleStatistics'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, schedule=None, job_specification=None, execution_info=None, metadata=None, stats=None):
-        self.id = id
-        self.display_name = display_name
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
-        self.schedule = schedule
-        self.job_specification = job_specification
-        self.execution_info = execution_info
-        self.metadata = metadata
-        self.stats = stats
+    def __init__(self, **kwargs):
+        super(CloudJobSchedule, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.url = kwargs.get('url', None)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.state = kwargs.get('state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.previous_state = kwargs.get('previous_state', None)
+        self.previous_state_transition_time = kwargs.get('previous_state_transition_time', None)
+        self.schedule = kwargs.get('schedule', None)
+        self.job_specification = kwargs.get('job_specification', None)
+        self.execution_info = kwargs.get('execution_info', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.stats = kwargs.get('stats', None)

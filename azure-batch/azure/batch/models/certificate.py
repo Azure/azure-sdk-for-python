@@ -58,13 +58,14 @@ class Certificate(Model):
         'delete_certificate_error': {'key': 'deleteCertificateError', 'type': 'DeleteCertificateError'},
     }
 
-    def __init__(self, thumbprint=None, thumbprint_algorithm=None, url=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, public_data=None, delete_certificate_error=None):
-        self.thumbprint = thumbprint
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.url = url
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
-        self.public_data = public_data
-        self.delete_certificate_error = delete_certificate_error
+    def __init__(self, **kwargs):
+        super(Certificate, self).__init__(**kwargs)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.thumbprint_algorithm = kwargs.get('thumbprint_algorithm', None)
+        self.url = kwargs.get('url', None)
+        self.state = kwargs.get('state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.previous_state = kwargs.get('previous_state', None)
+        self.previous_state_transition_time = kwargs.get('previous_state_transition_time', None)
+        self.public_data = kwargs.get('public_data', None)
+        self.delete_certificate_error = kwargs.get('delete_certificate_error', None)

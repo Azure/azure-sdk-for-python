@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class TaskExecutionInformation(Model):
     """Information about the execution of a task.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param start_time: The time at which the task started running. 'Running'
      corresponds to the running state, so if the task specifies resource files
      or application packages, then the start time reflects the time at which
@@ -45,11 +47,11 @@ class TaskExecutionInformation(Model):
      property is set only if the task is in the completed state and encountered
      a failure.
     :type failure_info: ~azure.batch.models.TaskFailureInformation
-    :param retry_count: The number of times the task has been retried by the
-     Batch service. Task application failures (non-zero exit code) are retried,
-     pre-processing errors (the task could not be run) and file upload errors
-     are not retried. The Batch service will retry the task up to the limit
-     specified by the constraints.
+    :param retry_count: Required. The number of times the task has been
+     retried by the Batch service. Task application failures (non-zero exit
+     code) are retried, pre-processing errors (the task could not be run) and
+     file upload errors are not retried. The Batch service will retry the task
+     up to the limit specified by the constraints.
     :type retry_count: int
     :param last_retry_time: The most recent time at which a retry of the task
      started running. This element is present only if the task was retried
@@ -58,12 +60,12 @@ class TaskExecutionInformation(Model):
      other than retry; for example, if the compute node was rebooted during a
      retry, then the startTime is updated but the lastRetryTime is not.
     :type last_retry_time: datetime
-    :param requeue_count: The number of times the task has been requeued by
-     the Batch service as the result of a user request. When the user removes
-     nodes from a pool (by resizing/shrinking the pool) or when the job is
-     being disabled, the user can specify that running tasks on the nodes be
-     requeued for execution. This count tracks how many times the task has been
-     requeued for these reasons.
+    :param requeue_count: Required. The number of times the task has been
+     requeued by the Batch service as the result of a user request. When the
+     user removes nodes from a pool (by resizing/shrinking the pool) or when
+     the job is being disabled, the user can specify that running tasks on the
+     nodes be requeued for execution. This count tracks how many times the task
+     has been requeued for these reasons.
     :type requeue_count: int
     :param last_requeue_time: The most recent time at which the task has been
      requeued by the Batch service as the result of a user request. This
@@ -93,14 +95,15 @@ class TaskExecutionInformation(Model):
         'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, container_info=None, failure_info=None, last_retry_time=None, last_requeue_time=None, result=None):
-        self.start_time = start_time
-        self.end_time = end_time
-        self.exit_code = exit_code
-        self.container_info = container_info
-        self.failure_info = failure_info
-        self.retry_count = retry_count
-        self.last_retry_time = last_retry_time
-        self.requeue_count = requeue_count
-        self.last_requeue_time = last_requeue_time
-        self.result = result
+    def __init__(self, **kwargs):
+        super(TaskExecutionInformation, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.container_info = kwargs.get('container_info', None)
+        self.failure_info = kwargs.get('failure_info', None)
+        self.retry_count = kwargs.get('retry_count', None)
+        self.last_retry_time = kwargs.get('last_retry_time', None)
+        self.requeue_count = kwargs.get('requeue_count', None)
+        self.last_requeue_time = kwargs.get('last_requeue_time', None)
+        self.result = kwargs.get('result', None)

@@ -16,19 +16,8 @@ class NodeRebootParameter(Model):
     """Options for rebooting a compute node.
 
     :param node_reboot_option: When to reboot the compute node and what to do
-     with currently running tasks. Values are:
-     requeue - Terminate running task processes and requeue the tasks. The
-     tasks will run again when a node is available. Restart the node as soon as
-     tasks have been terminated.
-     terminate - Terminate running tasks. The tasks will not run again. Restart
-     the node as soon as tasks have been terminated.
-     taskcompletion - Allow currently running tasks to complete. Schedule no
-     new tasks while waiting. Restart the node when all tasks have completed.
-     retaineddata - Allow currently running tasks to complete, then wait for
-     all task data retention periods to expire. Schedule no new tasks while
-     waiting. Restart the node when all task retention periods have expired.
-     The default value is requeue. Possible values include: 'requeue',
-     'terminate', 'taskCompletion', 'retainedData'
+     with currently running tasks. The default value is requeue. Possible
+     values include: 'requeue', 'terminate', 'taskCompletion', 'retainedData'
     :type node_reboot_option: str or
      ~azure.batch.models.ComputeNodeRebootOption
     """
@@ -37,5 +26,6 @@ class NodeRebootParameter(Model):
         'node_reboot_option': {'key': 'nodeRebootOption', 'type': 'ComputeNodeRebootOption'},
     }
 
-    def __init__(self, node_reboot_option=None):
-        self.node_reboot_option = node_reboot_option
+    def __init__(self, **kwargs):
+        super(NodeRebootParameter, self).__init__(**kwargs)
+        self.node_reboot_option = kwargs.get('node_reboot_option', None)
