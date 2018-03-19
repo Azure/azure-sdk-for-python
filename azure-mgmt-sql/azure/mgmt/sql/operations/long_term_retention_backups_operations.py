@@ -215,7 +215,7 @@ class LongTermRetentionBackupsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups/{backupName}'}
 
     def list_by_database(
-            self, location_name, long_term_retention_server_name, long_term_retention_database_name, only_latest_per_database=None, custom_headers=None, raw=False, **operation_config):
+            self, location_name, long_term_retention_server_name, long_term_retention_database_name, only_latest_per_database=None, database_state=None, custom_headers=None, raw=False, **operation_config):
         """Lists all long term retention backups for a database.
 
         :param location_name: The location of the database
@@ -227,6 +227,11 @@ class LongTermRetentionBackupsOperations(object):
         :param only_latest_per_database: Whether or not to only get the latest
          backup for each database.
         :type only_latest_per_database: bool
+        :param database_state: Whether to query against just live databases,
+         just deleted databases, or all databases. Possible values include:
+         'All', 'Live', 'Deleted'
+        :type database_state: str or
+         ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -254,8 +259,8 @@ class LongTermRetentionBackupsOperations(object):
                 query_parameters = {}
                 if only_latest_per_database is not None:
                     query_parameters['onlyLatestPerDatabase'] = self._serialize.query("only_latest_per_database", only_latest_per_database, 'bool')
-                if self.config.database_state is not None:
-                    query_parameters['databaseState'] = self._serialize.query("self.config.database_state", self.config.database_state, 'str')
+                if database_state is not None:
+                    query_parameters['databaseState'] = self._serialize.query("database_state", database_state, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -296,7 +301,7 @@ class LongTermRetentionBackupsOperations(object):
     list_by_database.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionServers/{longTermRetentionServerName}/longTermRetentionDatabases/{longTermRetentionDatabaseName}/longTermRetentionBackups'}
 
     def list_by_location(
-            self, location_name, only_latest_per_database=None, custom_headers=None, raw=False, **operation_config):
+            self, location_name, only_latest_per_database=None, database_state=None, custom_headers=None, raw=False, **operation_config):
         """Lists the long term retention backups for a given location.
 
         :param location_name: The location of the database
@@ -304,6 +309,11 @@ class LongTermRetentionBackupsOperations(object):
         :param only_latest_per_database: Whether or not to only get the latest
          backup for each database.
         :type only_latest_per_database: bool
+        :param database_state: Whether to query against just live databases,
+         just deleted databases, or all databases. Possible values include:
+         'All', 'Live', 'Deleted'
+        :type database_state: str or
+         ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -329,8 +339,8 @@ class LongTermRetentionBackupsOperations(object):
                 query_parameters = {}
                 if only_latest_per_database is not None:
                     query_parameters['onlyLatestPerDatabase'] = self._serialize.query("only_latest_per_database", only_latest_per_database, 'bool')
-                if self.config.database_state is not None:
-                    query_parameters['databaseState'] = self._serialize.query("self.config.database_state", self.config.database_state, 'str')
+                if database_state is not None:
+                    query_parameters['databaseState'] = self._serialize.query("database_state", database_state, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -371,7 +381,7 @@ class LongTermRetentionBackupsOperations(object):
     list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationName}/longTermRetentionBackups'}
 
     def list_by_server(
-            self, location_name, long_term_retention_server_name, only_latest_per_database=None, custom_headers=None, raw=False, **operation_config):
+            self, location_name, long_term_retention_server_name, only_latest_per_database=None, database_state=None, custom_headers=None, raw=False, **operation_config):
         """Lists the long term retention backups for a given server.
 
         :param location_name: The location of the database
@@ -381,6 +391,11 @@ class LongTermRetentionBackupsOperations(object):
         :param only_latest_per_database: Whether or not to only get the latest
          backup for each database.
         :type only_latest_per_database: bool
+        :param database_state: Whether to query against just live databases,
+         just deleted databases, or all databases. Possible values include:
+         'All', 'Live', 'Deleted'
+        :type database_state: str or
+         ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -407,8 +422,8 @@ class LongTermRetentionBackupsOperations(object):
                 query_parameters = {}
                 if only_latest_per_database is not None:
                     query_parameters['onlyLatestPerDatabase'] = self._serialize.query("only_latest_per_database", only_latest_per_database, 'bool')
-                if self.config.database_state is not None:
-                    query_parameters['databaseState'] = self._serialize.query("self.config.database_state", self.config.database_state, 'str')
+                if database_state is not None:
+                    query_parameters['databaseState'] = self._serialize.query("database_state", database_state, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

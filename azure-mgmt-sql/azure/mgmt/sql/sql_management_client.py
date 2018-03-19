@@ -69,16 +69,11 @@ class SqlManagementClientConfiguration(AzureConfiguration):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
-    :param database_state: Whether to query against just live databases, just
-     deleted databases, or all databases. Possible values include: 'All',
-     'Live', 'Deleted'
-    :type database_state: str or
-     ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, database_state=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -94,7 +89,6 @@ class SqlManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.database_state = database_state
 
 
 class SqlManagementClient(object):
@@ -194,18 +188,13 @@ class SqlManagementClient(object):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
-    :param database_state: Whether to query against just live databases, just
-     deleted databases, or all databases. Possible values include: 'All',
-     'Live', 'Deleted'
-    :type database_state: str or
-     ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, database_state=None, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = SqlManagementClientConfiguration(credentials, subscription_id, database_state, base_url)
+        self.config = SqlManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
