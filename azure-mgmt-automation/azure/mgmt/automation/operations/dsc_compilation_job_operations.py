@@ -107,13 +107,13 @@ class DscCompilationJobOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobName}'}
 
     def get(
-            self, resource_group_name, compilation_job_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, compilation_job_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc configuration compilation job identified by job id.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param compilation_job_id: The Dsc configuration compilation job id.
-        :type compilation_job_id: str
+        :param compilation_job_name: The the DSC configuration Id.
+        :type compilation_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -130,7 +130,7 @@ class DscCompilationJobOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
-            'compilationJobId': self._serialize.url("compilation_job_id", compilation_job_id, 'str'),
+            'compilationJobName': self._serialize.url("compilation_job_name", compilation_job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
