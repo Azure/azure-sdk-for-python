@@ -13,8 +13,6 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
-from .operations.backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
 from .operations.recoverable_databases_operations import RecoverableDatabasesOperations
 from .operations.restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -50,6 +48,8 @@ from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
+from .operations.long_term_retention_backups_operations import LongTermRetentionBackupsOperations
+from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
@@ -97,10 +97,6 @@ class SqlManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
 
-    :ivar backup_long_term_retention_policies: BackupLongTermRetentionPolicies operations
-    :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
-    :ivar backup_long_term_retention_vaults: BackupLongTermRetentionVaults operations
-    :vartype backup_long_term_retention_vaults: azure.mgmt.sql.operations.BackupLongTermRetentionVaultsOperations
     :ivar recoverable_databases: RecoverableDatabases operations
     :vartype recoverable_databases: azure.mgmt.sql.operations.RecoverableDatabasesOperations
     :ivar restorable_dropped_databases: RestorableDroppedDatabases operations
@@ -171,6 +167,10 @@ class SqlManagementClient(object):
     :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
+    :ivar long_term_retention_backups: LongTermRetentionBackups operations
+    :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
+    :ivar backup_long_term_retention_policies: BackupLongTermRetentionPolicies operations
+    :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
@@ -201,10 +201,6 @@ class SqlManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_long_term_retention_vaults = BackupLongTermRetentionVaultsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.recoverable_databases = RecoverableDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restorable_dropped_databases = RestorableDroppedDatabasesOperations(
@@ -274,6 +270,10 @@ class SqlManagementClient(object):
         self.subscription_usages = SubscriptionUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.long_term_retention_backups = LongTermRetentionBackupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
