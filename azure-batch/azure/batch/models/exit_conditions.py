@@ -48,9 +48,10 @@ class ExitConditions(Model):
         'default': {'key': 'default', 'type': 'ExitOptions'},
     }
 
-    def __init__(self, exit_codes=None, exit_code_ranges=None, pre_processing_error=None, file_upload_error=None, default=None):
-        self.exit_codes = exit_codes
-        self.exit_code_ranges = exit_code_ranges
-        self.pre_processing_error = pre_processing_error
-        self.file_upload_error = file_upload_error
-        self.default = default
+    def __init__(self, **kwargs):
+        super(ExitConditions, self).__init__(**kwargs)
+        self.exit_codes = kwargs.get('exit_codes', None)
+        self.exit_code_ranges = kwargs.get('exit_code_ranges', None)
+        self.pre_processing_error = kwargs.get('pre_processing_error', None)
+        self.file_upload_error = kwargs.get('file_upload_error', None)
+        self.default = kwargs.get('default', None)

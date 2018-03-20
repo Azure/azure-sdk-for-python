@@ -32,6 +32,7 @@ class UserIdentity(Model):
         'auto_user': {'key': 'autoUser', 'type': 'AutoUserSpecification'},
     }
 
-    def __init__(self, user_name=None, auto_user=None):
-        self.user_name = user_name
-        self.auto_user = auto_user
+    def __init__(self, **kwargs):
+        super(UserIdentity, self).__init__(**kwargs)
+        self.user_name = kwargs.get('user_name', None)
+        self.auto_user = kwargs.get('auto_user', None)

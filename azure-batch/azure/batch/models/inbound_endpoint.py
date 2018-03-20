@@ -15,19 +15,22 @@ from msrest.serialization import Model
 class InboundEndpoint(Model):
     """An inbound endpoint on a compute node.
 
-    :param name: The name of the endpoint.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the endpoint.
     :type name: str
-    :param protocol: The protocol of the endpoint. Possible values include:
-     'tcp', 'udp'
+    :param protocol: Required. The protocol of the endpoint. Possible values
+     include: 'tcp', 'udp'
     :type protocol: str or ~azure.batch.models.InboundEndpointProtocol
-    :param public_ip_address: The public IP address of the compute node.
-    :type public_ip_address: str
-    :param public_fqdn: The public fully qualified domain name for the compute
+    :param public_ip_address: Required. The public IP address of the compute
      node.
+    :type public_ip_address: str
+    :param public_fqdn: Required. The public fully qualified domain name for
+     the compute node.
     :type public_fqdn: str
-    :param frontend_port: The public port number of the endpoint.
+    :param frontend_port: Required. The public port number of the endpoint.
     :type frontend_port: int
-    :param backend_port: The backend port number of the endpoint.
+    :param backend_port: Required. The backend port number of the endpoint.
     :type backend_port: int
     """
 
@@ -49,10 +52,11 @@ class InboundEndpoint(Model):
         'backend_port': {'key': 'backendPort', 'type': 'int'},
     }
 
-    def __init__(self, name, protocol, public_ip_address, public_fqdn, frontend_port, backend_port):
-        self.name = name
-        self.protocol = protocol
-        self.public_ip_address = public_ip_address
-        self.public_fqdn = public_fqdn
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
+    def __init__(self, **kwargs):
+        super(InboundEndpoint, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.public_ip_address = kwargs.get('public_ip_address', None)
+        self.public_fqdn = kwargs.get('public_fqdn', None)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.backend_port = kwargs.get('backend_port', None)

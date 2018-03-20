@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class JobScheduleUpdateParameter(Model):
     """The set of changes to be made to a job schedule.
 
-    :param schedule: The schedule according to which jobs will be created. If
-     you do not specify this element, it is equivalent to passing the default
-     schedule: that is, a single job scheduled to run immediately.
+    All required parameters must be populated in order to send to Azure.
+
+    :param schedule: Required. The schedule according to which jobs will be
+     created. If you do not specify this element, it is equivalent to passing
+     the default schedule: that is, a single job scheduled to run immediately.
     :type schedule: ~azure.batch.models.Schedule
-    :param job_specification: Details of the jobs to be created on this
-     schedule. Updates affect only jobs that are started after the update has
-     taken place. Any currently active job continues with the older
+    :param job_specification: Required. Details of the jobs to be created on
+     this schedule. Updates affect only jobs that are started after the update
+     has taken place. Any currently active job continues with the older
      specification.
     :type job_specification: ~azure.batch.models.JobSpecification
     :param metadata: A list of name-value pairs associated with the job
@@ -42,7 +44,8 @@ class JobScheduleUpdateParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, schedule, job_specification, metadata=None):
-        self.schedule = schedule
-        self.job_specification = job_specification
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(JobScheduleUpdateParameter, self).__init__(**kwargs)
+        self.schedule = kwargs.get('schedule', None)
+        self.job_specification = kwargs.get('job_specification', None)
+        self.metadata = kwargs.get('metadata', None)

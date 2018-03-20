@@ -34,9 +34,18 @@ class ApplicationListOptions(Model):
     :type ocp_date: datetime
     """
 
-    def __init__(self, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
-        self.max_results = max_results
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
+    _attribute_map = {
+        'max_results': {'key': '', 'type': 'int'},
+        'timeout': {'key': '', 'type': 'int'},
+        'client_request_id': {'key': '', 'type': 'str'},
+        'return_client_request_id': {'key': '', 'type': 'bool'},
+        'ocp_date': {'key': '', 'type': 'rfc-1123'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApplicationListOptions, self).__init__(**kwargs)
+        self.max_results = kwargs.get('max_results', 1000)
+        self.timeout = kwargs.get('timeout', 30)
+        self.client_request_id = kwargs.get('client_request_id', None)
+        self.return_client_request_id = kwargs.get('return_client_request_id', False)
+        self.ocp_date = kwargs.get('ocp_date', None)

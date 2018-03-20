@@ -40,30 +40,14 @@ class CloudPool(Model):
     :type last_modified: datetime
     :param creation_time: The creation time of the pool.
     :type creation_time: datetime
-    :param state: The current state of the pool. Values are:
-     active - The pool is available to run tasks subject to the availability of
-     compute nodes.
-     deleting - The user has requested that the pool be deleted, but the delete
-     operation has not yet completed.
-     upgrading - The user has requested that the operating system of the pool's
-     nodes be upgraded, but the upgrade operation has not yet completed (that
-     is, some nodes in the pool have not yet been upgraded). While upgrading,
-     the pool may be able to run tasks (with reduced capacity) but this is not
-     guaranteed. Possible values include: 'active', 'deleting', 'upgrading'
+    :param state: The current state of the pool. Possible values include:
+     'active', 'deleting', 'upgrading'
     :type state: str or ~azure.batch.models.PoolState
     :param state_transition_time: The time at which the pool entered its
      current state.
     :type state_transition_time: datetime
-    :param allocation_state: Whether the pool is resizing. Values are:
-     steady - The pool is not resizing. There are no changes to the number of
-     nodes in the pool in progress. A pool enters this state when it is created
-     and when no operations are being performed on the pool to change the
-     number of dedicated nodes.
-     resizing - The pool is resizing; that is, compute nodes are being added to
-     or removed from the pool.
-     stopping - The pool was resizing, but the user has requested that the
-     resize be stopped, but the stop request has not yet been completed.
-     Possible values include: 'steady', 'resizing', 'stopping'
+    :param allocation_state: Whether the pool is resizing. Possible values
+     include: 'steady', 'resizing', 'stopping'
     :type allocation_state: str or ~azure.batch.models.AllocationState
     :param allocation_state_transition_time: The time at which the pool
      entered its current allocation state.
@@ -222,38 +206,39 @@ class CloudPool(Model):
         'stats': {'key': 'stats', 'type': 'PoolStatistics'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes=None, current_low_priority_nodes=None, target_dedicated_nodes=None, target_low_priority_nodes=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None):
-        self.id = id
-        self.display_name = display_name
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.allocation_state = allocation_state
-        self.allocation_state_transition_time = allocation_state_transition_time
-        self.vm_size = vm_size
-        self.cloud_service_configuration = cloud_service_configuration
-        self.virtual_machine_configuration = virtual_machine_configuration
-        self.resize_timeout = resize_timeout
-        self.resize_errors = resize_errors
-        self.current_dedicated_nodes = current_dedicated_nodes
-        self.current_low_priority_nodes = current_low_priority_nodes
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
-        self.enable_auto_scale = enable_auto_scale
-        self.auto_scale_formula = auto_scale_formula
-        self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
-        self.auto_scale_run = auto_scale_run
-        self.enable_inter_node_communication = enable_inter_node_communication
-        self.network_configuration = network_configuration
-        self.start_task = start_task
-        self.certificate_references = certificate_references
-        self.application_package_references = application_package_references
-        self.application_licenses = application_licenses
-        self.max_tasks_per_node = max_tasks_per_node
-        self.task_scheduling_policy = task_scheduling_policy
-        self.user_accounts = user_accounts
-        self.metadata = metadata
-        self.stats = stats
+    def __init__(self, **kwargs):
+        super(CloudPool, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.url = kwargs.get('url', None)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.state = kwargs.get('state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.allocation_state = kwargs.get('allocation_state', None)
+        self.allocation_state_transition_time = kwargs.get('allocation_state_transition_time', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.cloud_service_configuration = kwargs.get('cloud_service_configuration', None)
+        self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)
+        self.resize_timeout = kwargs.get('resize_timeout', None)
+        self.resize_errors = kwargs.get('resize_errors', None)
+        self.current_dedicated_nodes = kwargs.get('current_dedicated_nodes', None)
+        self.current_low_priority_nodes = kwargs.get('current_low_priority_nodes', None)
+        self.target_dedicated_nodes = kwargs.get('target_dedicated_nodes', None)
+        self.target_low_priority_nodes = kwargs.get('target_low_priority_nodes', None)
+        self.enable_auto_scale = kwargs.get('enable_auto_scale', None)
+        self.auto_scale_formula = kwargs.get('auto_scale_formula', None)
+        self.auto_scale_evaluation_interval = kwargs.get('auto_scale_evaluation_interval', None)
+        self.auto_scale_run = kwargs.get('auto_scale_run', None)
+        self.enable_inter_node_communication = kwargs.get('enable_inter_node_communication', None)
+        self.network_configuration = kwargs.get('network_configuration', None)
+        self.start_task = kwargs.get('start_task', None)
+        self.certificate_references = kwargs.get('certificate_references', None)
+        self.application_package_references = kwargs.get('application_package_references', None)
+        self.application_licenses = kwargs.get('application_licenses', None)
+        self.max_tasks_per_node = kwargs.get('max_tasks_per_node', None)
+        self.task_scheduling_policy = kwargs.get('task_scheduling_policy', None)
+        self.user_accounts = kwargs.get('user_accounts', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.stats = kwargs.get('stats', None)

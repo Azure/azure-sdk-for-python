@@ -29,21 +29,23 @@ class JobManagerTask(Model):
     priorities are observed. For example, if a Job Manager in a priority 0 job
     needs to be restarted, it will not displace tasks of a priority 1 job.
 
-    :param id: A string that uniquely identifies the Job Manager task within
-     the job. The ID can contain any combination of alphanumeric characters
-     including hyphens and underscores and cannot contain more than 64
-     characters.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A string that uniquely identifies the Job Manager
+     task within the job. The ID can contain any combination of alphanumeric
+     characters including hyphens and underscores and cannot contain more than
+     64 characters.
     :type id: str
     :param display_name: The display name of the Job Manager task. It need not
      be unique and can contain any Unicode characters up to a maximum length of
      1024.
     :type display_name: str
-    :param command_line: The command line of the Job Manager task. The command
-     line does not run under a shell, and therefore cannot take advantage of
-     shell features such as environment variable expansion. If you want to take
-     advantage of such features, you should invoke the shell in the command
-     line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
-     MyCommand" in Linux.
+    :param command_line: Required. The command line of the Job Manager task.
+     The command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you
+     want to take advantage of such features, you should invoke the shell in
+     the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Manager task runs. If the pool that will run this task has
@@ -144,18 +146,19 @@ class JobManagerTask(Model):
         'allow_low_priority_node': {'key': 'allowLowPriorityNode', 'type': 'bool'},
     }
 
-    def __init__(self, id, command_line, display_name=None, container_settings=None, resource_files=None, output_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None, allow_low_priority_node=None):
-        self.id = id
-        self.display_name = display_name
-        self.command_line = command_line
-        self.container_settings = container_settings
-        self.resource_files = resource_files
-        self.output_files = output_files
-        self.environment_settings = environment_settings
-        self.constraints = constraints
-        self.kill_job_on_completion = kill_job_on_completion
-        self.user_identity = user_identity
-        self.run_exclusive = run_exclusive
-        self.application_package_references = application_package_references
-        self.authentication_token_settings = authentication_token_settings
-        self.allow_low_priority_node = allow_low_priority_node
+    def __init__(self, **kwargs):
+        super(JobManagerTask, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.command_line = kwargs.get('command_line', None)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.resource_files = kwargs.get('resource_files', None)
+        self.output_files = kwargs.get('output_files', None)
+        self.environment_settings = kwargs.get('environment_settings', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.kill_job_on_completion = kwargs.get('kill_job_on_completion', None)
+        self.user_identity = kwargs.get('user_identity', None)
+        self.run_exclusive = kwargs.get('run_exclusive', None)
+        self.application_package_references = kwargs.get('application_package_references', None)
+        self.authentication_token_settings = kwargs.get('authentication_token_settings', None)
+        self.allow_low_priority_node = kwargs.get('allow_low_priority_node', None)

@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class CertificateReference(Model):
     """A reference to a certificate to be installed on compute nodes in a pool.
 
-    :param thumbprint: The thumbprint of the certificate.
+    All required parameters must be populated in order to send to Azure.
+
+    :param thumbprint: Required. The thumbprint of the certificate.
     :type thumbprint: str
-    :param thumbprint_algorithm: The algorithm with which the thumbprint is
-     associated. This must be sha1.
+    :param thumbprint_algorithm: Required. The algorithm with which the
+     thumbprint is associated. This must be sha1.
     :type thumbprint_algorithm: str
     :param store_location: The location of the certificate store on the
      compute node into which to install the certificate. The default value is
-     currentUser. This property is applicable only for pools configured with
+     currentuser. This property is applicable only for pools configured with
      Windows nodes (that is, created with cloudServiceConfiguration, or with
      virtualMachineConfiguration using a Windows image reference). For Linux
      compute nodes, the certificates are stored in a directory inside the task
@@ -41,12 +43,8 @@ class CertificateReference(Model):
      any custom store name can also be used. The default value is My.
     :type store_name: str
     :param visibility: Which user accounts on the compute node should have
-     access to the private data of the certificate. Values are:
-     starttask - The user account under which the start task is run.
-     task - The accounts under which job tasks are run.
-     remoteuser - The accounts under which users remotely access the node.
-     You can specify more than one visibility in this collection. The default
-     is all accounts.
+     access to the private data of the certificate. You can specify more than
+     one visibility in this collection. The default is all accounts.
     :type visibility: list[str or ~azure.batch.models.CertificateVisibility]
     """
 
@@ -63,9 +61,10 @@ class CertificateReference(Model):
         'visibility': {'key': 'visibility', 'type': '[CertificateVisibility]'},
     }
 
-    def __init__(self, thumbprint, thumbprint_algorithm, store_location=None, store_name=None, visibility=None):
-        self.thumbprint = thumbprint
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.store_location = store_location
-        self.store_name = store_name
-        self.visibility = visibility
+    def __init__(self, **kwargs):
+        super(CertificateReference, self).__init__(**kwargs)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.thumbprint_algorithm = kwargs.get('thumbprint_algorithm', None)
+        self.store_location = kwargs.get('store_location', None)
+        self.store_name = kwargs.get('store_name', None)
+        self.visibility = kwargs.get('visibility', None)
