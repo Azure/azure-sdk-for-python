@@ -102,3 +102,4 @@ ENV/
 
 # mypy
 .mypy_cache/
+.pytest_cache/v/cache/lastfailed

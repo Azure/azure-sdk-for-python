@@ -4,7 +4,8 @@
 # -----------------------------------------------------------------------------------
 
 import logging
-from azure.eventprocessorhost.abstract_event_processor import AbstractEventProcessor
+from azure.eventprocessorhost import AbstractEventProcessor
+
 
 class MockEventProcessor(AbstractEventProcessor):
     """
