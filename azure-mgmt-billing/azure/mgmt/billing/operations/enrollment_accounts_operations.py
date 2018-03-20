@@ -98,8 +98,8 @@ class EnrollmentAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EnrollmentAccountResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.EnrollmentAccountResult or
+        :return: EnrollmentAccount or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.EnrollmentAccount or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -135,7 +135,7 @@ class EnrollmentAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('EnrollmentAccountResult', response)
+            deserialized = self._deserialize('EnrollmentAccount', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

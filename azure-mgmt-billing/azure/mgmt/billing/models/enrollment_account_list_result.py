@@ -19,17 +19,22 @@ class EnrollmentAccountListResult(Model):
     sending a request.
 
     :ivar value: The list of enrollment accounts.
-    :vartype value: list[~azure.mgmt.billing.models.EnrollmentAccountResult]
+    :vartype value: list[~azure.mgmt.billing.models.EnrollmentAccount]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
         'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EnrollmentAccountResult]'},
+        'value': {'key': 'value', 'type': '[EnrollmentAccount]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self):
         super(EnrollmentAccountListResult, self).__init__()
         self.value = None
+        self.next_link = None
