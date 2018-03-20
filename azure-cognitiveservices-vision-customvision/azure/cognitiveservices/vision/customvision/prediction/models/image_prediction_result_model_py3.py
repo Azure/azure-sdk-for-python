@@ -47,7 +47,7 @@ class ImagePredictionResultModel(Model):
         'predictions': {'key': 'Predictions', 'type': '[ImageTagPredictionModel]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ImagePredictionResultModel, self).__init__(**kwargs)
         self.id = None
         self.project = None
