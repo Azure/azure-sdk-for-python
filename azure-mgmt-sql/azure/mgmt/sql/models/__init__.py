@@ -101,6 +101,12 @@ from .restore_point import RestorePoint
 from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
 from .database_operation import DatabaseOperation
 from .elastic_pool_operation import ElasticPoolOperation
+from .sku import Sku
+from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
+from .database_vulnerability_assessment import DatabaseVulnerabilityAssessment
+from .vulnerability_assessment_scan_error import VulnerabilityAssessmentScanError
+from .vulnerability_assessment_scan_record import VulnerabilityAssessmentScanRecord
+from .database_vulnerability_assessment_scans_export import DatabaseVulnerabilityAssessmentScansExport
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -141,6 +147,7 @@ from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
+from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
 from .sql_management_client_enums import (
     CapabilityStatus,
     MaxSizeUnits,
@@ -196,6 +203,8 @@ from .sql_management_client_enums import (
     AutomaticTuningServerReason,
     RestorePointType,
     ManagementOperationState,
+    VulnerabilityAssessmentScanTriggerType,
+    VulnerabilityAssessmentScanState,
     LongTermRetentionDatabaseState,
 )
 
@@ -292,6 +301,12 @@ __all__ = [
     'CreateDatabaseRestorePointDefinition',
     'DatabaseOperation',
     'ElasticPoolOperation',
+    'Sku',
+    'VulnerabilityAssessmentRecurringScansProperties',
+    'DatabaseVulnerabilityAssessment',
+    'VulnerabilityAssessmentScanError',
+    'VulnerabilityAssessmentScanRecord',
+    'DatabaseVulnerabilityAssessmentScansExport',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -332,6 +347,7 @@ __all__ = [
     'RestorePointPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
+    'VulnerabilityAssessmentScanRecordPaged',
     'CapabilityStatus',
     'MaxSizeUnits',
     'PerformanceLevelUnit',
@@ -386,5 +402,7 @@ __all__ = [
     'AutomaticTuningServerReason',
     'RestorePointType',
     'ManagementOperationState',
+    'VulnerabilityAssessmentScanTriggerType',
+    'VulnerabilityAssessmentScanState',
     'LongTermRetentionDatabaseState',
 ]

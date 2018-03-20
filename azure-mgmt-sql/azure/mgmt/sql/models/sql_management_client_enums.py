@@ -492,6 +492,20 @@ class ManagementOperationState(Enum):
     cancelled = "Cancelled"
 
 
+class VulnerabilityAssessmentScanTriggerType(Enum):
+
+    on_demand = "OnDemand"
+    recurring = "Recurring"
+
+
+class VulnerabilityAssessmentScanState(Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    failed_to_run = "FailedToRun"
+    in_progress = "InProgress"
+
+
 class LongTermRetentionDatabaseState(Enum):
 
     all = "All"
