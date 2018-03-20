@@ -50,3 +50,4 @@ class EPHOptions:
         self.receive_timeout = 60
         self.release_pump_on_timeout = False
         self.initial_offset_provider = "-1"
+        self.debug_trace = False

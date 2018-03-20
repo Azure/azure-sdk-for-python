@@ -80,7 +80,7 @@ class EventHubClient(object):
 
     def _create_connection(self):
         if not self.connection:
-            log.info("{}: Creating connection with address={}".format(self.container_id, self.address))
+            log.info("{}: Creating connection with address={}".format(self.container_id, self.address.geturl()))
             self.connection = Connection(
                 self.address.hostname,
                 self.auth,

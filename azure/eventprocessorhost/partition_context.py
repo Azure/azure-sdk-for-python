@@ -6,6 +6,10 @@ import asyncio
 import logging
 from azure.eventprocessorhost.checkpoint import Checkpoint
 
+
+_logger = logging.getLogger(__name__)
+
+
 class PartitionContext:
     """
     Encapsulates information related to an Event Hubs partition used by AbstractEventProcessor
@@ -33,7 +37,7 @@ class PartitionContext:
         """
         Returns the initial offset for processing the partition.
         """
-        logging.info("Calling user-provided initial offset provider %s %s",
+        _logger.info("Calling user-provided initial offset provider %s %s",
                      self.host.guid, self.partition_id)
         starting_checkpoint = await self.host.storage_manager\
                                         .get_checkpoint_async(self.partition_id)
@@ -46,7 +50,7 @@ class PartitionContext:
             self.offset = starting_checkpoint.offset
             self.sequence_number = starting_checkpoint.sequence_number
 
-        logging.info("%s %s Initial offset/sequenceNumber provided %s/%s",
+        _logger.info("%s %s Initial offset/sequenceNumber provided %s/%s",
                      self.host.guid, self.partition_id, self.offset, self.sequence_number)
         return self.offset
 
@@ -91,7 +95,7 @@ class PartitionContext:
         """
         Persists the checkpoint
         """
-        logging.debug("PartitionPumpCheckpointStart %s %s %s %s",
+        _logger.debug("PartitionPumpCheckpointStart %s %s %s %s",
                       self.host.guid, checkpoint.partition_id,
                       checkpoint.offset, checkpoint.sequence_number)
         try:
@@ -100,7 +104,7 @@ class PartitionContext:
             if not in_store_checkpoint \
                or checkpoint.sequence_number >= in_store_checkpoint.sequence_number:
                 if not in_store_checkpoint:
-                    logging.info("persisting checkpoint %s", str(checkpoint.__dict__))
+                    _logger.info("persisting checkpoint %s", str(checkpoint.__dict__))
                     await self.host.storage_manager \
                               .create_checkpoint_if_not_exists_async(checkpoint.partition_id)
 
@@ -110,14 +114,14 @@ class PartitionContext:
             else:
                 msg = "Ignoring out of date checkpoint with offset %s/sequence number %s because \
                        current persisted checkpoint has higher offset %s/sequence number %s"
-                logging.error(msg, checkpoint.offset, checkpoint.sequence_number,
+                _logger.error(msg, checkpoint.offset, checkpoint.sequence_number,
                               in_store_checkpoint.offset, in_store_checkpoint.sequence_number)
                 raise Exception("offset/sequenceNumber invalid")
 
         except Exception as err:
-            logging.error("PartitionPumpCheckpointError %s %s %s",
+            _logger.error("PartitionPumpCheckpointError %s %s %s",
                           self.host.guid, checkpoint.partition_id, repr(err))
             raise
         finally:
-            logging.debug("PartitionPumpCheckpointStop %s %s",
+            _logger.debug("PartitionPumpCheckpointStop %s %s",
                           self.host.guid, checkpoint.partition_id)

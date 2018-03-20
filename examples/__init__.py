@@ -7,9 +7,13 @@ import sys
 import logging
 
 def get_logger(level):
-    logger = logging.getLogger("uamqp")
-    logger.setLevel(level)
+    azure_logger = logging.getLogger("azure")
+    azure_logger.setLevel(level)
     handler = logging.StreamHandler(stream=sys.stdout)
     handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-    logger.addHandler(handler)
-    return logger
+    azure_logger.addHandler(handler)
+
+    uamqp_logger = logging.getLogger("uamqp")
+    uamqp_logger.setLevel(level)
+    uamqp_logger.addHandler(handler)
+    return azure_logger
