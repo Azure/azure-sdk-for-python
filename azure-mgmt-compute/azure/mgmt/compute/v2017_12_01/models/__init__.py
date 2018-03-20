@@ -10,10 +10,12 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .compute_operation_value_py3 import ComputeOperationValue
     from .instance_view_status_py3 import InstanceViewStatus
     from .sub_resource_py3 import SubResource
     from .sku_py3 import Sku
     from .availability_set_py3 import AvailabilitySet
+    from .availability_set_update_py3 import AvailabilitySetUpdate
     from .virtual_machine_size_py3 import VirtualMachineSize
     from .virtual_machine_extension_image_py3 import VirtualMachineExtensionImage
     from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
@@ -60,12 +62,14 @@ try:
     from .maintenance_redeploy_status_py3 import MaintenanceRedeployStatus
     from .virtual_machine_instance_view_py3 import VirtualMachineInstanceView
     from .virtual_machine_py3 import VirtualMachine
+    from .virtual_machine_update_py3 import VirtualMachineUpdate
     from .rolling_upgrade_policy_py3 import RollingUpgradePolicy
     from .upgrade_policy_py3 import UpgradePolicy
     from .image_os_disk_py3 import ImageOSDisk
     from .image_data_disk_py3 import ImageDataDisk
     from .image_storage_profile_py3 import ImageStorageProfile
     from .image_py3 import Image
+    from .image_update_py3 import ImageUpdate
     from .virtual_machine_scale_set_identity_py3 import VirtualMachineScaleSetIdentity
     from .virtual_machine_scale_set_os_profile_py3 import VirtualMachineScaleSetOSProfile
     from .virtual_machine_scale_set_update_os_profile_py3 import VirtualMachineScaleSetUpdateOSProfile
@@ -127,10 +131,12 @@ try:
     from .run_command_document_py3 import RunCommandDocument
     from .run_command_result_py3 import RunCommandResult
 except (SyntaxError, ImportError):
+    from .compute_operation_value import ComputeOperationValue
     from .instance_view_status import InstanceViewStatus
     from .sub_resource import SubResource
     from .sku import Sku
     from .availability_set import AvailabilitySet
+    from .availability_set_update import AvailabilitySetUpdate
     from .virtual_machine_size import VirtualMachineSize
     from .virtual_machine_extension_image import VirtualMachineExtensionImage
     from .virtual_machine_image_resource import VirtualMachineImageResource
@@ -177,12 +183,14 @@ except (SyntaxError, ImportError):
     from .maintenance_redeploy_status import MaintenanceRedeployStatus
     from .virtual_machine_instance_view import VirtualMachineInstanceView
     from .virtual_machine import VirtualMachine
+    from .virtual_machine_update import VirtualMachineUpdate
     from .rolling_upgrade_policy import RollingUpgradePolicy
     from .upgrade_policy import UpgradePolicy
     from .image_os_disk import ImageOSDisk
     from .image_data_disk import ImageDataDisk
     from .image_storage_profile import ImageStorageProfile
     from .image import Image
+    from .image_update import ImageUpdate
     from .virtual_machine_scale_set_identity import VirtualMachineScaleSetIdentity
     from .virtual_machine_scale_set_os_profile import VirtualMachineScaleSetOSProfile
     from .virtual_machine_scale_set_update_os_profile import VirtualMachineScaleSetUpdateOSProfile
@@ -243,6 +251,7 @@ except (SyntaxError, ImportError):
     from .run_command_document_base import RunCommandDocumentBase
     from .run_command_document import RunCommandDocument
     from .run_command_result import RunCommandResult
+from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
 from .usage_paged import UsagePaged
@@ -278,10 +287,12 @@ from .compute_management_client_enums import (
 )
 
 __all__ = [
+    'ComputeOperationValue',
     'InstanceViewStatus',
     'SubResource',
     'Sku',
     'AvailabilitySet',
+    'AvailabilitySetUpdate',
     'VirtualMachineSize',
     'VirtualMachineExtensionImage',
     'VirtualMachineImageResource',
@@ -328,12 +339,14 @@ __all__ = [
     'MaintenanceRedeployStatus',
     'VirtualMachineInstanceView',
     'VirtualMachine',
+    'VirtualMachineUpdate',
     'RollingUpgradePolicy',
     'UpgradePolicy',
     'ImageOSDisk',
     'ImageDataDisk',
     'ImageStorageProfile',
     'Image',
+    'ImageUpdate',
     'VirtualMachineScaleSetIdentity',
     'VirtualMachineScaleSetOSProfile',
     'VirtualMachineScaleSetUpdateOSProfile',
@@ -394,6 +407,7 @@ __all__ = [
     'RunCommandDocumentBase',
     'RunCommandDocument',
     'RunCommandResult',
+    'ComputeOperationValuePaged',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
     'UsagePaged',
