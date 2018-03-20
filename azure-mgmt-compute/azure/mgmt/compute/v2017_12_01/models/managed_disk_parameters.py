@@ -26,7 +26,7 @@ class ManagedDiskParameters(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
     }
 
     def __init__(self, **kwargs):

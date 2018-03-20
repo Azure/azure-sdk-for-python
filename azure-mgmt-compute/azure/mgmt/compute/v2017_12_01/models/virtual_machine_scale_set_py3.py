@@ -57,12 +57,6 @@ class VirtualMachineScaleSet(Resource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
-    :param zone_balance: Whether to force stictly even Virtual Machine
-     distribution cross x-zones in case there is zone outage.
-    :type zone_balance: bool
-    :param platform_fault_domain_count: Fault Domain count for each placement
-     group.
-    :type platform_fault_domain_count: int
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -94,13 +88,11 @@ class VirtualMachineScaleSet(Resource):
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
-        'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
@@ -110,7 +102,5 @@ class VirtualMachineScaleSet(Resource):
         self.overprovision = overprovision
         self.unique_id = None
         self.single_placement_group = single_placement_group
-        self.zone_balance = zone_balance
-        self.platform_fault_domain_count = platform_fault_domain_count
         self.identity = identity
         self.zones = zones

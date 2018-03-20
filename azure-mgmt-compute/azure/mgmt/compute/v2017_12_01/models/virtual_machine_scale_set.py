@@ -57,12 +57,6 @@ class VirtualMachineScaleSet(Resource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
-    :param zone_balance: Whether to force stictly even Virtual Machine
-     distribution cross x-zones in case there is zone outage.
-    :type zone_balance: bool
-    :param platform_fault_domain_count: Fault Domain count for each placement
-     group.
-    :type platform_fault_domain_count: int
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -94,8 +88,6 @@ class VirtualMachineScaleSet(Resource):
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
-        'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
-        'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
@@ -110,7 +102,5 @@ class VirtualMachineScaleSet(Resource):
         self.overprovision = kwargs.get('overprovision', None)
         self.unique_id = None
         self.single_placement_group = kwargs.get('single_placement_group', None)
-        self.zone_balance = kwargs.get('zone_balance', None)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)
