@@ -29,16 +29,15 @@ class FlowLogInformation(Model):
     :param retention_policy:
     :type retention_policy:
      ~azure.mgmt.network.v2018_01_01.models.RetentionPolicyParameters
-    :param network_watcher_flow_analytics_configuration: Required.
-    :type network_watcher_flow_analytics_configuration:
-     ~azure.mgmt.network.v2018_01_01.models.TrafficAnalyticsConfigurationProperties
+    :param flow_analytics_configuration:
+    :type flow_analytics_configuration:
+     ~azure.mgmt.network.v2018_01_01.models.TrafficAnalyticsProperties
     """
 
     _validation = {
         'target_resource_id': {'required': True},
         'storage_id': {'required': True},
         'enabled': {'required': True},
-        'network_watcher_flow_analytics_configuration': {'required': True},
     }
 
     _attribute_map = {
@@ -46,7 +45,7 @@ class FlowLogInformation(Model):
         'storage_id': {'key': 'properties.storageId', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
-        'network_watcher_flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration', 'type': 'TrafficAnalyticsConfigurationProperties'},
+        'flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration', 'type': 'TrafficAnalyticsProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -55,4 +54,4 @@ class FlowLogInformation(Model):
         self.storage_id = kwargs.get('storage_id', None)
         self.enabled = kwargs.get('enabled', None)
         self.retention_policy = kwargs.get('retention_policy', None)
-        self.network_watcher_flow_analytics_configuration = kwargs.get('network_watcher_flow_analytics_configuration', None)
+        self.flow_analytics_configuration = kwargs.get('flow_analytics_configuration', None)
