@@ -20,6 +20,9 @@ class MetricAlertCriteria(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     """
@@ -29,6 +32,7 @@ class MetricAlertCriteria(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
     }
 
@@ -38,4 +42,5 @@ class MetricAlertCriteria(Model):
 
     def __init__(self, **kwargs):
         super(MetricAlertCriteria, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.odatatype = None

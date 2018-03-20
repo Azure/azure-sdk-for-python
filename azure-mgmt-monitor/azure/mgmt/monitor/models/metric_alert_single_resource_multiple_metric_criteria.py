@@ -18,6 +18,9 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param all_of: The list of metric criteria for this 'all of' operation.
@@ -29,6 +32,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'all_of': {'key': 'allOf', 'type': '[MetricCriteria]'},
     }

@@ -24,9 +24,9 @@ class MetricCriteria(Model):
     :param metric_namespace: Namespace of the metric.
     :type metric_namespace: str
     :param operator: Required. the criteria operator.
-    :type operator: str
-    :param time_aggregation: Required. the criteria time aggregation value.
-    :type time_aggregation: str
+    :type operator: object
+    :param time_aggregation: Required. the criteria time aggregation types.
+    :type time_aggregation: object
     :param threshold: Required. the criteria threshold value that activates
      the alert.
     :type threshold: float
@@ -46,13 +46,13 @@ class MetricCriteria(Model):
         'name': {'key': 'name', 'type': 'str'},
         'metric_name': {'key': 'metricName', 'type': 'str'},
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'time_aggregation': {'key': 'timeAggregation', 'type': 'str'},
+        'operator': {'key': 'operator', 'type': 'object'},
+        'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'threshold': {'key': 'threshold', 'type': 'float'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
     }
 
-    def __init__(self, *, name: str, metric_name: str, operator: str, time_aggregation: str, threshold: float, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
+    def __init__(self, *, name: str, metric_name: str, operator, time_aggregation, threshold: float, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
         super(MetricCriteria, self).__init__(**kwargs)
         self.name = name
         self.metric_name = metric_name
