@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class BackupLongTermRetentionPolicy(ProxyResource):
-    """A backup long term retention policy.
+class BackupLongTermRetentionVault(ProxyResource):
+    """A backup long term retention vault.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,13 +26,9 @@ class BackupLongTermRetentionPolicy(ProxyResource):
     :vartype type: str
     :ivar location: The geo-location where the resource lives
     :vartype location: str
-    :param state: The status of the backup long term retention policy.
-     Possible values include: 'Disabled', 'Enabled'
-    :type state: str or
-     ~azure.mgmt.sql.models.BackupLongTermRetentionPolicyState
-    :param recovery_services_backup_policy_resource_id: The azure recovery
-     services backup protection policy resource id
-    :type recovery_services_backup_policy_resource_id: str
+    :param recovery_services_vault_resource_id: The azure recovery services
+     vault resource id
+    :type recovery_services_vault_resource_id: str
     """
 
     _validation = {
@@ -40,8 +36,7 @@ class BackupLongTermRetentionPolicy(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
-        'state': {'required': True},
-        'recovery_services_backup_policy_resource_id': {'required': True},
+        'recovery_services_vault_resource_id': {'required': True},
     }
 
     _attribute_map = {
@@ -49,12 +44,10 @@ class BackupLongTermRetentionPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'BackupLongTermRetentionPolicyState'},
-        'recovery_services_backup_policy_resource_id': {'key': 'properties.recoveryServicesBackupPolicyResourceId', 'type': 'str'},
+        'recovery_services_vault_resource_id': {'key': 'properties.recoveryServicesVaultResourceId', 'type': 'str'},
     }
 
-    def __init__(self, state, recovery_services_backup_policy_resource_id):
-        super(BackupLongTermRetentionPolicy, self).__init__()
+    def __init__(self, recovery_services_vault_resource_id):
+        super(BackupLongTermRetentionVault, self).__init__()
         self.location = None
-        self.state = state
-        self.recovery_services_backup_policy_resource_id = recovery_services_backup_policy_resource_id
+        self.recovery_services_vault_resource_id = recovery_services_vault_resource_id
