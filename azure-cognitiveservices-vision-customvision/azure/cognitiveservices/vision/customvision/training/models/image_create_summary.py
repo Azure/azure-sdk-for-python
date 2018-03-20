@@ -35,7 +35,7 @@ class ImageCreateSummary(Model):
         'images': {'key': 'Images', 'type': '[ImageCreateResult]'},
     }
 
-    def __init__(self):
-        super(ImageCreateSummary, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImageCreateSummary, self).__init__(**kwargs)
         self.is_batch_successful = None
         self.images = None
