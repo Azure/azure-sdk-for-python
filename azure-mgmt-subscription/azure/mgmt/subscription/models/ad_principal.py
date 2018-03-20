@@ -12,21 +12,23 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """REST API operation.
+class AdPrincipal(Model):
+    """Active Directory Principal for subscription creation delegated permission.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.subscription.models.OperationDisplay
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_id: Required. Object id of the Principal
+    :type object_id: str
     """
 
+    _validation = {
+        'object_id': {'required': True},
+    }
+
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'object_id': {'key': 'objectId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        super(AdPrincipal, self).__init__(**kwargs)
+        self.object_id = kwargs.get('object_id', None)

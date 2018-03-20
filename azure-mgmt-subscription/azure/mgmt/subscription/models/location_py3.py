@@ -51,7 +51,7 @@ class Location(Model):
         'longitude': {'key': 'longitude', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Location, self).__init__(**kwargs)
         self.id = None
         self.subscription_id = None
