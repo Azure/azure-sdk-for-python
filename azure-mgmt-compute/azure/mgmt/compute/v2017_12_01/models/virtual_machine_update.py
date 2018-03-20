@@ -79,9 +79,6 @@ class VirtualMachineUpdate(UpdateResource):
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
     :vartype vm_id: str
-    :ivar resources: The virtual machine child extension resources.
-    :vartype resources:
-     list[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineExtension]
     :param identity: The identity of the virtual machine, if configured.
     :type identity:
      ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineIdentity
@@ -93,7 +90,6 @@ class VirtualMachineUpdate(UpdateResource):
         'provisioning_state': {'readonly': True},
         'instance_view': {'readonly': True},
         'vm_id': {'readonly': True},
-        'resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -109,7 +105,6 @@ class VirtualMachineUpdate(UpdateResource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
@@ -127,6 +122,5 @@ class VirtualMachineUpdate(UpdateResource):
         self.instance_view = None
         self.license_type = kwargs.get('license_type', None)
         self.vm_id = None
-        self.resources = None
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)
