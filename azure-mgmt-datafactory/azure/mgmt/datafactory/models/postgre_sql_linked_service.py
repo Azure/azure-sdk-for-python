@@ -31,20 +31,8 @@ class PostgreSqlLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
-    :param server: Server name for connection. Type: string (or Expression
-     with resultType string).
-    :type server: object
-    :param database: Database name for connection. Type: string (or Expression
-     with resultType string).
-    :type database: object
-    :param schema: Schema name for connection. Type: string (or Expression
-     with resultType string).
-    :type schema: object
-    :param username: Username for authentication. Type: string (or Expression
-     with resultType string).
-    :type username: object
-    :param password: Password for authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param connection_string: The connection string.
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -53,8 +41,7 @@ class PostgreSqlLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
-        'database': {'required': True},
+        'connection_string': {'required': True},
     }
 
     _attribute_map = {
@@ -64,20 +51,12 @@ class PostgreSqlLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'server': {'key': 'typeProperties.server', 'type': 'object'},
-        'database': {'key': 'typeProperties.database', 'type': 'object'},
-        'schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, schema=None, username=None, password=None, encrypted_credential=None):
+    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, encrypted_credential=None):
         super(PostgreSqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.server = server
-        self.database = database
-        self.schema = schema
-        self.username = username
-        self.password = password
+        self.connection_string = connection_string
         self.encrypted_credential = encrypted_credential
         self.type = 'PostgreSql'
