@@ -33,7 +33,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         empty_volume = Volume(name='empty-volume', empty_dir={})
         volume_mount = VolumeMount(name='empty-volume', mount_path='/mnt/mydir')
 
-        container_group = self.client.container_groups.create_or_update(
+        poller = self.client.container_groups.create_or_update(
             resource_group.name,
             container_group_name,
             {
@@ -54,6 +54,7 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
                 'volumes': [empty_volume]
             }
         )
+        container_group = poller.result()
 
         self.assertEqual(container_group.name, container_group_name)
         self.assertEqual(container_group.location, location)
@@ -89,6 +90,14 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
         self.assertEqual(container_groups[0].containers[0].resources.requests.cpu, cpu)
         self.assertEqual(container_groups[0].volumes[0].name, empty_volume.name)
 
+        terminal_size = {
+            "rows": 24,
+            "cols": 80
+        }
+        command = "/bin/bash"
+        containerExecResponse = self.client.start_container.launch_exec(resource_group.name, container_group.name, container_group.containers[0].name, command, terminal_size)
+        self.assertNotEqual(containerExecResponse.web_socket_uri, None)
+        self.assertNotEqual(containerExecResponse.password, None)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
