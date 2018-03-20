@@ -58,11 +58,9 @@ from .job_provisioning_state_property import JobProvisioningStateProperty
 from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
+from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
 from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
-from .dsc_node import DscNode
-from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
-from .dsc_node_configuration import DscNodeConfiguration
 from .dsc_node_update_parameters import DscNodeUpdateParameters
 from .dsc_report_error import DscReportError
 from .dsc_report_resource_navigation import DscReportResourceNavigation
@@ -124,6 +122,8 @@ from .source_control_update_parameters import SourceControlUpdateParameters
 from .source_control_sync_job import SourceControlSyncJob
 from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
 from .source_control_sync_job_by_id import SourceControlSyncJobById
+from .dsc_node import DscNode
+from .dsc_node_configuration import DscNodeConfiguration
 from .dsc_node_configuration_create_or_update_parameters_properties import DscNodeConfigurationCreateOrUpdateParametersProperties
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
@@ -225,11 +225,9 @@ __all__ = [
     'DscCompilationJob',
     'DscConfigurationCreateOrUpdateParameters',
     'DscMetaConfiguration',
+    'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
     'DscNodeExtensionHandlerAssociationProperty',
-    'DscNode',
-    'DscNodeConfigurationCreateOrUpdateParameters',
-    'DscNodeConfiguration',
     'DscNodeUpdateParameters',
     'DscReportError',
     'DscReportResourceNavigation',
@@ -291,6 +289,8 @@ __all__ = [
     'SourceControlSyncJob',
     'SourceControlSyncJobByIdErrors',
     'SourceControlSyncJobById',
+    'DscNode',
+    'DscNodeConfiguration',
     'DscNodeConfigurationCreateOrUpdateParametersProperties',
     'AutomationAccountPaged',
     'OperationPaged',
