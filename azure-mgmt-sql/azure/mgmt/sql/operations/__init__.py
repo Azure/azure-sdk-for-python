@@ -51,6 +51,7 @@ from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .restore_points_operations import RestorePointsOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
+from .database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -95,4 +96,5 @@ __all__ = [
     'RestorePointsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
+    'DatabaseVulnerabilityAssessmentScansOperations',
 ]

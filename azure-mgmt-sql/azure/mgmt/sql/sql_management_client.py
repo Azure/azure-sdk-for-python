@@ -55,6 +55,7 @@ from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
+from .operations.database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
 from . import models
 
 
@@ -181,6 +182,8 @@ class SqlManagementClient(object):
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
     :vartype elastic_pool_operations: azure.mgmt.sql.operations.ElasticPoolOperations
+    :ivar database_vulnerability_assessment_scans: DatabaseVulnerabilityAssessmentScans operations
+    :vartype database_vulnerability_assessment_scans: azure.mgmt.sql.operations.DatabaseVulnerabilityAssessmentScansOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -284,4 +287,6 @@ class SqlManagementClient(object):
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pool_operations = ElasticPoolOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(
             self._client, self.config, self._serialize, self._deserialize)
