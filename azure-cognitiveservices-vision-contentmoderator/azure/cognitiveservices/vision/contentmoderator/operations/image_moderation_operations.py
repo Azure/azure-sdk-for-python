@@ -53,7 +53,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/FindFaces'
+        url = self.find_faces.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -87,6 +87,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    find_faces.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/FindFaces'}
 
     def ocr_method(
             self, language, cache_image=None, enhanced=False, custom_headers=None, raw=False, **operation_config):
@@ -115,7 +116,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/OCR'
+        url = self.ocr_method.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -152,6 +153,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    ocr_method.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/OCR'}
 
     def evaluate_method(
             self, cache_image=None, custom_headers=None, raw=False, **operation_config):
@@ -173,7 +175,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/Evaluate'
+        url = self.evaluate_method.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -207,6 +209,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    evaluate_method.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/Evaluate'}
 
     def match_method(
             self, list_id=None, cache_image=None, custom_headers=None, raw=False, **operation_config):
@@ -237,7 +240,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/Match'
+        url = self.match_method.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -273,6 +276,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    match_method.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/Match'}
 
     def find_faces_file_input(
             self, image_stream, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -301,7 +305,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/FindFaces'
+        url = self.find_faces_file_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -339,6 +343,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    find_faces_file_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/FindFaces'}
 
     def find_faces_url_input(
             self, content_type, cache_image=None, data_representation="URL", value=None, custom_headers=None, raw=False, **operation_config):
@@ -368,7 +373,7 @@ class ImageModerationOperations(object):
         image_url = models.BodyModel(data_representation=data_representation, value=value)
 
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/FindFaces'
+        url = self.find_faces_url_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -407,6 +412,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    find_faces_url_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/FindFaces'}
 
     def ocr_url_input(
             self, language, content_type, cache_image=None, enhanced=False, data_representation="URL", value=None, custom_headers=None, raw=False, **operation_config):
@@ -443,7 +449,7 @@ class ImageModerationOperations(object):
         image_url = models.BodyModel(data_representation=data_representation, value=value)
 
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/OCR'
+        url = self.ocr_url_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -485,6 +491,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    ocr_url_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/OCR'}
 
     def ocr_file_input(
             self, language, image_stream, cache_image=None, enhanced=False, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -520,7 +527,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/OCR'
+        url = self.ocr_file_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -561,6 +568,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    ocr_file_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/OCR'}
 
     def evaluate_file_input(
             self, image_stream, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -589,7 +597,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/Evaluate'
+        url = self.evaluate_file_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -627,6 +635,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    evaluate_file_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/Evaluate'}
 
     def evaluate_url_input(
             self, content_type, cache_image=None, data_representation="URL", value=None, custom_headers=None, raw=False, **operation_config):
@@ -656,7 +665,7 @@ class ImageModerationOperations(object):
         image_url = models.BodyModel(data_representation=data_representation, value=value)
 
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/Evaluate'
+        url = self.evaluate_url_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -695,6 +704,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    evaluate_url_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/Evaluate'}
 
     def match_url_input(
             self, content_type, list_id=None, cache_image=None, data_representation="URL", value=None, custom_headers=None, raw=False, **operation_config):
@@ -733,7 +743,7 @@ class ImageModerationOperations(object):
         image_url = models.BodyModel(data_representation=data_representation, value=value)
 
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/Match'
+        url = self.match_url_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -774,6 +784,7 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    match_url_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/Match'}
 
     def match_file_input(
             self, image_stream, list_id=None, cache_image=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -811,7 +822,7 @@ class ImageModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessImage/Match'
+        url = self.match_file_input.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -851,3 +862,4 @@ class ImageModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    match_file_input.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessImage/Match'}

@@ -67,7 +67,7 @@ class TextModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessText/Screen/'
+        url = self.screen_text.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -113,6 +113,7 @@ class TextModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    screen_text.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessText/Screen/'}
 
     def detect_language(
             self, text_content_type, text_content, custom_headers=None, raw=False, **operation_config):
@@ -139,7 +140,7 @@ class TextModerationOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/moderate/v1.0/ProcessText/DetectLanguage'
+        url = self.detect_language.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True)
         }
@@ -176,3 +177,4 @@ class TextModerationOperations(object):
             return client_raw_response
 
         return deserialized
+    detect_language.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessText/DetectLanguage'}

@@ -54,7 +54,7 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'
+        url = self.add_term.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
@@ -89,6 +89,7 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    add_term.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'}
 
     def delete_term(
             self, list_id, term, language, custom_headers=None, raw=False, **operation_config):
@@ -111,7 +112,7 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'
+        url = self.delete_term.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
@@ -146,6 +147,7 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_term.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms/{term}'}
 
     def get_all_terms(
             self, list_id, language, offset=None, limit=None, custom_headers=None, raw=False, **operation_config):
@@ -171,7 +173,7 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms'
+        url = self.get_all_terms.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
@@ -209,6 +211,7 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    get_all_terms.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms'}
 
     def delete_all_terms(
             self, list_id, language, custom_headers=None, raw=False, **operation_config):
@@ -230,7 +233,7 @@ class ListManagementTermOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/termlists/{listId}/terms'
+        url = self.delete_all_terms.metadata['url']
         path_format_arguments = {
             'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
@@ -264,3 +267,4 @@ class ListManagementTermOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_all_terms.metadata = {'url': '/contentmoderator/lists/v1.0/termlists/{listId}/terms'}
