@@ -8,10 +8,10 @@ import asyncio
 import logging
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
-from eventprocessorhost.eph import EventProcessorHost
-from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
-from eventprocessorhost.azure_blob_lease import AzureBlobLease
-from eventprocessorhost.eh_partition_pump import EventHubPartitionPump
+from azure.eventprocessorhost.eph import EventProcessorHost
+from azure.eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from azure.eventprocessorhost.azure_blob_lease import AzureBlobLease
+from azure.eventprocessorhost.eh_partition_pump import EventHubPartitionPump
 
 class PartitionPumpTestCase(unittest.TestCase):
     """Tests for `eh_partition_pump.py`."""

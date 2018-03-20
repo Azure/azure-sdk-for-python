@@ -10,7 +10,7 @@ try:
     from azure.eventprocessorhost.abstract_event_processor import AbstractEventProcessor
     from azure.eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
     from azure.eventprocessorhost.eh_config import EventHubConfig
-    from azure.eventprocessorhost.eph import EventProcessorHost
+    from azure.eventprocessorhost.eph import EventProcessorHost, EPHOptions
 except (SyntaxError, ImportError):
     raise
     #raise ImportError("EventProcessHost is only compatible with Python 3.6 and above.")

@@ -5,7 +5,7 @@
 
 import uuid
 import asyncio
-from eventprocessorhost.partition_manager import PartitionManager
+from azure.eventprocessorhost.partition_manager import PartitionManager
 
 class EventProcessorHost:
     """

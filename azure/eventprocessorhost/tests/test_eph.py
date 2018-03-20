@@ -9,9 +9,9 @@ import asyncio
 import sys
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
-from eventprocessorhost.eh_config import EventHubConfig
-from eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
-from eventprocessorhost.eph import EventProcessorHost
+from azure.eventprocessorhost.eh_config import EventHubConfig
+from azure.eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
+from azure.eventprocessorhost.eph import EventProcessorHost
 
 class EventProcessorHostTestCase(unittest.TestCase):
     """Tests for `partition_manager.py`."""

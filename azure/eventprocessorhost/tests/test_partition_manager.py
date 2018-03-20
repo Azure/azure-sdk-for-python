@@ -7,8 +7,8 @@ import unittest
 import asyncio
 from mock_event_processor import MockEventProcessor
 from mock_credentials import MockCredentials
-from eventprocessorhost.partition_manager import PartitionManager
-from eventprocessorhost.eph import EventProcessorHost
+from azure.eventprocessorhost.partition_manager import PartitionManager
+from azure.eventprocessorhost.eph import EventProcessorHost
 
 
 class PartitionManagerTestCase(unittest.TestCase):

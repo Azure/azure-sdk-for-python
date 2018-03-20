@@ -36,6 +36,9 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+azure/storage/
+azure/common/
+
 htmlcov/
 .tox/
 .coverage

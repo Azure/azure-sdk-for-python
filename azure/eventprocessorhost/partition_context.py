@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 import asyncio
 import logging
-from eventprocessorhost.checkpoint import Checkpoint
+from azure.eventprocessorhost.checkpoint import Checkpoint
 
 class PartitionContext:
     """

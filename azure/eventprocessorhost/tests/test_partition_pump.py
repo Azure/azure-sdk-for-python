@@ -6,9 +6,9 @@
 import unittest
 import asyncio
 from mock_event_processor import MockEventProcessor
-from eventprocessorhost.eph import EventProcessorHost
-from eventprocessorhost.lease import Lease
-from eventprocessorhost.partition_pump import PartitionPump
+from azure.eventprocessorhost.eph import EventProcessorHost
+from azure.eventprocessorhost.lease import Lease
+from azure.eventprocessorhost.partition_pump import PartitionPump
 
 class PartitionPumpTestCase(unittest.TestCase):
     """Tests for `partition_pump.py`."""

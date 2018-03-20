@@ -6,7 +6,7 @@
 from abc import  abstractmethod
 import logging
 import asyncio
-from eventprocessorhost.partition_context import PartitionContext
+from azure.eventprocessorhost.partition_context import PartitionContext
 
 class PartitionPump():
     """
