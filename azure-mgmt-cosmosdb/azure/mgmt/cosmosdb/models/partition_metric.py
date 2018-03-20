@@ -63,7 +63,7 @@ class PartitionMetric(Metric):
         'partition_key_range_id': {'key': 'partitionKeyRangeId', 'type': 'str'},
     }
 
-    def __init__(self, unit=None):
-        super(PartitionMetric, self).__init__(unit=unit)
+    def __init__(self, **kwargs):
+        super(PartitionMetric, self).__init__(**kwargs)
         self.partition_id = None
         self.partition_key_range_id = None

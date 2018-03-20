@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class ConsistencyPolicy(Model):
     """The consistency policy for the Cosmos DB database account.
 
-    :param default_consistency_level: The default consistency level and
-     configuration settings of the Cosmos DB account. Possible values include:
-     'Eventual', 'Session', 'BoundedStaleness', 'Strong', 'ConsistentPrefix'
+    All required parameters must be populated in order to send to Azure.
+
+    :param default_consistency_level: Required. The default consistency level
+     and configuration settings of the Cosmos DB account. Possible values
+     include: 'Eventual', 'Session', 'BoundedStaleness', 'Strong',
+     'ConsistentPrefix'
     :type default_consistency_level: str or
      ~azure.mgmt.cosmosdb.models.DefaultConsistencyLevel
     :param max_staleness_prefix: When used with the Bounded Staleness
@@ -44,8 +47,8 @@ class ConsistencyPolicy(Model):
         'max_interval_in_seconds': {'key': 'maxIntervalInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, default_consistency_level, max_staleness_prefix=None, max_interval_in_seconds=None):
-        super(ConsistencyPolicy, self).__init__()
-        self.default_consistency_level = default_consistency_level
-        self.max_staleness_prefix = max_staleness_prefix
-        self.max_interval_in_seconds = max_interval_in_seconds
+    def __init__(self, **kwargs):
+        super(ConsistencyPolicy, self).__init__(**kwargs)
+        self.default_consistency_level = kwargs.get('default_consistency_level', None)
+        self.max_staleness_prefix = kwargs.get('max_staleness_prefix', None)
+        self.max_interval_in_seconds = kwargs.get('max_interval_in_seconds', None)
