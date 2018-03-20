@@ -9,32 +9,60 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .consistency_policy import ConsistencyPolicy
-from .capability import Capability
-from .location import Location
-from .failover_policy import FailoverPolicy
-from .database_account import DatabaseAccount
-from .failover_policies import FailoverPolicies
-from .resource import Resource
-from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
-from .database_account_patch_parameters import DatabaseAccountPatchParameters
-from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
-from .database_account_list_keys_result import DatabaseAccountListKeysResult
-from .database_account_connection_string import DatabaseAccountConnectionString
-from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
-from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .metric_name import MetricName
-from .usage import Usage
-from .partition_usage import PartitionUsage
-from .metric_availability import MetricAvailability
-from .metric_definition import MetricDefinition
-from .metric_value import MetricValue
-from .metric import Metric
-from .percentile_metric_value import PercentileMetricValue
-from .percentile_metric import PercentileMetric
-from .partition_metric import PartitionMetric
+try:
+    from .consistency_policy_py3 import ConsistencyPolicy
+    from .capability_py3 import Capability
+    from .location_py3 import Location
+    from .failover_policy_py3 import FailoverPolicy
+    from .database_account_py3 import DatabaseAccount
+    from .failover_policies_py3 import FailoverPolicies
+    from .resource_py3 import Resource
+    from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
+    from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
+    from .database_account_list_read_only_keys_result_py3 import DatabaseAccountListReadOnlyKeysResult
+    from .database_account_list_keys_result_py3 import DatabaseAccountListKeysResult
+    from .database_account_connection_string_py3 import DatabaseAccountConnectionString
+    from .database_account_list_connection_strings_result_py3 import DatabaseAccountListConnectionStringsResult
+    from .database_account_regenerate_key_parameters_py3 import DatabaseAccountRegenerateKeyParameters
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .metric_name_py3 import MetricName
+    from .usage_py3 import Usage
+    from .partition_usage_py3 import PartitionUsage
+    from .metric_availability_py3 import MetricAvailability
+    from .metric_definition_py3 import MetricDefinition
+    from .metric_value_py3 import MetricValue
+    from .metric_py3 import Metric
+    from .percentile_metric_value_py3 import PercentileMetricValue
+    from .percentile_metric_py3 import PercentileMetric
+    from .partition_metric_py3 import PartitionMetric
+except (SyntaxError, ImportError):
+    from .consistency_policy import ConsistencyPolicy
+    from .capability import Capability
+    from .location import Location
+    from .failover_policy import FailoverPolicy
+    from .database_account import DatabaseAccount
+    from .failover_policies import FailoverPolicies
+    from .resource import Resource
+    from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
+    from .database_account_patch_parameters import DatabaseAccountPatchParameters
+    from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
+    from .database_account_list_keys_result import DatabaseAccountListKeysResult
+    from .database_account_connection_string import DatabaseAccountConnectionString
+    from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
+    from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .metric_name import MetricName
+    from .usage import Usage
+    from .partition_usage import PartitionUsage
+    from .metric_availability import MetricAvailability
+    from .metric_definition import MetricDefinition
+    from .metric_value import MetricValue
+    from .metric import Metric
+    from .percentile_metric_value import PercentileMetricValue
+    from .percentile_metric import PercentileMetric
+    from .partition_metric import PartitionMetric
 from .database_account_paged import DatabaseAccountPaged
 from .metric_paged import MetricPaged
 from .usage_paged import UsagePaged

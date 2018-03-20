@@ -18,14 +18,16 @@ class DatabaseAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
     :ivar name: The name of the database account.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: The location of the resource group to which the resource
-     belongs.
+    :param location: Required. The location of the resource group to which the
+     resource belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -101,16 +103,16 @@ class DatabaseAccount(Resource):
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
     }
 
-    def __init__(self, location, tags=None, kind="GlobalDocumentDB", provisioning_state=None, ip_range_filter=None, enable_automatic_failover=None, consistency_policy=None, capabilities=None):
-        super(DatabaseAccount, self).__init__(location=location, tags=tags)
-        self.kind = kind
-        self.provisioning_state = provisioning_state
+    def __init__(self, **kwargs):
+        super(DatabaseAccount, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', "GlobalDocumentDB")
+        self.provisioning_state = kwargs.get('provisioning_state', None)
         self.document_endpoint = None
         self.database_account_offer_type = None
-        self.ip_range_filter = ip_range_filter
-        self.enable_automatic_failover = enable_automatic_failover
-        self.consistency_policy = consistency_policy
-        self.capabilities = capabilities
+        self.ip_range_filter = kwargs.get('ip_range_filter', None)
+        self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
+        self.consistency_policy = kwargs.get('consistency_policy', None)
+        self.capabilities = kwargs.get('capabilities', None)
         self.write_locations = None
         self.read_locations = None
         self.failover_policies = None
