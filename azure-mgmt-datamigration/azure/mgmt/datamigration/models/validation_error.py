@@ -24,10 +24,10 @@ class ValidationError(Model):
 
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'Severity'},
+        'severity': {'key': 'severity', 'type': 'str'},
     }
 
-    def __init__(self, text=None, severity=None):
-        super(ValidationError, self).__init__()
-        self.text = text
-        self.severity = severity
+    def __init__(self, **kwargs):
+        super(ValidationError, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.severity = kwargs.get('severity', None)

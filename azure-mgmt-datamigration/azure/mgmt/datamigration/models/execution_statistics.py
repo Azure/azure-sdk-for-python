@@ -41,11 +41,11 @@ class ExecutionStatistics(Model):
         'sql_errors': {'key': 'sqlErrors', 'type': '[str]'},
     }
 
-    def __init__(self, execution_count=None, cpu_time_ms=None, elapsed_time_ms=None, wait_stats=None, has_errors=None, sql_errors=None):
-        super(ExecutionStatistics, self).__init__()
-        self.execution_count = execution_count
-        self.cpu_time_ms = cpu_time_ms
-        self.elapsed_time_ms = elapsed_time_ms
-        self.wait_stats = wait_stats
-        self.has_errors = has_errors
-        self.sql_errors = sql_errors
+    def __init__(self, **kwargs):
+        super(ExecutionStatistics, self).__init__(**kwargs)
+        self.execution_count = kwargs.get('execution_count', None)
+        self.cpu_time_ms = kwargs.get('cpu_time_ms', None)
+        self.elapsed_time_ms = kwargs.get('elapsed_time_ms', None)
+        self.wait_stats = kwargs.get('wait_stats', None)
+        self.has_errors = kwargs.get('has_errors', None)
+        self.sql_errors = kwargs.get('sql_errors', None)

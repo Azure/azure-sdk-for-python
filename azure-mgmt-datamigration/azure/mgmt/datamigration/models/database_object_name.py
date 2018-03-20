@@ -40,12 +40,12 @@ class DatabaseObjectName(Model):
         'database_name': {'key': 'databaseName', 'type': 'str'},
         'object_name': {'key': 'objectName', 'type': 'str'},
         'schema_name': {'key': 'schemaName', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'ObjectType'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
     }
 
-    def __init__(self, object_type=None):
-        super(DatabaseObjectName, self).__init__()
+    def __init__(self, **kwargs):
+        super(DatabaseObjectName, self).__init__(**kwargs)
         self.database_name = None
         self.object_name = None
         self.schema_name = None
-        self.object_type = object_type
+        self.object_type = kwargs.get('object_type', None)

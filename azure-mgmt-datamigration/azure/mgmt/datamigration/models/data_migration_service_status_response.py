@@ -35,9 +35,9 @@ class DataMigrationServiceStatusResponse(Model):
         'supported_task_types': {'key': 'supportedTaskTypes', 'type': '[str]'},
     }
 
-    def __init__(self, agent_version=None, status=None, vm_size=None, supported_task_types=None):
-        super(DataMigrationServiceStatusResponse, self).__init__()
-        self.agent_version = agent_version
-        self.status = status
-        self.vm_size = vm_size
-        self.supported_task_types = supported_task_types
+    def __init__(self, **kwargs):
+        super(DataMigrationServiceStatusResponse, self).__init__(**kwargs)
+        self.agent_version = kwargs.get('agent_version', None)
+        self.status = kwargs.get('status', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.supported_task_types = kwargs.get('supported_task_types', None)

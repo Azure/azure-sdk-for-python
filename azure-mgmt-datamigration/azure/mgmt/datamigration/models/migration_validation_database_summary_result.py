@@ -53,11 +53,11 @@ class MigrationValidationDatabaseSummaryResult(Model):
         'target_database_name': {'key': 'targetDatabaseName', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'ValidationStatus'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(MigrationValidationDatabaseSummaryResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(MigrationValidationDatabaseSummaryResult, self).__init__(**kwargs)
         self.id = None
         self.migration_id = None
         self.source_database_name = None

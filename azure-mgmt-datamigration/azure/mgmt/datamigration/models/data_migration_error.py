@@ -30,10 +30,10 @@ class DataMigrationError(Model):
 
     _attribute_map = {
         'message': {'key': 'message', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ErrorType'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, type=None):
-        super(DataMigrationError, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataMigrationError, self).__init__(**kwargs)
         self.message = None
-        self.type = type
+        self.type = kwargs.get('type', None)

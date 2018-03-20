@@ -16,8 +16,10 @@ class ConnectToSourceSqlServerTaskInput(Model):
     """Input for the task that validates connection to SQL Server and also
     validates source server requirements.
 
-    :param source_connection_info: Connection information for Source SQL
-     Server
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_connection_info: Required. Connection information for Source
+     SQL Server
     :type source_connection_info:
      ~azure.mgmt.datamigration.models.SqlConnectionInfo
     :param check_permissions_group: Permission group for validations. Possible
@@ -32,10 +34,10 @@ class ConnectToSourceSqlServerTaskInput(Model):
 
     _attribute_map = {
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
-        'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'ServerLevelPermissionsGroup'},
+        'check_permissions_group': {'key': 'checkPermissionsGroup', 'type': 'str'},
     }
 
-    def __init__(self, source_connection_info, check_permissions_group=None):
-        super(ConnectToSourceSqlServerTaskInput, self).__init__()
-        self.source_connection_info = source_connection_info
-        self.check_permissions_group = check_permissions_group
+    def __init__(self, **kwargs):
+        super(ConnectToSourceSqlServerTaskInput, self).__init__(**kwargs)
+        self.source_connection_info = kwargs.get('source_connection_info', None)
+        self.check_permissions_group = kwargs.get('check_permissions_group', None)

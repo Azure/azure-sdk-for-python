@@ -33,9 +33,9 @@ class AvailableServiceSkuSku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    def __init__(self, name=None, family=None, size=None, tier=None):
-        super(AvailableServiceSkuSku, self).__init__()
-        self.name = name
-        self.family = family
-        self.size = size
-        self.tier = tier
+    def __init__(self, **kwargs):
+        super(AvailableServiceSkuSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.family = kwargs.get('family', None)
+        self.size = kwargs.get('size', None)
+        self.tier = kwargs.get('tier', None)

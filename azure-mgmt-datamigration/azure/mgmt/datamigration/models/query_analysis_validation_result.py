@@ -27,7 +27,7 @@ class QueryAnalysisValidationResult(Model):
         'validation_errors': {'key': 'validationErrors', 'type': 'ValidationError'},
     }
 
-    def __init__(self, query_results=None, validation_errors=None):
-        super(QueryAnalysisValidationResult, self).__init__()
-        self.query_results = query_results
-        self.validation_errors = validation_errors
+    def __init__(self, **kwargs):
+        super(QueryAnalysisValidationResult, self).__init__(**kwargs)
+        self.query_results = kwargs.get('query_results', None)
+        self.validation_errors = kwargs.get('validation_errors', None)

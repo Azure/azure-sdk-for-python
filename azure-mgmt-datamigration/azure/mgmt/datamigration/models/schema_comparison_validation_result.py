@@ -35,9 +35,9 @@ class SchemaComparisonValidationResult(Model):
         'target_database_object_count': {'key': 'targetDatabaseObjectCount', 'type': '{long}'},
     }
 
-    def __init__(self, schema_differences=None, validation_errors=None, source_database_object_count=None, target_database_object_count=None):
-        super(SchemaComparisonValidationResult, self).__init__()
-        self.schema_differences = schema_differences
-        self.validation_errors = validation_errors
-        self.source_database_object_count = source_database_object_count
-        self.target_database_object_count = target_database_object_count
+    def __init__(self, **kwargs):
+        super(SchemaComparisonValidationResult, self).__init__(**kwargs)
+        self.schema_differences = kwargs.get('schema_differences', None)
+        self.validation_errors = kwargs.get('validation_errors', None)
+        self.source_database_object_count = kwargs.get('source_database_object_count', None)
+        self.target_database_object_count = kwargs.get('target_database_object_count', None)

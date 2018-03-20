@@ -18,6 +18,8 @@ class DataMigrationService(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -26,7 +28,7 @@ class DataMigrationService(TrackedResource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param etag: HTTP strong entity tag value. Ignored if submitted
     :type etag: str
@@ -41,7 +43,7 @@ class DataMigrationService(TrackedResource):
     :param public_key: The public key of the service, used to encrypt secrets
      sent to the service
     :type public_key: str
-    :param virtual_subnet_id: The ID of the
+    :param virtual_subnet_id: Required. The ID of the
      Microsoft.Network/virtualNetworks/subnets resource to which the service
      should be joined
     :type virtual_subnet_id: str
@@ -66,17 +68,17 @@ class DataMigrationService(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ServiceProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'public_key': {'key': 'properties.publicKey', 'type': 'str'},
         'virtual_subnet_id': {'key': 'properties.virtualSubnetId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'ServiceSku'},
     }
 
-    def __init__(self, location, virtual_subnet_id, tags=None, etag=None, kind=None, public_key=None, sku=None):
-        super(DataMigrationService, self).__init__(tags=tags, location=location)
-        self.etag = etag
-        self.kind = kind
+    def __init__(self, **kwargs):
+        super(DataMigrationService, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
+        self.kind = kwargs.get('kind', None)
         self.provisioning_state = None
-        self.public_key = public_key
-        self.virtual_subnet_id = virtual_subnet_id
-        self.sku = sku
+        self.public_key = kwargs.get('public_key', None)
+        self.virtual_subnet_id = kwargs.get('virtual_subnet_id', None)
+        self.sku = kwargs.get('sku', None)

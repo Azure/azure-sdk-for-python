@@ -44,8 +44,8 @@ class ConnectToTargetSqlDbTaskOutput(TaskOutput):
         'target_server_brand_version': {'key': 'targetServerBrandVersion', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ConnectToTargetSqlDbTaskOutput, self).__init__()
+    def __init__(self, **kwargs):
+        super(ConnectToTargetSqlDbTaskOutput, self).__init__(**kwargs)
         self.databases = None
         self.target_server_version = None
         self.target_server_brand_version = None

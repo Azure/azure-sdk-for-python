@@ -32,9 +32,9 @@ class QueryExecutionResult(Model):
         'target_result': {'key': 'targetResult', 'type': 'ExecutionStatistics'},
     }
 
-    def __init__(self, query_text=None, statements_in_batch=None, source_result=None, target_result=None):
-        super(QueryExecutionResult, self).__init__()
-        self.query_text = query_text
-        self.statements_in_batch = statements_in_batch
-        self.source_result = source_result
-        self.target_result = target_result
+    def __init__(self, **kwargs):
+        super(QueryExecutionResult, self).__init__(**kwargs)
+        self.query_text = kwargs.get('query_text', None)
+        self.statements_in_batch = kwargs.get('statements_in_batch', None)
+        self.source_result = kwargs.get('source_result', None)
+        self.target_result = kwargs.get('target_result', None)

@@ -19,13 +19,15 @@ class GetUserTablesSqlTaskProperties(ProjectTaskProperties):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar errors: Array of errors. This is ignored if submitted.
     :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
     :ivar state: The state of the task. This is ignored if submitted. Possible
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
     :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
-    :param task_type: Constant filled by server.
+    :param task_type: Required. Constant filled by server.
     :type task_type: str
     :param input: Task input
     :type input: ~azure.mgmt.datamigration.models.GetUserTablesSqlTaskInput
@@ -43,14 +45,14 @@ class GetUserTablesSqlTaskProperties(ProjectTaskProperties):
 
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[ODataError]'},
-        'state': {'key': 'state', 'type': 'TaskState'},
+        'state': {'key': 'state', 'type': 'str'},
         'task_type': {'key': 'taskType', 'type': 'str'},
         'input': {'key': 'input', 'type': 'GetUserTablesSqlTaskInput'},
         'output': {'key': 'output', 'type': '[GetUserTablesSqlTaskOutput]'},
     }
 
-    def __init__(self, input=None):
-        super(GetUserTablesSqlTaskProperties, self).__init__()
-        self.input = input
+    def __init__(self, **kwargs):
+        super(GetUserTablesSqlTaskProperties, self).__init__(**kwargs)
+        self.input = kwargs.get('input', None)
         self.output = None
         self.task_type = 'GetUserTables.Sql'

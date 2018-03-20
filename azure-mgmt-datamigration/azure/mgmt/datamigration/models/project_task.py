@@ -44,7 +44,7 @@ class ProjectTask(Resource):
         'properties': {'key': 'properties', 'type': 'ProjectTaskProperties'},
     }
 
-    def __init__(self, etag=None, properties=None):
-        super(ProjectTask, self).__init__()
-        self.etag = etag
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ProjectTask, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
+        self.properties = kwargs.get('properties', None)

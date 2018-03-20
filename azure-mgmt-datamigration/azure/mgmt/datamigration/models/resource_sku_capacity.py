@@ -41,11 +41,11 @@ class ResourceSkuCapacity(Model):
         'minimum': {'key': 'minimum', 'type': 'long'},
         'maximum': {'key': 'maximum', 'type': 'long'},
         'default': {'key': 'default', 'type': 'long'},
-        'scale_type': {'key': 'scaleType', 'type': 'ResourceSkuCapacityScaleType'},
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ResourceSkuCapacity, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSkuCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
         self.default = None

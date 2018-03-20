@@ -60,8 +60,8 @@ class DataMigrationProjectMetadata(Model):
         'selected_migration_tables': {'key': 'selectedMigrationTables', 'type': '[MigrationTableMetadata]'},
     }
 
-    def __init__(self):
-        super(DataMigrationProjectMetadata, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataMigrationProjectMetadata, self).__init__(**kwargs)
         self.source_server_name = None
         self.source_server_port = None
         self.source_username = None

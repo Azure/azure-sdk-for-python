@@ -57,7 +57,7 @@ class DataItemMigrationSummaryResult(Model):
         'name': {'key': 'name', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'MigrationState'},
+        'state': {'key': 'state', 'type': 'str'},
         'status_message': {'key': 'statusMessage', 'type': 'str'},
         'items_count': {'key': 'itemsCount', 'type': 'long'},
         'items_completed_count': {'key': 'itemsCompletedCount', 'type': 'long'},
@@ -65,8 +65,8 @@ class DataItemMigrationSummaryResult(Model):
         'result_prefix': {'key': 'resultPrefix', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(DataItemMigrationSummaryResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataItemMigrationSummaryResult, self).__init__(**kwargs)
         self.name = None
         self.started_on = None
         self.ended_on = None

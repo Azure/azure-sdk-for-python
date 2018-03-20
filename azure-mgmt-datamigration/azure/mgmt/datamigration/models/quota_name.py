@@ -26,7 +26,7 @@ class QuotaName(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, localized_value=None, value=None):
-        super(QuotaName, self).__init__()
-        self.localized_value = localized_value
-        self.value = value
+    def __init__(self, **kwargs):
+        super(QuotaName, self).__init__(**kwargs)
+        self.localized_value = kwargs.get('localized_value', None)
+        self.value = kwargs.get('value', None)

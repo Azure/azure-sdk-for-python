@@ -34,7 +34,7 @@ class MigrationTableMetadata(Model):
         'target_table_name': {'key': 'targetTableName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(MigrationTableMetadata, self).__init__()
+    def __init__(self, **kwargs):
+        super(MigrationTableMetadata, self).__init__(**kwargs)
         self.source_table_name = None
         self.target_table_name = None

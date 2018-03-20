@@ -37,13 +37,13 @@ class ResourceSkuRestrictions(Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'ResourceSkuRestrictionsType'},
+        'type': {'key': 'type', 'type': 'str'},
         'values': {'key': 'values', 'type': '[str]'},
-        'reason_code': {'key': 'reasonCode', 'type': 'ResourceSkuRestrictionsReasonCode'},
+        'reason_code': {'key': 'reasonCode', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ResourceSkuRestrictions, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSkuRestrictions, self).__init__(**kwargs)
         self.type = None
         self.values = None
         self.reason_code = None

@@ -71,11 +71,11 @@ class MigrationValidationDatabaseLevelResult(Model):
         'data_integrity_validation_result': {'key': 'dataIntegrityValidationResult', 'type': 'DataIntegrityValidationResult'},
         'schema_validation_result': {'key': 'schemaValidationResult', 'type': 'SchemaComparisonValidationResult'},
         'query_analysis_validation_result': {'key': 'queryAnalysisValidationResult', 'type': 'QueryAnalysisValidationResult'},
-        'status': {'key': 'status', 'type': 'ValidationStatus'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(MigrationValidationDatabaseLevelResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(MigrationValidationDatabaseLevelResult, self).__init__(**kwargs)
         self.id = None
         self.migration_id = None
         self.source_database_name = None

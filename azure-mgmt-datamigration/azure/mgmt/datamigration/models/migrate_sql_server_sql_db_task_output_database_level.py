@@ -18,9 +18,11 @@ class MigrateSqlServerSqlDbTaskOutputDatabaseLevel(MigrateSqlServerSqlDbTaskOutp
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Result identifier
     :vartype id: str
-    :param result_type: Constant filled by server.
+    :param result_type: Required. Constant filled by server.
     :type result_type: str
     :ivar database_name: Name of the item
     :vartype database_name: str
@@ -86,8 +88,8 @@ class MigrateSqlServerSqlDbTaskOutputDatabaseLevel(MigrateSqlServerSqlDbTaskOutp
         'database_name': {'key': 'databaseName', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'MigrationState'},
-        'stage': {'key': 'stage', 'type': 'DatabaseMigrationStage'},
+        'state': {'key': 'state', 'type': 'str'},
+        'stage': {'key': 'stage', 'type': 'str'},
         'status_message': {'key': 'statusMessage', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'number_of_objects': {'key': 'numberOfObjects', 'type': 'long'},
@@ -99,8 +101,8 @@ class MigrateSqlServerSqlDbTaskOutputDatabaseLevel(MigrateSqlServerSqlDbTaskOutp
         'object_summary': {'key': 'objectSummary', 'type': '{DataItemMigrationSummaryResult}'},
     }
 
-    def __init__(self):
-        super(MigrateSqlServerSqlDbTaskOutputDatabaseLevel, self).__init__()
+    def __init__(self, **kwargs):
+        super(MigrateSqlServerSqlDbTaskOutputDatabaseLevel, self).__init__(**kwargs)
         self.database_name = None
         self.started_on = None
         self.ended_on = None

@@ -16,9 +16,12 @@ class GetUserTablesSqlTaskInput(Model):
     """Input for the task that collects user tables for the given list of
     databases.
 
-    :param connection_info: Connection information for SQL Server
+    All required parameters must be populated in order to send to Azure.
+
+    :param connection_info: Required. Connection information for SQL Server
     :type connection_info: ~azure.mgmt.datamigration.models.SqlConnectionInfo
-    :param selected_databases: List of database names to collect tables for
+    :param selected_databases: Required. List of database names to collect
+     tables for
     :type selected_databases: list[str]
     """
 
@@ -32,7 +35,7 @@ class GetUserTablesSqlTaskInput(Model):
         'selected_databases': {'key': 'selectedDatabases', 'type': '[str]'},
     }
 
-    def __init__(self, connection_info, selected_databases):
-        super(GetUserTablesSqlTaskInput, self).__init__()
-        self.connection_info = connection_info
-        self.selected_databases = selected_databases
+    def __init__(self, **kwargs):
+        super(GetUserTablesSqlTaskInput, self).__init__(**kwargs)
+        self.connection_info = kwargs.get('connection_info', None)
+        self.selected_databases = kwargs.get('selected_databases', None)
