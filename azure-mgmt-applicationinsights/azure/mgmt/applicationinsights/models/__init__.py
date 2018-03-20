@@ -43,6 +43,7 @@ from .application_insights_component_web_test_location import ApplicationInsight
 from .web_test_geolocation import WebTestGeolocation
 from .web_test_properties_configuration import WebTestPropertiesConfiguration
 from .web_test import WebTest
+from .workbook import Workbook
 from .operation_paged import OperationPaged
 from .application_insights_component_api_key_paged import ApplicationInsightsComponentAPIKeyPaged
 from .application_insights_component_paged import ApplicationInsightsComponentPaged
@@ -55,7 +56,9 @@ from .application_insights_management_client_enums import (
     PurgeState,
     FavoriteType,
     WebTestKind,
+    SharedTypeKind,
     FavoriteSourceType,
+    CategoryType,
 )
 
 __all__ = [
@@ -93,6 +96,7 @@ __all__ = [
     'WebTestGeolocation',
     'WebTestPropertiesConfiguration',
     'WebTest',
+    'Workbook',
     'OperationPaged',
     'ApplicationInsightsComponentAPIKeyPaged',
     'ApplicationInsightsComponentPaged',
@@ -104,5 +108,7 @@ __all__ = [
     'PurgeState',
     'FavoriteType',
     'WebTestKind',
+    'SharedTypeKind',
     'FavoriteSourceType',
+    'CategoryType',
 ]
