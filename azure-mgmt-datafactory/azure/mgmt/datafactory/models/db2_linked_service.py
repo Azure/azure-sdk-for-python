@@ -37,9 +37,6 @@ class Db2LinkedService(LinkedService):
     :param database: Database name for connection. Type: string (or Expression
      with resultType string).
     :type database: object
-    :param schema: Schema name for connection. Type: string (or Expression
-     with resultType string).
-    :type schema: object
     :param authentication_type: AuthenticationType to be used for connection.
      Possible values include: 'Basic'
     :type authentication_type: str or
@@ -70,18 +67,16 @@ class Db2LinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'database': {'key': 'typeProperties.database', 'type': 'object'},
-        'schema': {'key': 'typeProperties.schema', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, schema=None, authentication_type=None, username=None, password=None, encrypted_credential=None):
+    def __init__(self, server, database, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, authentication_type=None, username=None, password=None, encrypted_credential=None):
         super(Db2LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.server = server
         self.database = database
-        self.schema = schema
         self.authentication_type = authentication_type
         self.username = username
         self.password = password
