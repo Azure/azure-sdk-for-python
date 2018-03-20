@@ -12,19 +12,19 @@
 from enum import Enum
 
 
-class DatabaseAccountKind(Enum):
+class DatabaseAccountKind(str, Enum):
 
     global_document_db = "GlobalDocumentDB"
     mongo_db = "MongoDB"
     parse = "Parse"
 
 
-class DatabaseAccountOfferType(Enum):
+class DatabaseAccountOfferType(str, Enum):
 
     standard = "Standard"
 
 
-class DefaultConsistencyLevel(Enum):
+class DefaultConsistencyLevel(str, Enum):
 
     eventual = "Eventual"
     session = "Session"
@@ -33,7 +33,7 @@ class DefaultConsistencyLevel(Enum):
     consistent_prefix = "ConsistentPrefix"
 
 
-class KeyKind(Enum):
+class KeyKind(str, Enum):
 
     primary = "primary"
     secondary = "secondary"
@@ -41,7 +41,7 @@ class KeyKind(Enum):
     secondary_readonly = "secondaryReadonly"
 
 
-class UnitType(Enum):
+class UnitType(str, Enum):
 
     count = "Count"
     bytes = "Bytes"
@@ -52,7 +52,7 @@ class UnitType(Enum):
     milliseconds = "Milliseconds"
 
 
-class PrimaryAggregationType(Enum):
+class PrimaryAggregationType(str, Enum):
 
     none = "None"
     average = "Average"
