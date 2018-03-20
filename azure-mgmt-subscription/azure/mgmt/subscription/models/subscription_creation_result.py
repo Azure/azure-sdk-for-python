@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """REST API operation.
+class SubscriptionCreationResult(Model):
+    """The created subscription object.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.subscription.models.OperationDisplay
+    :param subscription_link: The link to the new subscription.
+    :type subscription_link: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'subscription_link': {'key': 'subscriptionLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        super(SubscriptionCreationResult, self).__init__(**kwargs)
+        self.subscription_link = kwargs.get('subscription_link', None)
