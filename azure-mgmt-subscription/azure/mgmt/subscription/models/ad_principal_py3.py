@@ -17,24 +17,18 @@ class AdPrincipal(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param tenant_id: Required. Tenant id of the Principal. Must be the
-     current tenant the caller is logged in to.
-    :type tenant_id: str
     :param object_id: Required. Object id of the Principal
     :type object_id: str
     """
 
     _validation = {
-        'tenant_id': {'required': True},
         'object_id': {'required': True},
     }
 
     _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'object_id': {'key': 'objectId', 'type': 'str'},
     }
 
-    def __init__(self, *, tenant_id: str, object_id: str, **kwargs) -> None:
+    def __init__(self, *, object_id: str, **kwargs) -> None:
         super(AdPrincipal, self).__init__(**kwargs)
-        self.tenant_id = tenant_id
         self.object_id = object_id
