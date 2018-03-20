@@ -27,7 +27,7 @@ class MigrationReportResult(Model):
         'report_url': {'key': 'reportUrl', 'type': 'str'},
     }
 
-    def __init__(self, id=None, report_url=None):
-        super(MigrationReportResult, self).__init__()
-        self.id = id
-        self.report_url = report_url
+    def __init__(self, **kwargs):
+        super(MigrationReportResult, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.report_url = kwargs.get('report_url', None)

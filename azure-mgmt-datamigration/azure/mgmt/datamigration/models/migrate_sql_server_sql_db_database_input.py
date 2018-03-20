@@ -35,9 +35,9 @@ class MigrateSqlServerSqlDbDatabaseInput(Model):
         'table_map': {'key': 'tableMap', 'type': '{str}'},
     }
 
-    def __init__(self, name=None, target_database_name=None, make_source_db_read_only=None, table_map=None):
-        super(MigrateSqlServerSqlDbDatabaseInput, self).__init__()
-        self.name = name
-        self.target_database_name = target_database_name
-        self.make_source_db_read_only = make_source_db_read_only
-        self.table_map = table_map
+    def __init__(self, **kwargs):
+        super(MigrateSqlServerSqlDbDatabaseInput, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.target_database_name = kwargs.get('target_database_name', None)
+        self.make_source_db_read_only = kwargs.get('make_source_db_read_only', None)
+        self.table_map = kwargs.get('table_map', None)

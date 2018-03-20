@@ -17,12 +17,15 @@ class ProjectTaskProperties(Model):
     by current client, this object is returned.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MigrateSqlServerSqlDbTaskProperties,
+    sub-classes are: ValidateMigrationInputSqlServerSqlMITaskProperties,
+    MigrateSqlServerSqlDbTaskProperties, MigrateSqlServerSqlMITaskProperties,
     GetUserTablesSqlTaskProperties, ConnectToTargetSqlDbTaskProperties,
-    ConnectToSourceSqlServerTaskProperties
+    ConnectToTargetSqlMITaskProperties, ConnectToSourceSqlServerTaskProperties
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar errors: Array of errors. This is ignored if submitted.
     :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
@@ -30,7 +33,7 @@ class ProjectTaskProperties(Model):
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
     :vartype state: str or ~azure.mgmt.datamigration.models.TaskState
-    :param task_type: Constant filled by server.
+    :param task_type: Required. Constant filled by server.
     :type task_type: str
     """
 
@@ -42,16 +45,16 @@ class ProjectTaskProperties(Model):
 
     _attribute_map = {
         'errors': {'key': 'errors', 'type': '[ODataError]'},
-        'state': {'key': 'state', 'type': 'TaskState'},
+        'state': {'key': 'state', 'type': 'str'},
         'task_type': {'key': 'taskType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'task_type': {'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties'}
+        'task_type': {'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties'}
     }
 
-    def __init__(self):
-        super(ProjectTaskProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(ProjectTaskProperties, self).__init__(**kwargs)
         self.errors = None
         self.state = None
         self.task_type = None

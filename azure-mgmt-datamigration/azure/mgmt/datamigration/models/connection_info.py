@@ -18,11 +18,13 @@ class ConnectionInfo(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SqlConnectionInfo
 
+    All required parameters must be populated in order to send to Azure.
+
     :param user_name: User name
     :type user_name: str
     :param password: Password credential.
     :type password: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -40,8 +42,8 @@ class ConnectionInfo(Model):
         'type': {'SqlConnectionInfo': 'SqlConnectionInfo'}
     }
 
-    def __init__(self, user_name=None, password=None):
-        super(ConnectionInfo, self).__init__()
-        self.user_name = user_name
-        self.password = password
+    def __init__(self, **kwargs):
+        super(ConnectionInfo, self).__init__(**kwargs)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
         self.type = None

@@ -35,8 +35,8 @@ class MigrationValidationOptions(Model):
         'enable_query_analysis_validation': {'key': 'enableQueryAnalysisValidation', 'type': 'bool'},
     }
 
-    def __init__(self, enable_schema_validation=None, enable_data_integrity_validation=None, enable_query_analysis_validation=None):
-        super(MigrationValidationOptions, self).__init__()
-        self.enable_schema_validation = enable_schema_validation
-        self.enable_data_integrity_validation = enable_data_integrity_validation
-        self.enable_query_analysis_validation = enable_query_analysis_validation
+    def __init__(self, **kwargs):
+        super(MigrationValidationOptions, self).__init__(**kwargs)
+        self.enable_schema_validation = kwargs.get('enable_schema_validation', None)
+        self.enable_data_integrity_validation = kwargs.get('enable_data_integrity_validation', None)
+        self.enable_query_analysis_validation = kwargs.get('enable_query_analysis_validation', None)

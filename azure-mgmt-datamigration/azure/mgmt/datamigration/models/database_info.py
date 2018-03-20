@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class DatabaseInfo(Model):
     """Project Database Details.
 
-    :param source_database_name: Name of the database
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_database_name: Required. Name of the database
     :type source_database_name: str
     """
 
@@ -27,6 +29,6 @@ class DatabaseInfo(Model):
         'source_database_name': {'key': 'sourceDatabaseName', 'type': 'str'},
     }
 
-    def __init__(self, source_database_name):
-        super(DatabaseInfo, self).__init__()
-        self.source_database_name = source_database_name
+    def __init__(self, **kwargs):
+        super(DatabaseInfo, self).__init__(**kwargs)
+        self.source_database_name = kwargs.get('source_database_name', None)

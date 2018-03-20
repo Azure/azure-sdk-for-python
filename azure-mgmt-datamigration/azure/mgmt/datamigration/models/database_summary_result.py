@@ -60,7 +60,7 @@ class DatabaseSummaryResult(DataItemMigrationSummaryResult):
         'name': {'key': 'name', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'MigrationState'},
+        'state': {'key': 'state', 'type': 'str'},
         'status_message': {'key': 'statusMessage', 'type': 'str'},
         'items_count': {'key': 'itemsCount', 'type': 'long'},
         'items_completed_count': {'key': 'itemsCompletedCount', 'type': 'long'},
@@ -69,6 +69,6 @@ class DatabaseSummaryResult(DataItemMigrationSummaryResult):
         'size_mb': {'key': 'sizeMB', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(DatabaseSummaryResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(DatabaseSummaryResult, self).__init__(**kwargs)
         self.size_mb = None

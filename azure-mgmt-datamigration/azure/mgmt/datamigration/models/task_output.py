@@ -30,6 +30,6 @@ class TaskOutput(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(TaskOutput, self).__init__()
+    def __init__(self, **kwargs):
+        super(TaskOutput, self).__init__(**kwargs)
         self.id = None

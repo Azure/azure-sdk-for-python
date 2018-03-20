@@ -12,7 +12,16 @@
 from enum import Enum
 
 
-class ValidationStatus(Enum):
+class AuthenticationType(str, Enum):
+
+    none = "None"
+    windows_authentication = "WindowsAuthentication"
+    sql_authentication = "SqlAuthentication"
+    active_directory_integrated = "ActiveDirectoryIntegrated"
+    active_directory_password = "ActiveDirectoryPassword"
+
+
+class ValidationStatus(str, Enum):
 
     default = "Default"
     not_started = "NotStarted"
@@ -24,21 +33,21 @@ class ValidationStatus(Enum):
     stopped = "Stopped"
 
 
-class Severity(Enum):
+class Severity(str, Enum):
 
     message = "Message"
     warning = "Warning"
     error = "Error"
 
 
-class UpdateActionType(Enum):
+class UpdateActionType(str, Enum):
 
     deleted_on_target = "DeletedOnTarget"
     changed_on_target = "ChangedOnTarget"
     added_on_target = "AddedOnTarget"
 
 
-class ObjectType(Enum):
+class ObjectType(str, Enum):
 
     stored_procedures = "StoredProcedures"
     table = "Table"
@@ -47,7 +56,7 @@ class ObjectType(Enum):
     function = "Function"
 
 
-class MigrationState(Enum):
+class MigrationState(str, Enum):
 
     none = "None"
     in_progress = "InProgress"
@@ -58,7 +67,7 @@ class MigrationState(Enum):
     stopped = "Stopped"
 
 
-class DatabaseMigrationStage(Enum):
+class DatabaseMigrationStage(str, Enum):
 
     none = "None"
     initialize = "Initialize"
@@ -68,7 +77,7 @@ class DatabaseMigrationStage(Enum):
     completed = "Completed"
 
 
-class MigrationStatus(Enum):
+class MigrationStatus(str, Enum):
 
     default = "Default"
     connecting = "Connecting"
@@ -82,16 +91,7 @@ class MigrationStatus(Enum):
     completed_with_warnings = "CompletedWithWarnings"
 
 
-class AuthenticationType(Enum):
-
-    none = "None"
-    windows_authentication = "WindowsAuthentication"
-    sql_authentication = "SqlAuthentication"
-    active_directory_integrated = "ActiveDirectoryIntegrated"
-    active_directory_password = "ActiveDirectoryPassword"
-
-
-class DatabaseState(Enum):
+class DatabaseState(str, Enum):
 
     online = "Online"
     restoring = "Restoring"
@@ -104,7 +104,7 @@ class DatabaseState(Enum):
     offline_secondary = "OfflineSecondary"
 
 
-class DatabaseCompatLevel(Enum):
+class DatabaseCompatLevel(str, Enum):
 
     compat_level80 = "CompatLevel80"
     compat_level90 = "CompatLevel90"
@@ -115,7 +115,7 @@ class DatabaseCompatLevel(Enum):
     compat_level140 = "CompatLevel140"
 
 
-class DatabaseFileType(Enum):
+class DatabaseFileType(str, Enum):
 
     rows = "Rows"
     log = "Log"
@@ -124,13 +124,13 @@ class DatabaseFileType(Enum):
     fulltext = "Fulltext"
 
 
-class ServerLevelPermissionsGroup(Enum):
+class ServerLevelPermissionsGroup(str, Enum):
 
     default = "Default"
     migration_from_sql_server_to_azure_db = "MigrationFromSqlServerToAzureDB"
 
 
-class TaskState(Enum):
+class TaskState(str, Enum):
 
     unknown = "Unknown"
     queued = "Queued"
@@ -142,7 +142,7 @@ class TaskState(Enum):
     faulted = "Faulted"
 
 
-class ServiceProvisioningState(Enum):
+class ServiceProvisioningState(str, Enum):
 
     accepted = "Accepted"
     deleting = "Deleting"
@@ -156,56 +156,56 @@ class ServiceProvisioningState(Enum):
     failed = "Failed"
 
 
-class ProjectTargetPlatform(Enum):
+class ProjectTargetPlatform(str, Enum):
 
     sqldb = "SQLDB"
     unknown = "Unknown"
 
 
-class ProjectSourcePlatform(Enum):
+class ProjectSourcePlatform(str, Enum):
 
     sql = "SQL"
     unknown = "Unknown"
 
 
-class ProjectProvisioningState(Enum):
+class ProjectProvisioningState(str, Enum):
 
     deleting = "Deleting"
     succeeded = "Succeeded"
 
 
-class NameCheckFailureReason(Enum):
+class NameCheckFailureReason(str, Enum):
 
     already_exists = "AlreadyExists"
     invalid = "Invalid"
 
 
-class ServiceScalability(Enum):
+class ServiceScalability(str, Enum):
 
     none = "none"
     manual = "manual"
     automatic = "automatic"
 
 
-class ResourceSkuRestrictionsType(Enum):
+class ResourceSkuRestrictionsType(str, Enum):
 
     location = "location"
 
 
-class ResourceSkuRestrictionsReasonCode(Enum):
+class ResourceSkuRestrictionsReasonCode(str, Enum):
 
     quota_id = "QuotaId"
     not_available_for_subscription = "NotAvailableForSubscription"
 
 
-class ResourceSkuCapacityScaleType(Enum):
+class ResourceSkuCapacityScaleType(str, Enum):
 
     automatic = "Automatic"
     manual = "Manual"
     none = "None"
 
 
-class ErrorType(Enum):
+class ErrorType(str, Enum):
 
     default = "Default"
     warning = "Warning"

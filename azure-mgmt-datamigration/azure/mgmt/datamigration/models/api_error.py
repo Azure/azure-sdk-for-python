@@ -24,9 +24,9 @@ class ApiError(Model):
         'error': {'key': 'error', 'type': 'ODataError'},
     }
 
-    def __init__(self, error=None):
-        super(ApiError, self).__init__()
-        self.error = error
+    def __init__(self, **kwargs):
+        super(ApiError, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class ApiErrorException(HttpOperationError):

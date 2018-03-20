@@ -30,8 +30,8 @@ class AvailableServiceSku(Model):
         'capacity': {'key': 'capacity', 'type': 'AvailableServiceSkuCapacity'},
     }
 
-    def __init__(self, resource_type=None, sku=None, capacity=None):
-        super(AvailableServiceSku, self).__init__()
-        self.resource_type = resource_type
-        self.sku = sku
-        self.capacity = capacity
+    def __init__(self, **kwargs):
+        super(AvailableServiceSku, self).__init__(**kwargs)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.sku = kwargs.get('sku', None)
+        self.capacity = kwargs.get('capacity', None)

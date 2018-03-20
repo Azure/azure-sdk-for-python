@@ -18,9 +18,11 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Result identifier
     :vartype id: str
-    :param result_type: Constant filled by server.
+    :param result_type: Required. Constant filled by server.
     :type result_type: str
     :ivar started_on: Migration start time
     :vartype started_on: datetime
@@ -84,7 +86,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
         'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'long'},
-        'status': {'key': 'status', 'type': 'MigrationStatus'},
+        'status': {'key': 'status', 'type': 'str'},
         'status_message': {'key': 'statusMessage', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{str}'},
@@ -97,8 +99,8 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         'exceptions_and_warnings': {'key': 'exceptionsAndWarnings', 'type': '[ReportableException]'},
     }
 
-    def __init__(self, migration_report_result=None):
-        super(MigrateSqlServerSqlDbTaskOutputMigrationLevel, self).__init__()
+    def __init__(self, **kwargs):
+        super(MigrateSqlServerSqlDbTaskOutputMigrationLevel, self).__init__(**kwargs)
         self.started_on = None
         self.ended_on = None
         self.duration_in_seconds = None
@@ -107,7 +109,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         self.message = None
         self.databases = None
         self.database_summary = None
-        self.migration_report_result = migration_report_result
+        self.migration_report_result = kwargs.get('migration_report_result', None)
         self.source_server_version = None
         self.source_server_brand_version = None
         self.target_server_version = None

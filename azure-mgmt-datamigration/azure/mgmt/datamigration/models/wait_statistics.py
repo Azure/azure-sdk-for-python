@@ -30,8 +30,8 @@ class WaitStatistics(Model):
         'wait_count': {'key': 'waitCount', 'type': 'long'},
     }
 
-    def __init__(self, wait_type=None, wait_time_ms=0, wait_count=None):
-        super(WaitStatistics, self).__init__()
-        self.wait_type = wait_type
-        self.wait_time_ms = wait_time_ms
-        self.wait_count = wait_count
+    def __init__(self, **kwargs):
+        super(WaitStatistics, self).__init__(**kwargs)
+        self.wait_type = kwargs.get('wait_type', None)
+        self.wait_time_ms = kwargs.get('wait_time_ms', 0)
+        self.wait_count = kwargs.get('wait_count', None)

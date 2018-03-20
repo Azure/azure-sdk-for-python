@@ -40,10 +40,10 @@ class ServiceSku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, family=None, size=None, capacity=None):
-        super(ServiceSku, self).__init__()
-        self.name = name
-        self.tier = tier
-        self.family = family
-        self.size = size
-        self.capacity = capacity
+    def __init__(self, **kwargs):
+        super(ServiceSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.family = kwargs.get('family', None)
+        self.size = kwargs.get('size', None)
+        self.capacity = kwargs.get('capacity', None)

@@ -34,7 +34,7 @@ class DatabaseTable(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(DatabaseTable, self).__init__()
+    def __init__(self, **kwargs):
+        super(DatabaseTable, self).__init__(**kwargs)
         self.has_rows = None
         self.name = None

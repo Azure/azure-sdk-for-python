@@ -42,12 +42,12 @@ class MigrationValidationResult(Model):
         'id': {'key': 'id', 'type': 'str'},
         'migration_id': {'key': 'migrationId', 'type': 'str'},
         'summary_results': {'key': 'summaryResults', 'type': '{MigrationValidationDatabaseSummaryResult}'},
-        'status': {'key': 'status', 'type': 'ValidationStatus'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, summary_results=None):
-        super(MigrationValidationResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(MigrationValidationResult, self).__init__(**kwargs)
         self.id = None
         self.migration_id = None
-        self.summary_results = summary_results
+        self.summary_results = kwargs.get('summary_results', None)
         self.status = None

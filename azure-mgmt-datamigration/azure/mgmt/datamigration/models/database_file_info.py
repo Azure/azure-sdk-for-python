@@ -38,16 +38,16 @@ class DatabaseFileInfo(Model):
         'logical_name': {'key': 'logicalName', 'type': 'str'},
         'physical_full_name': {'key': 'physicalFullName', 'type': 'str'},
         'restore_full_name': {'key': 'restoreFullName', 'type': 'str'},
-        'file_type': {'key': 'fileType', 'type': 'DatabaseFileType'},
+        'file_type': {'key': 'fileType', 'type': 'str'},
         'size_mb': {'key': 'sizeMB', 'type': 'float'},
     }
 
-    def __init__(self, database_name=None, id=None, logical_name=None, physical_full_name=None, restore_full_name=None, file_type=None, size_mb=None):
-        super(DatabaseFileInfo, self).__init__()
-        self.database_name = database_name
-        self.id = id
-        self.logical_name = logical_name
-        self.physical_full_name = physical_full_name
-        self.restore_full_name = restore_full_name
-        self.file_type = file_type
-        self.size_mb = size_mb
+    def __init__(self, **kwargs):
+        super(DatabaseFileInfo, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.id = kwargs.get('id', None)
+        self.logical_name = kwargs.get('logical_name', None)
+        self.physical_full_name = kwargs.get('physical_full_name', None)
+        self.restore_full_name = kwargs.get('restore_full_name', None)
+        self.file_type = kwargs.get('file_type', None)
+        self.size_mb = kwargs.get('size_mb', None)

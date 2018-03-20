@@ -38,10 +38,10 @@ class Quota(Model):
         'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    def __init__(self, current_value=None, id=None, limit=None, name=None, unit=None):
-        super(Quota, self).__init__()
-        self.current_value = current_value
-        self.id = id
-        self.limit = limit
-        self.name = name
-        self.unit = unit
+    def __init__(self, **kwargs):
+        super(Quota, self).__init__(**kwargs)
+        self.current_value = kwargs.get('current_value', None)
+        self.id = kwargs.get('id', None)
+        self.limit = kwargs.get('limit', None)
+        self.name = kwargs.get('name', None)
+        self.unit = kwargs.get('unit', None)

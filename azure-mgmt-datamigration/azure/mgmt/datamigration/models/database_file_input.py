@@ -33,13 +33,13 @@ class DatabaseFileInput(Model):
         'logical_name': {'key': 'logicalName', 'type': 'str'},
         'physical_full_name': {'key': 'physicalFullName', 'type': 'str'},
         'restore_full_name': {'key': 'restoreFullName', 'type': 'str'},
-        'file_type': {'key': 'fileType', 'type': 'DatabaseFileType'},
+        'file_type': {'key': 'fileType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, logical_name=None, physical_full_name=None, restore_full_name=None, file_type=None):
-        super(DatabaseFileInput, self).__init__()
-        self.id = id
-        self.logical_name = logical_name
-        self.physical_full_name = physical_full_name
-        self.restore_full_name = restore_full_name
-        self.file_type = file_type
+    def __init__(self, **kwargs):
+        super(DatabaseFileInput, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.logical_name = kwargs.get('logical_name', None)
+        self.physical_full_name = kwargs.get('physical_full_name', None)
+        self.restore_full_name = kwargs.get('restore_full_name', None)
+        self.file_type = kwargs.get('file_type', None)

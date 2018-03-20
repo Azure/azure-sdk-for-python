@@ -9,78 +9,184 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
-from .resource import Resource
-from .odata_error import ODataError
-from .task_output import TaskOutput
-from .validation_error import ValidationError
-from .wait_statistics import WaitStatistics
-from .execution_statistics import ExecutionStatistics
-from .query_execution_result import QueryExecutionResult
-from .query_analysis_validation_result import QueryAnalysisValidationResult
-from .schema_comparison_validation_result_type import SchemaComparisonValidationResultType
-from .schema_comparison_validation_result import SchemaComparisonValidationResult
-from .data_integrity_validation_result import DataIntegrityValidationResult
-from .migration_validation_database_level_result import MigrationValidationDatabaseLevelResult
-from .migration_validation_database_summary_result import MigrationValidationDatabaseSummaryResult
-from .migration_validation_result import MigrationValidationResult
-from .reportable_exception import ReportableException
-from .migrate_sql_server_sql_db_task_output_error import MigrateSqlServerSqlDbTaskOutputError
-from .migrate_sql_server_sql_db_task_output_table_level import MigrateSqlServerSqlDbTaskOutputTableLevel
-from .data_item_migration_summary_result import DataItemMigrationSummaryResult
-from .migrate_sql_server_sql_db_task_output_database_level import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
-from .migration_report_result import MigrationReportResult
-from .database_summary_result import DatabaseSummaryResult
-from .migrate_sql_server_sql_db_task_output_migration_level import MigrateSqlServerSqlDbTaskOutputMigrationLevel
-from .migrate_sql_server_sql_db_task_output import MigrateSqlServerSqlDbTaskOutput
-from .connection_info import ConnectionInfo
-from .sql_connection_info import SqlConnectionInfo
-from .sql_migration_task_input import SqlMigrationTaskInput
-from .migration_validation_options import MigrationValidationOptions
-from .migrate_sql_server_sql_db_database_input import MigrateSqlServerSqlDbDatabaseInput
-from .migrate_sql_server_sql_db_task_input import MigrateSqlServerSqlDbTaskInput
-from .migrate_sql_server_sql_db_task_properties import MigrateSqlServerSqlDbTaskProperties
-from .database_table import DatabaseTable
-from .get_user_tables_sql_task_output import GetUserTablesSqlTaskOutput
-from .get_user_tables_sql_task_input import GetUserTablesSqlTaskInput
-from .get_user_tables_sql_task_properties import GetUserTablesSqlTaskProperties
-from .connect_to_target_sql_db_task_output import ConnectToTargetSqlDbTaskOutput
-from .connect_to_target_sql_db_task_input import ConnectToTargetSqlDbTaskInput
-from .connect_to_target_sql_db_task_properties import ConnectToTargetSqlDbTaskProperties
-from .database_file_info import DatabaseFileInfo
-from .connect_to_source_sql_server_task_output_database_level import ConnectToSourceSqlServerTaskOutputDatabaseLevel
-from .connect_to_source_sql_server_task_output_task_level import ConnectToSourceSqlServerTaskOutputTaskLevel
-from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTaskOutput
-from .connect_to_source_sql_server_task_input import ConnectToSourceSqlServerTaskInput
-from .connect_to_source_sql_server_task_properties import ConnectToSourceSqlServerTaskProperties
-from .project_task_properties import ProjectTaskProperties
-from .project_task import ProjectTask
-from .service_sku import ServiceSku
-from .data_migration_service import DataMigrationService
-from .name_availability_request import NameAvailabilityRequest
-from .database_info import DatabaseInfo
-from .project import Project
-from .api_error import ApiError, ApiErrorException
-from .service_operation_display import ServiceOperationDisplay
-from .service_operation import ServiceOperation
-from .quota_name import QuotaName
-from .quota import Quota
-from .name_availability_response import NameAvailabilityResponse
-from .available_service_sku_sku import AvailableServiceSkuSku
-from .available_service_sku_capacity import AvailableServiceSkuCapacity
-from .available_service_sku import AvailableServiceSku
-from .data_migration_service_status_response import DataMigrationServiceStatusResponse
-from .resource_sku_restrictions import ResourceSkuRestrictions
-from .resource_sku_capabilities import ResourceSkuCapabilities
-from .resource_sku_costs import ResourceSkuCosts
-from .resource_sku_capacity import ResourceSkuCapacity
-from .resource_sku import ResourceSku
-from .database import Database
-from .database_object_name import DatabaseObjectName
-from .migration_table_metadata import MigrationTableMetadata
-from .data_migration_project_metadata import DataMigrationProjectMetadata
-from .data_migration_error import DataMigrationError
-from .database_file_input import DatabaseFileInput
+try:
+    from .tracked_resource_py3 import TrackedResource
+    from .resource_py3 import Resource
+    from .odata_error_py3 import ODataError
+    from .reportable_exception_py3 import ReportableException
+    from .task_output_py3 import TaskOutput
+    from .validate_migration_input_sql_server_sql_mi_task_output_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
+    from .blob_share_py3 import BlobShare
+    from .file_share_py3 import FileShare
+    from .migrate_sql_server_sql_mi_database_input_py3 import MigrateSqlServerSqlMIDatabaseInput
+    from .connection_info_py3 import ConnectionInfo
+    from .sql_connection_info_py3 import SqlConnectionInfo
+    from .validate_migration_input_sql_server_sql_mi_task_input_py3 import ValidateMigrationInputSqlServerSqlMITaskInput
+    from .validate_migration_input_sql_server_sql_mi_task_properties_py3 import ValidateMigrationInputSqlServerSqlMITaskProperties
+    from .validation_error_py3 import ValidationError
+    from .wait_statistics_py3 import WaitStatistics
+    from .execution_statistics_py3 import ExecutionStatistics
+    from .query_execution_result_py3 import QueryExecutionResult
+    from .query_analysis_validation_result_py3 import QueryAnalysisValidationResult
+    from .schema_comparison_validation_result_type_py3 import SchemaComparisonValidationResultType
+    from .schema_comparison_validation_result_py3 import SchemaComparisonValidationResult
+    from .data_integrity_validation_result_py3 import DataIntegrityValidationResult
+    from .migration_validation_database_level_result_py3 import MigrationValidationDatabaseLevelResult
+    from .migration_validation_database_summary_result_py3 import MigrationValidationDatabaseSummaryResult
+    from .migration_validation_result_py3 import MigrationValidationResult
+    from .migrate_sql_server_sql_db_task_output_error_py3 import MigrateSqlServerSqlDbTaskOutputError
+    from .migrate_sql_server_sql_db_task_output_table_level_py3 import MigrateSqlServerSqlDbTaskOutputTableLevel
+    from .data_item_migration_summary_result_py3 import DataItemMigrationSummaryResult
+    from .migrate_sql_server_sql_db_task_output_database_level_py3 import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
+    from .migration_report_result_py3 import MigrationReportResult
+    from .database_summary_result_py3 import DatabaseSummaryResult
+    from .migrate_sql_server_sql_db_task_output_migration_level_py3 import MigrateSqlServerSqlDbTaskOutputMigrationLevel
+    from .migrate_sql_server_sql_db_task_output_py3 import MigrateSqlServerSqlDbTaskOutput
+    from .sql_migration_task_input_py3 import SqlMigrationTaskInput
+    from .migration_validation_options_py3 import MigrationValidationOptions
+    from .migrate_sql_server_sql_db_database_input_py3 import MigrateSqlServerSqlDbDatabaseInput
+    from .migrate_sql_server_sql_db_task_input_py3 import MigrateSqlServerSqlDbTaskInput
+    from .migrate_sql_server_sql_db_task_properties_py3 import MigrateSqlServerSqlDbTaskProperties
+    from .migrate_sql_server_sql_mi_task_output_error_py3 import MigrateSqlServerSqlMITaskOutputError
+    from .migrate_sql_server_sql_mi_task_output_database_level_py3 import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .migrate_sql_server_sql_mi_task_output_migration_level_py3 import MigrateSqlServerSqlMITaskOutputMigrationLevel
+    from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
+    from .migrate_sql_server_sql_mi_task_input_py3 import MigrateSqlServerSqlMITaskInput
+    from .migrate_sql_server_sql_mi_task_properties_py3 import MigrateSqlServerSqlMITaskProperties
+    from .database_table_py3 import DatabaseTable
+    from .get_user_tables_sql_task_output_py3 import GetUserTablesSqlTaskOutput
+    from .get_user_tables_sql_task_input_py3 import GetUserTablesSqlTaskInput
+    from .get_user_tables_sql_task_properties_py3 import GetUserTablesSqlTaskProperties
+    from .connect_to_target_sql_db_task_output_py3 import ConnectToTargetSqlDbTaskOutput
+    from .connect_to_target_sql_db_task_input_py3 import ConnectToTargetSqlDbTaskInput
+    from .connect_to_target_sql_db_task_properties_py3 import ConnectToTargetSqlDbTaskProperties
+    from .connect_to_target_sql_mi_task_output_py3 import ConnectToTargetSqlMITaskOutput
+    from .connect_to_target_sql_mi_task_input_py3 import ConnectToTargetSqlMITaskInput
+    from .connect_to_target_sql_mi_task_properties_py3 import ConnectToTargetSqlMITaskProperties
+    from .database_file_info_py3 import DatabaseFileInfo
+    from .connect_to_source_sql_server_task_output_database_level_py3 import ConnectToSourceSqlServerTaskOutputDatabaseLevel
+    from .connect_to_source_sql_server_task_output_task_level_py3 import ConnectToSourceSqlServerTaskOutputTaskLevel
+    from .connect_to_source_sql_server_task_output_py3 import ConnectToSourceSqlServerTaskOutput
+    from .connect_to_source_sql_server_task_input_py3 import ConnectToSourceSqlServerTaskInput
+    from .connect_to_source_sql_server_task_properties_py3 import ConnectToSourceSqlServerTaskProperties
+    from .project_task_properties_py3 import ProjectTaskProperties
+    from .project_task_py3 import ProjectTask
+    from .service_sku_py3 import ServiceSku
+    from .data_migration_service_py3 import DataMigrationService
+    from .name_availability_request_py3 import NameAvailabilityRequest
+    from .database_info_py3 import DatabaseInfo
+    from .project_py3 import Project
+    from .api_error_py3 import ApiError, ApiErrorException
+    from .service_operation_display_py3 import ServiceOperationDisplay
+    from .service_operation_py3 import ServiceOperation
+    from .quota_name_py3 import QuotaName
+    from .quota_py3 import Quota
+    from .name_availability_response_py3 import NameAvailabilityResponse
+    from .available_service_sku_sku_py3 import AvailableServiceSkuSku
+    from .available_service_sku_capacity_py3 import AvailableServiceSkuCapacity
+    from .available_service_sku_py3 import AvailableServiceSku
+    from .data_migration_service_status_response_py3 import DataMigrationServiceStatusResponse
+    from .resource_sku_restrictions_py3 import ResourceSkuRestrictions
+    from .resource_sku_capabilities_py3 import ResourceSkuCapabilities
+    from .resource_sku_costs_py3 import ResourceSkuCosts
+    from .resource_sku_capacity_py3 import ResourceSkuCapacity
+    from .resource_sku_py3 import ResourceSku
+    from .database_py3 import Database
+    from .database_object_name_py3 import DatabaseObjectName
+    from .migration_table_metadata_py3 import MigrationTableMetadata
+    from .data_migration_project_metadata_py3 import DataMigrationProjectMetadata
+    from .data_migration_error_py3 import DataMigrationError
+    from .database_file_input_py3 import DatabaseFileInput
+    from .migrate_sql_server_sql_server_database_input_py3 import MigrateSqlServerSqlServerDatabaseInput
+except (SyntaxError, ImportError):
+    from .tracked_resource import TrackedResource
+    from .resource import Resource
+    from .odata_error import ODataError
+    from .reportable_exception import ReportableException
+    from .task_output import TaskOutput
+    from .validate_migration_input_sql_server_sql_mi_task_output import ValidateMigrationInputSqlServerSqlMITaskOutput
+    from .blob_share import BlobShare
+    from .file_share import FileShare
+    from .migrate_sql_server_sql_mi_database_input import MigrateSqlServerSqlMIDatabaseInput
+    from .connection_info import ConnectionInfo
+    from .sql_connection_info import SqlConnectionInfo
+    from .validate_migration_input_sql_server_sql_mi_task_input import ValidateMigrationInputSqlServerSqlMITaskInput
+    from .validate_migration_input_sql_server_sql_mi_task_properties import ValidateMigrationInputSqlServerSqlMITaskProperties
+    from .validation_error import ValidationError
+    from .wait_statistics import WaitStatistics
+    from .execution_statistics import ExecutionStatistics
+    from .query_execution_result import QueryExecutionResult
+    from .query_analysis_validation_result import QueryAnalysisValidationResult
+    from .schema_comparison_validation_result_type import SchemaComparisonValidationResultType
+    from .schema_comparison_validation_result import SchemaComparisonValidationResult
+    from .data_integrity_validation_result import DataIntegrityValidationResult
+    from .migration_validation_database_level_result import MigrationValidationDatabaseLevelResult
+    from .migration_validation_database_summary_result import MigrationValidationDatabaseSummaryResult
+    from .migration_validation_result import MigrationValidationResult
+    from .migrate_sql_server_sql_db_task_output_error import MigrateSqlServerSqlDbTaskOutputError
+    from .migrate_sql_server_sql_db_task_output_table_level import MigrateSqlServerSqlDbTaskOutputTableLevel
+    from .data_item_migration_summary_result import DataItemMigrationSummaryResult
+    from .migrate_sql_server_sql_db_task_output_database_level import MigrateSqlServerSqlDbTaskOutputDatabaseLevel
+    from .migration_report_result import MigrationReportResult
+    from .database_summary_result import DatabaseSummaryResult
+    from .migrate_sql_server_sql_db_task_output_migration_level import MigrateSqlServerSqlDbTaskOutputMigrationLevel
+    from .migrate_sql_server_sql_db_task_output import MigrateSqlServerSqlDbTaskOutput
+    from .sql_migration_task_input import SqlMigrationTaskInput
+    from .migration_validation_options import MigrationValidationOptions
+    from .migrate_sql_server_sql_db_database_input import MigrateSqlServerSqlDbDatabaseInput
+    from .migrate_sql_server_sql_db_task_input import MigrateSqlServerSqlDbTaskInput
+    from .migrate_sql_server_sql_db_task_properties import MigrateSqlServerSqlDbTaskProperties
+    from .migrate_sql_server_sql_mi_task_output_error import MigrateSqlServerSqlMITaskOutputError
+    from .migrate_sql_server_sql_mi_task_output_database_level import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .migrate_sql_server_sql_mi_task_output_migration_level import MigrateSqlServerSqlMITaskOutputMigrationLevel
+    from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
+    from .migrate_sql_server_sql_mi_task_input import MigrateSqlServerSqlMITaskInput
+    from .migrate_sql_server_sql_mi_task_properties import MigrateSqlServerSqlMITaskProperties
+    from .database_table import DatabaseTable
+    from .get_user_tables_sql_task_output import GetUserTablesSqlTaskOutput
+    from .get_user_tables_sql_task_input import GetUserTablesSqlTaskInput
+    from .get_user_tables_sql_task_properties import GetUserTablesSqlTaskProperties
+    from .connect_to_target_sql_db_task_output import ConnectToTargetSqlDbTaskOutput
+    from .connect_to_target_sql_db_task_input import ConnectToTargetSqlDbTaskInput
+    from .connect_to_target_sql_db_task_properties import ConnectToTargetSqlDbTaskProperties
+    from .connect_to_target_sql_mi_task_output import ConnectToTargetSqlMITaskOutput
+    from .connect_to_target_sql_mi_task_input import ConnectToTargetSqlMITaskInput
+    from .connect_to_target_sql_mi_task_properties import ConnectToTargetSqlMITaskProperties
+    from .database_file_info import DatabaseFileInfo
+    from .connect_to_source_sql_server_task_output_database_level import ConnectToSourceSqlServerTaskOutputDatabaseLevel
+    from .connect_to_source_sql_server_task_output_task_level import ConnectToSourceSqlServerTaskOutputTaskLevel
+    from .connect_to_source_sql_server_task_output import ConnectToSourceSqlServerTaskOutput
+    from .connect_to_source_sql_server_task_input import ConnectToSourceSqlServerTaskInput
+    from .connect_to_source_sql_server_task_properties import ConnectToSourceSqlServerTaskProperties
+    from .project_task_properties import ProjectTaskProperties
+    from .project_task import ProjectTask
+    from .service_sku import ServiceSku
+    from .data_migration_service import DataMigrationService
+    from .name_availability_request import NameAvailabilityRequest
+    from .database_info import DatabaseInfo
+    from .project import Project
+    from .api_error import ApiError, ApiErrorException
+    from .service_operation_display import ServiceOperationDisplay
+    from .service_operation import ServiceOperation
+    from .quota_name import QuotaName
+    from .quota import Quota
+    from .name_availability_response import NameAvailabilityResponse
+    from .available_service_sku_sku import AvailableServiceSkuSku
+    from .available_service_sku_capacity import AvailableServiceSkuCapacity
+    from .available_service_sku import AvailableServiceSku
+    from .data_migration_service_status_response import DataMigrationServiceStatusResponse
+    from .resource_sku_restrictions import ResourceSkuRestrictions
+    from .resource_sku_capabilities import ResourceSkuCapabilities
+    from .resource_sku_costs import ResourceSkuCosts
+    from .resource_sku_capacity import ResourceSkuCapacity
+    from .resource_sku import ResourceSku
+    from .database import Database
+    from .database_object_name import DatabaseObjectName
+    from .migration_table_metadata import MigrationTableMetadata
+    from .data_migration_project_metadata import DataMigrationProjectMetadata
+    from .data_migration_error import DataMigrationError
+    from .database_file_input import DatabaseFileInput
+    from .migrate_sql_server_sql_server_database_input import MigrateSqlServerSqlServerDatabaseInput
 from .resource_sku_paged import ResourceSkuPaged
 from .available_service_sku_paged import AvailableServiceSkuPaged
 from .data_migration_service_paged import DataMigrationServicePaged
@@ -89,6 +195,7 @@ from .project_paged import ProjectPaged
 from .quota_paged import QuotaPaged
 from .service_operation_paged import ServiceOperationPaged
 from .data_migration_service_client_enums import (
+    AuthenticationType,
     ValidationStatus,
     Severity,
     UpdateActionType,
@@ -96,7 +203,6 @@ from .data_migration_service_client_enums import (
     MigrationState,
     DatabaseMigrationStage,
     MigrationStatus,
-    AuthenticationType,
     DatabaseState,
     DatabaseCompatLevel,
     DatabaseFileType,
@@ -118,7 +224,16 @@ __all__ = [
     'TrackedResource',
     'Resource',
     'ODataError',
+    'ReportableException',
     'TaskOutput',
+    'ValidateMigrationInputSqlServerSqlMITaskOutput',
+    'BlobShare',
+    'FileShare',
+    'MigrateSqlServerSqlMIDatabaseInput',
+    'ConnectionInfo',
+    'SqlConnectionInfo',
+    'ValidateMigrationInputSqlServerSqlMITaskInput',
+    'ValidateMigrationInputSqlServerSqlMITaskProperties',
     'ValidationError',
     'WaitStatistics',
     'ExecutionStatistics',
@@ -130,7 +245,6 @@ __all__ = [
     'MigrationValidationDatabaseLevelResult',
     'MigrationValidationDatabaseSummaryResult',
     'MigrationValidationResult',
-    'ReportableException',
     'MigrateSqlServerSqlDbTaskOutputError',
     'MigrateSqlServerSqlDbTaskOutputTableLevel',
     'DataItemMigrationSummaryResult',
@@ -139,13 +253,17 @@ __all__ = [
     'DatabaseSummaryResult',
     'MigrateSqlServerSqlDbTaskOutputMigrationLevel',
     'MigrateSqlServerSqlDbTaskOutput',
-    'ConnectionInfo',
-    'SqlConnectionInfo',
     'SqlMigrationTaskInput',
     'MigrationValidationOptions',
     'MigrateSqlServerSqlDbDatabaseInput',
     'MigrateSqlServerSqlDbTaskInput',
     'MigrateSqlServerSqlDbTaskProperties',
+    'MigrateSqlServerSqlMITaskOutputError',
+    'MigrateSqlServerSqlMITaskOutputDatabaseLevel',
+    'MigrateSqlServerSqlMITaskOutputMigrationLevel',
+    'MigrateSqlServerSqlMITaskOutput',
+    'MigrateSqlServerSqlMITaskInput',
+    'MigrateSqlServerSqlMITaskProperties',
     'DatabaseTable',
     'GetUserTablesSqlTaskOutput',
     'GetUserTablesSqlTaskInput',
@@ -153,6 +271,9 @@ __all__ = [
     'ConnectToTargetSqlDbTaskOutput',
     'ConnectToTargetSqlDbTaskInput',
     'ConnectToTargetSqlDbTaskProperties',
+    'ConnectToTargetSqlMITaskOutput',
+    'ConnectToTargetSqlMITaskInput',
+    'ConnectToTargetSqlMITaskProperties',
     'DatabaseFileInfo',
     'ConnectToSourceSqlServerTaskOutputDatabaseLevel',
     'ConnectToSourceSqlServerTaskOutputTaskLevel',
@@ -187,6 +308,7 @@ __all__ = [
     'DataMigrationProjectMetadata',
     'DataMigrationError',
     'DatabaseFileInput',
+    'MigrateSqlServerSqlServerDatabaseInput',
     'ResourceSkuPaged',
     'AvailableServiceSkuPaged',
     'DataMigrationServicePaged',
@@ -194,6 +316,7 @@ __all__ = [
     'ProjectPaged',
     'QuotaPaged',
     'ServiceOperationPaged',
+    'AuthenticationType',
     'ValidationStatus',
     'Severity',
     'UpdateActionType',
@@ -201,7 +324,6 @@ __all__ = [
     'MigrationState',
     'DatabaseMigrationStage',
     'MigrationStatus',
-    'AuthenticationType',
     'DatabaseState',
     'DatabaseCompatLevel',
     'DatabaseFileType',

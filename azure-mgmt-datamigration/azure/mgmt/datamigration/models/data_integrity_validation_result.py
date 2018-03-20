@@ -28,7 +28,7 @@ class DataIntegrityValidationResult(Model):
         'validation_errors': {'key': 'validationErrors', 'type': 'ValidationError'},
     }
 
-    def __init__(self, failed_objects=None, validation_errors=None):
-        super(DataIntegrityValidationResult, self).__init__()
-        self.failed_objects = failed_objects
-        self.validation_errors = validation_errors
+    def __init__(self, **kwargs):
+        super(DataIntegrityValidationResult, self).__init__(**kwargs)
+        self.failed_objects = kwargs.get('failed_objects', None)
+        self.validation_errors = kwargs.get('validation_errors', None)
