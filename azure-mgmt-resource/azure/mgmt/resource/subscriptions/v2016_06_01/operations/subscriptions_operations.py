@@ -38,13 +38,15 @@ class SubscriptionsOperations(object):
         self.config = config
 
     def list_locations(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Gets all available geo-locations.
 
         This operation provides all the locations that are available for
         resource providers; however, each resource provider may support a
         subset of this list.
 
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -61,7 +63,7 @@ class SubscriptionsOperations(object):
                 # Construct URL
                 url = self.list_locations.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -107,9 +109,11 @@ class SubscriptionsOperations(object):
     list_locations.metadata = {'url': '/subscriptions/{subscriptionId}/locations'}
 
     def get(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Gets details about a specified subscription.
 
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -124,7 +128,7 @@ class SubscriptionsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
