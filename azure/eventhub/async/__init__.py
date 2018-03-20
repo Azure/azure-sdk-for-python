@@ -85,7 +85,7 @@ class EventHubClientAsync(EventHubClient):
 
         @param offset: the initial L{Offset} to receive events.
         """
-        source_url = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+        source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
         source = Source(source_url)
         if offset is not None:
@@ -107,13 +107,13 @@ class EventHubClientAsync(EventHubClient):
 
         @param offset: the initial L{Offset} to receive events.
         """
-        source_url = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+        source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
         handler = AsyncReceiver(self, source_url, prefetch=prefetch, epoch=epoch, loop=loop)
         self.clients.append(handler._handler)
         return handler
 
-    def add_async_sender(self, loop=None, partition=None, loop=None):
+    def add_async_sender(self, partition=None, loop=None):
         """
         Registers a L{Sender} to publish L{EventData} objects to an Event Hub or one of its partitions.
 
@@ -122,7 +122,7 @@ class EventHubClientAsync(EventHubClient):
         @param partition: the id of the destination event hub partition. If not specified, events will
         be distributed across partitions based on the default distribution logic.
         """
-        target = "amqps://{}/{}".format(self.address.hostname, self.address.path)
+        target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if partition:
             target += "/Partitions/" + partition
         handler = AsyncSender(self, target, loop=loop)
