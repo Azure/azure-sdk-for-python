@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .action import Action
 
 
-class Action(Model):
-    """Represents the filter actions which are allowed for the transformation of a
-    message that have been matched by a filter expression.
+class SqlRuleAction(Action):
+    """Represents set of actions written in SQL language-based syntax that is
+    performed against a ServiceBus.Messaging.BrokeredMessage .
 
     :param sql_expression: SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
@@ -32,8 +32,5 @@ class Action(Model):
         'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(Action, self).__init__(**kwargs)
-        self.sql_expression = kwargs.get('sql_expression', None)
-        self.compatibility_level = kwargs.get('compatibility_level', None)
-        self.requires_preprocessing = kwargs.get('requires_preprocessing', True)
+    def __init__(self, *, sql_expression: str=None, compatibility_level: int=None, requires_preprocessing: bool=True, **kwargs) -> None:
+        super(SqlRuleAction, self).__init__(sql_expression=sql_expression, compatibility_level=compatibility_level, requires_preprocessing=requires_preprocessing, **kwargs)

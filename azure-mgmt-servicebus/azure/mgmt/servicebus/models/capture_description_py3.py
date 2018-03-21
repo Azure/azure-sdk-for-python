@@ -48,10 +48,10 @@ class CaptureDescription(Model):
         'destination': {'key': 'destination', 'type': 'Destination'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, enabled: bool=None, encoding=None, interval_in_seconds: int=None, size_limit_in_bytes: int=None, destination=None, **kwargs) -> None:
         super(CaptureDescription, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.encoding = kwargs.get('encoding', None)
-        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
-        self.size_limit_in_bytes = kwargs.get('size_limit_in_bytes', None)
-        self.destination = kwargs.get('destination', None)
+        self.enabled = enabled
+        self.encoding = encoding
+        self.interval_in_seconds = interval_in_seconds
+        self.size_limit_in_bytes = size_limit_in_bytes
+        self.destination = destination

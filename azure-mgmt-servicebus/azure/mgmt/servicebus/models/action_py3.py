@@ -32,8 +32,8 @@ class Action(Model):
         'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, sql_expression: str=None, compatibility_level: int=None, requires_preprocessing: bool=True, **kwargs) -> None:
         super(Action, self).__init__(**kwargs)
-        self.sql_expression = kwargs.get('sql_expression', None)
-        self.compatibility_level = kwargs.get('compatibility_level', None)
-        self.requires_preprocessing = kwargs.get('requires_preprocessing', True)
+        self.sql_expression = sql_expression
+        self.compatibility_level = compatibility_level
+        self.requires_preprocessing = requires_preprocessing
