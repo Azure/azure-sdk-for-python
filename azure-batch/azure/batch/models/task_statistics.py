@@ -82,6 +82,7 @@ class TaskStatistics(Model):
     }
 
     def __init__(self, url, start_time, last_update_time, user_cpu_time, kernel_cpu_time, wall_clock_time, read_iops, write_iops, read_io_gi_b, write_io_gi_b, wait_time):
+        super(TaskStatistics, self).__init__()
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time

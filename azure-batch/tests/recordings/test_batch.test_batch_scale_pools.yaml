@@ -1,28 +1,27 @@
 interactions:
 - request:
-    body: '{"autoScaleFormula": "$TargetDedicatedNodes=2", "autoScaleEvaluationInterval":
-      "PT6M"}'
+    body: '{"autoScaleEvaluationInterval": "PT6M", "autoScaleFormula": "$TargetDedicatedNodes=2"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['86']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:10:44 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:36:56 GMT']
     method: POST
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale']
+      dataserviceid: ['https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:10:44 GMT']
-      etag: ['0x8D5262402F19461']
-      last-modified: ['Tue, 07 Nov 2017 21:10:45 GMT']
-      request-id: [97e0ed88-a0f2-4af8-b9d8-39506a61ecc7]
+      date: ['Tue, 13 Mar 2018 19:36:56 GMT']
+      etag: ['0x8D58919C88075BC']
+      last-modified: ['Tue, 13 Mar 2018 19:36:57 GMT']
+      request-id: [e7c64e52-b2f5-4302-9bac-6ad3a6973ba8]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -36,22 +35,20 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['47']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:10:45 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:36:57 GMT']
     method: POST
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\"\
-        ,\"timestamp\":\"2017-11-07T21:10:45.6294794Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\
-        \r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\",\"timestamp\":\"2018-03-13T19:36:58.1241258Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
-      dataserviceid: ['https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale']
+      dataserviceid: ['https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:10:44 GMT']
-      request-id: [dc51ff39-6c9b-4bc3-a69a-2ec43a7360ad]
+      date: ['Tue, 13 Mar 2018 19:36:58 GMT']
+      request-id: [85563fca-bd08-4228-967d-37666cc74c09]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -64,22 +61,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:10:45 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:36:58 GMT']
     method: POST
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale']
+      dataserviceid: ['https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:10:46 GMT']
-      etag: ['0x8D5262403BB2568']
-      last-modified: ['Tue, 07 Nov 2017 21:10:46 GMT']
-      request-id: [82bc916c-9f53-43f1-b366-560e0e3bdf4d]
+      date: ['Tue, 13 Mar 2018 19:36:58 GMT']
+      etag: ['0x8D58919C93D1047']
+      last-modified: ['Tue, 13 Mar 2018 19:36:58 GMT']
+      request-id: [ebecf632-dc00-4d08-805f-c21a713ce4c8]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -91,35 +88,26 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:10:46 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:36:58 GMT']
     method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D5262403BB2568\",\"lastModified\":\"2017-11-07T21:10:46.6067816Z\"\
-        ,\"creationTime\":\"2017-11-07T21:10:44.2408057Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T21:10:44.2408057Z\",\"allocationState\"\
-        :\"stopping\",\"allocationStateTransitionTime\":\"2017-11-07T21:10:46.6067816Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\
-        \n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D58919C93D1047\",\"lastModified\":\"2018-03-13T19:36:58.6203207Z\",\"creationTime\":\"2018-03-13T19:36:56.7133662Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-03-13T19:36:56.7133662Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2018-03-13T19:36:58.6203207Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:10:47 GMT']
-      etag: ['0x8D5262403BB2568']
-      last-modified: ['Tue, 07 Nov 2017 21:10:46 GMT']
-      request-id: [9d079a49-ef87-41da-b85e-4a42ac8cb358]
+      date: ['Tue, 13 Mar 2018 19:36:58 GMT']
+      etag: ['0x8D58919C93D1047']
+      last-modified: ['Tue, 13 Mar 2018 19:36:58 GMT']
+      request-id: [38d60718-04b8-4e28-81bb-54f925abf768]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -131,77 +119,29 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:11:07 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:37:19 GMT']
     method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D5262403BB2568\",\"lastModified\":\"2017-11-07T21:10:46.6067816Z\"\
-        ,\"creationTime\":\"2017-11-07T21:10:44.2408057Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T21:10:44.2408057Z\",\"allocationState\"\
-        :\"stopping\",\"allocationStateTransitionTime\":\"2017-11-07T21:10:46.6067816Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\
-        \n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D58919C93D1047\",\"lastModified\":\"2018-03-13T19:36:58.6203207Z\",\"creationTime\":\"2018-03-13T19:36:56.7133662Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-03-13T19:36:56.7133662Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-03-13T19:37:09.3463141Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"resizeErrors\":[\r\n
+        \   {\r\n      \"code\":\"ResizeStopped\",\"message\":\"Desired number of
+        dedicated nodes could not be allocated due to a stop resize operation\"\r\n
+        \   }\r\n  ],\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:11:07 GMT']
-      etag: ['0x8D5262403BB2568']
-      last-modified: ['Tue, 07 Nov 2017 21:10:46 GMT']
-      request-id: [10c5456a-b11a-4905-b95c-d7e0ec16fd1e]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:11:27 GMT']
-    method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2017-09-01.6.0
-  response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D5262403BB2568\",\"lastModified\":\"2017-11-07T21:10:46.6067816Z\"\
-        ,\"creationTime\":\"2017-11-07T21:10:44.2408057Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T21:10:44.2408057Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T21:11:27.5540764Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"resizeErrors\":[\r\n    {\r\n      \"code\":\"ResizeStopped\",\"message\"\
-        :\"Desired number of dedicated nodes could not be allocated due to a stop\
-        \ resize operation\"\r\n    }\r\n  ],\"enableAutoScale\":false,\"enableInterNodeCommunication\"\
-        :false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\"\
-        :\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n    \"imageReference\"\
-        :{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\"\r\n  }\r\n}"}
-    headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:11:28 GMT']
-      etag: ['0x8D5262403BB2568']
-      last-modified: ['Tue, 07 Nov 2017 21:10:46 GMT']
-      request-id: [b270d71a-3397-47db-a4fc-656ac1ceb89b]
+      date: ['Tue, 13 Mar 2018 19:37:19 GMT']
+      etag: ['0x8D58919C93D1047']
+      last-modified: ['Tue, 13 Mar 2018 19:36:58 GMT']
+      request-id: [78ecedfd-c9bc-4701-a66f-4e3644e4054e]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -215,21 +155,21 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['56']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:11:28 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:37:19 GMT']
     method: POST
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize']
+      dataserviceid: ['https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:11:29 GMT']
-      etag: ['0x8D526241D40FFF7']
-      last-modified: ['Tue, 07 Nov 2017 21:11:29 GMT']
-      request-id: [d9e9cd88-1a37-4110-bc98-f84f2d3232b3]
+      date: ['Tue, 13 Mar 2018 19:37:20 GMT']
+      etag: ['0x8D58919D60AB15A']
+      last-modified: ['Tue, 13 Mar 2018 19:37:20 GMT']
+      request-id: [6824bcd0-117d-4462-90f8-2eff080e4de5]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -242,22 +182,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:11:29 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:37:20 GMT']
     method: POST
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize']
+      dataserviceid: ['https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:11:30 GMT']
-      etag: ['0x8D526241D9F4C3C']
-      last-modified: ['Tue, 07 Nov 2017 21:11:30 GMT']
-      request-id: [6ee2d76b-f092-4a7f-a9ff-a9c919811f9f]
+      date: ['Tue, 13 Mar 2018 19:37:19 GMT']
+      etag: ['0x8D58919D657B031']
+      last-modified: ['Tue, 13 Mar 2018 19:37:20 GMT']
+      request-id: [4b457d24-cca4-4b8f-bc61-8ddb8fb0ae8f]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -269,35 +209,26 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:11:29 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:37:20 GMT']
     method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D526241D9F4C3C\",\"lastModified\":\"2017-11-07T21:11:30.0450364Z\"\
-        ,\"creationTime\":\"2017-11-07T21:10:44.2408057Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T21:10:44.2408057Z\",\"allocationState\"\
-        :\"stopping\",\"allocationStateTransitionTime\":\"2017-11-07T21:11:30.0450364Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\
-        \n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D58919D657B031\",\"lastModified\":\"2018-03-13T19:37:20.6051889Z\",\"creationTime\":\"2018-03-13T19:36:56.7133662Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-03-13T19:36:56.7133662Z\",\"allocationState\":\"stopping\",\"allocationStateTransitionTime\":\"2018-03-13T19:37:20.6051889Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:11:30 GMT']
-      etag: ['0x8D526241D9F4C3C']
-      last-modified: ['Tue, 07 Nov 2017 21:11:30 GMT']
-      request-id: [a0d3a34e-d5bc-47d8-8933-9deb2abc1da9]
+      date: ['Tue, 13 Mar 2018 19:37:21 GMT']
+      etag: ['0x8D58919D657B031']
+      last-modified: ['Tue, 13 Mar 2018 19:37:20 GMT']
+      request-id: [fff6e422-b6ce-495e-9871-b7b2da0eebe2]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -309,35 +240,31 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:11:50 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:37:41 GMT']
     method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D526241D9F4C3C\",\"lastModified\":\"2017-11-07T21:11:30.0450364Z\"\
-        ,\"creationTime\":\"2017-11-07T21:10:44.2408057Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T21:10:44.2408057Z\",\"allocationState\"\
-        :\"stopping\",\"allocationStateTransitionTime\":\"2017-11-07T21:11:30.0450364Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\
-        \n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\",\"eTag\":\"0x8D58919D657B031\",\"lastModified\":\"2018-03-13T19:37:20.6051889Z\",\"creationTime\":\"2018-03-13T19:36:56.7133662Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-03-13T19:36:56.7133662Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2018-03-13T19:37:29.3685714Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":2,\"resizeErrors\":[\r\n
+        \   {\r\n      \"code\":\"ResizeStopped\",\"message\":\"Desired number of
+        dedicated nodes could not be allocated due to a stop resize operation\"\r\n
+        \   },{\r\n      \"code\":\"ResizeStopped\",\"message\":\"Desired number of
+        low priority nodes could not be allocated due to a stop resize operation\"\r\n
+        \   }\r\n  ],\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \   {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\n    }\r\n
+        \ ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n
+        \ },\"virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:11:51 GMT']
-      etag: ['0x8D526241D9F4C3C']
-      last-modified: ['Tue, 07 Nov 2017 21:11:30 GMT']
-      request-id: [36d629a2-c585-4031-8509-c9667838ccd9]
+      date: ['Tue, 13 Mar 2018 19:37:41 GMT']
+      etag: ['0x8D58919D657B031']
+      last-modified: ['Tue, 13 Mar 2018 19:37:20 GMT']
+      request-id: [9a6dbd9e-bdc3-4c7a-a66a-04724d949c81]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -349,39 +276,23 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:12:11 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:37:41 GMT']
     method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/lifetimepoolstats?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"url\":\"https://batche2690d64.japanwest.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D526241D9F4C3C\",\"lastModified\":\"2017-11-07T21:11:30.0450364Z\"\
-        ,\"creationTime\":\"2017-11-07T21:10:44.2408057Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T21:10:44.2408057Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2017-11-07T21:12:11.6676785Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":2,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :2,\"resizeErrors\":[\r\n    {\r\n      \"code\":\"ResizeStopped\",\"message\"\
-        :\"Desired number of dedicated nodes could not be allocated due to a stop\
-        \ resize operation\"\r\n    },{\r\n      \"code\":\"ResizeStopped\",\"message\"\
-        :\"Desired number of low priority nodes could not be allocated due to a stop\
-        \ resize operation\"\r\n    }\r\n  ],\"enableAutoScale\":false,\"enableInterNodeCommunication\"\
-        :false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\"\
-        :\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n    \"imageReference\"\
-        :{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\"\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#poolstats/@Element\",\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/lifetimepoolstats\",\"usageStats\":{\r\n
+        \   \"startTime\":\"2018-03-13T19:36:38.590799Z\",\"lastUpdateTime\":\"2018-03-13T19:36:38.590799Z\",\"dedicatedCoreTime\":\"PT0S\"\r\n
+        \ },\"resourceStats\":{\r\n    \"startTime\":\"2018-03-13T19:36:38.590799Z\",\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2018-03-13T19:36:38.590799Z\",\"avgCPUPercentage\":0.0,\"avgMemoryGiB\":0.0,\"peakMemoryGiB\":0.0,\"avgDiskGiB\":0.0,\"peakDiskGiB\":0.0,\"diskReadGiB\":0.0,\"diskWriteGiB\":0.0,\"networkReadGiB\":0.0,\"networkWriteGiB\":0.0\r\n
+        \ }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:12:11 GMT']
-      etag: ['0x8D526241D9F4C3C']
-      last-modified: ['Tue, 07 Nov 2017 21:11:30 GMT']
-      request-id: [b7fe0fcb-0a0f-4588-85a7-65ec680afc09]
+      date: ['Tue, 13 Mar 2018 19:37:42 GMT']
+      request-id: [2dc933e5-fe2f-4ac6-a8ab-019bdec3d9fe]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -393,54 +304,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:12:11 GMT']
+      ocp-date: ['Tue, 13 Mar 2018 19:37:42 GMT']
     method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/lifetimepoolstats?api-version=2017-09-01.6.0
+    uri: https://batche2690d64.westcentralus.batch.azure.com/poolusagemetrics?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#poolstats/@Element\"\
-        ,\"url\":\"https://batche2690d64.japanwest.batch.azure.com/lifetimepoolstats\"\
-        ,\"usageStats\":{\r\n    \"startTime\":\"2017-11-07T21:10:24.0787022Z\",\"\
-        lastUpdateTime\":\"2017-11-07T21:10:24.0787022Z\",\"dedicatedCoreTime\":\"\
-        PT0S\"\r\n  },\"resourceStats\":{\r\n    \"startTime\":\"2017-11-07T21:10:24.0787022Z\"\
-        ,\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2017-11-07T21:10:24.0787022Z\"\
-        ,\"avgCPUPercentage\":0.0,\"avgMemoryGiB\":0.0,\"peakMemoryGiB\":0.0,\"avgDiskGiB\"\
-        :0.0,\"peakDiskGiB\":0.0,\"diskReadGiB\":0.0,\"diskWriteGiB\":0.0,\"networkReadGiB\"\
-        :0.0,\"networkWriteGiB\":0.0\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#poolusagemetrics\",\"value\":[\r\n
+        \   \r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:12:12 GMT']
-      request-id: [27f2de51-f6b1-4e5f-8139-f344a46a8dd4]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 21:12:12 GMT']
-    method: GET
-    uri: https://batche2690d64.japanwest.batch.azure.com/poolusagemetrics?api-version=2017-09-01.6.0
-  response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.japanwest.batch.azure.com/$metadata#poolusagemetrics\"\
-        ,\"value\":[\r\n    \r\n  ]\r\n}"}
-    headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 21:12:13 GMT']
-      request-id: [025b19b9-9f5c-4d18-a7fc-f98bc9ff059a]
+      date: ['Tue, 13 Mar 2018 19:37:42 GMT']
+      request-id: [337b01ec-c5d6-4aa7-bd3d-0a2d1b26af9f]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]

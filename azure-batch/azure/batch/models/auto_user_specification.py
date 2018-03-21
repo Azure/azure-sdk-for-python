@@ -16,17 +16,11 @@ class AutoUserSpecification(Model):
     """Specifies the parameters for the auto user that runs a task on the Batch
     service.
 
-    :param scope: The scope for the auto user. Values are:
-     pool - specifies that the task runs as the common auto user account which
-     is created on every node in a pool.
-     task - specifies that the service should create a new user for the task.
-     The default value is task. Possible values include: 'task', 'pool'
+    :param scope: The scope for the auto user. The default value is task.
+     Possible values include: 'task', 'pool'
     :type scope: str or ~azure.batch.models.AutoUserScope
-    :param elevation_level: The elevation level of the auto user. nonAdmin -
-     The auto user is a standard user without elevated access. admin - The auto
-     user is a user with elevated access and operates with full Administrator
-     permissions. The default value is nonAdmin. Possible values include:
-     'nonAdmin', 'admin'
+    :param elevation_level: The elevation level of the auto user. The default
+     value is nonAdmin. Possible values include: 'nonAdmin', 'admin'
     :type elevation_level: str or ~azure.batch.models.ElevationLevel
     """
 
@@ -36,5 +30,6 @@ class AutoUserSpecification(Model):
     }
 
     def __init__(self, scope=None, elevation_level=None):
+        super(AutoUserSpecification, self).__init__()
         self.scope = scope
         self.elevation_level = elevation_level

@@ -43,6 +43,7 @@ class JobScheduleListOptions(Model):
     """
 
     def __init__(self, filter=None, select=None, expand=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
+        super(JobScheduleListOptions, self).__init__()
         self.filter = filter
         self.select = select
         self.expand = expand

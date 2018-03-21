@@ -1,29 +1,30 @@
 interactions:
 - request:
-    body: '{"id": "batch_schedule_fe140e2a", "schedule": {"startWindow": "PT1H", "recurrenceInterval":
-      "P1D"}, "jobSpecification": {"onAllTasksComplete": "terminateJob", "constraints":
-      {"maxTaskRetryCount": 2}, "poolInfo": {"poolId": "pool_id"}}}'
+    body: '{"id": "batch_schedule_fe140e2a", "jobSpecification": {"poolInfo": {"poolId":
+      "pool_id"}, "constraints": {"maxTaskRetryCount": 2}, "onAllTasksComplete": "terminatejob"},
+      "schedule": {"recurrenceInterval": "P1D", "startWindow": "PT1H"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['235']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:18 GMT']
     method: POST
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
+      dataserviceid: ['https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:07 GMT']
-      etag: ['0x8D526307EF62004']
-      last-modified: ['Tue, 07 Nov 2017 22:40:07 GMT']
-      location: ['https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
-      request-id: [1de8b118-efef-4130-b4a6-efcbcd861728]
+      date: ['Tue, 13 Mar 2018 20:17:18 GMT']
+      etag: ['0x8D5891F6BCAE2B5']
+      last-modified: ['Tue, 13 Mar 2018 20:17:18 GMT']
+      location: ['https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
+      request-id: [1fbac776-9d66-42a7-944f-818508398830]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -35,33 +36,28 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:19 GMT']
     method: GET
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.japanwest.batch.azure.com/$metadata#jobschedules\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_schedule_fe140e2a\",\"url\"\
-        :\"https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a\"\
-        ,\"eTag\":\"0x8D526307EF62004\",\"lastModified\":\"2017-11-07T22:40:07.313818Z\"\
-        ,\"creationTime\":\"2017-11-07T22:40:07.313818Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T22:40:07.313818Z\",\"schedule\":{\r\n \
-        \       \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n      },\"\
-        jobSpecification\":{\r\n        \"priority\":0,\"usesTaskDependencies\":false,\"\
-        onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\"\
-        :{\r\n          \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\"\
-        :2\r\n        },\"poolInfo\":{\r\n          \"poolId\":\"pool_id\"\r\n   \
-        \     }\r\n      },\"executionInfo\":{\r\n        \"nextRunTime\":\"2017-11-08T22:40:07.313818Z\"\
-        ,\"recentJob\":{\r\n          \"url\":\"https://batchfe140e2a.japanwest.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\"\
-        ,\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n        }\r\n      }\r\n    }\r\
-        \n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobschedules\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\",\"eTag\":\"0x8D5891F6BCAE2B5\",\"lastModified\":\"2018-03-13T20:17:18.8243125Z\",\"creationTime\":\"2018-03-13T20:17:18.8243125Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-03-13T20:17:18.8243125Z\",\"schedule\":{\r\n
+        \       \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n      },\"jobSpecification\":{\r\n
+        \       \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n
+        \         \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
+        \       },\"poolInfo\":{\r\n          \"poolId\":\"pool_id\"\r\n        }\r\n
+        \     },\"executionInfo\":{\r\n        \"nextRunTime\":\"2018-03-14T20:17:18.8243125Z\",\"recentJob\":{\r\n
+        \         \"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:08 GMT']
-      request-id: [979c687b-9cf0-4b08-a430-755f90c4094f]
+      date: ['Tue, 13 Mar 2018 20:17:19 GMT']
+      request-id: [a5c36eae-6c99-4550-9cfc-4907654a0817]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -73,33 +69,28 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:19 GMT']
     method: GET
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.japanwest.batch.azure.com/$metadata#jobschedules/@Element\"\
-        ,\"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a\"\
-        ,\"eTag\":\"0x8D526307EF62004\",\"lastModified\":\"2017-11-07T22:40:07.313818Z\"\
-        ,\"creationTime\":\"2017-11-07T22:40:07.313818Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T22:40:07.313818Z\",\"schedule\":{\r\n \
-        \   \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n  },\"jobSpecification\"\
-        :{\r\n    \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\"\
-        :\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n   \
-        \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\"\
-        :2\r\n    },\"poolInfo\":{\r\n      \"poolId\":\"pool_id\"\r\n    }\r\n  },\"\
-        executionInfo\":{\r\n    \"nextRunTime\":\"2017-11-08T22:40:07.313818Z\",\"\
-        recentJob\":{\r\n      \"url\":\"https://batchfe140e2a.japanwest.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\"\
-        ,\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n    }\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobschedules/@Element\",\"id\":\"batch_schedule_fe140e2a\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a\",\"eTag\":\"0x8D5891F6BCAE2B5\",\"lastModified\":\"2018-03-13T20:17:18.8243125Z\",\"creationTime\":\"2018-03-13T20:17:18.8243125Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-03-13T20:17:18.8243125Z\",\"schedule\":{\r\n
+        \   \"startWindow\":\"PT1H\",\"recurrenceInterval\":\"P1D\"\r\n  },\"jobSpecification\":{\r\n
+        \   \"priority\":0,\"usesTaskDependencies\":false,\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\",\"constraints\":{\r\n
+        \     \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
+        \   },\"poolInfo\":{\r\n      \"poolId\":\"pool_id\"\r\n    }\r\n  },\"executionInfo\":{\r\n
+        \   \"nextRunTime\":\"2018-03-14T20:17:18.8243125Z\",\"recentJob\":{\r\n      \"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"id\":\"batch_schedule_fe140e2a:job-1\"\r\n
+        \   }\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:09 GMT']
-      etag: ['0x8D526307EF62004']
-      last-modified: ['Tue, 07 Nov 2017 22:40:07 GMT']
-      request-id: [455dcc90-91d1-4357-9cb3-8488782e5ed0]
+      date: ['Tue, 13 Mar 2018 20:17:20 GMT']
+      etag: ['0x8D5891F6BCAE2B5']
+      last-modified: ['Tue, 13 Mar 2018 20:17:18 GMT']
+      request-id: [4c805e6f-9f4c-48c9-a8ef-d82e3e02ff96]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -111,20 +102,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:20 GMT']
     method: HEAD
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:10 GMT']
-      etag: ['0x8D526307EF62004']
-      last-modified: ['Tue, 07 Nov 2017 22:40:07 GMT']
-      request-id: [2fc3e3fe-0b2b-48fc-97bd-785d34952316]
+      date: ['Tue, 13 Mar 2018 20:17:19 GMT']
+      etag: ['0x8D5891F6BCAE2B5']
+      last-modified: ['Tue, 13 Mar 2018 20:17:18 GMT']
+      request-id: [6fa79b22-d168-46e4-a378-1a5eeb352616]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -136,29 +128,26 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:20 GMT']
     method: GET
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a/jobs?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/jobs?api-version=2018-03-01.6.1
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.japanwest.batch.azure.com/$metadata#jobs\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_schedule_fe140e2a:job-1\",\"\
-        url\":\"https://batchfe140e2a.japanwest.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\"\
-        ,\"eTag\":\"0x8D526307F03CE22\",\"lastModified\":\"2017-11-07T22:40:07.4034722Z\"\
-        ,\"creationTime\":\"2017-11-07T22:40:07.3809907Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-07T22:40:07.4034722Z\",\"priority\":0,\"usesTaskDependencies\"\
-        :false,\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":2\r\n      },\"poolInfo\":{\r\n        \"poolId\":\"\
-        pool_id\"\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2017-11-07T22:40:07.4034722Z\"\
-        ,\"poolId\":\"pool_id\"\r\n      },\"onAllTasksComplete\":\"terminatejob\"\
-        ,\"onTaskFailure\":\"noaction\"\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchfe140e2a.westcentralus.batch.azure.com/$metadata#jobs\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_schedule_fe140e2a:job-1\",\"url\":\"https://batchfe140e2a.westcentralus.batch.azure.com/jobs/batch_schedule_fe140e2a:job-1\",\"eTag\":\"0x8D5891F6BD28426\",\"lastModified\":\"2018-03-13T20:17:18.8743206Z\",\"creationTime\":\"2018-03-13T20:17:18.8583077Z\",\"state\":\"active\",\"stateTransitionTime\":\"2018-03-13T20:17:18.8743206Z\",\"priority\":0,\"usesTaskDependencies\":false,\"constraints\":{\r\n
+        \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":2\r\n
+        \     },\"poolInfo\":{\r\n        \"poolId\":\"pool_id\"\r\n      },\"executionInfo\":{\r\n
+        \       \"startTime\":\"2018-03-13T20:17:18.8743206Z\",\"poolId\":\"pool_id\"\r\n
+        \     },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"noaction\"\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:12 GMT']
-      request-id: [e394c5ff-b1ad-4fe0-b2e7-fc7991212945]
+      date: ['Tue, 13 Mar 2018 20:17:21 GMT']
+      request-id: [a7b6f41b-36df-4258-bab1-c4455fd8f9aa]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -171,22 +160,23 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:21 GMT']
     method: POST
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
       content-length: ['0']
-      dataserviceid: ['https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable']
+      dataserviceid: ['https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/disable']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:13 GMT']
-      etag: ['0x8D526308282E74A']
-      last-modified: ['Tue, 07 Nov 2017 22:40:13 GMT']
-      request-id: [2fccb7be-b9a8-4055-ae47-07345d1f9316]
+      date: ['Tue, 13 Mar 2018 20:17:21 GMT']
+      etag: ['0x8D5891F6D8BCD45']
+      last-modified: ['Tue, 13 Mar 2018 20:17:21 GMT']
+      request-id: [5241acc8-3761-4f82-97f1-85f9e0d7dfc5]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
@@ -198,49 +188,51 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:22 GMT']
     method: POST
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
       content-length: ['0']
-      dataserviceid: ['https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable']
+      dataserviceid: ['https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/enable']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:14 GMT']
-      etag: ['0x8D52630835BF92F']
-      last-modified: ['Tue, 07 Nov 2017 22:40:14 GMT']
-      request-id: [8085b7b5-0a32-4cd8-b88c-aec944eb16d5]
+      date: ['Tue, 13 Mar 2018 20:17:22 GMT']
+      etag: ['0x8D5891F6DE3577E']
+      last-modified: ['Tue, 13 Mar 2018 20:17:22 GMT']
+      request-id: [bf884503-4fa9-4244-8f4b-5e35f2a77420]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
     status: {code: 204, message: No Content}
 - request:
-    body: '{"schedule": {"recurrenceInterval": "PT10H"}, "jobSpecification": {"poolInfo":
-      {"poolId": "pool_id"}}}'
+    body: '{"jobSpecification": {"poolInfo": {"poolId": "pool_id"}}, "schedule": {"recurrenceInterval":
+      "PT10H"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['102']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:22 GMT']
     method: PUT
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
+      dataserviceid: ['https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:17 GMT']
-      etag: ['0x8D5263084D0B64C']
-      last-modified: ['Tue, 07 Nov 2017 22:40:17 GMT']
-      request-id: [487a3d61-7d2f-4b37-be6f-d5f47b075c45]
+      date: ['Tue, 13 Mar 2018 20:17:22 GMT']
+      etag: ['0x8D5891F6E3A17AF']
+      last-modified: ['Tue, 13 Mar 2018 20:17:22 GMT']
+      request-id: [09e64fbd-e420-4681-8b91-b307c3a90fae]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -254,20 +246,21 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['44']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:23 GMT']
     method: PATCH
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
+      dataserviceid: ['https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:17 GMT']
-      etag: ['0x8D526308568288D']
-      last-modified: ['Tue, 07 Nov 2017 22:40:18 GMT']
-      request-id: [f43e8089-2b4a-4365-977c-057a555112fc]
+      date: ['Tue, 13 Mar 2018 20:17:23 GMT']
+      etag: ['0x8D5891F6E8BF4DD']
+      last-modified: ['Tue, 13 Mar 2018 20:17:23 GMT']
+      request-id: [a670d092-8eaa-46f0-8f3a-4a36c09e3130]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -280,21 +273,22 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:23 GMT']
     method: POST
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate']
+      dataserviceid: ['https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a/terminate']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:18 GMT']
-      etag: ['0x8D5263085CF0962']
-      last-modified: ['Tue, 07 Nov 2017 22:40:18 GMT']
-      request-id: [64661459-2769-45db-8b7d-9154361e22b6]
+      date: ['Tue, 13 Mar 2018 20:17:24 GMT']
+      etag: ['0x8D5891F6EDEB41F']
+      last-modified: ['Tue, 13 Mar 2018 20:17:23 GMT']
+      request-id: [08e3cefd-4fde-4e36-a5ea-032eb9624c29]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -307,18 +301,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.0 (Windows-2008ServerR2-6.1.7601-SP1) requests/2.18.4
+          msrest/0.4.27 msrest_azure/0.4.22 batchserviceclient/5.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
+      ocp-date: ['Tue, 13 Mar 2018 20:17:24 GMT']
     method: DELETE
-    uri: https://batchfe140e2a.japanwest.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2017-09-01.6.0
+    uri: https://batchfe140e2a.westcentralus.batch.azure.com/jobschedules/batch_schedule_fe140e2a?api-version=2018-03-01.6.1
   response:
     body: {string: ''}
     headers:
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 22:40:19 GMT']
-      request-id: [a4793292-6d08-486a-b1b4-f64d645be3ee]
+      date: ['Tue, 13 Mar 2018 20:17:24 GMT']
+      request-id: [b0f4ebfe-913e-44d2-9409-7115c5640746]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
