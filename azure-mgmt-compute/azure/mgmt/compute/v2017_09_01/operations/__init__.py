@@ -9,7 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_skus_operations import ResourceSkusOperations
+try:
+    from .resource_skus_operations_async import ResourceSkusOperations
+except (SyntaxError, ImportError):
+    from .resource_skus_operations import ResourceSkusOperations
 
 __all__ = [
     'ResourceSkusOperations',

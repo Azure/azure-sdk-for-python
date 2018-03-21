@@ -9,18 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .availability_sets_operations import AvailabilitySetsOperations
-from .virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
-from .virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
-from .virtual_machine_images_operations import VirtualMachineImagesOperations
-from .usage_operations import UsageOperations
-from .virtual_machine_sizes_operations import VirtualMachineSizesOperations
-from .images_operations import ImagesOperations
-from .virtual_machines_operations import VirtualMachinesOperations
-from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
-from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
-from .disks_operations import DisksOperations
-from .snapshots_operations import SnapshotsOperations
+try:
+    from .availability_sets_operations_async import AvailabilitySetsOperations
+    from .virtual_machine_extension_images_operations_async import VirtualMachineExtensionImagesOperations
+    from .virtual_machine_extensions_operations_async import VirtualMachineExtensionsOperations
+    from .virtual_machine_images_operations_async import VirtualMachineImagesOperations
+    from .usage_operations_async import UsageOperations
+    from .virtual_machine_sizes_operations_async import VirtualMachineSizesOperations
+    from .images_operations_async import ImagesOperations
+    from .virtual_machines_operations_async import VirtualMachinesOperations
+    from .virtual_machine_scale_sets_operations_async import VirtualMachineScaleSetsOperations
+    from .virtual_machine_scale_set_vms_operations_async import VirtualMachineScaleSetVMsOperations
+    from .disks_operations_async import DisksOperations
+    from .snapshots_operations_async import SnapshotsOperations
+except (SyntaxError, ImportError):
+    from .availability_sets_operations import AvailabilitySetsOperations
+    from .virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
+    from .virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
+    from .virtual_machine_images_operations import VirtualMachineImagesOperations
+    from .usage_operations import UsageOperations
+    from .virtual_machine_sizes_operations import VirtualMachineSizesOperations
+    from .images_operations import ImagesOperations
+    from .virtual_machines_operations import VirtualMachinesOperations
+    from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
+    from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
+    from .disks_operations import DisksOperations
+    from .snapshots_operations import SnapshotsOperations
 
 __all__ = [
     'AvailabilitySetsOperations',

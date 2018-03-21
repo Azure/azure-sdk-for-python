@@ -53,8 +53,7 @@ class VirtualMachineRunCommandsOperations(object):
          ~azure.mgmt.compute.v2017_03_30.models.RunCommandDocumentBasePaged[~azure.mgmt.compute.v2017_03_30.models.RunCommandDocumentBase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -84,6 +83,11 @@ class VirtualMachineRunCommandsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters)
+            return request, header_parameters
+
+        def internal_paging(next_link=None):
+            request, header_parameters = prepare_request(next_link)
+
             response = self._client.send(
                 request, header_parameters, stream=False, **operation_config)
 
@@ -95,12 +99,10 @@ class VirtualMachineRunCommandsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RunCommandDocumentBasePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RunCommandDocumentBasePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RunCommandDocumentBasePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/runCommands'}
@@ -146,9 +148,11 @@ class VirtualMachineRunCommandsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        body_content = None
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -156,7 +160,6 @@ class VirtualMachineRunCommandsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('RunCommandDocument', response)
 

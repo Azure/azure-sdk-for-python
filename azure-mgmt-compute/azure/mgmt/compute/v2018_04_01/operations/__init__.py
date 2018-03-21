@@ -9,8 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .disks_operations import DisksOperations
-from .snapshots_operations import SnapshotsOperations
+try:
+    from .disks_operations_async import DisksOperations
+    from .snapshots_operations_async import SnapshotsOperations
+except (SyntaxError, ImportError):
+    from .disks_operations import DisksOperations
+    from .snapshots_operations import SnapshotsOperations
 
 __all__ = [
     'DisksOperations',

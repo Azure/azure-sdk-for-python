@@ -13,22 +13,22 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.availability_sets_operations import AvailabilitySetsOperations
-from .operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
-from .operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
-from .operations.virtual_machine_images_operations import VirtualMachineImagesOperations
-from .operations.usage_operations import UsageOperations
-from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations
-from .operations.images_operations import ImagesOperations
-from .operations.resource_skus_operations import ResourceSkusOperations
-from .operations.virtual_machines_operations import VirtualMachinesOperations
-from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
-from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
-from .operations.virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
-from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
-from .operations.disks_operations import DisksOperations
-from .operations.snapshots_operations import SnapshotsOperations
-from .operations.virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
+from .operations import AvailabilitySetsOperations
+from .operations import VirtualMachineExtensionImagesOperations
+from .operations import VirtualMachineExtensionsOperations
+from .operations import VirtualMachineImagesOperations
+from .operations import UsageOperations
+from .operations import VirtualMachineSizesOperations
+from .operations import ImagesOperations
+from .operations import ResourceSkusOperations
+from .operations import VirtualMachinesOperations
+from .operations import VirtualMachineScaleSetsOperations
+from .operations import VirtualMachineScaleSetExtensionsOperations
+from .operations import VirtualMachineScaleSetRollingUpgradesOperations
+from .operations import VirtualMachineScaleSetVMsOperations
+from .operations import DisksOperations
+from .operations import SnapshotsOperations
+from .operations import VirtualMachineRunCommandsOperations
 from . import models
 
 
