@@ -10,10 +10,8 @@
 # --------------------------------------------------------------------------
 
 from .resource import Resource
-from .proxy_resource import ProxyResource
-from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
-from .backup_long_term_retention_vault import BackupLongTermRetentionVault
 from .tracked_resource import TrackedResource
+from .proxy_resource import ProxyResource
 from .recoverable_database import RecoverableDatabase
 from .restorable_dropped_database import RestorableDroppedDatabase
 from .max_size_capability import MaxSizeCapability
@@ -92,7 +90,8 @@ from .sync_group import SyncGroup
 from .sync_member import SyncMember
 from .subscription_usage import SubscriptionUsage
 from .virtual_network_rule import VirtualNetworkRule
-from .database_operation import DatabaseOperation
+from .long_term_retention_backup import LongTermRetentionBackup
+from .backup_long_term_retention_policy import BackupLongTermRetentionPolicy
 from .resource_move_definition import ResourceMoveDefinition
 from .automatic_tuning_server_options import AutomaticTuningServerOptions
 from .server_automatic_tuning import ServerAutomaticTuning
@@ -100,8 +99,8 @@ from .server_dns_alias import ServerDnsAlias
 from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
 from .restore_point import RestorePoint
 from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
-from .backup_long_term_retention_policy_paged import BackupLongTermRetentionPolicyPaged
-from .backup_long_term_retention_vault_paged import BackupLongTermRetentionVaultPaged
+from .database_operation import DatabaseOperation
+from .elastic_pool_operation import ElasticPoolOperation
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -137,11 +136,12 @@ from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
-from .database_operation_paged import DatabaseOperationPaged
+from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
+from .database_operation_paged import DatabaseOperationPaged
+from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .sql_management_client_enums import (
-    BackupLongTermRetentionPolicyState,
     CapabilityStatus,
     MaxSizeUnits,
     PerformanceLevelUnit,
@@ -192,18 +192,17 @@ from .sql_management_client_enums import (
     SyncDirection,
     SyncMemberState,
     VirtualNetworkRuleState,
-    ManagementOperationState,
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
+    ManagementOperationState,
+    DatabaseState,
 )
 
 __all__ = [
     'Resource',
-    'ProxyResource',
-    'BackupLongTermRetentionPolicy',
-    'BackupLongTermRetentionVault',
     'TrackedResource',
+    'ProxyResource',
     'RecoverableDatabase',
     'RestorableDroppedDatabase',
     'MaxSizeCapability',
@@ -282,7 +281,8 @@ __all__ = [
     'SyncMember',
     'SubscriptionUsage',
     'VirtualNetworkRule',
-    'DatabaseOperation',
+    'LongTermRetentionBackup',
+    'BackupLongTermRetentionPolicy',
     'ResourceMoveDefinition',
     'AutomaticTuningServerOptions',
     'ServerAutomaticTuning',
@@ -290,8 +290,8 @@ __all__ = [
     'ServerDnsAliasAcquisition',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
-    'BackupLongTermRetentionPolicyPaged',
-    'BackupLongTermRetentionVaultPaged',
+    'DatabaseOperation',
+    'ElasticPoolOperation',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -327,10 +327,11 @@ __all__ = [
     'SyncMemberPaged',
     'SubscriptionUsagePaged',
     'VirtualNetworkRulePaged',
-    'DatabaseOperationPaged',
+    'LongTermRetentionBackupPaged',
     'ServerDnsAliasPaged',
     'RestorePointPaged',
-    'BackupLongTermRetentionPolicyState',
+    'DatabaseOperationPaged',
+    'ElasticPoolOperationPaged',
     'CapabilityStatus',
     'MaxSizeUnits',
     'PerformanceLevelUnit',
@@ -381,8 +382,9 @@ __all__ = [
     'SyncDirection',
     'SyncMemberState',
     'VirtualNetworkRuleState',
-    'ManagementOperationState',
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
+    'ManagementOperationState',
+    'DatabaseState',
 ]
