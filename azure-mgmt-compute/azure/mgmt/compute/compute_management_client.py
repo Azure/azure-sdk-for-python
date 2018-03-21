@@ -79,9 +79,9 @@ class ComputeManagementClient(object):
 
     DEFAULT_API_VERSION = '2017-12-01'
     DEFAULT_PROFILE = {
-        'disks': '2017-03-30',
+        'disks': '2018-04-01',
         'resource_skus': '2017-09-01',
-        'snapshots': '2017-03-30',
+        'snapshots': '2018-04-01',
     }
 
     def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
