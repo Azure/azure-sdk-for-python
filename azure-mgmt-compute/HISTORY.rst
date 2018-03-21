@@ -34,6 +34,10 @@ This version uses a next-generation code generator that *might* introduce breaki
 **Compute features**
 
 - Support zone resilient for image/snapshots (new ApiVersion 2018-04-01)
+- Add "operations" operation group
+- Add availability_set.update
+- Add images.update
+- Add virtual_machine.update
 
 3.1.0rc3 (2018-11-01)
 +++++++++++++++++++++
