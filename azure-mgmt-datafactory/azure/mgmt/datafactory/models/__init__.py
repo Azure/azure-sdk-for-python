@@ -267,6 +267,8 @@ from .lookup_activity import LookupActivity
 from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
 from .custom_activity_reference_object import CustomActivityReferenceObject
 from .custom_activity import CustomActivity
+from .ssis_property_override import SSISPropertyOverride
+from .ssis_execution_parameter import SSISExecutionParameter
 from .ssis_package_location import SSISPackageLocation
 from .execute_ssis_package_activity import ExecuteSSISPackageActivity
 from .hd_insight_spark_activity import HDInsightSparkActivity
@@ -654,6 +656,8 @@ __all__ = [
     'SqlServerStoredProcedureActivity',
     'CustomActivityReferenceObject',
     'CustomActivity',
+    'SSISPropertyOverride',
+    'SSISExecutionParameter',
     'SSISPackageLocation',
     'ExecuteSSISPackageActivity',
     'HDInsightSparkActivity',
