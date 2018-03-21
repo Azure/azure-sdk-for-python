@@ -4559,7 +4559,7 @@ class KeyVaultClient(object):
         return deserialized
     get_deleted_storage_account.metadata = {'url': '/deletedstorage/{storage-account-name}'}
 
-    def purge_deleted_storge_account(
+    def purge_deleted_storage_account(
             self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
         """Permanently deletes the specified storage account.
 
@@ -4584,7 +4584,7 @@ class KeyVaultClient(object):
          :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
-        url = self.purge_deleted_storge_account.metadata['url']
+        url = self.purge_deleted_storage_account.metadata['url']
         path_format_arguments = {
             'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
             'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern=r'^[0-9a-zA-Z]+$')
@@ -4615,7 +4615,7 @@ class KeyVaultClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    purge_deleted_storge_account.metadata = {'url': '/deletedstorage/{storage-account-name}'}
+    purge_deleted_storage_account.metadata = {'url': '/deletedstorage/{storage-account-name}'}
 
     def recover_deleted_storage_account(
             self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
