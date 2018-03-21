@@ -31,6 +31,10 @@ This version uses a next-generation code generator that *might* introduce breaki
   - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
   - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
 
+**Compute features**
+
+- Support zone resilient for image/snapshots (new ApiVersion 2018-04-01)
+
 3.1.0rc3 (2018-11-01)
 +++++++++++++++++++++
 
