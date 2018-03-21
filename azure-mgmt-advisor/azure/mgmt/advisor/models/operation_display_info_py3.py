@@ -33,9 +33,9 @@ class OperationDisplayInfo(Model):
         'resource': {'key': 'resource', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, description: str=None, operation: str=None, provider: str=None, resource: str=None, **kwargs) -> None:
         super(OperationDisplayInfo, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.operation = kwargs.get('operation', None)
-        self.provider = kwargs.get('provider', None)
-        self.resource = kwargs.get('resource', None)
+        self.description = description
+        self.operation = operation
+        self.provider = provider
+        self.resource = resource

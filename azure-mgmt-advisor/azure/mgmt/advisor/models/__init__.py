@@ -9,15 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .config_data_properties import ConfigDataProperties
-from .config_data import ConfigData
-from .arm_error_response_body import ARMErrorResponseBody
-from .short_description import ShortDescription
-from .resource_recommendation_base import ResourceRecommendationBase
-from .resource import Resource
-from .operation_display_info import OperationDisplayInfo
-from .operation_entity import OperationEntity
-from .suppression_contract import SuppressionContract
+try:
+    from .config_data_properties_py3 import ConfigDataProperties
+    from .config_data_py3 import ConfigData
+    from .arm_error_response_body_py3 import ARMErrorResponseBody
+    from .short_description_py3 import ShortDescription
+    from .resource_recommendation_base_py3 import ResourceRecommendationBase
+    from .resource_py3 import Resource
+    from .operation_display_info_py3 import OperationDisplayInfo
+    from .operation_entity_py3 import OperationEntity
+    from .suppression_contract_py3 import SuppressionContract
+except (SyntaxError, ImportError):
+    from .config_data_properties import ConfigDataProperties
+    from .config_data import ConfigData
+    from .arm_error_response_body import ARMErrorResponseBody
+    from .short_description import ShortDescription
+    from .resource_recommendation_base import ResourceRecommendationBase
+    from .resource import Resource
+    from .operation_display_info import OperationDisplayInfo
+    from .operation_entity import OperationEntity
+    from .suppression_contract import SuppressionContract
 from .config_data_paged import ConfigDataPaged
 from .resource_recommendation_base_paged import ResourceRecommendationBasePaged
 from .operation_entity_paged import OperationEntityPaged
