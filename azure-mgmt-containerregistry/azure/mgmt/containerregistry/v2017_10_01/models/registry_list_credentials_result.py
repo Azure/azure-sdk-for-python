@@ -27,7 +27,7 @@ class RegistryListCredentialsResult(Model):
         'passwords': {'key': 'passwords', 'type': '[RegistryPassword]'},
     }
 
-    def __init__(self, username=None, passwords=None):
-        super(RegistryListCredentialsResult, self).__init__()
-        self.username = username
-        self.passwords = passwords
+    def __init__(self, **kwargs):
+        super(RegistryListCredentialsResult, self).__init__(**kwargs)
+        self.username = kwargs.get('username', None)
+        self.passwords = kwargs.get('passwords', None)

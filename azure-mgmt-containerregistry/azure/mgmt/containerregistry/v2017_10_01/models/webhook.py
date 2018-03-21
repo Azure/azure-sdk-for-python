@@ -18,14 +18,16 @@ class Webhook(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource ID.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource. This cannot be changed
-     after the resource is created.
+    :param location: Required. The location of the resource. This cannot be
+     changed after the resource is created.
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
@@ -38,8 +40,8 @@ class Webhook(Resource):
      'foo:bar' means events for 'foo:bar' only. 'foo' is equivalent to
      'foo:latest'. Empty means all events.
     :type scope: str
-    :param actions: The list of actions that trigger the webhook to post
-     notifications.
+    :param actions: Required. The list of actions that trigger the webhook to
+     post notifications.
     :type actions: list[str or
      ~azure.mgmt.containerregistry.v2017_10_01.models.WebhookAction]
     :ivar provisioning_state: The provisioning state of the webhook at the
@@ -70,9 +72,9 @@ class Webhook(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, actions, tags=None, status=None, scope=None):
-        super(Webhook, self).__init__(location=location, tags=tags)
-        self.status = status
-        self.scope = scope
-        self.actions = actions
+    def __init__(self, **kwargs):
+        super(Webhook, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.scope = kwargs.get('scope', None)
+        self.actions = kwargs.get('actions', None)
         self.provisioning_state = None

@@ -30,7 +30,7 @@ class Source(Model):
         'instance_id': {'key': 'instanceID', 'type': 'str'},
     }
 
-    def __init__(self, addr=None, instance_id=None):
-        super(Source, self).__init__()
-        self.addr = addr
-        self.instance_id = instance_id
+    def __init__(self, **kwargs):
+        super(Source, self).__init__(**kwargs)
+        self.addr = kwargs.get('addr', None)
+        self.instance_id = kwargs.get('instance_id', None)

@@ -18,8 +18,10 @@ class Sku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The SKU name of the container registry. Required for registry
-     creation. Allowed value: Basic.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The SKU name of the container registry. Required
+     for registry creation. Allowed value: Basic.
     :type name: str
     :ivar tier: The SKU tier based on the SKU name. Possible values include:
      'Basic'
@@ -37,7 +39,7 @@ class Sku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        super(Sku, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.tier = None

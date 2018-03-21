@@ -38,10 +38,10 @@ class Request(Model):
         'useragent': {'key': 'useragent', 'type': 'str'},
     }
 
-    def __init__(self, id=None, addr=None, host=None, method=None, useragent=None):
-        super(Request, self).__init__()
-        self.id = id
-        self.addr = addr
-        self.host = host
-        self.method = method
-        self.useragent = useragent
+    def __init__(self, **kwargs):
+        super(Request, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.addr = kwargs.get('addr', None)
+        self.host = kwargs.get('host', None)
+        self.method = kwargs.get('method', None)
+        self.useragent = kwargs.get('useragent', None)
