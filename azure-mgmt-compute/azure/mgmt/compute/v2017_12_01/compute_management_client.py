@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.availability_sets_operations import AvailabilitySetsOperations
 from .operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
@@ -70,6 +71,8 @@ class ComputeManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ComputeManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.compute.v2017_12_01.operations.Operations
     :ivar availability_sets: AvailabilitySets operations
     :vartype availability_sets: azure.mgmt.compute.v2017_12_01.operations.AvailabilitySetsOperations
     :ivar virtual_machine_extension_images: VirtualMachineExtensionImages operations
@@ -120,6 +123,8 @@ class ComputeManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.availability_sets = AvailabilitySetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
