@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class KeyVaultAndSecretReference(Model):
     """Key Vault Secret Url and vault id of the encryption key .
 
-    :param source_vault: Resource id of the KeyVault containing the key or
-     secret
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_vault: Required. Resource id of the KeyVault containing the
+     key or secret
     :type source_vault: ~azure.mgmt.compute.v2017_03_30.models.SourceVault
-    :param secret_url: Url pointing to a key or secret in KeyVault
+    :param secret_url: Required. Url pointing to a key or secret in KeyVault
     :type secret_url: str
     """
 
@@ -32,7 +34,7 @@ class KeyVaultAndSecretReference(Model):
         'secret_url': {'key': 'secretUrl', 'type': 'str'},
     }
 
-    def __init__(self, source_vault, secret_url):
-        super(KeyVaultAndSecretReference, self).__init__()
-        self.source_vault = source_vault
-        self.secret_url = secret_url
+    def __init__(self, **kwargs):
+        super(KeyVaultAndSecretReference, self).__init__(**kwargs)
+        self.source_vault = kwargs.get('source_vault', None)
+        self.secret_url = kwargs.get('secret_url', None)

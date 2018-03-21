@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .availability_sets_operations import AvailabilitySetsOperations
 from .virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
@@ -21,9 +22,11 @@ from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperat
 from .virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
 from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
+from .log_analytics_operations import LogAnalyticsOperations
 from .virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
 
 __all__ = [
+    'Operations',
     'AvailabilitySetsOperations',
     'VirtualMachineExtensionImagesOperations',
     'VirtualMachineExtensionsOperations',
@@ -36,5 +39,6 @@ __all__ = [
     'VirtualMachineScaleSetExtensionsOperations',
     'VirtualMachineScaleSetRollingUpgradesOperations',
     'VirtualMachineScaleSetVMsOperations',
+    'LogAnalyticsOperations',
     'VirtualMachineRunCommandsOperations',
 ]

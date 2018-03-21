@@ -39,8 +39,8 @@ class VirtualMachineScaleSetSku(Model):
         'capacity': {'key': 'capacity', 'type': 'VirtualMachineScaleSetSkuCapacity'},
     }
 
-    def __init__(self):
-        super(VirtualMachineScaleSetSku, self).__init__()
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetSku, self).__init__(**kwargs)
         self.resource_type = None
         self.sku = None
         self.capacity = None

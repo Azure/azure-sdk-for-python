@@ -37,8 +37,8 @@ class EncryptionSettings(Model):
         'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultAndKeyReference'},
     }
 
-    def __init__(self, enabled=None, disk_encryption_key=None, key_encryption_key=None):
-        super(EncryptionSettings, self).__init__()
-        self.enabled = enabled
-        self.disk_encryption_key = disk_encryption_key
-        self.key_encryption_key = key_encryption_key
+    def __init__(self, **kwargs):
+        super(EncryptionSettings, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.disk_encryption_key = kwargs.get('disk_encryption_key', None)
+        self.key_encryption_key = kwargs.get('key_encryption_key', None)
