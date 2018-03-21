@@ -15,8 +15,11 @@ from msrest.serialization import Model
 class DeploymentExtended(Model):
     """Deployment information.
 
-    :param id: The ID of the deployment.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the deployment.
+    :vartype id: str
     :param name: The name of the deployment.
     :type name: str
     :param properties: Deployment properties.
@@ -25,6 +28,7 @@ class DeploymentExtended(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'required': True},
     }
 
@@ -34,8 +38,8 @@ class DeploymentExtended(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, name, id=None, properties=None):
+    def __init__(self, name, properties=None):
         super(DeploymentExtended, self).__init__()
-        self.id = id
+        self.id = None
         self.name = name
         self.properties = properties
