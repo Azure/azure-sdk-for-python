@@ -116,6 +116,19 @@ class EventHubClient(object):
         self._close_clients()
         self._close_connection()
 
+    def get_eventhub_info(self):
+        eh_name = self.address.path.lstrip('/')
+        target = "amqps://{}/{}".format(self.address.hostname, eh_name)
+        with uamqp.AMQPClient(target, auth=self.auth, debug=True) as mgmt_client:
+            mgmt_msg = Message(application_properties={'name': eh_name})
+            response = mgmt_client.mgmt_request(
+                mgmt_msg,
+                constants.READ_OPERATION,
+                op_type=b'com.microsoft:eventhub',
+                status_code_field=b'status-code',
+                description_fields=b'status-description')
+            return response.get_data()
+
     def add_receiver(self, consumer_group, partition, offset=None, prefetch=300):
         """
         Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.

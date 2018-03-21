@@ -8,8 +8,10 @@ import asyncio
 from queue import Queue
 import concurrent.futures
 from collections import Counter
-from bs4 import BeautifulSoup
+
 import requests
+
+from azure.eventhub.async import EventHubClientAsync
 from azure.eventprocessorhost.eh_partition_pump import EventHubPartitionPump
 from azure.eventprocessorhost.cancellation_token import CancellationToken
 
@@ -35,22 +37,16 @@ class PartitionManager:
         """
         Returns a list of all the event hub partition ids
         """
-        return ["0", "1"]
         if not self.partition_ids:
+            eh_client = EventHubClientAsync(
+                self.host.eh_config.client_address,
+                debug=self.host.eph_options.debug_trace)
             try:
-                headers = {"Content-Type": "application/json;type=entry;charset=utf-8",
-                           "Authorization": self.host.eh_config.rest_token,
-                           "Host": "{}.servicebus.windows.net".format(self.host.eh_config.sb_name)
-                           }
-
-                res = requests.get('https://{}.servicebus.windows.net/{}?timeout=60& \
-                                    api-version=2014-01'.format(self.host.eh_config.sb_name,
-                                                                self.host.eh_config.eh_name),
-                                   headers=headers)
-                soup = BeautifulSoup(res.text, "lxml-xml")  # process xml response
-                self.partition_ids = [pid.text for pid in soup.find("PartitionIds")]
+                eh_info = await eh_client.get_eventhub_info_async()
+                print("got eh info", eh_info)
+                self.partition_ids = eh_info['partition_ids']
             except Exception as err:
-                raise Exception("failed to get partition ids", repr(err))
+                raise Exception("Failed to get partition ids", repr(err))
 
         return self.partition_ids
 

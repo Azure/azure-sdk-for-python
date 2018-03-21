@@ -22,7 +22,7 @@ from azure.eventhub import (
 
 from uamqp.async import SASTokenAsync
 from uamqp.async import ConnectionAsync
-from uamqp import SendClientAsync, ReceiveClientAsync, Source
+from uamqp import Message, AMQPClientAsync, SendClientAsync, ReceiveClientAsync, Source
 from uamqp import constants, types
 
 log = logging.getLogger(__name__)
@@ -71,6 +71,19 @@ class EventHubClientAsync(EventHubClient):
         self.stopped = True
         await self._close_clients_async()
         await self._close_connection_async()
+
+    async def get_eventhub_info_async(self):
+        eh_name = self.address.path.lstrip('/')
+        target = "amqps://{}/{}".format(self.address.hostname, eh_name)
+        async with AMQPClientAsync(target, auth=self.auth, debug=True) as mgmt_client:
+            mgmt_msg = Message(application_properties={'name': eh_name})
+            response = await mgmt_client.mgmt_request_async(
+                mgmt_msg,
+                constants.READ_OPERATION,
+                op_type=b'com.microsoft:eventhub',
+                status_code_field=b'status-code',
+                description_fields=b'status-description')
+            return response.get_data()
 
     def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, loop=None):
         """
