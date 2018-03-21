@@ -6,12 +6,17 @@
 import logging
 import asyncio
 import sys
+import os
+
 from azure.eventprocessorhost import (
     AbstractEventProcessor,
     AzureStorageCheckpointLeaseManager,
     EventHubConfig,
-    EventProcessorHost)
+    EventProcessorHost,
+    EPHOptions)
 
+import examples
+logger = examples.get_logger(logging.DEBUG)
 
 class ExEventProcessorHost(EventProcessorHost):
     async def open_async(self):
@@ -40,14 +45,14 @@ class EventProcessor(AbstractEventProcessor):
         """
         Called by processor host to initialize the event processor.
         """
-        logging.info("Connection established {}".format(context.partition_id))
+        logger.info("Connection established {}".format(context.partition_id))
 
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
         (Params) Context:Information about the partition
         """
-        logging.info("Connection closed (reason {}, id {}, offset {}, sq_number {})".format(
+        logger.info("Connection closed (reason {}, id {}, offset {}, sq_number {})".format(
             reason,
             context.partition_id,
             context.offset,
@@ -59,7 +64,7 @@ class EventProcessor(AbstractEventProcessor):
         This is where the real work of the event processor is done.
         (Params) Context: Information about the partition, Messages: The events to be processed.
         """
-        logging.info("Events processed {} {}".format(context.partition_id, messages))
+        logger.info("Events processed {}".format(context.sequence_number))
         await context.checkpoint_async()
 
     async def process_error_async(self, context, error):
@@ -69,9 +74,12 @@ class EventProcessor(AbstractEventProcessor):
         continuing to pump messages,so no action is required from
         (Params) Context: Information about the partition, Error: The error that occured.
         """
-        logging.error("Event Processor Error {}".format(repr(error)))
+        logger.error("Event Processor Error {}".format(repr(error)))
+
 
 try:
+    LOOP = asyncio.get_event_loop()
+
     # Storage Account Credentials
     STORAGE_ACCOUNT_NAME = os.environ.get('AZURE_STORAGE_ACCOUNT')
     STORAGE_KEY = os.environ.get('AZURE_STORAGE_ACCESS_KEY')
@@ -84,8 +92,19 @@ try:
 
     # Eventhub config and storage manager 
     EH_CONFIG = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$default")
+    EH_OPTIONS = EPHOptions()
+    EH_OPTIONS.release_pump_on_timeout = True
+    EH_OPTIONS.debug_trace = False
     STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
                                                          LEASE_CONTAINER_NAME)
+    #Event loop and host
+    HOST = EventProcessorHost(
+        EventProcessor,
+        EH_CONFIG,
+        STORAGE_MANAGER,
+        ep_params=["param1","param2"],
+        eph_options=EH_OPTIONS,
+        loop=LOOP)
 
     # HOST = exEventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
     #                             ep_params=["param1", "param2"], loop=LOOP)
