@@ -42,5 +42,6 @@ class PoolInformation(Model):
     }
 
     def __init__(self, pool_id=None, auto_pool_specification=None):
+        super(PoolInformation, self).__init__()
         self.pool_id = pool_id
         self.auto_pool_specification = auto_pool_specification

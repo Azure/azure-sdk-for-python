@@ -114,6 +114,7 @@ class JobPreparationTask(Model):
     }
 
     def __init__(self, command_line, id=None, container_settings=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, user_identity=None, rerun_on_node_reboot_after_success=None):
+        super(JobPreparationTask, self).__init__()
         self.id = id
         self.command_line = command_line
         self.container_settings = container_settings

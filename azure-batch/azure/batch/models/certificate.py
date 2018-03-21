@@ -59,6 +59,7 @@ class Certificate(Model):
     }
 
     def __init__(self, thumbprint=None, thumbprint_algorithm=None, url=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, public_data=None, delete_certificate_error=None):
+        super(Certificate, self).__init__()
         self.thumbprint = thumbprint
         self.thumbprint_algorithm = thumbprint_algorithm
         self.url = url

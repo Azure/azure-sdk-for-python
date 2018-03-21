@@ -33,6 +33,7 @@ class NodeFile(Model):
     }
 
     def __init__(self, name=None, url=None, is_directory=None, properties=None):
+        super(NodeFile, self).__init__()
         self.name = name
         self.url = url
         self.is_directory = is_directory
