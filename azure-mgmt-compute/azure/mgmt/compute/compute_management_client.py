@@ -79,9 +79,9 @@ class ComputeManagementClient(object):
 
     DEFAULT_API_VERSION = '2017-12-01'
     DEFAULT_PROFILE = {
-        'disks': '2017-03-30',
+        'disks': '2018-04-01',
         'resource_skus': '2017-09-01',
-        'snapshots': '2017-03-30',
+        'snapshots': '2018-04-01',
     }
 
     def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
@@ -108,6 +108,7 @@ class ComputeManagementClient(object):
            * 2017-03-30: :mod:`v2017_03_30.models<azure.mgmt.compute.v2017_03_30.models>`
            * 2017-09-01: :mod:`v2017_09_01.models<azure.mgmt.compute.v2017_09_01.models>`
            * 2017-12-01: :mod:`v2017_12_01.models<azure.mgmt.compute.v2017_12_01.models>`
+           * 2018-04-01: :mod:`v2018_04_01.models<azure.mgmt.compute.v2018_04_01.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -126,6 +127,9 @@ class ComputeManagementClient(object):
             return models
         elif api_version == '2017-12-01':
             from .v2017_12_01 import models
+            return models
+        elif api_version == '2018-04-01':
+            from .v2018_04_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
@@ -160,12 +164,15 @@ class ComputeManagementClient(object):
 
            * 2016-04-30-preview: :class:`DisksOperations<azure.mgmt.compute.v2016_04_30_preview.operations.DisksOperations>`
            * 2017-03-30: :class:`DisksOperations<azure.mgmt.compute.v2017_03_30.operations.DisksOperations>`
+           * 2018-04-01: :class:`DisksOperations<azure.mgmt.compute.v2018_04_01.operations.DisksOperations>`
         """
         api_version = self.profile.get('disks', self.api_version)
         if api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import DisksOperations as OperationClass
         elif api_version == '2017-03-30':
             from .v2017_03_30.operations import DisksOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import DisksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -185,6 +192,32 @@ class ComputeManagementClient(object):
             from .v2017_03_30.operations import ImagesOperations as OperationClass
         elif api_version == '2017-12-01':
             from .v2017_12_01.operations import ImagesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def log_analytics(self):
+        """Instance depends on the API version:
+
+           * 2017-12-01: :class:`LogAnalyticsOperations<azure.mgmt.compute.v2017_12_01.operations.LogAnalyticsOperations>`
+        """
+        api_version = self.profile.get('log_analytics', self.api_version)
+        if api_version == '2017-12-01':
+            from .v2017_12_01.operations import LogAnalyticsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2017-12-01: :class:`Operations<azure.mgmt.compute.v2017_12_01.operations.Operations>`
+        """
+        api_version = self.profile.get('operations', self.api_version)
+        if api_version == '2017-12-01':
+            from .v2017_12_01.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -211,12 +244,15 @@ class ComputeManagementClient(object):
 
            * 2016-04-30-preview: :class:`SnapshotsOperations<azure.mgmt.compute.v2016_04_30_preview.operations.SnapshotsOperations>`
            * 2017-03-30: :class:`SnapshotsOperations<azure.mgmt.compute.v2017_03_30.operations.SnapshotsOperations>`
+           * 2018-04-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2018_04_01.operations.SnapshotsOperations>`
         """
         api_version = self.profile.get('snapshots', self.api_version)
         if api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import SnapshotsOperations as OperationClass
         elif api_version == '2017-03-30':
             from .v2017_03_30.operations import SnapshotsOperations as OperationClass
+        elif api_version == '2018-04-01':
+            from .v2018_04_01.operations import SnapshotsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
