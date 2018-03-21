@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource_namespace_patch import ResourceNamespacePatch
 
 
-class SBNamespace(TrackedResource):
+class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     """Description of a namespace resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource Id
     :vartype id: str
@@ -26,7 +24,7 @@ class SBNamespace(TrackedResource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Required. The Geo-location where the resource lives
+    :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -49,7 +47,6 @@ class SBNamespace(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
@@ -71,9 +68,9 @@ class SBNamespace(TrackedResource):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SBNamespace, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, **kwargs) -> None:
+        super(SBNamespaceUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None

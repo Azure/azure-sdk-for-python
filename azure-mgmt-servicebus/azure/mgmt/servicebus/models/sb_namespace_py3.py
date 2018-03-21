@@ -71,9 +71,9 @@ class SBNamespace(TrackedResource):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SBNamespace, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, location: str, tags=None, sku=None, **kwargs) -> None:
+        super(SBNamespace, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None

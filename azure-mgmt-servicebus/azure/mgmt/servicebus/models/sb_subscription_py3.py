@@ -111,22 +111,22 @@ class SBSubscription(Resource):
         'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SBSubscription, self).__init__(**kwargs)
+    def __init__(self, *, lock_duration=None, requires_session: bool=None, default_message_time_to_live=None, dead_lettering_on_filter_evaluation_exceptions: bool=None, dead_lettering_on_message_expiration: bool=None, duplicate_detection_history_time_window=None, max_delivery_count: int=None, status=None, enable_batched_operations: bool=None, auto_delete_on_idle=None, forward_to: str=None, forward_dead_lettered_messages_to: str=None, **kwargs) -> None:
+        super(SBSubscription, self).__init__(, **kwargs)
         self.message_count = None
         self.created_at = None
         self.accessed_at = None
         self.updated_at = None
         self.count_details = None
-        self.lock_duration = kwargs.get('lock_duration', None)
-        self.requires_session = kwargs.get('requires_session', None)
-        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
-        self.dead_lettering_on_filter_evaluation_exceptions = kwargs.get('dead_lettering_on_filter_evaluation_exceptions', None)
-        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
-        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
-        self.status = kwargs.get('status', None)
-        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
-        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
-        self.forward_to = kwargs.get('forward_to', None)
-        self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
+        self.lock_duration = lock_duration
+        self.requires_session = requires_session
+        self.default_message_time_to_live = default_message_time_to_live
+        self.dead_lettering_on_filter_evaluation_exceptions = dead_lettering_on_filter_evaluation_exceptions
+        self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
+        self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
+        self.max_delivery_count = max_delivery_count
+        self.status = status
+        self.enable_batched_operations = enable_batched_operations
+        self.auto_delete_on_idle = auto_delete_on_idle
+        self.forward_to = forward_to
+        self.forward_dead_lettered_messages_to = forward_dead_lettered_messages_to
