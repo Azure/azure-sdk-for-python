@@ -3,7 +3,7 @@
 Release History
 ===============
 
-4.0.0rc1 (2018-XX-XX)
+4.0.0rc1 (2018-03-21)
 +++++++++++++++++++++
 
 **General Breaking changes**
