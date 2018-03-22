@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class RecoverableDatabasesOperations(object):
-    """RecoverableDatabasesOperations operations.
+class ElasticPoolOperations(object):
+    """ElasticPoolOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2017-10-01-preview".
     """
 
     models = models
@@ -33,14 +33,13 @@ class RecoverableDatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2014-04-01"
+        self.api_version = "2017-10-01-preview"
 
         self.config = config
 
-    def get(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a recoverable database, which is a resource representing a
-        database's geo backup.
+    def cancel(
+            self, resource_group_name, server_name, elastic_pool_name, operation_id, custom_headers=None, raw=False, **operation_config):
+        """Cancels the asynchronous operation on the elastic pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -48,25 +47,27 @@ class RecoverableDatabasesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database
-        :type database_name: str
+        :param elastic_pool_name:
+        :type elastic_pool_name: str
+        :param operation_id: The operation identifier.
+        :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RecoverableDatabase or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.sql.models.RecoverableDatabase or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.cancel.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -85,7 +86,7 @@ class RecoverableDatabasesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
+        request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -93,21 +94,14 @@ class RecoverableDatabasesOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RecoverableDatabase', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/operations/{operationId}/cancel'}
 
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases/{databaseName}'}
-
-    def list_by_server(
-            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of recoverable databases.
+    def list_by_elastic_pool(
+            self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of operations performed on the elastic pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -115,25 +109,28 @@ class RecoverableDatabasesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param elastic_pool_name:
+        :type elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of RecoverableDatabase
+        :return: An iterator like instance of ElasticPoolOperation
         :rtype:
-         ~azure.mgmt.sql.models.RecoverableDatabasePaged[~azure.mgmt.sql.models.RecoverableDatabase]
+         ~azure.mgmt.sql.models.ElasticPoolOperationPaged[~azure.mgmt.sql.models.ElasticPoolOperation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_server.metadata['url']
+                url = self.list_by_elastic_pool.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serverName': self._serialize.url("server_name", server_name, 'str')
+                    'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -168,12 +165,12 @@ class RecoverableDatabasesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RecoverableDatabasePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ElasticPoolOperationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.RecoverableDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ElasticPoolOperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_server.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases'}
+    list_by_elastic_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/operations'}
