@@ -13,13 +13,12 @@ from msrest.serialization import Model
 
 
 class FlowLogStatusParameters(Model):
-    """Parameters that define a resource to query flow log and traffic analytics
-    (optional) status.
+    """Parameters that define a resource to query flow log status.
 
     All required parameters must be populated in order to send to Azure.
 
     :param target_resource_id: Required. The target resource where getting the
-     flow logging and traffic analytics (optional) status.
+     flow logging status.
     :type target_resource_id: str
     """
 
