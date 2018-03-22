@@ -12,8 +12,8 @@
 from .dataset import Dataset
 
 
-class ImpalaObjectDataset(Dataset):
-    """Impala server dataset.
+class SalesforceMarketingCloudObjectDataset(Dataset):
+    """Salesforce Marketing Cloud dataset.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -42,5 +42,5 @@ class ImpalaObjectDataset(Dataset):
     }
 
     def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None):
-        super(ImpalaObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.type = 'ImpalaObject'
+        super(SalesforceMarketingCloudObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
+        self.type = 'SalesforceMarketingCloudObject'

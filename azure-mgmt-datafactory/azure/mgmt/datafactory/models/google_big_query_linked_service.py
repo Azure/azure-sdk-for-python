@@ -23,6 +23,12 @@ class GoogleBigQueryLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param project: The default BigQuery project to query against.
@@ -81,6 +87,8 @@ class GoogleBigQueryLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'project': {'key': 'typeProperties.project', 'type': 'object'},
         'additional_projects': {'key': 'typeProperties.additionalProjects', 'type': 'object'},
@@ -96,8 +104,8 @@ class GoogleBigQueryLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, project, authentication_type, additional_properties=None, connect_via=None, description=None, additional_projects=None, request_google_drive_scope=None, refresh_token=None, client_id=None, client_secret=None, email=None, key_file_path=None, trusted_cert_path=None, use_system_trust_store=None, encrypted_credential=None):
-        super(GoogleBigQueryLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, project, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, additional_projects=None, request_google_drive_scope=None, refresh_token=None, client_id=None, client_secret=None, email=None, key_file_path=None, trusted_cert_path=None, use_system_trust_store=None, encrypted_credential=None):
+        super(GoogleBigQueryLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.project = project
         self.additional_projects = additional_projects
         self.request_google_drive_scope = request_google_drive_scope

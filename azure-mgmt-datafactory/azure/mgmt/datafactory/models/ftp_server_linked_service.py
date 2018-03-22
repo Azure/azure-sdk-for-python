@@ -23,6 +23,12 @@ class FtpServerLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param host: Host name of the FTP server. Type: string (or Expression with
@@ -64,6 +70,8 @@ class FtpServerLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
@@ -75,8 +83,8 @@ class FtpServerLinkedService(LinkedService):
         'enable_server_certificate_validation': {'key': 'typeProperties.enableServerCertificateValidation', 'type': 'object'},
     }
 
-    def __init__(self, host, additional_properties=None, connect_via=None, description=None, port=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, enable_ssl=None, enable_server_certificate_validation=None):
-        super(FtpServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, host, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, port=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, enable_ssl=None, enable_server_certificate_validation=None):
+        super(FtpServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.host = host
         self.port = port
         self.authentication_type = authentication_type
