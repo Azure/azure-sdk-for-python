@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class VaultCreateOrUpdateParameters(Model):
     """Parameters for creating or updating a vault.
 
-    :param location: The supported Azure location where the key vault should
-     be created.
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The supported Azure location where the key
+     vault should be created.
     :type location: str
     :param tags: The tags that will be assigned to the key vault.
     :type tags: dict[str, str]
-    :param properties: Properties of the vault
+    :param properties: Required. Properties of the vault
     :type properties: ~azure.mgmt.keyvault.models.VaultProperties
     """
 
@@ -35,8 +37,8 @@ class VaultCreateOrUpdateParameters(Model):
         'properties': {'key': 'properties', 'type': 'VaultProperties'},
     }
 
-    def __init__(self, location, properties, tags=None):
-        super(VaultCreateOrUpdateParameters, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(VaultCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)

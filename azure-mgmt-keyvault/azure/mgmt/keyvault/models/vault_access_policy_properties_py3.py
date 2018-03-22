@@ -31,6 +31,6 @@ class VaultAccessPolicyProperties(Model):
         'access_policies': {'key': 'accessPolicies', 'type': '[AccessPolicyEntry]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, access_policies, **kwargs) -> None:
         super(VaultAccessPolicyProperties, self).__init__(**kwargs)
-        self.access_policies = kwargs.get('access_policies', None)
+        self.access_policies = access_policies
