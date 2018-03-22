@@ -195,13 +195,6 @@ class TransparentDataEncryptionActivityStatus(Enum):
     decrypting = "Decrypting"
 
 
-class ElasticPoolEdition(Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-
-
 class SecurityAlertPolicyState(Enum):
 
     new = "New"
@@ -248,6 +241,13 @@ class ElasticPoolState(Enum):
     creating = "Creating"
     ready = "Ready"
     disabled = "Disabled"
+
+
+class ElasticPoolEdition(Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
 
 
 class GeoBackupPolicyState(Enum):
@@ -492,7 +492,7 @@ class ManagementOperationState(Enum):
     cancelled = "Cancelled"
 
 
-class DatabaseState(Enum):
+class LongTermRetentionDatabaseState(Enum):
 
     all = "All"
     live = "Live"

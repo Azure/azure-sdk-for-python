@@ -25,13 +25,13 @@ from .operations.data_masking_rules_operations import DataMaskingRulesOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.geo_backup_policies_operations import GeoBackupPoliciesOperations
+from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .operations.replication_links_operations import ReplicationLinksOperations
 from .operations.server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .operations.server_communication_links_operations import ServerCommunicationLinksOperations
 from .operations.service_objectives_operations import ServiceObjectivesOperations
 from .operations.elastic_pool_activities_operations import ElasticPoolActivitiesOperations
 from .operations.elastic_pool_database_activities_operations import ElasticPoolDatabaseActivitiesOperations
-from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .operations.service_tier_advisors_operations import ServiceTierAdvisorsOperations
 from .operations.transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 from .operations.transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
@@ -121,6 +121,8 @@ class SqlManagementClient(object):
     :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
     :ivar geo_backup_policies: GeoBackupPolicies operations
     :vartype geo_backup_policies: azure.mgmt.sql.operations.GeoBackupPoliciesOperations
+    :ivar recommended_elastic_pools: RecommendedElasticPools operations
+    :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
     :ivar replication_links: ReplicationLinks operations
     :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
     :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
@@ -133,8 +135,6 @@ class SqlManagementClient(object):
     :vartype elastic_pool_activities: azure.mgmt.sql.operations.ElasticPoolActivitiesOperations
     :ivar elastic_pool_database_activities: ElasticPoolDatabaseActivities operations
     :vartype elastic_pool_database_activities: azure.mgmt.sql.operations.ElasticPoolDatabaseActivitiesOperations
-    :ivar recommended_elastic_pools: RecommendedElasticPools operations
-    :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
     :ivar service_tier_advisors: ServiceTierAdvisors operations
     :vartype service_tier_advisors: azure.mgmt.sql.operations.ServiceTierAdvisorsOperations
     :ivar transparent_data_encryptions: TransparentDataEncryptions operations
@@ -225,6 +225,8 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.geo_backup_policies = GeoBackupPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.replication_links = ReplicationLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
@@ -236,8 +238,6 @@ class SqlManagementClient(object):
         self.elastic_pool_activities = ElasticPoolActivitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pool_database_activities = ElasticPoolDatabaseActivitiesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_tier_advisors = ServiceTierAdvisorsOperations(
             self._client, self.config, self._serialize, self._deserialize)

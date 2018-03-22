@@ -21,13 +21,13 @@ from .data_masking_rules_operations import DataMaskingRulesOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .firewall_rules_operations import FirewallRulesOperations
 from .geo_backup_policies_operations import GeoBackupPoliciesOperations
+from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .replication_links_operations import ReplicationLinksOperations
 from .server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .server_communication_links_operations import ServerCommunicationLinksOperations
 from .service_objectives_operations import ServiceObjectivesOperations
 from .elastic_pool_activities_operations import ElasticPoolActivitiesOperations
 from .elastic_pool_database_activities_operations import ElasticPoolDatabaseActivitiesOperations
-from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .service_tier_advisors_operations import ServiceTierAdvisorsOperations
 from .transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 from .transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
@@ -65,13 +65,13 @@ __all__ = [
     'ElasticPoolsOperations',
     'FirewallRulesOperations',
     'GeoBackupPoliciesOperations',
+    'RecommendedElasticPoolsOperations',
     'ReplicationLinksOperations',
     'ServerAzureADAdministratorsOperations',
     'ServerCommunicationLinksOperations',
     'ServiceObjectivesOperations',
     'ElasticPoolActivitiesOperations',
     'ElasticPoolDatabaseActivitiesOperations',
-    'RecommendedElasticPoolsOperations',
     'ServiceTierAdvisorsOperations',
     'TransparentDataEncryptionsOperations',
     'TransparentDataEncryptionActivitiesOperations',
