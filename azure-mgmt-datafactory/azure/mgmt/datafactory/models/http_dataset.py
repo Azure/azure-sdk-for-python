@@ -15,6 +15,8 @@ from .dataset import Dataset
 class HttpDataset(Dataset):
     """A file in an HTTP web server.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,7 +25,7 @@ class HttpDataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -32,7 +34,7 @@ class HttpDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param relative_url: The relative URL based on the URL in the
      HttpLinkedService refers to an HTTP file Type: string (or Expression with
@@ -77,12 +79,12 @@ class HttpDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, relative_url=None, request_method=None, request_body=None, additional_headers=None, format=None, compression=None):
-        super(HttpDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.relative_url = relative_url
-        self.request_method = request_method
-        self.request_body = request_body
-        self.additional_headers = additional_headers
-        self.format = format
-        self.compression = compression
+    def __init__(self, **kwargs):
+        super(HttpDataset, self).__init__(**kwargs)
+        self.relative_url = kwargs.get('relative_url', None)
+        self.request_method = kwargs.get('request_method', None)
+        self.request_body = kwargs.get('request_body', None)
+        self.additional_headers = kwargs.get('additional_headers', None)
+        self.format = kwargs.get('format', None)
+        self.compression = kwargs.get('compression', None)
         self.type = 'HttpFile'

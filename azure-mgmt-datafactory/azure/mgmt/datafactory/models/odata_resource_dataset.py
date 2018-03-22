@@ -15,6 +15,8 @@ from .dataset import Dataset
 class ODataResourceDataset(Dataset):
     """The Open Data Protocol (OData) resource dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,7 +25,7 @@ class ODataResourceDataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -32,7 +34,7 @@ class ODataResourceDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param path: The OData resource path. Type: string (or Expression with
      resultType string).
@@ -55,7 +57,7 @@ class ODataResourceDataset(Dataset):
         'path': {'key': 'typeProperties.path', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, path=None):
-        super(ODataResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.path = path
+    def __init__(self, **kwargs):
+        super(ODataResourceDataset, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
         self.type = 'ODataResource'

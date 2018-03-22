@@ -21,6 +21,8 @@ class CopySink(Model):
     SqlSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
     AzureTableSink, AzureQueueSink, SapCloudForCustomerSink
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -38,7 +40,7 @@ class CopySink(Model):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -59,11 +61,11 @@ class CopySink(Model):
         'type': {'SalesforceSink': 'SalesforceSink', 'DynamicsSink': 'DynamicsSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink'}
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None):
-        super(CopySink, self).__init__()
-        self.additional_properties = additional_properties
-        self.write_batch_size = write_batch_size
-        self.write_batch_timeout = write_batch_timeout
-        self.sink_retry_count = sink_retry_count
-        self.sink_retry_wait = sink_retry_wait
+    def __init__(self, **kwargs):
+        super(CopySink, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.write_batch_size = kwargs.get('write_batch_size', None)
+        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
+        self.sink_retry_count = kwargs.get('sink_retry_count', None)
+        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
         self.type = None

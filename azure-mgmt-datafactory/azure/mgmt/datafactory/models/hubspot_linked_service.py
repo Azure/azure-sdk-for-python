@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class HubspotLinkedService(LinkedService):
     """Hubspot Serivce linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,10 @@ class HubspotLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param client_id: The client ID associated with your Hubspot application.
+    :param client_id: Required. The client ID associated with your Hubspot
+     application.
     :type client_id: object
     :param client_secret: The client secret associated with your Hubspot
      application.
@@ -80,14 +83,14 @@ class HubspotLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, client_id, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, client_secret=None, access_token=None, refresh_token=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(HubspotLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.access_token = access_token
-        self.refresh_token = refresh_token
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(HubspotLinkedService, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.access_token = kwargs.get('access_token', None)
+        self.refresh_token = kwargs.get('refresh_token', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Hubspot'

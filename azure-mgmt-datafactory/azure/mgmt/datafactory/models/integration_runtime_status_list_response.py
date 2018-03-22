@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class IntegrationRuntimeStatusListResponse(Model):
     """A list of integration runtime status.
 
-    :param value: List of integration runtime status.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of integration runtime status.
     :type value:
      list[~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse]
     :param next_link: The link to the next page of results, if any remaining
@@ -32,7 +34,7 @@ class IntegrationRuntimeStatusListResponse(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value, next_link=None):
-        super(IntegrationRuntimeStatusListResponse, self).__init__()
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeStatusListResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)

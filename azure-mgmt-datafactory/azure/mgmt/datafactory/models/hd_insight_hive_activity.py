@@ -15,16 +15,18 @@ from .execution_activity import ExecutionActivity
 class HDInsightHiveActivity(ExecutionActivity):
     """HDInsight Hive activity type.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
@@ -71,12 +73,12 @@ class HDInsightHiveActivity(ExecutionActivity):
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
     }
 
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, script_path=None, script_linked_service=None, defines=None):
-        super(HDInsightHiveActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.storage_linked_services = storage_linked_services
-        self.arguments = arguments
-        self.get_debug_info = get_debug_info
-        self.script_path = script_path
-        self.script_linked_service = script_linked_service
-        self.defines = defines
+    def __init__(self, **kwargs):
+        super(HDInsightHiveActivity, self).__init__(**kwargs)
+        self.storage_linked_services = kwargs.get('storage_linked_services', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.get_debug_info = kwargs.get('get_debug_info', None)
+        self.script_path = kwargs.get('script_path', None)
+        self.script_linked_service = kwargs.get('script_linked_service', None)
+        self.defines = kwargs.get('defines', None)
         self.type = 'HDInsightHive'
