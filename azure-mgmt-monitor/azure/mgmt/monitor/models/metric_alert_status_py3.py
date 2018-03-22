@@ -19,9 +19,8 @@ class MetricAlertStatus(Model):
     :type name: str
     :param id: The alert rule arm id.
     :type id: str
-    :param type: Possible values include:
-     'microsoft.insights/metricalerts/status'
-    :type type: str or ~azure.mgmt.monitor.models.enum
+    :param type: The extended resource type name.
+    :type type: str
     :param properties: The alert status properties of the metric alert status.
     :type properties: ~azure.mgmt.monitor.models.MetricAlertStatusProperties
     """
@@ -33,7 +32,7 @@ class MetricAlertStatus(Model):
         'properties': {'key': 'properties', 'type': 'MetricAlertStatusProperties'},
     }
 
-    def __init__(self, *, name: str=None, id: str=None, type=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, id: str=None, type: str=None, properties=None, **kwargs) -> None:
         super(MetricAlertStatus, self).__init__(**kwargs)
         self.name = name
         self.id = id
