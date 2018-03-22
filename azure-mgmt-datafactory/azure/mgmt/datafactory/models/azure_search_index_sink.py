@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class AzureSearchIndexSink(CopySink):
     """A copy activity Azure Search Index sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -32,7 +34,7 @@ class AzureSearchIndexSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: Specify the write behavior when upserting documents
      into Azure Search Index. Possible values include: 'Merge', 'Upload'
@@ -54,7 +56,7 @@ class AzureSearchIndexSink(CopySink):
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, write_behavior=None):
-        super(AzureSearchIndexSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
-        self.write_behavior = write_behavior
+    def __init__(self, **kwargs):
+        super(AzureSearchIndexSink, self).__init__(**kwargs)
+        self.write_behavior = kwargs.get('write_behavior', None)
         self.type = 'AzureSearchIndexSink'

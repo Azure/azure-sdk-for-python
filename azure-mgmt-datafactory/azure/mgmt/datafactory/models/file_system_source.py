@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class FileSystemSource(CopySource):
     """A copy activity file system source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -25,7 +27,7 @@ class FileSystemSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
@@ -45,7 +47,7 @@ class FileSystemSource(CopySource):
         'recursive': {'key': 'recursive', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, recursive=None):
-        super(FileSystemSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
-        self.recursive = recursive
+    def __init__(self, **kwargs):
+        super(FileSystemSource, self).__init__(**kwargs)
+        self.recursive = kwargs.get('recursive', None)
         self.type = 'FileSystemSource'

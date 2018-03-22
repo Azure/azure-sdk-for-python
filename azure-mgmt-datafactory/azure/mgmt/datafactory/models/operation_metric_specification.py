@@ -50,14 +50,14 @@ class OperationMetricSpecification(Model):
         'availabilities': {'key': 'availabilities', 'type': '[OperationMetricAvailability]'},
     }
 
-    def __init__(self, name=None, display_name=None, display_description=None, unit=None, aggregation_type=None, enable_regional_mdm_account=None, source_mdm_account=None, source_mdm_namespace=None, availabilities=None):
-        super(OperationMetricSpecification, self).__init__()
-        self.name = name
-        self.display_name = display_name
-        self.display_description = display_description
-        self.unit = unit
-        self.aggregation_type = aggregation_type
-        self.enable_regional_mdm_account = enable_regional_mdm_account
-        self.source_mdm_account = source_mdm_account
-        self.source_mdm_namespace = source_mdm_namespace
-        self.availabilities = availabilities
+    def __init__(self, **kwargs):
+        super(OperationMetricSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
+        self.availabilities = kwargs.get('availabilities', None)

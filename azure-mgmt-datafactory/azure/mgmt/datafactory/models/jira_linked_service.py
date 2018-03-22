@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class JiraLinkedService(LinkedService):
     """Jira Serivce linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,16 +31,17 @@ class JiraLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: The IP address or host name of the Jira service. (e.g.
-     jira.example.com)
+    :param host: Required. The IP address or host name of the Jira service.
+     (e.g. jira.example.com)
     :type host: object
     :param port: The TCP port that the Jira server uses to listen for client
      connections. The default value is 443 if connecting through HTTPS, or 8080
      if connecting through HTTP.
     :type port: object
-    :param username: The user name that you use to access Jira Service.
+    :param username: Required. The user name that you use to access Jira
+     Service.
     :type username: object
     :param password: The password corresponding to the user name that you
      provided in the username field.
@@ -82,14 +85,14 @@ class JiraLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, username, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, port=None, password=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(JiraLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.port = port
-        self.username = username
-        self.password = password
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(JiraLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.port = kwargs.get('port', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Jira'

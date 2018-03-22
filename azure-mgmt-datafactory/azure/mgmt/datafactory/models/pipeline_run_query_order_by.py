@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class PipelineRunQueryOrderBy(Model):
     """An object to provide order by options for listing pipeline runs.
 
-    :param order_by: Parameter name to be used for order by. Possible values
-     include: 'RunStart', 'RunEnd'
+    All required parameters must be populated in order to send to Azure.
+
+    :param order_by: Required. Parameter name to be used for order by.
+     Possible values include: 'RunStart', 'RunEnd'
     :type order_by: str or
      ~azure.mgmt.datafactory.models.PipelineRunQueryOrderByField
-    :param order: Sorting order of the parameter. Possible values include:
-     'ASC', 'DESC'
+    :param order: Required. Sorting order of the parameter. Possible values
+     include: 'ASC', 'DESC'
     :type order: str or ~azure.mgmt.datafactory.models.PipelineRunQueryOrder
     """
 
@@ -34,7 +36,7 @@ class PipelineRunQueryOrderBy(Model):
         'order': {'key': 'order', 'type': 'str'},
     }
 
-    def __init__(self, order_by, order):
-        super(PipelineRunQueryOrderBy, self).__init__()
-        self.order_by = order_by
-        self.order = order
+    def __init__(self, **kwargs):
+        super(PipelineRunQueryOrderBy, self).__init__(**kwargs)
+        self.order_by = kwargs.get('order_by', None)
+        self.order = kwargs.get('order', None)

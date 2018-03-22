@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class HDInsightOnDemandLinkedService(LinkedService):
     """HDInsight ondemand linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,37 +31,37 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param cluster_size: Number of worker/data nodes in the cluster.
+    :param cluster_size: Required. Number of worker/data nodes in the cluster.
      Suggestion value: 4. Type: string (or Expression with resultType string).
     :type cluster_size: object
-    :param time_to_live: The allowed idle time for the on-demand HDInsight
-     cluster. Specifies how long the on-demand HDInsight cluster stays alive
-     after completion of an activity run if there are no other active jobs in
-     the cluster. The minimum value is 5 mins. Type: string (or Expression with
-     resultType string).
-    :type time_to_live: object
-    :param version: Version of the HDInsight cluster.  Type: string (or
+    :param time_to_live: Required. The allowed idle time for the on-demand
+     HDInsight cluster. Specifies how long the on-demand HDInsight cluster
+     stays alive after completion of an activity run if there are no other
+     active jobs in the cluster. The minimum value is 5 mins. Type: string (or
      Expression with resultType string).
+    :type time_to_live: object
+    :param version: Required. Version of the HDInsight cluster.  Type: string
+     (or Expression with resultType string).
     :type version: object
-    :param linked_service_name: Azure Storage linked service to be used by the
-     on-demand cluster for storing and processing data.
+    :param linked_service_name: Required. Azure Storage linked service to be
+     used by the on-demand cluster for storing and processing data.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param host_subscription_id: The customer’s subscription to host the
-     cluster. Type: string (or Expression with resultType string).
+    :param host_subscription_id: Required. The customer’s subscription to host
+     the cluster. Type: string (or Expression with resultType string).
     :type host_subscription_id: object
     :param service_principal_id: The service principal id for the
      hostSubscriptionId. Type: string (or Expression with resultType string).
     :type service_principal_id: object
     :param service_principal_key: The key for the service principal id.
     :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
-    :param tenant: The Tenant id/name to which the service principal belongs.
-     Type: string (or Expression with resultType string).
-    :type tenant: object
-    :param cluster_resource_group: The resource group where the cluster
+    :param tenant: Required. The Tenant id/name to which the service principal
      belongs. Type: string (or Expression with resultType string).
+    :type tenant: object
+    :param cluster_resource_group: Required. The resource group where the
+     cluster belongs. Type: string (or Expression with resultType string).
     :type cluster_resource_group: object
     :param cluster_name_prefix: The prefix of cluster name, postfix will be
      distinct with timestamp. Type: string (or Expression with resultType
@@ -182,36 +184,36 @@ class HDInsightOnDemandLinkedService(LinkedService):
         'zookeeper_node_size': {'key': 'typeProperties.zookeeperNodeSize', 'type': 'object'},
     }
 
-    def __init__(self, cluster_size, time_to_live, version, linked_service_name, host_subscription_id, tenant, cluster_resource_group, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, service_principal_id=None, service_principal_key=None, cluster_name_prefix=None, cluster_user_name=None, cluster_password=None, cluster_ssh_user_name=None, cluster_ssh_password=None, additional_linked_service_names=None, hcatalog_linked_service_name=None, cluster_type=None, spark_version=None, core_configuration=None, h_base_configuration=None, hdfs_configuration=None, hive_configuration=None, map_reduce_configuration=None, oozie_configuration=None, storm_configuration=None, yarn_configuration=None, encrypted_credential=None, head_node_size=None, data_node_size=None, zookeeper_node_size=None):
-        super(HDInsightOnDemandLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.cluster_size = cluster_size
-        self.time_to_live = time_to_live
-        self.version = version
-        self.linked_service_name = linked_service_name
-        self.host_subscription_id = host_subscription_id
-        self.service_principal_id = service_principal_id
-        self.service_principal_key = service_principal_key
-        self.tenant = tenant
-        self.cluster_resource_group = cluster_resource_group
-        self.cluster_name_prefix = cluster_name_prefix
-        self.cluster_user_name = cluster_user_name
-        self.cluster_password = cluster_password
-        self.cluster_ssh_user_name = cluster_ssh_user_name
-        self.cluster_ssh_password = cluster_ssh_password
-        self.additional_linked_service_names = additional_linked_service_names
-        self.hcatalog_linked_service_name = hcatalog_linked_service_name
-        self.cluster_type = cluster_type
-        self.spark_version = spark_version
-        self.core_configuration = core_configuration
-        self.h_base_configuration = h_base_configuration
-        self.hdfs_configuration = hdfs_configuration
-        self.hive_configuration = hive_configuration
-        self.map_reduce_configuration = map_reduce_configuration
-        self.oozie_configuration = oozie_configuration
-        self.storm_configuration = storm_configuration
-        self.yarn_configuration = yarn_configuration
-        self.encrypted_credential = encrypted_credential
-        self.head_node_size = head_node_size
-        self.data_node_size = data_node_size
-        self.zookeeper_node_size = zookeeper_node_size
+    def __init__(self, **kwargs):
+        super(HDInsightOnDemandLinkedService, self).__init__(**kwargs)
+        self.cluster_size = kwargs.get('cluster_size', None)
+        self.time_to_live = kwargs.get('time_to_live', None)
+        self.version = kwargs.get('version', None)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.host_subscription_id = kwargs.get('host_subscription_id', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.cluster_resource_group = kwargs.get('cluster_resource_group', None)
+        self.cluster_name_prefix = kwargs.get('cluster_name_prefix', None)
+        self.cluster_user_name = kwargs.get('cluster_user_name', None)
+        self.cluster_password = kwargs.get('cluster_password', None)
+        self.cluster_ssh_user_name = kwargs.get('cluster_ssh_user_name', None)
+        self.cluster_ssh_password = kwargs.get('cluster_ssh_password', None)
+        self.additional_linked_service_names = kwargs.get('additional_linked_service_names', None)
+        self.hcatalog_linked_service_name = kwargs.get('hcatalog_linked_service_name', None)
+        self.cluster_type = kwargs.get('cluster_type', None)
+        self.spark_version = kwargs.get('spark_version', None)
+        self.core_configuration = kwargs.get('core_configuration', None)
+        self.h_base_configuration = kwargs.get('h_base_configuration', None)
+        self.hdfs_configuration = kwargs.get('hdfs_configuration', None)
+        self.hive_configuration = kwargs.get('hive_configuration', None)
+        self.map_reduce_configuration = kwargs.get('map_reduce_configuration', None)
+        self.oozie_configuration = kwargs.get('oozie_configuration', None)
+        self.storm_configuration = kwargs.get('storm_configuration', None)
+        self.yarn_configuration = kwargs.get('yarn_configuration', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.head_node_size = kwargs.get('head_node_size', None)
+        self.data_node_size = kwargs.get('data_node_size', None)
+        self.zookeeper_node_size = kwargs.get('zookeeper_node_size', None)
         self.type = 'HDInsightOnDemand'
