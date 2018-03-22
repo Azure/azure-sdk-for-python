@@ -23,6 +23,12 @@ class HiveLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     :param host: IP address or host name of the Hive server, separated by ';'
@@ -94,6 +100,8 @@ class HiveLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
@@ -114,8 +122,8 @@ class HiveLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, authentication_type, additional_properties=None, connect_via=None, description=None, port=None, server_type=None, thrift_transport_protocol=None, service_discovery_mode=None, zoo_keeper_name_space=None, use_native_query=None, username=None, password=None, http_path=None, enable_ssl=None, trusted_cert_path=None, use_system_trust_store=None, allow_host_name_cn_mismatch=None, allow_self_signed_server_cert=None, encrypted_credential=None):
-        super(HiveLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
+    def __init__(self, host, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, port=None, server_type=None, thrift_transport_protocol=None, service_discovery_mode=None, zoo_keeper_name_space=None, use_native_query=None, username=None, password=None, http_path=None, enable_ssl=None, trusted_cert_path=None, use_system_trust_store=None, allow_host_name_cn_mismatch=None, allow_self_signed_server_cert=None, encrypted_credential=None):
+        super(HiveLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
         self.host = host
         self.port = port
         self.server_type = server_type

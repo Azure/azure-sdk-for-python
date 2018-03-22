@@ -12,9 +12,8 @@
 from .control_activity import ControlActivity
 
 
-class ForEachActivity(ControlActivity):
-    """This activity is used for iterating over a collection and execute given
-    activities.
+class FilterActivity(ControlActivity):
+    """Filter and return results from input array based on the conditions.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -27,24 +26,17 @@ class ForEachActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param type: Constant filled by server.
     :type type: str
-    :param is_sequential: Should the loop be executed in sequence or in
-     parallel (max 50)
-    :type is_sequential: bool
-    :param batch_count: Batch count to be used for controlling the number of
-     parallel execution (when isSequential is set to false).
-    :type batch_count: int
-    :param items: Collection to iterate.
+    :param items: Input array on which filter should be applied.
     :type items: ~azure.mgmt.datafactory.models.Expression
-    :param activities: List of activities to execute .
-    :type activities: list[~azure.mgmt.datafactory.models.Activity]
+    :param condition: Condition to be used for filtering the input.
+    :type condition: ~azure.mgmt.datafactory.models.Expression
     """
 
     _validation = {
         'name': {'required': True},
         'type': {'required': True},
-        'batch_count': {'maximum': 50},
         'items': {'required': True},
-        'activities': {'required': True},
+        'condition': {'required': True},
     }
 
     _attribute_map = {
@@ -53,16 +45,12 @@ class ForEachActivity(ControlActivity):
         'description': {'key': 'description', 'type': 'str'},
         'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
         'type': {'key': 'type', 'type': 'str'},
-        'is_sequential': {'key': 'typeProperties.isSequential', 'type': 'bool'},
-        'batch_count': {'key': 'typeProperties.batchCount', 'type': 'int'},
         'items': {'key': 'typeProperties.items', 'type': 'Expression'},
-        'activities': {'key': 'typeProperties.activities', 'type': '[Activity]'},
+        'condition': {'key': 'typeProperties.condition', 'type': 'Expression'},
     }
 
-    def __init__(self, name, items, activities, additional_properties=None, description=None, depends_on=None, is_sequential=None, batch_count=None):
-        super(ForEachActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
-        self.is_sequential = is_sequential
-        self.batch_count = batch_count
+    def __init__(self, name, items, condition, additional_properties=None, description=None, depends_on=None):
+        super(FilterActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
         self.items = items
-        self.activities = activities
-        self.type = 'ForEach'
+        self.condition = condition
+        self.type = 'Filter'
