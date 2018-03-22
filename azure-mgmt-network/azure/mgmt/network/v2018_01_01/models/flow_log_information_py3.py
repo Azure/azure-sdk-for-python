@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class FlowLogInformation(Model):
-    """Information on the configuration of flow log.
+    """Information on the configuration of flow log and traffic analytics
+    (optional).
 
     All required parameters must be populated in order to send to Azure.
 
@@ -28,12 +29,16 @@ class FlowLogInformation(Model):
     :param retention_policy:
     :type retention_policy:
      ~azure.mgmt.network.v2018_01_01.models.RetentionPolicyParameters
+    :param network_watcher_flow_analytics_configuration: Required.
+    :type network_watcher_flow_analytics_configuration:
+     ~azure.mgmt.network.v2018_01_01.models.TrafficAnalyticsConfigurationProperties
     """
 
     _validation = {
         'target_resource_id': {'required': True},
         'storage_id': {'required': True},
         'enabled': {'required': True},
+        'network_watcher_flow_analytics_configuration': {'required': True},
     }
 
     _attribute_map = {
@@ -41,11 +46,13 @@ class FlowLogInformation(Model):
         'storage_id': {'key': 'properties.storageId', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
+        'network_watcher_flow_analytics_configuration': {'key': 'flowAnalyticsConfiguration.networkWatcherFlowAnalyticsConfiguration', 'type': 'TrafficAnalyticsConfigurationProperties'},
     }
 
-    def __init__(self, *, target_resource_id: str, storage_id: str, enabled: bool, retention_policy=None, **kwargs) -> None:
+    def __init__(self, *, target_resource_id: str, storage_id: str, enabled: bool, network_watcher_flow_analytics_configuration, retention_policy=None, **kwargs) -> None:
         super(FlowLogInformation, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.storage_id = storage_id
         self.enabled = enabled
         self.retention_policy = retention_policy
+        self.network_watcher_flow_analytics_configuration = network_watcher_flow_analytics_configuration
