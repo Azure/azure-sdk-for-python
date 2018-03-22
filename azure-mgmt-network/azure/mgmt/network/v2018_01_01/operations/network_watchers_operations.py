@@ -1103,8 +1103,7 @@ class NetworkWatchersOperations(object):
 
     def set_flow_log_configuration(
             self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Configures flow log and traffic analytics (optional) on a specified
-        resource.
+        """Configures flow log on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource
          group.
@@ -1211,8 +1210,7 @@ class NetworkWatchersOperations(object):
 
     def get_flow_log_status(
             self, resource_group_name, network_watcher_name, target_resource_id, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Queries status of flow log and traffic analytics (optional) on a
-        specified resource.
+        """Queries status of flow log on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource
          group.
@@ -1220,7 +1218,7 @@ class NetworkWatchersOperations(object):
         :param network_watcher_name: The name of the network watcher resource.
         :type network_watcher_name: str
         :param target_resource_id: The target resource where getting the flow
-         logging and traffic analytics (optional) status.
+         logging status.
         :type target_resource_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
