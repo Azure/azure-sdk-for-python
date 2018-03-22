@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class SqlSink(CopySink):
     """A copy activity SQL sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -32,7 +34,7 @@ class SqlSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
      Type: string (or Expression with resultType string).
@@ -65,10 +67,10 @@ class SqlSink(CopySink):
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, sql_writer_stored_procedure_name=None, sql_writer_table_type=None, pre_copy_script=None, stored_procedure_parameters=None):
-        super(SqlSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
-        self.sql_writer_stored_procedure_name = sql_writer_stored_procedure_name
-        self.sql_writer_table_type = sql_writer_table_type
-        self.pre_copy_script = pre_copy_script
-        self.stored_procedure_parameters = stored_procedure_parameters
+    def __init__(self, **kwargs):
+        super(SqlSink, self).__init__(**kwargs)
+        self.sql_writer_stored_procedure_name = kwargs.get('sql_writer_stored_procedure_name', None)
+        self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
         self.type = 'SqlSink'

@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureKeyVaultLinkedService(LinkedService):
     """Azure Key Vault linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,9 @@ class AzureKeyVaultLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param base_url: The base URL of the Azure Key Vault. e.g.
+    :param base_url: Required. The base URL of the Azure Key Vault. e.g.
      https://myakv.vault.azure.net Type: string (or Expression with resultType
      string).
     :type base_url: object
@@ -52,7 +54,7 @@ class AzureKeyVaultLinkedService(LinkedService):
         'base_url': {'key': 'typeProperties.baseUrl', 'type': 'object'},
     }
 
-    def __init__(self, base_url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None):
-        super(AzureKeyVaultLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.base_url = base_url
+    def __init__(self, **kwargs):
+        super(AzureKeyVaultLinkedService, self).__init__(**kwargs)
+        self.base_url = kwargs.get('base_url', None)
         self.type = 'AzureKeyVault'

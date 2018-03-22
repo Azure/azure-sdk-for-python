@@ -49,8 +49,8 @@ class LinkedIntegrationRuntime(Model):
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(LinkedIntegrationRuntime, self).__init__()
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntime, self).__init__(**kwargs)
         self.name = None
         self.subscription_id = None
         self.data_factory_name = None

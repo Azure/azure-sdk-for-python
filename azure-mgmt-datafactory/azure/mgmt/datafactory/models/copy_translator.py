@@ -18,10 +18,12 @@ class CopyTranslator(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: TabularTranslator
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -38,7 +40,7 @@ class CopyTranslator(Model):
         'type': {'TabularTranslator': 'TabularTranslator'}
     }
 
-    def __init__(self, additional_properties=None):
-        super(CopyTranslator, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(CopyTranslator, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.type = None

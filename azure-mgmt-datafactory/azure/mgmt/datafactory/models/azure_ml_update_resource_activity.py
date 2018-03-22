@@ -15,32 +15,34 @@ from .execution_activity import ExecutionActivity
 class AzureMLUpdateResourceActivity(ExecutionActivity):
     """Azure ML Update Resource management activity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param trained_model_name: Name of the Trained Model module in the Web
-     Service experiment to be updated. Type: string (or Expression with
+    :param trained_model_name: Required. Name of the Trained Model module in
+     the Web Service experiment to be updated. Type: string (or Expression with
      resultType string).
     :type trained_model_name: object
-    :param trained_model_linked_service_name: Name of Azure Storage linked
-     service holding the .ilearner file that will be uploaded by the update
-     operation.
+    :param trained_model_linked_service_name: Required. Name of Azure Storage
+     linked service holding the .ilearner file that will be uploaded by the
+     update operation.
     :type trained_model_linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
-    :param trained_model_file_path: The relative file path in
+    :param trained_model_file_path: Required. The relative file path in
      trainedModelLinkedService to represent the .ilearner file that will be
      uploaded by the update operation.  Type: string (or Expression with
      resultType string).
@@ -68,9 +70,9 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):
         'trained_model_file_path': {'key': 'typeProperties.trainedModelFilePath', 'type': 'object'},
     }
 
-    def __init__(self, name, trained_model_name, trained_model_linked_service_name, trained_model_file_path, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None):
-        super(AzureMLUpdateResourceActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.trained_model_name = trained_model_name
-        self.trained_model_linked_service_name = trained_model_linked_service_name
-        self.trained_model_file_path = trained_model_file_path
+    def __init__(self, **kwargs):
+        super(AzureMLUpdateResourceActivity, self).__init__(**kwargs)
+        self.trained_model_name = kwargs.get('trained_model_name', None)
+        self.trained_model_linked_service_name = kwargs.get('trained_model_linked_service_name', None)
+        self.trained_model_file_path = kwargs.get('trained_model_file_path', None)
         self.type = 'AzureMLUpdateResource'

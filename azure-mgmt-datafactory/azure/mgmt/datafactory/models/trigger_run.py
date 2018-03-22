@@ -65,9 +65,9 @@ class TriggerRun(Model):
         'triggered_pipelines': {'key': 'triggeredPipelines', 'type': '{str}'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(TriggerRun, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(TriggerRun, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.trigger_run_id = None
         self.trigger_name = None
         self.trigger_type = None

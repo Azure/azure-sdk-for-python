@@ -18,6 +18,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      'NeedRegistration', 'Online', 'Limited', 'Offline'
     :vartype state: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :ivar create_time: The time at which the integration runtime was created,
      in ISO8601 format.
@@ -109,13 +111,13 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'links': {'key': 'typeProperties.links', 'type': '[LinkedIntegrationRuntime]'},
     }
 
-    def __init__(self, additional_properties=None, nodes=None, links=None):
-        super(SelfHostedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties)
+    def __init__(self, **kwargs):
+        super(SelfHostedIntegrationRuntimeStatus, self).__init__(**kwargs)
         self.create_time = None
         self.task_queue_id = None
         self.internal_channel_encryption = None
         self.version = None
-        self.nodes = nodes
+        self.nodes = kwargs.get('nodes', None)
         self.scheduled_update_date = None
         self.update_delay_offset = None
         self.local_time_zone_offset = None
@@ -123,5 +125,5 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.service_urls = None
         self.auto_update = None
         self.version_status = None
-        self.links = links
+        self.links = kwargs.get('links', None)
         self.type = 'SelfHosted'
