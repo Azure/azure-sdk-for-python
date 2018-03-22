@@ -28,7 +28,8 @@ class SubscriptionCreationParameters(Model):
      enrollment account scope. Possible values include: 'MS-AZR-0017P',
      'MS-AZR-0148P'
     :type offer_type: str or ~azure.mgmt.subscription.models.OfferType
-    :param additional_parameters:
+    :param additional_parameters: Additional, untyped parameters to support
+     custom subscription creation scenarios.
     :type additional_parameters: dict[str, object]
     """
 
