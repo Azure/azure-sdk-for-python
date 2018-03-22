@@ -28,12 +28,15 @@ class SubscriptionCreationParameters(Model):
      enrollment account scope. Possible values include: 'MS-AZR-0017P',
      'MS-AZR-0148P'
     :type offer_type: str or ~azure.mgmt.subscription.models.OfferType
+    :param additional_parameters:
+    :type additional_parameters: dict[str, object]
     """
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
         'owners': {'key': 'owners', 'type': '[AdPrincipal]'},
         'offer_type': {'key': 'offerType', 'type': 'str'},
+        'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
     }
 
     def __init__(self, **kwargs):
@@ -41,3 +44,4 @@ class SubscriptionCreationParameters(Model):
         self.display_name = kwargs.get('display_name', None)
         self.owners = kwargs.get('owners', None)
         self.offer_type = kwargs.get('offer_type', None)
+        self.additional_parameters = kwargs.get('additional_parameters', None)
