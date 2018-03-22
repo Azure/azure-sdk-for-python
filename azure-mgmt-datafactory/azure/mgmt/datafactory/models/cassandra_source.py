@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class CassandraSource(CopySource):
     """A copy activity source for a Cassandra database.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -25,7 +27,7 @@ class CassandraSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param query: Database query. Should be a SQL-92 query expression or
      Cassandra Query Language (CQL) command. Type: string (or Expression with
@@ -56,8 +58,8 @@ class CassandraSource(CopySource):
         'consistency_level': {'key': 'consistencyLevel', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None, consistency_level=None):
-        super(CassandraSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
-        self.query = query
-        self.consistency_level = consistency_level
+    def __init__(self, **kwargs):
+        super(CassandraSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.consistency_level = kwargs.get('consistency_level', None)
         self.type = 'CassandraSource'

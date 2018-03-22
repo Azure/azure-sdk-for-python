@@ -19,6 +19,8 @@ class DatasetStorageFormat(Model):
     sub-classes are: ParquetFormat, OrcFormat, AvroFormat, JsonFormat,
     TextFormat
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -28,7 +30,7 @@ class DatasetStorageFormat(Model):
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -47,9 +49,9 @@ class DatasetStorageFormat(Model):
         'type': {'ParquetFormat': 'ParquetFormat', 'OrcFormat': 'OrcFormat', 'AvroFormat': 'AvroFormat', 'JsonFormat': 'JsonFormat', 'TextFormat': 'TextFormat'}
     }
 
-    def __init__(self, additional_properties=None, serializer=None, deserializer=None):
-        super(DatasetStorageFormat, self).__init__()
-        self.additional_properties = additional_properties
-        self.serializer = serializer
-        self.deserializer = deserializer
+    def __init__(self, **kwargs):
+        super(DatasetStorageFormat, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.serializer = kwargs.get('serializer', None)
+        self.deserializer = kwargs.get('deserializer', None)
         self.type = None

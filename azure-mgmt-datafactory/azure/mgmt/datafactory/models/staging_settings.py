@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class StagingSettings(Model):
     """Staging settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param linked_service_name: Staging linked service reference.
+    :param linked_service_name: Required. Staging linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param path: The path to storage for storing the interim data. Type:
@@ -41,9 +43,9 @@ class StagingSettings(Model):
         'enable_compression': {'key': 'enableCompression', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, path=None, enable_compression=None):
-        super(StagingSettings, self).__init__()
-        self.additional_properties = additional_properties
-        self.linked_service_name = linked_service_name
-        self.path = path
-        self.enable_compression = enable_compression
+    def __init__(self, **kwargs):
+        super(StagingSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.path = kwargs.get('path', None)
+        self.enable_compression = kwargs.get('enable_compression', None)
