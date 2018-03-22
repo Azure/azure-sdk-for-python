@@ -11,10 +11,16 @@
 
 from .feature_properties import FeatureProperties
 from .feature_result import FeatureResult
+from .operation_display import OperationDisplay
+from .operation_definition import OperationDefinition
+from .operations_list import OperationsList
 from .feature_result_paged import FeatureResultPaged
 
 __all__ = [
     'FeatureProperties',
     'FeatureResult',
+    'OperationDisplay',
+    'OperationDefinition',
+    'OperationsList',
     'FeatureResultPaged',
 ]
