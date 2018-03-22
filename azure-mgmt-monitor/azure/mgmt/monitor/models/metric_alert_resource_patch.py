@@ -39,7 +39,7 @@ class MetricAlertResourcePatch(Model):
     :param window_size: Required. the period of time (in ISO 8601 duration
      format) that is used to monitor alert activity based on the threshold.
     :type window_size: timedelta
-    :param criteria: Required. definies the specific alert criteria
+    :param criteria: Required. defines the specific alert criteria
      information.
     :type criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
     :param actions: the array of actions that are performed when the alert
