@@ -28,8 +28,6 @@ class DscConfigurationUpdateParameters(Model):
     :type description: str
     :param name: Gets or sets name of the resource.
     :type name: str
-    :param location: Gets or sets the location of the resource.
-    :type location: str
     :param tags: Gets or sets the tags attached to the resource.
     :type tags: dict[str, str]
     """
@@ -45,11 +43,10 @@ class DscConfigurationUpdateParameters(Model):
         'parameters': {'key': 'properties.parameters', 'type': '{DscConfigurationParameter}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, source, log_verbose=None, log_progress=None, parameters=None, description=None, name=None, location=None, tags=None):
+    def __init__(self, source, log_verbose=None, log_progress=None, parameters=None, description=None, name=None, tags=None):
         super(DscConfigurationUpdateParameters, self).__init__()
         self.log_verbose = log_verbose
         self.log_progress = log_progress
@@ -57,5 +54,4 @@ class DscConfigurationUpdateParameters(Model):
         self.parameters = parameters
         self.description = description
         self.name = name
-        self.location = location
         self.tags = tags
