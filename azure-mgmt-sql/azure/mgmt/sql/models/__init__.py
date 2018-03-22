@@ -36,8 +36,6 @@ from .database_update import DatabaseUpdate
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
 from .elastic_pool_activity import ElasticPoolActivity
-from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
-from .recommended_elastic_pool import RecommendedElasticPool
 from .database_security_alert_policy import DatabaseSecurityAlertPolicy
 from .data_masking_policy import DataMaskingPolicy
 from .data_masking_rule import DataMaskingRule
@@ -54,6 +52,8 @@ from .metric_name import MetricName
 from .metric import Metric
 from .metric_availability import MetricAvailability
 from .metric_definition import MetricDefinition
+from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
+from .recommended_elastic_pool import RecommendedElasticPool
 from .replication_link import ReplicationLink
 from .server_azure_ad_administrator import ServerAzureADAdministrator
 from .server_communication_link import ServerCommunicationLink
@@ -111,14 +111,14 @@ from .data_masking_rule_paged import DataMaskingRulePaged
 from .elastic_pool_paged import ElasticPoolPaged
 from .firewall_rule_paged import FirewallRulePaged
 from .geo_backup_policy_paged import GeoBackupPolicyPaged
+from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
+from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
 from .replication_link_paged import ReplicationLinkPaged
 from .server_azure_ad_administrator_paged import ServerAzureADAdministratorPaged
 from .server_communication_link_paged import ServerCommunicationLinkPaged
 from .service_objective_paged import ServiceObjectivePaged
 from .elastic_pool_activity_paged import ElasticPoolActivityPaged
 from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
-from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
-from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
 from .service_tier_advisor_paged import ServiceTierAdvisorPaged
 from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
 from .server_usage_paged import ServerUsagePaged
@@ -157,7 +157,6 @@ from .sql_management_client_enums import (
     ReadScale,
     SampleName,
     TransparentDataEncryptionActivityStatus,
-    ElasticPoolEdition,
     SecurityAlertPolicyState,
     SecurityAlertPolicyEmailAccountAdmins,
     SecurityAlertPolicyUseServerDefault,
@@ -165,6 +164,7 @@ from .sql_management_client_enums import (
     DataMaskingRuleState,
     DataMaskingFunction,
     ElasticPoolState,
+    ElasticPoolEdition,
     GeoBackupPolicyState,
     StorageKeyType,
     AuthenticationType,
@@ -196,7 +196,7 @@ from .sql_management_client_enums import (
     AutomaticTuningServerReason,
     RestorePointType,
     ManagementOperationState,
-    DatabaseState,
+    LongTermRetentionDatabaseState,
 )
 
 __all__ = [
@@ -227,8 +227,6 @@ __all__ = [
     'TransparentDataEncryptionActivity',
     'ElasticPoolDatabaseActivity',
     'ElasticPoolActivity',
-    'RecommendedElasticPoolMetric',
-    'RecommendedElasticPool',
     'DatabaseSecurityAlertPolicy',
     'DataMaskingPolicy',
     'DataMaskingRule',
@@ -245,6 +243,8 @@ __all__ = [
     'Metric',
     'MetricAvailability',
     'MetricDefinition',
+    'RecommendedElasticPoolMetric',
+    'RecommendedElasticPool',
     'ReplicationLink',
     'ServerAzureADAdministrator',
     'ServerCommunicationLink',
@@ -302,14 +302,14 @@ __all__ = [
     'ElasticPoolPaged',
     'FirewallRulePaged',
     'GeoBackupPolicyPaged',
+    'RecommendedElasticPoolPaged',
+    'RecommendedElasticPoolMetricPaged',
     'ReplicationLinkPaged',
     'ServerAzureADAdministratorPaged',
     'ServerCommunicationLinkPaged',
     'ServiceObjectivePaged',
     'ElasticPoolActivityPaged',
     'ElasticPoolDatabaseActivityPaged',
-    'RecommendedElasticPoolPaged',
-    'RecommendedElasticPoolMetricPaged',
     'ServiceTierAdvisorPaged',
     'TransparentDataEncryptionActivityPaged',
     'ServerUsagePaged',
@@ -347,7 +347,6 @@ __all__ = [
     'ReadScale',
     'SampleName',
     'TransparentDataEncryptionActivityStatus',
-    'ElasticPoolEdition',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',
     'SecurityAlertPolicyUseServerDefault',
@@ -355,6 +354,7 @@ __all__ = [
     'DataMaskingRuleState',
     'DataMaskingFunction',
     'ElasticPoolState',
+    'ElasticPoolEdition',
     'GeoBackupPolicyState',
     'StorageKeyType',
     'AuthenticationType',
@@ -386,5 +386,5 @@ __all__ = [
     'AutomaticTuningServerReason',
     'RestorePointType',
     'ManagementOperationState',
-    'DatabaseState',
+    'LongTermRetentionDatabaseState',
 ]
