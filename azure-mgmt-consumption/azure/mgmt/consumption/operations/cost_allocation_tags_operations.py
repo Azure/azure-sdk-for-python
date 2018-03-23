@@ -36,9 +36,9 @@ class CostAllocationTagsOperations(object):
 
         self.config = config
 
-    def list(
+    def get(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all cost allocation tags for a billing account.
+        """Get cost allocation tags for a billing account.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -52,7 +52,7 @@ class CostAllocationTagsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
         }
@@ -89,7 +89,7 @@ class CostAllocationTagsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/billingaccounts/{billingAccountId}/providers/microsoft.consumption/costallocationtags'}
+    get.metadata = {'url': '/billingaccounts/{billingAccountId}/providers/microsoft.consumption/costallocationtags'}
 
     def create_or_update(
             self, e_tag=None, cost_allocation_tags=None, custom_headers=None, raw=False, **operation_config):
