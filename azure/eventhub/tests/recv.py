@@ -20,11 +20,12 @@ from azure.eventhub.async import EventHubClientAsync
 
 logger = utils.get_logger("recv_test.log", logging.INFO)
 
-async def pump(_pid, _recv, _dl):
+async def pump(_pid, receiver, _args, _dl):
     total = 0
     iteration = 0
-    while time.time() < _dl:
-        batch_gen = _recv.receive(batch_size=5000, timeout=60)
+    deadline = time.time() + _dl
+    while time.time() < deadline:
+        batch_gen = receiver.receive(batch_size=5000, timeout=5)
         batch = []
         async for event in batch_gen:
             batch.append(event)
@@ -34,20 +35,18 @@ async def pump(_pid, _recv, _dl):
         if size == 0:
             print("{}: No events received, queue size {}, delivered {}".format(
                 _pid,
-                _recv.messages.qsize(),
-                _recv.delivered))
-        if iteration >= 80:
+                receiver.queue_size,
+                receiver.delivered))
+        elif iteration >= 80:
             iteration = 0
             print("{}: total received {}, last sn={}, last offset={}".format(
                         _pid,
                         total,
                         batch[-1].sequence_number,
                         batch[-1].offset))
-    print("{}: total received {}, last sn={}, last offset={}".format(
+    print("{}: total received {}".format(
         _pid,
-        total,
-        batch[-1].sequence_number,
-        batch[-1].offset))
+        total))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
@@ -76,7 +75,6 @@ try:
 
     loop = asyncio.get_event_loop()
     client = EventHubClientAsync(address, username=policy, password=key)
-    deadline = time.time() + args.duration
     asyncio.gather()
     pumps = []
     for pid in args.partitions.split(","):
@@ -84,11 +82,11 @@ try:
             consumer_group=args.consumer,
             partition=pid,
             offset=Offset(args.offset),
-            prefetch=5000)
-        pumps.append(pump(pid, receiver, deadline))
+            prefetch=100)
+        pumps.append(pump(pid, receiver, args, args.duration))
     loop.run_until_complete(client.run_async())
     loop.run_until_complete(asyncio.gather(*pumps))
-    client.stop()
+    loop.run_until_complete(client.stop_async())
     loop.close()
 except KeyboardInterrupt:
     pass

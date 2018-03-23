@@ -194,7 +194,11 @@ class Sender:
     TIMEOUT = 60.0
 
     def __init__(self, client, target):
-        self._handler = SendClient(target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT)
+        self._handler = SendClient(
+            target,
+            auth=client.auth,
+            debug=client.debug,
+            msg_timeout=Sender.TIMEOUT)
         self._outcome = None
         self._condition = None
 
@@ -236,7 +240,6 @@ class Sender:
 
     @staticmethod
     def _error(outcome, condition):
-        print("setting outcome:", outcome, condition)
         return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)
 
 

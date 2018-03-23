@@ -149,7 +149,11 @@ class AsyncSender(Sender):
     def __init__(self, client, target, loop=None):
         self.loop = loop or asyncio.get_event_loop()
         self._handler = SendClientAsync(
-            target, auth=client.auth, debug=client.debug, msg_timeout=Sender.TIMEOUT, loop=self.loop)
+            target,
+            auth=client.auth,
+            debug=client.debug,
+            msg_timeout=Sender.TIMEOUT,
+            loop=self.loop)
         self._outcome = None
         self._condition = None
 
@@ -193,12 +197,12 @@ class AsyncReceiver(Receiver):
             timeout=self.timeout,
             loop=self.loop)
 
-    async def on_message(self, event):
+    def on_message(self, event):
         """ Handle message received event """
         self.delivered += 1
         event_data = EventData.create(event)
         if self._callback:
-            await self._callback(event_data)
+            self._callback(event_data)
         self.offset = event_data.offset
         return event_data
 

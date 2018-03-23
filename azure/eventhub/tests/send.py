@@ -17,60 +17,68 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
 parser.add_argument("--payload", help="payload size", type=int, default=512)
 parser.add_argument("--batch", help="Number of events to send and wait", type=int, default=1)
-parser.add_argument("address", help="Address Uri to the event hub entity", nargs="?")
+parser.add_argument("--conn-str", help="EventHub connection string")
+parser.add_argument("--eventhub", help="Name of EventHub")
+parser.add_argument("--address", help="Address URI to the EventHub entity")
+parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
+parser.add_argument("--sas-key", help="Shared access key")
 
-args = parser.parse_args()
 
-class TransferClient(object):
-    def __init__(self, sender):
-        self._sender = sender
-        self._deadline = time.time() + args.duration
-        self._total = 0
-        self._success = 0
-        self._failure = 0
-        self._event = threading.Event()
+def check_send_successful(outcome, condition):
+    if outcome.value != 0:
+        print("Send failed {}".format(condition))
 
-    def run(self):
+
+def main(address, policy, key):
+    client = EventHubClient(address, username=policy, password=key)
+    sender = client.add_sender()
+    client.run()
+    deadline = time.time() + args.duration
+    total = 0
+
+    def data_generator():
         for i in range(args.batch):
-            self.start_send()
-        self._event.wait()
+            yield b"D" * args.payload
 
-    def start_send(self):
-        self._sender.transfer(EventData("B" * args.payload), self.end_send)
-
-    def end_send(self, event_data, error):
-        self._total += 1
-        if error:
-            logger.error("send failed %s", error)
-            self._failure += 1
-        else:
-            self._success += 1
-        if self._total % 500 == 0:
-            logger.info("Send total %d, success %d, failure %d",
-                        self._total,
-                        self._success,
-                        self._failure)
-        if time.time() < self._deadline:
-            self.start_send()
-        else:
-            self._event.set()
-
-try:
-    sender = Sender()
-    client = EventHubClient(args.address).publish(sender).run_daemon()
     if args.batch > 1:
-        TransferClient(sender).run()
+        print("Sending batched messages")
     else:
-        total = 0
-        deadline = time.time() + args.duration
+        print("Sending single messages")
+
+    try:
         while time.time() < deadline:
-            try:
-                sender.send(EventData("D" * args.payload))
-                total += 1
-                if total % 500 == 0:
-                    logger.info("Send total %d", total)
-            except Exception as err:
-                logger.error("Send failed %s", err)
-    client.stop()
-except KeyboardInterrupt:
-    pass
+            if args.batch > 1:
+                data = EventData(batch=data_generator())
+            else:
+                data = EventData(body=b"D" * args.payload)
+            sender.transfer(data, callback=check_send_successful)
+            total += args.batch
+            if total % 5000 == 0:
+               sender.wait()
+               print("Send total {}".format(total))
+    except Exception as err:
+        print("Send failed {}".format(err))
+    finally:
+        client.stop()
+    print("Sent total {}".format(total))
+
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    entity = None
+    if args.conn_str:
+        address, policy, key, entity = utils.parse_conn_str(args.conn_str)
+    elif args.address:
+        address = args.address
+        policy = args.sas_policy
+        key = args.sas_key
+    else:
+        raise ValueError("Must specify either '--conn-str' or '--address'")
+    entity = entity or args.eventhub
+    address = utils.build_uri(address, entity)
+
+    try:
+        main(address, policy, key)
+    except KeyboardInterrupt:
+        pass
+
