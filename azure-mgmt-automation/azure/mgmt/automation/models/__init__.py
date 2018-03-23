@@ -58,11 +58,9 @@ from .job_provisioning_state_property import JobProvisioningStateProperty
 from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
+from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
 from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
-from .dsc_node import DscNode
-from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
-from .dsc_node_configuration import DscNodeConfiguration
 from .dsc_node_update_parameters import DscNodeUpdateParameters
 from .dsc_report_error import DscReportError
 from .dsc_report_resource_navigation import DscReportResourceNavigation
@@ -104,6 +102,8 @@ from .variable_update_parameters import VariableUpdateParameters
 from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
 from .webhook import Webhook
 from .webhook_update_parameters import WebhookUpdateParameters
+from .dsc_node import DscNode
+from .dsc_node_configuration import DscNodeConfiguration
 from .collection_item_update_configuration import CollectionItemUpdateConfiguration
 from .software_update_configuration_collection_item import SoftwareUpdateConfigurationCollectionItem
 from .software_update_configuration_list_result import SoftwareUpdateConfigurationListResult
@@ -224,11 +224,9 @@ __all__ = [
     'DscCompilationJob',
     'DscConfigurationCreateOrUpdateParameters',
     'DscMetaConfiguration',
+    'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
     'DscNodeExtensionHandlerAssociationProperty',
-    'DscNode',
-    'DscNodeConfigurationCreateOrUpdateParameters',
-    'DscNodeConfiguration',
     'DscNodeUpdateParameters',
     'DscReportError',
     'DscReportResourceNavigation',
@@ -270,6 +268,8 @@ __all__ = [
     'WebhookCreateOrUpdateParameters',
     'Webhook',
     'WebhookUpdateParameters',
+    'DscNode',
+    'DscNodeConfiguration',
     'CollectionItemUpdateConfiguration',
     'SoftwareUpdateConfigurationCollectionItem',
     'SoftwareUpdateConfigurationListResult',
