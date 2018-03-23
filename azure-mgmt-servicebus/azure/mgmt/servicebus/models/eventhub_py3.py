@@ -70,12 +70,12 @@ class Eventhub(Resource):
         'capture_description': {'key': 'properties.captureDescription', 'type': 'CaptureDescription'},
     }
 
-    def __init__(self, **kwargs):
-        super(Eventhub, self).__init__(**kwargs)
+    def __init__(self, *, message_retention_in_days: int=None, partition_count: int=None, status=None, capture_description=None, **kwargs) -> None:
+        super(Eventhub, self).__init__(, **kwargs)
         self.partition_ids = None
         self.created_at = None
         self.updated_at = None
-        self.message_retention_in_days = kwargs.get('message_retention_in_days', None)
-        self.partition_count = kwargs.get('partition_count', None)
-        self.status = kwargs.get('status', None)
-        self.capture_description = kwargs.get('capture_description', None)
+        self.message_retention_in_days = message_retention_in_days
+        self.partition_count = partition_count
+        self.status = status
+        self.capture_description = capture_description
