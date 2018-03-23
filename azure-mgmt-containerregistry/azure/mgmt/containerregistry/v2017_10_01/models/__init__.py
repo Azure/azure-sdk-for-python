@@ -10,7 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .image_copy_from_model_py3 import ImageCopyFromModel
+    from .import_source_py3 import ImportSource
+    from .import_image_parameters_py3 import ImportImageParameters
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
     from .registry_name_status_py3 import RegistryNameStatus
     from .operation_display_definition_py3 import OperationDisplayDefinition
@@ -42,7 +43,8 @@ try:
     from .event_py3 import Event
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
-    from .image_copy_from_model import ImageCopyFromModel
+    from .import_source import ImportSource
+    from .import_image_parameters import ImportImageParameters
     from .registry_name_check_request import RegistryNameCheckRequest
     from .registry_name_status import RegistryNameStatus
     from .operation_display_definition import OperationDisplayDefinition
@@ -89,7 +91,8 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
-    'ImageCopyFromModel',
+    'ImportSource',
+    'ImportImageParameters',
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
     'OperationDisplayDefinition',

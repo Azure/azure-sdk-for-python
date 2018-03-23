@@ -40,10 +40,10 @@ class RegistriesOperations(object):
         self.config = config
 
 
-    def _copy_image_from_initial(
-            self, resource_group_name, registry_name, image_copy_parameters, custom_headers=None, raw=False, **operation_config):
+    def _import_image_initial(
+            self, resource_group_name, registry_name, import_parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.copy_image_from.metadata['url']
+        url = self.import_image.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -66,7 +66,7 @@ class RegistriesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(image_copy_parameters, 'ImageCopyFromModel')
+        body_content = self._serialize.body(import_parameters, 'ImportImageParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -82,8 +82,8 @@ class RegistriesOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def copy_image_from(
-            self, resource_group_name, registry_name, image_copy_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+    def import_image(
+            self, resource_group_name, registry_name, import_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Copies an image to this registry from the specified registry.
 
         :param resource_group_name: The name of the resource group to which
@@ -91,10 +91,10 @@ class RegistriesOperations(object):
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param image_copy_parameters: The parameters specifying the image to
-         copy and the source registry.
-        :type image_copy_parameters:
-         ~azure.mgmt.containerregistry.v2017_10_01.models.ImageCopyFromModel
+        :param import_parameters: The parameters specifying the image to copy
+         and the source registry.
+        :type import_parameters:
+         ~azure.mgmt.containerregistry.v2017_10_01.models.ImportImageParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -106,10 +106,10 @@ class RegistriesOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._copy_image_from_initial(
+        raw_result = self._import_image_initial(
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            image_copy_parameters=image_copy_parameters,
+            import_parameters=import_parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -127,7 +127,7 @@ class RegistriesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    copy_image_from.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/copyImageFrom'}
+    import_image.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/importImage'}
 
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):

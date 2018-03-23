@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ImageCopyFromModel(Model):
-    """ImageCopyFromModel.
+class ImportImageParameters(Model):
+    """ImportImageParameters.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -26,9 +26,9 @@ class ImageCopyFromModel(Model):
     :param source_manifest_digest: The manifest sha of the source image.
      Exclusive with SourceTag.
     :type source_manifest_digest: str
-    :param source_registry_resource_id: Required. The resource id of the
-     source registry.
-    :type source_registry_resource_id: str
+    :param source: Required. The source of the image.
+    :type source:
+     ~azure.mgmt.containerregistry.v2017_10_01.models.ImportSource
     :param target_tags: List of strings of the form repo[:tag].  When tag is
      omitted the source will be used (or 'latest' if source tag is also
      omitted.)
@@ -36,33 +36,34 @@ class ImageCopyFromModel(Model):
     :param untagged_target_repositories: List of strings of repository names
      to do a manifest only copy.  No tag will be created.
     :type untagged_target_repositories: list[str]
-    :param force: When true, any existing target tags will be overwritten.
-     When false, any existing target tags will fail the operation before any
+    :param mode: When Force, any existing target tags will be overwritten.
+     When NoForce, any existing target tags will fail the operation before any
      copying begins.
-    :type force: bool
+     NoForce is the default. Possible values include: 'NoForce', 'Force'
+    :type mode: str or ~azure.mgmt.containerregistry.v2017_10_01.models.enum
     """
 
     _validation = {
         'source_repository': {'required': True},
-        'source_registry_resource_id': {'required': True},
+        'source': {'required': True},
     }
 
     _attribute_map = {
         'source_repository': {'key': 'sourceRepository', 'type': 'str'},
         'source_tag': {'key': 'sourceTag', 'type': 'str'},
         'source_manifest_digest': {'key': 'sourceManifestDigest', 'type': 'str'},
-        'source_registry_resource_id': {'key': 'sourceRegistryResourceId', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'ImportSource'},
         'target_tags': {'key': 'targetTags', 'type': '[str]'},
         'untagged_target_repositories': {'key': 'untaggedTargetRepositories', 'type': '[str]'},
-        'force': {'key': 'force', 'type': 'bool'},
+        'mode': {'key': 'mode', 'type': 'str'},
     }
 
-    def __init__(self, *, source_repository: str, source_registry_resource_id: str, source_tag: str=None, source_manifest_digest: str=None, target_tags=None, untagged_target_repositories=None, force: bool=None, **kwargs) -> None:
-        super(ImageCopyFromModel, self).__init__(**kwargs)
+    def __init__(self, *, source_repository: str, source, source_tag: str=None, source_manifest_digest: str=None, target_tags=None, untagged_target_repositories=None, mode=None, **kwargs) -> None:
+        super(ImportImageParameters, self).__init__(**kwargs)
         self.source_repository = source_repository
         self.source_tag = source_tag
         self.source_manifest_digest = source_manifest_digest
-        self.source_registry_resource_id = source_registry_resource_id
+        self.source = source
         self.target_tags = target_tags
         self.untagged_target_repositories = untagged_target_repositories
-        self.force = force
+        self.mode = mode
