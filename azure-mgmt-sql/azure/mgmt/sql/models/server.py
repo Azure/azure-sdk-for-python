@@ -18,6 +18,8 @@ class Server(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -26,7 +28,7 @@ class Server(TrackedResource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param identity: The Azure Active Directory identity of the server.
     :type identity: ~azure.mgmt.sql.models.ResourceIdentity
@@ -73,12 +75,12 @@ class Server(TrackedResource):
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, identity=None, administrator_login=None, administrator_login_password=None, version=None):
-        super(Server, self).__init__(tags=tags, location=location)
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(Server, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.kind = None
-        self.administrator_login = administrator_login
-        self.administrator_login_password = administrator_login_password
-        self.version = version
+        self.administrator_login = kwargs.get('administrator_login', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
+        self.version = kwargs.get('version', None)
         self.state = None
         self.fully_qualified_domain_name = None

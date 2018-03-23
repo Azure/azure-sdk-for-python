@@ -18,6 +18,8 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -26,9 +28,9 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :vartype type: str
     :ivar kind: Resource kind.
     :vartype kind: str
-    :param state: Specifies the state of the policy. If state is Enabled,
-     storageEndpoint and storageAccountAccessKey are required. Possible values
-     include: 'Enabled', 'Disabled'
+    :param state: Required. Specifies the state of the policy. If state is
+     Enabled, storageEndpoint and storageAccountAccessKey are required.
+     Possible values include: 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
     :param storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). If state is Enabled,
@@ -74,13 +76,13 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
     }
 
-    def __init__(self, state, storage_endpoint=None, storage_account_access_key=None, retention_days=None, audit_actions_and_groups=None, storage_account_subscription_id=None, is_storage_secondary_key_in_use=None):
-        super(DatabaseBlobAuditingPolicy, self).__init__()
+    def __init__(self, **kwargs):
+        super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
-        self.state = state
-        self.storage_endpoint = storage_endpoint
-        self.storage_account_access_key = storage_account_access_key
-        self.retention_days = retention_days
-        self.audit_actions_and_groups = audit_actions_and_groups
-        self.storage_account_subscription_id = storage_account_subscription_id
-        self.is_storage_secondary_key_in_use = is_storage_secondary_key_in_use
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.retention_days = kwargs.get('retention_days', None)
+        self.audit_actions_and_groups = kwargs.get('audit_actions_and_groups', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
+        self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)

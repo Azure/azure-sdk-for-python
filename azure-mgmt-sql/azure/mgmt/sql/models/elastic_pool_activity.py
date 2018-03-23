@@ -126,9 +126,9 @@ class ElasticPoolActivity(ProxyResource):
         'requested_dtu_guarantee': {'key': 'properties.requestedDtuGuarantee', 'type': 'int'},
     }
 
-    def __init__(self, location=None):
-        super(ElasticPoolActivity, self).__init__()
-        self.location = location
+    def __init__(self, **kwargs):
+        super(ElasticPoolActivity, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
         self.end_time = None
         self.error_code = None
         self.error_message = None
