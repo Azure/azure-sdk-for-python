@@ -230,7 +230,8 @@ class LongTermRetentionBackupsOperations(object):
         :param database_state: Whether to query against just live databases,
          just deleted databases, or all databases. Possible values include:
          'All', 'Live', 'Deleted'
-        :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
+        :type database_state: str or
+         ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -311,7 +312,8 @@ class LongTermRetentionBackupsOperations(object):
         :param database_state: Whether to query against just live databases,
          just deleted databases, or all databases. Possible values include:
          'All', 'Live', 'Deleted'
-        :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
+        :type database_state: str or
+         ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -392,7 +394,8 @@ class LongTermRetentionBackupsOperations(object):
         :param database_state: Whether to query against just live databases,
          just deleted databases, or all databases. Possible values include:
          'All', 'Live', 'Deleted'
-        :type database_state: str or ~azure.mgmt.sql.models.DatabaseState
+        :type database_state: str or
+         ~azure.mgmt.sql.models.LongTermRetentionDatabaseState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

@@ -492,7 +492,7 @@ class ManagementOperationState(Enum):
     cancelled = "Cancelled"
 
 
-class DatabaseState(Enum):
+class LongTermRetentionDatabaseState(Enum):
 
     all = "All"
     live = "Live"

@@ -196,7 +196,7 @@ from .sql_management_client_enums import (
     AutomaticTuningServerReason,
     RestorePointType,
     ManagementOperationState,
-    DatabaseState,
+    LongTermRetentionDatabaseState,
 )
 
 __all__ = [
@@ -386,5 +386,5 @@ __all__ = [
     'AutomaticTuningServerReason',
     'RestorePointType',
     'ManagementOperationState',
-    'DatabaseState',
+    'LongTermRetentionDatabaseState',
 ]
