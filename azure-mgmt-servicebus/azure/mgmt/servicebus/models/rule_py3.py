@@ -52,9 +52,9 @@ class Rule(Resource):
         'correlation_filter': {'key': 'properties.correlationFilter', 'type': 'CorrelationFilter'},
     }
 
-    def __init__(self, **kwargs):
-        super(Rule, self).__init__(**kwargs)
-        self.action = kwargs.get('action', None)
-        self.filter_type = kwargs.get('filter_type', None)
-        self.sql_filter = kwargs.get('sql_filter', None)
-        self.correlation_filter = kwargs.get('correlation_filter', None)
+    def __init__(self, *, action=None, filter_type=None, sql_filter=None, correlation_filter=None, **kwargs) -> None:
+        super(Rule, self).__init__(, **kwargs)
+        self.action = action
+        self.filter_type = filter_type
+        self.sql_filter = sql_filter
+        self.correlation_filter = correlation_filter

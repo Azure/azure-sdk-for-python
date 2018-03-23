@@ -12,29 +12,28 @@
 from msrest.serialization import Model
 
 
-class PremiumMessagingRegionsProperties(Model):
-    """PremiumMessagingRegionsProperties.
+class Operation(Model):
+    """A ServiceBus REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Region code
-    :vartype code: str
-    :ivar full_name: Full name of the region
-    :vartype full_name: str
+    :ivar name: Operation name: {provider}/{resource}/{operation}
+    :vartype name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.servicebus.models.OperationDisplay
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'full_name': {'readonly': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'full_name': {'key': 'fullName', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
-        super(PremiumMessagingRegionsProperties, self).__init__(**kwargs)
-        self.code = None
-        self.full_name = None
+    def __init__(self, *, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.display = display
