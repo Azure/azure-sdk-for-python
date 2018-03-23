@@ -44,6 +44,6 @@ class SBAuthorizationRule(Resource):
         'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, **kwargs):
-        super(SBAuthorizationRule, self).__init__(**kwargs)
-        self.rights = kwargs.get('rights', None)
+    def __init__(self, *, rights, **kwargs) -> None:
+        super(SBAuthorizationRule, self).__init__(, **kwargs)
+        self.rights = rights
