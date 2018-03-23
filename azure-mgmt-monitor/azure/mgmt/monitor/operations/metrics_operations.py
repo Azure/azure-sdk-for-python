@@ -56,7 +56,7 @@ class MetricsOperations(object):
         :param top: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
-        :type top: int
+        :type top: float
         :param orderby: The aggregation to use for sorting results and the
          direction of the sort.
          Only one order can be specified.
@@ -109,7 +109,7 @@ class MetricsOperations(object):
         if aggregation is not None:
             query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
         if top is not None:
-            query_parameters['top'] = self._serialize.query("top", top, 'int')
+            query_parameters['top'] = self._serialize.query("top", top, 'float')
         if orderby is not None:
             query_parameters['orderby'] = self._serialize.query("orderby", orderby, 'str')
         if filter is not None:
