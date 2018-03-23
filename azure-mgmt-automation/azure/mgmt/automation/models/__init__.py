@@ -57,6 +57,7 @@ from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParame
 from .job_provisioning_state_property import JobProvisioningStateProperty
 from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
+from .dsc_configuration_update_parameters import DscConfigurationUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
 from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
@@ -223,6 +224,7 @@ __all__ = [
     'JobProvisioningStateProperty',
     'DscCompilationJob',
     'DscConfigurationCreateOrUpdateParameters',
+    'DscConfigurationUpdateParameters',
     'DscMetaConfiguration',
     'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
