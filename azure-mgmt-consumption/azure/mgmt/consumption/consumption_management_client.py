@@ -37,14 +37,11 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
     :type subscription_id: str
     :param billing_account_id: Azure Billing Account ID.
     :type billing_account_id: str
-    :param grain: Can be daily or monthly. Possible values include:
-     'DailyGrain', 'MonthlyGrain'
-    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, billing_account_id, grain, base_url=None):
+            self, credentials, subscription_id, billing_account_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -52,8 +49,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if billing_account_id is None:
             raise ValueError("Parameter 'billing_account_id' must not be None.")
-        if grain is None:
-            raise ValueError("Parameter 'grain' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -65,7 +60,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
         self.credentials = credentials
         self.subscription_id = subscription_id
         self.billing_account_id = billing_account_id
-        self.grain = grain
 
 
 class ConsumptionManagementClient(object):
@@ -100,16 +94,13 @@ class ConsumptionManagementClient(object):
     :type subscription_id: str
     :param billing_account_id: Azure Billing Account ID.
     :type billing_account_id: str
-    :param grain: Can be daily or monthly. Possible values include:
-     'DailyGrain', 'MonthlyGrain'
-    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, billing_account_id, grain, base_url=None):
+            self, credentials, subscription_id, billing_account_id, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, billing_account_id, grain, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, billing_account_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
