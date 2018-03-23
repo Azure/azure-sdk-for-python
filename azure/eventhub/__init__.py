@@ -51,9 +51,9 @@ class EventHubClient(object):
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
         self.address = urlparse(address)
         username = unquote_plus(self.address.username) if self.address.username else None
-        username = kwargs.get('username', username)
+        username = kwargs.get('username') or username
         password = unquote_plus(self.address.password) if self.address.password else None
-        password = kwargs.get('password', password)
+        password = kwargs.get('password') or password
         if not username or not password:
             raise ValueError("Missing username and/or password.")
         auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
