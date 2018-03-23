@@ -37,9 +37,11 @@ class DscNodeOperations(object):
         self.config = config
 
     def delete(
-            self, automation_account_name, node_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, node_id, custom_headers=None, raw=False, **operation_config):
         """Delete the dsc node identified by node id.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: Automation account name.
         :type automation_account_name: str
         :param node_id: The node id.
@@ -58,7 +60,7 @@ class DscNodeOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -99,9 +101,11 @@ class DscNodeOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}'}
 
     def get(
-            self, automation_account_name, node_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, node_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the dsc node identified by node id.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param node_id: The node id.
@@ -120,7 +124,7 @@ class DscNodeOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -161,9 +165,11 @@ class DscNodeOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}'}
 
     def update(
-            self, automation_account_name, node_id, node_id1=None, node_configuration=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, node_id, node_id1=None, node_configuration=None, custom_headers=None, raw=False, **operation_config):
         """Update the dsc node.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param node_id: Parameters supplied to the update dsc node.
@@ -189,7 +195,7 @@ class DscNodeOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -234,9 +240,11 @@ class DscNodeOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}'}
 
     def list_by_automation_account(
-            self, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of dsc nodes.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
@@ -258,7 +266,7 @@ class DscNodeOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

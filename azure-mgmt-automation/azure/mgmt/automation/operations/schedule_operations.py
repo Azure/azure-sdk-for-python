@@ -37,9 +37,11 @@ class ScheduleOperations(object):
         self.config = config
 
     def create_or_update(
-            self, automation_account_name, schedule_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, schedule_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a schedule.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
@@ -62,7 +64,7 @@ class ScheduleOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'scheduleName': self._serialize.url("schedule_name", schedule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -107,9 +109,11 @@ class ScheduleOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/schedules/{scheduleName}'}
 
     def update(
-            self, automation_account_name, schedule_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, schedule_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Update the schedule identified by schedule name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
@@ -132,7 +136,7 @@ class ScheduleOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'scheduleName': self._serialize.url("schedule_name", schedule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -177,9 +181,11 @@ class ScheduleOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/schedules/{scheduleName}'}
 
     def get(
-            self, automation_account_name, schedule_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, schedule_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the schedule identified by schedule name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
@@ -198,7 +204,7 @@ class ScheduleOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'scheduleName': self._serialize.url("schedule_name", schedule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -239,9 +245,11 @@ class ScheduleOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/schedules/{scheduleName}'}
 
     def delete(
-            self, automation_account_name, schedule_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, schedule_name, custom_headers=None, raw=False, **operation_config):
         """Delete the schedule identified by schedule name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param schedule_name: The schedule name.
@@ -259,7 +267,7 @@ class ScheduleOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'scheduleName': self._serialize.url("schedule_name", schedule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -293,9 +301,11 @@ class ScheduleOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/schedules/{scheduleName}'}
 
     def list_by_automation_account(
-            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of schedules.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -315,7 +325,7 @@ class ScheduleOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
