@@ -28,16 +28,21 @@ class SubscriptionCreationParameters(Model):
      enrollment account scope. Possible values include: 'MS-AZR-0017P',
      'MS-AZR-0148P'
     :type offer_type: str or ~azure.mgmt.subscription.models.OfferType
+    :param additional_parameters: Additional, untyped parameters to support
+     custom subscription creation scenarios.
+    :type additional_parameters: dict[str, object]
     """
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
         'owners': {'key': 'owners', 'type': '[AdPrincipal]'},
         'offer_type': {'key': 'offerType', 'type': 'str'},
+        'additional_parameters': {'key': 'additionalParameters', 'type': '{object}'},
     }
 
-    def __init__(self, *, display_name: str=None, owners=None, offer_type=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, owners=None, offer_type=None, additional_parameters=None, **kwargs) -> None:
         super(SubscriptionCreationParameters, self).__init__(**kwargs)
         self.display_name = display_name
         self.owners = owners
         self.offer_type = offer_type
+        self.additional_parameters = additional_parameters
