@@ -231,9 +231,11 @@ class DscConfigurationOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations/{configurationName}'}
 
     def update(
-            self, automation_account_name, configuration_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, configuration_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Create the configuration identified by configuration name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param configuration_name: The create or update parameters for
@@ -256,7 +258,7 @@ class DscConfigurationOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
