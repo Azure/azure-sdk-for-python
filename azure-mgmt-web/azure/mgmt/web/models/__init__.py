@@ -121,6 +121,7 @@ from .analysis_definition import AnalysisDefinition
 from .diagnostic_analysis import DiagnosticAnalysis
 from .diagnostic_category import DiagnosticCategory
 from .diagnostic_detector_response import DiagnosticDetectorResponse
+from .billing_meter import BillingMeter
 from .stack_minor_version import StackMinorVersion
 from .stack_major_version import StackMajorVersion
 from .application_stack import ApplicationStack
@@ -440,6 +441,7 @@ __all__ = [
     'DiagnosticAnalysis',
     'DiagnosticCategory',
     'DiagnosticDetectorResponse',
+    'BillingMeter',
     'StackMinorVersion',
     'StackMajorVersion',
     'ApplicationStack',

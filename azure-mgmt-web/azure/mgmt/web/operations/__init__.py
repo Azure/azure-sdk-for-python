@@ -17,6 +17,7 @@ from .domain_registration_provider_operations import DomainRegistrationProviderO
 from .certificates_operations import CertificatesOperations
 from .deleted_web_apps_operations import DeletedWebAppsOperations
 from .diagnostics_operations import DiagnosticsOperations
+from .global_model_operations import GlobalModelOperations
 from .provider_operations import ProviderOperations
 from .recommendations_operations import RecommendationsOperations
 from .resource_health_metadata_operations import ResourceHealthMetadataOperations
@@ -33,6 +34,7 @@ __all__ = [
     'CertificatesOperations',
     'DeletedWebAppsOperations',
     'DiagnosticsOperations',
+    'GlobalModelOperations',
     'ProviderOperations',
     'RecommendationsOperations',
     'ResourceHealthMetadataOperations',

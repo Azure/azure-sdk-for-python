@@ -25,6 +25,7 @@ from .operations.domain_registration_provider_operations import DomainRegistrati
 from .operations.certificates_operations import CertificatesOperations
 from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
 from .operations.diagnostics_operations import DiagnosticsOperations
+from .operations.global_model_operations import GlobalModelOperations
 from .operations.provider_operations import ProviderOperations
 from .operations.recommendations_operations import RecommendationsOperations
 from .operations.resource_health_metadata_operations import ResourceHealthMetadataOperations
@@ -89,6 +90,8 @@ class WebSiteManagementClient(object):
     :vartype deleted_web_apps: azure.mgmt.web.operations.DeletedWebAppsOperations
     :ivar diagnostics: Diagnostics operations
     :vartype diagnostics: azure.mgmt.web.operations.DiagnosticsOperations
+    :ivar global_model: GlobalModel operations
+    :vartype global_model: azure.mgmt.web.operations.GlobalModelOperations
     :ivar provider: Provider operations
     :vartype provider: azure.mgmt.web.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
@@ -136,6 +139,8 @@ class WebSiteManagementClient(object):
         self.deleted_web_apps = DeletedWebAppsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.diagnostics = DiagnosticsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.global_model = GlobalModelOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
