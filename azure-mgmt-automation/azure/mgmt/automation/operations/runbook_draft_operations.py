@@ -40,9 +40,11 @@ class RunbookDraftOperations(object):
         self.config = config
 
     def get_content(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the content of runbook draft identified by runbook name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -60,7 +62,7 @@ class RunbookDraftOperations(object):
         url = self.get_content.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -103,12 +105,12 @@ class RunbookDraftOperations(object):
 
 
     def _replace_content_initial(
-            self, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.replace_content.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -148,9 +150,11 @@ class RunbookDraftOperations(object):
             return client_raw_response
 
     def replace_content(
-            self, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
         """Replaces the runbook draft content.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -168,6 +172,7 @@ class RunbookDraftOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         raw_result = self._replace_content_initial(
+            resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
             runbook_content=runbook_content,
@@ -213,9 +218,11 @@ class RunbookDraftOperations(object):
     replace_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/content'}
 
     def get(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the runbook draft identified by runbook name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -235,7 +242,7 @@ class RunbookDraftOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -276,12 +283,12 @@ class RunbookDraftOperations(object):
 
 
     def _publish_initial(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.publish.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -317,9 +324,11 @@ class RunbookDraftOperations(object):
             return client_raw_response
 
     def publish(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Publish runbook draft.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The parameters supplied to the publish runbook
@@ -336,6 +345,7 @@ class RunbookDraftOperations(object):
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         raw_result = self._publish_initial(
+            resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
             custom_headers=custom_headers,
@@ -380,10 +390,12 @@ class RunbookDraftOperations(object):
     publish.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/publish'}
 
     def undo_edit(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Undo draft edit to last known published state identified by runbook
         name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -403,7 +415,7 @@ class RunbookDraftOperations(object):
         url = self.undo_edit.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
