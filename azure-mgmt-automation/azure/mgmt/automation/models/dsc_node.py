@@ -18,11 +18,11 @@ class DscNode(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
     :param last_seen: Gets or sets the last seen time of the node.
     :type last_seen: datetime
@@ -32,9 +32,8 @@ class DscNode(ProxyResource):
     :type ip: str
     :param account_id: Gets or sets the account id of the node.
     :type account_id: str
-    :param node_configuration: Gets or sets the configuration of the node.
-    :type node_configuration:
-     ~azure.mgmt.automation.models.DscNodeConfigurationAssociationProperty
+    :param dsc_node_name: Gets or sets the name of the dsc nodeconfiguration.
+    :type dsc_node_name: str
     :param status: Gets or sets the status of the node.
     :type status: str
     :param node_id: Gets or sets the node id.
@@ -61,20 +60,20 @@ class DscNode(ProxyResource):
         'registration_time': {'key': 'properties.registrationTime', 'type': 'iso-8601'},
         'ip': {'key': 'properties.ip', 'type': 'str'},
         'account_id': {'key': 'properties.accountId', 'type': 'str'},
-        'node_configuration': {'key': 'properties.nodeConfiguration', 'type': 'DscNodeConfigurationAssociationProperty'},
+        'dsc_node_name': {'key': 'properties.nodeConfiguration.name', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'node_id': {'key': 'properties.nodeId', 'type': 'str'},
         'etag': {'key': 'properties.etag', 'type': 'str'},
         'extension_handler': {'key': 'properties.extensionHandler', 'type': '[DscNodeExtensionHandlerAssociationProperty]'},
     }
 
-    def __init__(self, last_seen=None, registration_time=None, ip=None, account_id=None, node_configuration=None, status=None, node_id=None, etag=None, extension_handler=None):
+    def __init__(self, last_seen=None, registration_time=None, ip=None, account_id=None, dsc_node_name=None, status=None, node_id=None, etag=None, extension_handler=None):
         super(DscNode, self).__init__()
         self.last_seen = last_seen
         self.registration_time = registration_time
         self.ip = ip
         self.account_id = account_id
-        self.node_configuration = node_configuration
+        self.dsc_node_name = dsc_node_name
         self.status = status
         self.node_id = node_id
         self.etag = etag

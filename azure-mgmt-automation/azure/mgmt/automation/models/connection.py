@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Connection(Model):
+class Connection(ProxyResource):
     """Definition of the connection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the resource.
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Gets the name of the connection.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
     :param connection_type: Gets or sets the connectionType of the connection.
     :type connection_type:
@@ -60,9 +60,6 @@ class Connection(Model):
 
     def __init__(self, connection_type=None, description=None):
         super(Connection, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
         self.connection_type = connection_type
         self.field_definition_values = None
         self.creation_time = None

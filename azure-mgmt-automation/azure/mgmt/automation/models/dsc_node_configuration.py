@@ -18,11 +18,11 @@ class DscNodeConfiguration(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
     :param last_modified_time: Gets or sets the last modified time.
     :type last_modified_time: datetime

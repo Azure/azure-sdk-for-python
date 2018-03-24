@@ -64,26 +64,20 @@ class AutomationClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param automation_account_name: The name of the automation account.
-    :type automation_account_name: str
-    :param automation_account_name1: The name of the automation account.
-    :type automation_account_name1: str
-    :param client_request_id: Identifies this specific client request.
-    :type client_request_id: str
+    :param resource_group_name: Name of an Azure Resource group.
+    :type resource_group_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, automation_account_name, automation_account_name1, client_request_id=None, base_url=None):
+            self, credentials, subscription_id, resource_group_name, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if automation_account_name is None:
-            raise ValueError("Parameter 'automation_account_name' must not be None.")
-        if automation_account_name1 is None:
-            raise ValueError("Parameter 'automation_account_name1' must not be None.")
+        if resource_group_name is None:
+            raise ValueError("Parameter 'resource_group_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -94,9 +88,7 @@ class AutomationClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.automation_account_name = automation_account_name
-        self.automation_account_name1 = automation_account_name1
-        self.client_request_id = client_request_id
+        self.resource_group_name = resource_group_name
 
 
 class AutomationClient(object):
@@ -185,19 +177,15 @@ class AutomationClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param automation_account_name: The name of the automation account.
-    :type automation_account_name: str
-    :param automation_account_name1: The name of the automation account.
-    :type automation_account_name1: str
-    :param client_request_id: Identifies this specific client request.
-    :type client_request_id: str
+    :param resource_group_name: Name of an Azure Resource group.
+    :type resource_group_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, automation_account_name, automation_account_name1, client_request_id=None, base_url=None):
+            self, credentials, subscription_id, resource_group_name, base_url=None):
 
-        self.config = AutomationClientConfiguration(credentials, subscription_id, automation_account_name, automation_account_name1, client_request_id, base_url)
+        self.config = AutomationClientConfiguration(credentials, subscription_id, resource_group_name, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

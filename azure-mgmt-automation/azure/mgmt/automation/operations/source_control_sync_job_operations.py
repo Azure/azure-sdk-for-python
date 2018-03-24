@@ -37,11 +37,11 @@ class SourceControlSyncJobOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, source_control_name, source_control_sync_job_id, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, source_control_name, source_control_sync_job_id, custom_headers=None, raw=False, **operation_config):
         """Creates the sync job for a source control.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param source_control_name: The source control name.
         :type source_control_name: str
         :param source_control_sync_job_id: The source control sync job id.
@@ -60,8 +60,8 @@ class SourceControlSyncJobOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'sourceControlName': self._serialize.url("source_control_name", source_control_name, 'str'),
             'sourceControlSyncJobId': self._serialize.url("source_control_sync_job_id", source_control_sync_job_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -102,11 +102,11 @@ class SourceControlSyncJobOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}/sourceControlSyncJobs/{sourceControlSyncJobId}'}
 
     def get(
-            self, resource_group_name, source_control_name, source_control_sync_job_id, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, source_control_name, source_control_sync_job_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the source control sync job identified by job id.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param source_control_name: The source control name.
         :type source_control_name: str
         :param source_control_sync_job_id: The source control sync job id.
@@ -125,8 +125,8 @@ class SourceControlSyncJobOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'sourceControlName': self._serialize.url("source_control_name", source_control_name, 'str'),
             'sourceControlSyncJobId': self._serialize.url("source_control_sync_job_id", source_control_sync_job_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -167,11 +167,11 @@ class SourceControlSyncJobOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}/sourceControlSyncJobs/{sourceControlSyncJobId}'}
 
     def list_by_automation_account(
-            self, resource_group_name, source_control_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, source_control_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of source control sync jobs.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param source_control_name: The source control name.
         :type source_control_name: str
         :param filter: The filter to apply on the operation.
@@ -193,8 +193,8 @@ class SourceControlSyncJobOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-                    'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'sourceControlName': self._serialize.url("source_control_name", source_control_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

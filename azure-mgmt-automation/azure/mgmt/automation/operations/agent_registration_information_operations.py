@@ -37,11 +37,11 @@ class AgentRegistrationInformationOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the automation agent registration information.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -57,8 +57,8 @@ class AgentRegistrationInformationOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -96,11 +96,11 @@ class AgentRegistrationInformationOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/agentRegistrationInformation'}
 
     def regenerate_key(
-            self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Regenerate a primary or secondary agent registration key.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param parameters: The name of the agent registration key to be
          regenerated
         :type parameters:
@@ -120,8 +120,8 @@ class AgentRegistrationInformationOperations(object):
         url = self.regenerate_key.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

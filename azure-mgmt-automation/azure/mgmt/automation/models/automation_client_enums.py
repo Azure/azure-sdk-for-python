@@ -12,6 +12,31 @@
 from enum import Enum
 
 
+class JobProvisioningState(Enum):
+
+    failed = "Failed"
+    succeeded = "Succeeded"
+    suspended = "Suspended"
+    processing = "Processing"
+
+
+class JobStatus(Enum):
+
+    new = "New"
+    activating = "Activating"
+    running = "Running"
+    completed = "Completed"
+    failed = "Failed"
+    stopped = "Stopped"
+    blocked = "Blocked"
+    suspended = "Suspended"
+    disconnected = "Disconnected"
+    suspending = "Suspending"
+    stopping = "Stopping"
+    resuming = "Resuming"
+    removing = "Removing"
+
+
 class RunbookTypeEnum(Enum):
 
     script = "Script"
@@ -100,31 +125,6 @@ class AgentRegistrationKeyName(Enum):
 
     primary = "primary"
     secondary = "secondary"
-
-
-class JobProvisioningState(Enum):
-
-    failed = "Failed"
-    succeeded = "Succeeded"
-    suspended = "Suspended"
-    processing = "Processing"
-
-
-class JobStatus(Enum):
-
-    new = "New"
-    activating = "Activating"
-    running = "Running"
-    completed = "Completed"
-    failed = "Failed"
-    stopped = "Stopped"
-    blocked = "Blocked"
-    suspended = "Suspended"
-    disconnected = "Disconnected"
-    suspending = "Suspending"
-    stopping = "Stopping"
-    resuming = "Resuming"
-    removing = "Removing"
 
 
 class JobStreamType(Enum):

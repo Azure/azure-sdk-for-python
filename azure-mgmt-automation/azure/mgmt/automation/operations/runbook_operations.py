@@ -38,11 +38,9 @@ class RunbookOperations(object):
         self.config = config
 
     def get_content(
-            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the content of runbook identified by runbook name.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -60,7 +58,7 @@ class RunbookOperations(object):
         url = self.get_content.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -102,11 +100,9 @@ class RunbookOperations(object):
     get_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/content'}
 
     def get(
-            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the runbook identified by runbook name.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -126,7 +122,7 @@ class RunbookOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -166,11 +162,9 @@ class RunbookOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}'}
 
     def create_or_update(
-            self, resource_group_name, automation_account_name, runbook_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, runbook_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create the runbook identified by runbook name.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -195,7 +189,7 @@ class RunbookOperations(object):
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -241,11 +235,9 @@ class RunbookOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}'}
 
     def update(
-            self, resource_group_name, automation_account_name, runbook_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, runbook_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Update the runbook identified by runbook name.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -268,7 +260,7 @@ class RunbookOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -312,11 +304,9 @@ class RunbookOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}'}
 
     def delete(
-            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Delete the runbook by name.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -335,7 +325,7 @@ class RunbookOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -368,11 +358,9 @@ class RunbookOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of runbooks.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -393,7 +381,7 @@ class RunbookOperations(object):
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

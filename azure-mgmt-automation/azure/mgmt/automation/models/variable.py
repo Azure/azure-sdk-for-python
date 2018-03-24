@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Variable(Model):
+class Variable(ProxyResource):
     """Definition of the varible.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the resource.
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Gets the name of the variable.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
     :param value: Gets or sets the value of the variable.
     :type value: str
@@ -55,9 +55,6 @@ class Variable(Model):
 
     def __init__(self, value=None, is_encrypted=None, creation_time=None, last_modified_time=None, description=None):
         super(Variable, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
         self.value = value
         self.is_encrypted = is_encrypted
         self.creation_time = creation_time

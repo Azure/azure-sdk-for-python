@@ -37,11 +37,11 @@ class DscCompilationJobStreamOperations(object):
         self.config = config
 
     def list_by_job(
-            self, resource_group_name, job_id, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, job_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve all the job streams for the compilation Job.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param job_id: The job id.
         :type job_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -58,8 +58,8 @@ class DscCompilationJobStreamOperations(object):
         # Construct URL
         url = self.list_by_job.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

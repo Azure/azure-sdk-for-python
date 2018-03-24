@@ -38,18 +38,20 @@ class SoftwareUpdateConfigurationsOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, software_update_configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, software_update_configuration_name, parameters, client_request_id=None, custom_headers=None, raw=False, **operation_config):
         """Create a new software update configuration with the name given in the
         URI.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param software_update_configuration_name: The name of the software
          update configuration to be created.
         :type software_update_configuration_name: str
         :param parameters: Request body.
         :type parameters:
          ~azure.mgmt.automation.models.SoftwareUpdateConfiguration
+        :param client_request_id: Identifies this specific client request.
+        :type client_request_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -64,8 +66,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'softwareUpdateConfigurationName': self._serialize.url("software_update_configuration_name", software_update_configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -81,8 +83,8 @@ class SoftwareUpdateConfigurationsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.client_request_id is not None:
-            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
+        if client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("client_request_id", client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -114,14 +116,16 @@ class SoftwareUpdateConfigurationsOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurations/{softwareUpdateConfigurationName}'}
 
     def get_by_name(
-            self, resource_group_name, software_update_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, software_update_configuration_name, client_request_id=None, custom_headers=None, raw=False, **operation_config):
         """Get a single software update configuration by name.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param software_update_configuration_name: The name of the software
          update configuration to be created.
         :type software_update_configuration_name: str
+        :param client_request_id: Identifies this specific client request.
+        :type client_request_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -136,8 +140,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.get_by_name.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'softwareUpdateConfigurationName': self._serialize.url("software_update_configuration_name", software_update_configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -153,8 +157,8 @@ class SoftwareUpdateConfigurationsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.client_request_id is not None:
-            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
+        if client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("client_request_id", client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -180,14 +184,16 @@ class SoftwareUpdateConfigurationsOperations(object):
     get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurations/{softwareUpdateConfigurationName}'}
 
     def delete(
-            self, resource_group_name, software_update_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, software_update_configuration_name, client_request_id=None, custom_headers=None, raw=False, **operation_config):
         """delete a specific software update configuration.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param software_update_configuration_name: The name of the software
          update configuration to be created.
         :type software_update_configuration_name: str
+        :param client_request_id: Identifies this specific client request.
+        :type client_request_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -201,8 +207,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'softwareUpdateConfigurationName': self._serialize.url("software_update_configuration_name", software_update_configuration_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -218,8 +224,8 @@ class SoftwareUpdateConfigurationsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.client_request_id is not None:
-            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
+        if client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("client_request_id", client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -238,11 +244,13 @@ class SoftwareUpdateConfigurationsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurations/{softwareUpdateConfigurationName}'}
 
     def list(
-            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, client_request_id=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get all software update configurations for the account.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
+        :param client_request_id: Identifies this specific client request.
+        :type client_request_id: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -261,8 +269,8 @@ class SoftwareUpdateConfigurationsOperations(object):
         url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -279,8 +287,8 @@ class SoftwareUpdateConfigurationsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.client_request_id is not None:
-            header_parameters['clientRequestId'] = self._serialize.header("self.config.client_request_id", self.config.client_request_id, 'str')
+        if client_request_id is not None:
+            header_parameters['clientRequestId'] = self._serialize.header("client_request_id", client_request_id, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 

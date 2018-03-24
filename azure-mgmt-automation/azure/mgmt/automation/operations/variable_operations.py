@@ -37,11 +37,9 @@ class VariableOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, automation_account_name, variable_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, variable_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a variable.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param variable_name: The variable name.
@@ -64,7 +62,7 @@ class VariableOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'variableName': self._serialize.url("variable_name", variable_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -111,11 +109,9 @@ class VariableOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/variables/{variableName}'}
 
     def update(
-            self, resource_group_name, automation_account_name, variable_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, variable_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Update a variable.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param variable_name: The variable name.
@@ -138,7 +134,7 @@ class VariableOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'variableName': self._serialize.url("variable_name", variable_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -183,11 +179,9 @@ class VariableOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/variables/{variableName}'}
 
     def delete(
-            self, resource_group_name, automation_account_name, variable_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, variable_name, custom_headers=None, raw=False, **operation_config):
         """Delete the variable.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param variable_name: The name of variable.
@@ -205,7 +199,7 @@ class VariableOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'variableName': self._serialize.url("variable_name", variable_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -239,11 +233,9 @@ class VariableOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/variables/{variableName}'}
 
     def get(
-            self, resource_group_name, automation_account_name, variable_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, variable_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the variable identified by variable name.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param variable_name: The name of variable.
@@ -262,7 +254,7 @@ class VariableOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'variableName': self._serialize.url("variable_name", variable_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -303,11 +295,9 @@ class VariableOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/variables/{variableName}'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of variables.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -327,7 +317,7 @@ class VariableOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

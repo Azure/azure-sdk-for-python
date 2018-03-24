@@ -13,6 +13,18 @@ from .error_response import ErrorResponse, ErrorResponseException
 from .usage_counter_name import UsageCounterName
 from .usage import Usage
 from .statistics import Statistics
+from .runbook_association_property import RunbookAssociationProperty
+from .webhook import Webhook
+from .variable import Variable
+from .job_provisioning_state_property import JobProvisioningStateProperty
+from .dsc_configuration_association_property import DscConfigurationAssociationProperty
+from .dsc_compilation_job import DscCompilationJob
+from .credential import Credential
+from .connection_type_association_property import ConnectionTypeAssociationProperty
+from .connection import Connection
+from .certificate import Certificate
+from .proxy_resource import ProxyResource
+from .resource import Resource
 from .runbook_parameter import RunbookParameter
 from .content_hash import ContentHash
 from .content_link import ContentLink
@@ -23,24 +35,20 @@ from .module import Module
 from .content_source import ContentSource
 from .dsc_configuration_parameter import DscConfigurationParameter
 from .dsc_configuration import DscConfiguration
-from .resource import Resource
+from .tracked_resource import TrackedResource
 from .sku import Sku
 from .automation_account import AutomationAccount
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .automation_account_create_or_update_parameters import AutomationAccountCreateOrUpdateParameters
 from .automation_account_update_parameters import AutomationAccountUpdateParameters
-from .certificate import Certificate
 from .certificate_update_parameters import CertificateUpdateParameters
 from .certificate_create_or_update_parameters import CertificateCreateOrUpdateParameters
-from .connection_type_association_property import ConnectionTypeAssociationProperty
-from .connection import Connection
 from .connection_update_parameters import ConnectionUpdateParameters
 from .connection_create_or_update_parameters import ConnectionCreateOrUpdateParameters
 from .field_definition import FieldDefinition
 from .connection_type import ConnectionType
 from .connection_type_create_or_update_parameters import ConnectionTypeCreateOrUpdateParameters
-from .credential import Credential
 from .credential_update_parameters import CredentialUpdateParameters
 from .credential_create_or_update_parameters import CredentialCreateOrUpdateParameters
 from .activity_parameter import ActivityParameter
@@ -52,11 +60,9 @@ from .advanced_schedule import AdvancedSchedule
 from .agent_registration_keys import AgentRegistrationKeys
 from .agent_registration import AgentRegistration
 from .agent_registration_regenerate_key_parameter import AgentRegistrationRegenerateKeyParameter
-from .dsc_configuration_association_property import DscConfigurationAssociationProperty
 from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParameters
-from .job_provisioning_state_property import JobProvisioningStateProperty
-from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
+from .dsc_configuration_update_parameters import DscConfigurationUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
 from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
@@ -70,7 +76,6 @@ from .hybrid_runbook_worker import HybridRunbookWorker
 from .run_as_credential_association_property import RunAsCredentialAssociationProperty
 from .hybrid_runbook_worker_group import HybridRunbookWorkerGroup
 from .hybrid_runbook_worker_group_update_parameters import HybridRunbookWorkerGroupUpdateParameters
-from .runbook_association_property import RunbookAssociationProperty
 from .job import Job
 from .job_create_parameters import JobCreateParameters
 from .job_list_result import JobListResult
@@ -82,7 +87,6 @@ from .job_stream_list_result import JobStreamListResult
 from .linked_workspace import LinkedWorkspace
 from .module_create_or_update_parameters import ModuleCreateOrUpdateParameters
 from .module_update_parameters import ModuleUpdateParameters
-from .proxy_resource import ProxyResource
 from .runbook_draft_undo_edit_result import RunbookDraftUndoEditResult
 from .runbook_create_or_update_parameters import RunbookCreateOrUpdateParameters
 from .runbook_create_or_update_draft_properties import RunbookCreateOrUpdateDraftProperties
@@ -97,10 +101,8 @@ from .test_job_create_parameters import TestJobCreateParameters
 from .test_job import TestJob
 from .type_field import TypeField
 from .variable_create_or_update_parameters import VariableCreateOrUpdateParameters
-from .variable import Variable
 from .variable_update_parameters import VariableUpdateParameters
 from .webhook_create_or_update_parameters import WebhookCreateOrUpdateParameters
-from .webhook import Webhook
 from .webhook_update_parameters import WebhookUpdateParameters
 from .job_collection_item import JobCollectionItem
 from .windows_properties import WindowsProperties
@@ -152,6 +154,8 @@ from .dsc_node_report_paged import DscNodeReportPaged
 from .dsc_compilation_job_paged import DscCompilationJobPaged
 from .dsc_node_configuration_paged import DscNodeConfigurationPaged
 from .automation_client_enums import (
+    JobProvisioningState,
+    JobStatus,
     RunbookTypeEnum,
     RunbookState,
     RunbookProvisioningState,
@@ -163,8 +167,6 @@ from .automation_client_enums import (
     AutomationAccountState,
     ScheduleDay,
     AgentRegistrationKeyName,
-    JobProvisioningState,
-    JobStatus,
     JobStreamType,
     HttpStatusCode,
     ScheduleFrequency,
@@ -180,6 +182,18 @@ __all__ = [
     'UsageCounterName',
     'Usage',
     'Statistics',
+    'RunbookAssociationProperty',
+    'Webhook',
+    'Variable',
+    'JobProvisioningStateProperty',
+    'DscConfigurationAssociationProperty',
+    'DscCompilationJob',
+    'Credential',
+    'ConnectionTypeAssociationProperty',
+    'Connection',
+    'Certificate',
+    'ProxyResource',
+    'Resource',
     'RunbookParameter',
     'ContentHash',
     'ContentLink',
@@ -190,24 +204,20 @@ __all__ = [
     'ContentSource',
     'DscConfigurationParameter',
     'DscConfiguration',
-    'Resource',
+    'TrackedResource',
     'Sku',
     'AutomationAccount',
     'OperationDisplay',
     'Operation',
     'AutomationAccountCreateOrUpdateParameters',
     'AutomationAccountUpdateParameters',
-    'Certificate',
     'CertificateUpdateParameters',
     'CertificateCreateOrUpdateParameters',
-    'ConnectionTypeAssociationProperty',
-    'Connection',
     'ConnectionUpdateParameters',
     'ConnectionCreateOrUpdateParameters',
     'FieldDefinition',
     'ConnectionType',
     'ConnectionTypeCreateOrUpdateParameters',
-    'Credential',
     'CredentialUpdateParameters',
     'CredentialCreateOrUpdateParameters',
     'ActivityParameter',
@@ -219,11 +229,9 @@ __all__ = [
     'AgentRegistrationKeys',
     'AgentRegistration',
     'AgentRegistrationRegenerateKeyParameter',
-    'DscConfigurationAssociationProperty',
     'DscCompilationJobCreateParameters',
-    'JobProvisioningStateProperty',
-    'DscCompilationJob',
     'DscConfigurationCreateOrUpdateParameters',
+    'DscConfigurationUpdateParameters',
     'DscMetaConfiguration',
     'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
@@ -237,7 +245,6 @@ __all__ = [
     'RunAsCredentialAssociationProperty',
     'HybridRunbookWorkerGroup',
     'HybridRunbookWorkerGroupUpdateParameters',
-    'RunbookAssociationProperty',
     'Job',
     'JobCreateParameters',
     'JobListResult',
@@ -249,7 +256,6 @@ __all__ = [
     'LinkedWorkspace',
     'ModuleCreateOrUpdateParameters',
     'ModuleUpdateParameters',
-    'ProxyResource',
     'RunbookDraftUndoEditResult',
     'RunbookCreateOrUpdateParameters',
     'RunbookCreateOrUpdateDraftProperties',
@@ -264,10 +270,8 @@ __all__ = [
     'TestJob',
     'TypeField',
     'VariableCreateOrUpdateParameters',
-    'Variable',
     'VariableUpdateParameters',
     'WebhookCreateOrUpdateParameters',
-    'Webhook',
     'WebhookUpdateParameters',
     'JobCollectionItem',
     'WindowsProperties',
@@ -318,6 +322,8 @@ __all__ = [
     'DscNodeReportPaged',
     'DscCompilationJobPaged',
     'DscNodeConfigurationPaged',
+    'JobProvisioningState',
+    'JobStatus',
     'RunbookTypeEnum',
     'RunbookState',
     'RunbookProvisioningState',
@@ -329,8 +335,6 @@ __all__ = [
     'AutomationAccountState',
     'ScheduleDay',
     'AgentRegistrationKeyName',
-    'JobProvisioningState',
-    'JobStatus',
     'JobStreamType',
     'HttpStatusCode',
     'ScheduleFrequency',

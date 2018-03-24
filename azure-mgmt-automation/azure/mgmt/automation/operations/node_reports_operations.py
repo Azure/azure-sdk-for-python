@@ -37,11 +37,11 @@ class NodeReportsOperations(object):
         self.config = config
 
     def list_by_node(
-            self, resource_group_name, node_id, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, node_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc node report list by node id.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param node_id: The parameters supplied to the list operation.
         :type node_id: str
         :param filter: The filter to apply on the operation.
@@ -63,8 +63,8 @@ class NodeReportsOperations(object):
                 # Construct URL
                 url = self.list_by_node.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-                    'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+                    'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'nodeId': self._serialize.url("node_id", node_id, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -112,11 +112,11 @@ class NodeReportsOperations(object):
     list_by_node.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}/reports'}
 
     def get(
-            self, resource_group_name, node_id, report_id, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, node_id, report_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc node report data by node id and report id.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param node_id: The Dsc node id.
         :type node_id: str
         :param report_id: The report id.
@@ -135,8 +135,8 @@ class NodeReportsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'reportId': self._serialize.url("report_id", report_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -177,11 +177,11 @@ class NodeReportsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}/reports/{reportId}'}
 
     def get_content(
-            self, resource_group_name, node_id, report_id, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, automation_account_name, node_id, report_id, custom_headers=None, raw=False, callback=None, **operation_config):
         """Retrieve the Dsc node reports by node id and report id.
 
-        :param resource_group_name: Name of an Azure Resource group.
-        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
         :param node_id: The Dsc node id.
         :type node_id: str
         :param report_id: The report id.
@@ -204,8 +204,8 @@ class NodeReportsOperations(object):
         # Construct URL
         url = self.get_content.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
-            'automationAccountName': self._serialize.url("self.config.automation_account_name", self.config.automation_account_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'reportId': self._serialize.url("report_id", report_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
