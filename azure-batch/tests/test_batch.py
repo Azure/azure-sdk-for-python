@@ -379,12 +379,10 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_sharedkey_client(**kwargs)
         # Test Enable Autoscale
         interval = datetime.timedelta(minutes=6)
-        param = models.PoolEnableAutoScaleParameter(
-            auto_scale_formula='$TargetDedicatedNodes=2',
-            auto_scale_evaluation_interval=interval)
         response = client.pool.enable_auto_scale(
             batch_pool.name,
-            param)
+            auto_scale_formula='$TargetDedicatedNodes=2',
+            auto_scale_evaluation_interval=interval)
 
         self.assertIsNone(response)
 
