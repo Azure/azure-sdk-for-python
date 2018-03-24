@@ -1341,7 +1341,7 @@ class DatabasesOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume'}
 
-    def rename(
+    def move(
             self, resource_group_name, server_name, database_name, id, custom_headers=None, raw=False, **operation_config):
         """Renames a database.
 
@@ -1369,7 +1369,7 @@ class DatabasesOperations(object):
         api_version = "2017-10-01-preview"
 
         # Construct URL
-        url = self.rename.metadata['url']
+        url = self.move.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -1408,4 +1408,4 @@ class DatabasesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    rename.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/move'}
+    move.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/move'}
