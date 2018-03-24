@@ -32,7 +32,6 @@ async def run(client):
     sender = client.add_async_sender()
     await client.run_async()
     await send(sender, 4)
-    await client.stop_async()
 
 
 async def send(snd, count):
