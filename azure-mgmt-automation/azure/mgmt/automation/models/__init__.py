@@ -67,6 +67,7 @@ from .dsc_meta_configuration import DscMetaConfiguration
 from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
 from .dsc_node_extension_handler_association_property import DscNodeExtensionHandlerAssociationProperty
+from .dsc_node_update_parameters_properties import DscNodeUpdateParametersProperties
 from .dsc_node_update_parameters import DscNodeUpdateParameters
 from .dsc_report_error import DscReportError
 from .dsc_report_resource_navigation import DscReportResourceNavigation
@@ -236,6 +237,7 @@ __all__ = [
     'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
     'DscNodeExtensionHandlerAssociationProperty',
+    'DscNodeUpdateParametersProperties',
     'DscNodeUpdateParameters',
     'DscReportError',
     'DscReportResourceNavigation',

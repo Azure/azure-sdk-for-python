@@ -194,8 +194,6 @@ class DscNodeConfigurationOperations(object):
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('DscNodeConfiguration', response)
         if response.status_code == 201:
             deserialized = self._deserialize('DscNodeConfiguration', response)
 

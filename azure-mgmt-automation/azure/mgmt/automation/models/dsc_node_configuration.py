@@ -31,6 +31,13 @@ class DscNodeConfiguration(ProxyResource):
     :param configuration: Gets or sets the configuration of the node.
     :type configuration:
      ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
+    :param source: Source of node configuration.
+    :type source: str
+    :param node_count: Number of nodes with this nodeconfiguration assigned
+    :type node_count: long
+    :param increment_node_configuration_build: If a new build version of
+     NodeConfiguration is required.
+    :type increment_node_configuration_build: bool
     """
 
     _validation = {
@@ -46,10 +53,16 @@ class DscNodeConfiguration(ProxyResource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
+        'source': {'key': 'properties.source', 'type': 'str'},
+        'node_count': {'key': 'properties.nodeCount', 'type': 'long'},
+        'increment_node_configuration_build': {'key': 'properties.incrementNodeConfigurationBuild', 'type': 'bool'},
     }
 
-    def __init__(self, last_modified_time=None, creation_time=None, configuration=None):
+    def __init__(self, last_modified_time=None, creation_time=None, configuration=None, source=None, node_count=None, increment_node_configuration_build=None):
         super(DscNodeConfiguration, self).__init__()
         self.last_modified_time = last_modified_time
         self.creation_time = creation_time
         self.configuration = configuration
+        self.source = source
+        self.node_count = node_count
+        self.increment_node_configuration_build = increment_node_configuration_build

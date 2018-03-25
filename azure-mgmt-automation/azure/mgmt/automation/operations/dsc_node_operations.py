@@ -161,18 +161,17 @@ class DscNodeOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}'}
 
     def update(
-            self, automation_account_name, node_id, node_id1=None, node_configuration=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, node_id, dsc_node_update_parameters, custom_headers=None, raw=False, **operation_config):
         """Update the dsc node.
 
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param node_id: Parameters supplied to the update dsc node.
         :type node_id: str
-        :param node_id1: Gets or sets the id of the dsc node.
-        :type node_id1: str
-        :param node_configuration: Gets or sets the configuration of the node.
-        :type node_configuration:
-         ~azure.mgmt.automation.models.DscNodeConfigurationAssociationProperty
+        :param dsc_node_update_parameters: Parameters supplied to the update
+         dsc node.
+        :type dsc_node_update_parameters:
+         ~azure.mgmt.automation.models.DscNodeUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -184,8 +183,6 @@ class DscNodeOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
-        parameters = models.DscNodeUpdateParameters(node_configuration=node_configuration)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -211,7 +208,7 @@ class DscNodeOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DscNodeUpdateParameters')
+        body_content = self._serialize.body(dsc_node_update_parameters, 'DscNodeUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
