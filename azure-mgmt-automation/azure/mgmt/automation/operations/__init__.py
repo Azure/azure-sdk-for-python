@@ -13,6 +13,7 @@ from .automation_account_operations import AutomationAccountOperations
 from .operations import Operations
 from .statistics_operations import StatisticsOperations
 from .usages_operations import UsagesOperations
+from .keys_operations import KeysOperations
 from .certificate_operations import CertificateOperations
 from .connection_operations import ConnectionOperations
 from .connection_type_operations import ConnectionTypeOperations
@@ -51,6 +52,7 @@ __all__ = [
     'Operations',
     'StatisticsOperations',
     'UsagesOperations',
+    'KeysOperations',
     'CertificateOperations',
     'ConnectionOperations',
     'ConnectionTypeOperations',

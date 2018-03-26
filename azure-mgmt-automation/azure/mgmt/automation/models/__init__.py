@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .error_response import ErrorResponse, ErrorResponseException
+from .key import Key
 from .usage_counter_name import UsageCounterName
 from .usage import Usage
 from .statistics import Statistics
@@ -132,6 +133,7 @@ from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
 from .usage_paged import UsagePaged
+from .key_paged import KeyPaged
 from .certificate_paged import CertificatePaged
 from .connection_paged import ConnectionPaged
 from .connection_type_paged import ConnectionTypePaged
@@ -155,6 +157,8 @@ from .dsc_node_report_paged import DscNodeReportPaged
 from .dsc_compilation_job_paged import DscCompilationJobPaged
 from .dsc_node_configuration_paged import DscNodeConfigurationPaged
 from .automation_client_enums import (
+    AutomationKeyName,
+    AutomationKeyPermissions,
     JobProvisioningState,
     JobStatus,
     RunbookTypeEnum,
@@ -180,6 +184,7 @@ from .automation_client_enums import (
 
 __all__ = [
     'ErrorResponse', 'ErrorResponseException',
+    'Key',
     'UsageCounterName',
     'Usage',
     'Statistics',
@@ -302,6 +307,7 @@ __all__ = [
     'OperationPaged',
     'StatisticsPaged',
     'UsagePaged',
+    'KeyPaged',
     'CertificatePaged',
     'ConnectionPaged',
     'ConnectionTypePaged',
@@ -324,6 +330,8 @@ __all__ = [
     'DscNodeReportPaged',
     'DscCompilationJobPaged',
     'DscNodeConfigurationPaged',
+    'AutomationKeyName',
+    'AutomationKeyPermissions',
     'JobProvisioningState',
     'JobStatus',
     'RunbookTypeEnum',
