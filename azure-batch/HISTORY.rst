@@ -3,6 +3,11 @@
 Release History
 ===============
 
+4.1.1 (2018-03-26)
+++++++++++++++++++
+
+- Fix regression on method `enable_auto_scale`.
+
 4.1.0 (2018-03-07)
 ++++++++++++++++++
 
