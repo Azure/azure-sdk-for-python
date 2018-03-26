@@ -37,11 +37,9 @@ class FieldsOperations(object):
         self.config = config
 
     def list_by_type(
-            self, resource_group_name, automation_account_name, module_name, type_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, module_name, type_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of fields of a given type identified by module name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param module_name: The name of module.
@@ -65,7 +63,7 @@ class FieldsOperations(object):
                 # Construct URL
                 url = self.list_by_type.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'moduleName': self._serialize.url("module_name", module_name, 'str'),
                     'typeName': self._serialize.url("type_name", type_name, 'str'),

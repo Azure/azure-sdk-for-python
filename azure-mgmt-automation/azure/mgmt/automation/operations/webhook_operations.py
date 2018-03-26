@@ -37,11 +37,9 @@ class WebhookOperations(object):
         self.config = config
 
     def generate_uri(
-            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Generates a Uri for use in creating a webhook.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -57,7 +55,7 @@ class WebhookOperations(object):
         # Construct URL
         url = self.generate_uri.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -97,11 +95,9 @@ class WebhookOperations(object):
     generate_uri.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/webhooks/generateUri'}
 
     def delete(
-            self, resource_group_name, automation_account_name, webhook_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, webhook_name, custom_headers=None, raw=False, **operation_config):
         """Delete the webhook by name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param webhook_name: The webhook name.
@@ -119,7 +115,7 @@ class WebhookOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -153,11 +149,9 @@ class WebhookOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/webhooks/{webhookName}'}
 
     def get(
-            self, resource_group_name, automation_account_name, webhook_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, webhook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the webhook identified by webhook name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param webhook_name: The webhook name.
@@ -176,7 +170,7 @@ class WebhookOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -217,11 +211,9 @@ class WebhookOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/webhooks/{webhookName}'}
 
     def create_or_update(
-            self, resource_group_name, automation_account_name, webhook_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, webhook_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create the webhook identified by webhook name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param webhook_name: The webhook name.
@@ -243,7 +235,7 @@ class WebhookOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -290,11 +282,9 @@ class WebhookOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/webhooks/{webhookName}'}
 
     def update(
-            self, resource_group_name, automation_account_name, webhook_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, webhook_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Update the webhook identified by webhook name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param webhook_name: The webhook name.
@@ -316,7 +306,7 @@ class WebhookOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -361,11 +351,9 @@ class WebhookOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/webhooks/{webhookName}'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of webhooks.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
@@ -387,7 +375,7 @@ class WebhookOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

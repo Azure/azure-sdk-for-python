@@ -37,11 +37,9 @@ class CertificateOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, automation_account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Delete the certificate.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param certificate_name: The name of certificate.
@@ -59,7 +57,7 @@ class CertificateOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -93,11 +91,9 @@ class CertificateOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/certificates/{certificateName}'}
 
     def get(
-            self, resource_group_name, automation_account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the certificate identified by certificate name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param certificate_name: The name of certificate.
@@ -116,7 +112,7 @@ class CertificateOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -157,11 +153,9 @@ class CertificateOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/certificates/{certificateName}'}
 
     def create_or_update(
-            self, resource_group_name, automation_account_name, certificate_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, certificate_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a certificate.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param certificate_name: The parameters supplied to the create or
@@ -185,7 +179,7 @@ class CertificateOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -232,11 +226,9 @@ class CertificateOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/certificates/{certificateName}'}
 
     def update(
-            self, resource_group_name, automation_account_name, certificate_name, name=None, description=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, certificate_name, name=None, description=None, custom_headers=None, raw=False, **operation_config):
         """Update a certificate.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param certificate_name: The parameters supplied to the update
@@ -262,7 +254,7 @@ class CertificateOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'certificateName': self._serialize.url("certificate_name", certificate_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -307,11 +299,9 @@ class CertificateOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/certificates/{certificateName}'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of certificates.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -331,7 +321,7 @@ class CertificateOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
