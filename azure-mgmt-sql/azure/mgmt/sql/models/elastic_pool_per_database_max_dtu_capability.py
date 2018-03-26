@@ -41,8 +41,8 @@ class ElasticPoolPerDatabaseMaxDtuCapability(Model):
         'supported_per_database_min_dtus': {'key': 'supportedPerDatabaseMinDtus', 'type': '[ElasticPoolPerDatabaseMinDtuCapability]'},
     }
 
-    def __init__(self):
-        super(ElasticPoolPerDatabaseMaxDtuCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(ElasticPoolPerDatabaseMaxDtuCapability, self).__init__(**kwargs)
         self.limit = None
         self.status = None
         self.supported_per_database_min_dtus = None

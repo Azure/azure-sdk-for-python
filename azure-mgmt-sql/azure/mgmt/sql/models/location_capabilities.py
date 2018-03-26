@@ -40,8 +40,8 @@ class LocationCapabilities(Model):
         'supported_server_versions': {'key': 'supportedServerVersions', 'type': '[ServerVersionCapability]'},
     }
 
-    def __init__(self):
-        super(LocationCapabilities, self).__init__()
+    def __init__(self, **kwargs):
+        super(LocationCapabilities, self).__init__(**kwargs)
         self.name = None
         self.status = None
         self.supported_server_versions = None

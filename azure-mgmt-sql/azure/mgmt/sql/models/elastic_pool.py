@@ -18,6 +18,8 @@ class ElasticPool(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -26,7 +28,7 @@ class ElasticPool(TrackedResource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :ivar creation_date: The creation date of the elastic pool (ISO8601
      format).
@@ -81,14 +83,14 @@ class ElasticPool(TrackedResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, edition=None, dtu=None, database_dtu_max=None, database_dtu_min=None, storage_mb=None, zone_redundant=None):
-        super(ElasticPool, self).__init__(tags=tags, location=location)
+    def __init__(self, **kwargs):
+        super(ElasticPool, self).__init__(**kwargs)
         self.creation_date = None
         self.state = None
-        self.edition = edition
-        self.dtu = dtu
-        self.database_dtu_max = database_dtu_max
-        self.database_dtu_min = database_dtu_min
-        self.storage_mb = storage_mb
-        self.zone_redundant = zone_redundant
+        self.edition = kwargs.get('edition', None)
+        self.dtu = kwargs.get('dtu', None)
+        self.database_dtu_max = kwargs.get('database_dtu_max', None)
+        self.database_dtu_min = kwargs.get('database_dtu_min', None)
+        self.storage_mb = kwargs.get('storage_mb', None)
+        self.zone_redundant = kwargs.get('zone_redundant', None)
         self.kind = None

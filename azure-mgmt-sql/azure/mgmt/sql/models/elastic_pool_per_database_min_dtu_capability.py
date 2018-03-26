@@ -35,7 +35,7 @@ class ElasticPoolPerDatabaseMinDtuCapability(Model):
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
     }
 
-    def __init__(self):
-        super(ElasticPoolPerDatabaseMinDtuCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(ElasticPoolPerDatabaseMinDtuCapability, self).__init__(**kwargs)
         self.limit = None
         self.status = None

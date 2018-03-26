@@ -46,8 +46,8 @@ class ElasticPoolEditionCapability(Model):
         'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(ElasticPoolEditionCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(ElasticPoolEditionCapability, self).__init__(**kwargs)
         self.name = None
         self.status = None
         self.supported_elastic_pool_dtus = None

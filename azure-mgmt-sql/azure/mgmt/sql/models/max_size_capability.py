@@ -40,8 +40,8 @@ class MaxSizeCapability(Model):
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
     }
 
-    def __init__(self):
-        super(MaxSizeCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(MaxSizeCapability, self).__init__(**kwargs)
         self.limit = None
         self.unit = None
         self.status = None

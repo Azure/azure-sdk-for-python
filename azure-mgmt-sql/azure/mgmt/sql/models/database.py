@@ -18,6 +18,8 @@ class Database(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -26,7 +28,7 @@ class Database(TrackedResource):
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :ivar kind: Kind of database.  This is metadata used for the Azure portal
      experience.
@@ -256,32 +258,32 @@ class Database(TrackedResource):
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, source_database_deletion_date=None, restore_point_in_time=None, recovery_services_recovery_point_resource_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None, zone_redundant=None):
-        super(Database, self).__init__(tags=tags, location=location)
+    def __init__(self, **kwargs):
+        super(Database, self).__init__(**kwargs)
         self.kind = None
-        self.collation = collation
+        self.collation = kwargs.get('collation', None)
         self.creation_date = None
         self.containment_state = None
         self.current_service_objective_id = None
         self.database_id = None
         self.earliest_restore_date = None
-        self.create_mode = create_mode
-        self.source_database_id = source_database_id
-        self.source_database_deletion_date = source_database_deletion_date
-        self.restore_point_in_time = restore_point_in_time
-        self.recovery_services_recovery_point_resource_id = recovery_services_recovery_point_resource_id
-        self.edition = edition
-        self.max_size_bytes = max_size_bytes
-        self.requested_service_objective_id = requested_service_objective_id
-        self.requested_service_objective_name = requested_service_objective_name
+        self.create_mode = kwargs.get('create_mode', None)
+        self.source_database_id = kwargs.get('source_database_id', None)
+        self.source_database_deletion_date = kwargs.get('source_database_deletion_date', None)
+        self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
+        self.recovery_services_recovery_point_resource_id = kwargs.get('recovery_services_recovery_point_resource_id', None)
+        self.edition = kwargs.get('edition', None)
+        self.max_size_bytes = kwargs.get('max_size_bytes', None)
+        self.requested_service_objective_id = kwargs.get('requested_service_objective_id', None)
+        self.requested_service_objective_name = kwargs.get('requested_service_objective_name', None)
         self.service_level_objective = None
         self.status = None
-        self.elastic_pool_name = elastic_pool_name
+        self.elastic_pool_name = kwargs.get('elastic_pool_name', None)
         self.default_secondary_location = None
         self.service_tier_advisors = None
         self.transparent_data_encryption = None
         self.recommended_index = None
         self.failover_group_id = None
-        self.read_scale = read_scale
-        self.sample_name = sample_name
-        self.zone_redundant = zone_redundant
+        self.read_scale = kwargs.get('read_scale', None)
+        self.sample_name = kwargs.get('sample_name', None)
+        self.zone_redundant = kwargs.get('zone_redundant', None)

@@ -59,8 +59,8 @@ class ServiceObjectiveCapability(Model):
         'included_max_size': {'key': 'includedMaxSize', 'type': 'MaxSizeCapability'},
     }
 
-    def __init__(self):
-        super(ServiceObjectiveCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServiceObjectiveCapability, self).__init__(**kwargs)
         self.name = None
         self.status = None
         self.unit = None

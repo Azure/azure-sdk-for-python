@@ -63,8 +63,8 @@ class SyncAgentLinkedDatabase(ProxyResource):
         'user_name': {'key': 'properties.userName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SyncAgentLinkedDatabase, self).__init__()
+    def __init__(self, **kwargs):
+        super(SyncAgentLinkedDatabase, self).__init__(**kwargs)
         self.database_type = None
         self.database_id = None
         self.description = None

@@ -46,8 +46,8 @@ class EditionCapability(Model):
         'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(EditionCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(EditionCapability, self).__init__(**kwargs)
         self.name = None
         self.status = None
         self.supported_service_level_objectives = None

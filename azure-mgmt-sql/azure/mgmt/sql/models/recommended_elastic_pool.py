@@ -85,13 +85,13 @@ class RecommendedElasticPool(ProxyResource):
         'metrics': {'key': 'properties.metrics', 'type': '[RecommendedElasticPoolMetric]'},
     }
 
-    def __init__(self, dtu=None, database_dtu_min=None, database_dtu_max=None, storage_mb=None):
-        super(RecommendedElasticPool, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecommendedElasticPool, self).__init__(**kwargs)
         self.database_edition = None
-        self.dtu = dtu
-        self.database_dtu_min = database_dtu_min
-        self.database_dtu_max = database_dtu_max
-        self.storage_mb = storage_mb
+        self.dtu = kwargs.get('dtu', None)
+        self.database_dtu_min = kwargs.get('database_dtu_min', None)
+        self.database_dtu_max = kwargs.get('database_dtu_max', None)
+        self.storage_mb = kwargs.get('storage_mb', None)
         self.observation_period_start = None
         self.observation_period_end = None
         self.max_observed_dtu = None

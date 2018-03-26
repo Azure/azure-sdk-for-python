@@ -18,6 +18,8 @@ class FirewallRule(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -28,13 +30,13 @@ class FirewallRule(ProxyResource):
     :vartype kind: str
     :ivar location: Location of the server that contains this firewall rule.
     :vartype location: str
-    :param start_ip_address: The start IP address of the firewall rule. Must
-     be IPv4 format. Use value '0.0.0.0' to represent all Azure-internal IP
-     addresses.
+    :param start_ip_address: Required. The start IP address of the firewall
+     rule. Must be IPv4 format. Use value '0.0.0.0' to represent all
+     Azure-internal IP addresses.
     :type start_ip_address: str
-    :param end_ip_address: The end IP address of the firewall rule. Must be
-     IPv4 format. Must be greater than or equal to startIpAddress. Use value
-     '0.0.0.0' to represent all Azure-internal IP addresses.
+    :param end_ip_address: Required. The end IP address of the firewall rule.
+     Must be IPv4 format. Must be greater than or equal to startIpAddress. Use
+     value '0.0.0.0' to represent all Azure-internal IP addresses.
     :type end_ip_address: str
     """
 
@@ -58,9 +60,9 @@ class FirewallRule(ProxyResource):
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, start_ip_address, end_ip_address):
-        super(FirewallRule, self).__init__()
+    def __init__(self, **kwargs):
+        super(FirewallRule, self).__init__(**kwargs)
         self.kind = None
         self.location = None
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
+        self.start_ip_address = kwargs.get('start_ip_address', None)
+        self.end_ip_address = kwargs.get('end_ip_address', None)

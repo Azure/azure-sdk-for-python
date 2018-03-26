@@ -72,14 +72,14 @@ class ElasticPoolUpdate(Resource):
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self, tags=None, edition=None, dtu=None, database_dtu_max=None, database_dtu_min=None, storage_mb=None, zone_redundant=None):
-        super(ElasticPoolUpdate, self).__init__()
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(ElasticPoolUpdate, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
         self.creation_date = None
         self.state = None
-        self.edition = edition
-        self.dtu = dtu
-        self.database_dtu_max = database_dtu_max
-        self.database_dtu_min = database_dtu_min
-        self.storage_mb = storage_mb
-        self.zone_redundant = zone_redundant
+        self.edition = kwargs.get('edition', None)
+        self.dtu = kwargs.get('dtu', None)
+        self.database_dtu_max = kwargs.get('database_dtu_max', None)
+        self.database_dtu_min = kwargs.get('database_dtu_min', None)
+        self.storage_mb = kwargs.get('storage_mb', None)
+        self.zone_redundant = kwargs.get('zone_redundant', None)

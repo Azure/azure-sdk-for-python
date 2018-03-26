@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -82,7 +82,7 @@ class DatabasesOperations(object):
             return client_raw_response
 
     def pause(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Pauses a data warehouse.
 
         :param resource_group_name: The name of the resource group that
@@ -94,12 +94,14 @@ class DatabasesOperations(object):
         :param database_name: The name of the data warehouse to pause.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._pause_initial(
@@ -110,40 +112,19 @@ class DatabasesOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     pause.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause'}
 
 
@@ -189,7 +170,7 @@ class DatabasesOperations(object):
             return client_raw_response
 
     def resume(
-            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Resumes a data warehouse.
 
         :param resource_group_name: The name of the resource group that
@@ -201,12 +182,14 @@ class DatabasesOperations(object):
         :param database_name: The name of the data warehouse to resume.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._resume_initial(
@@ -217,40 +200,19 @@ class DatabasesOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume'}
 
 
@@ -309,7 +271,7 @@ class DatabasesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a new database or updates an existing database.
 
         :param resource_group_name: The name of the resource group that
@@ -325,13 +287,16 @@ class DatabasesOperations(object):
          database.
         :type parameters: ~azure.mgmt.sql.models.Database
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns Database or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Database or
+         ClientRawResponse<Database> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.Database]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.Database]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -343,30 +308,8 @@ class DatabasesOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 201, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('Database', response)
 
             if raw:
@@ -375,12 +318,13 @@ class DatabasesOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}'}
 
 
@@ -437,7 +381,7 @@ class DatabasesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates an existing database.
 
         :param resource_group_name: The name of the resource group that
@@ -451,13 +395,16 @@ class DatabasesOperations(object):
         :param parameters: The required parameters for updating a database.
         :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns Database or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Database or
+         ClientRawResponse<Database> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.Database]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.Database]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -469,30 +416,8 @@ class DatabasesOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('Database', response)
 
             if raw:
@@ -501,12 +426,13 @@ class DatabasesOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}'}
 
     def delete(
@@ -1088,7 +1014,7 @@ class DatabasesOperations(object):
         return deserialized
 
     def import_method(
-            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Imports a bacpac into a new database. .
 
         :param resource_group_name: The name of the resource group that
@@ -1101,13 +1027,16 @@ class DatabasesOperations(object):
          a database.
         :type parameters: ~azure.mgmt.sql.models.ImportRequest
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         ImportExportResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ImportExportResponse or
+         ClientRawResponse<ImportExportResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ImportExportResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ImportExportResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._import_method_initial(
@@ -1118,30 +1047,8 @@ class DatabasesOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('ImportExportResponse', response)
 
             if raw:
@@ -1150,12 +1057,13 @@ class DatabasesOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     import_method.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/import'}
 
 
@@ -1213,7 +1121,7 @@ class DatabasesOperations(object):
         return deserialized
 
     def create_import_operation(
-            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates an import operation that imports a bacpac into an existing
         database. The existing database must be empty.
 
@@ -1229,13 +1137,16 @@ class DatabasesOperations(object):
          a database.
         :type parameters: ~azure.mgmt.sql.models.ImportExtensionRequest
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         ImportExportResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ImportExportResponse or
+         ClientRawResponse<ImportExportResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ImportExportResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ImportExportResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_import_operation_initial(
@@ -1247,30 +1158,8 @@ class DatabasesOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [201, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('ImportExportResponse', response)
 
             if raw:
@@ -1279,12 +1168,13 @@ class DatabasesOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_import_operation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extensions/{extensionName}'}
 
 
@@ -1341,7 +1231,7 @@ class DatabasesOperations(object):
         return deserialized
 
     def export(
-            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Exports a database to a bacpac.
 
         :param resource_group_name: The name of the resource group that
@@ -1355,13 +1245,16 @@ class DatabasesOperations(object):
         :param parameters: The required parameters for exporting a database.
         :type parameters: ~azure.mgmt.sql.models.ExportRequest
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         ImportExportResponse or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ImportExportResponse or
+         ClientRawResponse<ImportExportResponse> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.sql.models.ImportExportResponse]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.sql.models.ImportExportResponse]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._export_initial(
@@ -1373,30 +1266,8 @@ class DatabasesOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('ImportExportResponse', response)
 
             if raw:
@@ -1405,12 +1276,13 @@ class DatabasesOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     export.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export'}
 
     def list_metrics(

@@ -46,8 +46,8 @@ class ServerVersionCapability(Model):
         'supported_elastic_pool_editions': {'key': 'supportedElasticPoolEditions', 'type': '[ElasticPoolEditionCapability]'},
     }
 
-    def __init__(self):
-        super(ServerVersionCapability, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServerVersionCapability, self).__init__(**kwargs)
         self.name = None
         self.status = None
         self.supported_editions = None

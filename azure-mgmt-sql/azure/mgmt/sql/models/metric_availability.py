@@ -34,7 +34,7 @@ class MetricAvailability(Model):
         'time_grain': {'key': 'timeGrain', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(MetricAvailability, self).__init__()
+    def __init__(self, **kwargs):
+        super(MetricAvailability, self).__init__(**kwargs)
         self.retention = None
         self.time_grain = None
