@@ -43,12 +43,12 @@ class SoaRecord(Model):
         'minimum_ttl': {'key': 'minimumTTL', 'type': 'long'},
     }
 
-    def __init__(self, host=None, email=None, serial_number=None, refresh_time=None, retry_time=None, expire_time=None, minimum_ttl=None):
-        super(SoaRecord, self).__init__()
-        self.host = host
-        self.email = email
-        self.serial_number = serial_number
-        self.refresh_time = refresh_time
-        self.retry_time = retry_time
-        self.expire_time = expire_time
-        self.minimum_ttl = minimum_ttl
+    def __init__(self, **kwargs):
+        super(SoaRecord, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.email = kwargs.get('email', None)
+        self.serial_number = kwargs.get('serial_number', None)
+        self.refresh_time = kwargs.get('refresh_time', None)
+        self.retry_time = kwargs.get('retry_time', None)
+        self.expire_time = kwargs.get('expire_time', None)
+        self.minimum_ttl = kwargs.get('minimum_ttl', None)

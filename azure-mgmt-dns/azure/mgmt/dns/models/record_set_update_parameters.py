@@ -24,6 +24,6 @@ class RecordSetUpdateParameters(Model):
         'record_set': {'key': 'RecordSet', 'type': 'RecordSet'},
     }
 
-    def __init__(self, record_set=None):
-        super(RecordSetUpdateParameters, self).__init__()
-        self.record_set = record_set
+    def __init__(self, **kwargs):
+        super(RecordSetUpdateParameters, self).__init__(**kwargs)
+        self.record_set = kwargs.get('record_set', None)
