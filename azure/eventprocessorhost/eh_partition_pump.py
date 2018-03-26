@@ -17,6 +17,7 @@ class EventHubPartitionPump(PartitionPump):
     """
     Pulls and messages from lease partition from eventhub and sends them to processor
     """
+
     def __init__(self, host, lease):
         PartitionPump.__init__(self, host, lease)
         self.eh_client = None
@@ -34,9 +35,9 @@ class EventHubPartitionPump(PartitionPump):
                 await self.open_clients_async()
                 _opened_ok = True
             except Exception as err:
-                _logger.warning("%s,%s PartitionPumpWarning: Failure creating client or receiver,\
-                                retrying: %s", self.host.guid, self.partition_context.partition_id,
-                                repr(err))
+                _logger.warning(
+                    "{},{} PartitionPumpWarning: Failure creating client or receiver, "
+                    "retrying: {!r}".format(self.host.guid, self.partition_context.partition_id, err))
                 last_exception = err
                 _retry_count += 1
 
@@ -48,7 +49,7 @@ class EventHubPartitionPump(PartitionPump):
             loop = asyncio.get_event_loop()
             self.set_pump_status("Running")
             await self.eh_client.run_async()
-            await self.partition_receiver.run()
+            loop.create_task(self.partition_receiver.run())
 
         if self.pump_status in ["OpenFailed", "Errored"]:
             self.set_pump_status("Closing")
@@ -91,10 +92,12 @@ class EventHubPartitionPump(PartitionPump):
         """
         await self.clean_up_clients_async()
 
+
 class PartitionReceiver:
     """
     Recieves events from a async until lease is lost
     """
+
     def __init__(self, eh_partition_pump):
         self.eh_partition_pump = eh_partition_pump
         self.max_batch_size = self.eh_partition_pump.host.eph_options.max_batch_size
@@ -129,12 +132,12 @@ class PartitionReceiver:
 
     async def process_events_async(self, events):
         """
-        # This method is called on the thread that the EH client uses to run the pump.
-        # There is one pump per EventHubClient. Since each PartitionPump creates a
-        # new EventHubClient,using that thread to call OnEvents does no harm. Even if OnEvents
-        # is slow, the pump will get control back each time OnEvents returns, and be able to receive
-        # a new batch of messages with which to make the next OnEvents call.The pump gains nothing
-        # by running faster than OnEvents.
+        This method is called on the thread that the EH client uses to run the pump.
+        There is one pump per EventHubClient. Since each PartitionPump creates a
+        new EventHubClient,using that thread to call OnEvents does no harm. Even if OnEvents
+        is slow, the pump will get control back each time OnEvents returns, and be able to receive
+        a new batch of messages with which to make the next OnEvents call.The pump gains nothing
+        by running faster than OnEvents.
         """
         await self.eh_partition_pump.process_events_async(events)
 

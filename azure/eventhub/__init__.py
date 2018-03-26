@@ -74,7 +74,7 @@ class EventHubClient(object):
         properties = {}
         properties["product"] = "eventhub.python"
         properties["version"] = __version__
-        properties["framework"] = "Python %d.%d.%d" % (sys.version_info[0], sys.version_info[1], sys.version_info[2])
+        properties["framework"] = "Python {}.{}.{}".format(*sys.version_info[0:3])
         properties["platform"] = sys.platform
         return properties
 

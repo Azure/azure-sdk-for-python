@@ -7,12 +7,14 @@ import uuid
 import asyncio
 from azure.eventprocessorhost.partition_manager import PartitionManager
 
+
 class EventProcessorHost:
     """
     Represents a host for processing Event Hubs event data at scale.
     Takes in event hub a event processor class definition a eh_config object
     As well as a storage manager and an optional event_processor params (ep_params)
     """
+
     def __init__(self, event_processor, eh_config, storage_manager, ep_params=None, eph_options=None, loop=None):
         self.event_processor = event_processor
         self.event_processor_params = ep_params

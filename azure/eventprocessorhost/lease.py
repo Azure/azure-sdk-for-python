@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
+
 class Lease:
     """
     Lease contains partition processing state metadata used to manage partition state.
     """
+
     def __init__(self):
         self.partition_id = None
         self.sequence_number = None
@@ -45,4 +47,3 @@ class Lease:
         """
         self.epoch += 1
         return self.epoch
-    

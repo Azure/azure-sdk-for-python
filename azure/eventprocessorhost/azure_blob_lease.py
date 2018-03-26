@@ -4,7 +4,10 @@
 # -----------------------------------------------------------------------------------
 
 import json
+import asyncio
+
 from azure.eventprocessorhost.lease import Lease
+
 
 class AzureBlobLease(Lease):
     """
