@@ -20,54 +20,54 @@ class IotHubProperties(Model):
 
     :param authorization_policies: The shared access policies you can use to
      secure a connection to the IoT hub.
-    :type authorization_policies: list of
-     :class:`SharedAccessSignatureAuthorizationRule
-     <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>`
+    :type authorization_policies:
+     list[~azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule]
     :param ip_filter_rules: The IP filter rules.
-    :type ip_filter_rules: list of :class:`IpFilterRule
-     <azure.mgmt.iothub.models.IpFilterRule>`
+    :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
+    :ivar state: Thehub state state.
+    :vartype state: str
     :ivar host_name: The name of the host.
     :vartype host_name: str
     :param event_hub_endpoints: The Event Hub-compatible endpoint properties.
      The possible keys to this dictionary are events and
      operationsMonitoringEvents. Both of these keys have to be present in the
      dictionary while making create or update calls for the IoT hub.
-    :type event_hub_endpoints: dict
+    :type event_hub_endpoints: dict[str,
+     ~azure.mgmt.iothub.models.EventHubProperties]
     :param routing:
-    :type routing: :class:`RoutingProperties
-     <azure.mgmt.iothub.models.RoutingProperties>`
+    :type routing: ~azure.mgmt.iothub.models.RoutingProperties
     :param storage_endpoints: The list of Azure Storage endpoints where you
      can upload files. Currently you can configure only one Azure Storage
      account and that MUST have its key as $default. Specifying more than one
      storage account causes an error to be thrown. Not specifying a value for
      this property when the enableFileUploadNotifications property is set to
      True, causes an error to be thrown.
-    :type storage_endpoints: dict
+    :type storage_endpoints: dict[str,
+     ~azure.mgmt.iothub.models.StorageEndpointProperties]
     :param messaging_endpoints: The messaging endpoint properties for the file
      upload notification queue.
-    :type messaging_endpoints: dict
+    :type messaging_endpoints: dict[str,
+     ~azure.mgmt.iothub.models.MessagingEndpointProperties]
     :param enable_file_upload_notifications: If True, file upload
      notifications are enabled.
     :type enable_file_upload_notifications: bool
     :param cloud_to_device:
-    :type cloud_to_device: :class:`CloudToDeviceProperties
-     <azure.mgmt.iothub.models.CloudToDeviceProperties>`
+    :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
     :param operations_monitoring_properties:
     :type operations_monitoring_properties:
-     :class:`OperationsMonitoringProperties
-     <azure.mgmt.iothub.models.OperationsMonitoringProperties>`
+     ~azure.mgmt.iothub.models.OperationsMonitoringProperties
     :param features: The capabilities and features enabled for the IoT hub.
      Possible values include: 'None', 'DeviceManagement'
-    :type features: str or :class:`Capabilities
-     <azure.mgmt.iothub.models.Capabilities>`
+    :type features: str or ~azure.mgmt.iothub.models.Capabilities
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
+        'state': {'readonly': True},
         'host_name': {'readonly': True},
     }
 
@@ -75,6 +75,7 @@ class IotHubProperties(Model):
         'authorization_policies': {'key': 'authorizationPolicies', 'type': '[SharedAccessSignatureAuthorizationRule]'},
         'ip_filter_rules': {'key': 'ipFilterRules', 'type': '[IpFilterRule]'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
         'host_name': {'key': 'hostName', 'type': 'str'},
         'event_hub_endpoints': {'key': 'eventHubEndpoints', 'type': '{EventHubProperties}'},
         'routing': {'key': 'routing', 'type': 'RoutingProperties'},
@@ -87,17 +88,19 @@ class IotHubProperties(Model):
         'features': {'key': 'features', 'type': 'str'},
     }
 
-    def __init__(self, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications=None, cloud_to_device=None, comments=None, operations_monitoring_properties=None, features=None):
-        self.authorization_policies = authorization_policies
-        self.ip_filter_rules = ip_filter_rules
+    def __init__(self, **kwargs):
+        super(IotHubProperties, self).__init__(**kwargs)
+        self.authorization_policies = kwargs.get('authorization_policies', None)
+        self.ip_filter_rules = kwargs.get('ip_filter_rules', None)
         self.provisioning_state = None
+        self.state = None
         self.host_name = None
-        self.event_hub_endpoints = event_hub_endpoints
-        self.routing = routing
-        self.storage_endpoints = storage_endpoints
-        self.messaging_endpoints = messaging_endpoints
-        self.enable_file_upload_notifications = enable_file_upload_notifications
-        self.cloud_to_device = cloud_to_device
-        self.comments = comments
-        self.operations_monitoring_properties = operations_monitoring_properties
-        self.features = features
+        self.event_hub_endpoints = kwargs.get('event_hub_endpoints', None)
+        self.routing = kwargs.get('routing', None)
+        self.storage_endpoints = kwargs.get('storage_endpoints', None)
+        self.messaging_endpoints = kwargs.get('messaging_endpoints', None)
+        self.enable_file_upload_notifications = kwargs.get('enable_file_upload_notifications', None)
+        self.cloud_to_device = kwargs.get('cloud_to_device', None)
+        self.comments = kwargs.get('comments', None)
+        self.operations_monitoring_properties = kwargs.get('operations_monitoring_properties', None)
+        self.features = kwargs.get('features', None)
