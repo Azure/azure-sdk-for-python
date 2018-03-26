@@ -12,6 +12,17 @@
 from enum import Enum
 
 
+class AutomationKeyName(Enum):
+
+    primary = "primary"
+    secondary = "secondary"
+
+
+class AutomationKeyPermissions(Enum):
+
+    full = "Full"
+
+
 class RunbookTypeEnum(Enum):
 
     script = "Script"
