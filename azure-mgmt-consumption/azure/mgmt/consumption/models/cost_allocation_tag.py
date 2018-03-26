@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class CostAllocationTag(Model):
     """The cost allocation tag.
 
-    :param key_name: Cost allocation tag key name.
-    :type key_name: str
+    :param key: Cost allocation tag key.
+    :type key: str
     """
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, key_name=None):
+    def __init__(self, key=None):
         super(CostAllocationTag, self).__init__()
-        self.key_name = key_name
+        self.key = key
