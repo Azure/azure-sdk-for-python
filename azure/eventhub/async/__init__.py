@@ -39,7 +39,7 @@ class EventHubClientAsync(EventHubClient):
     def _create_connection_async(self):
         if not self.connection:
             log.info("{}: Creating connection with address={}".format(
-                self.container_id, self.address))
+                self.container_id, self.address.geturl()))
             self.connection = ConnectionAsync(
                 self.address.hostname,
                 self.auth,
@@ -75,7 +75,7 @@ class EventHubClientAsync(EventHubClient):
     async def get_eventhub_info_async(self):
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
-        async with AMQPClientAsync(target, auth=self.auth, debug=True) as mgmt_client:
+        async with AMQPClientAsync(target, auth=self.auth, debug=self.debug) as mgmt_client:
             mgmt_msg = Message(application_properties={'name': eh_name})
             response = await mgmt_client.mgmt_request_async(
                 mgmt_msg,

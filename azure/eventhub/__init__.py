@@ -58,8 +58,6 @@ class EventHubClient(object):
             raise ValueError("Missing username and/or password.")
         auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self.auth = self._create_auth(auth_uri, username, password)
-
-        self.daemon = None
         self.connection = None
         self.debug = kwargs.get('debug', False)
 
@@ -119,7 +117,7 @@ class EventHubClient(object):
     def get_eventhub_info(self):
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
-        with uamqp.AMQPClient(target, auth=self.auth, debug=True) as mgmt_client:
+        with uamqp.AMQPClient(target, auth=self.auth, debug=self.debug) as mgmt_client:
             mgmt_msg = Message(application_properties={'name': eh_name})
             response = mgmt_client.mgmt_request(
                 mgmt_msg,

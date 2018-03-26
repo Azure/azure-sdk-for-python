@@ -18,16 +18,6 @@ from azure.eventprocessorhost import (
 import examples
 logger = examples.get_logger(logging.DEBUG)
 
-class ExEventProcessorHost(EventProcessorHost):
-    async def open_async(self):
-        _loop = asyncio.get_event_loop()
-        _loop.create_task(self.kill_me())
-        await super().open_async()
-
-    async def kill_me(self):
-        await asyncio.sleep(30)
-        self.loop.create_task(self.close_async())
-
 
 class EventProcessor(AbstractEventProcessor):
     """
@@ -74,11 +64,19 @@ class EventProcessor(AbstractEventProcessor):
         continuing to pump messages,so no action is required from
         (Params) Context: Information about the partition, Error: The error that occured.
         """
-        logger.error("Event Processor Error {}".format(repr(error)))
+        logger.error("Event Processor Error {!r}".format(error))
+
+
+async def wait_and_close(host):
+    """
+    Run EventProcessorHost for 2 minutes then shutdown.
+    """
+    await asyncio.sleep(120)
+    await host.close_async()
 
 
 try:
-    LOOP = asyncio.get_event_loop()
+    loop = asyncio.get_event_loop()
 
     # Storage Account Credentials
     STORAGE_ACCOUNT_NAME = os.environ.get('AZURE_STORAGE_ACCOUNT')
@@ -91,30 +89,32 @@ try:
     KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
     # Eventhub config and storage manager 
-    EH_CONFIG = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$default")
-    EH_OPTIONS = EPHOptions()
-    EH_OPTIONS.release_pump_on_timeout = True
-    EH_OPTIONS.debug_trace = False
-    STORAGE_MANAGER = AzureStorageCheckpointLeaseManager(STORAGE_ACCOUNT_NAME, STORAGE_KEY,
-                                                         LEASE_CONTAINER_NAME)
+    eh_config = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$default")
+    eh_options = EPHOptions()
+    eh_options.release_pump_on_timeout = True
+    eh_options.debug_trace = False
+    storage_manager = AzureStorageCheckpointLeaseManager(
+        STORAGE_ACCOUNT_NAME, STORAGE_KEY, LEASE_CONTAINER_NAME)
+
     #Event loop and host
-    HOST = EventProcessorHost(
+    host = EventProcessorHost(
         EventProcessor,
-        EH_CONFIG,
-        STORAGE_MANAGER,
+        eh_config,
+        storage_manager,
         ep_params=["param1","param2"],
-        eph_options=EH_OPTIONS,
-        loop=LOOP)
+        eph_options=eh_options,
+        loop=loop)
 
-    # HOST = exEventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
-    #                             ep_params=["param1", "param2"], loop=LOOP)
+    tasks = asyncio.gather(
+        host.open_async(),
+        wait_and_close(host))
+    loop.run_until_complete(tasks)
 
-    host = EventProcessorHost(EventProcessor, EH_CONFIG, STORAGE_MANAGER,
-                              ep_params=["param1", "param2"], loop=loop)
-    loop.create_task(host.open_async())
-    while any([True if not task.done() else False for task in asyncio.Task.all_tasks()]):
-        loop.run_until_complete(asyncio.sleep(1))
-    loop.run_until_complete(host.close_async())
+except KeyboardInterrupt:
+    # Canceling pending tasks and stopping the loop
+    for task in asyncio.Task.all_tasks():
+       task.cancel()
+    loop.run_forever()
 
 finally:
     loop.stop()

@@ -23,6 +23,7 @@ class EventHubPartitionPump(PartitionPump):
         self.eh_client = None
         self.partition_receiver = None
         self.partition_receive_handler = None
+        self.running = None
 
     async def on_open_async(self):
         """
@@ -49,7 +50,7 @@ class EventHubPartitionPump(PartitionPump):
             loop = asyncio.get_event_loop()
             self.set_pump_status("Running")
             await self.eh_client.run_async()
-            loop.create_task(self.partition_receiver.run())
+            self.running = loop.create_task(self.partition_receiver.run())
 
         if self.pump_status in ["OpenFailed", "Errored"]:
             self.set_pump_status("Closing")
@@ -90,6 +91,8 @@ class EventHubPartitionPump(PartitionPump):
         """
         Overides partition pump on cleasing
         """
+        self.partition_receiver.eh_partition_pump.set_pump_status("Errored")
+        await self.running
         await self.clean_up_clients_async()
 
 
@@ -120,12 +123,11 @@ class PartitionReceiver:
                     await self.process_error_async(e)
                 else:
                     if not msgs:
-                        print("No events received, queue size {}, delivered {}, release {}".format(
+                        _logger.info("No events received, queue size {}, delivered {}, release {}".format(
                             self.eh_partition_pump.partition_receive_handler.queue_size,
                             self.eh_partition_pump.partition_receive_handler.delivered,
                             self.eh_partition_pump.host.eph_options.release_pump_on_timeout))
                         if self.eh_partition_pump.host.eph_options.release_pump_on_timeout:
-                            print("releasing on timeout")
                             await self.process_error_async(TimeoutError("No events received"))
                     else:
                         await self.process_events_async(msgs)

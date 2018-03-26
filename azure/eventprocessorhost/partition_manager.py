@@ -30,7 +30,6 @@ class PartitionManager:
         self.partition_pumps = {}
         self.partition_ids = None
         self.run_task = None
-        self.pump_executor = None
         self.cancellation_token = CancellationToken()
 
     async def get_partition_ids_async(self):
@@ -58,8 +57,6 @@ class PartitionManager:
 
         partition_count = await self.initialize_stores_async()
         _logger.info("{} PartitionCount: {}".format(self.host.guid, partition_count))
-        self.pump_executor = concurrent.futures.ThreadPoolExecutor(max_workers=partition_count)
-
         self.run_task = asyncio.ensure_future(self.run_async())
 
     async def stop_async(self):
