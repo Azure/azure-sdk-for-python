@@ -91,14 +91,14 @@ class PartitionPump():
             await self.on_closing_async(reason)
             if self.processor:
                 _logger.info("PartitionPumpInvokeProcessorCloseStart {} {} {}".format(
-                    self.host.guid, self.partition_context.partition_id, reason)
+                    self.host.guid, self.partition_context.partition_id, reason))
                 await self.processor.close_async(self.partition_context, reason)
                 _logger.info("PartitionPumpInvokeProcessorCloseStart {} {}".format(
-                    self.host.guid, self.partition_context.partition_id)
+                    self.host.guid, self.partition_context.partition_id))
         except Exception as err:
             await self.process_error_async(err)
             _logger.error("{} {} {!r}".format(
-                self.host.guid, self.partition_context.partition_id, err)
+                self.host.guid, self.partition_context.partition_id, err))
             raise err
 
         if reason == "LeaseLost":
@@ -107,7 +107,7 @@ class PartitionPump():
                 await self.host.storage_manager.release_lease_async(self.partition_context.lease)
             except Exception as err:
                 _logger.error("{} {} {!r}".format(
-                    self.host.guid, self.partition_context.partition_id, err)
+                    self.host.guid, self.partition_context.partition_id, err))
                 raise err
 
         self.set_pump_status("Closed")

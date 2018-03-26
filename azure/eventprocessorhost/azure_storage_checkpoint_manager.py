@@ -215,7 +215,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
             _logger.info("Creating Lease {} {} {}".format(
                 self.lease_container_name,
                 partition_id,
-                json_lease)
+                json_lease))
             await self.host.loop.run_in_executor(
                 self.executor,
                 functools.partial(

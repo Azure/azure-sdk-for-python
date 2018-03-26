@@ -107,7 +107,6 @@ class PartitionContext:
                 self.lease.offset = checkpoint.offset
                 self.lease.sequence_number = checkpoint.sequence_number
             else:
-                msg = 
                 _logger.error(
                     "Ignoring out of date checkpoint with offset {}/sequence number {} because "
                     "current persisted checkpoint has higher offset {}/sequence number {}".format(
