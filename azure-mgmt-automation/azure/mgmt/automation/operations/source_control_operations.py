@@ -37,11 +37,9 @@ class SourceControlOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, automation_account_name, source_control_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, source_control_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a source control.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param source_control_name: The source control name.
@@ -64,7 +62,7 @@ class SourceControlOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'sourceControlName': self._serialize.url("source_control_name", source_control_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -111,11 +109,9 @@ class SourceControlOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}'}
 
     def update(
-            self, resource_group_name, automation_account_name, source_control_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, source_control_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Update a source control.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param source_control_name: The source control name.
@@ -138,7 +134,7 @@ class SourceControlOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'sourceControlName': self._serialize.url("source_control_name", source_control_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -183,11 +179,9 @@ class SourceControlOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}'}
 
     def delete(
-            self, resource_group_name, automation_account_name, source_control_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, source_control_name, custom_headers=None, raw=False, **operation_config):
         """Delete the source control.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param source_control_name: The name of source control.
@@ -205,7 +199,7 @@ class SourceControlOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'sourceControlName': self._serialize.url("source_control_name", source_control_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -239,11 +233,9 @@ class SourceControlOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}'}
 
     def get(
-            self, resource_group_name, automation_account_name, source_control_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, source_control_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the source control identified by source control name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param source_control_name: The name of source control.
@@ -262,7 +254,7 @@ class SourceControlOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'sourceControlName': self._serialize.url("source_control_name", source_control_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -303,11 +295,9 @@ class SourceControlOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/sourceControls/{sourceControlName}'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of source controls.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
@@ -329,7 +319,7 @@ class SourceControlOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

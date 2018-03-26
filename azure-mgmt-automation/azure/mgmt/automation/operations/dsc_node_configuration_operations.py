@@ -37,11 +37,9 @@ class DscNodeConfigurationOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, automation_account_name, node_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, node_configuration_name, custom_headers=None, raw=False, **operation_config):
         """Delete the Dsc node configurations by node configuration.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param node_configuration_name: The Dsc node configuration name.
@@ -59,7 +57,7 @@ class DscNodeConfigurationOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeConfigurationName': self._serialize.url("node_configuration_name", node_configuration_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -93,11 +91,9 @@ class DscNodeConfigurationOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodeConfigurations/{nodeConfigurationName}'}
 
     def get(
-            self, resource_group_name, automation_account_name, node_configuration_name, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, node_configuration_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc node configurations by node configuration.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param node_configuration_name: The Dsc node configuration name.
@@ -116,7 +112,7 @@ class DscNodeConfigurationOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeConfigurationName': self._serialize.url("node_configuration_name", node_configuration_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -157,11 +153,9 @@ class DscNodeConfigurationOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodeConfigurations/{nodeConfigurationName}'}
 
     def create_or_update(
-            self, resource_group_name, automation_account_name, node_configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, node_configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create the node configuration identified by node configuration name.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param node_configuration_name: The create or update parameters for
@@ -184,7 +178,7 @@ class DscNodeConfigurationOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeConfigurationName': self._serialize.url("node_configuration_name", node_configuration_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -229,11 +223,9 @@ class DscNodeConfigurationOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodeConfigurations/{nodeConfigurationName}'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of dsc node configurations.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
@@ -255,7 +247,7 @@ class DscNodeConfigurationOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
