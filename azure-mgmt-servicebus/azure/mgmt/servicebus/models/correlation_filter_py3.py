@@ -15,8 +15,6 @@ from msrest.serialization import Model
 class CorrelationFilter(Model):
     """Represents the correlation filter expression.
 
-    :param properties: dictionary object for custom filters
-    :type properties: dict[str, str]
     :param correlation_id: Identifier of the correlation.
     :type correlation_id: str
     :param message_id: Identifier of the message.
@@ -39,7 +37,6 @@ class CorrelationFilter(Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': '{str}'},
         'correlation_id': {'key': 'correlationId', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'to': {'key': 'to', 'type': 'str'},
@@ -51,9 +48,8 @@ class CorrelationFilter(Model):
         'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
     }
 
-    def __init__(self, *, properties=None, correlation_id: str=None, message_id: str=None, to: str=None, reply_to: str=None, label: str=None, session_id: str=None, reply_to_session_id: str=None, content_type: str=None, requires_preprocessing: bool=True, **kwargs) -> None:
+    def __init__(self, *, correlation_id: str=None, message_id: str=None, to: str=None, reply_to: str=None, label: str=None, session_id: str=None, reply_to_session_id: str=None, content_type: str=None, requires_preprocessing: bool=True, **kwargs) -> None:
         super(CorrelationFilter, self).__init__(**kwargs)
-        self.properties = properties
         self.correlation_id = correlation_id
         self.message_id = message_id
         self.to = to
