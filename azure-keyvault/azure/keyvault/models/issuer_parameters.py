@@ -21,14 +21,19 @@ class IssuerParameters(Model):
     :param certificate_type: Type of certificate to be requested from the
      issuer provider.
     :type certificate_type: str
+    :param certificate_transparency: Indicates if the certificates generated
+     under this policy should be published to certificate transparency logs.
+    :type certificate_transparency: bool
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'certificate_type': {'key': 'cty', 'type': 'str'},
+        'certificate_transparency': {'key': 'cert_transparency', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, certificate_type=None):
+    def __init__(self, name=None, certificate_type=None, certificate_transparency=None):
         super(IssuerParameters, self).__init__()
         self.name = name
         self.certificate_type = certificate_type
+        self.certificate_transparency = certificate_transparency

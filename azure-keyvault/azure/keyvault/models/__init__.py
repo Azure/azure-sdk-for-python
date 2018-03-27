@@ -85,6 +85,8 @@ from .deleted_sas_definition_item import DeletedSasDefinitionItem
 from .sas_definition_create_parameters import SasDefinitionCreateParameters
 from .sas_definition_update_parameters import SasDefinitionUpdateParameters
 from .key_vault_error import KeyVaultError, KeyVaultErrorException
+from .certificate_restore_parameters import CertificateRestoreParameters
+from .backup_certificate_result import BackupCertificateResult
 from .key_item_paged import KeyItemPaged
 from .deleted_key_item_paged import DeletedKeyItemPaged
 from .secret_item_paged import SecretItemPaged
@@ -185,6 +187,8 @@ __all__ = [
     'SasDefinitionCreateParameters',
     'SasDefinitionUpdateParameters',
     'KeyVaultError', 'KeyVaultErrorException',
+    'CertificateRestoreParameters',
+    'BackupCertificateResult',
     'KeyItemPaged',
     'DeletedKeyItemPaged',
     'SecretItemPaged',
