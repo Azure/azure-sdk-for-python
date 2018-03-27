@@ -40,9 +40,11 @@ class RunbookDraftOperations(object):
         self.config = config
 
     def get_content(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the content of runbook draft identified by runbook name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -60,7 +62,7 @@ class RunbookDraftOperations(object):
         url = self.get_content.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -103,12 +105,12 @@ class RunbookDraftOperations(object):
 
 
     def _replace_content_initial(
-            self, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.replace_content.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -136,21 +138,34 @@ class RunbookDraftOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('str', response)
             header_dict = {
                 'location': 'str',
             }
-            client_raw_response.add_headers(header_dict)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            try:
+                client_raw_response.add_headers(header_dict)
+            except DeserializationError:
+                pass # Deserialization of Headers here can fail
             return client_raw_response
 
+        return deserialized
+
     def replace_content(
-            self, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
         """Replaces the runbook draft content.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -160,14 +175,15 @@ class RunbookDraftOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
+        :return: An instance of AzureOperationPoller that returns str or
          ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[str] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         raw_result = self._replace_content_initial(
+            resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
             runbook_content=runbook_content,
@@ -194,15 +210,20 @@ class RunbookDraftOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
+            header_dict = {
+                'location': 'str',
+            }
+            deserialized = self._deserialize('str', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                client_raw_response.add_headers({
-                    'location': 'str',
-                })
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
                 return client_raw_response
+
+            return deserialized
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -213,9 +234,11 @@ class RunbookDraftOperations(object):
     replace_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/content'}
 
     def get(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the runbook draft identified by runbook name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -235,7 +258,7 @@ class RunbookDraftOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -276,12 +299,12 @@ class RunbookDraftOperations(object):
 
 
     def _publish_initial(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.publish.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -305,21 +328,34 @@ class RunbookDraftOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
+        deserialized = None
+        header_dict = {}
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('str', response)
             header_dict = {
                 'location': 'str',
             }
-            client_raw_response.add_headers(header_dict)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            try:
+                client_raw_response.add_headers(header_dict)
+            except DeserializationError:
+                pass # Deserialization of Headers here can fail
             return client_raw_response
 
+        return deserialized
+
     def publish(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Publish runbook draft.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The parameters supplied to the publish runbook
@@ -328,14 +364,15 @@ class RunbookDraftOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
+        :return: An instance of AzureOperationPoller that returns str or
          ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[str] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
         raw_result = self._publish_initial(
+            resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
             custom_headers=custom_headers,
@@ -361,15 +398,20 @@ class RunbookDraftOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [200, 202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
+            header_dict = {
+                'location': 'str',
+            }
+            deserialized = self._deserialize('str', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                client_raw_response.add_headers({
-                    'location': 'str',
-                })
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
                 return client_raw_response
+
+            return deserialized
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -380,10 +422,12 @@ class RunbookDraftOperations(object):
     publish.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/publish'}
 
     def undo_edit(
-            self, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Undo draft edit to last known published state identified by runbook
         name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param runbook_name: The runbook name.
@@ -403,7 +447,7 @@ class RunbookDraftOperations(object):
         url = self.undo_edit.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
