@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .task_output import TaskOutput
+from msrest.serialization import Model
 
 
-class ConnectToTargetSqlDbTaskOutput(TaskOutput):
+class ConnectToTargetSqlDbTaskOutput(Model):
     """Output for the task that validates connection to SQL DB and target server
     requirements.
 
@@ -46,6 +46,7 @@ class ConnectToTargetSqlDbTaskOutput(TaskOutput):
 
     def __init__(self, **kwargs):
         super(ConnectToTargetSqlDbTaskOutput, self).__init__(**kwargs)
+        self.id = None
         self.databases = None
         self.target_server_version = None
         self.target_server_brand_version = None
