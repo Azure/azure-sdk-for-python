@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class ElasticPoolEditionCapability(Model):
-    """The elastic pool edition capability.
+class ElasticPoolPerDatabaseMinPerformanceLevelCapability(Model):
+    """The minimum per-database performance level capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The elastic pool edition name.
-    :vartype name: str
-    :ivar supported_elastic_pool_performance_levels: The list of supported
-     elastic pool DTU levels for the edition.
-    :vartype supported_elastic_pool_performance_levels:
-     list[~azure.mgmt.sql.models.ElasticPoolPerformanceLevelCapability]
-    :ivar zone_redundant: Whether or not zone redundancy is supported for the
-     edition.
-    :vartype zone_redundant: bool
+    :ivar limit: The minimum performance level per database.
+    :vartype limit: float
+    :ivar unit: Unit type used to measure performance level. Possible values
+     include: 'DTU', 'VCores'
+    :vartype unit: str or ~azure.mgmt.sql.models.PerformanceLevelUnit
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -35,24 +31,21 @@ class ElasticPoolEditionCapability(Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'supported_elastic_pool_performance_levels': {'readonly': True},
-        'zone_redundant': {'readonly': True},
+        'limit': {'readonly': True},
+        'unit': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'supported_elastic_pool_performance_levels': {'key': 'supportedElasticPoolPerformanceLevels', 'type': '[ElasticPoolPerformanceLevelCapability]'},
-        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'limit': {'key': 'limit', 'type': 'float'},
+        'unit': {'key': 'unit', 'type': 'str'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
     def __init__(self, *, reason: str=None, **kwargs) -> None:
-        super(ElasticPoolEditionCapability, self).__init__(**kwargs)
-        self.name = None
-        self.supported_elastic_pool_performance_levels = None
-        self.zone_redundant = None
+        super(ElasticPoolPerDatabaseMinPerformanceLevelCapability, self).__init__(**kwargs)
+        self.limit = None
+        self.unit = None
         self.status = None
         self.reason = reason

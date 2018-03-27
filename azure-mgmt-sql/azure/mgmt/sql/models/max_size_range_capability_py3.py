@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class ElasticPoolEditionCapability(Model):
-    """The elastic pool edition capability.
+class MaxSizeRangeCapability(Model):
+    """The maximum size range capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The elastic pool edition name.
-    :vartype name: str
-    :ivar supported_elastic_pool_performance_levels: The list of supported
-     elastic pool DTU levels for the edition.
-    :vartype supported_elastic_pool_performance_levels:
-     list[~azure.mgmt.sql.models.ElasticPoolPerformanceLevelCapability]
-    :ivar zone_redundant: Whether or not zone redundancy is supported for the
-     edition.
-    :vartype zone_redundant: bool
+    :ivar min_value: Minimum value.
+    :vartype min_value: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar max_value: Maximum value.
+    :vartype max_value: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar scale_size: Scale/step size for discrete values between the minimum
+     value and the maximum value.
+    :vartype scale_size: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar log_size: Size of transaction log.
+    :vartype log_size: ~azure.mgmt.sql.models.LogSizeCapability
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -35,24 +35,27 @@ class ElasticPoolEditionCapability(Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'supported_elastic_pool_performance_levels': {'readonly': True},
-        'zone_redundant': {'readonly': True},
+        'min_value': {'readonly': True},
+        'max_value': {'readonly': True},
+        'scale_size': {'readonly': True},
+        'log_size': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'supported_elastic_pool_performance_levels': {'key': 'supportedElasticPoolPerformanceLevels', 'type': '[ElasticPoolPerformanceLevelCapability]'},
-        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'min_value': {'key': 'minValue', 'type': 'MaxSizeCapability'},
+        'max_value': {'key': 'maxValue', 'type': 'MaxSizeCapability'},
+        'scale_size': {'key': 'scaleSize', 'type': 'MaxSizeCapability'},
+        'log_size': {'key': 'logSize', 'type': 'LogSizeCapability'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
     def __init__(self, *, reason: str=None, **kwargs) -> None:
-        super(ElasticPoolEditionCapability, self).__init__(**kwargs)
-        self.name = None
-        self.supported_elastic_pool_performance_levels = None
-        self.zone_redundant = None
+        super(MaxSizeRangeCapability, self).__init__(**kwargs)
+        self.min_value = None
+        self.max_value = None
+        self.scale_size = None
+        self.log_size = None
         self.status = None
         self.reason = reason

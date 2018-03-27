@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class MaxSizeCapability(Model):
-    """The maximum size capability.
+class LogSizeCapability(Model):
+    """The log size capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar limit: The maximum size limit (see 'unit' for the units).
+    :ivar limit: The log size limit (see 'unit' for the units).
     :vartype limit: int
     :ivar unit: The units that the limit is expressed in. Possible values
-     include: 'Megabytes', 'Gigabytes', 'Terabytes', 'Petabytes'
-    :vartype unit: str or ~azure.mgmt.sql.models.MaxSizeUnit
+     include: 'Megabytes', 'Gigabytes', 'Terabytes', 'Petabytes', 'Percent'
+    :vartype unit: str or ~azure.mgmt.sql.models.LogSizeUnit
     """
 
     _validation = {
@@ -35,7 +35,7 @@ class MaxSizeCapability(Model):
         'unit': {'key': 'unit', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(MaxSizeCapability, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(LogSizeCapability, self).__init__(**kwargs)
         self.limit = None
         self.unit = None

@@ -12,29 +12,27 @@
 from msrest.serialization import Model
 
 
-class ServiceObjectiveCapability(Model):
-    """The service objectives capability.
+class ManagedInstanceFamilyCapability(Model):
+    """The managed server family capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The unique ID of the service objective.
-    :vartype id: str
-    :ivar name: The service objective name.
+    :ivar name: Family name.
     :vartype name: str
-    :ivar supported_max_sizes: The list of supported maximum database sizes.
-    :vartype supported_max_sizes:
-     list[~azure.mgmt.sql.models.MaxSizeRangeCapability]
-    :ivar performance_level: The performance level.
-    :vartype performance_level:
-     ~azure.mgmt.sql.models.PerformanceLevelCapability
-    :ivar sku: The sku.
-    :vartype sku: ~azure.mgmt.sql.models.Sku
+    :ivar sku: SKU name.
+    :vartype sku: str
     :ivar supported_license_types: List of supported license types.
     :vartype supported_license_types:
      list[~azure.mgmt.sql.models.LicenseTypeCapability]
-    :ivar included_max_size: The included (free) max size.
+    :ivar supported_vcores_values: List of supported virtual cores values.
+    :vartype supported_vcores_values:
+     list[~azure.mgmt.sql.models.ManagedInstanceVcoresCapability]
+    :ivar included_max_size: Included size.
     :vartype included_max_size: ~azure.mgmt.sql.models.MaxSizeCapability
+    :ivar supported_storage_sizes: Storage size ranges.
+    :vartype supported_storage_sizes:
+     list[~azure.mgmt.sql.models.MaxSizeRangeCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -43,36 +41,33 @@ class ServiceObjectiveCapability(Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'supported_max_sizes': {'readonly': True},
-        'performance_level': {'readonly': True},
         'sku': {'readonly': True},
         'supported_license_types': {'readonly': True},
+        'supported_vcores_values': {'readonly': True},
         'included_max_size': {'readonly': True},
+        'supported_storage_sizes': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'supported_max_sizes': {'key': 'supportedMaxSizes', 'type': '[MaxSizeRangeCapability]'},
-        'performance_level': {'key': 'performanceLevel', 'type': 'PerformanceLevelCapability'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        'sku': {'key': 'sku', 'type': 'str'},
         'supported_license_types': {'key': 'supportedLicenseTypes', 'type': '[LicenseTypeCapability]'},
+        'supported_vcores_values': {'key': 'supportedVcoresValues', 'type': '[ManagedInstanceVcoresCapability]'},
         'included_max_size': {'key': 'includedMaxSize', 'type': 'MaxSizeCapability'},
+        'supported_storage_sizes': {'key': 'supportedStorageSizes', 'type': '[MaxSizeRangeCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServiceObjectiveCapability, self).__init__(**kwargs)
-        self.id = None
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(ManagedInstanceFamilyCapability, self).__init__(**kwargs)
         self.name = None
-        self.supported_max_sizes = None
-        self.performance_level = None
         self.sku = None
         self.supported_license_types = None
+        self.supported_vcores_values = None
         self.included_max_size = None
+        self.supported_storage_sizes = None
         self.status = None
-        self.reason = kwargs.get('reason', None)
+        self.reason = reason

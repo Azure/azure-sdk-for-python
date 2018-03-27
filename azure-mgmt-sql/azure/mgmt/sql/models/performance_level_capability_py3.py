@@ -12,30 +12,30 @@
 from msrest.serialization import Model
 
 
-class MaxSizeCapability(Model):
-    """The maximum size capability.
+class PerformanceLevelCapability(Model):
+    """The performance level capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar limit: The maximum size limit (see 'unit' for the units).
-    :vartype limit: int
-    :ivar unit: The units that the limit is expressed in. Possible values
-     include: 'Megabytes', 'Gigabytes', 'Terabytes', 'Petabytes'
-    :vartype unit: str or ~azure.mgmt.sql.models.MaxSizeUnit
+    :ivar value: Performance level value.
+    :vartype value: float
+    :ivar unit: Unit type used to measure performance level. Possible values
+     include: 'DTU', 'VCores'
+    :vartype unit: str or ~azure.mgmt.sql.models.PerformanceLevelUnit
     """
 
     _validation = {
-        'limit': {'readonly': True},
+        'value': {'readonly': True},
         'unit': {'readonly': True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'int'},
+        'value': {'key': 'value', 'type': 'float'},
         'unit': {'key': 'unit', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MaxSizeCapability, self).__init__(**kwargs)
-        self.limit = None
+        super(PerformanceLevelCapability, self).__init__(**kwargs)
+        self.value = None
         self.unit = None

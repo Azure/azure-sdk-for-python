@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class ElasticPoolEditionCapability(Model):
-    """The elastic pool edition capability.
+class ManagedInstanceVersionCapability(Model):
+    """The managed instance capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The elastic pool edition name.
+    :ivar name: The server version name.
     :vartype name: str
-    :ivar supported_elastic_pool_performance_levels: The list of supported
-     elastic pool DTU levels for the edition.
-    :vartype supported_elastic_pool_performance_levels:
-     list[~azure.mgmt.sql.models.ElasticPoolPerformanceLevelCapability]
-    :ivar zone_redundant: Whether or not zone redundancy is supported for the
-     edition.
-    :vartype zone_redundant: bool
+    :ivar supported_editions: The list of supported managed instance editions.
+    :vartype supported_editions:
+     list[~azure.mgmt.sql.models.ManagedInstanceEditionCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -36,23 +32,20 @@ class ElasticPoolEditionCapability(Model):
 
     _validation = {
         'name': {'readonly': True},
-        'supported_elastic_pool_performance_levels': {'readonly': True},
-        'zone_redundant': {'readonly': True},
+        'supported_editions': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'supported_elastic_pool_performance_levels': {'key': 'supportedElasticPoolPerformanceLevels', 'type': '[ElasticPoolPerformanceLevelCapability]'},
-        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'supported_editions': {'key': 'supportedEditions', 'type': '[ManagedInstanceEditionCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
     def __init__(self, *, reason: str=None, **kwargs) -> None:
-        super(ElasticPoolEditionCapability, self).__init__(**kwargs)
+        super(ManagedInstanceVersionCapability, self).__init__(**kwargs)
         self.name = None
-        self.supported_elastic_pool_performance_levels = None
-        self.zone_redundant = None
+        self.supported_editions = None
         self.status = None
         self.reason = reason

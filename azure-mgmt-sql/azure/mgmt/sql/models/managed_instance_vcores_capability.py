@@ -12,30 +12,39 @@
 from msrest.serialization import Model
 
 
-class ElasticPoolPerDatabaseMinDtuCapability(Model):
-    """The minimum per-database DTU capability.
+class ManagedInstanceVcoresCapability(Model):
+    """The managed instance virtual cores capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar limit: The maximum DTUs per database.
-    :vartype limit: long
+    :ivar name: The virtual cores identifier.
+    :vartype name: str
+    :ivar value: The virtual cores value.
+    :vartype value: int
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
+    :param reason: The reason for the capability not being available.
+    :type reason: str
     """
 
     _validation = {
-        'limit': {'readonly': True},
+        'name': {'readonly': True},
+        'value': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'int'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(ElasticPoolPerDatabaseMinDtuCapability, self).__init__(**kwargs)
-        self.limit = None
+    def __init__(self, **kwargs):
+        super(ManagedInstanceVcoresCapability, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
         self.status = None
+        self.reason = kwargs.get('reason', None)

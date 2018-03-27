@@ -12,21 +12,17 @@
 from msrest.serialization import Model
 
 
-class ElasticPoolEditionCapability(Model):
-    """The elastic pool edition capability.
+class ManagedInstanceEditionCapability(Model):
+    """The managed server capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The elastic pool edition name.
+    :ivar name: The managed server version name.
     :vartype name: str
-    :ivar supported_elastic_pool_performance_levels: The list of supported
-     elastic pool DTU levels for the edition.
-    :vartype supported_elastic_pool_performance_levels:
-     list[~azure.mgmt.sql.models.ElasticPoolPerformanceLevelCapability]
-    :ivar zone_redundant: Whether or not zone redundancy is supported for the
-     edition.
-    :vartype zone_redundant: bool
+    :ivar supported_families: The supported families.
+    :vartype supported_families:
+     list[~azure.mgmt.sql.models.ManagedInstanceFamilyCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
@@ -36,23 +32,20 @@ class ElasticPoolEditionCapability(Model):
 
     _validation = {
         'name': {'readonly': True},
-        'supported_elastic_pool_performance_levels': {'readonly': True},
-        'zone_redundant': {'readonly': True},
+        'supported_families': {'readonly': True},
         'status': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'supported_elastic_pool_performance_levels': {'key': 'supportedElasticPoolPerformanceLevels', 'type': '[ElasticPoolPerformanceLevelCapability]'},
-        'zone_redundant': {'key': 'zoneRedundant', 'type': 'bool'},
+        'supported_families': {'key': 'supportedFamilies', 'type': '[ManagedInstanceFamilyCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, *, reason: str=None, **kwargs) -> None:
-        super(ElasticPoolEditionCapability, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(ManagedInstanceEditionCapability, self).__init__(**kwargs)
         self.name = None
-        self.supported_elastic_pool_performance_levels = None
-        self.zone_redundant = None
+        self.supported_families = None
         self.status = None
-        self.reason = reason
+        self.reason = kwargs.get('reason', None)

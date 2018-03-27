@@ -48,7 +48,7 @@ class RecommendedElasticPool(ProxyResource):
     :ivar max_observed_storage_mb: Gets maximum observed storage in megabytes.
     :vartype max_observed_storage_mb: float
     :ivar databases: The list of databases in this pool. Expanded property
-    :vartype databases: list[~azure.mgmt.sql.models.Database]
+    :vartype databases: list[~azure.mgmt.sql.models.TrackedResource]
     :ivar metrics: The list of databases housed in the server. Expanded
      property
     :vartype metrics:
@@ -81,7 +81,7 @@ class RecommendedElasticPool(ProxyResource):
         'observation_period_end': {'key': 'properties.observationPeriodEnd', 'type': 'iso-8601'},
         'max_observed_dtu': {'key': 'properties.maxObservedDtu', 'type': 'float'},
         'max_observed_storage_mb': {'key': 'properties.maxObservedStorageMB', 'type': 'float'},
-        'databases': {'key': 'properties.databases', 'type': '[Database]'},
+        'databases': {'key': 'properties.databases', 'type': '[TrackedResource]'},
         'metrics': {'key': 'properties.metrics', 'type': '[RecommendedElasticPoolMetric]'},
     }
 
