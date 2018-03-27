@@ -37,9 +37,11 @@ class LinkedWorkspaceOperations(object):
         self.config = config
 
     def get(
-            self, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the linked workspace for the account id.
 
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -56,7 +58,7 @@ class LinkedWorkspaceOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
