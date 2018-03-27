@@ -12,37 +12,40 @@
 from msrest.serialization import Model
 
 
-class ElasticPoolPerDatabaseMaxDtuCapability(Model):
-    """The max per-database DTU capability.
+class ManagedInstanceEditionCapability(Model):
+    """The managed server capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar limit: The maximum DTUs per database.
-    :vartype limit: long
+    :ivar name: The managed server version name.
+    :vartype name: str
+    :ivar supported_families: The supported families.
+    :vartype supported_families:
+     list[~azure.mgmt.sql.models.ManagedInstanceFamilyCapability]
     :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.CapabilityStatus
-    :ivar supported_per_database_min_dtus: The list of supported min database
-     DTUs.
-    :vartype supported_per_database_min_dtus:
-     list[~azure.mgmt.sql.models.ElasticPoolPerDatabaseMinDtuCapability]
+    :param reason: The reason for the capability not being available.
+    :type reason: str
     """
 
     _validation = {
-        'limit': {'readonly': True},
+        'name': {'readonly': True},
+        'supported_families': {'readonly': True},
         'status': {'readonly': True},
-        'supported_per_database_min_dtus': {'readonly': True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'supported_families': {'key': 'supportedFamilies', 'type': '[ManagedInstanceFamilyCapability]'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
-        'supported_per_database_min_dtus': {'key': 'supportedPerDatabaseMinDtus', 'type': '[ElasticPoolPerDatabaseMinDtuCapability]'},
+        'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ElasticPoolPerDatabaseMaxDtuCapability, self).__init__()
-        self.limit = None
+    def __init__(self, *, reason: str=None, **kwargs) -> None:
+        super(ManagedInstanceEditionCapability, self).__init__(**kwargs)
+        self.name = None
+        self.supported_families = None
         self.status = None
-        self.supported_per_database_min_dtus = None
+        self.reason = reason

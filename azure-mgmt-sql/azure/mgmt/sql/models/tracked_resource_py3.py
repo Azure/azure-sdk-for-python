@@ -9,14 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .resource import Resource
 
 
-class BackupLongTermRetentionVault(ProxyResource):
-    """A backup long term retention vault.
+class TrackedResource(Resource):
+    """ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -24,30 +26,28 @@ class BackupLongTermRetentionVault(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: The geo-location where the resource lives
-    :vartype location: str
-    :param recovery_services_vault_resource_id: The azure recovery services
-     vault resource id
-    :type recovery_services_vault_resource_id: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: Required. Resource location.
+    :type location: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'recovery_services_vault_resource_id': {'required': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
-        'recovery_services_vault_resource_id': {'key': 'properties.recoveryServicesVaultResourceId', 'type': 'str'},
     }
 
-    def __init__(self, recovery_services_vault_resource_id):
-        super(BackupLongTermRetentionVault, self).__init__()
-        self.location = None
-        self.recovery_services_vault_resource_id = recovery_services_vault_resource_id
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(TrackedResource, self).__init__(, **kwargs)
+        self.tags = tags
+        self.location = location
