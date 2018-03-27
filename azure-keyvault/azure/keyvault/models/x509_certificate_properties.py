@@ -28,9 +28,6 @@ class X509CertificateProperties(Model):
     :param validity_in_months: The duration that the ceritifcate is valid in
      months.
     :type validity_in_months: int
-    :param certificate_transparency: Indicates if the certificates generated
-     under this policy should be published to certificate transparency logs.
-    :type certificate_transparency: bool
     """
 
     _validation = {
@@ -43,7 +40,6 @@ class X509CertificateProperties(Model):
         'subject_alternative_names': {'key': 'sans', 'type': 'SubjectAlternativeNames'},
         'key_usage': {'key': 'key_usage', 'type': '[str]'},
         'validity_in_months': {'key': 'validity_months', 'type': 'int'},
-        'certificate_transparency': {'key': 'cert_transparency', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -53,4 +49,3 @@ class X509CertificateProperties(Model):
         self.subject_alternative_names = kwargs.get('subject_alternative_names', None)
         self.key_usage = kwargs.get('key_usage', None)
         self.validity_in_months = kwargs.get('validity_in_months', None)
-        self.certificate_transparency = kwargs.get('certificate_transparency', None)
