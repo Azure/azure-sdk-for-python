@@ -7,6 +7,8 @@ import logging
 import asyncio
 import sys
 import os
+import signal
+import functools
 
 from azure.eventprocessorhost import (
     AbstractEventProcessor,
@@ -52,7 +54,10 @@ class EventProcessor(AbstractEventProcessor):
         """
         Called by the processor host when a batch of events has arrived.
         This is where the real work of the event processor is done.
-        (Params) Context: Information about the partition, Messages: The events to be processed.
+        :param context: Information about the partition
+        :type context: ~azure.eventprocessorhost.PartitionContext
+        :param messages: The events to be processed.
+        :type messages: list[~azure.eventhub.EventData]
         """
         logger.info("Events processed {}".format(context.sequence_number))
         await context.checkpoint_async()
@@ -96,7 +101,7 @@ try:
     storage_manager = AzureStorageCheckpointLeaseManager(
         STORAGE_ACCOUNT_NAME, STORAGE_KEY, LEASE_CONTAINER_NAME)
 
-    #Event loop and host
+    # Event loop and host
     host = EventProcessorHost(
         EventProcessor,
         eh_config,
@@ -113,7 +118,7 @@ try:
 except KeyboardInterrupt:
     # Canceling pending tasks and stopping the loop
     for task in asyncio.Task.all_tasks():
-       task.cancel()
+        task.cancel()
     loop.run_forever()
 
 finally:

@@ -317,7 +317,8 @@ class Receiver:
 
 class EventData(object):
     """
-    The L{EventData} class is a holder of event content.
+    The EventData class is a holder of event content.
+    Acts as a wrapper to an ~uamqp.Message object.
     """
 
     PROP_SEQ_NUMBER = b"x-opt-sequence-number"
@@ -326,7 +327,11 @@ class EventData(object):
 
     def __init__(self, body=None, batch=None):
         """
-        @param kwargs: name/value pairs in properties.
+        Initialize EventData
+        :param body: The data to send in a single message.
+        :type body: str or bytes
+        :param batch: A data generator to send batched messages.
+        :type batch: Generator
         """
         if batch:
             self.message = BatchMessage(data=batch, multi_messages=True)
@@ -338,21 +343,24 @@ class EventData(object):
     @property
     def sequence_number(self):
         """
-        Return the sequence number of the received event data object.
+        The sequence number of the event data object.
+        :returns: int
         """
         return self._annotations.get(EventData.PROP_SEQ_NUMBER, None)
 
     @property
     def offset(self):
         """
-        Return the offset of the received event data object.
+        The offset of the event data object.
+        :returns: int
         """
         return self._annotations.get(EventData.PROP_OFFSET, None)
 
     @property
     def partition_key(self):
         """
-        Return the partition key of the event data object.
+        The partition key of the event data object.
+        :returns: bytes
         """
         return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
@@ -360,6 +368,8 @@ class EventData(object):
     def partition_key(self, value):
         """
         Set the partition key of the event data object.
+        :param value: The partition key to set.
+        :type value: str or bytes
         """
         annotations = dict(self._annotations)
         annotations[types.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
@@ -368,17 +378,27 @@ class EventData(object):
 
     @property
     def properties(self):
-        """Application defined properties (dict)."""
+        """
+        Application defined properties on the message.
+        :returns: dict
+        """
         return self._properties
 
     @property
     def body(self):
-        """Return the body of the event data object."""
+        """
+        The body of the event data object.
+        :returns: bytes or generator[bytes]
+        """
         return self.message.get_data()
 
     @classmethod
     def create(cls, message):
-        """Creates an event data object from an AMQP message."""
+        """
+        Creates an event data object from an AMQP message.
+        :param message: The received message.
+        :type message: ~uamqp.Message
+        """
         event_data = EventData()
         event_data.message = message
         event_data._annotations = message.message_annotations
@@ -401,14 +421,23 @@ class Offset(object):
       >>> offset = Offset(datetime.datetime.utcnow())
     Events after a specific timestmp:
       >>> offset = Offset(timestamp(1506968696002))
-
     """
     def __init__(self, value, inclusive=False):
+        """
+        Initialize Offset.
+        :param value: The offset value.
+        :type value: ~datetime.datetime or int or str
+        :param inclusive: Whether to include the supplied value as the start point.
+        :type inclusive: bool
+        """
         self.value = value
         self.inclusive = inclusive
 
     def selector(self):
-        """ Creates a selector expression of the offset """
+        """
+        Creates a selector expression of the offset.
+        :returns: bytes
+        """
         if isinstance(self.value, datetime.datetime):
             epoch = datetime.datetime.utcfromtimestamp(0)
             milli_seconds = timestamp((self.value - epoch).total_seconds() * 1000.0)  # TODO

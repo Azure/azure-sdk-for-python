@@ -72,19 +72,22 @@ class PartitionPump():
     @abstractmethod
     async def on_open_async(self):
         """
-        Event handler for on open event
+        Event handler for on open event.
         """
         pass
 
     def is_closing(self):
         """
-        Returns whether pump is closing
+        Returns whether pump is closing.
+        :returns: bool
         """
         return self.pump_status == "Closing" or self.pump_status == "Closed"
 
     async def close_async(self, reason):
         """
-        Safely closes the pump
+        Safely closes the pump.
+        :param reason: The reason for the shutdown.
+        :type reason: str
         """
         self.set_pump_status("Closing")
         try:
@@ -115,7 +118,9 @@ class PartitionPump():
     @abstractmethod
     async def on_closing_async(self, reason):
         """
-        Event handler for on closing event
+        Event handler for on closing event.
+        :param reason: The reason for the shutdown.
+        :type reason: str
         """
         pass
 
