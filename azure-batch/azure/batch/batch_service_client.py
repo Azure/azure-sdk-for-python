@@ -46,7 +46,7 @@ class BatchServiceClientConfiguration(AzureConfiguration):
 
         super(BatchServiceClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-batch/{}'.format(VERSION))
+        self.add_user_agent('batchserviceclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
