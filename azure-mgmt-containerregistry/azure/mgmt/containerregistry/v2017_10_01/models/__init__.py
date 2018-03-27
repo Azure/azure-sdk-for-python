@@ -81,6 +81,7 @@ from .replication_paged import ReplicationPaged
 from .webhook_paged import WebhookPaged
 from .event_paged import EventPaged
 from .container_registry_management_client_enums import (
+    ImportMode,
     SkuName,
     SkuTier,
     ProvisioningState,
@@ -128,6 +129,7 @@ __all__ = [
     'ReplicationPaged',
     'WebhookPaged',
     'EventPaged',
+    'ImportMode',
     'SkuName',
     'SkuTier',
     'ProvisioningState',

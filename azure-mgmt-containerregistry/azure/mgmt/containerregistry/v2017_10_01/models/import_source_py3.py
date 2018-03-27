@@ -15,15 +15,21 @@ from msrest.serialization import Model
 class ImportSource(Model):
     """ImportSource.
 
-    :param resource_id: The resource identifier of the source Azure Container
-     Registry.
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. The resource identifier of the source Azure
+     Container Registry.
     :type resource_id: str
     """
+
+    _validation = {
+        'resource_id': {'required': True},
+    }
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+    def __init__(self, *, resource_id: str, **kwargs) -> None:
         super(ImportSource, self).__init__(**kwargs)
         self.resource_id = resource_id

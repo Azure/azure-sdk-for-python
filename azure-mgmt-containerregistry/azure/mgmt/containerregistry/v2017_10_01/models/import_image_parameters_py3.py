@@ -40,7 +40,8 @@ class ImportImageParameters(Model):
      When NoForce, any existing target tags will fail the operation before any
      copying begins.
      NoForce is the default. Possible values include: 'NoForce', 'Force'
-    :type mode: str or ~azure.mgmt.containerregistry.v2017_10_01.models.enum
+    :type mode: str or
+     ~azure.mgmt.containerregistry.v2017_10_01.models.ImportMode
     """
 
     _validation = {
