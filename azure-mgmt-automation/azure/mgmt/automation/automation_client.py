@@ -17,7 +17,6 @@ from .operations.automation_account_operations import AutomationAccountOperation
 from .operations.operations import Operations
 from .operations.statistics_operations import StatisticsOperations
 from .operations.usages_operations import UsagesOperations
-from .operations.keys_operations import KeysOperations
 from .operations.certificate_operations import CertificateOperations
 from .operations.connection_operations import ConnectionOperations
 from .operations.connection_type_operations import ConnectionTypeOperations
@@ -101,8 +100,6 @@ class AutomationClient(object):
     :vartype statistics: azure.mgmt.automation.operations.StatisticsOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.automation.operations.UsagesOperations
-    :ivar keys: Keys operations
-    :vartype keys: azure.mgmt.automation.operations.KeysOperations
     :ivar certificate: Certificate operations
     :vartype certificate: azure.mgmt.automation.operations.CertificateOperations
     :ivar connection: Connection operations
@@ -195,8 +192,6 @@ class AutomationClient(object):
         self.statistics = StatisticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.keys = KeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.certificate = CertificateOperations(
             self._client, self.config, self._serialize, self._deserialize)
