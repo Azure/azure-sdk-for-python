@@ -37,9 +37,11 @@ class JobStreamOperations(object):
         self.config = config
 
     def get(
-            self, automation_account_name, job_name, job_stream_id, client_request_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, job_name, job_stream_id, client_request_id=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve the job stream identified by job stream id.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param job_name: The job name.
@@ -63,7 +65,7 @@ class JobStreamOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'jobName': self._serialize.url("job_name", job_name, 'str'),
             'jobStreamId': self._serialize.url("job_stream_id", job_stream_id, 'str')
@@ -106,9 +108,11 @@ class JobStreamOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/streams/{jobStreamId}'}
 
     def list_by_job(
-            self, automation_account_name, job_name, filter=None, client_request_id=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, job_name, filter=None, client_request_id=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of jobs streams identified by job name.
 
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param job_name: The job name.
@@ -134,7 +138,7 @@ class JobStreamOperations(object):
                 # Construct URL
                 url = self.list_by_job.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'jobName': self._serialize.url("job_name", job_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')

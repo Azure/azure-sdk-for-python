@@ -17,6 +17,7 @@ from .operations.automation_account_operations import AutomationAccountOperation
 from .operations.operations import Operations
 from .operations.statistics_operations import StatisticsOperations
 from .operations.usages_operations import UsagesOperations
+from .operations.keys_operations import KeysOperations
 from .operations.certificate_operations import CertificateOperations
 from .operations.connection_operations import ConnectionOperations
 from .operations.connection_type_operations import ConnectionTypeOperations
@@ -64,20 +65,16 @@ class AutomationClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param resource_group_name: The resource group name.
-    :type resource_group_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if resource_group_name is None:
-            raise ValueError("Parameter 'resource_group_name' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -88,7 +85,6 @@ class AutomationClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.resource_group_name = resource_group_name
 
 
 class AutomationClient(object):
@@ -105,6 +101,8 @@ class AutomationClient(object):
     :vartype statistics: azure.mgmt.automation.operations.StatisticsOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.automation.operations.UsagesOperations
+    :ivar keys: Keys operations
+    :vartype keys: azure.mgmt.automation.operations.KeysOperations
     :ivar certificate: Certificate operations
     :vartype certificate: azure.mgmt.automation.operations.CertificateOperations
     :ivar connection: Connection operations
@@ -177,15 +175,13 @@ class AutomationClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param resource_group_name: The resource group name.
-    :type resource_group_name: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = AutomationClientConfiguration(credentials, subscription_id, resource_group_name, base_url)
+        self.config = AutomationClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -199,6 +195,8 @@ class AutomationClient(object):
         self.statistics = StatisticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.keys = KeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.certificate = CertificateOperations(
             self._client, self.config, self._serialize, self._deserialize)

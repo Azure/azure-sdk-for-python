@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .error_response import ErrorResponse, ErrorResponseException
+from .key import Key
 from .usage_counter_name import UsageCounterName
 from .usage import Usage
 from .statistics import Statistics
@@ -57,6 +58,7 @@ from .dsc_compilation_job_create_parameters import DscCompilationJobCreateParame
 from .job_provisioning_state_property import JobProvisioningStateProperty
 from .dsc_compilation_job import DscCompilationJob
 from .dsc_configuration_create_or_update_parameters import DscConfigurationCreateOrUpdateParameters
+from .dsc_configuration_update_parameters import DscConfigurationUpdateParameters
 from .dsc_meta_configuration import DscMetaConfiguration
 from .dsc_node_configuration_create_or_update_parameters import DscNodeConfigurationCreateOrUpdateParameters
 from .dsc_node_configuration_association_property import DscNodeConfigurationAssociationProperty
@@ -128,6 +130,7 @@ from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
 from .usage_paged import UsagePaged
+from .key_paged import KeyPaged
 from .certificate_paged import CertificatePaged
 from .connection_paged import ConnectionPaged
 from .connection_type_paged import ConnectionTypePaged
@@ -151,6 +154,8 @@ from .source_control_paged import SourceControlPaged
 from .source_control_sync_job_paged import SourceControlSyncJobPaged
 from .job_collection_item_paged import JobCollectionItemPaged
 from .automation_client_enums import (
+    AutomationKeyName,
+    AutomationKeyPermissions,
     RunbookTypeEnum,
     RunbookState,
     RunbookProvisioningState,
@@ -176,6 +181,7 @@ from .automation_client_enums import (
 
 __all__ = [
     'ErrorResponse', 'ErrorResponseException',
+    'Key',
     'UsageCounterName',
     'Usage',
     'Statistics',
@@ -223,6 +229,7 @@ __all__ = [
     'JobProvisioningStateProperty',
     'DscCompilationJob',
     'DscConfigurationCreateOrUpdateParameters',
+    'DscConfigurationUpdateParameters',
     'DscMetaConfiguration',
     'DscNodeConfigurationCreateOrUpdateParameters',
     'DscNodeConfigurationAssociationProperty',
@@ -294,6 +301,7 @@ __all__ = [
     'OperationPaged',
     'StatisticsPaged',
     'UsagePaged',
+    'KeyPaged',
     'CertificatePaged',
     'ConnectionPaged',
     'ConnectionTypePaged',
@@ -316,6 +324,8 @@ __all__ = [
     'SourceControlPaged',
     'SourceControlSyncJobPaged',
     'JobCollectionItemPaged',
+    'AutomationKeyName',
+    'AutomationKeyPermissions',
     'RunbookTypeEnum',
     'RunbookState',
     'RunbookProvisioningState',
