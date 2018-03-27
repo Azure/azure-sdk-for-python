@@ -11,7 +11,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [21d2c4ee-37a5-11e7-a1e3-1866da24a76d]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/invoices/latest?api-version=2017-04-24-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/invoices/latest?api-version=2018-03-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/invoices/201705-217089190378988","type":"Microsoft.Billing/invoices","name":"201705-217089190378988","properties":{"downloadUrl":{"expiryTime":"2017-05-13T07:26:46Z","url":"https://billinginsightsstore02.blob.core.windows.net/invoices/00000000-0000-0000-0000-000000000000-201705-217089190378988.pdf?sv=2014-02-14&sr=b&sig=VItizs2Bez8hxhvUrJZVue3hRv29Qy%2BiqWtlrUDdAjc%3D&se=2017-05-13T07%3A26%3A46Z&sp=r"},"invoicePeriodEndDate":"2017-04-26","invoicePeriodStartDate":"2017-03-27","billingPeriodIds":["/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201705-1"]}}'}
     headers:

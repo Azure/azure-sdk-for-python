@@ -11,7 +11,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [4a18bae8-37a5-11e7-95a3-1866da24a76d]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods?api-version=2017-04-24-preview&$top=1
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods?api-version=2018-03-01-preview&$top=1
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201706-1","type":"Microsoft.Billing/billingPeriods","name":"201706-1","properties":{"billingPeriodStartDate":"2017-04-27","billingPeriodEndDate":"2017-05-26"}}]}'}
     headers:
