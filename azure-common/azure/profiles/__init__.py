@@ -46,8 +46,8 @@ class DefaultProfile(object):
 
     def use(self, profile):
         """Define a new default profile."""
-        if not isinstance(profile, KnownProfiles) and not isinstance(profile, ProfileDefinition):
-            raise ValueError("Can only set as default a ProfileDefinition or a KwownProfiles")
+        if not isinstance(profile, (KnownProfiles, ProfileDefinition)):
+            raise ValueError("Can only set as default a ProfileDefinition or a KnownProfiles")
         type(self).profile = profile
 
     def definition(self):

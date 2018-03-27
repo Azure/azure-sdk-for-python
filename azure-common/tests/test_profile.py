@@ -14,7 +14,10 @@ def test_profile_from_string():
 
     with pytest.raises(ValueError):
         KnownProfiles.from_name("blablabla")
-    
+
+def test_default_profile():
+    with pytest.raises(ValueError):
+        KnownProfiles.default.use("This is not a profile")
 
 def test_multiapi_client():
 
