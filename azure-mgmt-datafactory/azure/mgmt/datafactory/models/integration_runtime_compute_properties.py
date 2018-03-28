@@ -50,11 +50,11 @@ class IntegrationRuntimeComputeProperties(Model):
         'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
     }
 
-    def __init__(self, additional_properties=None, location=None, node_size=None, number_of_nodes=None, max_parallel_executions_per_node=None, v_net_properties=None):
-        super(IntegrationRuntimeComputeProperties, self).__init__()
-        self.additional_properties = additional_properties
-        self.location = location
-        self.node_size = node_size
-        self.number_of_nodes = number_of_nodes
-        self.max_parallel_executions_per_node = max_parallel_executions_per_node
-        self.v_net_properties = v_net_properties
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeComputeProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.location = kwargs.get('location', None)
+        self.node_size = kwargs.get('node_size', None)
+        self.number_of_nodes = kwargs.get('number_of_nodes', None)
+        self.max_parallel_executions_per_node = kwargs.get('max_parallel_executions_per_node', None)
+        self.v_net_properties = kwargs.get('v_net_properties', None)

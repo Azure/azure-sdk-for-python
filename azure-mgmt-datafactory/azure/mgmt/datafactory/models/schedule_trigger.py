@@ -18,6 +18,8 @@ class ScheduleTrigger(MultiplePipelineTrigger):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -28,12 +30,12 @@ class ScheduleTrigger(MultiplePipelineTrigger):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
      list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
-    :param recurrence: Recurrence schedule configuration.
+    :param recurrence: Required. Recurrence schedule configuration.
     :type recurrence: ~azure.mgmt.datafactory.models.ScheduleTriggerRecurrence
     """
 
@@ -52,7 +54,7 @@ class ScheduleTrigger(MultiplePipelineTrigger):
         'recurrence': {'key': 'typeProperties.recurrence', 'type': 'ScheduleTriggerRecurrence'},
     }
 
-    def __init__(self, recurrence, additional_properties=None, description=None, pipelines=None):
-        super(ScheduleTrigger, self).__init__(additional_properties=additional_properties, description=description, pipelines=pipelines)
-        self.recurrence = recurrence
+    def __init__(self, **kwargs):
+        super(ScheduleTrigger, self).__init__(**kwargs)
+        self.recurrence = kwargs.get('recurrence', None)
         self.type = 'ScheduleTrigger'

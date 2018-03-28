@@ -46,9 +46,9 @@ class ManagedIntegrationRuntimeError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(ManagedIntegrationRuntimeError, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(ManagedIntegrationRuntimeError, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.time = None
         self.code = None
         self.parameters = None

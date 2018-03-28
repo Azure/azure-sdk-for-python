@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class SalesforceLinkedService(LinkedService):
     """Linked service for Salesforce.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class SalesforceLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param environment_url: The URL of Salesforce instance. Default is
      'https://login.salesforce.com'. To copy data from sandbox, specify
@@ -70,11 +72,11 @@ class SalesforceLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, environment_url=None, username=None, password=None, security_token=None, encrypted_credential=None):
-        super(SalesforceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.environment_url = environment_url
-        self.username = username
-        self.password = password
-        self.security_token = security_token
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(SalesforceLinkedService, self).__init__(**kwargs)
+        self.environment_url = kwargs.get('environment_url', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.security_token = kwargs.get('security_token', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Salesforce'

@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class SqlDWSink(CopySink):
     """A copy activity SQL Data Warehouse sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -32,7 +34,7 @@ class SqlDWSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
      with resultType string).
@@ -62,9 +64,9 @@ class SqlDWSink(CopySink):
         'poly_base_settings': {'key': 'polyBaseSettings', 'type': 'PolybaseSettings'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, pre_copy_script=None, allow_poly_base=None, poly_base_settings=None):
-        super(SqlDWSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
-        self.pre_copy_script = pre_copy_script
-        self.allow_poly_base = allow_poly_base
-        self.poly_base_settings = poly_base_settings
+    def __init__(self, **kwargs):
+        super(SqlDWSink, self).__init__(**kwargs)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
+        self.allow_poly_base = kwargs.get('allow_poly_base', None)
+        self.poly_base_settings = kwargs.get('poly_base_settings', None)
         self.type = 'SqlDWSink'

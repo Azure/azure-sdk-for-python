@@ -15,23 +15,25 @@ from .execution_activity import ExecutionActivity
 class ExecuteSSISPackageActivity(ExecutionActivity):
     """Execute SSIS package activity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param package_location: SSIS package location.
+    :param package_location: Required. SSIS package location.
     :type package_location: ~azure.mgmt.datafactory.models.SSISPackageLocation
     :param runtime: Specifies the runtime to execute SSIS package. Possible
      values include: 'x64', 'x86'
@@ -41,7 +43,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :param environment_path: The environment path to execution the SSIS
      package.
     :type environment_path: str
-    :param connect_via: The integration runtime reference.
+    :param connect_via: Required. The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     """
@@ -68,11 +70,11 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
     }
 
-    def __init__(self, name, package_location, connect_via, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, runtime=None, logging_level=None, environment_path=None):
-        super(ExecuteSSISPackageActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.package_location = package_location
-        self.runtime = runtime
-        self.logging_level = logging_level
-        self.environment_path = environment_path
-        self.connect_via = connect_via
+    def __init__(self, **kwargs):
+        super(ExecuteSSISPackageActivity, self).__init__(**kwargs)
+        self.package_location = kwargs.get('package_location', None)
+        self.runtime = kwargs.get('runtime', None)
+        self.logging_level = kwargs.get('logging_level', None)
+        self.environment_path = kwargs.get('environment_path', None)
+        self.connect_via = kwargs.get('connect_via', None)
         self.type = 'ExecuteSSISPackage'
