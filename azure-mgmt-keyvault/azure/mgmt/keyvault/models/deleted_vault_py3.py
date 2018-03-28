@@ -12,46 +12,38 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """Key Vault resource.
+class DeletedVault(Model):
+    """Deleted vault information with extended details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The Azure Resource Manager resource ID for the key vault.
+    :ivar id: The resource ID for the deleted key vault.
     :vartype id: str
     :ivar name: The name of the key vault.
     :vartype name: str
     :ivar type: The resource type of the key vault.
     :vartype type: str
-    :param location: Required. The supported Azure location where the key
-     vault should be created.
-    :type location: str
-    :param tags: The tags that will be assigned to the key vault.
-    :type tags: dict[str, str]
+    :param properties: Properties of the vault
+    :type properties: ~azure.mgmt.keyvault.models.DeletedVaultProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'DeletedVaultProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(DeletedVault, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.properties = properties

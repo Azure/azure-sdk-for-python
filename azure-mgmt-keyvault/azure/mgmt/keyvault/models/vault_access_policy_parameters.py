@@ -12,32 +12,32 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """Key Vault resource.
+class VaultAccessPolicyParameters(Model):
+    """Parameters for updating the access policy in a vault.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The Azure Resource Manager resource ID for the key vault.
+    :ivar id: The resource id of the access policy.
     :vartype id: str
-    :ivar name: The name of the key vault.
+    :ivar name: The resource name of the access policy.
     :vartype name: str
-    :ivar type: The resource type of the key vault.
+    :ivar type: The resource name of the access policy.
     :vartype type: str
-    :param location: Required. The supported Azure location where the key
-     vault should be created.
-    :type location: str
-    :param tags: The tags that will be assigned to the key vault.
-    :type tags: dict[str, str]
+    :ivar location: The resource type of the the access policy.
+    :vartype location: str
+    :param properties: Required. Properties of the access policy
+    :type properties: ~azure.mgmt.keyvault.models.VaultAccessPolicyProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'location': {'readonly': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -45,13 +45,13 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'VaultAccessPolicyProperties'},
     }
 
     def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
+        super(VaultAccessPolicyParameters, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = None
+        self.properties = kwargs.get('properties', None)
