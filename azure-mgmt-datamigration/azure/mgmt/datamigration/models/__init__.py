@@ -14,7 +14,6 @@ try:
     from .resource_py3 import Resource
     from .odata_error_py3 import ODataError
     from .reportable_exception_py3 import ReportableException
-    from .task_output_py3 import TaskOutput
     from .validate_migration_input_sql_server_sql_mi_task_output_py3 import ValidateMigrationInputSqlServerSqlMITaskOutput
     from .blob_share_py3 import BlobShare
     from .file_share_py3 import FileShare
@@ -103,7 +102,6 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .odata_error import ODataError
     from .reportable_exception import ReportableException
-    from .task_output import TaskOutput
     from .validate_migration_input_sql_server_sql_mi_task_output import ValidateMigrationInputSqlServerSqlMITaskOutput
     from .blob_share import BlobShare
     from .file_share import FileShare
@@ -225,7 +223,6 @@ __all__ = [
     'Resource',
     'ODataError',
     'ReportableException',
-    'TaskOutput',
     'ValidateMigrationInputSqlServerSqlMITaskOutput',
     'BlobShare',
     'FileShare',

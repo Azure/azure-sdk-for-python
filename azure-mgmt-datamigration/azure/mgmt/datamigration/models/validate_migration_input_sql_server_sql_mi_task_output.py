@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .task_output import TaskOutput
+from msrest.serialization import Model
 
 
-class ValidateMigrationInputSqlServerSqlMITaskOutput(TaskOutput):
+class ValidateMigrationInputSqlServerSqlMITaskOutput(Model):
     """Output for task that validates migration input for SQL to Azure SQL Managed
     Instance migrations.
 
@@ -60,6 +60,7 @@ class ValidateMigrationInputSqlServerSqlMITaskOutput(TaskOutput):
 
     def __init__(self, **kwargs):
         super(ValidateMigrationInputSqlServerSqlMITaskOutput, self).__init__(**kwargs)
+        self.id = None
         self.name = None
         self.restore_database_name_errors = None
         self.backup_folder_errors = None

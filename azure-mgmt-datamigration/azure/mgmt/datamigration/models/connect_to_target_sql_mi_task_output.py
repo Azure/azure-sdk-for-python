@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .task_output import TaskOutput
+from msrest.serialization import Model
 
 
-class ConnectToTargetSqlMITaskOutput(TaskOutput):
+class ConnectToTargetSqlMITaskOutput(Model):
     """Output for the task that validates connection to Azure SQL Database Managed
     Instance.
 
@@ -46,6 +46,7 @@ class ConnectToTargetSqlMITaskOutput(TaskOutput):
 
     def __init__(self, **kwargs):
         super(ConnectToTargetSqlMITaskOutput, self).__init__(**kwargs)
+        self.id = None
         self.target_server_version = None
         self.target_server_brand_version = None
         self.validation_errors = None
