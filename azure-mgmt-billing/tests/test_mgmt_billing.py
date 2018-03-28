@@ -38,7 +38,7 @@ class MgmtBillingTest(AzureMgmtTestCase):
         self.billing_client = self.create_mgmt_client(azure.mgmt.billing.BillingManagementClient)
 
     def test_billing_enrollment_accounts_list(self):
-        output = self.billing_client.enrollment_accounts.list()
+        output = list(self.billing_client.enrollment_accounts.list())
         self.assertTrue(len(output) > 0)
 
     def test_billing_invoice_latest(self):
