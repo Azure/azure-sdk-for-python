@@ -19,8 +19,10 @@ class MockCredentials:
     eh_policy = "pythonpolicy"
     eh_key = "bW9ja3Bhc3N3b3Jk"
 
-    eh_address = EventHubConfig(
-        MockCredentials.sb_name,
-        MockCredentials.eh_name,
-        MockCredentials.eh_policy,
-        MockCredentials.eh_key)
+    def __init__(self):
+        self.eh_address = EventHubConfig(
+            self.sb_name,
+            self.eh_name,
+            self.eh_policy,
+            self.eh_key,
+            "$default")

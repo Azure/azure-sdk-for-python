@@ -3,118 +3,113 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-import unittest
-import logging
+import pytest
 import asyncio
 import time
-from mock_credentials import MockCredentials
-from mock_event_processor import MockEventProcessor
-from azure.eventprocessorhost.eph import EventProcessorHost
-from azure.eventprocessorhost.azure_storage_checkpoint_manager import AzureStorageCheckpointLeaseManager
-
-class AzureStorageCheckpointLeaseManagerTestCase(unittest.TestCase):
-    """Tests for `eh_partition_pump.py`."""
-
-    def __init__(self, *args, **kwargs):
-        """
-        Simulate AzureStorageCheckpointLeaseManager
-        """
-        super(AzureStorageCheckpointLeaseManagerTestCase, self).__init__(*args, **kwargs)
-        self._loop = None
-        self._credentials = MockCredentials()
-        self._consumer_group = "$Default"
-        self._host = EventProcessorHost(MockEventProcessor, self._credentials.eh_address,
-                                        self._consumer_group)
-
-        self._storage_clm = AzureStorageCheckpointLeaseManager(self._credentials.storage_account,
-                                                               self._credentials.storage_key,
-                                                               self._credentials.lease_container,
-                                                               "lease")
-    def test_init(self):
-        """
-        Test that the AzureStorageCheckpointLeaseManager initializes correctly
-        """
-        self._storage_clm.initialize(self._host)
-
-    def test_create_store(self):
-        """
-        Test the store is created correctly if not exists
-        """
-        self._storage_clm.initialize(self._host)
-        self._loop = asyncio.get_event_loop()
-        self._loop.run_until_complete(self._storage_clm.create_checkpoint_store_if_not_exists_async())
-
-    # def test_create_lease(self):
-    #     """
-    #     Test lease creation
-    #     """
-    #     self._storage_clm.initialize(self._host)
-    #     self._loop = asyncio.get_event_loop()
-    #     self._loop.run_until_complete(self._storage_clm.create_checkpoint_store_if_not_exists_async())
-    #     self._loop.run_until_complete(self._storage_clm.create_lease_if_not_exists_async("1"))
-
-    # def test_get_lease(self):
-    #     """
-    #     Test get lease
-    #     """
-    #     self._storage_clm.initialize(self._host)
-    #     self._loop = asyncio.get_event_loop()
-    #     self._loop.run_until_complete(self._storage_clm.get_lease_async("1"))
-
-    # def test_aquire_renew_release_lease(self):
-    #     """
-    #     Test aquire lease
-    #     """
-    #     self._storage_clm.initialize(self._host)
-    #     self._loop = asyncio.get_event_loop()
-    #     lease = self._loop.run_until_complete(self._storage_clm.get_lease_async("1"))
-    #     self._loop.run_until_complete(self._storage_clm.acquire_lease_async(lease))
-    #     self._loop.run_until_complete(self._storage_clm.renew_lease_async(lease))
-    #     self._loop.run_until_complete(self._storage_clm.release_lease_async(lease))
-    #     print(lease.__dict__)
-
-    # def test_delete_lease(self):
-    #     """
-    #     Test delete lease
-    #     """
-    #     self._storage_clm.initialize(self._host)
-    #     self._loop = asyncio.get_event_loop()
-    #     self._loop.run_until_complete(self._storage_clm.delete_lease_async("1"))
-
-    # def test_checkpointing(self):
-    #     """
-    #     Test checkpointing
-    #     """
-    #     self._storage_clm.initialize(self._host)
-    #     self._loop = asyncio.get_event_loop()
-    #     local_checkpoint = self._loop.run_until_complete(self._storage_clm.create_checkpoint_if_not_exists_async("1"))
-    #     print("Local CheckPoint", local_checkpoint.__dict__)
-    #     lease = self._loop.run_until_complete(self._storage_clm.get_lease_async("1"))
-    #     self._loop.run_until_complete(self._storage_clm.acquire_lease_async(lease))
-    #     self._loop.run_until_complete(self._storage_clm.update_checkpoint_async(lease, local_checkpoint))
-    #     cloud_checkpoint = self._loop.run_until_complete(self._storage_clm.get_checkpoint_async("1"))
-    #     lease.offset = cloud_checkpoint.offset
-    #     lease.sequence_number = cloud_checkpoint.sequence_number
-    #     # print("Cloud Checkpoint", cloud_checkpoint.__dict__)
-    #     # modify_checkpoint = cloud_checkpoint
-    #     # modify_checkpoint.offset = "512"
-    #     # modify_checkpoint.sequence_number = "32"
-    #     # time.sleep(35)
-    #     # self._loop.run_until_complete(self._storage_clm.update_checkpoint_async(lease, modify_checkpoint))
-    #     print("Release Lease")
-    #     self._loop.run_until_complete(self._storage_clm.release_lease_async(lease))
+from azure.common import AzureException
 
 
-    # def test_create_checkpoint(self):
-    #     logging.basicConfig(filename='testcheckpoint.log', level=logging.INFO,
-    #                         format='%(asctime)s %(message)s')
-    #     self._storage_clm.initialize(self._host)
-    #     self._loop = asyncio.get_event_loop()
-    #     local_checkpoint = self._loop.run_until_complete(self._storage_clm.create_checkpoint_if_not_exists_async("1"))
-    
-
-    #     # self._loop.run_until_complete(self._storage_clm.delete_lease_async(lease))
+def test_init(empty_eph, storage_clm):
+    """
+    Test that the AzureStorageCheckpointLeaseManager initializes correctly
+    """
+    is_live, storage = storage_clm
+    storage.initialize(empty_eph)
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_create_store(empty_eph, storage_clm):
+    """
+    Test the store is created correctly if not exists
+    """
+    is_live, storage = storage_clm
+    storage.initialize(empty_eph)
+    loop = asyncio.get_event_loop()
+    if is_live:
+        loop.run_until_complete(storage.create_checkpoint_store_if_not_exists_async())
+    else:
+        with pytest.raises(AzureException):
+            loop.run_until_complete(storage.create_checkpoint_store_if_not_exists_async())
+
+
+def test_create_lease(empty_eph, storage_clm):
+    """
+    Test lease creation
+    """
+    is_live, storage = storage_clm
+    storage.initialize(empty_eph)
+    loop = asyncio.get_event_loop()
+    if is_live:
+        loop.run_until_complete(storage.create_checkpoint_store_if_not_exists_async())
+        loop.run_until_complete(storage.create_lease_if_not_exists_async("1"))
+
+
+def test_get_lease(empty_eph, storage_clm):
+    """
+    Test get lease
+    """
+    is_live, storage = storage_clm
+    storage.initialize(empty_eph)
+    loop = asyncio.get_event_loop()
+    if is_live:
+        loop.run_until_complete(storage.get_lease_async("1"))
+
+
+def test_aquire_renew_release_lease(empty_eph, storage_clm):
+    """
+    Test aquire lease
+    """
+    is_live, storage = storage_clm
+    storage.initialize(empty_eph)
+    loop = asyncio.get_event_loop()
+    if is_live:
+        lease = loop.run_until_complete(storage.get_lease_async("1"))
+        loop.run_until_complete(storage.acquire_lease_async(lease))
+        loop.run_until_complete(storage.renew_lease_async(lease))
+        loop.run_until_complete(storage.release_lease_async(lease))
+        assert lease.partition_id == "1"
+        assert lease.epoch == 1
+        assert loop.run_until_complete(lease.state()) == "available"
+
+
+def test_delete_lease(empty_eph, storage_clm):
+    """
+    Test delete lease
+    """
+    is_live, storage = storage_clm
+    storage.initialize(empty_eph)
+    loop = asyncio.get_event_loop()
+    if is_live:
+        lease = loop.run_until_complete(storage.get_lease_async("1"))
+        loop.run_until_complete(storage.delete_lease_async(lease))
+        lease = loop.run_until_complete(storage.get_lease_async("1"))
+        assert lease == None
+
+
+def test_checkpointing(empty_eph, storage_clm):
+    """
+    Test checkpointing
+    """
+    is_live, storage = storage_clm
+    storage.initialize(empty_eph)
+    loop = asyncio.get_event_loop()
+    if is_live:
+        local_checkpoint = loop.run_until_complete(storage.create_checkpoint_if_not_exists_async("1"))
+        assert local_checkpoint.partition_id == "1"
+        assert local_checkpoint.offset == "-1"
+        lease = loop.run_until_complete(storage.get_lease_async("1"))
+        loop.run_until_complete(storage.acquire_lease_async(lease))
+        loop.run_until_complete(storage.update_checkpoint_async(lease, local_checkpoint))
+        cloud_checkpoint = loop.run_until_complete(storage.get_checkpoint_async("1"))
+        lease.offset = cloud_checkpoint.offset
+        lease.sequence_number = cloud_checkpoint.sequence_number
+        assert cloud_checkpoint.partition_id == "1"
+        assert cloud_checkpoint.offset == "-1"
+        modify_checkpoint = cloud_checkpoint
+        modify_checkpoint.offset = "512"
+        modify_checkpoint.sequence_number = "32"
+        time.sleep(35)
+        loop.run_until_complete(storage.update_checkpoint_async(lease, modify_checkpoint))
+        cloud_checkpoint = loop.run_until_complete(storage.get_checkpoint_async("1"))
+        assert cloud_checkpoint.partition_id == "1"
+        assert cloud_checkpoint.offset == "512"
+        loop.run_until_complete(storage.release_lease_async(lease))

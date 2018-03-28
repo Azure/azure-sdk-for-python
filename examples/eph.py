@@ -120,6 +120,7 @@ except KeyboardInterrupt:
     for task in asyncio.Task.all_tasks():
         task.cancel()
     loop.run_forever()
+    tasks.exception()
 
 finally:
     loop.stop()

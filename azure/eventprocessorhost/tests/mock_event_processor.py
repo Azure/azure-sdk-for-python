@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 import logging
-from azure.eventprocessorhost import AbstractEventProcessor
+from azure.eventprocessorhost.abstract_event_processor import AbstractEventProcessor
 
 
 class MockEventProcessor(AbstractEventProcessor):
@@ -17,11 +17,12 @@ class MockEventProcessor(AbstractEventProcessor):
         """
         self.params = params
         self._msg_counter = 0
+
     async def open_async(self, context):
         """
         Called by processor host to initialize the event processor.
         """
-        logging.info("Connection established {}".format(context.partition_id)
+        logging.info("Connection established {}".format(context.partition_id))
 
     async def close_async(self, context, reason):
         """
@@ -29,7 +30,7 @@ class MockEventProcessor(AbstractEventProcessor):
         (Params) Context:Information about the partition
         """
         logging.info("Connection closed (reason {}, id {}, offset {}, sq_number {})".format(
-            reason, context.partition_id, context.offset, context.sequence_number)
+            reason, context.partition_id, context.offset, context.sequence_number))
 
     async def process_events_async(self, context, messages):
         """
