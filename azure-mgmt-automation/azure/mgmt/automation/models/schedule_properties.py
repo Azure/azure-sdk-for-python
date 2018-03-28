@@ -36,7 +36,7 @@ class ScheduleProperties(Model):
      minutes.
     :type next_run_offset_minutes: float
     :param interval: Gets or sets the interval of the schedule.
-    :type interval: bytearray
+    :type interval: int
     :param frequency: Gets or sets the frequency of the schedule. Possible
      values include: 'OneTime', 'Day', 'Hour', 'Week', 'Month'
     :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
@@ -64,7 +64,7 @@ class ScheduleProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'next_run': {'key': 'nextRun', 'type': 'iso-8601'},
         'next_run_offset_minutes': {'key': 'nextRunOffsetMinutes', 'type': 'float'},
-        'interval': {'key': 'interval', 'type': 'bytearray'},
+        'interval': {'key': 'interval', 'type': 'int'},
         'frequency': {'key': 'frequency', 'type': 'str'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'advanced_schedule': {'key': 'advancedSchedule', 'type': 'AdvancedSchedule'},
