@@ -20,7 +20,7 @@ import logging
 import datetime
 import sys
 import threading
-from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode
+from proton import DELEGATED, Url, timestamp, generate_uuid, utf82unicode, symbol
 from proton import Delivery, Message
 from proton.reactor import dispatch, Container, Selector
 from proton.handlers import Handler, EndpointStateHandler
@@ -375,43 +375,49 @@ class EventData(object):
     The L{EventData} class is a holder of event content.
     """
 
-    PROP_SEQ_NUMBER = "x-opt-sequence-number"
-    PROP_OFFSET = "x-opt-offset"
-    PROP_PARTITION_KEY = "x-opt-partition-key"
+    PROP_SEQ_NUMBER = symbol("x-opt-sequence-number")
+    PROP_OFFSET = symbol("x-opt-offset")
+    PROP_PARTITION_KEY = symbol("x-opt-partition-key")
 
     def __init__(self, body=None):
         """
         @param kwargs: name/value pairs in properties.
         """
         self.message = Message(body)
+        self._local = True
 
     @property
     def sequence_number(self):
         """
-        Return the sequence number of the event data object.
+        Return the sequence number of the received event data object.
         """
         return self.message.annotations[EventData.PROP_SEQ_NUMBER]
 
     @property
     def offset(self):
         """
-        Return the offset of the event data object.
+        Return the offset of the received event data object.
         """
         return self.message.annotations[EventData.PROP_OFFSET]
 
     def _get_partition_key(self):
-        return self.message.annotations[EventData.PROP_PARTITION_KEY]
+        return self.message.annotations[EventData.PROP_PARTITION_KEY] if self.message.annotations else None
 
     def _set_partition_key(self, value):
+        if self._local and self.message.annotations is None:
+            self.message.annotations = {}
         self.message.annotations[EventData.PROP_PARTITION_KEY] = value
 
     partition_key = property(_get_partition_key, _set_partition_key, doc="""
-        Gets or sets the partition key of the event data object.
+        Gets or sets the partition key of the event data object. This property
+        cannot be set on a received event data object.
         """)
 
     @property
     def properties(self):
         """Application defined properties (dict)."""
+        if self._local and self.message.properties is None:
+            self.message.properties = {}
         return self.message.properties
 
     @property
@@ -424,6 +430,7 @@ class EventData(object):
         """Creates an event data object from an AMQP message."""
         event_data = EventData()
         event_data.message = message
+        event_data._local = False
         return event_data
 
 class Offset(object):
