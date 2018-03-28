@@ -13,7 +13,7 @@ from .server_properties_for_create import ServerPropertiesForCreate
 
 
 class ServerPropertiesForRestore(ServerPropertiesForCreate):
-    """The properties to a new server by restoring from a backup.
+    """The properties used to create a new server by restoring from a backup.
 
     All required parameters must be populated in order to send to Azure.
 
