@@ -29,11 +29,15 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param filter: An OData filter expression that describes a subset of
+     usages to return. The supported parameter is name.value (name of the
+     metric, can have an or of multiple names).
+    :type filter: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, filter=None, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -44,11 +48,12 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
 
         super(CognitiveServicesManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('cognitiveservicesmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-cognitiveservices/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.filter = filter
 
 
 class CognitiveServicesManagementClient(object):
@@ -69,13 +74,17 @@ class CognitiveServicesManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param filter: An OData filter expression that describes a subset of
+     usages to return. The supported parameter is name.value (name of the
+     metric, can have an or of multiple names).
+    :type filter: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, filter=None, base_url=None):
 
-        self.config = CognitiveServicesManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CognitiveServicesManagementClientConfiguration(credentials, subscription_id, filter, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
