@@ -16,21 +16,32 @@ from msrest.exceptions import HttpOperationError
 class ErrorResponse(Model):
     """Error Response.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param code: Error code.
     :type code: str
     :param message: Error message indicating why the operation failed.
     :type message: str
+    :ivar error: Error model.
+    :vartype error: ~azure.mgmt.web.models.ErrorResponseError
     """
+
+    _validation = {
+        'error': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponseError'},
     }
 
     def __init__(self, code=None, message=None):
         super(ErrorResponse, self).__init__()
         self.code = code
         self.message = message
+        self.error = None
 
 
 class ErrorResponseException(HttpOperationError):

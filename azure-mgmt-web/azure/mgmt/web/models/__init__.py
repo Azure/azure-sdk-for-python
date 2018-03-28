@@ -84,6 +84,8 @@ from .domain_control_center_sso_request import DomainControlCenterSsoRequest
 from .domain_ownership_identifier import DomainOwnershipIdentifier
 from .domain_patch_resource import DomainPatchResource
 from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
+from .error_response_error_details_item import ErrorResponseErrorDetailsItem
+from .error_response_error import ErrorResponseError
 from .error_response import ErrorResponse, ErrorResponseException
 from .tld_legal_agreement import TldLegalAgreement
 from .top_level_domain import TopLevelDomain
@@ -115,6 +117,12 @@ from .data_source import DataSource
 from .response_meta_data import ResponseMetaData
 from .analysis_data import AnalysisData
 from .analysis_definition import AnalysisDefinition
+from .data_table_response_column import DataTableResponseColumn
+from .data_table_response_object import DataTableResponseObject
+from .detector_info import DetectorInfo
+from .rendering import Rendering
+from .diagnostic_data import DiagnosticData
+from .detector_response import DetectorResponse
 from .diagnostic_analysis import DiagnosticAnalysis
 from .diagnostic_category import DiagnosticCategory
 from .diagnostic_detector_response import DiagnosticDetectorResponse
@@ -123,6 +131,7 @@ from .stack_major_version import StackMajorVersion
 from .application_stack import ApplicationStack
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
+from .resource_health_metadata import ResourceHealthMetadata
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
 from .geo_region import GeoRegion
 from .hosting_environment_deployment_info import HostingEnvironmentDeploymentInfo
@@ -221,11 +230,13 @@ from .top_level_domain_paged import TopLevelDomainPaged
 from .tld_legal_agreement_paged import TldLegalAgreementPaged
 from .certificate_paged import CertificatePaged
 from .deleted_site_paged import DeletedSitePaged
+from .detector_response_paged import DetectorResponsePaged
 from .diagnostic_category_paged import DiagnosticCategoryPaged
 from .analysis_definition_paged import AnalysisDefinitionPaged
 from .detector_definition_paged import DetectorDefinitionPaged
 from .application_stack_paged import ApplicationStackPaged
 from .recommendation_paged import RecommendationPaged
+from .resource_health_metadata_paged import ResourceHealthMetadataPaged
 from .source_control_paged import SourceControlPaged
 from .geo_region_paged import GeoRegionPaged
 from .identifier_paged import IdentifierPaged
@@ -294,6 +305,7 @@ from .web_site_management_client_enums import (
     OperationStatus,
     IssueType,
     SolutionType,
+    RenderingType,
     ResourceScopeType,
     NotificationLevel,
     Channels,
@@ -398,6 +410,8 @@ __all__ = [
     'DomainOwnershipIdentifier',
     'DomainPatchResource',
     'DomainRecommendationSearchParameters',
+    'ErrorResponseErrorDetailsItem',
+    'ErrorResponseError',
     'ErrorResponse', 'ErrorResponseException',
     'TldLegalAgreement',
     'TopLevelDomain',
@@ -429,6 +443,12 @@ __all__ = [
     'ResponseMetaData',
     'AnalysisData',
     'AnalysisDefinition',
+    'DataTableResponseColumn',
+    'DataTableResponseObject',
+    'DetectorInfo',
+    'Rendering',
+    'DiagnosticData',
+    'DetectorResponse',
     'DiagnosticAnalysis',
     'DiagnosticCategory',
     'DiagnosticDetectorResponse',
@@ -437,6 +457,7 @@ __all__ = [
     'ApplicationStack',
     'Recommendation',
     'RecommendationRule',
+    'ResourceHealthMetadata',
     'CsmMoveResourceEnvelope',
     'GeoRegion',
     'HostingEnvironmentDeploymentInfo',
@@ -535,11 +556,13 @@ __all__ = [
     'TldLegalAgreementPaged',
     'CertificatePaged',
     'DeletedSitePaged',
+    'DetectorResponsePaged',
     'DiagnosticCategoryPaged',
     'AnalysisDefinitionPaged',
     'DetectorDefinitionPaged',
     'ApplicationStackPaged',
     'RecommendationPaged',
+    'ResourceHealthMetadataPaged',
     'SourceControlPaged',
     'GeoRegionPaged',
     'IdentifierPaged',
@@ -607,6 +630,7 @@ __all__ = [
     'OperationStatus',
     'IssueType',
     'SolutionType',
+    'RenderingType',
     'ResourceScopeType',
     'NotificationLevel',
     'Channels',

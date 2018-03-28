@@ -27,6 +27,7 @@ from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
 from .operations.diagnostics_operations import DiagnosticsOperations
 from .operations.provider_operations import ProviderOperations
 from .operations.recommendations_operations import RecommendationsOperations
+from .operations.resource_health_metadata_operations import ResourceHealthMetadataOperations
 from .operations.web_apps_operations import WebAppsOperations
 from .operations.app_service_environments_operations import AppServiceEnvironmentsOperations
 from .operations.app_service_plans_operations import AppServicePlansOperations
@@ -92,6 +93,8 @@ class WebSiteManagementClient(object):
     :vartype provider: azure.mgmt.web.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
     :vartype recommendations: azure.mgmt.web.operations.RecommendationsOperations
+    :ivar resource_health_metadata: ResourceHealthMetadata operations
+    :vartype resource_health_metadata: azure.mgmt.web.operations.ResourceHealthMetadataOperations
     :ivar web_apps: WebApps operations
     :vartype web_apps: azure.mgmt.web.operations.WebAppsOperations
     :ivar app_service_environments: AppServiceEnvironments operations
@@ -137,6 +140,8 @@ class WebSiteManagementClient(object):
         self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommendations = RecommendationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_health_metadata = ResourceHealthMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_apps = WebAppsOperations(
             self._client, self.config, self._serialize, self._deserialize)
