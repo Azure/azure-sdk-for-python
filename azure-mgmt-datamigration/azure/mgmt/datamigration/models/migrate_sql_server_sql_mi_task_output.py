@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .task_output import TaskOutput
+from msrest.serialization import Model
 
 
-class MigrateSqlServerSqlMITaskOutput(TaskOutput):
+class MigrateSqlServerSqlMITaskOutput(Model):
     """Output for task that migrates SQL Server databases to Azure SQL Database
     Managed Instance.
 
@@ -48,5 +48,5 @@ class MigrateSqlServerSqlMITaskOutput(TaskOutput):
 
     def __init__(self, **kwargs):
         super(MigrateSqlServerSqlMITaskOutput, self).__init__(**kwargs)
+        self.id = None
         self.result_type = None
-        self.result_type = 'MigrateSqlServerSqlMITaskOutput'

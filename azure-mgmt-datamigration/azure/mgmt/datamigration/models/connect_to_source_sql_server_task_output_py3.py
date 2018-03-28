@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .task_output import TaskOutput
+from msrest.serialization import Model
 
 
-class ConnectToSourceSqlServerTaskOutput(TaskOutput):
+class ConnectToSourceSqlServerTaskOutput(Model):
     """Output for the task that validates connection to SQL Server and also
     validates source server requirements.
 
@@ -46,6 +46,6 @@ class ConnectToSourceSqlServerTaskOutput(TaskOutput):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ConnectToSourceSqlServerTaskOutput, self).__init__(, **kwargs)
+        super(ConnectToSourceSqlServerTaskOutput, self).__init__(**kwargs)
+        self.id = None
         self.result_type = None
-        self.result_type = 'ConnectToSourceSqlServerTaskOutput'

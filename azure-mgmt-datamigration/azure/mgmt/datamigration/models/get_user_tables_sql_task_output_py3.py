@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .task_output import TaskOutput
+from msrest.serialization import Model
 
 
-class GetUserTablesSqlTaskOutput(TaskOutput):
+class GetUserTablesSqlTaskOutput(Model):
     """Output of the task that collects user tables for the given list of
     databases.
 
@@ -42,6 +42,7 @@ class GetUserTablesSqlTaskOutput(TaskOutput):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(GetUserTablesSqlTaskOutput, self).__init__(, **kwargs)
+        super(GetUserTablesSqlTaskOutput, self).__init__(**kwargs)
+        self.id = None
         self.databases_to_tables = None
         self.validation_errors = None
