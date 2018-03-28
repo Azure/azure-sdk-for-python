@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class CognitiveServicesAccountKeys(Model):
-    """The access keys for the cognitive services account.
+class CheckSkuAvailabilityResultList(Model):
+    """Check SKU availability result list.
 
-    :param key1: Gets the value of key 1.
-    :type key1: str
-    :param key2: Gets the value of key 2.
-    :type key2: str
+    :param value: Check SKU availability result list.
+    :type value:
+     list[~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResult]
     """
 
     _attribute_map = {
-        'key1': {'key': 'key1', 'type': 'str'},
-        'key2': {'key': 'key2', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[CheckSkuAvailabilityResult]'},
     }
 
-    def __init__(self, **kwargs):
-        super(CognitiveServicesAccountKeys, self).__init__(**kwargs)
-        self.key1 = kwargs.get('key1', None)
-        self.key2 = kwargs.get('key2', None)
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(CheckSkuAvailabilityResultList, self).__init__(**kwargs)
+        self.value = value
