@@ -2,6 +2,15 @@
 
 Release History
 ===============
+1.0.0a2 (2018-03-28)
+++++++++++++++++++++
+* Upgrading to API version 7.0-preview
+* Adding elliptic curve key support
+* Adding managed storage account key backup, restore and soft delete support
+* Breaking update to managed storage account SasDefinition creation
+* Adding certificate backup and restore support
+* Adding certificate transparency
+
 1.0.0a1 (2018-01-25)
 ++++++++++++++++++++
 * Added message encryption support for message encryption enabled vaults
