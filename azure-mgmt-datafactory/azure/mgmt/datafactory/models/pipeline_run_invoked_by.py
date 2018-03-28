@@ -34,7 +34,7 @@ class PipelineRunInvokedBy(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(PipelineRunInvokedBy, self).__init__()
+    def __init__(self, **kwargs):
+        super(PipelineRunInvokedBy, self).__init__(**kwargs)
         self.name = None
         self.id = None

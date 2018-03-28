@@ -44,10 +44,10 @@ class IntegrationRuntimeSsisProperties(Model):
         'edition': {'key': 'edition', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, edition=None):
-        super(IntegrationRuntimeSsisProperties, self).__init__()
-        self.additional_properties = additional_properties
-        self.catalog_info = catalog_info
-        self.license_type = license_type
-        self.custom_setup_script_properties = custom_setup_script_properties
-        self.edition = edition
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.catalog_info = kwargs.get('catalog_info', None)
+        self.license_type = kwargs.get('license_type', None)
+        self.custom_setup_script_properties = kwargs.get('custom_setup_script_properties', None)
+        self.edition = kwargs.get('edition', None)

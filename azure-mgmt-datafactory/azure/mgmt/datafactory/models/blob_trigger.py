@@ -18,6 +18,8 @@ class BlobTrigger(MultiplePipelineTrigger):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -28,18 +30,19 @@ class BlobTrigger(MultiplePipelineTrigger):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
      list[~azure.mgmt.datafactory.models.TriggerPipelineReference]
-    :param folder_path: The path of the container/folder that will trigger the
-     pipeline.
+    :param folder_path: Required. The path of the container/folder that will
+     trigger the pipeline.
     :type folder_path: str
-    :param max_concurrency: The max number of parallel files to handle when it
-     is triggered.
+    :param max_concurrency: Required. The max number of parallel files to
+     handle when it is triggered.
     :type max_concurrency: int
-    :param linked_service: The Azure Storage linked service reference.
+    :param linked_service: Required. The Azure Storage linked service
+     reference.
     :type linked_service:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
@@ -63,9 +66,9 @@ class BlobTrigger(MultiplePipelineTrigger):
         'linked_service': {'key': 'typeProperties.linkedService', 'type': 'LinkedServiceReference'},
     }
 
-    def __init__(self, folder_path, max_concurrency, linked_service, additional_properties=None, description=None, pipelines=None):
-        super(BlobTrigger, self).__init__(additional_properties=additional_properties, description=description, pipelines=pipelines)
-        self.folder_path = folder_path
-        self.max_concurrency = max_concurrency
-        self.linked_service = linked_service
+    def __init__(self, **kwargs):
+        super(BlobTrigger, self).__init__(**kwargs)
+        self.folder_path = kwargs.get('folder_path', None)
+        self.max_concurrency = kwargs.get('max_concurrency', None)
+        self.linked_service = kwargs.get('linked_service', None)
         self.type = 'BlobTrigger'

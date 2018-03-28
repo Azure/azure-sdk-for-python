@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class AzureTableSink(CopySink):
     """A copy activity Azure Table sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -32,7 +34,7 @@ class AzureTableSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param azure_table_default_partition_key_value: Azure Table default
      partition key value. Type: string (or Expression with resultType string).
@@ -65,10 +67,10 @@ class AzureTableSink(CopySink):
         'azure_table_insert_type': {'key': 'azureTableInsertType', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, azure_table_default_partition_key_value=None, azure_table_partition_key_name=None, azure_table_row_key_name=None, azure_table_insert_type=None):
-        super(AzureTableSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
-        self.azure_table_default_partition_key_value = azure_table_default_partition_key_value
-        self.azure_table_partition_key_name = azure_table_partition_key_name
-        self.azure_table_row_key_name = azure_table_row_key_name
-        self.azure_table_insert_type = azure_table_insert_type
+    def __init__(self, **kwargs):
+        super(AzureTableSink, self).__init__(**kwargs)
+        self.azure_table_default_partition_key_value = kwargs.get('azure_table_default_partition_key_value', None)
+        self.azure_table_partition_key_name = kwargs.get('azure_table_partition_key_name', None)
+        self.azure_table_row_key_name = kwargs.get('azure_table_row_key_name', None)
+        self.azure_table_insert_type = kwargs.get('azure_table_insert_type', None)
         self.type = 'AzureTableSink'

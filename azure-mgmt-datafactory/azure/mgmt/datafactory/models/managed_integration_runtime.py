@@ -19,12 +19,14 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
     :param description: Integration runtime description.
     :type description: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :ivar state: Integration runtime state, only valid for managed dedicated
      integration runtime. Possible values include: 'Initial', 'Stopped',
@@ -55,9 +57,9 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         'ssis_properties': {'key': 'typeProperties.ssisProperties', 'type': 'IntegrationRuntimeSsisProperties'},
     }
 
-    def __init__(self, additional_properties=None, description=None, compute_properties=None, ssis_properties=None):
-        super(ManagedIntegrationRuntime, self).__init__(additional_properties=additional_properties, description=description)
+    def __init__(self, **kwargs):
+        super(ManagedIntegrationRuntime, self).__init__(**kwargs)
         self.state = None
-        self.compute_properties = compute_properties
-        self.ssis_properties = ssis_properties
+        self.compute_properties = kwargs.get('compute_properties', None)
+        self.ssis_properties = kwargs.get('ssis_properties', None)
         self.type = 'Managed'

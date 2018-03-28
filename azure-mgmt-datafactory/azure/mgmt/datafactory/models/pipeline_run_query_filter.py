@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class PipelineRunQueryFilter(Model):
     """Query filter option for listing pipeline runs.
 
-    :param operand: Parameter name to be used for filter. Possible values
-     include: 'PipelineName', 'Status', 'RunStart', 'RunEnd'
+    All required parameters must be populated in order to send to Azure.
+
+    :param operand: Required. Parameter name to be used for filter. Possible
+     values include: 'PipelineName', 'Status', 'RunStart', 'RunEnd'
     :type operand: str or
      ~azure.mgmt.datafactory.models.PipelineRunQueryFilterOperand
-    :param operator: Operator to be used for filter. Possible values include:
-     'Equals', 'NotEquals', 'In', 'NotIn'
+    :param operator: Required. Operator to be used for filter. Possible values
+     include: 'Equals', 'NotEquals', 'In', 'NotIn'
     :type operator: str or
      ~azure.mgmt.datafactory.models.PipelineRunQueryFilterOperator
-    :param values: List of filter values.
+    :param values: Required. List of filter values.
     :type values: list[str]
     """
 
@@ -39,8 +41,8 @@ class PipelineRunQueryFilter(Model):
         'values': {'key': 'values', 'type': '[str]'},
     }
 
-    def __init__(self, operand, operator, values):
-        super(PipelineRunQueryFilter, self).__init__()
-        self.operand = operand
-        self.operator = operator
-        self.values = values
+    def __init__(self, **kwargs):
+        super(PipelineRunQueryFilter, self).__init__(**kwargs)
+        self.operand = kwargs.get('operand', None)
+        self.operator = kwargs.get('operator', None)
+        self.values = kwargs.get('values', None)

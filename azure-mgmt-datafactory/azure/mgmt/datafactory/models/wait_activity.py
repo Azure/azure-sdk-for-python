@@ -15,18 +15,20 @@ from .control_activity import ControlActivity
 class WaitActivity(ControlActivity):
     """This activity suspends pipeline execution for the specified interval.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param wait_time_in_seconds: Duration in seconds.
+    :param wait_time_in_seconds: Required. Duration in seconds.
     :type wait_time_in_seconds: int
     """
 
@@ -45,7 +47,7 @@ class WaitActivity(ControlActivity):
         'wait_time_in_seconds': {'key': 'typeProperties.waitTimeInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, name, wait_time_in_seconds, additional_properties=None, description=None, depends_on=None):
-        super(WaitActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on)
-        self.wait_time_in_seconds = wait_time_in_seconds
+    def __init__(self, **kwargs):
+        super(WaitActivity, self).__init__(**kwargs)
+        self.wait_time_in_seconds = kwargs.get('wait_time_in_seconds', None)
         self.type = 'Wait'

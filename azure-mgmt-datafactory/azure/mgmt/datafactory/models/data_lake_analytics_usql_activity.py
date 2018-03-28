@@ -15,26 +15,28 @@ from .execution_activity import ExecutionActivity
 class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
     """Data Lake Analytics U-SQL activity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param script_path: Case-sensitive path to folder that contains the U-SQL
-     script. Type: string (or Expression with resultType string).
+    :param script_path: Required. Case-sensitive path to folder that contains
+     the U-SQL script. Type: string (or Expression with resultType string).
     :type script_path: object
-    :param script_linked_service: Script linked service reference.
+    :param script_linked_service: Required. Script linked service reference.
     :type script_linked_service:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param degree_of_parallelism: The maximum number of nodes simultaneously
@@ -81,13 +83,13 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
         'compilation_mode': {'key': 'typeProperties.compilationMode', 'type': 'object'},
     }
 
-    def __init__(self, name, script_path, script_linked_service, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, degree_of_parallelism=None, priority=None, parameters=None, runtime_version=None, compilation_mode=None):
-        super(DataLakeAnalyticsUSQLActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.script_path = script_path
-        self.script_linked_service = script_linked_service
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
-        self.parameters = parameters
-        self.runtime_version = runtime_version
-        self.compilation_mode = compilation_mode
+    def __init__(self, **kwargs):
+        super(DataLakeAnalyticsUSQLActivity, self).__init__(**kwargs)
+        self.script_path = kwargs.get('script_path', None)
+        self.script_linked_service = kwargs.get('script_linked_service', None)
+        self.degree_of_parallelism = kwargs.get('degree_of_parallelism', None)
+        self.priority = kwargs.get('priority', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.compilation_mode = kwargs.get('compilation_mode', None)
         self.type = 'DataLakeAnalyticsU-SQL'
