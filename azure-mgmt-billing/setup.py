@@ -76,7 +76,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     install_requires=[
         'msrestazure~=0.4.7',
         'azure-common~=1.1.5',
