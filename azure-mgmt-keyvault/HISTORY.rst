@@ -2,6 +2,12 @@
 
 Release History
 ===============
+1.0.0a2 (2018-03-28)
+++++++++++++++++++++
+* Upgrading to API version 2018-02-14-preview
+* Adding network_acls vault property for limiting network access to a vault
+* Adding managed storage account key backup, restore and soft delete support
+* Adding vault property enable_purge_protection for enhance protection against vault deletion
 
 0.40.0 (2017-06-06)
 +++++++++++++++++++
