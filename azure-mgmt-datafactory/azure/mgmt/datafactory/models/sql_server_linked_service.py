@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class SqlServerLinkedService(LinkedService):
     """SQL Server linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,9 @@ class SqlServerLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: The connection string.
+    :param connection_string: Required. The connection string.
     :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param user_name: The on-premises Windows authentication user name. Type:
      string (or Expression with resultType string).
@@ -62,10 +64,10 @@ class SqlServerLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, user_name=None, password=None, encrypted_credential=None):
-        super(SqlServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.connection_string = connection_string
-        self.user_name = user_name
-        self.password = password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(SqlServerLinkedService, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'SqlServer'

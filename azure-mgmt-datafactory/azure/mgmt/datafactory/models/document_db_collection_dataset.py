@@ -15,6 +15,8 @@ from .dataset import Dataset
 class DocumentDbCollectionDataset(Dataset):
     """Microsoft Azure Document Database Collection dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,7 +25,7 @@ class DocumentDbCollectionDataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -32,10 +34,10 @@ class DocumentDbCollectionDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param collection_name: Document Database collection name. Type: string
-     (or Expression with resultType string).
+    :param collection_name: Required. Document Database collection name. Type:
+     string (or Expression with resultType string).
     :type collection_name: object
     """
 
@@ -56,7 +58,7 @@ class DocumentDbCollectionDataset(Dataset):
         'collection_name': {'key': 'typeProperties.collectionName', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, collection_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None):
-        super(DocumentDbCollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.collection_name = collection_name
+    def __init__(self, **kwargs):
+        super(DocumentDbCollectionDataset, self).__init__(**kwargs)
+        self.collection_name = kwargs.get('collection_name', None)
         self.type = 'DocumentDbCollection'

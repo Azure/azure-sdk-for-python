@@ -15,16 +15,18 @@ from .execution_activity import ExecutionActivity
 class HDInsightStreamingActivity(ExecutionActivity):
     """HDInsight streaming activity type.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
@@ -40,19 +42,20 @@ class HDInsightStreamingActivity(ExecutionActivity):
      'Always', 'Failure'
     :type get_debug_info: str or
      ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
-    :param mapper: Mapper executable name. Type: string (or Expression with
-     resultType string).
+    :param mapper: Required. Mapper executable name. Type: string (or
+     Expression with resultType string).
     :type mapper: object
-    :param reducer: Reducer executable name. Type: string (or Expression with
-     resultType string).
+    :param reducer: Required. Reducer executable name. Type: string (or
+     Expression with resultType string).
     :type reducer: object
-    :param input: Input blob path. Type: string (or Expression with resultType
-     string).
-    :type input: object
-    :param output: Output blob path. Type: string (or Expression with
+    :param input: Required. Input blob path. Type: string (or Expression with
      resultType string).
+    :type input: object
+    :param output: Required. Output blob path. Type: string (or Expression
+     with resultType string).
     :type output: object
-    :param file_paths: Paths to streaming job files. Can be directories.
+    :param file_paths: Required. Paths to streaming job files. Can be
+     directories.
     :type file_paths: list[object]
     :param file_linked_service: Linked service reference where the files are
      located.
@@ -99,18 +102,18 @@ class HDInsightStreamingActivity(ExecutionActivity):
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
     }
 
-    def __init__(self, name, mapper, reducer, input, output, file_paths, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, file_linked_service=None, combiner=None, command_environment=None, defines=None):
-        super(HDInsightStreamingActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.storage_linked_services = storage_linked_services
-        self.arguments = arguments
-        self.get_debug_info = get_debug_info
-        self.mapper = mapper
-        self.reducer = reducer
-        self.input = input
-        self.output = output
-        self.file_paths = file_paths
-        self.file_linked_service = file_linked_service
-        self.combiner = combiner
-        self.command_environment = command_environment
-        self.defines = defines
+    def __init__(self, **kwargs):
+        super(HDInsightStreamingActivity, self).__init__(**kwargs)
+        self.storage_linked_services = kwargs.get('storage_linked_services', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.get_debug_info = kwargs.get('get_debug_info', None)
+        self.mapper = kwargs.get('mapper', None)
+        self.reducer = kwargs.get('reducer', None)
+        self.input = kwargs.get('input', None)
+        self.output = kwargs.get('output', None)
+        self.file_paths = kwargs.get('file_paths', None)
+        self.file_linked_service = kwargs.get('file_linked_service', None)
+        self.combiner = kwargs.get('combiner', None)
+        self.command_environment = kwargs.get('command_environment', None)
+        self.defines = kwargs.get('defines', None)
         self.type = 'HDInsightStreaming'

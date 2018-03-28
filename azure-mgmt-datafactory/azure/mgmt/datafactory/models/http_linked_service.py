@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class HttpLinkedService(LinkedService):
     """Linked service for an HTTP source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,9 +31,9 @@ class HttpLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param url: The base URL of the HTTP endpoint, e.g.
+    :param url: Required. The base URL of the HTTP endpoint, e.g.
      http://www.microsoft.com. Type: string (or Expression with resultType
      string).
     :type url: object
@@ -90,14 +92,14 @@ class HttpLinkedService(LinkedService):
         'enable_server_certificate_validation': {'key': 'typeProperties.enableServerCertificateValidation', 'type': 'object'},
     }
 
-    def __init__(self, url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, authentication_type=None, user_name=None, password=None, embedded_cert_data=None, cert_thumbprint=None, encrypted_credential=None, enable_server_certificate_validation=None):
-        super(HttpLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.url = url
-        self.authentication_type = authentication_type
-        self.user_name = user_name
-        self.password = password
-        self.embedded_cert_data = embedded_cert_data
-        self.cert_thumbprint = cert_thumbprint
-        self.encrypted_credential = encrypted_credential
-        self.enable_server_certificate_validation = enable_server_certificate_validation
+    def __init__(self, **kwargs):
+        super(HttpLinkedService, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.embedded_cert_data = kwargs.get('embedded_cert_data', None)
+        self.cert_thumbprint = kwargs.get('cert_thumbprint', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.enable_server_certificate_validation = kwargs.get('enable_server_certificate_validation', None)
         self.type = 'HttpServer'

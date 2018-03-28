@@ -18,7 +18,9 @@ class LinkedIntegrationRuntimeProperties(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: LinkedIntegrationRuntimeRbac, LinkedIntegrationRuntimeKey
 
-    :param authorization_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
     """
 
@@ -34,6 +36,6 @@ class LinkedIntegrationRuntimeProperties(Model):
         'authorization_type': {'RBAC': 'LinkedIntegrationRuntimeRbac', 'Key': 'LinkedIntegrationRuntimeKey'}
     }
 
-    def __init__(self):
-        super(LinkedIntegrationRuntimeProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntimeProperties, self).__init__(**kwargs)
         self.authorization_type = None

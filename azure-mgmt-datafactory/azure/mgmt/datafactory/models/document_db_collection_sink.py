@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class DocumentDbCollectionSink(CopySink):
     """A copy activity Document Database Collection sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -32,7 +34,7 @@ class DocumentDbCollectionSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param nesting_separator: Nested properties separator. Default is . (dot).
      Type: string (or Expression with resultType string).
@@ -53,7 +55,7 @@ class DocumentDbCollectionSink(CopySink):
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, nesting_separator=None):
-        super(DocumentDbCollectionSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait)
-        self.nesting_separator = nesting_separator
+    def __init__(self, **kwargs):
+        super(DocumentDbCollectionSink, self).__init__(**kwargs)
+        self.nesting_separator = kwargs.get('nesting_separator', None)
         self.type = 'DocumentDbCollectionSink'

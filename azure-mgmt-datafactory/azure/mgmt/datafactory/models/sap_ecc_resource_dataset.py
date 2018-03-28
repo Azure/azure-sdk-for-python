@@ -15,6 +15,8 @@ from .dataset import Dataset
 class SapEccResourceDataset(Dataset):
     """The path of the SAP ECC OData entity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,7 +25,7 @@ class SapEccResourceDataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -32,10 +34,10 @@ class SapEccResourceDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param path: The path of the SAP ECC OData entity. Type: string (or
-     Expression with resultType string).
+    :param path: Required. The path of the SAP ECC OData entity. Type: string
+     (or Expression with resultType string).
     :type path: str
     """
 
@@ -56,7 +58,7 @@ class SapEccResourceDataset(Dataset):
         'path': {'key': 'typeProperties.path', 'type': 'str'},
     }
 
-    def __init__(self, linked_service_name, path, additional_properties=None, description=None, structure=None, parameters=None, annotations=None):
-        super(SapEccResourceDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.path = path
+    def __init__(self, **kwargs):
+        super(SapEccResourceDataset, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
         self.type = 'SapEccResource'
