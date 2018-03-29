@@ -20,7 +20,8 @@ class Rendering(Model):
     :type rendering_type: str or ~azure.mgmt.web.models.RenderingType
     :param title: Title of data
     :type title: str
-    :param description: Description
+    :param description: Description of the data that will help it be
+     interpreted
     :type description: str
     """
 

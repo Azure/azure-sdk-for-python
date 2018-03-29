@@ -18,7 +18,7 @@ class DetectorInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar description: Description
+    :ivar description: Short description of the detector and its purpose
     :vartype description: str
     :ivar category: Support Category
     :vartype category: str
