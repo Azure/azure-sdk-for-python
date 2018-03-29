@@ -24,8 +24,6 @@ class LogFile(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param log_file_name: Log file name.
-    :type log_file_name: str
     :param size_in_kb: Size of the log file.
     :type size_in_kb: long
     :ivar created_time: Creation timestamp of the log file.
@@ -50,7 +48,6 @@ class LogFile(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'log_file_name': {'key': 'properties.name', 'type': 'str'},
         'size_in_kb': {'key': 'properties.sizeInKB', 'type': 'long'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
@@ -60,7 +57,6 @@ class LogFile(ProxyResource):
 
     def __init__(self, **kwargs):
         super(LogFile, self).__init__(**kwargs)
-        self.log_file_name = kwargs.get('log_file_name', None)
         self.size_in_kb = kwargs.get('size_in_kb', None)
         self.created_time = None
         self.last_modified_time = None
