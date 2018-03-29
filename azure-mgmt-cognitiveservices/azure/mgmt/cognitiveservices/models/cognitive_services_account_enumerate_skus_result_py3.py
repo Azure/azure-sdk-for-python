@@ -32,6 +32,6 @@ class CognitiveServicesAccountEnumerateSkusResult(Model):
         'value': {'key': 'value', 'type': '[CognitiveServicesResourceAndSku]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(CognitiveServicesAccountEnumerateSkusResult, self).__init__(**kwargs)
         self.value = None

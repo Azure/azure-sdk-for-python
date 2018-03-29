@@ -59,10 +59,10 @@ class CognitiveServicesAccountCreateParameters(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, sku, kind, location: str, properties, tags=None, **kwargs) -> None:
         super(CognitiveServicesAccountCreateParameters, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.kind = kwargs.get('kind', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.properties = kwargs.get('properties', None)
+        self.sku = sku
+        self.kind = kind
+        self.location = location
+        self.tags = tags
+        self.properties = properties

@@ -30,6 +30,6 @@ class RegenerateKeyParameters(Model):
         'key_name': {'key': 'keyName', 'type': 'KeyName'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key_name, **kwargs) -> None:
         super(RegenerateKeyParameters, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+        self.key_name = key_name

@@ -26,7 +26,7 @@ class CognitiveServicesResourceAndSku(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, resource_type: str=None, sku=None, **kwargs) -> None:
         super(CognitiveServicesResourceAndSku, self).__init__(**kwargs)
-        self.resource_type = kwargs.get('resource_type', None)
-        self.sku = kwargs.get('sku', None)
+        self.resource_type = resource_type
+        self.sku = sku
