@@ -34,7 +34,7 @@ class ContainerGroupPropertiesInstanceView(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ContainerGroupPropertiesInstanceView, self).__init__(**kwargs)
         self.events = None
         self.state = None

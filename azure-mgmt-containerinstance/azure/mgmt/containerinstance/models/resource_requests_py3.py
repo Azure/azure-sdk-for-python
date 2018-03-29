@@ -34,7 +34,7 @@ class ResourceRequests(Model):
         'cpu': {'key': 'cpu', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, memory_in_gb: float, cpu: float, **kwargs) -> None:
         super(ResourceRequests, self).__init__(**kwargs)
-        self.memory_in_gb = kwargs.get('memory_in_gb', None)
-        self.cpu = kwargs.get('cpu', None)
+        self.memory_in_gb = memory_in_gb
+        self.cpu = cpu

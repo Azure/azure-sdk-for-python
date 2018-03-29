@@ -37,8 +37,8 @@ class ImageRegistryCredential(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, server: str, username: str, password: str=None, **kwargs) -> None:
         super(ImageRegistryCredential, self).__init__(**kwargs)
-        self.server = kwargs.get('server', None)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
+        self.server = server
+        self.username = username
+        self.password = password

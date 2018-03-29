@@ -27,7 +27,7 @@ class ContainerExecRequest(Model):
         'terminal_size': {'key': 'terminalSize', 'type': 'ContainerExecRequestTerminalSize'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, command: str=None, terminal_size=None, **kwargs) -> None:
         super(ContainerExecRequest, self).__init__(**kwargs)
-        self.command = kwargs.get('command', None)
-        self.terminal_size = kwargs.get('terminal_size', None)
+        self.command = command
+        self.terminal_size = terminal_size

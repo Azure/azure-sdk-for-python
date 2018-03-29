@@ -42,7 +42,7 @@ class Usage(Model):
         'name': {'key': 'name', 'type': 'UsageName'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Usage, self).__init__(**kwargs)
         self.unit = None
         self.current_value = None

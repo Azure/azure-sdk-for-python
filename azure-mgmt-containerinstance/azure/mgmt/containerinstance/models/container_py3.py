@@ -65,13 +65,13 @@ class Container(Model):
         'volume_mounts': {'key': 'properties.volumeMounts', 'type': '[VolumeMount]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, image: str, resources, command=None, ports=None, environment_variables=None, volume_mounts=None, **kwargs) -> None:
         super(Container, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.image = kwargs.get('image', None)
-        self.command = kwargs.get('command', None)
-        self.ports = kwargs.get('ports', None)
-        self.environment_variables = kwargs.get('environment_variables', None)
+        self.name = name
+        self.image = image
+        self.command = command
+        self.ports = ports
+        self.environment_variables = environment_variables
         self.instance_view = None
-        self.resources = kwargs.get('resources', None)
-        self.volume_mounts = kwargs.get('volume_mounts', None)
+        self.resources = resources
+        self.volume_mounts = volume_mounts

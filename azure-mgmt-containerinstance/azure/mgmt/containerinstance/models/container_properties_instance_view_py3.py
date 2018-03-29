@@ -45,7 +45,7 @@ class ContainerPropertiesInstanceView(Model):
         'events': {'key': 'events', 'type': '[Event]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ContainerPropertiesInstanceView, self).__init__(**kwargs)
         self.restart_count = None
         self.current_state = None

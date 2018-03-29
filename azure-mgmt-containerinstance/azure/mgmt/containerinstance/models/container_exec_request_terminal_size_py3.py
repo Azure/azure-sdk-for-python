@@ -12,24 +12,21 @@
 from msrest.serialization import Model
 
 
-class UsageListResult(Model):
-    """The response containing the usage data.
+class ContainerExecRequestTerminalSize(Model):
+    """The size of the terminal.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.containerinstance.models.Usage]
+    :param rows: The row size of the terminal
+    :type rows: int
+    :param cols: The column size of the terminal
+    :type cols: int
     """
 
-    _validation = {
-        'value': {'readonly': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
+        'rows': {'key': 'rows', 'type': 'int'},
+        'cols': {'key': 'cols', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(UsageListResult, self).__init__(**kwargs)
-        self.value = None
+    def __init__(self, *, rows: int=None, cols: int=None, **kwargs) -> None:
+        super(ContainerExecRequestTerminalSize, self).__init__(**kwargs)
+        self.rows = rows
+        self.cols = cols

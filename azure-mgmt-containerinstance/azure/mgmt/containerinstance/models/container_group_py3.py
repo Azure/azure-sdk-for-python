@@ -89,13 +89,13 @@ class ContainerGroup(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerGroup, self).__init__(**kwargs)
+    def __init__(self, *, containers, os_type, location: str=None, tags=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None, **kwargs) -> None:
+        super(ContainerGroup, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
-        self.containers = kwargs.get('containers', None)
-        self.image_registry_credentials = kwargs.get('image_registry_credentials', None)
-        self.restart_policy = kwargs.get('restart_policy', None)
-        self.ip_address = kwargs.get('ip_address', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.volumes = kwargs.get('volumes', None)
+        self.containers = containers
+        self.image_registry_credentials = image_registry_credentials
+        self.restart_policy = restart_policy
+        self.ip_address = ip_address
+        self.os_type = os_type
+        self.volumes = volumes
         self.instance_view = None

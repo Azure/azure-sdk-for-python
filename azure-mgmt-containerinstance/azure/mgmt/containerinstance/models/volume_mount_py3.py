@@ -38,8 +38,8 @@ class VolumeMount(Model):
         'read_only': {'key': 'readOnly', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, mount_path: str, read_only: bool=None, **kwargs) -> None:
         super(VolumeMount, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.mount_path = kwargs.get('mount_path', None)
-        self.read_only = kwargs.get('read_only', None)
+        self.name = name
+        self.mount_path = mount_path
+        self.read_only = read_only

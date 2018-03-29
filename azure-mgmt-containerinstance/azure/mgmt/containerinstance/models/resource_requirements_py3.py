@@ -33,7 +33,7 @@ class ResourceRequirements(Model):
         'limits': {'key': 'limits', 'type': 'ResourceLimits'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, requests, limits=None, **kwargs) -> None:
         super(ResourceRequirements, self).__init__(**kwargs)
-        self.requests = kwargs.get('requests', None)
-        self.limits = kwargs.get('limits', None)
+        self.requests = requests
+        self.limits = limits

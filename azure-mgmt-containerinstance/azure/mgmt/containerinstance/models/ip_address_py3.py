@@ -49,9 +49,9 @@ class IpAddress(Model):
 
     type = "Public"
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, ports, ip: str=None, dns_name_label: str=None, **kwargs) -> None:
         super(IpAddress, self).__init__(**kwargs)
-        self.ports = kwargs.get('ports', None)
-        self.ip = kwargs.get('ip', None)
-        self.dns_name_label = kwargs.get('dns_name_label', None)
+        self.ports = ports
+        self.ip = ip
+        self.dns_name_label = dns_name_label
         self.fqdn = None

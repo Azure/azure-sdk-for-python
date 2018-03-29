@@ -44,9 +44,9 @@ class AzureFileVolume(Model):
         'storage_account_key': {'key': 'storageAccountKey', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, share_name: str, storage_account_name: str, read_only: bool=None, storage_account_key: str=None, **kwargs) -> None:
         super(AzureFileVolume, self).__init__(**kwargs)
-        self.share_name = kwargs.get('share_name', None)
-        self.read_only = kwargs.get('read_only', None)
-        self.storage_account_name = kwargs.get('storage_account_name', None)
-        self.storage_account_key = kwargs.get('storage_account_key', None)
+        self.share_name = share_name
+        self.read_only = read_only
+        self.storage_account_name = storage_account_name
+        self.storage_account_key = storage_account_key

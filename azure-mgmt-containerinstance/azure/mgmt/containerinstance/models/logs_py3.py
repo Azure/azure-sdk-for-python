@@ -9,35 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ContainerNetworkProtocol(str, Enum):
+class Logs(Model):
+    """The logs.
 
-    tcp = "TCP"
-    udp = "UDP"
+    :param content: The content of the log.
+    :type content: str
+    """
 
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'str'},
+    }
 
-class ContainerGroupRestartPolicy(str, Enum):
-
-    always = "Always"
-    on_failure = "OnFailure"
-    never = "Never"
-
-
-class ContainerGroupNetworkProtocol(str, Enum):
-
-    tcp = "TCP"
-    udp = "UDP"
-
-
-class OperatingSystemTypes(str, Enum):
-
-    windows = "Windows"
-    linux = "Linux"
-
-
-class ContainerInstanceOperationsOrigin(str, Enum):
-
-    user = "User"
-    system = "System"
+    def __init__(self, *, content: str=None, **kwargs) -> None:
+        super(Logs, self).__init__(**kwargs)
+        self.content = content

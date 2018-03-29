@@ -30,6 +30,6 @@ class UsageListResult(Model):
         'value': {'key': 'value', 'type': '[Usage]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UsageListResult, self).__init__(**kwargs)
         self.value = None

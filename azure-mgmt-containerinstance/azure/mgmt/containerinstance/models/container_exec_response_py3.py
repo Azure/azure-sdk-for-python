@@ -26,7 +26,7 @@ class ContainerExecResponse(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, web_socket_uri: str=None, password: str=None, **kwargs) -> None:
         super(ContainerExecResponse, self).__init__(**kwargs)
-        self.web_socket_uri = kwargs.get('web_socket_uri', None)
-        self.password = kwargs.get('password', None)
+        self.web_socket_uri = web_socket_uri
+        self.password = password

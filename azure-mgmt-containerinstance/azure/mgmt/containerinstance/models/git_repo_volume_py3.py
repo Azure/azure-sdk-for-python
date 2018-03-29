@@ -39,8 +39,8 @@ class GitRepoVolume(Model):
         'revision': {'key': 'revision', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, repository: str, directory: str=None, revision: str=None, **kwargs) -> None:
         super(GitRepoVolume, self).__init__(**kwargs)
-        self.directory = kwargs.get('directory', None)
-        self.repository = kwargs.get('repository', None)
-        self.revision = kwargs.get('revision', None)
+        self.directory = directory
+        self.repository = repository
+        self.revision = revision

@@ -12,29 +12,21 @@
 from msrest.serialization import Model
 
 
-class ResourceRequests(Model):
-    """The resource requests.
+class ResourceLimits(Model):
+    """The resource limits.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param memory_in_gb: Required. The memory request in GB of this container
-     instance.
+    :param memory_in_gb: The memory limit in GB of this container instance.
     :type memory_in_gb: float
-    :param cpu: Required. The CPU request of this container instance.
+    :param cpu: The CPU limit of this container instance.
     :type cpu: float
     """
-
-    _validation = {
-        'memory_in_gb': {'required': True},
-        'cpu': {'required': True},
-    }
 
     _attribute_map = {
         'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
         'cpu': {'key': 'cpu', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
-        super(ResourceRequests, self).__init__(**kwargs)
-        self.memory_in_gb = kwargs.get('memory_in_gb', None)
-        self.cpu = kwargs.get('cpu', None)
+    def __init__(self, *, memory_in_gb: float=None, cpu: float=None, **kwargs) -> None:
+        super(ResourceLimits, self).__init__(**kwargs)
+        self.memory_in_gb = memory_in_gb
+        self.cpu = cpu

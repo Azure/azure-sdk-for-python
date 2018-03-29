@@ -39,10 +39,10 @@ class ContainerState(Model):
         'detail_status': {'key': 'detailStatus', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, state: str=None, start_time=None, exit_code: int=None, finish_time=None, detail_status: str=None, **kwargs) -> None:
         super(ContainerState, self).__init__(**kwargs)
-        self.state = kwargs.get('state', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.exit_code = kwargs.get('exit_code', None)
-        self.finish_time = kwargs.get('finish_time', None)
-        self.detail_status = kwargs.get('detail_status', None)
+        self.state = state
+        self.start_time = start_time
+        self.exit_code = exit_code
+        self.finish_time = finish_time
+        self.detail_status = detail_status

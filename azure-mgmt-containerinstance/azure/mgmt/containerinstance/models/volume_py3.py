@@ -41,10 +41,10 @@ class Volume(Model):
         'git_repo': {'key': 'gitRepo', 'type': 'GitRepoVolume'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, azure_file=None, empty_dir=None, secret=None, git_repo=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.azure_file = kwargs.get('azure_file', None)
-        self.empty_dir = kwargs.get('empty_dir', None)
-        self.secret = kwargs.get('secret', None)
-        self.git_repo = kwargs.get('git_repo', None)
+        self.name = name
+        self.azure_file = azure_file
+        self.empty_dir = empty_dir
+        self.secret = secret
+        self.git_repo = git_repo

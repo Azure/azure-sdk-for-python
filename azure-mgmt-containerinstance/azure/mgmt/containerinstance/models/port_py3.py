@@ -12,28 +12,29 @@
 from msrest.serialization import Model
 
 
-class EnvironmentVariable(Model):
-    """The environment variable to set within the container instance.
+class Port(Model):
+    """The port exposed on the container group.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the environment variable.
-    :type name: str
-    :param value: Required. The value of the environment variable.
-    :type value: str
+    :param protocol: The protocol associated with the port. Possible values
+     include: 'TCP', 'UDP'
+    :type protocol: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol
+    :param port: Required. The port number.
+    :type port: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        'port': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(EnvironmentVariable, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *, port: int, protocol=None, **kwargs) -> None:
+        super(Port, self).__init__(**kwargs)
+        self.protocol = protocol
+        self.port = port

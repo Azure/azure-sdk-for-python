@@ -33,7 +33,7 @@ class EnvironmentVariable(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs) -> None:
         super(EnvironmentVariable, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+        self.name = name
+        self.value = value

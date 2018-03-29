@@ -38,11 +38,11 @@ class Event(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, count: int=None, first_timestamp=None, last_timestamp=None, name: str=None, message: str=None, type: str=None, **kwargs) -> None:
         super(Event, self).__init__(**kwargs)
-        self.count = kwargs.get('count', None)
-        self.first_timestamp = kwargs.get('first_timestamp', None)
-        self.last_timestamp = kwargs.get('last_timestamp', None)
-        self.name = kwargs.get('name', None)
-        self.message = kwargs.get('message', None)
-        self.type = kwargs.get('type', None)
+        self.count = count
+        self.first_timestamp = first_timestamp
+        self.last_timestamp = last_timestamp
+        self.name = name
+        self.message = message
+        self.type = type
