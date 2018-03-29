@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class OperationPaged(Paged):
+class EnrollmentAccountPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.billing.models.Operation>` object
+    A paging container for iterating over a list of :class:`EnrollmentAccount <azure.mgmt.billing.models.EnrollmentAccount>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Operation]'}
+        'current_page': {'key': 'value', 'type': '[EnrollmentAccount]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(OperationPaged, self).__init__(*args, **kwargs)
+        super(EnrollmentAccountPaged, self).__init__(*args, **kwargs)
