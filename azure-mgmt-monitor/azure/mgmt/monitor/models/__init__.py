@@ -59,6 +59,9 @@ try:
     from .itsm_receiver_py3 import ItsmReceiver
     from .azure_app_push_receiver_py3 import AzureAppPushReceiver
     from .automation_runbook_receiver_py3 import AutomationRunbookReceiver
+    from .voice_receiver_py3 import VoiceReceiver
+    from .logic_app_receiver_py3 import LogicAppReceiver
+    from .azure_function_receiver_py3 import AzureFunctionReceiver
     from .action_group_resource_py3 import ActionGroupResource
     from .enable_request_py3 import EnableRequest
     from .action_group_patch_body_py3 import ActionGroupPatchBody
@@ -144,6 +147,9 @@ except (SyntaxError, ImportError):
     from .itsm_receiver import ItsmReceiver
     from .azure_app_push_receiver import AzureAppPushReceiver
     from .automation_runbook_receiver import AutomationRunbookReceiver
+    from .voice_receiver import VoiceReceiver
+    from .logic_app_receiver import LogicAppReceiver
+    from .azure_function_receiver import AzureFunctionReceiver
     from .action_group_resource import ActionGroupResource
     from .enable_request import EnableRequest
     from .action_group_patch_body import ActionGroupPatchBody
@@ -257,6 +263,9 @@ __all__ = [
     'ItsmReceiver',
     'AzureAppPushReceiver',
     'AutomationRunbookReceiver',
+    'VoiceReceiver',
+    'LogicAppReceiver',
+    'AzureFunctionReceiver',
     'ActionGroupResource',
     'EnableRequest',
     'ActionGroupPatchBody',
