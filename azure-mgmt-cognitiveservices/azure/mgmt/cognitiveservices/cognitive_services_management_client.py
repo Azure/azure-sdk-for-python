@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.accounts_operations import AccountsOperations
+from .operations.resource_skus_operations import ResourceSkusOperations
 from .operations.operations import Operations
 from .operations.check_sku_availability_operations import CheckSkuAvailabilityOperations
 from . import models
@@ -44,7 +45,7 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
 
         super(CognitiveServicesManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('cognitiveservicesmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-cognitiveservices/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -59,6 +60,8 @@ class CognitiveServicesManagementClient(object):
 
     :ivar accounts: Accounts operations
     :vartype accounts: azure.mgmt.cognitiveservices.operations.AccountsOperations
+    :ivar resource_skus: ResourceSkus operations
+    :vartype resource_skus: azure.mgmt.cognitiveservices.operations.ResourceSkusOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cognitiveservices.operations.Operations
     :ivar check_sku_availability: CheckSkuAvailability operations
@@ -84,6 +87,8 @@ class CognitiveServicesManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
         self.accounts = AccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_skus = ResourceSkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

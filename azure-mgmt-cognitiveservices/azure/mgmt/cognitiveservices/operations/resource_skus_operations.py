@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class ResourceSkusOperations(object):
+    """ResourceSkusOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -39,16 +39,17 @@ class Operations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the available Cognitive Services account operations.
+        """Gets the list of Microsoft.CognitiveServices SKUs available for your
+        Subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of OperationEntity
+        :return: An iterator like instance of ResourceSku
         :rtype:
-         ~azure.mgmt.cognitiveservices.models.OperationEntityPaged[~azure.mgmt.cognitiveservices.models.OperationEntity]
+         ~azure.mgmt.cognitiveservices.models.ResourceSkuPaged[~azure.mgmt.cognitiveservices.models.ResourceSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -56,6 +57,10 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -88,12 +93,12 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationEntityPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ResourceSkuPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationEntityPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ResourceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.CognitiveServices/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/skus'}
