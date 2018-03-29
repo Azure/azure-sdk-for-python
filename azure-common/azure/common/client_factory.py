@@ -63,10 +63,11 @@ def get_client_from_cli_profile(client_class, **kwargs):
             'credentials': kwargs.get('credentials', credentials),
             'subscription_id': kwargs.get('subscription_id', subscription_id)
         })
-    if 'base_url' not in kwargs:
-        cloud = get_cli_active_cloud()
-        # api_version_profile = cloud.profile # TBC using _shared
-        parameters['base_url'] = cloud.endpoints.resource_manager
+    if client_class not in [DataLakeAnalyticsJobManagementClient]:
+        if 'base_url' not in kwargs:
+            cloud = get_cli_active_cloud()
+            # api_version_profile = cloud.profile # TBC using _shared
+            parameters['base_url'] = cloud.endpoints.resource_manager
     parameters.update(kwargs)
     return _instantiate_client(client_class, **parameters)
 
