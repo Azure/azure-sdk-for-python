@@ -553,15 +553,12 @@ class WorkbooksOperations(object):
     update_link.metadata = {'url': '/providers/microsoft.insights/workbooks'}
 
     def delete_link(
-            self, resource_name, source_id, category, custom_headers=None, raw=False, **operation_config):
-        """Delete a workbook.
+            self, resource_id, category, custom_headers=None, raw=False, **operation_config):
+        """Delete a link between a source resource and workbook resource.
 
-        :param resource_name: The name of the Application Insights component
-         resource.
-        :type resource_name: str
-        :param source_id: Azure Resource Id that will fetch all linked
-         workbooks.
-        :type source_id: str
+        :param resource_id: Azure Resource Id or any target workbook resource
+         id.
+        :type resource_id: str
         :param category: Category of workbook to return. Possible values
          include: 'workbook', 'TSG', 'performance', 'retention'
         :type category: str or
@@ -578,14 +575,10 @@ class WorkbooksOperations(object):
         """
         # Construct URL
         url = self.delete_link.metadata['url']
-        path_format_arguments = {
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['sourceId'] = self._serialize.query("source_id", source_id, 'str')
+        query_parameters['resourceId'] = self._serialize.query("resource_id", resource_id, 'str')
         query_parameters['category'] = self._serialize.query("category", category, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
