@@ -28,7 +28,7 @@ class PerformanceTierProperties(Model):
         'service_level_objectives': {'key': 'serviceLevelObjectives', 'type': '[PerformanceTierServiceLevelObjectives]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, service_level_objectives=None, **kwargs) -> None:
         super(PerformanceTierProperties, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.service_level_objectives = kwargs.get('service_level_objectives', None)
+        self.id = id
+        self.service_level_objectives = service_level_objectives

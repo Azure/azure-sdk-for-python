@@ -39,9 +39,9 @@ class ServerForCreate(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties, location: str, sku=None, tags=None, **kwargs) -> None:
         super(ServerForCreate, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.properties = kwargs.get('properties', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.sku = sku
+        self.properties = properties
+        self.location = location
+        self.tags = tags

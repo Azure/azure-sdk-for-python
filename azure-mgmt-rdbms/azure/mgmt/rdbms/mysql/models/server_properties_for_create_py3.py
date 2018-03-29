@@ -48,9 +48,9 @@ class ServerPropertiesForCreate(Model):
         'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
         super(ServerPropertiesForCreate, self).__init__(**kwargs)
-        self.version = kwargs.get('version', None)
-        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
+        self.version = version
+        self.ssl_enforcement = ssl_enforcement
+        self.storage_profile = storage_profile
         self.create_mode = None

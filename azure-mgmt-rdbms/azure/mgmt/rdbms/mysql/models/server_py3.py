@@ -79,13 +79,13 @@ class Server(TrackedResource):
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
     }
 
-    def __init__(self, **kwargs):
-        super(Server, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.administrator_login = kwargs.get('administrator_login', None)
-        self.version = kwargs.get('version', None)
-        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
-        self.user_visible_state = kwargs.get('user_visible_state', None)
-        self.fully_qualified_domain_name = kwargs.get('fully_qualified_domain_name', None)
-        self.earliest_restore_date = kwargs.get('earliest_restore_date', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
+    def __init__(self, *, location: str, tags=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, **kwargs) -> None:
+        super(Server, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.administrator_login = administrator_login
+        self.version = version
+        self.ssl_enforcement = ssl_enforcement
+        self.user_visible_state = user_visible_state
+        self.fully_qualified_domain_name = fully_qualified_domain_name
+        self.earliest_restore_date = earliest_restore_date
+        self.storage_profile = storage_profile

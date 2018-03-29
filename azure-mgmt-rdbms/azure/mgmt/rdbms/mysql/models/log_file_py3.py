@@ -55,10 +55,10 @@ class LogFile(ProxyResource):
         'url': {'key': 'properties.url', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(LogFile, self).__init__(**kwargs)
-        self.size_in_kb = kwargs.get('size_in_kb', None)
+    def __init__(self, *, size_in_kb: int=None, log_file_type: str=None, url: str=None, **kwargs) -> None:
+        super(LogFile, self).__init__(, **kwargs)
+        self.size_in_kb = size_in_kb
         self.created_time = None
         self.last_modified_time = None
-        self.log_file_type = kwargs.get('log_file_type', None)
-        self.url = kwargs.get('url', None)
+        self.log_file_type = log_file_type
+        self.url = url

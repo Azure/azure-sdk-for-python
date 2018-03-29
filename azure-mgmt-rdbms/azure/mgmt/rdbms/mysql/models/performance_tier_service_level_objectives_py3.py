@@ -47,13 +47,13 @@ class PerformanceTierServiceLevelObjectives(Model):
         'min_storage_mb': {'key': 'minStorageMB', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, edition: str=None, v_core: int=None, hardware_generation: str=None, max_backup_retention_days: int=None, min_backup_retention_days: int=None, max_storage_mb: int=None, min_storage_mb: int=None, **kwargs) -> None:
         super(PerformanceTierServiceLevelObjectives, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.edition = kwargs.get('edition', None)
-        self.v_core = kwargs.get('v_core', None)
-        self.hardware_generation = kwargs.get('hardware_generation', None)
-        self.max_backup_retention_days = kwargs.get('max_backup_retention_days', None)
-        self.min_backup_retention_days = kwargs.get('min_backup_retention_days', None)
-        self.max_storage_mb = kwargs.get('max_storage_mb', None)
-        self.min_storage_mb = kwargs.get('min_storage_mb', None)
+        self.id = id
+        self.edition = edition
+        self.v_core = v_core
+        self.hardware_generation = hardware_generation
+        self.max_backup_retention_days = max_backup_retention_days
+        self.min_backup_retention_days = min_backup_retention_days
+        self.max_storage_mb = max_storage_mb
+        self.min_storage_mb = min_storage_mb
