@@ -59,9 +59,9 @@ class IntegrationRuntimeConnectionInfo(Model):
         'is_identity_cert_exprired': {'key': 'isIdentityCertExprired', 'type': 'bool'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(IntegrationRuntimeConnectionInfo, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeConnectionInfo, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.service_token = None
         self.identity_cert_thumbprint = None
         self.host_service_uri = None

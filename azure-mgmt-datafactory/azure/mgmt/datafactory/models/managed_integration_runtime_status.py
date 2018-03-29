@@ -18,6 +18,8 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
      'NeedRegistration', 'Online', 'Limited', 'Offline'
     :vartype state: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeState
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :ivar create_time: The time at which the integration runtime was created,
      in ISO8601 format.
@@ -67,8 +69,8 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'last_operation': {'key': 'typeProperties.lastOperation', 'type': 'ManagedIntegrationRuntimeOperationResult'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(ManagedIntegrationRuntimeStatus, self).__init__(additional_properties=additional_properties)
+    def __init__(self, **kwargs):
+        super(ManagedIntegrationRuntimeStatus, self).__init__(**kwargs)
         self.create_time = None
         self.nodes = None
         self.other_errors = None

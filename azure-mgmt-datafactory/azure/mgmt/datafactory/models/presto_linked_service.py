@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class PrestoLinkedService(LinkedService):
     """Presto server linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,20 +31,22 @@ class PrestoLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: The IP address or host name of the Presto server. (i.e.
-     192.168.222.160)
+    :param host: Required. The IP address or host name of the Presto server.
+     (i.e. 192.168.222.160)
     :type host: object
-    :param server_version: The version of the Presto server. (i.e. 0.148-t)
+    :param server_version: Required. The version of the Presto server. (i.e.
+     0.148-t)
     :type server_version: object
-    :param catalog: The catalog context for all request against the server.
+    :param catalog: Required. The catalog context for all request against the
+     server.
     :type catalog: object
     :param port: The TCP port that the Presto server uses to listen for client
      connections. The default value is 8080.
     :type port: object
-    :param authentication_type: The authentication mechanism used to connect
-     to the Presto server. Possible values include: 'Anonymous', 'LDAP'
+    :param authentication_type: Required. The authentication mechanism used to
+     connect to the Presto server. Possible values include: 'Anonymous', 'LDAP'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.PrestoAuthenticationType
     :param username: The user name used to connect to the Presto server.
@@ -109,20 +113,20 @@ class PrestoLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, server_version, catalog, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, port=None, username=None, password=None, enable_ssl=None, trusted_cert_path=None, use_system_trust_store=None, allow_host_name_cn_mismatch=None, allow_self_signed_server_cert=None, time_zone_id=None, encrypted_credential=None):
-        super(PrestoLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.server_version = server_version
-        self.catalog = catalog
-        self.port = port
-        self.authentication_type = authentication_type
-        self.username = username
-        self.password = password
-        self.enable_ssl = enable_ssl
-        self.trusted_cert_path = trusted_cert_path
-        self.use_system_trust_store = use_system_trust_store
-        self.allow_host_name_cn_mismatch = allow_host_name_cn_mismatch
-        self.allow_self_signed_server_cert = allow_self_signed_server_cert
-        self.time_zone_id = time_zone_id
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(PrestoLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.server_version = kwargs.get('server_version', None)
+        self.catalog = kwargs.get('catalog', None)
+        self.port = kwargs.get('port', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.enable_ssl = kwargs.get('enable_ssl', None)
+        self.trusted_cert_path = kwargs.get('trusted_cert_path', None)
+        self.use_system_trust_store = kwargs.get('use_system_trust_store', None)
+        self.allow_host_name_cn_mismatch = kwargs.get('allow_host_name_cn_mismatch', None)
+        self.allow_self_signed_server_cert = kwargs.get('allow_self_signed_server_cert', None)
+        self.time_zone_id = kwargs.get('time_zone_id', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Presto'

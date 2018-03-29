@@ -43,12 +43,12 @@ class ScheduleTriggerRecurrence(Model):
         'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
     }
 
-    def __init__(self, additional_properties=None, frequency=None, interval=None, start_time=None, end_time=None, time_zone=None, schedule=None):
-        super(ScheduleTriggerRecurrence, self).__init__()
-        self.additional_properties = additional_properties
-        self.frequency = frequency
-        self.interval = interval
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_zone = time_zone
-        self.schedule = schedule
+    def __init__(self, **kwargs):
+        super(ScheduleTriggerRecurrence, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.frequency = kwargs.get('frequency', None)
+        self.interval = kwargs.get('interval', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.schedule = kwargs.get('schedule', None)
