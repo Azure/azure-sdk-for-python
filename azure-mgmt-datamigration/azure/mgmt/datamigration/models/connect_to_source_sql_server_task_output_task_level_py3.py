@@ -28,6 +28,10 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
     :ivar databases: Source databases as a map from database name to database
      id
     :vartype databases: dict[str, str]
+    :ivar logins: Source logins as a map from login name to login id.
+    :vartype logins: dict[str, str]
+    :ivar agent_jobs: Source agent jobs as a map from agent job name to id.
+    :vartype agent_jobs: dict[str, str]
     :ivar source_server_version: Source server version
     :vartype source_server_version: str
     :ivar source_server_brand_version: Source server brand version
@@ -41,6 +45,8 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
         'id': {'readonly': True},
         'result_type': {'required': True},
         'databases': {'readonly': True},
+        'logins': {'readonly': True},
+        'agent_jobs': {'readonly': True},
         'source_server_version': {'readonly': True},
         'source_server_brand_version': {'readonly': True},
         'validation_errors': {'readonly': True},
@@ -50,6 +56,8 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
         'id': {'key': 'id', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{str}'},
+        'logins': {'key': 'Logins', 'type': '{str}'},
+        'agent_jobs': {'key': 'AgentJobs', 'type': '{str}'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
@@ -58,6 +66,8 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
     def __init__(self, **kwargs) -> None:
         super(ConnectToSourceSqlServerTaskOutputTaskLevel, self).__init__(, **kwargs)
         self.databases = None
+        self.logins = None
+        self.agent_jobs = None
         self.source_server_version = None
         self.source_server_brand_version = None
         self.validation_errors = None

@@ -17,7 +17,9 @@ class ConnectToSourceSqlServerTaskOutput(Model):
     validates source server requirements.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ConnectToSourceSqlServerTaskOutputDatabaseLevel,
+    sub-classes are: ConnectToSourceSqlServerTaskOutputAgentJobLevel,
+    ConnectToSourceSqlServerTaskOutputLoginLevel,
+    ConnectToSourceSqlServerTaskOutputDatabaseLevel,
     ConnectToSourceSqlServerTaskOutputTaskLevel
 
     Variables are only populated by the server, and will be ignored when
@@ -42,7 +44,7 @@ class ConnectToSourceSqlServerTaskOutput(Model):
     }
 
     _subtype_map = {
-        'result_type': {'DatabaseLevelOutput': 'ConnectToSourceSqlServerTaskOutputDatabaseLevel', 'TaskLevelOutput': 'ConnectToSourceSqlServerTaskOutputTaskLevel'}
+        'result_type': {'AgentJobLevelOutput': 'ConnectToSourceSqlServerTaskOutputAgentJobLevel', 'LoginLevelOutput': 'ConnectToSourceSqlServerTaskOutputLoginLevel', 'DatabaseLevelOutput': 'ConnectToSourceSqlServerTaskOutputDatabaseLevel', 'TaskLevelOutput': 'ConnectToSourceSqlServerTaskOutputTaskLevel'}
     }
 
     def __init__(self, **kwargs):

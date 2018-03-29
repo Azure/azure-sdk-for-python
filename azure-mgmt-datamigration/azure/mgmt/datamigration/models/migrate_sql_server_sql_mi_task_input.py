@@ -29,6 +29,10 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
     :param selected_databases: Required. Databases to migrate
     :type selected_databases:
      list[~azure.mgmt.datamigration.models.MigrateSqlServerSqlMIDatabaseInput]
+    :param selected_logins: Logins to migrate.
+    :type selected_logins: list[str]
+    :param selected_agent_jobs: Agent Jobs to migrate.
+    :type selected_agent_jobs: list[str]
     :param backup_file_share: Backup file share information for all selected
      databases.
     :type backup_file_share: ~azure.mgmt.datamigration.models.FileShare
@@ -48,6 +52,8 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
         'target_connection_info': {'key': 'targetConnectionInfo', 'type': 'SqlConnectionInfo'},
         'selected_databases': {'key': 'selectedDatabases', 'type': '[MigrateSqlServerSqlMIDatabaseInput]'},
+        'selected_logins': {'key': 'selectedLogins', 'type': '[str]'},
+        'selected_agent_jobs': {'key': 'selectedAgentJobs', 'type': '[str]'},
         'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
         'backup_blob_share': {'key': 'backupBlobShare', 'type': 'BlobShare'},
     }
@@ -55,5 +61,7 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
     def __init__(self, **kwargs):
         super(MigrateSqlServerSqlMITaskInput, self).__init__(**kwargs)
         self.selected_databases = kwargs.get('selected_databases', None)
+        self.selected_logins = kwargs.get('selected_logins', None)
+        self.selected_agent_jobs = kwargs.get('selected_agent_jobs', None)
         self.backup_file_share = kwargs.get('backup_file_share', None)
         self.backup_blob_share = kwargs.get('backup_blob_share', None)

@@ -47,7 +47,10 @@ try:
     from .migrate_sql_server_sql_db_task_input_py3 import MigrateSqlServerSqlDbTaskInput
     from .migrate_sql_server_sql_db_task_properties_py3 import MigrateSqlServerSqlDbTaskProperties
     from .migrate_sql_server_sql_mi_task_output_error_py3 import MigrateSqlServerSqlMITaskOutputError
+    from .migrate_sql_server_sql_mi_task_output_login_level_py3 import MigrateSqlServerSqlMITaskOutputLoginLevel
+    from .migrate_sql_server_sql_mi_task_output_agent_job_level_py3 import MigrateSqlServerSqlMITaskOutputAgentJobLevel
     from .migrate_sql_server_sql_mi_task_output_database_level_py3 import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .start_migration_scenario_server_role_result_py3 import StartMigrationScenarioServerRoleResult
     from .migrate_sql_server_sql_mi_task_output_migration_level_py3 import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from .migrate_sql_server_sql_mi_task_output_py3 import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input_py3 import MigrateSqlServerSqlMITaskInput
@@ -62,6 +65,9 @@ try:
     from .connect_to_target_sql_mi_task_output_py3 import ConnectToTargetSqlMITaskOutput
     from .connect_to_target_sql_mi_task_input_py3 import ConnectToTargetSqlMITaskInput
     from .connect_to_target_sql_mi_task_properties_py3 import ConnectToTargetSqlMITaskProperties
+    from .migration_eligibility_info_py3 import MigrationEligibilityInfo
+    from .connect_to_source_sql_server_task_output_agent_job_level_py3 import ConnectToSourceSqlServerTaskOutputAgentJobLevel
+    from .connect_to_source_sql_server_task_output_login_level_py3 import ConnectToSourceSqlServerTaskOutputLoginLevel
     from .database_file_info_py3 import DatabaseFileInfo
     from .connect_to_source_sql_server_task_output_database_level_py3 import ConnectToSourceSqlServerTaskOutputDatabaseLevel
     from .connect_to_source_sql_server_task_output_task_level_py3 import ConnectToSourceSqlServerTaskOutputTaskLevel
@@ -135,7 +141,10 @@ except (SyntaxError, ImportError):
     from .migrate_sql_server_sql_db_task_input import MigrateSqlServerSqlDbTaskInput
     from .migrate_sql_server_sql_db_task_properties import MigrateSqlServerSqlDbTaskProperties
     from .migrate_sql_server_sql_mi_task_output_error import MigrateSqlServerSqlMITaskOutputError
+    from .migrate_sql_server_sql_mi_task_output_login_level import MigrateSqlServerSqlMITaskOutputLoginLevel
+    from .migrate_sql_server_sql_mi_task_output_agent_job_level import MigrateSqlServerSqlMITaskOutputAgentJobLevel
     from .migrate_sql_server_sql_mi_task_output_database_level import MigrateSqlServerSqlMITaskOutputDatabaseLevel
+    from .start_migration_scenario_server_role_result import StartMigrationScenarioServerRoleResult
     from .migrate_sql_server_sql_mi_task_output_migration_level import MigrateSqlServerSqlMITaskOutputMigrationLevel
     from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
     from .migrate_sql_server_sql_mi_task_input import MigrateSqlServerSqlMITaskInput
@@ -150,6 +159,9 @@ except (SyntaxError, ImportError):
     from .connect_to_target_sql_mi_task_output import ConnectToTargetSqlMITaskOutput
     from .connect_to_target_sql_mi_task_input import ConnectToTargetSqlMITaskInput
     from .connect_to_target_sql_mi_task_properties import ConnectToTargetSqlMITaskProperties
+    from .migration_eligibility_info import MigrationEligibilityInfo
+    from .connect_to_source_sql_server_task_output_agent_job_level import ConnectToSourceSqlServerTaskOutputAgentJobLevel
+    from .connect_to_source_sql_server_task_output_login_level import ConnectToSourceSqlServerTaskOutputLoginLevel
     from .database_file_info import DatabaseFileInfo
     from .connect_to_source_sql_server_task_output_database_level import ConnectToSourceSqlServerTaskOutputDatabaseLevel
     from .connect_to_source_sql_server_task_output_task_level import ConnectToSourceSqlServerTaskOutputTaskLevel
@@ -201,6 +213,8 @@ from .data_migration_service_client_enums import (
     MigrationState,
     DatabaseMigrationStage,
     MigrationStatus,
+    LoginMigrationStage,
+    LoginType,
     DatabaseState,
     DatabaseCompatLevel,
     DatabaseFileType,
@@ -256,7 +270,10 @@ __all__ = [
     'MigrateSqlServerSqlDbTaskInput',
     'MigrateSqlServerSqlDbTaskProperties',
     'MigrateSqlServerSqlMITaskOutputError',
+    'MigrateSqlServerSqlMITaskOutputLoginLevel',
+    'MigrateSqlServerSqlMITaskOutputAgentJobLevel',
     'MigrateSqlServerSqlMITaskOutputDatabaseLevel',
+    'StartMigrationScenarioServerRoleResult',
     'MigrateSqlServerSqlMITaskOutputMigrationLevel',
     'MigrateSqlServerSqlMITaskOutput',
     'MigrateSqlServerSqlMITaskInput',
@@ -271,6 +288,9 @@ __all__ = [
     'ConnectToTargetSqlMITaskOutput',
     'ConnectToTargetSqlMITaskInput',
     'ConnectToTargetSqlMITaskProperties',
+    'MigrationEligibilityInfo',
+    'ConnectToSourceSqlServerTaskOutputAgentJobLevel',
+    'ConnectToSourceSqlServerTaskOutputLoginLevel',
     'DatabaseFileInfo',
     'ConnectToSourceSqlServerTaskOutputDatabaseLevel',
     'ConnectToSourceSqlServerTaskOutputTaskLevel',
@@ -321,6 +341,8 @@ __all__ = [
     'MigrationState',
     'DatabaseMigrationStage',
     'MigrationStatus',
+    'LoginMigrationStage',
+    'LoginType',
     'DatabaseState',
     'DatabaseCompatLevel',
     'DatabaseFileType',

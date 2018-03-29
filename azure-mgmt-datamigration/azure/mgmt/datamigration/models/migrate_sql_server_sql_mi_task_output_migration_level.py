@@ -36,8 +36,17 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
     :ivar state: Current state of migration. Possible values include: 'None',
      'InProgress', 'Failed', 'Warning', 'Completed', 'Skipped', 'Stopped'
     :vartype state: str or ~azure.mgmt.datamigration.models.MigrationState
+    :ivar agent_jobs: Selected agent jobs as a map from name to id
+    :vartype agent_jobs: dict[str, str]
+    :ivar logins: Selected logins as a map from name to id
+    :vartype logins: dict[str, str]
     :ivar message: Migration progress message
     :vartype message: str
+    :ivar server_role_results: Map of server role migration results.
+    :vartype server_role_results: dict[str,
+     ~azure.mgmt.datamigration.models.StartMigrationScenarioServerRoleResult]
+    :ivar orphaned_users: Map of users to database name of orphaned users.
+    :vartype orphaned_users: dict[str, str]
     :ivar databases: Selected databases as a map from database name to
      database id
     :vartype databases: dict[str, str]
@@ -61,7 +70,11 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         'ended_on': {'readonly': True},
         'status': {'readonly': True},
         'state': {'readonly': True},
+        'agent_jobs': {'readonly': True},
+        'logins': {'readonly': True},
         'message': {'readonly': True},
+        'server_role_results': {'readonly': True},
+        'orphaned_users': {'readonly': True},
         'databases': {'readonly': True},
         'source_server_version': {'readonly': True},
         'source_server_brand_version': {'readonly': True},
@@ -77,7 +90,11 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
+        'agent_jobs': {'key': 'agentJobs', 'type': '{str}'},
+        'logins': {'key': 'logins', 'type': '{str}'},
         'message': {'key': 'message', 'type': 'str'},
+        'server_role_results': {'key': 'serverRoleResults', 'type': '{StartMigrationScenarioServerRoleResult}'},
+        'orphaned_users': {'key': 'orphanedUsers', 'type': '{str}'},
         'databases': {'key': 'databases', 'type': '{str}'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
@@ -92,7 +109,11 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
         self.ended_on = None
         self.status = None
         self.state = None
+        self.agent_jobs = None
+        self.logins = None
         self.message = None
+        self.server_role_results = None
+        self.orphaned_users = None
         self.databases = None
         self.source_server_version = None
         self.source_server_brand_version = None
