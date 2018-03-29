@@ -44,6 +44,9 @@ from .web_test_geolocation import WebTestGeolocation
 from .web_test_properties_configuration import WebTestPropertiesConfiguration
 from .web_test import WebTest
 from .workbook import Workbook
+from .workbook_list_result import WorkbookListResult
+from .error_field_contract import ErrorFieldContract
+from .workbook_error_response import WorkbookErrorResponse, WorkbookErrorResponseException
 from .operation_paged import OperationPaged
 from .application_insights_component_api_key_paged import ApplicationInsightsComponentAPIKeyPaged
 from .application_insights_component_paged import ApplicationInsightsComponentPaged
@@ -97,6 +100,9 @@ __all__ = [
     'WebTestPropertiesConfiguration',
     'WebTest',
     'Workbook',
+    'WorkbookListResult',
+    'ErrorFieldContract',
+    'WorkbookErrorResponse', 'WorkbookErrorResponseException',
     'OperationPaged',
     'ApplicationInsightsComponentAPIKeyPaged',
     'ApplicationInsightsComponentPaged',
