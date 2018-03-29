@@ -12,8 +12,8 @@
 from .migrate_sql_server_sql_mi_task_output import MigrateSqlServerSqlMITaskOutput
 
 
-class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutput):
-    """MigrateSqlServerSqlMITaskOutputDatabaseLevel.
+class MigrateSqlServerSqlMITaskOutputAgentJobLevel(MigrateSqlServerSqlMITaskOutput):
+    """MigrateSqlServerSqlMITaskOutputAgentJobLevel.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,24 +24,20 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
     :vartype id: str
     :param result_type: Required. Constant filled by server.
     :type result_type: str
-    :ivar database_name: Name of the database
-    :vartype database_name: str
-    :ivar size_mb: Size of the database in megabytes
-    :vartype size_mb: float
+    :ivar name: AgentJob name.
+    :vartype name: str
+    :ivar is_enabled: The state of the original AgentJob.
+    :vartype is_enabled: bool
     :ivar state: Current state of migration. Possible values include: 'None',
      'InProgress', 'Failed', 'Warning', 'Completed', 'Skipped', 'Stopped'
     :vartype state: str or ~azure.mgmt.datamigration.models.MigrationState
-    :ivar stage: Current stage of migration. Possible values include: 'None',
-     'Initialize', 'Backup', 'FileCopy', 'Restore', 'Completed'
-    :vartype stage: str or
-     ~azure.mgmt.datamigration.models.DatabaseMigrationStage
     :ivar started_on: Migration start time
     :vartype started_on: datetime
     :ivar ended_on: Migration end time
     :vartype ended_on: datetime
     :ivar message: Migration progress message
     :vartype message: str
-    :ivar exceptions_and_warnings: Migration exceptions and warnings
+    :ivar exceptions_and_warnings: Migration errors and warnings per job
     :vartype exceptions_and_warnings:
      list[~azure.mgmt.datamigration.models.ReportableException]
     """
@@ -49,10 +45,9 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
     _validation = {
         'id': {'readonly': True},
         'result_type': {'required': True},
-        'database_name': {'readonly': True},
-        'size_mb': {'readonly': True},
+        'name': {'readonly': True},
+        'is_enabled': {'readonly': True},
         'state': {'readonly': True},
-        'stage': {'readonly': True},
         'started_on': {'readonly': True},
         'ended_on': {'readonly': True},
         'message': {'readonly': True},
@@ -62,24 +57,22 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
-        'database_name': {'key': 'databaseName', 'type': 'str'},
-        'size_mb': {'key': 'sizeMB', 'type': 'float'},
+        'name': {'key': 'name', 'type': 'str'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
         'state': {'key': 'state', 'type': 'str'},
-        'stage': {'key': 'stage', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
         'ended_on': {'key': 'endedOn', 'type': 'iso-8601'},
         'message': {'key': 'message', 'type': 'str'},
         'exceptions_and_warnings': {'key': 'exceptionsAndWarnings', 'type': '[ReportableException]'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlMITaskOutputDatabaseLevel, self).__init__(, **kwargs)
-        self.database_name = None
-        self.size_mb = None
+    def __init__(self, **kwargs):
+        super(MigrateSqlServerSqlMITaskOutputAgentJobLevel, self).__init__(**kwargs)
+        self.name = None
+        self.is_enabled = None
         self.state = None
-        self.stage = None
         self.started_on = None
         self.ended_on = None
         self.message = None
         self.exceptions_and_warnings = None
-        self.result_type = 'DatabaseLevelOutput'
+        self.result_type = 'AgentJobLevelOutput'

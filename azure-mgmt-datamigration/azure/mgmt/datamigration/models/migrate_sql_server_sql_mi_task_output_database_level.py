@@ -26,6 +26,8 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
     :type result_type: str
     :ivar database_name: Name of the database
     :vartype database_name: str
+    :ivar size_mb: Size of the database in megabytes
+    :vartype size_mb: float
     :ivar state: Current state of migration. Possible values include: 'None',
      'InProgress', 'Failed', 'Warning', 'Completed', 'Skipped', 'Stopped'
     :vartype state: str or ~azure.mgmt.datamigration.models.MigrationState
@@ -48,6 +50,7 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
         'id': {'readonly': True},
         'result_type': {'required': True},
         'database_name': {'readonly': True},
+        'size_mb': {'readonly': True},
         'state': {'readonly': True},
         'stage': {'readonly': True},
         'started_on': {'readonly': True},
@@ -60,6 +63,7 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
         'id': {'key': 'id', 'type': 'str'},
         'result_type': {'key': 'resultType', 'type': 'str'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
+        'size_mb': {'key': 'sizeMB', 'type': 'float'},
         'state': {'key': 'state', 'type': 'str'},
         'stage': {'key': 'stage', 'type': 'str'},
         'started_on': {'key': 'startedOn', 'type': 'iso-8601'},
@@ -71,6 +75,7 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
     def __init__(self, **kwargs):
         super(MigrateSqlServerSqlMITaskOutputDatabaseLevel, self).__init__(**kwargs)
         self.database_name = None
+        self.size_mb = None
         self.state = None
         self.stage = None
         self.started_on = None

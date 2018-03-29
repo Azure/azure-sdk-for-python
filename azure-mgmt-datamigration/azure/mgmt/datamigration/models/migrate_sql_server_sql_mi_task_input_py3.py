@@ -29,6 +29,10 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
     :param selected_databases: Required. Databases to migrate
     :type selected_databases:
      list[~azure.mgmt.datamigration.models.MigrateSqlServerSqlMIDatabaseInput]
+    :param selected_logins: Logins to migrate.
+    :type selected_logins: list[str]
+    :param selected_agent_jobs: Agent Jobs to migrate.
+    :type selected_agent_jobs: list[str]
     :param backup_file_share: Backup file share information for all selected
      databases.
     :type backup_file_share: ~azure.mgmt.datamigration.models.FileShare
@@ -48,12 +52,16 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         'source_connection_info': {'key': 'sourceConnectionInfo', 'type': 'SqlConnectionInfo'},
         'target_connection_info': {'key': 'targetConnectionInfo', 'type': 'SqlConnectionInfo'},
         'selected_databases': {'key': 'selectedDatabases', 'type': '[MigrateSqlServerSqlMIDatabaseInput]'},
+        'selected_logins': {'key': 'selectedLogins', 'type': '[str]'},
+        'selected_agent_jobs': {'key': 'selectedAgentJobs', 'type': '[str]'},
         'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
         'backup_blob_share': {'key': 'backupBlobShare', 'type': 'BlobShare'},
     }
 
-    def __init__(self, *, source_connection_info, target_connection_info, selected_databases, backup_blob_share, backup_file_share=None, **kwargs) -> None:
+    def __init__(self, *, source_connection_info, target_connection_info, selected_databases, backup_blob_share, selected_logins=None, selected_agent_jobs=None, backup_file_share=None, **kwargs) -> None:
         super(MigrateSqlServerSqlMITaskInput, self).__init__(source_connection_info=source_connection_info, target_connection_info=target_connection_info, **kwargs)
         self.selected_databases = selected_databases
+        self.selected_logins = selected_logins
+        self.selected_agent_jobs = selected_agent_jobs
         self.backup_file_share = backup_file_share
         self.backup_blob_share = backup_blob_share

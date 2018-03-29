@@ -25,6 +25,10 @@ class ConnectToTargetSqlMITaskOutput(Model):
     :vartype target_server_version: str
     :ivar target_server_brand_version: Target server brand version
     :vartype target_server_brand_version: str
+    :ivar logins: List of logins on the target server.
+    :vartype logins: list[str]
+    :ivar agent_jobs: List of agent jobs on the target server.
+    :vartype agent_jobs: list[str]
     :ivar validation_errors: Validation errors
     :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
@@ -34,6 +38,8 @@ class ConnectToTargetSqlMITaskOutput(Model):
         'id': {'readonly': True},
         'target_server_version': {'readonly': True},
         'target_server_brand_version': {'readonly': True},
+        'logins': {'readonly': True},
+        'agent_jobs': {'readonly': True},
         'validation_errors': {'readonly': True},
     }
 
@@ -41,6 +47,8 @@ class ConnectToTargetSqlMITaskOutput(Model):
         'id': {'key': 'id', 'type': 'str'},
         'target_server_version': {'key': 'targetServerVersion', 'type': 'str'},
         'target_server_brand_version': {'key': 'targetServerBrandVersion', 'type': 'str'},
+        'logins': {'key': 'Logins', 'type': '[str]'},
+        'agent_jobs': {'key': 'AgentJobs', 'type': '[str]'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
     }
 
@@ -49,4 +57,6 @@ class ConnectToTargetSqlMITaskOutput(Model):
         self.id = None
         self.target_server_version = None
         self.target_server_brand_version = None
+        self.logins = None
+        self.agent_jobs = None
         self.validation_errors = None

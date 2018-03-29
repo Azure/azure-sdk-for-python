@@ -18,6 +18,8 @@ class MigrateSqlServerSqlMITaskOutput(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: MigrateSqlServerSqlMITaskOutputError,
+    MigrateSqlServerSqlMITaskOutputLoginLevel,
+    MigrateSqlServerSqlMITaskOutputAgentJobLevel,
     MigrateSqlServerSqlMITaskOutputDatabaseLevel,
     MigrateSqlServerSqlMITaskOutputMigrationLevel
 
@@ -43,7 +45,7 @@ class MigrateSqlServerSqlMITaskOutput(Model):
     }
 
     _subtype_map = {
-        'result_type': {'ErrorOutput': 'MigrateSqlServerSqlMITaskOutputError', 'DatabaseLevelOutput': 'MigrateSqlServerSqlMITaskOutputDatabaseLevel', 'MigrationLevelOutput': 'MigrateSqlServerSqlMITaskOutputMigrationLevel'}
+        'result_type': {'ErrorOutput': 'MigrateSqlServerSqlMITaskOutputError', 'LoginLevelOutput': 'MigrateSqlServerSqlMITaskOutputLoginLevel', 'AgentJobLevelOutput': 'MigrateSqlServerSqlMITaskOutputAgentJobLevel', 'DatabaseLevelOutput': 'MigrateSqlServerSqlMITaskOutputDatabaseLevel', 'MigrationLevelOutput': 'MigrateSqlServerSqlMITaskOutputMigrationLevel'}
     }
 
     def __init__(self, **kwargs):

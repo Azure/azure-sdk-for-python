@@ -91,6 +91,30 @@ class MigrationStatus(str, Enum):
     completed_with_warnings = "CompletedWithWarnings"
 
 
+class LoginMigrationStage(str, Enum):
+
+    none = "None"
+    initialize = "Initialize"
+    login_migration = "LoginMigration"
+    establish_user_mapping = "EstablishUserMapping"
+    assign_role_membership = "AssignRoleMembership"
+    assign_role_ownership = "AssignRoleOwnership"
+    establish_server_permissions = "EstablishServerPermissions"
+    establish_object_permissions = "EstablishObjectPermissions"
+    completed = "Completed"
+
+
+class LoginType(str, Enum):
+
+    windows_user = "WindowsUser"
+    windows_group = "WindowsGroup"
+    sql_login = "SqlLogin"
+    certificate = "Certificate"
+    asymmetric_key = "AsymmetricKey"
+    external_user = "ExternalUser"
+    external_group = "ExternalGroup"
+
+
 class DatabaseState(str, Enum):
 
     online = "Online"
@@ -159,6 +183,7 @@ class ServiceProvisioningState(str, Enum):
 class ProjectTargetPlatform(str, Enum):
 
     sqldb = "SQLDB"
+    sqlmi = "SQLMI"
     unknown = "Unknown"
 
 
