@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.1.0 (2018-03-29)
+++++++++++++++++++
+
+**Features**
+
+- Add  Geo-Restore ability for MySQL and PostgreSQL
+
 1.0.0 (2018-03-19)
 ++++++++++++++++++
 
