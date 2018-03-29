@@ -248,7 +248,7 @@ class WebAppsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, name, site_envelope, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -260,6 +260,14 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if skip_dns_registration is not None:
+            query_parameters['skipDnsRegistration'] = self._serialize.query("skip_dns_registration", skip_dns_registration, 'bool')
+        if skip_custom_domain_verification is not None:
+            query_parameters['skipCustomDomainVerification'] = self._serialize.query("skip_custom_domain_verification", skip_custom_domain_verification, 'bool')
+        if force_dns_registration is not None:
+            query_parameters['forceDnsRegistration'] = self._serialize.query("force_dns_registration", force_dns_registration, 'bool')
+        if ttl_in_seconds is not None:
+            query_parameters['ttlInSeconds'] = self._serialize.query("ttl_in_seconds", ttl_in_seconds, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -299,7 +307,7 @@ class WebAppsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, name, site_envelope, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new web, mobile, or API app in an existing resource group, or
         updates an existing app.
 
@@ -315,6 +323,19 @@ class WebAppsOperations(object):
         :param site_envelope: A JSON representation of the app properties. See
          example.
         :type site_envelope: ~azure.mgmt.web.models.Site
+        :param skip_dns_registration: If true web app hostname is not
+         registered with DNS on creation. This parameter is
+         only used for app creation.
+        :type skip_dns_registration: bool
+        :param skip_custom_domain_verification: If true, custom (non
+         *.azurewebsites.net) domains associated with web app are not verified.
+        :type skip_custom_domain_verification: bool
+        :param force_dns_registration: If true, web app hostname is force
+         registered with DNS.
+        :type force_dns_registration: bool
+        :param ttl_in_seconds: Time to live in seconds for web app's default
+         domain name.
+        :type ttl_in_seconds: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -329,6 +350,10 @@ class WebAppsOperations(object):
             resource_group_name=resource_group_name,
             name=name,
             site_envelope=site_envelope,
+            skip_dns_registration=skip_dns_registration,
+            skip_custom_domain_verification=skip_custom_domain_verification,
+            force_dns_registration=force_dns_registration,
+            ttl_in_seconds=ttl_in_seconds,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -374,7 +399,7 @@ class WebAppsOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}'}
 
     def delete(
-            self, resource_group_name, name, delete_metrics=None, delete_empty_server_farm=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, delete_metrics=None, delete_empty_server_farm=None, skip_dns_registration=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a web, mobile, or API app, or one of the deployment slots.
 
         Deletes a web, mobile, or API app, or one of the deployment slots.
@@ -390,6 +415,8 @@ class WebAppsOperations(object):
          will be empty after app deletion and you want to delete the empty App
          Service plan. By default, the empty App Service plan is not deleted.
         :type delete_empty_server_farm: bool
+        :param skip_dns_registration: If true, DNS registration is skipped.
+        :type skip_dns_registration: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -414,6 +441,8 @@ class WebAppsOperations(object):
             query_parameters['deleteMetrics'] = self._serialize.query("delete_metrics", delete_metrics, 'bool')
         if delete_empty_server_farm is not None:
             query_parameters['deleteEmptyServerFarm'] = self._serialize.query("delete_empty_server_farm", delete_empty_server_farm, 'bool')
+        if skip_dns_registration is not None:
+            query_parameters['skipDnsRegistration'] = self._serialize.query("skip_dns_registration", skip_dns_registration, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -441,7 +470,7 @@ class WebAppsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}'}
 
     def update(
-            self, resource_group_name, name, site_envelope, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, site_envelope, skip_dns_registration=None, skip_custom_domain_verification=None, force_dns_registration=None, ttl_in_seconds=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new web, mobile, or API app in an existing resource group, or
         updates an existing app.
 
@@ -457,6 +486,19 @@ class WebAppsOperations(object):
         :param site_envelope: A JSON representation of the app properties. See
          example.
         :type site_envelope: ~azure.mgmt.web.models.SitePatchResource
+        :param skip_dns_registration: If true web app hostname is not
+         registered with DNS on creation. This parameter is
+         only used for app creation.
+        :type skip_dns_registration: bool
+        :param skip_custom_domain_verification: If true, custom (non
+         *.azurewebsites.net) domains associated with web app are not verified.
+        :type skip_custom_domain_verification: bool
+        :param force_dns_registration: If true, web app hostname is force
+         registered with DNS.
+        :type force_dns_registration: bool
+        :param ttl_in_seconds: Time to live in seconds for web app's default
+         domain name.
+        :type ttl_in_seconds: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -478,6 +520,14 @@ class WebAppsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if skip_dns_registration is not None:
+            query_parameters['skipDnsRegistration'] = self._serialize.query("skip_dns_registration", skip_dns_registration, 'bool')
+        if skip_custom_domain_verification is not None:
+            query_parameters['skipCustomDomainVerification'] = self._serialize.query("skip_custom_domain_verification", skip_custom_domain_verification, 'bool')
+        if force_dns_registration is not None:
+            query_parameters['forceDnsRegistration'] = self._serialize.query("force_dns_registration", force_dns_registration, 'bool')
+        if ttl_in_seconds is not None:
+            query_parameters['ttlInSeconds'] = self._serialize.query("ttl_in_seconds", ttl_in_seconds, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
