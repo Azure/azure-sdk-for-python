@@ -73,7 +73,7 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
             resource_group_name = self.resource_group_name,
             resource_name = self.resource_name,
         )
-        validate_bot_properties(self)
+        self.validate_bot_properties(bot)
 
         #ensure that the bot was not found with a get
         with self.assertRaises(ErrorException):

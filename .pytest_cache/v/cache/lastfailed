@@ -9,6 +9,7 @@
   "azure-mgmt-batchai/tests/test_mgmt_batchai_quota_and_usage.py": true,
   "azure-mgmt-botservice/tests/test_botservice_channels.py": true,
   "azure-mgmt-botservice/tests/test_mgmt_botservice.py": true,
+  "azure-mgmt-botservice/tests/test_mgmt_botservice_crud.py::CoreBotServiceTestCase::test_bot_operations": true,
   "azure-mgmt-compute/tests/test_mgmt_compute.py": true,
   "azure-mgmt-compute/tests/test_mgmt_managed_disks.py": true,
   "azure-mgmt-compute/tests/test_mgmt_msi.py": true,
