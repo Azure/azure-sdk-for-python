@@ -16,14 +16,16 @@ class AzureFileVolume(Model):
     """The properties of the Azure File volume. Azure File shares are mounted as
     volumes.
 
-    :param share_name: The name of the Azure File share to be mounted as a
-     volume.
+    All required parameters must be populated in order to send to Azure.
+
+    :param share_name: Required. The name of the Azure File share to be
+     mounted as a volume.
     :type share_name: str
     :param read_only: The flag indicating whether the Azure File shared
      mounted as a volume is read-only.
     :type read_only: bool
-    :param storage_account_name: The name of the storage account that contains
-     the Azure File share.
+    :param storage_account_name: Required. The name of the storage account
+     that contains the Azure File share.
     :type storage_account_name: str
     :param storage_account_key: The storage account access key used to access
      the Azure File share.
@@ -42,9 +44,9 @@ class AzureFileVolume(Model):
         'storage_account_key': {'key': 'storageAccountKey', 'type': 'str'},
     }
 
-    def __init__(self, share_name, storage_account_name, read_only=None, storage_account_key=None):
-        super(AzureFileVolume, self).__init__()
-        self.share_name = share_name
-        self.read_only = read_only
-        self.storage_account_name = storage_account_name
-        self.storage_account_key = storage_account_key
+    def __init__(self, **kwargs):
+        super(AzureFileVolume, self).__init__(**kwargs)
+        self.share_name = kwargs.get('share_name', None)
+        self.read_only = kwargs.get('read_only', None)
+        self.storage_account_name = kwargs.get('storage_account_name', None)
+        self.storage_account_key = kwargs.get('storage_account_key', None)

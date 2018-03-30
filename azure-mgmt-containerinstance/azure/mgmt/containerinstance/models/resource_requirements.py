@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class ResourceRequirements(Model):
     """The resource requirements.
 
-    :param requests: The resource requests of this container instance.
+    All required parameters must be populated in order to send to Azure.
+
+    :param requests: Required. The resource requests of this container
+     instance.
     :type requests: ~azure.mgmt.containerinstance.models.ResourceRequests
     :param limits: The resource limits of this container instance.
     :type limits: ~azure.mgmt.containerinstance.models.ResourceLimits
@@ -30,7 +33,7 @@ class ResourceRequirements(Model):
         'limits': {'key': 'limits', 'type': 'ResourceLimits'},
     }
 
-    def __init__(self, requests, limits=None):
-        super(ResourceRequirements, self).__init__()
-        self.requests = requests
-        self.limits = limits
+    def __init__(self, **kwargs):
+        super(ResourceRequirements, self).__init__(**kwargs)
+        self.requests = kwargs.get('requests', None)
+        self.limits = kwargs.get('limits', None)

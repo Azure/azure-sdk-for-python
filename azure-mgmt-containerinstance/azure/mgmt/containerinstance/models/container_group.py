@@ -18,6 +18,8 @@ class ContainerGroup(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource id.
     :vartype id: str
     :ivar name: The resource name.
@@ -31,7 +33,7 @@ class ContainerGroup(Resource):
     :ivar provisioning_state: The provisioning state of the container group.
      This only appears in the response.
     :vartype provisioning_state: str
-    :param containers: The containers within the container group.
+    :param containers: Required. The containers within the container group.
     :type containers: list[~azure.mgmt.containerinstance.models.Container]
     :param image_registry_credentials: The image registry credentials by which
      the container group is created from.
@@ -47,8 +49,9 @@ class ContainerGroup(Resource):
      ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
     :param ip_address: The IP address type of the container group.
     :type ip_address: ~azure.mgmt.containerinstance.models.IpAddress
-    :param os_type: The operating system type required by the containers in
-     the container group. Possible values include: 'Windows', 'Linux'
+    :param os_type: Required. The operating system type required by the
+     containers in the container group. Possible values include: 'Windows',
+     'Linux'
     :type os_type: str or
      ~azure.mgmt.containerinstance.models.OperatingSystemTypes
     :param volumes: The list of volumes that can be mounted by containers in
@@ -86,13 +89,13 @@ class ContainerGroup(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
     }
 
-    def __init__(self, containers, os_type, location=None, tags=None, image_registry_credentials=None, restart_policy=None, ip_address=None, volumes=None):
-        super(ContainerGroup, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(ContainerGroup, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.containers = containers
-        self.image_registry_credentials = image_registry_credentials
-        self.restart_policy = restart_policy
-        self.ip_address = ip_address
-        self.os_type = os_type
-        self.volumes = volumes
+        self.containers = kwargs.get('containers', None)
+        self.image_registry_credentials = kwargs.get('image_registry_credentials', None)
+        self.restart_policy = kwargs.get('restart_policy', None)
+        self.ip_address = kwargs.get('ip_address', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.volumes = kwargs.get('volumes', None)
         self.instance_view = None
