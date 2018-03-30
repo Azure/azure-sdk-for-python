@@ -27,13 +27,6 @@
         "azure-keyvault/azure/keyvault/generated",
         "azure-keyvault/azure/keyvault/__init__.py"
       ]
-    },
-    "subscription": {
-      "build_dir": "azure-mgmt-subscription",
-      "markdown": "specification/subscription/resource-manager/readme.md",
-      "autorest_options": {
-        "tag": "package-all-subscription"
-      }
     }
   }
 }
