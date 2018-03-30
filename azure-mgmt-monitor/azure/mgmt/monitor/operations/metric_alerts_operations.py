@@ -99,7 +99,7 @@ class MetricAlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insight/metricAlerts'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/metricAlerts'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -166,7 +166,7 @@ class MetricAlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insight/metricAlerts'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts'}
 
     def get(
             self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -227,7 +227,7 @@ class MetricAlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insight/metricAlerts/{ruleName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}'}
 
     def create_or_update(
             self, resource_group_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -294,7 +294,7 @@ class MetricAlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insight/metricAlerts/{ruleName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}'}
 
     def update(
             self, resource_group_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -361,7 +361,7 @@ class MetricAlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insight/metricAlerts/{ruleName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}'}
 
     def delete(
             self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -415,4 +415,4 @@ class MetricAlertsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insight/metricAlerts/{ruleName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}'}
