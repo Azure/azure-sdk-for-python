@@ -38,7 +38,7 @@ client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
 try:
     receiver = client.add_receiver(CONSUMER_GROUP, PARTITION, prefetch=100, offset=OFFSET)
     client.run()
-    batched_events = list(receiver.receive(batch_size=10))
+    batched_events = receiver.receive(max_batch_size=10)
     for event_data in batched_events:
         last_offset = event_data.offset
         last_sn = event_data.sequence_number

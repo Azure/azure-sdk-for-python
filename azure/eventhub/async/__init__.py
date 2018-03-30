@@ -206,7 +206,7 @@ class AsyncReceiver(Receiver):
         self.offset = event_data.offset
         return event_data
 
-    async def _receive_gen(self, batch_size, timeout):
+    async def receive(self, max_batch_size=None, callback=None, timeout=None):
         """
         Receive events asynchronously.
         @param count: max number of events to receive. The result may be less.
@@ -214,28 +214,10 @@ class AsyncReceiver(Receiver):
         Returns a list of L{EventData} objects. An empty list means no data is
         available. None means the receiver is closed (eof).
         """
-        timeout_ms = 1000 * timeout if timeout else 0
-        if batch_size:
-            message_iter = await self._handler.receive_message_batch_async(
-                batch_size=batch_size,
-                on_message_received=self.on_message,
-                timeout=timeout_ms)
-            for event_data in message_iter:
-                yield event_data
-        else:
-            receive_timeout = time.time() + timeout if timeout else None
-            message_iter = await self._handler.receive_message_batch_async(
-                on_message_received=self.on_message,
-                timeout=timeout_ms)
-            while message_iter and (not receive_timeout or time.time() < receive_timeout):
-                for event_data in message_iter:
-                    yield event_data
-                if receive_timeout:
-                    timeout_ms = int((receive_timeout - time.time()) * 1000)
-                message_iter = await self._handler.receive_message_batch_async(
-                    on_message_received=self.on_message,
-                    timeout=timeout_ms)
-
-    def receive(self, batch_size=None, callback=None, timeout=None):
         self._callback = callback
-        return self._receive_gen(batch_size, timeout)
+        timeout_ms = 1000 * timeout if timeout else 0
+        batch = await self._handler.receive_message_batch_async(
+            max_batch_size=max_batch_size,
+            on_message_received=self.on_message,
+            timeout=timeout_ms)
+        return batch

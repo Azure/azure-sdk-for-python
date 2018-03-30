@@ -113,12 +113,10 @@ class PartitionReceiver:
         # Implement pull max batch from queue instead of one message at a time
         while self.eh_partition_pump.pump_status != "Errored" and not self.eh_partition_pump.is_closing():
             if self.eh_partition_pump.partition_receive_handler:
-                msgs = []
                 try:
-                    async for event_data in self.eh_partition_pump.partition_receive_handler.receive(
-                            batch_size = self.max_batch_size,
-                            timeout=self.recieve_timeout):
-                        msgs.append(event_data)
+                    msgs = self.eh_partition_pump.partition_receive_handler.receive(
+                            max_batch_size=self.max_batch_size,
+                            timeout=self.recieve_timeout)
                 except Exception as e:
                     await self.process_error_async(e)
                 else:

@@ -29,8 +29,7 @@ def check_send_successful(outcome, condition):
         print("Send failed {}".format(condition))
 
 
-def main(address, policy, key):
-    client = EventHubClient(address, username=policy, password=key)
+def main(client):
     sender = client.add_sender()
     client.run()
     deadline = time.time() + args.duration
@@ -53,7 +52,7 @@ def main(address, policy, key):
                 data = EventData(body=b"D" * args.payload)
             sender.transfer(data, callback=check_send_successful)
             total += args.batch
-            if total % 5000 == 0:
+            if total % 10000 == 0:
                sender.wait()
                print("Send total {}".format(total))
     except Exception as err:
@@ -65,20 +64,20 @@ def main(address, policy, key):
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    entity = None
     if args.conn_str:
-        address, policy, key, entity = utils.parse_conn_str(args.conn_str)
+        client = EventHubClient.from_connection_string(
+            args.conn_str,
+            eventhub=args.eventhub)
     elif args.address:
-        address = args.address
-        policy = args.sas_policy
-        key = args.sas_key
+        client = EventHubClient(
+            args.address,
+            username=args.sas_policy,
+            password=args.sas_key)
     else:
         raise ValueError("Must specify either '--conn-str' or '--address'")
-    entity = entity or args.eventhub
-    address = utils.build_uri(address, entity)
 
     try:
-        main(address, policy, key)
+        main(client)
     except KeyboardInterrupt:
         pass
 

@@ -38,7 +38,7 @@ async def pump(client):
     await client.run_async()
     total = 0
     start_time = time.time()
-    async for event_data in receiver.receive(timeout=10):
+    for event_data in await receiver.receive(timeout=10):
         last_offset = event_data.offset
         last_sn = event_data.sequence_number
         total += 1

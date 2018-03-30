@@ -37,6 +37,38 @@ __version__ = "0.2.0a1"
 log = logging.getLogger(__name__)
 
 
+
+def _parse_conn_str(conn_str):
+    endpoint = None
+    shared_access_key_name = None
+    shared_access_key = None
+    entity_path = None
+    for element in conn_str.split(';'):
+        key, _, value = element.partition('=')
+        if key.lower() == 'endpoint':
+            endpoint = value.rstrip('/')
+        elif key.lower() == 'sharedaccesskeyname':
+            shared_access_key_name = value
+        elif key.lower() == 'sharedaccesskey':
+            shared_access_key = value
+        elif key.lower() == 'entitypath':
+            entity_path = value
+    if not all([endpoint, shared_access_key_name, shared_access_key]):
+        raise ValueError("Invalid connection string")
+    return endpoint, shared_access_key_name, shared_access_key, entity_path
+
+
+def _build_uri(address, entity):
+    parsed = urlparse(address)
+    if parsed.path:
+        print(parsed.path)
+        return address
+    if not entity:
+        raise ValueError("No EventHub specified")
+    address += "/" + str(entity)
+    return address
+
+
 class EventHubClient(object):
     """
     The L{EventHubClient} class defines a high level interface for sending
@@ -64,6 +96,13 @@ class EventHubClient(object):
         self.clients = []
         self.stopped = False
         log.info("{}: Created the Event Hub client".format(self.container_id))
+
+    @classmethod
+    def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
+        address, policy, key, entity = _parse_conn_str(conn_str)
+        entity = entity or eventhub
+        address = _build_uri(address, entity)
+        return cls(address, username=policy, password=key, **kwargs)
 
     def _create_auth(self, auth_uri, username, password):
         return authentication.SASTokenAuth.from_shared_access_key(auth_uri, username, password)
@@ -284,12 +323,12 @@ class Receiver:
         self.offset = event_data.offset
         return event_data
 
-    def receive(self, batch_size=None, callback=None, timeout=None):
+    def receive(self, max_batch_size=None, callback=None, timeout=None):
         timeout_ms = 1000 * timeout if timeout else 0
         self._callback = callback
-        if batch_size:
+        if max_batch_size:
             message_iter = self._handler.receive_message_batch(
-                batch_size=batch_size,
+                max_batch_size=max_batch_size,
                 on_message_received=self.on_message,
                 timeout=timeout_ms)
             for event_data in message_iter:

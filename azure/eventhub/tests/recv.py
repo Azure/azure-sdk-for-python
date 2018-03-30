@@ -24,29 +24,30 @@ async def pump(_pid, receiver, _args, _dl):
     total = 0
     iteration = 0
     deadline = time.time() + _dl
-    while time.time() < deadline:
-        batch_gen = receiver.receive(batch_size=5000, timeout=5)
-        batch = []
-        async for event in batch_gen:
-            batch.append(event)
-        size = len(batch)
-        total += size
-        iteration += 1
-        if size == 0:
-            print("{}: No events received, queue size {}, delivered {}".format(
-                _pid,
-                receiver.queue_size,
-                receiver.delivered))
-        elif iteration >= 80:
-            iteration = 0
-            print("{}: total received {}, last sn={}, last offset={}".format(
-                        _pid,
-                        total,
-                        batch[-1].sequence_number,
-                        batch[-1].offset))
-    print("{}: total received {}".format(
-        _pid,
-        total))
+    try:
+        while time.time() < deadline:
+            batch = await receiver.receive(timeout=5)
+            size = len(batch)
+            total += size
+            iteration += 1
+            if size == 0:
+                print("{}: No events received, queue size {}, delivered {}".format(
+                    _pid,
+                    receiver.queue_size,
+                    receiver.delivered))
+            elif iteration >= 80:
+                iteration = 0
+                print("{}: total received {}, last sn={}, last offset={}".format(
+                            _pid,
+                            total,
+                            batch[-1].sequence_number,
+                            batch[-1].offset))
+        print("{}: total received {}".format(
+            _pid,
+            total))
+    except Exception as e:
+        print("Partition {} receiver failed: {}".format(_pid, e))
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
@@ -60,33 +61,32 @@ parser.add_argument("--sas-policy", help="Name of the shared access policy to au
 parser.add_argument("--sas-key", help="Shared access key")
 
 try:
+    loop = asyncio.get_event_loop()
     args = parser.parse_args()
-    entity = None
     if args.conn_str:
-        address, policy, key, entity = utils.parse_conn_str(args.conn_str)
+        client = EventHubClientAsync.from_connection_string(
+            args.conn_str,
+            eventhub=args.eventhub)
     elif args.address:
-        address = args.address
-        policy = args.sas_policy
-        key = args.sas_key
+        client = EventHubClientAsync(
+            args.address,
+            username=args.sas_policy,
+            password=args.sas_key)
     else:
         raise ValueError("Must specify either '--conn-str' or '--address'")
-    entity = entity or args.eventhub
-    address = utils.build_uri(address, entity)
 
-    loop = asyncio.get_event_loop()
-    client = EventHubClientAsync(address, username=policy, password=key)
-    asyncio.gather()
     pumps = []
     for pid in args.partitions.split(","):
         receiver = client.add_async_receiver(
             consumer_group=args.consumer,
             partition=pid,
             offset=Offset(args.offset),
-            prefetch=100)
+            prefetch=5000)
         pumps.append(pump(pid, receiver, args, args.duration))
     loop.run_until_complete(client.run_async())
     loop.run_until_complete(asyncio.gather(*pumps))
+except:
+    raise
+finally:
     loop.run_until_complete(client.stop_async())
     loop.close()
-except KeyboardInterrupt:
-    pass
