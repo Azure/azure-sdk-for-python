@@ -15,12 +15,6 @@ from azure.common.client_factory import *
 
 class TestCommon(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_get_client_from_auth_file(self):
 
         configuration = {
