@@ -12,26 +12,29 @@
 from msrest.serialization import Model
 
 
-class CognitiveServicesAccountEnumerateSkusResult(Model):
-    """The list of cognitive services accounts operation response.
+class MetricName(Model):
+    """A metric name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: Gets the list of Cognitive Services accounts and their
-     properties.
-    :vartype value:
-     list[~azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku]
+    :ivar value: The name of the metric.
+    :vartype value: str
+    :ivar localized_value: The friendly name of the metric.
+    :vartype localized_value: str
     """
 
     _validation = {
         'value': {'readonly': True},
+        'localized_value': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CognitiveServicesResourceAndSku]'},
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(CognitiveServicesAccountEnumerateSkusResult, self).__init__(**kwargs)
+        super(MetricName, self).__init__(**kwargs)
         self.value = None
+        self.localized_value = None
