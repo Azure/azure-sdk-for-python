@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class EnvironmentVariable(Model):
     """The environment variable to set within the container instance.
 
-    :param name: The name of the environment variable.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the environment variable.
     :type name: str
-    :param value: The value of the environment variable.
+    :param value: Required. The value of the environment variable.
     :type value: str
     """
 
@@ -31,7 +33,7 @@ class EnvironmentVariable(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        super(EnvironmentVariable, self).__init__()
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(EnvironmentVariable, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

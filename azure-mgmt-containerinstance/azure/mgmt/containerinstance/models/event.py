@@ -15,19 +15,31 @@ from msrest.serialization import Model
 class Event(Model):
     """A container group or container instance event.
 
-    :param count: The count of the event.
-    :type count: int
-    :param first_timestamp: The date-time of the earliest logged event.
-    :type first_timestamp: datetime
-    :param last_timestamp: The date-time of the latest logged event.
-    :type last_timestamp: datetime
-    :param name: The event name.
-    :type name: str
-    :param message: The event message.
-    :type message: str
-    :param type: The event type.
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar count: The count of the event.
+    :vartype count: int
+    :ivar first_timestamp: The date-time of the earliest logged event.
+    :vartype first_timestamp: datetime
+    :ivar last_timestamp: The date-time of the latest logged event.
+    :vartype last_timestamp: datetime
+    :ivar name: The event name.
+    :vartype name: str
+    :ivar message: The event message.
+    :vartype message: str
+    :ivar type: The event type.
+    :vartype type: str
     """
+
+    _validation = {
+        'count': {'readonly': True},
+        'first_timestamp': {'readonly': True},
+        'last_timestamp': {'readonly': True},
+        'name': {'readonly': True},
+        'message': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'count': {'key': 'count', 'type': 'int'},
@@ -38,11 +50,11 @@ class Event(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, count=None, first_timestamp=None, last_timestamp=None, name=None, message=None, type=None):
-        super(Event, self).__init__()
-        self.count = count
-        self.first_timestamp = first_timestamp
-        self.last_timestamp = last_timestamp
-        self.name = name
-        self.message = message
-        self.type = type
+    def __init__(self, **kwargs):
+        super(Event, self).__init__(**kwargs)
+        self.count = None
+        self.first_timestamp = None
+        self.last_timestamp = None
+        self.name = None
+        self.message = None
+        self.type = None
