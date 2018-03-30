@@ -15,14 +15,21 @@ from msrest.serialization import Model
 class Logs(Model):
     """The logs.
 
-    :param content: The content of the log.
-    :type content: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar content: The content of the log.
+    :vartype content: str
     """
+
+    _validation = {
+        'content': {'readonly': True},
+    }
 
     _attribute_map = {
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    def __init__(self, *, content: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(Logs, self).__init__(**kwargs)
-        self.content = content
+        self.content = None

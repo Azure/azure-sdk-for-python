@@ -15,21 +15,31 @@ from msrest.serialization import Model
 class ContainerState(Model):
     """The container instance state.
 
-    :param state: The state of the container instance.
-    :type state: str
-    :param start_time: The date-time when the container instance state
-     started.
-    :type start_time: datetime
-    :param exit_code: The container instance exit codes correspond to those
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar state: The state of the container instance.
+    :vartype state: str
+    :ivar start_time: The date-time when the container instance state started.
+    :vartype start_time: datetime
+    :ivar exit_code: The container instance exit codes correspond to those
      from the `docker run` command.
-    :type exit_code: int
-    :param finish_time: The date-time when the container instance state
+    :vartype exit_code: int
+    :ivar finish_time: The date-time when the container instance state
      finished.
-    :type finish_time: datetime
-    :param detail_status: The human-readable status of the container instance
+    :vartype finish_time: datetime
+    :ivar detail_status: The human-readable status of the container instance
      state.
-    :type detail_status: str
+    :vartype detail_status: str
     """
+
+    _validation = {
+        'state': {'readonly': True},
+        'start_time': {'readonly': True},
+        'exit_code': {'readonly': True},
+        'finish_time': {'readonly': True},
+        'detail_status': {'readonly': True},
+    }
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'str'},
@@ -41,8 +51,8 @@ class ContainerState(Model):
 
     def __init__(self, **kwargs):
         super(ContainerState, self).__init__(**kwargs)
-        self.state = kwargs.get('state', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.exit_code = kwargs.get('exit_code', None)
-        self.finish_time = kwargs.get('finish_time', None)
-        self.detail_status = kwargs.get('detail_status', None)
+        self.state = None
+        self.start_time = None
+        self.exit_code = None
+        self.finish_time = None
+        self.detail_status = None

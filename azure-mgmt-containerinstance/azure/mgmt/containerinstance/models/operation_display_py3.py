@@ -15,15 +15,25 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """The display information of the operation.
 
-    :param provider: The name of the provider of the operation.
-    :type provider: str
-    :param resource: The name of the resource type of the operation.
-    :type resource: str
-    :param operation: The friendly name of the operation.
-    :type operation: str
-    :param description: The description of the operation.
-    :type description: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provider: The name of the provider of the operation.
+    :vartype provider: str
+    :ivar resource: The name of the resource type of the operation.
+    :vartype resource: str
+    :ivar operation: The friendly name of the operation.
+    :vartype operation: str
+    :ivar description: The description of the operation.
+    :vartype description: str
     """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+        'operation': {'readonly': True},
+        'description': {'readonly': True},
+    }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
@@ -32,9 +42,9 @@ class OperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
