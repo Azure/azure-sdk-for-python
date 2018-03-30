@@ -9,34 +9,56 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_only_resource import ProxyOnlyResource
 
 
-class BillingMeter(Model):
-    """Billing meter.
+class BillingMeter(ProxyOnlyResource):
+    """App Service billing entity that contains information about meter which the
+    Azure billing system utilizes to charge users for services.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource Name.
+    :vartype name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :ivar type: Resource type.
+    :vartype type: str
     :param meter_id: Meter GUID onboarded in Commerce
     :type meter_id: str
-    :param billing_location: CSM Location
+    :param billing_location: Azure Location of billable resource
     :type billing_location: str
-    :param short_name: Short Name from Azure pricing Page
+    :param short_name: Short Name from App Service Azure pricing Page
     :type short_name: str
-    :param friendly_name: Meter Resource Name
+    :param friendly_name: Friendly name of the meter
     :type friendly_name: str
-    :param resource_type: ResourceType meter used for
+    :param resource_type: App Service resource type meter used for
     :type resource_type: str
     """
 
-    _attribute_map = {
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'billing_location': {'key': 'billingLocation', 'type': 'str'},
-        'short_name': {'key': 'shortName', 'type': 'str'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
-    def __init__(self, meter_id=None, billing_location=None, short_name=None, friendly_name=None, resource_type=None):
-        super(BillingMeter, self).__init__()
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'meter_id': {'key': 'properties.meterId', 'type': 'str'},
+        'billing_location': {'key': 'properties.billingLocation', 'type': 'str'},
+        'short_name': {'key': 'properties.shortName', 'type': 'str'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
+    }
+
+    def __init__(self, kind=None, meter_id=None, billing_location=None, short_name=None, friendly_name=None, resource_type=None):
+        super(BillingMeter, self).__init__(kind=kind)
         self.meter_id = meter_id
         self.billing_location = billing_location
         self.short_name = short_name

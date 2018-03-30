@@ -25,10 +25,10 @@ from .operations.domain_registration_provider_operations import DomainRegistrati
 from .operations.certificates_operations import CertificatesOperations
 from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
 from .operations.diagnostics_operations import DiagnosticsOperations
-from .operations.global_model_operations import GlobalModelOperations
 from .operations.provider_operations import ProviderOperations
 from .operations.recommendations_operations import RecommendationsOperations
 from .operations.resource_health_metadata_operations import ResourceHealthMetadataOperations
+from .operations.billing_meters_operations import BillingMetersOperations
 from .operations.web_apps_operations import WebAppsOperations
 from .operations.app_service_environments_operations import AppServiceEnvironmentsOperations
 from .operations.app_service_plans_operations import AppServicePlansOperations
@@ -90,14 +90,14 @@ class WebSiteManagementClient(object):
     :vartype deleted_web_apps: azure.mgmt.web.operations.DeletedWebAppsOperations
     :ivar diagnostics: Diagnostics operations
     :vartype diagnostics: azure.mgmt.web.operations.DiagnosticsOperations
-    :ivar global_model: GlobalModel operations
-    :vartype global_model: azure.mgmt.web.operations.GlobalModelOperations
     :ivar provider: Provider operations
     :vartype provider: azure.mgmt.web.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
     :vartype recommendations: azure.mgmt.web.operations.RecommendationsOperations
     :ivar resource_health_metadata: ResourceHealthMetadata operations
     :vartype resource_health_metadata: azure.mgmt.web.operations.ResourceHealthMetadataOperations
+    :ivar billing_meters: BillingMeters operations
+    :vartype billing_meters: azure.mgmt.web.operations.BillingMetersOperations
     :ivar web_apps: WebApps operations
     :vartype web_apps: azure.mgmt.web.operations.WebAppsOperations
     :ivar app_service_environments: AppServiceEnvironments operations
@@ -140,13 +140,13 @@ class WebSiteManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.diagnostics = DiagnosticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.global_model = GlobalModelOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommendations = RecommendationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.resource_health_metadata = ResourceHealthMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_meters = BillingMetersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_apps = WebAppsOperations(
             self._client, self.config, self._serialize, self._deserialize)
