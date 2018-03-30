@@ -1,0 +1,235 @@
+interactions:
+- request:
+    body: '{"location": "global", "sku": {"name": "Free"}, "kind": "Bot", "properties":
+      {"displayName": "this is a test bot", "description": "this is a description
+      for a test bot", "endpoint": "https://bing.com/messages/", "msaAppId": "41a220b9-6571-4f0b-bbd2-43f1c1d82f52",
+      "developerAppInsightKey": "59513bad-10a7-4d41-b4d0-b1c34c6af52a", "developerAppInsightsApiKey":
+      "w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv2r", "developerAppInsightsApplicationId":
+      "cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['481']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11?api-version=2017-12-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11","name":"testpythonbot11","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-03-29T23%3A21%3A55.4273565Z''\"","location":"global","sku":{"name":""},"kind":"Bot","properties":{"displayName":"this
+        is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f52","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['926']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 29 Mar 2018 23:21:55 GMT']
+      etag: [W/"datetime'2018-03-29T23%3A21%3A55.4273565Z'"]
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"location": "global", "properties": {"channelName": "SlackChannel", "properties":
+      {"clientId": "130828831840.338719758214", "clientSecret": "f8bbe76c52f8e339622b5c17e5004d26",
+      "verificationToken": "AhWzLaEjsy8uVgIsxFTZhDwd", "isEnabled": true}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['246']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11/channels/SlackChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"InternalServerError","message":"Encountered
+        internal server error. Please try again."}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['105']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 29 Mar 2018 23:22:16 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: '{"location": "global", "properties": {"channelName": "SlackChannel", "properties":
+      {"clientId": "130828831840.338719758214", "clientSecret": "f8bbe76c52f8e339622b5c17e5004d26",
+      "verificationToken": "AhWzLaEjsy8uVgIsxFTZhDwd", "isEnabled": true}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['246']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11/channels/SlackChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"InternalServerError","message":"Encountered
+        internal server error. Please try again."}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['105']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 29 Mar 2018 23:22:18 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: '{"location": "global", "properties": {"channelName": "SlackChannel", "properties":
+      {"clientId": "130828831840.338719758214", "clientSecret": "f8bbe76c52f8e339622b5c17e5004d26",
+      "verificationToken": "AhWzLaEjsy8uVgIsxFTZhDwd", "isEnabled": true}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['246']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11/channels/SlackChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"InternalServerError","message":"Encountered
+        internal server error. Please try again."}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['105']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 29 Mar 2018 23:22:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: '{"location": "global", "properties": {"channelName": "SlackChannel", "properties":
+      {"clientId": "130828831840.338719758214", "clientSecret": "f8bbe76c52f8e339622b5c17e5004d26",
+      "verificationToken": "AhWzLaEjsy8uVgIsxFTZhDwd", "isEnabled": true}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['246']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11/channels/SlackChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"InternalServerError","message":"Encountered
+        internal server error. Please try again."}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['105']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 29 Mar 2018 23:22:26 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: '{"location": "global", "properties": {"channelName": "SlackChannel", "properties":
+      {"clientId": "130828831840.338719758214", "clientSecret": "f8bbe76c52f8e339622b5c17e5004d26",
+      "verificationToken": "AhWzLaEjsy8uVgIsxFTZhDwd", "isEnabled": true}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['246']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11/channels/SlackChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"InternalServerError","message":"Encountered
+        internal server error. Please try again."}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['105']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 29 Mar 2018 23:22:34 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot11?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"CannotDeleteResource","message":"Can not delete
+        resource before nested resources are deleted."}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['114']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 29 Mar 2018 23:22:34 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [gateway]
+    status: {code: 409, message: Conflict}
+version: 1
