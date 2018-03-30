@@ -402,6 +402,10 @@ class WorkbooksOperations(object):
         """
         # Construct URL
         url = self.list_by_source_id.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -440,7 +444,7 @@ class WorkbooksOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_source_id.metadata = {'url': '/providers/microsoft.insights/workbooks'}
+    list_by_source_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/links'}
 
     def create_link(
             self, link_properties, custom_headers=None, raw=False, **operation_config):
@@ -462,6 +466,10 @@ class WorkbooksOperations(object):
         """
         # Construct URL
         url = self.create_link.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -491,7 +499,7 @@ class WorkbooksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    create_link.metadata = {'url': '/providers/microsoft.insights/workbooks'}
+    create_link.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/links'}
 
     def update_link(
             self, link_properties, custom_headers=None, raw=False, **operation_config):
@@ -514,6 +522,10 @@ class WorkbooksOperations(object):
         """
         # Construct URL
         url = self.update_link.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -550,7 +562,7 @@ class WorkbooksOperations(object):
             return client_raw_response
 
         return deserialized
-    update_link.metadata = {'url': '/providers/microsoft.insights/workbooks'}
+    update_link.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/links'}
 
     def delete_link(
             self, resource_id, category, custom_headers=None, raw=False, **operation_config):
@@ -575,6 +587,10 @@ class WorkbooksOperations(object):
         """
         # Construct URL
         url = self.delete_link.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -602,4 +618,69 @@ class WorkbooksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_link.metadata = {'url': '/providers/microsoft.insights/workbooks'}
+    delete_link.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/links'}
+
+    def list_by_source_id1(
+            self, resource_name, can_fetch_content=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a workbook link by a workbook resource name.
+
+        :param resource_name: The name of the Application Insights component
+         resource.
+        :type resource_name: str
+        :param can_fetch_content: Flag indicating whether or not to return the
+         full content for each applicable workbook. If false, only return
+         summary content for workbooks.
+        :type can_fetch_content: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Workbook or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.applicationinsights.models.Workbook or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`WorkbookErrorResponseException<azure.mgmt.applicationinsights.models.WorkbookErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_by_source_id1.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if can_fetch_content is not None:
+            query_parameters['canFetchContent'] = self._serialize.query("can_fetch_content", can_fetch_content, 'bool')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.WorkbookErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Workbook', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_by_source_id1.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/{resourceName}/links'}
