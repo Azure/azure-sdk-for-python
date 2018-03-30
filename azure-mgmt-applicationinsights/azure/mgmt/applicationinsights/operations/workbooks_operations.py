@@ -372,7 +372,7 @@ class WorkbooksOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/{resourceName}'}
 
-    def list_by_source_id(
+    def list(
             self, source_id, category, tags=None, can_fetch_content=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of workbooks.
 
@@ -401,7 +401,7 @@ class WorkbooksOperations(object):
          :class:`WorkbookErrorResponseException<azure.mgmt.applicationinsights.models.WorkbookErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_source_id.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -444,7 +444,7 @@ class WorkbooksOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_source_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/links'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/links'}
 
     def create_link(
             self, link_properties, custom_headers=None, raw=False, **operation_config):
@@ -620,7 +620,7 @@ class WorkbooksOperations(object):
             return client_raw_response
     delete_link.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/links'}
 
-    def list_by_source_id1(
+    def list_by_source_id(
             self, resource_name, can_fetch_content=None, custom_headers=None, raw=False, **operation_config):
         """Gets a workbook link by a workbook resource name.
 
@@ -643,7 +643,7 @@ class WorkbooksOperations(object):
          :class:`WorkbookErrorResponseException<azure.mgmt.applicationinsights.models.WorkbookErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_source_id1.metadata['url']
+        url = self.list_by_source_id.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
@@ -683,4 +683,4 @@ class WorkbooksOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_source_id1.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/{resourceName}/links'}
+    list_by_source_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/{resourceName}/links'}
