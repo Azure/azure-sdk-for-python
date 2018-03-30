@@ -1,6 +1,11 @@
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.botservice import AzureBotService
-from azure.mgmt.botservice.models import Bot, BotProperties,sku
+from azure.mgmt.botservice.models import (
+    Bot,
+    BotProperties,
+    sku,
+    ErrorException
+)
 import json
 
 class CoreBotServiceTestCase(AzureMgmtTestCase):
@@ -73,7 +78,6 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
             resource_group_name = self.resource_group_name,
             resource_name = self.resource_name,
         )
-        self.validate_bot_properties(bot)
 
         #ensure that the bot was not found with a get
         with self.assertRaises(ErrorException):

@@ -1,6 +1,13 @@
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.botservice import AzureBotService
 from azure.mgmt.botservice.models import Bot, BotProperties,sku,BotChannel,ErrorException
+from azure.mgmt.botservice.models import (
+    Bot,
+    BotProperties,
+    BotChannel,
+    ErrorException,
+    sku
+)
 import pdb
 
 class BotServiceChannelsTestCase(AzureMgmtTestCase):

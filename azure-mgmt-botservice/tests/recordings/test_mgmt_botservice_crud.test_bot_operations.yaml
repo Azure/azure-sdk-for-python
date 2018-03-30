@@ -18,14 +18,14 @@ interactions:
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12","name":"testpythonbot12","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-03-30T23%3A02%3A35.3750012Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12","name":"testpythonbot12","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-03-30T23%3A21%3A06.2253122Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f51","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['928']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 30 Mar 2018 23:02:35 GMT']
-      etag: [W/"datetime'2018-03-30T23%3A02%3A35.3750012Z'"]
+      date: ['Fri, 30 Mar 2018 23:21:06 GMT']
+      etag: [W/"datetime'2018-03-30T23%3A21%3A06.2253122Z'"]
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
@@ -48,14 +48,14 @@ interactions:
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12","name":"testpythonbot12","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-03-30T23%3A02%3A35.3750012Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12","name":"testpythonbot12","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-03-30T23%3A21%3A06.2253122Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f51","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
       content-length: ['928']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 30 Mar 2018 23:02:52 GMT']
-      etag: [W/"datetime'2018-03-30T23%3A02%3A35.3750012Z'"]
+      date: ['Fri, 30 Mar 2018 23:21:07 GMT']
+      etag: [W/"datetime'2018-03-30T23%3A21%3A06.2253122Z'"]
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
@@ -84,14 +84,14 @@ interactions:
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12","name":"testpythonbot12","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-03-30T23%3A03%3A19.995903Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12","name":"testpythonbot12","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-03-30T23%3A21%3A10.3362612Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is another description","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f51","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['918']
+      content-length: ['919']
       content-type: [application/json; charset=utf-8]
-      date: ['Fri, 30 Mar 2018 23:03:19 GMT']
-      etag: [W/"datetime'2018-03-30T23%3A03%3A19.995903Z'"]
+      date: ['Fri, 30 Mar 2018 23:21:10 GMT']
+      etag: [W/"datetime'2018-03-30T23%3A21%3A10.3362612Z'"]
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
@@ -121,7 +121,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Fri, 30 Mar 2018 23:03:28 GMT']
+      date: ['Fri, 30 Mar 2018 23:21:15 GMT']
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
@@ -131,4 +131,30 @@ interactions:
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot12?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.BotService/botServices/testpythonbot12''
+        under resource group ''testpythonrg'' was not found."}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['164']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 30 Mar 2018 23:21:17 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [gateway]
+    status: {code: 404, message: Not Found}
 version: 1
