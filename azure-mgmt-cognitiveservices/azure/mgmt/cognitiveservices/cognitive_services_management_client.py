@@ -44,7 +44,7 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
 
         super(CognitiveServicesManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('cognitiveservicesmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-cognitiveservices/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
