@@ -30,7 +30,8 @@ class PolicyContract(Resource):
      Policy.
     :type policy_content: str
     :param content_format: Format of the policyContent. Possible values
-     include: 'xml', 'xml-link'. Default value: "xml" .
+     include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'. Default value: "xml"
+     .
     :type content_format: str or
      ~azure.mgmt.apimanagement.models.PolicyContentFormat
     """
