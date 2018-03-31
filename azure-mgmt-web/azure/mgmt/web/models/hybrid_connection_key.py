@@ -50,7 +50,7 @@ class HybridConnectionKey(ProxyOnlyResource):
         'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(HybridConnectionKey, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(HybridConnectionKey, self).__init__(**kwargs)
         self.send_key_name = None
         self.send_key_value = None

@@ -27,7 +27,7 @@ class TrackedResource(Resource):
      Microsoft.Network/trafficmanagerProfiles.
     :vartype type: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param location: The Azure Region where the resource lives
     :type location: str
     """
@@ -46,7 +46,7 @@ class TrackedResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, location=None):
-        super(TrackedResource, self).__init__()
-        self.tags = tags
-        self.location = location
+    def __init__(self, **kwargs):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.location = kwargs.get('location', None)

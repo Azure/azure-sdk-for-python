@@ -24,5 +24,6 @@ class ResourceList(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, next_link=None):
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(ResourceList, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)

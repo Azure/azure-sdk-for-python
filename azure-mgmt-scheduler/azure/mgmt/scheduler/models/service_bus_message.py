@@ -16,24 +16,23 @@ class ServiceBusMessage(Model):
     """ServiceBusMessage.
 
     :param authentication: Gets or sets the Service Bus authentication.
-    :type authentication: :class:`ServiceBusAuthentication
-     <azure.mgmt.scheduler.models.ServiceBusAuthentication>`
+    :type authentication:
+     ~azure.mgmt.scheduler.models.ServiceBusAuthentication
     :param brokered_message_properties: Gets or sets the brokered message
      properties.
     :type brokered_message_properties:
-     :class:`ServiceBusBrokeredMessageProperties
-     <azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties>`
+     ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
     :param custom_message_properties: Gets or sets the custom message
      properties.
-    :type custom_message_properties: dict
+    :type custom_message_properties: dict[str, str]
     :param message: Gets or sets the message.
     :type message: str
     :param namespace: Gets or sets the namespace.
     :type namespace: str
     :param transport_type: Gets or sets the transport type. Possible values
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    :type transport_type: str or :class:`ServiceBusTransportType
-     <azure.mgmt.scheduler.models.ServiceBusTransportType>`
+    :type transport_type: str or
+     ~azure.mgmt.scheduler.models.ServiceBusTransportType
     """
 
     _attribute_map = {
@@ -45,10 +44,11 @@ class ServiceBusMessage(Model):
         'transport_type': {'key': 'transportType', 'type': 'ServiceBusTransportType'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None):
-        self.authentication = authentication
-        self.brokered_message_properties = brokered_message_properties
-        self.custom_message_properties = custom_message_properties
-        self.message = message
-        self.namespace = namespace
-        self.transport_type = transport_type
+    def __init__(self, **kwargs):
+        super(ServiceBusMessage, self).__init__(**kwargs)
+        self.authentication = kwargs.get('authentication', None)
+        self.brokered_message_properties = kwargs.get('brokered_message_properties', None)
+        self.custom_message_properties = kwargs.get('custom_message_properties', None)
+        self.message = kwargs.get('message', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.transport_type = kwargs.get('transport_type', None)

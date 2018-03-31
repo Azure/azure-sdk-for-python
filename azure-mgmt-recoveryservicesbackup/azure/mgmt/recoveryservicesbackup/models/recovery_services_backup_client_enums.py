@@ -12,62 +12,78 @@
 from enum import Enum
 
 
-class JobSupportedAction(Enum):
+class ProtectionState(str, Enum):
+
+    invalid = "Invalid"
+    ir_pending = "IRPending"
+    protected = "Protected"
+    protection_error = "ProtectionError"
+    protection_stopped = "ProtectionStopped"
+    protection_paused = "ProtectionPaused"
+
+
+class HealthStatus(str, Enum):
+
+    passed = "Passed"
+    action_required = "ActionRequired"
+    action_suggested = "ActionSuggested"
+    invalid = "Invalid"
+
+
+class JobSupportedAction(str, Enum):
 
     invalid = "Invalid"
     cancellable = "Cancellable"
     retriable = "Retriable"
 
 
-class BackupManagementType(Enum):
+class ProtectedItemState(str, Enum):
 
     invalid = "Invalid"
-    azure_iaas_vm = "AzureIaasVM"
-    mab = "MAB"
-    dpm = "DPM"
-    azure_backup_server = "AzureBackupServer"
-    azure_sql = "AzureSql"
+    ir_pending = "IRPending"
+    protected = "Protected"
+    protection_error = "ProtectionError"
+    protection_stopped = "ProtectionStopped"
+    protection_paused = "ProtectionPaused"
 
 
-class JobStatus(Enum):
-
-    invalid = "Invalid"
-    in_progress = "InProgress"
-    completed = "Completed"
-    failed = "Failed"
-    completed_with_warnings = "CompletedWithWarnings"
-    cancelled = "Cancelled"
-    cancelling = "Cancelling"
-
-
-class JobOperationType(Enum):
+class SupportStatus(str, Enum):
 
     invalid = "Invalid"
-    register = "Register"
-    un_register = "UnRegister"
-    configure_backup = "ConfigureBackup"
-    backup = "Backup"
-    restore = "Restore"
-    disable_backup = "DisableBackup"
-    delete_backup_data = "DeleteBackupData"
+    supported = "Supported"
+    default_off = "DefaultOFF"
+    default_on = "DefaultON"
+    not_supported = "NotSupported"
 
 
-class MabServerType(Enum):
+class LastBackupStatus(str, Enum):
 
     invalid = "Invalid"
-    unknown = "Unknown"
-    iaas_vm_container = "IaasVMContainer"
-    iaas_vm_service_container = "IaasVMServiceContainer"
-    dpm_container = "DPMContainer"
-    azure_backup_server_container = "AzureBackupServerContainer"
-    mab_container = "MABContainer"
-    cluster = "Cluster"
-    azure_sql_container = "AzureSqlContainer"
-    windows = "Windows"
-    vcenter = "VCenter"
+    healthy = "Healthy"
+    unhealthy = "Unhealthy"
+    ir_pending = "IRPending"
 
 
-class WorkloadType(Enum):
+class ProtectedItemHealthStatus(str, Enum):
+
+    invalid = "Invalid"
+    healthy = "Healthy"
+    unhealthy = "Unhealthy"
+    not_reachable = "NotReachable"
+    ir_pending = "IRPending"
+
+
+class UsagesUnit(str, Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    percent = "Percent"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+
+
+class DataSourceType(str, Enum):
 
     invalid = "Invalid"
     vm = "VM"
@@ -80,90 +96,33 @@ class WorkloadType(Enum):
     system_state = "SystemState"
     client = "Client"
     generic_data_source = "GenericDataSource"
+    sql_data_base = "SQLDataBase"
+    azure_file_share = "AzureFileShare"
 
 
-class ProtectionState(Enum):
+class ProtectionStatus(str, Enum):
 
     invalid = "Invalid"
-    ir_pending = "IRPending"
+    not_protected = "NotProtected"
+    protecting = "Protecting"
     protected = "Protected"
-    protection_error = "ProtectionError"
-    protection_stopped = "ProtectionStopped"
-    protection_paused = "ProtectionPaused"
+    protection_failed = "ProtectionFailed"
 
 
-class HealthStatus(Enum):
-
-    passed = "Passed"
-    action_required = "ActionRequired"
-    action_suggested = "ActionSuggested"
-    invalid = "Invalid"
-
-
-class ProtectedItemState(Enum):
+class FabricName(str, Enum):
 
     invalid = "Invalid"
-    ir_pending = "IRPending"
-    protected = "Protected"
-    protection_error = "ProtectionError"
-    protection_stopped = "ProtectionStopped"
-    protection_paused = "ProtectionPaused"
+    azure = "Azure"
 
 
-class UsagesUnit(Enum):
-
-    count = "Count"
-    bytes = "Bytes"
-    seconds = "Seconds"
-    percent = "Percent"
-    count_per_second = "CountPerSecond"
-    bytes_per_second = "BytesPerSecond"
-
-
-class StorageType(Enum):
-
-    invalid = "Invalid"
-    geo_redundant = "GeoRedundant"
-    locally_redundant = "LocallyRedundant"
-
-
-class StorageTypeState(Enum):
-
-    invalid = "Invalid"
-    locked = "Locked"
-    unlocked = "Unlocked"
-
-
-class EnhancedSecurityState(Enum):
-
-    invalid = "Invalid"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class Type(Enum):
+class Type(str, Enum):
 
     invalid = "Invalid"
     backup_protected_item_count_summary = "BackupProtectedItemCountSummary"
     backup_protection_container_count_summary = "BackupProtectionContainerCountSummary"
 
 
-class ContainerType(Enum):
-
-    invalid = "Invalid"
-    unknown = "Unknown"
-    iaas_vm_container = "IaasVMContainer"
-    iaas_vm_service_container = "IaasVMServiceContainer"
-    dpm_container = "DPMContainer"
-    azure_backup_server_container = "AzureBackupServerContainer"
-    mab_container = "MABContainer"
-    cluster = "Cluster"
-    azure_sql_container = "AzureSqlContainer"
-    windows = "Windows"
-    vcenter = "VCenter"
-
-
-class RetentionDurationType(Enum):
+class RetentionDurationType(str, Enum):
 
     invalid = "Invalid"
     days = "Days"
@@ -172,30 +131,43 @@ class RetentionDurationType(Enum):
     years = "Years"
 
 
-class RecoveryPointTierType(Enum):
+class BackupManagementType(str, Enum):
 
     invalid = "Invalid"
-    instant_rp = "InstantRP"
-    hardened_rp = "HardenedRP"
+    azure_iaas_vm = "AzureIaasVM"
+    mab = "MAB"
+    dpm = "DPM"
+    azure_backup_server = "AzureBackupServer"
+    azure_sql = "AzureSql"
+    azure_storage = "AzureStorage"
+    azure_workload = "AzureWorkload"
+    default_backup = "DefaultBackup"
 
 
-class RecoveryPointTierStatus(Enum):
-
-    invalid = "Invalid"
-    valid = "Valid"
-    disabled = "Disabled"
-    deleted = "Deleted"
-
-
-class RecoveryType(Enum):
+class JobStatus(str, Enum):
 
     invalid = "Invalid"
-    original_location = "OriginalLocation"
-    alternate_location = "AlternateLocation"
-    restore_disks = "RestoreDisks"
+    in_progress = "InProgress"
+    completed = "Completed"
+    failed = "Failed"
+    completed_with_warnings = "CompletedWithWarnings"
+    cancelled = "Cancelled"
+    cancelling = "Cancelling"
 
 
-class DayOfWeek(Enum):
+class JobOperationType(str, Enum):
+
+    invalid = "Invalid"
+    register = "Register"
+    un_register = "UnRegister"
+    configure_backup = "ConfigureBackup"
+    backup = "Backup"
+    restore = "Restore"
+    disable_backup = "DisableBackup"
+    delete_backup_data = "DeleteBackupData"
+
+
+class DayOfWeek(str, Enum):
 
     sunday = "Sunday"
     monday = "Monday"
@@ -206,14 +178,14 @@ class DayOfWeek(Enum):
     saturday = "Saturday"
 
 
-class RetentionScheduleFormat(Enum):
+class RetentionScheduleFormat(str, Enum):
 
     invalid = "Invalid"
     daily = "Daily"
     weekly = "Weekly"
 
 
-class WeekOfMonth(Enum):
+class WeekOfMonth(str, Enum):
 
     first = "First"
     second = "Second"
@@ -222,7 +194,7 @@ class WeekOfMonth(Enum):
     last = "Last"
 
 
-class MonthOfYear(Enum):
+class MonthOfYear(str, Enum):
 
     invalid = "Invalid"
     january = "January"
@@ -239,7 +211,26 @@ class MonthOfYear(Enum):
     december = "December"
 
 
-class BackupItemType(Enum):
+class MabServerType(str, Enum):
+
+    invalid = "Invalid"
+    unknown = "Unknown"
+    iaas_vm_container = "IaasVMContainer"
+    iaas_vm_service_container = "IaasVMServiceContainer"
+    dpm_container = "DPMContainer"
+    azure_backup_server_container = "AzureBackupServerContainer"
+    mab_container = "MABContainer"
+    cluster = "Cluster"
+    azure_sql_container = "AzureSqlContainer"
+    windows = "Windows"
+    vcenter = "VCenter"
+    vm_app_container = "VMAppContainer"
+    sqlag_work_load_container = "SQLAGWorkLoadContainer"
+    storage_container = "StorageContainer"
+    generic_container = "GenericContainer"
+
+
+class WorkloadType(str, Enum):
 
     invalid = "Invalid"
     vm = "VM"
@@ -252,18 +243,11 @@ class BackupItemType(Enum):
     system_state = "SystemState"
     client = "Client"
     generic_data_source = "GenericDataSource"
+    sql_data_base = "SQLDataBase"
+    azure_file_share = "AzureFileShare"
 
 
-class OperationStatusValues(Enum):
-
-    invalid = "Invalid"
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-
-
-class HttpStatusCode(Enum):
+class HttpStatusCode(str, Enum):
 
     continue_enum = "Continue"
     switching_protocols = "SwitchingProtocols"
@@ -314,7 +298,170 @@ class HttpStatusCode(Enum):
     http_version_not_supported = "HttpVersionNotSupported"
 
 
-class DataSourceType(Enum):
+class ValidationStatus(str, Enum):
+
+    invalid = "Invalid"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class HealthState(str, Enum):
+
+    passed = "Passed"
+    action_required = "ActionRequired"
+    action_suggested = "ActionSuggested"
+    invalid = "Invalid"
+
+
+class ScheduleRunType(str, Enum):
+
+    invalid = "Invalid"
+    daily = "Daily"
+    weekly = "Weekly"
+
+
+class AzureFileShareType(str, Enum):
+
+    invalid = "Invalid"
+    xsmb = "XSMB"
+    xsync = "XSync"
+
+
+class RecoveryType(str, Enum):
+
+    invalid = "Invalid"
+    original_location = "OriginalLocation"
+    alternate_location = "AlternateLocation"
+    restore_disks = "RestoreDisks"
+
+
+class CopyOptions(str, Enum):
+
+    invalid = "Invalid"
+    create_copy = "CreateCopy"
+    skip = "Skip"
+    overwrite = "Overwrite"
+    fail_on_conflict = "FailOnConflict"
+
+
+class RestoreRequestType(str, Enum):
+
+    invalid = "Invalid"
+    full_share_restore = "FullShareRestore"
+    item_level_restore = "ItemLevelRestore"
+
+
+class InquiryStatus(str, Enum):
+
+    invalid = "Invalid"
+    success = "Success"
+    failed = "Failed"
+
+
+class SQLDataDirectoryType(str, Enum):
+
+    invalid = "Invalid"
+    data = "Data"
+    log = "Log"
+
+
+class BackupType(str, Enum):
+
+    invalid = "Invalid"
+    full = "Full"
+    differential = "Differential"
+    log = "Log"
+    copy_only_full = "CopyOnlyFull"
+
+
+class RestorePointType(str, Enum):
+
+    invalid = "Invalid"
+    full = "Full"
+    log = "Log"
+    differential = "Differential"
+
+
+class OverwriteOptions(str, Enum):
+
+    invalid = "Invalid"
+    fail_on_conflict = "FailOnConflict"
+    overwrite = "Overwrite"
+
+
+class StorageType(str, Enum):
+
+    invalid = "Invalid"
+    geo_redundant = "GeoRedundant"
+    locally_redundant = "LocallyRedundant"
+
+
+class StorageTypeState(str, Enum):
+
+    invalid = "Invalid"
+    locked = "Locked"
+    unlocked = "Unlocked"
+
+
+class EnhancedSecurityState(str, Enum):
+
+    invalid = "Invalid"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ContainerType(str, Enum):
+
+    invalid = "Invalid"
+    unknown = "Unknown"
+    iaas_vm_container = "IaasVMContainer"
+    iaas_vm_service_container = "IaasVMServiceContainer"
+    dpm_container = "DPMContainer"
+    azure_backup_server_container = "AzureBackupServerContainer"
+    mab_container = "MABContainer"
+    cluster = "Cluster"
+    azure_sql_container = "AzureSqlContainer"
+    windows = "Windows"
+    vcenter = "VCenter"
+    vm_app_container = "VMAppContainer"
+    sqlag_work_load_container = "SQLAGWorkLoadContainer"
+    storage_container = "StorageContainer"
+    generic_container = "GenericContainer"
+
+
+class RestorePointQueryType(str, Enum):
+
+    invalid = "Invalid"
+    full = "Full"
+    log = "Log"
+    differential = "Differential"
+    full_and_differential = "FullAndDifferential"
+    all = "All"
+
+
+class WorkloadItemType(str, Enum):
+
+    invalid = "Invalid"
+    sql_instance = "SQLInstance"
+    sql_data_base = "SQLDataBase"
+
+
+class RecoveryPointTierType(str, Enum):
+
+    invalid = "Invalid"
+    instant_rp = "InstantRP"
+    hardened_rp = "HardenedRP"
+
+
+class RecoveryPointTierStatus(str, Enum):
+
+    invalid = "Invalid"
+    valid = "Valid"
+    disabled = "Disabled"
+    deleted = "Deleted"
+
+
+class BackupItemType(str, Enum):
 
     invalid = "Invalid"
     vm = "VM"
@@ -327,26 +474,14 @@ class DataSourceType(Enum):
     system_state = "SystemState"
     client = "Client"
     generic_data_source = "GenericDataSource"
+    sql_data_base = "SQLDataBase"
+    azure_file_share = "AzureFileShare"
 
 
-class HealthState(Enum):
-
-    passed = "Passed"
-    action_required = "ActionRequired"
-    action_suggested = "ActionSuggested"
-    invalid = "Invalid"
-
-
-class ScheduleRunType(Enum):
+class OperationStatusValues(str, Enum):
 
     invalid = "Invalid"
-    daily = "Daily"
-    weekly = "Weekly"
-
-
-class ProtectionStatus(Enum):
-
-    invalid = "Invalid"
-    not_protected = "NotProtected"
-    protecting = "Protecting"
-    protected = "Protected"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"

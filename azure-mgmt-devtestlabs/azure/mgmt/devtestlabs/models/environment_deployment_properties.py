@@ -27,7 +27,7 @@ class EnvironmentDeploymentProperties(Model):
         'parameters': {'key': 'parameters', 'type': '[ArmTemplateParameterProperties]'},
     }
 
-    def __init__(self, arm_template_id=None, parameters=None):
-        super(EnvironmentDeploymentProperties, self).__init__()
-        self.arm_template_id = arm_template_id
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(EnvironmentDeploymentProperties, self).__init__(**kwargs)
+        self.arm_template_id = kwargs.get('arm_template_id', None)
+        self.parameters = kwargs.get('parameters', None)

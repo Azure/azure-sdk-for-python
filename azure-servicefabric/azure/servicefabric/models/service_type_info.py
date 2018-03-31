@@ -39,9 +39,9 @@ class ServiceTypeInfo(Model):
         'is_service_group': {'key': 'IsServiceGroup', 'type': 'bool'},
     }
 
-    def __init__(self, service_type_description=None, service_manifest_name=None, service_manifest_version=None, is_service_group=None):
-        super(ServiceTypeInfo, self).__init__()
-        self.service_type_description = service_type_description
-        self.service_manifest_name = service_manifest_name
-        self.service_manifest_version = service_manifest_version
-        self.is_service_group = is_service_group
+    def __init__(self, **kwargs):
+        super(ServiceTypeInfo, self).__init__(**kwargs)
+        self.service_type_description = kwargs.get('service_type_description', None)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.service_manifest_version = kwargs.get('service_manifest_version', None)
+        self.is_service_group = kwargs.get('is_service_group', None)

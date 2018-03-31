@@ -9,35 +9,66 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_usage_statistics import ResourceUsageStatistics
-from .job_statistics_vertex import JobStatisticsVertex
-from .job_statistics_vertex_stage import JobStatisticsVertexStage
-from .job_statistics import JobStatistics
-from .job_data_path import JobDataPath
-from .job_state_audit_record import JobStateAuditRecord
-from .scope_job_resource import ScopeJobResource
-from .job_resource import JobResource
-from .diagnostics import Diagnostics
-from .usql_job_properties import USqlJobProperties
-from .scope_job_properties import ScopeJobProperties
-from .hive_job_properties import HiveJobProperties
-from .job_properties import JobProperties
-from .create_usql_job_properties import CreateUSqlJobProperties
-from .create_scope_job_properties import CreateScopeJobProperties
-from .create_job_properties import CreateJobProperties
-from .job_inner_error import JobInnerError
-from .job_error_details import JobErrorDetails
-from .job_relationship_properties import JobRelationshipProperties
-from .job_pipeline_run_information import JobPipelineRunInformation
-from .job_pipeline_information import JobPipelineInformation
-from .job_recurrence_information import JobRecurrenceInformation
-from .create_scope_job_parameters import CreateScopeJobParameters
-from .create_job_parameters import CreateJobParameters
-from .build_job_parameters import BuildJobParameters
-from .base_job_parameters import BaseJobParameters
-from .job_information_basic import JobInformationBasic
-from .job_information import JobInformation
-from .update_job_parameters import UpdateJobParameters
+try:
+    from .resource_usage_statistics_py3 import ResourceUsageStatistics
+    from .job_statistics_vertex_py3 import JobStatisticsVertex
+    from .job_statistics_vertex_stage_py3 import JobStatisticsVertexStage
+    from .job_statistics_py3 import JobStatistics
+    from .job_data_path_py3 import JobDataPath
+    from .job_state_audit_record_py3 import JobStateAuditRecord
+    from .scope_job_resource_py3 import ScopeJobResource
+    from .job_resource_py3 import JobResource
+    from .diagnostics_py3 import Diagnostics
+    from .usql_job_properties_py3 import USqlJobProperties
+    from .scope_job_properties_py3 import ScopeJobProperties
+    from .hive_job_properties_py3 import HiveJobProperties
+    from .job_properties_py3 import JobProperties
+    from .create_usql_job_properties_py3 import CreateUSqlJobProperties
+    from .create_scope_job_properties_py3 import CreateScopeJobProperties
+    from .create_job_properties_py3 import CreateJobProperties
+    from .job_inner_error_py3 import JobInnerError
+    from .job_error_details_py3 import JobErrorDetails
+    from .job_relationship_properties_py3 import JobRelationshipProperties
+    from .job_pipeline_run_information_py3 import JobPipelineRunInformation
+    from .job_pipeline_information_py3 import JobPipelineInformation
+    from .job_recurrence_information_py3 import JobRecurrenceInformation
+    from .create_scope_job_parameters_py3 import CreateScopeJobParameters
+    from .create_job_parameters_py3 import CreateJobParameters
+    from .build_job_parameters_py3 import BuildJobParameters
+    from .base_job_parameters_py3 import BaseJobParameters
+    from .job_information_basic_py3 import JobInformationBasic
+    from .job_information_py3 import JobInformation
+    from .update_job_parameters_py3 import UpdateJobParameters
+except (SyntaxError, ImportError):
+    from .resource_usage_statistics import ResourceUsageStatistics
+    from .job_statistics_vertex import JobStatisticsVertex
+    from .job_statistics_vertex_stage import JobStatisticsVertexStage
+    from .job_statistics import JobStatistics
+    from .job_data_path import JobDataPath
+    from .job_state_audit_record import JobStateAuditRecord
+    from .scope_job_resource import ScopeJobResource
+    from .job_resource import JobResource
+    from .diagnostics import Diagnostics
+    from .usql_job_properties import USqlJobProperties
+    from .scope_job_properties import ScopeJobProperties
+    from .hive_job_properties import HiveJobProperties
+    from .job_properties import JobProperties
+    from .create_usql_job_properties import CreateUSqlJobProperties
+    from .create_scope_job_properties import CreateScopeJobProperties
+    from .create_job_properties import CreateJobProperties
+    from .job_inner_error import JobInnerError
+    from .job_error_details import JobErrorDetails
+    from .job_relationship_properties import JobRelationshipProperties
+    from .job_pipeline_run_information import JobPipelineRunInformation
+    from .job_pipeline_information import JobPipelineInformation
+    from .job_recurrence_information import JobRecurrenceInformation
+    from .create_scope_job_parameters import CreateScopeJobParameters
+    from .create_job_parameters import CreateJobParameters
+    from .build_job_parameters import BuildJobParameters
+    from .base_job_parameters import BaseJobParameters
+    from .job_information_basic import JobInformationBasic
+    from .job_information import JobInformation
+    from .update_job_parameters import UpdateJobParameters
 from .job_information_basic_paged import JobInformationBasicPaged
 from .job_pipeline_information_paged import JobPipelineInformationPaged
 from .job_recurrence_information_paged import JobRecurrenceInformationPaged

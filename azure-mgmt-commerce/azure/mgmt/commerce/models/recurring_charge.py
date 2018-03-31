@@ -15,10 +15,12 @@ from .offer_term_info import OfferTermInfo
 class RecurringCharge(OfferTermInfo):
     """Indicates a recurring charge is present for this offer.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Constant filled by server.
+    :param name: Required. Constant filled by server.
     :type name: str
     :param recurring_charge: The amount of recurring charge as per the offer
      term.
@@ -35,7 +37,7 @@ class RecurringCharge(OfferTermInfo):
         'recurring_charge': {'key': 'RecurringCharge', 'type': 'int'},
     }
 
-    def __init__(self, effective_date=None, recurring_charge=None):
-        super(RecurringCharge, self).__init__(effective_date=effective_date)
-        self.recurring_charge = recurring_charge
+    def __init__(self, **kwargs):
+        super(RecurringCharge, self).__init__(**kwargs)
+        self.recurring_charge = kwargs.get('recurring_charge', None)
         self.name = 'Recurring Charge'

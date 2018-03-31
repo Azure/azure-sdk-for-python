@@ -16,18 +16,22 @@ class RateCardQueryParameters(Model):
     """Parameters that are used in the odata $filter query parameter for providing
     RateCard information.
 
-    :param offer_durable_id: The Offer ID parameter consists of the 'MS-AZR-'
-     prefix, plus the Offer ID number (e.g., MS-AZR-0026P). See
+    All required parameters must be populated in order to send to Azure.
+
+    :param offer_durable_id: Required. The Offer ID parameter consists of the
+     'MS-AZR-' prefix, plus the Offer ID number (e.g., MS-AZR-0026P). See
      https://azure.microsoft.com/en-us/support/legal/offer-details/ for more
      information on the list of available Offer IDs, country/region
      availability, and billing currency.
     :type offer_durable_id: str
-    :param currency: The currency in which the rates need to be provided.
+    :param currency: Required. The currency in which the rates need to be
+     provided.
     :type currency: str
-    :param locale: The culture in which the resource metadata needs to be
-     localized.
+    :param locale: Required. The culture in which the resource metadata needs
+     to be localized.
     :type locale: str
-    :param region_info: 2 letter ISO code where the offer was purchased.
+    :param region_info: Required. 2 letter ISO code where the offer was
+     purchased.
     :type region_info: str
     """
 
@@ -45,9 +49,9 @@ class RateCardQueryParameters(Model):
         'region_info': {'key': 'RegionInfo', 'type': 'str'},
     }
 
-    def __init__(self, offer_durable_id, currency, locale, region_info):
-        super(RateCardQueryParameters, self).__init__()
-        self.offer_durable_id = offer_durable_id
-        self.currency = currency
-        self.locale = locale
-        self.region_info = region_info
+    def __init__(self, **kwargs):
+        super(RateCardQueryParameters, self).__init__(**kwargs)
+        self.offer_durable_id = kwargs.get('offer_durable_id', None)
+        self.currency = kwargs.get('currency', None)
+        self.locale = kwargs.get('locale', None)
+        self.region_info = kwargs.get('region_info', None)

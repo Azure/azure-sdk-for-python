@@ -20,11 +20,13 @@ class RequiredResourceAccess(Model):
     application. The requiredResourceAccess property of the Application entity
     is a collection of ReqiredResourceAccess.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param resource_access: The list of OAuth2.0 permission scopes and app
-     roles that the application requires from the specified resource.
+    :param resource_access: Required. The list of OAuth2.0 permission scopes
+     and app roles that the application requires from the specified resource.
     :type resource_access: list[~azure.graphrbac.models.ResourceAccess]
     :param resource_app_id: The unique identifier for the resource that the
      application requires access to. This should be equal to the appId declared
@@ -42,8 +44,8 @@ class RequiredResourceAccess(Model):
         'resource_app_id': {'key': 'resourceAppId', 'type': 'str'},
     }
 
-    def __init__(self, resource_access, additional_properties=None, resource_app_id=None):
-        super(RequiredResourceAccess, self).__init__()
-        self.additional_properties = additional_properties
-        self.resource_access = resource_access
-        self.resource_app_id = resource_app_id
+    def __init__(self, **kwargs):
+        super(RequiredResourceAccess, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.resource_access = kwargs.get('resource_access', None)
+        self.resource_app_id = kwargs.get('resource_app_id', None)

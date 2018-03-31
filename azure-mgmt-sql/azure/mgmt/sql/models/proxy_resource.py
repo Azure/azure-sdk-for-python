@@ -32,5 +32,11 @@ class ProxyResource(Resource):
         'type': {'readonly': True},
     }
 
-    def __init__(self):
-        super(ProxyResource, self).__init__()
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)

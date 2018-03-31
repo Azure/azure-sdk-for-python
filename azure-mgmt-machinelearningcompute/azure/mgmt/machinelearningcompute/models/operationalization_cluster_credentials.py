@@ -46,11 +46,11 @@ class OperationalizationClusterCredentials(Model):
         'ssl_configuration': {'key': 'sslConfiguration', 'type': 'SslConfiguration'},
     }
 
-    def __init__(self, storage_account=None, container_registry=None, container_service=None, app_insights=None, service_auth_configuration=None, ssl_configuration=None):
-        super(OperationalizationClusterCredentials, self).__init__()
-        self.storage_account = storage_account
-        self.container_registry = container_registry
-        self.container_service = container_service
-        self.app_insights = app_insights
-        self.service_auth_configuration = service_auth_configuration
-        self.ssl_configuration = ssl_configuration
+    def __init__(self, **kwargs):
+        super(OperationalizationClusterCredentials, self).__init__(**kwargs)
+        self.storage_account = kwargs.get('storage_account', None)
+        self.container_registry = kwargs.get('container_registry', None)
+        self.container_service = kwargs.get('container_service', None)
+        self.app_insights = kwargs.get('app_insights', None)
+        self.service_auth_configuration = kwargs.get('service_auth_configuration', None)
+        self.ssl_configuration = kwargs.get('ssl_configuration', None)

@@ -57,7 +57,7 @@ class PersonGroupOperations(object):
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
-        url = '/persongroups/{personGroupId}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -87,6 +87,7 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create.metadata = {'url': '/persongroups/{personGroupId}'}
 
     def delete(
             self, person_group_id, custom_headers=None, raw=False, **operation_config):
@@ -106,7 +107,7 @@ class PersonGroupOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -132,6 +133,7 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/persongroups/{personGroupId}'}
 
     def get(
             self, person_group_id, custom_headers=None, raw=False, **operation_config):
@@ -152,7 +154,7 @@ class PersonGroupOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -185,6 +187,7 @@ class PersonGroupOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/persongroups/{personGroupId}'}
 
     def update(
             self, person_group_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
@@ -210,7 +213,7 @@ class PersonGroupOperations(object):
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
-        url = '/persongroups/{personGroupId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -240,6 +243,7 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update.metadata = {'url': '/persongroups/{personGroupId}'}
 
     def get_training_status(
             self, person_group_id, custom_headers=None, raw=False, **operation_config):
@@ -259,7 +263,7 @@ class PersonGroupOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/training'
+        url = self.get_training_status.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -292,6 +296,7 @@ class PersonGroupOperations(object):
             return client_raw_response
 
         return deserialized
+    get_training_status.metadata = {'url': '/persongroups/{personGroupId}/training'}
 
     def list(
             self, start=None, top=1000, custom_headers=None, raw=False, **operation_config):
@@ -314,7 +319,7 @@ class PersonGroupOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -350,6 +355,7 @@ class PersonGroupOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/persongroups'}
 
     def train(
             self, person_group_id, custom_headers=None, raw=False, **operation_config):
@@ -369,7 +375,7 @@ class PersonGroupOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/train'
+        url = self.train.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -395,3 +401,4 @@ class PersonGroupOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    train.metadata = {'url': '/persongroups/{personGroupId}/train'}

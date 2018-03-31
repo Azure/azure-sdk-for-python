@@ -17,13 +17,13 @@ class JobHistoryFilter(Model):
 
     :param status: Gets or sets the job execution status. Possible values
      include: 'Completed', 'Failed', 'Postponed'
-    :type status: str or :class:`JobExecutionStatus
-     <azure.mgmt.scheduler.models.JobExecutionStatus>`
+    :type status: str or ~azure.mgmt.scheduler.models.JobExecutionStatus
     """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'JobExecutionStatus'},
     }
 
-    def __init__(self, status=None):
-        self.status = status
+    def __init__(self, **kwargs):
+        super(JobHistoryFilter, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)

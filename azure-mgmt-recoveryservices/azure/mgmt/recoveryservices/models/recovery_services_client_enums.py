@@ -12,55 +12,7 @@
 from enum import Enum
 
 
-class StorageModelType(Enum):
-
-    invalid = "Invalid"
-    geo_redundant = "GeoRedundant"
-    locally_redundant = "LocallyRedundant"
-
-
-class StorageType(Enum):
-
-    invalid = "Invalid"
-    geo_redundant = "GeoRedundant"
-    locally_redundant = "LocallyRedundant"
-
-
-class StorageTypeState(Enum):
-
-    invalid = "Invalid"
-    locked = "Locked"
-    unlocked = "Unlocked"
-
-
-class EnhancedSecurityState(Enum):
-
-    invalid = "Invalid"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SkuName(Enum):
-
-    standard = "Standard"
-    rs0 = "RS0"
-
-
-class VaultUpgradeState(Enum):
-
-    unknown = "Unknown"
-    in_progress = "InProgress"
-    upgraded = "Upgraded"
-    failed = "Failed"
-
-
-class TriggerType(Enum):
-
-    user_triggered = "UserTriggered"
-    forced_upgrade = "ForcedUpgrade"
-
-
-class AuthType(Enum):
+class AuthType(str, Enum):
 
     invalid = "Invalid"
     acs = "ACS"
@@ -69,7 +21,27 @@ class AuthType(Enum):
     azure_active_directory = "AzureActiveDirectory"
 
 
-class UsagesUnit(Enum):
+class SkuName(str, Enum):
+
+    standard = "Standard"
+    rs0 = "RS0"
+
+
+class VaultUpgradeState(str, Enum):
+
+    unknown = "Unknown"
+    in_progress = "InProgress"
+    upgraded = "Upgraded"
+    failed = "Failed"
+
+
+class TriggerType(str, Enum):
+
+    user_triggered = "UserTriggered"
+    forced_upgrade = "ForcedUpgrade"
+
+
+class UsagesUnit(str, Enum):
 
     count = "Count"
     bytes = "Bytes"

@@ -12,12 +12,12 @@
 from enum import Enum
 
 
-class HanaHardwareTypeNamesEnum(Enum):
+class HanaHardwareTypeNamesEnum(str, Enum):
 
     cisco_ucs = "Cisco_UCS"
 
 
-class HanaInstanceSizeNamesEnum(Enum):
+class HanaInstanceSizeNamesEnum(str, Enum):
 
     s72m = "S72m"
     s144m = "S144m"

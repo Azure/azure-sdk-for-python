@@ -39,8 +39,8 @@ class JobStatistics(Model):
         'stages': {'key': 'stages', 'type': '[JobStatisticsVertexStage]'},
     }
 
-    def __init__(self):
-        super(JobStatistics, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobStatistics, self).__init__(**kwargs)
         self.last_update_time_utc = None
         self.finalizing_time_utc = None
         self.stages = None

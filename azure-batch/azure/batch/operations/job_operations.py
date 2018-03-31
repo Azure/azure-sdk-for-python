@@ -792,7 +792,7 @@ class JobOperations(object):
     enable.metadata = {'url': '/jobs/{jobId}/enable'}
 
     def terminate(
-            self, job_id, job_terminate_options=None, terminate_reason=None, custom_headers=None, raw=False, **operation_config):
+            self, job_id, terminate_reason=None, job_terminate_options=None, custom_headers=None, raw=False, **operation_config):
         """Terminates the specified job, marking it as completed.
 
         When a Terminate Job request is received, the Batch service sets the
@@ -802,11 +802,11 @@ class JobOperations(object):
 
         :param job_id: The ID of the job to terminate.
         :type job_id: str
-        :param job_terminate_options: Additional parameters for the operation
-        :type job_terminate_options: ~azure.batch.models.JobTerminateOptions
         :param terminate_reason: The text you want to appear as the job's
          TerminateReason. The default is 'UserTerminate'.
         :type terminate_reason: str
+        :param job_terminate_options: Additional parameters for the operation
+        :type job_terminate_options: ~azure.batch.models.JobTerminateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

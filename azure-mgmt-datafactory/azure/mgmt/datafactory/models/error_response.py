@@ -16,9 +16,11 @@ from msrest.exceptions import HttpOperationError
 class ErrorResponse(Model):
     """The object that defines the structure of an Azure Data Factory response.
 
-    :param code: Error code.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code.
     :type code: str
-    :param message: Error message.
+    :param message: Required. Error message.
     :type message: str
     :param target: Property name/path in request associated with error.
     :type target: str
@@ -38,12 +40,12 @@ class ErrorResponse(Model):
         'details': {'key': 'details', 'type': '[ErrorResponse]'},
     }
 
-    def __init__(self, code, message, target=None, details=None):
-        super(ErrorResponse, self).__init__()
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.target = kwargs.get('target', None)
+        self.details = kwargs.get('details', None)
 
 
 class ErrorResponseException(HttpOperationError):

@@ -47,11 +47,11 @@ class SubnetOverride(Model):
         'virtual_network_pool_name': {'key': 'virtualNetworkPoolName', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None, lab_subnet_name=None, use_in_vm_creation_permission=None, use_public_ip_address_permission=None, shared_public_ip_address_configuration=None, virtual_network_pool_name=None):
-        super(SubnetOverride, self).__init__()
-        self.resource_id = resource_id
-        self.lab_subnet_name = lab_subnet_name
-        self.use_in_vm_creation_permission = use_in_vm_creation_permission
-        self.use_public_ip_address_permission = use_public_ip_address_permission
-        self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
-        self.virtual_network_pool_name = virtual_network_pool_name
+    def __init__(self, **kwargs):
+        super(SubnetOverride, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
+        self.use_in_vm_creation_permission = kwargs.get('use_in_vm_creation_permission', None)
+        self.use_public_ip_address_permission = kwargs.get('use_public_ip_address_permission', None)
+        self.shared_public_ip_address_configuration = kwargs.get('shared_public_ip_address_configuration', None)
+        self.virtual_network_pool_name = kwargs.get('virtual_network_pool_name', None)

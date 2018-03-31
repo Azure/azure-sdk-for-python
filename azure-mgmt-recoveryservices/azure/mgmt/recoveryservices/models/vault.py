@@ -18,6 +18,8 @@ class Vault(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
     :ivar name: Resource name associated with the resource.
@@ -27,15 +29,14 @@ class Vault(TrackedResource):
     :vartype type: str
     :param e_tag: Optional ETag.
     :type e_tag: str
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param properties:
-    :type properties: :class:`VaultProperties
-     <azure.mgmt.recoveryservices.models.VaultProperties>`
+    :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
     :param sku:
-    :type sku: :class:`Sku <azure.mgmt.recoveryservices.models.Sku>`
+    :type sku: ~azure.mgmt.recoveryservices.models.Sku
     """
 
     _validation = {
@@ -56,7 +57,7 @@ class Vault(TrackedResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, location, e_tag=None, tags=None, properties=None, sku=None):
-        super(Vault, self).__init__(e_tag=e_tag, location=location, tags=tags)
-        self.properties = properties
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(Vault, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get('sku', None)

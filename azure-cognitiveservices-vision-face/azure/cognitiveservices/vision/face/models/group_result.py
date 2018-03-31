@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class GroupResult(Model):
     """An array of face groups based on face similarity.
 
-    :param groups: A partition of the original faces based on face similarity.
-     Groups are ranked by number of faces
+    All required parameters must be populated in order to send to Azure.
+
+    :param groups: Required. A partition of the original faces based on face
+     similarity. Groups are ranked by number of faces
     :type groups: list[list[str]]
     :param messy_group: Face ids array of faces that cannot find any similar
      faces from original faces.
@@ -32,7 +34,7 @@ class GroupResult(Model):
         'messy_group': {'key': 'messyGroup', 'type': '[str]'},
     }
 
-    def __init__(self, groups, messy_group=None):
-        super(GroupResult, self).__init__()
-        self.groups = groups
-        self.messy_group = messy_group
+    def __init__(self, **kwargs):
+        super(GroupResult, self).__init__(**kwargs)
+        self.groups = kwargs.get('groups', None)
+        self.messy_group = kwargs.get('messy_group', None)

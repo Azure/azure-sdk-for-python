@@ -18,6 +18,8 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The ID of the resource.
     :vartype id: str
     :ivar name: The name of the resource.
@@ -36,8 +38,8 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
     :param format: The format of the certificate - either Pfx or Cer. If
      omitted, the default is Pfx. Possible values include: 'Pfx', 'Cer'
     :type format: str or ~azure.mgmt.batch.models.CertificateFormat
-    :param data: The base64-encoded contents of the certificate. The maximum
-     size is 10KB.
+    :param data: Required. The base64-encoded contents of the certificate. The
+     maximum size is 10KB.
     :type data: str
     :param password: The password to access the certificate's private key.
      This is required if the certificate format is pfx and must be omitted if
@@ -65,10 +67,10 @@ class CertificateCreateOrUpdateParameters(ProxyResource):
         'password': {'key': 'properties.password', 'type': 'str'},
     }
 
-    def __init__(self, data, thumbprint_algorithm=None, thumbprint=None, format=None, password=None):
-        super(CertificateCreateOrUpdateParameters, self).__init__()
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.thumbprint = thumbprint
-        self.format = format
-        self.data = data
-        self.password = password
+    def __init__(self, **kwargs):
+        super(CertificateCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.thumbprint_algorithm = kwargs.get('thumbprint_algorithm', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.format = kwargs.get('format', None)
+        self.data = kwargs.get('data', None)
+        self.password = kwargs.get('password', None)

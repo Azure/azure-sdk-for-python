@@ -65,11 +65,12 @@ class Identity(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None):
+    def __init__(self, **kwargs):
+        super(Identity, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
         self.tenant_id = None
         self.principal_id = None
         self.client_id = None

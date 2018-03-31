@@ -32,9 +32,9 @@ class Face(Model):
         'top': {'key': 'Top', 'type': 'int'},
     }
 
-    def __init__(self, bottom=None, left=None, right=None, top=None):
-        super(Face, self).__init__()
-        self.bottom = bottom
-        self.left = left
-        self.right = right
-        self.top = top
+    def __init__(self, **kwargs):
+        super(Face, self).__init__(**kwargs)
+        self.bottom = kwargs.get('bottom', None)
+        self.left = kwargs.get('left', None)
+        self.right = kwargs.get('right', None)
+        self.top = kwargs.get('top', None)

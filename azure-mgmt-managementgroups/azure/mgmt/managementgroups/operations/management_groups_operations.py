@@ -21,7 +21,7 @@ class ManagementGroupsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. The current version is 2017-11-01-preview. Constant value: "2017-11-01-preview".
     """
 
@@ -65,7 +65,7 @@ class ManagementGroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Management/managementGroups'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -108,6 +108,7 @@ class ManagementGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.Management/managementGroups'}
 
     def get(
             self, group_id, expand=None, recurse=None, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
@@ -139,7 +140,7 @@ class ManagementGroupsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementGroups/{groupId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str')
         }
@@ -182,6 +183,7 @@ class ManagementGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}'}
 
     def create_or_update(
             self, group_id, create_management_group_request, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
@@ -212,7 +214,7 @@ class ManagementGroupsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementGroups/{groupId}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str')
         }
@@ -255,6 +257,7 @@ class ManagementGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}'}
 
     def update(
             self, group_id, create_management_group_request, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
@@ -282,7 +285,7 @@ class ManagementGroupsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementGroups/{groupId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str')
         }
@@ -325,6 +328,7 @@ class ManagementGroupsOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}'}
 
     def delete(
             self, group_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
@@ -348,7 +352,7 @@ class ManagementGroupsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementGroups/{groupId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str')
         }
@@ -380,3 +384,4 @@ class ManagementGroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}'}

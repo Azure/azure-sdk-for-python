@@ -16,8 +16,10 @@ class CertificateReference(Model):
     """A reference to a certificate to be installed on compute nodes in a pool.
     This must exist inside the same account as the pool.
 
-    :param id: The fully qualified ID of the certificate to install on the
-     pool. This must be inside the same batch account as the pool.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The fully qualified ID of the certificate to install
+     on the pool. This must be inside the same batch account as the pool.
     :type id: str
     :param store_location: The location of the certificate store on the
      compute node into which to install the certificate. The default value is
@@ -62,9 +64,9 @@ class CertificateReference(Model):
         'visibility': {'key': 'visibility', 'type': '[CertificateVisibility]'},
     }
 
-    def __init__(self, id, store_location=None, store_name=None, visibility=None):
-        super(CertificateReference, self).__init__()
-        self.id = id
-        self.store_location = store_location
-        self.store_name = store_name
-        self.visibility = visibility
+    def __init__(self, **kwargs):
+        super(CertificateReference, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.store_location = kwargs.get('store_location', None)
+        self.store_name = kwargs.get('store_name', None)
+        self.visibility = kwargs.get('visibility', None)

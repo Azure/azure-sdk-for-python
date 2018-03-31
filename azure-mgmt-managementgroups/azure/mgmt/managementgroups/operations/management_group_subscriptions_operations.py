@@ -21,7 +21,7 @@ class ManagementGroupSubscriptionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. The current version is 2017-11-01-preview. Constant value: "2017-11-01-preview".
     """
 
@@ -59,7 +59,7 @@ class ManagementGroupSubscriptionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str'),
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
@@ -92,6 +92,7 @@ class ManagementGroupSubscriptionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'}
 
     def delete(
             self, group_id, subscription_id, cache_control="no-cache", custom_headers=None, raw=False, **operation_config):
@@ -116,7 +117,7 @@ class ManagementGroupSubscriptionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.managementgroups.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("group_id", group_id, 'str'),
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
@@ -149,3 +150,4 @@ class ManagementGroupSubscriptionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/subscriptions/{subscriptionId}'}

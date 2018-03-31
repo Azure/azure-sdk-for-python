@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class CreateOrUpdateTrustedIdProviderParameters(Model):
     """The parameters used to create a new trusted identity provider.
 
-    :param id_provider: The URL of this trusted identity provider.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id_provider: Required. The URL of this trusted identity provider.
     :type id_provider: str
     """
 
@@ -27,6 +29,6 @@ class CreateOrUpdateTrustedIdProviderParameters(Model):
         'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
     }
 
-    def __init__(self, id_provider):
-        super(CreateOrUpdateTrustedIdProviderParameters, self).__init__()
-        self.id_provider = id_provider
+    def __init__(self, **kwargs):
+        super(CreateOrUpdateTrustedIdProviderParameters, self).__init__(**kwargs)
+        self.id_provider = kwargs.get('id_provider', None)

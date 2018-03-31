@@ -30,6 +30,6 @@ class RedisForceRebootResponse(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(RedisForceRebootResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(RedisForceRebootResponse, self).__init__(**kwargs)
         self.message = None

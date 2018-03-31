@@ -52,8 +52,8 @@ class Diagnostics(Model):
         'start': {'key': 'start', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(Diagnostics, self).__init__()
+    def __init__(self, **kwargs):
+        super(Diagnostics, self).__init__(**kwargs)
         self.column_number = None
         self.end = None
         self.line_number = None

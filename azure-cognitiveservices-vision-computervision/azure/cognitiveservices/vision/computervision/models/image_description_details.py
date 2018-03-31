@@ -35,9 +35,9 @@ class ImageDescriptionDetails(Model):
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, tags=None, captions=None, request_id=None, metadata=None):
-        super(ImageDescriptionDetails, self).__init__()
-        self.tags = tags
-        self.captions = captions
-        self.request_id = request_id
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(ImageDescriptionDetails, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.captions = kwargs.get('captions', None)
+        self.request_id = kwargs.get('request_id', None)
+        self.metadata = kwargs.get('metadata', None)

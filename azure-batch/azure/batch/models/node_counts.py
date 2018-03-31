@@ -15,33 +15,35 @@ from msrest.serialization import Model
 class NodeCounts(Model):
     """The number of nodes in each node state.
 
-    :param creating: The number of nodes in the creating state.
+    All required parameters must be populated in order to send to Azure.
+
+    :param creating: Required. The number of nodes in the creating state.
     :type creating: int
-    :param idle: The number of nodes in the idle state.
+    :param idle: Required. The number of nodes in the idle state.
     :type idle: int
-    :param offline: The number of nodes in the offline state.
+    :param offline: Required. The number of nodes in the offline state.
     :type offline: int
-    :param preempted: The number of nodes in the preempted state.
+    :param preempted: Required. The number of nodes in the preempted state.
     :type preempted: int
-    :param rebooting: The count of nodes in the rebooting state.
+    :param rebooting: Required. The count of nodes in the rebooting state.
     :type rebooting: int
-    :param reimaging: The number of nodes in the reimaging state.
+    :param reimaging: Required. The number of nodes in the reimaging state.
     :type reimaging: int
-    :param running: The number of nodes in the running state.
+    :param running: Required. The number of nodes in the running state.
     :type running: int
-    :param starting: The number of nodes in the starting state.
+    :param starting: Required. The number of nodes in the starting state.
     :type starting: int
-    :param start_task_failed: The number of nodes in the startTaskFailed
-     state.
+    :param start_task_failed: Required. The number of nodes in the
+     startTaskFailed state.
     :type start_task_failed: int
-    :param unknown: The number of nodes in the unknown state.
+    :param unknown: Required. The number of nodes in the unknown state.
     :type unknown: int
-    :param unusable: The number of nodes in the unusable state.
+    :param unusable: Required. The number of nodes in the unusable state.
     :type unusable: int
-    :param waiting_for_start_task: The number of nodes in the
+    :param waiting_for_start_task: Required. The number of nodes in the
      waitingForStartTask state.
     :type waiting_for_start_task: int
-    :param total: The total number of nodes.
+    :param total: Required. The total number of nodes.
     :type total: int
     """
 
@@ -77,18 +79,18 @@ class NodeCounts(Model):
         'total': {'key': 'total', 'type': 'int'},
     }
 
-    def __init__(self, creating, idle, offline, preempted, rebooting, reimaging, running, starting, start_task_failed, unknown, unusable, waiting_for_start_task, total):
-        super(NodeCounts, self).__init__()
-        self.creating = creating
-        self.idle = idle
-        self.offline = offline
-        self.preempted = preempted
-        self.rebooting = rebooting
-        self.reimaging = reimaging
-        self.running = running
-        self.starting = starting
-        self.start_task_failed = start_task_failed
-        self.unknown = unknown
-        self.unusable = unusable
-        self.waiting_for_start_task = waiting_for_start_task
-        self.total = total
+    def __init__(self, **kwargs):
+        super(NodeCounts, self).__init__(**kwargs)
+        self.creating = kwargs.get('creating', None)
+        self.idle = kwargs.get('idle', None)
+        self.offline = kwargs.get('offline', None)
+        self.preempted = kwargs.get('preempted', None)
+        self.rebooting = kwargs.get('rebooting', None)
+        self.reimaging = kwargs.get('reimaging', None)
+        self.running = kwargs.get('running', None)
+        self.starting = kwargs.get('starting', None)
+        self.start_task_failed = kwargs.get('start_task_failed', None)
+        self.unknown = kwargs.get('unknown', None)
+        self.unusable = kwargs.get('unusable', None)
+        self.waiting_for_start_task = kwargs.get('waiting_for_start_task', None)
+        self.total = kwargs.get('total', None)

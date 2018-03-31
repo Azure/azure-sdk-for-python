@@ -18,7 +18,10 @@ class RepairTaskDeleteDescription(Model):
     directly from your code.
     .
 
-    :param task_id: The ID of the completed repair task to be deleted.
+    All required parameters must be populated in order to send to Azure.
+
+    :param task_id: Required. The ID of the completed repair task to be
+     deleted.
     :type task_id: str
     :param version: The current version number of the repair task. If
      non-zero, then the request will only succeed if this value matches the
@@ -36,7 +39,7 @@ class RepairTaskDeleteDescription(Model):
         'version': {'key': 'Version', 'type': 'str'},
     }
 
-    def __init__(self, task_id, version=None):
-        super(RepairTaskDeleteDescription, self).__init__()
-        self.task_id = task_id
-        self.version = version
+    def __init__(self, **kwargs):
+        super(RepairTaskDeleteDescription, self).__init__(**kwargs)
+        self.task_id = kwargs.get('task_id', None)
+        self.version = kwargs.get('version', None)

@@ -16,8 +16,10 @@ class JobScheduleAddParameter(Model):
     """A job schedule that allows recurring jobs by specifying when to run jobs
     and a specification used to create each job.
 
-    :param id: A string that uniquely identifies the schedule within the
-     account. The ID can contain any combination of alphanumeric characters
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A string that uniquely identifies the schedule within
+     the account. The ID can contain any combination of alphanumeric characters
      including hyphens and underscores, and cannot contain more than 64
      characters. The ID is case-preserving and case-insensitive (that is, you
      may not have two IDs within an account that differ only by case).
@@ -26,10 +28,11 @@ class JobScheduleAddParameter(Model):
      need not be unique and can contain any Unicode characters up to a maximum
      length of 1024.
     :type display_name: str
-    :param schedule: The schedule according to which jobs will be created.
+    :param schedule: Required. The schedule according to which jobs will be
+     created.
     :type schedule: ~azure.batch.models.Schedule
-    :param job_specification: The details of the jobs to be created on this
-     schedule.
+    :param job_specification: Required. The details of the jobs to be created
+     on this schedule.
     :type job_specification: ~azure.batch.models.JobSpecification
     :param metadata: A list of name-value pairs associated with the schedule
      as metadata. The Batch service does not assign any meaning to metadata; it
@@ -51,10 +54,10 @@ class JobScheduleAddParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, id, schedule, job_specification, display_name=None, metadata=None):
-        super(JobScheduleAddParameter, self).__init__()
-        self.id = id
-        self.display_name = display_name
-        self.schedule = schedule
-        self.job_specification = job_specification
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(JobScheduleAddParameter, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.schedule = kwargs.get('schedule', None)
+        self.job_specification = kwargs.get('job_specification', None)
+        self.metadata = kwargs.get('metadata', None)

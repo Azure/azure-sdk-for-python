@@ -18,8 +18,7 @@ class JobMaxRecurrence(Model):
     :param frequency: Gets or sets the frequency of recurrence (second,
      minute, hour, day, week, month). Possible values include: 'Minute',
      'Hour', 'Day', 'Week', 'Month'
-    :type frequency: str or :class:`RecurrenceFrequency
-     <azure.mgmt.scheduler.models.RecurrenceFrequency>`
+    :type frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
     :param interval: Gets or sets the interval between retries.
     :type interval: int
     """
@@ -29,6 +28,7 @@ class JobMaxRecurrence(Model):
         'interval': {'key': 'interval', 'type': 'int'},
     }
 
-    def __init__(self, frequency=None, interval=None):
-        self.frequency = frequency
-        self.interval = interval
+    def __init__(self, **kwargs):
+        super(JobMaxRecurrence, self).__init__(**kwargs)
+        self.frequency = kwargs.get('frequency', None)
+        self.interval = kwargs.get('interval', None)

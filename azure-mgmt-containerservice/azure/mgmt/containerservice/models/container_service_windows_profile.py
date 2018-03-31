@@ -15,9 +15,13 @@ from msrest.serialization import Model
 class ContainerServiceWindowsProfile(Model):
     """Profile for Windows VMs in the container service cluster.
 
-    :param admin_username: The administrator username to use for Windows VMs.
+    All required parameters must be populated in order to send to Azure.
+
+    :param admin_username: Required. The administrator username to use for
+     Windows VMs.
     :type admin_username: str
-    :param admin_password: The administrator password to use for Windows VMs.
+    :param admin_password: Required. The administrator password to use for
+     Windows VMs.
     :type admin_password: str
     """
 
@@ -31,7 +35,7 @@ class ContainerServiceWindowsProfile(Model):
         'admin_password': {'key': 'adminPassword', 'type': 'str'},
     }
 
-    def __init__(self, admin_username, admin_password):
-        super(ContainerServiceWindowsProfile, self).__init__()
-        self.admin_username = admin_username
-        self.admin_password = admin_password
+    def __init__(self, **kwargs):
+        super(ContainerServiceWindowsProfile, self).__init__(**kwargs)
+        self.admin_username = kwargs.get('admin_username', None)
+        self.admin_password = kwargs.get('admin_password', None)

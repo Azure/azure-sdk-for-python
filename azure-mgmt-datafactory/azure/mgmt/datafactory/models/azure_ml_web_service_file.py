@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class AzureMLWebServiceFile(Model):
     """Azure ML WebService Input/Output file.
 
-    :param file_path: The relative file path, including container name, in the
-     Azure Blob Storage specified by the LinkedService. Type: string (or
-     Expression with resultType string).
+    All required parameters must be populated in order to send to Azure.
+
+    :param file_path: Required. The relative file path, including container
+     name, in the Azure Blob Storage specified by the LinkedService. Type:
+     string (or Expression with resultType string).
     :type file_path: object
-    :param linked_service_name: Reference to an Azure Storage LinkedService,
-     where Azure ML WebService Input/Output file located.
+    :param linked_service_name: Required. Reference to an Azure Storage
+     LinkedService, where Azure ML WebService Input/Output file located.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     """
@@ -35,7 +37,7 @@ class AzureMLWebServiceFile(Model):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
     }
 
-    def __init__(self, file_path, linked_service_name):
-        super(AzureMLWebServiceFile, self).__init__()
-        self.file_path = file_path
-        self.linked_service_name = linked_service_name
+    def __init__(self, **kwargs):
+        super(AzureMLWebServiceFile, self).__init__(**kwargs)
+        self.file_path = kwargs.get('file_path', None)
+        self.linked_service_name = kwargs.get('linked_service_name', None)

@@ -18,13 +18,15 @@ class Topic(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Fully qualified identifier of the resource
     :vartype id: str
     :ivar name: Name of the resource
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
-    :param location: Location of the resource
+    :param location: Required. Location of the resource
     :type location: str
     :param tags: Tags of the resource
     :type tags: dict[str, str]
@@ -56,7 +58,7 @@ class Topic(TrackedResource):
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None):
-        super(Topic, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(Topic, self).__init__(**kwargs)
         self.provisioning_state = None
         self.endpoint = None

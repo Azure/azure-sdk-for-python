@@ -24,6 +24,6 @@ class KubernetesClusterProperties(Model):
         'service_principal': {'key': 'servicePrincipal', 'type': 'ServicePrincipalProperties'},
     }
 
-    def __init__(self, service_principal=None):
-        super(KubernetesClusterProperties, self).__init__()
-        self.service_principal = service_principal
+    def __init__(self, **kwargs):
+        super(KubernetesClusterProperties, self).__init__(**kwargs)
+        self.service_principal = kwargs.get('service_principal', None)

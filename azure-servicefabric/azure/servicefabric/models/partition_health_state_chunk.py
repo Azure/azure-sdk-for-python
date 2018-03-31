@@ -37,7 +37,7 @@ class PartitionHealthStateChunk(EntityHealthStateChunk):
         'replica_health_state_chunks': {'key': 'ReplicaHealthStateChunks', 'type': 'ReplicaHealthStateChunkList'},
     }
 
-    def __init__(self, health_state=None, partition_id=None, replica_health_state_chunks=None):
-        super(PartitionHealthStateChunk, self).__init__(health_state=health_state)
-        self.partition_id = partition_id
-        self.replica_health_state_chunks = replica_health_state_chunks
+    def __init__(self, **kwargs):
+        super(PartitionHealthStateChunk, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.replica_health_state_chunks = kwargs.get('replica_health_state_chunks', None)

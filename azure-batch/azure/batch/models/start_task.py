@@ -16,12 +16,14 @@ class StartTask(Model):
     """A task which is run when a compute node joins a pool in the Azure Batch
     service, or when the compute node is rebooted or reimaged.
 
-    :param command_line: The command line of the start task. The command line
-     does not run under a shell, and therefore cannot take advantage of shell
-     features such as environment variable expansion. If you want to take
-     advantage of such features, you should invoke the shell in the command
-     line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
-     MyCommand" in Linux.
+    All required parameters must be populated in order to send to Azure.
+
+    :param command_line: Required. The command line of the start task. The
+     command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you
+     want to take advantage of such features, you should invoke the shell in
+     the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param container_settings: The settings for the container under which the
      start task runs. When this is specified, all directories recursively below
@@ -78,12 +80,12 @@ class StartTask(Model):
         'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, command_line, container_settings=None, resource_files=None, environment_settings=None, user_identity=None, max_task_retry_count=None, wait_for_success=None):
-        super(StartTask, self).__init__()
-        self.command_line = command_line
-        self.container_settings = container_settings
-        self.resource_files = resource_files
-        self.environment_settings = environment_settings
-        self.user_identity = user_identity
-        self.max_task_retry_count = max_task_retry_count
-        self.wait_for_success = wait_for_success
+    def __init__(self, **kwargs):
+        super(StartTask, self).__init__(**kwargs)
+        self.command_line = kwargs.get('command_line', None)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.resource_files = kwargs.get('resource_files', None)
+        self.environment_settings = kwargs.get('environment_settings', None)
+        self.user_identity = kwargs.get('user_identity', None)
+        self.max_task_retry_count = kwargs.get('max_task_retry_count', None)
+        self.wait_for_success = kwargs.get('wait_for_success', None)

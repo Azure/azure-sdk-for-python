@@ -9,100 +9,196 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
-from .sub_resource import SubResource
-from .resource_reference import ResourceReference
-from .sku import Sku
-from .workflow_parameter import WorkflowParameter
-from .workflow import Workflow
-from .workflow_filter import WorkflowFilter
-from .workflow_version import WorkflowVersion
-from .recurrence_schedule_occurrence import RecurrenceScheduleOccurrence
-from .recurrence_schedule import RecurrenceSchedule
-from .workflow_trigger_recurrence import WorkflowTriggerRecurrence
-from .workflow_trigger import WorkflowTrigger
-from .workflow_trigger_filter import WorkflowTriggerFilter
-from .workflow_trigger_list_callback_url_queries import WorkflowTriggerListCallbackUrlQueries
-from .workflow_trigger_callback_url import WorkflowTriggerCallbackUrl
-from .correlation import Correlation
-from .content_hash import ContentHash
-from .content_link import ContentLink
-from .workflow_trigger_history import WorkflowTriggerHistory
-from .workflow_trigger_history_filter import WorkflowTriggerHistoryFilter
-from .workflow_run_trigger import WorkflowRunTrigger
-from .workflow_output_parameter import WorkflowOutputParameter
-from .workflow_run import WorkflowRun
-from .workflow_run_filter import WorkflowRunFilter
-from .error_properties import ErrorProperties
-from .error_response import ErrorResponse, ErrorResponseException
-from .retry_history import RetryHistory
-from .workflow_run_action import WorkflowRunAction
-from .workflow_run_action_filter import WorkflowRunActionFilter
-from .regenerate_action_parameter import RegenerateActionParameter
-from .generate_upgraded_definition_parameters import GenerateUpgradedDefinitionParameters
-from .integration_account_sku import IntegrationAccountSku
-from .integration_account import IntegrationAccount
-from .get_callback_url_parameters import GetCallbackUrlParameters
-from .callback_url import CallbackUrl
-from .integration_account_schema import IntegrationAccountSchema
-from .integration_account_schema_filter import IntegrationAccountSchemaFilter
-from .integration_account_map_properties_parameters_schema import IntegrationAccountMapPropertiesParametersSchema
-from .integration_account_map import IntegrationAccountMap
-from .integration_account_map_filter import IntegrationAccountMapFilter
-from .business_identity import BusinessIdentity
-from .b2_bpartner_content import B2BPartnerContent
-from .partner_content import PartnerContent
-from .integration_account_partner import IntegrationAccountPartner
-from .integration_account_partner_filter import IntegrationAccountPartnerFilter
-from .as2_message_connection_settings import AS2MessageConnectionSettings
-from .as2_acknowledgement_connection_settings import AS2AcknowledgementConnectionSettings
-from .as2_mdn_settings import AS2MdnSettings
-from .as2_security_settings import AS2SecuritySettings
-from .as2_validation_settings import AS2ValidationSettings
-from .as2_envelope_settings import AS2EnvelopeSettings
-from .as2_error_settings import AS2ErrorSettings
-from .as2_protocol_settings import AS2ProtocolSettings
-from .as2_one_way_agreement import AS2OneWayAgreement
-from .as2_agreement_content import AS2AgreementContent
-from .x12_validation_settings import X12ValidationSettings
-from .x12_framing_settings import X12FramingSettings
-from .x12_envelope_settings import X12EnvelopeSettings
-from .x12_acknowledgement_settings import X12AcknowledgementSettings
-from .x12_message_filter import X12MessageFilter
-from .x12_security_settings import X12SecuritySettings
-from .x12_processing_settings import X12ProcessingSettings
-from .x12_envelope_override import X12EnvelopeOverride
-from .x12_validation_override import X12ValidationOverride
-from .x12_message_identifier import X12MessageIdentifier
-from .x12_schema_reference import X12SchemaReference
-from .x12_delimiter_overrides import X12DelimiterOverrides
-from .x12_protocol_settings import X12ProtocolSettings
-from .x12_one_way_agreement import X12OneWayAgreement
-from .x12_agreement_content import X12AgreementContent
-from .edifact_validation_settings import EdifactValidationSettings
-from .edifact_framing_settings import EdifactFramingSettings
-from .edifact_envelope_settings import EdifactEnvelopeSettings
-from .edifact_acknowledgement_settings import EdifactAcknowledgementSettings
-from .edifact_message_filter import EdifactMessageFilter
-from .edifact_processing_settings import EdifactProcessingSettings
-from .edifact_envelope_override import EdifactEnvelopeOverride
-from .edifact_message_identifier import EdifactMessageIdentifier
-from .edifact_schema_reference import EdifactSchemaReference
-from .edifact_validation_override import EdifactValidationOverride
-from .edifact_delimiter_override import EdifactDelimiterOverride
-from .edifact_protocol_settings import EdifactProtocolSettings
-from .edifact_one_way_agreement import EdifactOneWayAgreement
-from .edifact_agreement_content import EdifactAgreementContent
-from .agreement_content import AgreementContent
-from .integration_account_agreement import IntegrationAccountAgreement
-from .integration_account_agreement_filter import IntegrationAccountAgreementFilter
-from .key_vault_key_reference_key_vault import KeyVaultKeyReferenceKeyVault
-from .key_vault_key_reference import KeyVaultKeyReference
-from .integration_account_certificate import IntegrationAccountCertificate
-from .integration_account_session_filter import IntegrationAccountSessionFilter
-from .integration_account_session import IntegrationAccountSession
-from .operation_display import OperationDisplay
-from .operation import Operation
+try:
+    from .resource_py3 import Resource
+    from .sub_resource_py3 import SubResource
+    from .resource_reference_py3 import ResourceReference
+    from .sku_py3 import Sku
+    from .workflow_parameter_py3 import WorkflowParameter
+    from .workflow_py3 import Workflow
+    from .workflow_filter_py3 import WorkflowFilter
+    from .workflow_version_py3 import WorkflowVersion
+    from .recurrence_schedule_occurrence_py3 import RecurrenceScheduleOccurrence
+    from .recurrence_schedule_py3 import RecurrenceSchedule
+    from .workflow_trigger_recurrence_py3 import WorkflowTriggerRecurrence
+    from .workflow_trigger_py3 import WorkflowTrigger
+    from .workflow_trigger_filter_py3 import WorkflowTriggerFilter
+    from .workflow_trigger_list_callback_url_queries_py3 import WorkflowTriggerListCallbackUrlQueries
+    from .workflow_trigger_callback_url_py3 import WorkflowTriggerCallbackUrl
+    from .correlation_py3 import Correlation
+    from .content_hash_py3 import ContentHash
+    from .content_link_py3 import ContentLink
+    from .workflow_trigger_history_py3 import WorkflowTriggerHistory
+    from .workflow_trigger_history_filter_py3 import WorkflowTriggerHistoryFilter
+    from .workflow_run_trigger_py3 import WorkflowRunTrigger
+    from .workflow_output_parameter_py3 import WorkflowOutputParameter
+    from .workflow_run_py3 import WorkflowRun
+    from .workflow_run_filter_py3 import WorkflowRunFilter
+    from .error_properties_py3 import ErrorProperties
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .retry_history_py3 import RetryHistory
+    from .workflow_run_action_py3 import WorkflowRunAction
+    from .workflow_run_action_filter_py3 import WorkflowRunActionFilter
+    from .regenerate_action_parameter_py3 import RegenerateActionParameter
+    from .generate_upgraded_definition_parameters_py3 import GenerateUpgradedDefinitionParameters
+    from .integration_account_sku_py3 import IntegrationAccountSku
+    from .integration_account_py3 import IntegrationAccount
+    from .get_callback_url_parameters_py3 import GetCallbackUrlParameters
+    from .callback_url_py3 import CallbackUrl
+    from .integration_account_schema_py3 import IntegrationAccountSchema
+    from .integration_account_schema_filter_py3 import IntegrationAccountSchemaFilter
+    from .integration_account_map_properties_parameters_schema_py3 import IntegrationAccountMapPropertiesParametersSchema
+    from .integration_account_map_py3 import IntegrationAccountMap
+    from .integration_account_map_filter_py3 import IntegrationAccountMapFilter
+    from .business_identity_py3 import BusinessIdentity
+    from .b2_bpartner_content_py3 import B2BPartnerContent
+    from .partner_content_py3 import PartnerContent
+    from .integration_account_partner_py3 import IntegrationAccountPartner
+    from .integration_account_partner_filter_py3 import IntegrationAccountPartnerFilter
+    from .as2_message_connection_settings_py3 import AS2MessageConnectionSettings
+    from .as2_acknowledgement_connection_settings_py3 import AS2AcknowledgementConnectionSettings
+    from .as2_mdn_settings_py3 import AS2MdnSettings
+    from .as2_security_settings_py3 import AS2SecuritySettings
+    from .as2_validation_settings_py3 import AS2ValidationSettings
+    from .as2_envelope_settings_py3 import AS2EnvelopeSettings
+    from .as2_error_settings_py3 import AS2ErrorSettings
+    from .as2_protocol_settings_py3 import AS2ProtocolSettings
+    from .as2_one_way_agreement_py3 import AS2OneWayAgreement
+    from .as2_agreement_content_py3 import AS2AgreementContent
+    from .x12_validation_settings_py3 import X12ValidationSettings
+    from .x12_framing_settings_py3 import X12FramingSettings
+    from .x12_envelope_settings_py3 import X12EnvelopeSettings
+    from .x12_acknowledgement_settings_py3 import X12AcknowledgementSettings
+    from .x12_message_filter_py3 import X12MessageFilter
+    from .x12_security_settings_py3 import X12SecuritySettings
+    from .x12_processing_settings_py3 import X12ProcessingSettings
+    from .x12_envelope_override_py3 import X12EnvelopeOverride
+    from .x12_validation_override_py3 import X12ValidationOverride
+    from .x12_message_identifier_py3 import X12MessageIdentifier
+    from .x12_schema_reference_py3 import X12SchemaReference
+    from .x12_delimiter_overrides_py3 import X12DelimiterOverrides
+    from .x12_protocol_settings_py3 import X12ProtocolSettings
+    from .x12_one_way_agreement_py3 import X12OneWayAgreement
+    from .x12_agreement_content_py3 import X12AgreementContent
+    from .edifact_validation_settings_py3 import EdifactValidationSettings
+    from .edifact_framing_settings_py3 import EdifactFramingSettings
+    from .edifact_envelope_settings_py3 import EdifactEnvelopeSettings
+    from .edifact_acknowledgement_settings_py3 import EdifactAcknowledgementSettings
+    from .edifact_message_filter_py3 import EdifactMessageFilter
+    from .edifact_processing_settings_py3 import EdifactProcessingSettings
+    from .edifact_envelope_override_py3 import EdifactEnvelopeOverride
+    from .edifact_message_identifier_py3 import EdifactMessageIdentifier
+    from .edifact_schema_reference_py3 import EdifactSchemaReference
+    from .edifact_validation_override_py3 import EdifactValidationOverride
+    from .edifact_delimiter_override_py3 import EdifactDelimiterOverride
+    from .edifact_protocol_settings_py3 import EdifactProtocolSettings
+    from .edifact_one_way_agreement_py3 import EdifactOneWayAgreement
+    from .edifact_agreement_content_py3 import EdifactAgreementContent
+    from .agreement_content_py3 import AgreementContent
+    from .integration_account_agreement_py3 import IntegrationAccountAgreement
+    from .integration_account_agreement_filter_py3 import IntegrationAccountAgreementFilter
+    from .key_vault_key_reference_key_vault_py3 import KeyVaultKeyReferenceKeyVault
+    from .key_vault_key_reference_py3 import KeyVaultKeyReference
+    from .integration_account_certificate_py3 import IntegrationAccountCertificate
+    from .integration_account_session_filter_py3 import IntegrationAccountSessionFilter
+    from .integration_account_session_py3 import IntegrationAccountSession
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+except (SyntaxError, ImportError):
+    from .resource import Resource
+    from .sub_resource import SubResource
+    from .resource_reference import ResourceReference
+    from .sku import Sku
+    from .workflow_parameter import WorkflowParameter
+    from .workflow import Workflow
+    from .workflow_filter import WorkflowFilter
+    from .workflow_version import WorkflowVersion
+    from .recurrence_schedule_occurrence import RecurrenceScheduleOccurrence
+    from .recurrence_schedule import RecurrenceSchedule
+    from .workflow_trigger_recurrence import WorkflowTriggerRecurrence
+    from .workflow_trigger import WorkflowTrigger
+    from .workflow_trigger_filter import WorkflowTriggerFilter
+    from .workflow_trigger_list_callback_url_queries import WorkflowTriggerListCallbackUrlQueries
+    from .workflow_trigger_callback_url import WorkflowTriggerCallbackUrl
+    from .correlation import Correlation
+    from .content_hash import ContentHash
+    from .content_link import ContentLink
+    from .workflow_trigger_history import WorkflowTriggerHistory
+    from .workflow_trigger_history_filter import WorkflowTriggerHistoryFilter
+    from .workflow_run_trigger import WorkflowRunTrigger
+    from .workflow_output_parameter import WorkflowOutputParameter
+    from .workflow_run import WorkflowRun
+    from .workflow_run_filter import WorkflowRunFilter
+    from .error_properties import ErrorProperties
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .retry_history import RetryHistory
+    from .workflow_run_action import WorkflowRunAction
+    from .workflow_run_action_filter import WorkflowRunActionFilter
+    from .regenerate_action_parameter import RegenerateActionParameter
+    from .generate_upgraded_definition_parameters import GenerateUpgradedDefinitionParameters
+    from .integration_account_sku import IntegrationAccountSku
+    from .integration_account import IntegrationAccount
+    from .get_callback_url_parameters import GetCallbackUrlParameters
+    from .callback_url import CallbackUrl
+    from .integration_account_schema import IntegrationAccountSchema
+    from .integration_account_schema_filter import IntegrationAccountSchemaFilter
+    from .integration_account_map_properties_parameters_schema import IntegrationAccountMapPropertiesParametersSchema
+    from .integration_account_map import IntegrationAccountMap
+    from .integration_account_map_filter import IntegrationAccountMapFilter
+    from .business_identity import BusinessIdentity
+    from .b2_bpartner_content import B2BPartnerContent
+    from .partner_content import PartnerContent
+    from .integration_account_partner import IntegrationAccountPartner
+    from .integration_account_partner_filter import IntegrationAccountPartnerFilter
+    from .as2_message_connection_settings import AS2MessageConnectionSettings
+    from .as2_acknowledgement_connection_settings import AS2AcknowledgementConnectionSettings
+    from .as2_mdn_settings import AS2MdnSettings
+    from .as2_security_settings import AS2SecuritySettings
+    from .as2_validation_settings import AS2ValidationSettings
+    from .as2_envelope_settings import AS2EnvelopeSettings
+    from .as2_error_settings import AS2ErrorSettings
+    from .as2_protocol_settings import AS2ProtocolSettings
+    from .as2_one_way_agreement import AS2OneWayAgreement
+    from .as2_agreement_content import AS2AgreementContent
+    from .x12_validation_settings import X12ValidationSettings
+    from .x12_framing_settings import X12FramingSettings
+    from .x12_envelope_settings import X12EnvelopeSettings
+    from .x12_acknowledgement_settings import X12AcknowledgementSettings
+    from .x12_message_filter import X12MessageFilter
+    from .x12_security_settings import X12SecuritySettings
+    from .x12_processing_settings import X12ProcessingSettings
+    from .x12_envelope_override import X12EnvelopeOverride
+    from .x12_validation_override import X12ValidationOverride
+    from .x12_message_identifier import X12MessageIdentifier
+    from .x12_schema_reference import X12SchemaReference
+    from .x12_delimiter_overrides import X12DelimiterOverrides
+    from .x12_protocol_settings import X12ProtocolSettings
+    from .x12_one_way_agreement import X12OneWayAgreement
+    from .x12_agreement_content import X12AgreementContent
+    from .edifact_validation_settings import EdifactValidationSettings
+    from .edifact_framing_settings import EdifactFramingSettings
+    from .edifact_envelope_settings import EdifactEnvelopeSettings
+    from .edifact_acknowledgement_settings import EdifactAcknowledgementSettings
+    from .edifact_message_filter import EdifactMessageFilter
+    from .edifact_processing_settings import EdifactProcessingSettings
+    from .edifact_envelope_override import EdifactEnvelopeOverride
+    from .edifact_message_identifier import EdifactMessageIdentifier
+    from .edifact_schema_reference import EdifactSchemaReference
+    from .edifact_validation_override import EdifactValidationOverride
+    from .edifact_delimiter_override import EdifactDelimiterOverride
+    from .edifact_protocol_settings import EdifactProtocolSettings
+    from .edifact_one_way_agreement import EdifactOneWayAgreement
+    from .edifact_agreement_content import EdifactAgreementContent
+    from .agreement_content import AgreementContent
+    from .integration_account_agreement import IntegrationAccountAgreement
+    from .integration_account_agreement_filter import IntegrationAccountAgreementFilter
+    from .key_vault_key_reference_key_vault import KeyVaultKeyReferenceKeyVault
+    from .key_vault_key_reference import KeyVaultKeyReference
+    from .integration_account_certificate import IntegrationAccountCertificate
+    from .integration_account_session_filter import IntegrationAccountSessionFilter
+    from .integration_account_session import IntegrationAccountSession
+    from .operation_display import OperationDisplay
+    from .operation import Operation
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged

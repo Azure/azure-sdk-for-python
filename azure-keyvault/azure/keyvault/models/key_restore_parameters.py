@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class KeyRestoreParameters(Model):
     """The key restore parameters.
 
-    :param key_bundle_backup: The backup blob associated with a key bundle.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_bundle_backup: Required. The backup blob associated with a key
+     bundle.
     :type key_bundle_backup: bytes
     """
 
@@ -27,5 +30,6 @@ class KeyRestoreParameters(Model):
         'key_bundle_backup': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self, key_bundle_backup):
-        self.key_bundle_backup = key_bundle_backup
+    def __init__(self, **kwargs):
+        super(KeyRestoreParameters, self).__init__(**kwargs)
+        self.key_bundle_backup = kwargs.get('key_bundle_backup', None)

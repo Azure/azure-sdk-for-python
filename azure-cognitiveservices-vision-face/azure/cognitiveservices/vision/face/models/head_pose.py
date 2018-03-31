@@ -29,8 +29,8 @@ class HeadPose(Model):
         'pitch': {'key': 'pitch', 'type': 'float'},
     }
 
-    def __init__(self, roll=None, yaw=None, pitch=None):
-        super(HeadPose, self).__init__()
-        self.roll = roll
-        self.yaw = yaw
-        self.pitch = pitch
+    def __init__(self, **kwargs):
+        super(HeadPose, self).__init__(**kwargs)
+        self.roll = kwargs.get('roll', None)
+        self.yaw = kwargs.get('yaw', None)
+        self.pitch = kwargs.get('pitch', None)

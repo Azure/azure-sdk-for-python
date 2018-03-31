@@ -24,6 +24,6 @@ class EvaluatePoliciesRequest(Model):
         'policies': {'key': 'policies', 'type': '[EvaluatePoliciesProperties]'},
     }
 
-    def __init__(self, policies=None):
-        super(EvaluatePoliciesRequest, self).__init__()
-        self.policies = policies
+    def __init__(self, **kwargs):
+        super(EvaluatePoliciesRequest, self).__init__(**kwargs)
+        self.policies = kwargs.get('policies', None)

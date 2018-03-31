@@ -22,7 +22,7 @@ class SuppressionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
     """
 
@@ -59,7 +59,7 @@ class SuppressionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
             'recommendationId': self._serialize.url("recommendation_id", recommendation_id, 'str'),
@@ -100,6 +100,7 @@ class SuppressionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'}
 
     def create(
             self, resource_uri, recommendation_id, name, suppression_id=None, ttl=None, custom_headers=None, raw=False, **operation_config):
@@ -132,7 +133,7 @@ class SuppressionsOperations(object):
         suppression_contract = models.SuppressionContract(suppression_id=suppression_id, ttl=ttl)
 
         # Construct URL
-        url = '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
             'recommendationId': self._serialize.url("recommendation_id", recommendation_id, 'str'),
@@ -177,6 +178,7 @@ class SuppressionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'}
 
     def delete(
             self, resource_uri, recommendation_id, name, custom_headers=None, raw=False, **operation_config):
@@ -201,7 +203,7 @@ class SuppressionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
             'recommendationId': self._serialize.url("recommendation_id", recommendation_id, 'str'),
@@ -235,6 +237,7 @@ class SuppressionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{resourceUri}/providers/Microsoft.Advisor/recommendations/{recommendationId}/suppressions/{name}'}
 
     def list(
             self, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
@@ -262,7 +265,7 @@ class SuppressionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/suppressions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -311,3 +314,4 @@ class SuppressionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/suppressions'}

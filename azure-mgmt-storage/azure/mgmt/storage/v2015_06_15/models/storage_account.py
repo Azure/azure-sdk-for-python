@@ -104,16 +104,16 @@ class StorageAccount(Resource):
         'secondary_endpoints': {'key': 'properties.secondaryEndpoints', 'type': 'Endpoints'},
     }
 
-    def __init__(self, location=None, tags=None, provisioning_state=None, account_type=None, primary_endpoints=None, primary_location=None, status_of_primary=None, last_geo_failover_time=None, secondary_location=None, status_of_secondary=None, creation_time=None, custom_domain=None, secondary_endpoints=None):
-        super(StorageAccount, self).__init__(location=location, tags=tags)
-        self.provisioning_state = provisioning_state
-        self.account_type = account_type
-        self.primary_endpoints = primary_endpoints
-        self.primary_location = primary_location
-        self.status_of_primary = status_of_primary
-        self.last_geo_failover_time = last_geo_failover_time
-        self.secondary_location = secondary_location
-        self.status_of_secondary = status_of_secondary
-        self.creation_time = creation_time
-        self.custom_domain = custom_domain
-        self.secondary_endpoints = secondary_endpoints
+    def __init__(self, **kwargs):
+        super(StorageAccount, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.account_type = kwargs.get('account_type', None)
+        self.primary_endpoints = kwargs.get('primary_endpoints', None)
+        self.primary_location = kwargs.get('primary_location', None)
+        self.status_of_primary = kwargs.get('status_of_primary', None)
+        self.last_geo_failover_time = kwargs.get('last_geo_failover_time', None)
+        self.secondary_location = kwargs.get('secondary_location', None)
+        self.status_of_secondary = kwargs.get('status_of_secondary', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.custom_domain = kwargs.get('custom_domain', None)
+        self.secondary_endpoints = kwargs.get('secondary_endpoints', None)

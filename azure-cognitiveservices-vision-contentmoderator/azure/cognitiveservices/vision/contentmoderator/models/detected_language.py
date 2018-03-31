@@ -30,8 +30,8 @@ class DetectedLanguage(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, detected_language=None, status=None, tracking_id=None):
-        super(DetectedLanguage, self).__init__()
-        self.detected_language = detected_language
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(DetectedLanguage, self).__init__(**kwargs)
+        self.detected_language = kwargs.get('detected_language', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)

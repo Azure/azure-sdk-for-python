@@ -19,9 +19,11 @@ class GetPropertyBatchOperation(PropertyBatchOperation):
     the entire batch fails and cannot be committed in a transactional manner.
     .
 
-    :param property_name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param property_name: Required. The name of the Service Fabric property.
     :type property_name: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param include_value: Whether or not to return the property value with the
      metadata.
@@ -42,7 +44,7 @@ class GetPropertyBatchOperation(PropertyBatchOperation):
         'include_value': {'key': 'IncludeValue', 'type': 'bool'},
     }
 
-    def __init__(self, property_name, include_value=False):
-        super(GetPropertyBatchOperation, self).__init__(property_name=property_name)
-        self.include_value = include_value
+    def __init__(self, **kwargs):
+        super(GetPropertyBatchOperation, self).__init__(**kwargs)
+        self.include_value = kwargs.get('include_value', False)
         self.kind = 'Get'

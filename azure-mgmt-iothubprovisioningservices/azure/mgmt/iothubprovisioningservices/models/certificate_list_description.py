@@ -24,6 +24,6 @@ class CertificateListDescription(Model):
         'value': {'key': 'value', 'type': '[CertificateResponse]'},
     }
 
-    def __init__(self, value=None):
-        super(CertificateListDescription, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CertificateListDescription, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

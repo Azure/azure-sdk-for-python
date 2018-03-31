@@ -22,7 +22,7 @@ class PipelineOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-09-01-preview".
     """
 
@@ -66,7 +66,7 @@ class PipelineOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/pipelines'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True)
@@ -116,6 +116,7 @@ class PipelineOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/pipelines'}
 
     def get(
             self, account_name, pipeline_identity, start_date_time=None, end_date_time=None, custom_headers=None, raw=False, **operation_config):
@@ -146,7 +147,7 @@ class PipelineOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/pipelines/{pipelineIdentity}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -191,3 +192,4 @@ class PipelineOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/pipelines/{pipelineIdentity}'}

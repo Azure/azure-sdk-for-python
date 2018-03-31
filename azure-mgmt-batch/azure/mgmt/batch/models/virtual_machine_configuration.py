@@ -16,13 +16,15 @@ class VirtualMachineConfiguration(Model):
     """The configuration for compute nodes in a pool based on the Azure Virtual
     Machines infrastructure.
 
-    :param image_reference: A reference to the Azure Virtual Machines
-     Marketplace Image or the custom Virtual Machine Image to use.
+    All required parameters must be populated in order to send to Azure.
+
+    :param image_reference: Required. A reference to the Azure Virtual
+     Machines Marketplace Image or the custom Virtual Machine Image to use.
     :type image_reference: ~azure.mgmt.batch.models.ImageReference
     :param os_disk: Settings for the operating system disk of the Virtual
      Machine.
     :type os_disk: ~azure.mgmt.batch.models.OSDisk
-    :param node_agent_sku_id: The SKU of the Batch node agent to be
+    :param node_agent_sku_id: Required. The SKU of the Batch node agent to be
      provisioned on compute nodes in the pool. The Batch node agent is a
      program that runs on each node in the pool, and provides the
      command-and-control interface between the node and the Batch service.
@@ -64,11 +66,11 @@ class VirtualMachineConfiguration(Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
     }
 
-    def __init__(self, image_reference, node_agent_sku_id, os_disk=None, windows_configuration=None, data_disks=None, license_type=None):
-        super(VirtualMachineConfiguration, self).__init__()
-        self.image_reference = image_reference
-        self.os_disk = os_disk
-        self.node_agent_sku_id = node_agent_sku_id
-        self.windows_configuration = windows_configuration
-        self.data_disks = data_disks
-        self.license_type = license_type
+    def __init__(self, **kwargs):
+        super(VirtualMachineConfiguration, self).__init__(**kwargs)
+        self.image_reference = kwargs.get('image_reference', None)
+        self.os_disk = kwargs.get('os_disk', None)
+        self.node_agent_sku_id = kwargs.get('node_agent_sku_id', None)
+        self.windows_configuration = kwargs.get('windows_configuration', None)
+        self.data_disks = kwargs.get('data_disks', None)
+        self.license_type = kwargs.get('license_type', None)

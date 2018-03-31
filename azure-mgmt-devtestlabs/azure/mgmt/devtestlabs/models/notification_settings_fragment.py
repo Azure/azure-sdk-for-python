@@ -32,8 +32,8 @@ class NotificationSettingsFragment(Model):
         'webhook_url': {'key': 'webhookUrl', 'type': 'str'},
     }
 
-    def __init__(self, status=None, time_in_minutes=None, webhook_url=None):
-        super(NotificationSettingsFragment, self).__init__()
-        self.status = status
-        self.time_in_minutes = time_in_minutes
-        self.webhook_url = webhook_url
+    def __init__(self, **kwargs):
+        super(NotificationSettingsFragment, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.time_in_minutes = kwargs.get('time_in_minutes', None)
+        self.webhook_url = kwargs.get('webhook_url', None)

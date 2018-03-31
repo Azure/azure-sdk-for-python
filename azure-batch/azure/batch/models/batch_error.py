@@ -33,11 +33,11 @@ class BatchError(Model):
         'values': {'key': 'values', 'type': '[BatchErrorDetail]'},
     }
 
-    def __init__(self, code=None, message=None, values=None):
-        super(BatchError, self).__init__()
-        self.code = code
-        self.message = message
-        self.values = values
+    def __init__(self, **kwargs):
+        super(BatchError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.values = kwargs.get('values', None)
 
 
 class BatchErrorException(HttpOperationError):

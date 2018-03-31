@@ -26,7 +26,7 @@ class Address(Model):
         'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, text=None, index=None):
-        super(Address, self).__init__()
-        self.text = text
-        self.index = index
+    def __init__(self, **kwargs):
+        super(Address, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)

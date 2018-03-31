@@ -19,14 +19,16 @@ class CustomDomain(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param host_name: The host name of the custom domain. Must be a domain
-     name.
+    :param host_name: Required. The host name of the custom domain. Must be a
+     domain name.
     :type host_name: str
     :ivar resource_state: Resource status of the custom domain. Possible
      values include: 'Creating', 'Active', 'Deleting'
@@ -79,11 +81,11 @@ class CustomDomain(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, host_name, validation_data=None):
-        super(CustomDomain, self).__init__()
-        self.host_name = host_name
+    def __init__(self, **kwargs):
+        super(CustomDomain, self).__init__(**kwargs)
+        self.host_name = kwargs.get('host_name', None)
         self.resource_state = None
         self.custom_https_provisioning_state = None
         self.custom_https_provisioning_substate = None
-        self.validation_data = validation_data
+        self.validation_data = kwargs.get('validation_data', None)
         self.provisioning_state = None

@@ -55,16 +55,16 @@ class ResourceDeleteSuccessData(Model):
         'http_request': {'key': 'httpRequest', 'type': 'str'},
     }
 
-    def __init__(self, tenant_id=None, subscription_id=None, resource_group=None, resource_provider=None, resource_uri=None, operation_name=None, status=None, authorization=None, claims=None, correlation_id=None, http_request=None):
-        super(ResourceDeleteSuccessData, self).__init__()
-        self.tenant_id = tenant_id
-        self.subscription_id = subscription_id
-        self.resource_group = resource_group
-        self.resource_provider = resource_provider
-        self.resource_uri = resource_uri
-        self.operation_name = operation_name
-        self.status = status
-        self.authorization = authorization
-        self.claims = claims
-        self.correlation_id = correlation_id
-        self.http_request = http_request
+    def __init__(self, **kwargs):
+        super(ResourceDeleteSuccessData, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.resource_group = kwargs.get('resource_group', None)
+        self.resource_provider = kwargs.get('resource_provider', None)
+        self.resource_uri = kwargs.get('resource_uri', None)
+        self.operation_name = kwargs.get('operation_name', None)
+        self.status = kwargs.get('status', None)
+        self.authorization = kwargs.get('authorization', None)
+        self.claims = kwargs.get('claims', None)
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.http_request = kwargs.get('http_request', None)

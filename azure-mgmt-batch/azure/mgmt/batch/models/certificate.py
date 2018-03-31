@@ -100,11 +100,11 @@ class Certificate(ProxyResource):
         'delete_certificate_error': {'key': 'properties.deleteCertificateError', 'type': 'DeleteCertificateError'},
     }
 
-    def __init__(self, thumbprint_algorithm=None, thumbprint=None, format=None):
-        super(Certificate, self).__init__()
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.thumbprint = thumbprint
-        self.format = format
+    def __init__(self, **kwargs):
+        super(Certificate, self).__init__(**kwargs)
+        self.thumbprint_algorithm = kwargs.get('thumbprint_algorithm', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.format = kwargs.get('format', None)
         self.provisioning_state = None
         self.provisioning_state_transition_time = None
         self.previous_provisioning_state = None

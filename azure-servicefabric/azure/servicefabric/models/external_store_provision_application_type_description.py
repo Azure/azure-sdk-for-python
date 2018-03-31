@@ -17,13 +17,15 @@ class ExternalStoreProvisionApplicationTypeDescription(ProvisionApplicationTypeD
     an application package from an external store instead of a package uploaded
     to the Service Fabric image store.
 
-    :param async_property: Indicates whether or not provisioning should occur
-     asynchronously. When set to true, the provision operation returns when the
-     request is accepted by the system, and the provision operation continues
-     without any timeout limit. The default value is false. For large
-     application packages, we recommend setting the value to true.
+    All required parameters must be populated in order to send to Azure.
+
+    :param async_property: Required. Indicates whether or not provisioning
+     should occur asynchronously. When set to true, the provision operation
+     returns when the request is accepted by the system, and the provision
+     operation continues without any timeout limit. The default value is false.
+     For large application packages, we recommend setting the value to true.
     :type async_property: bool
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param application_package_download_uri: The path to the '.sfpkg'
      application package from where the application package can be downloaded
@@ -52,9 +54,9 @@ class ExternalStoreProvisionApplicationTypeDescription(ProvisionApplicationTypeD
         'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
     }
 
-    def __init__(self, async_property, application_package_download_uri=None, application_type_name=None, application_type_version=None):
-        super(ExternalStoreProvisionApplicationTypeDescription, self).__init__(async_property=async_property)
-        self.application_package_download_uri = application_package_download_uri
-        self.application_type_name = application_type_name
-        self.application_type_version = application_type_version
+    def __init__(self, **kwargs):
+        super(ExternalStoreProvisionApplicationTypeDescription, self).__init__(**kwargs)
+        self.application_package_download_uri = kwargs.get('application_package_download_uri', None)
+        self.application_type_name = kwargs.get('application_type_name', None)
+        self.application_type_version = kwargs.get('application_type_version', None)
         self.kind = 'ExternalStore'

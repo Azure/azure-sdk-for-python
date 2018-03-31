@@ -16,13 +16,15 @@ class CreateComputePolicyWithAccountParameters(Model):
     """The parameters used to create a new compute policy while creating a new
     Data Lake Analytics account.
 
-    :param name: The unique name of the compute policy to create.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the compute policy to create.
     :type name: str
-    :param object_id: The AAD object identifier for the entity to create a
-     policy for.
+    :param object_id: Required. The AAD object identifier for the entity to
+     create a policy for.
     :type object_id: str
-    :param object_type: The type of AAD object the object identifier refers
-     to. Possible values include: 'User', 'Group', 'ServicePrincipal'
+    :param object_type: Required. The type of AAD object the object identifier
+     refers to. Possible values include: 'User', 'Group', 'ServicePrincipal'
     :type object_type: str or
      ~azure.mgmt.datalake.analytics.account.models.AADObjectType
     :param max_degree_of_parallelism_per_job: The maximum degree of
@@ -51,10 +53,10 @@ class CreateComputePolicyWithAccountParameters(Model):
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
     }
 
-    def __init__(self, name, object_id, object_type, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
-        super(CreateComputePolicyWithAccountParameters, self).__init__()
-        self.name = name
-        self.object_id = object_id
-        self.object_type = object_type
-        self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
-        self.min_priority_per_job = min_priority_per_job
+    def __init__(self, **kwargs):
+        super(CreateComputePolicyWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.object_id = kwargs.get('object_id', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.max_degree_of_parallelism_per_job = kwargs.get('max_degree_of_parallelism_per_job', None)
+        self.min_priority_per_job = kwargs.get('min_priority_per_job', None)

@@ -76,8 +76,8 @@ class Artifact(Resource):
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(Artifact, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(Artifact, self).__init__(**kwargs)
         self.title = None
         self.description = None
         self.publisher = None

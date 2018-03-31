@@ -41,7 +41,7 @@ class PoolInformation(Model):
         'auto_pool_specification': {'key': 'autoPoolSpecification', 'type': 'AutoPoolSpecification'},
     }
 
-    def __init__(self, pool_id=None, auto_pool_specification=None):
-        super(PoolInformation, self).__init__()
-        self.pool_id = pool_id
-        self.auto_pool_specification = auto_pool_specification
+    def __init__(self, **kwargs):
+        super(PoolInformation, self).__init__(**kwargs)
+        self.pool_id = kwargs.get('pool_id', None)
+        self.auto_pool_specification = kwargs.get('auto_pool_specification', None)

@@ -15,6 +15,8 @@ from .service_update_description import ServiceUpdateDescription
 class StatelessServiceUpdateDescription(ServiceUpdateDescription):
     """Describes an update for a stateless service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param flags: Flags indicating whether other properties are set. Each of
      the associated properties corresponds to a flag, specified below, which,
      if set, indicate that the property is specified.
@@ -64,7 +66,7 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
     :param default_move_cost: The move cost for the service. Possible values
      include: 'Zero', 'Low', 'Medium', 'High'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_count: The instance count.
     :type instance_count: int
@@ -86,7 +88,7 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
         'instance_count': {'key': 'InstanceCount', 'type': 'int'},
     }
 
-    def __init__(self, flags=None, placement_constraints=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, instance_count=None):
-        super(StatelessServiceUpdateDescription, self).__init__(flags=flags, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, load_metrics=load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost)
-        self.instance_count = instance_count
+    def __init__(self, **kwargs):
+        super(StatelessServiceUpdateDescription, self).__init__(**kwargs)
+        self.instance_count = kwargs.get('instance_count', None)
         self.service_kind = 'Stateless'

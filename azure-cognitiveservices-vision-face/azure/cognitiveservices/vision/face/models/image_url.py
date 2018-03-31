@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ImageUrl(Model):
     """ImageUrl.
 
-    :param url:
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required.
     :type url: str
     """
 
@@ -27,6 +29,6 @@ class ImageUrl(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, url):
-        super(ImageUrl, self).__init__()
-        self.url = url
+    def __init__(self, **kwargs):
+        super(ImageUrl, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)

@@ -24,5 +24,6 @@ class GetProtectedItemQueryObject(Model):
         'expand': {'key': 'expand', 'type': 'str'},
     }
 
-    def __init__(self, expand=None):
-        self.expand = expand
+    def __init__(self, **kwargs):
+        super(GetProtectedItemQueryObject, self).__init__(**kwargs)
+        self.expand = kwargs.get('expand', None)

@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class KeyVaultKeyReference(Model):
     """The reference to the key vault key.
 
-    :param key_vault: The key vault reference.
-    :type key_vault: :class:`KeyVaultKeyReferenceKeyVault
-     <azure.mgmt.logic.models.KeyVaultKeyReferenceKeyVault>`
-    :param key_name: The private key name in key vault.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_vault: Required. The key vault reference.
+    :type key_vault: ~azure.mgmt.logic.models.KeyVaultKeyReferenceKeyVault
+    :param key_name: Required. The private key name in key vault.
     :type key_name: str
     :param key_version: The private key version in key vault.
     :type key_version: str
@@ -35,7 +36,8 @@ class KeyVaultKeyReference(Model):
         'key_version': {'key': 'keyVersion', 'type': 'str'},
     }
 
-    def __init__(self, key_vault, key_name, key_version=None):
-        self.key_vault = key_vault
-        self.key_name = key_name
-        self.key_version = key_version
+    def __init__(self, **kwargs):
+        super(KeyVaultKeyReference, self).__init__(**kwargs)
+        self.key_vault = kwargs.get('key_vault', None)
+        self.key_name = kwargs.get('key_name', None)
+        self.key_version = kwargs.get('key_version', None)

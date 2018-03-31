@@ -33,9 +33,9 @@ class ImageIds(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, content_source=None, content_ids=None, status=None, tracking_id=None):
-        super(ImageIds, self).__init__()
-        self.content_source = content_source
-        self.content_ids = content_ids
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(ImageIds, self).__init__(**kwargs)
+        self.content_source = kwargs.get('content_source', None)
+        self.content_ids = kwargs.get('content_ids', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)

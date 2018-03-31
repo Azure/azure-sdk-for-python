@@ -29,7 +29,8 @@ class AdmCredential(Model):
         'auth_token_url': {'key': 'properties.authTokenUrl', 'type': 'str'},
     }
 
-    def __init__(self, client_id=None, client_secret=None, auth_token_url=None):
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.auth_token_url = auth_token_url
+    def __init__(self, **kwargs):
+        super(AdmCredential, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.auth_token_url = kwargs.get('auth_token_url', None)

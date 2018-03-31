@@ -12,19 +12,19 @@
 from enum import Enum
 
 
-class ResourceType(Enum):
+class ResourceType(str, Enum):
 
     mediaservices = "mediaservices"
 
 
-class EntityNameUnavailabilityReason(Enum):
+class EntityNameUnavailabilityReason(str, Enum):
 
     none = "None"
     invalid = "Invalid"
     already_exists = "AlreadyExists"
 
 
-class KeyType(Enum):
+class KeyType(str, Enum):
 
     primary = "Primary"
     secondary = "Secondary"

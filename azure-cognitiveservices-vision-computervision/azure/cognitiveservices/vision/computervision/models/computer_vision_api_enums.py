@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class TextOperationStatusCodes(Enum):
+class TextOperationStatusCodes(str, Enum):
 
     not_started = "Not Started"
     running = "Running"
@@ -20,7 +20,7 @@ class TextOperationStatusCodes(Enum):
     succeeded = "Succeeded"
 
 
-class ComputerVisionErrorCodes(Enum):
+class ComputerVisionErrorCodes(str, Enum):
 
     invalid_image_url = "InvalidImageUrl"
     invalid_image_format = "InvalidImageFormat"
@@ -37,7 +37,7 @@ class ComputerVisionErrorCodes(Enum):
     storage_exception = "StorageException"
 
 
-class VisualFeatureTypes(Enum):
+class VisualFeatureTypes(str, Enum):
 
     image_type = "ImageType"
     faces = "Faces"
@@ -48,7 +48,7 @@ class VisualFeatureTypes(Enum):
     description = "Description"
 
 
-class OcrLanguages(Enum):
+class OcrLanguages(str, Enum):
 
     unk = "unk"
     zh_hans = "zh-Hans"
@@ -79,7 +79,7 @@ class OcrLanguages(Enum):
     sk = "sk"
 
 
-class AzureRegions(Enum):
+class AzureRegions(str, Enum):
 
     westus = "westus"
     westeurope = "westeurope"
@@ -95,19 +95,19 @@ class AzureRegions(Enum):
     brazilsouth = "brazilsouth"
 
 
-class Details(Enum):
+class Details(str, Enum):
 
     celebrities = "Celebrities"
     landmarks = "Landmarks"
 
 
-class Language1(Enum):
+class Language1(str, Enum):
 
     en = "en"
     zh = "zh"
 
 
-class DomainModels(Enum):
+class DomainModels(str, Enum):
 
     celebrities = "Celebrities"
     landmarks = "Landmarks"

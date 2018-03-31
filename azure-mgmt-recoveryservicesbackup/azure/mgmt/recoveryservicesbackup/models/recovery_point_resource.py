@@ -29,12 +29,11 @@ class RecoveryPointResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: RecoveryPointResource properties
-    :type properties: :class:`RecoveryPoint
-     <azure.mgmt.recoveryservicesbackup.models.RecoveryPoint>`
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.RecoveryPoint
     """
 
     _validation = {
@@ -53,6 +52,6 @@ class RecoveryPointResource(Resource):
         'properties': {'key': 'properties', 'type': 'RecoveryPoint'},
     }
 
-    def __init__(self, location=None, tags=None, e_tag=None, properties=None):
-        super(RecoveryPointResource, self).__init__(location=location, tags=tags, e_tag=e_tag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(RecoveryPointResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

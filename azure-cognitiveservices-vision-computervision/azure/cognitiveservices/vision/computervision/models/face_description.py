@@ -32,8 +32,8 @@ class FaceDescription(Model):
         'face_rectangle': {'key': 'faceRectangle', 'type': 'FaceRectangle'},
     }
 
-    def __init__(self, age=None, gender=None, face_rectangle=None):
-        super(FaceDescription, self).__init__()
-        self.age = age
-        self.gender = gender
-        self.face_rectangle = face_rectangle
+    def __init__(self, **kwargs):
+        super(FaceDescription, self).__init__(**kwargs)
+        self.age = kwargs.get('age', None)
+        self.gender = kwargs.get('gender', None)
+        self.face_rectangle = kwargs.get('face_rectangle', None)

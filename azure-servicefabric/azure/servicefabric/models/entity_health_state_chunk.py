@@ -26,6 +26,6 @@ class EntityHealthStateChunk(Model):
         'health_state': {'key': 'HealthState', 'type': 'str'},
     }
 
-    def __init__(self, health_state=None):
-        super(EntityHealthStateChunk, self).__init__()
-        self.health_state = health_state
+    def __init__(self, **kwargs):
+        super(EntityHealthStateChunk, self).__init__(**kwargs)
+        self.health_state = kwargs.get('health_state', None)

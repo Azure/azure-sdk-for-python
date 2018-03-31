@@ -47,6 +47,6 @@ class ServiceRunner(Resource):
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
     }
 
-    def __init__(self, location=None, tags=None, identity=None):
-        super(ServiceRunner, self).__init__(location=location, tags=tags)
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(ServiceRunner, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)

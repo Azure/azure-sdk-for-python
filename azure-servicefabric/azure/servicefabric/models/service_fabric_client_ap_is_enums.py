@@ -12,14 +12,14 @@
 from enum import Enum
 
 
-class ApplicationDefinitionKind(Enum):
+class ApplicationDefinitionKind(str, Enum):
 
     invalid = "Invalid"
     service_fabric_application_description = "ServiceFabricApplicationDescription"
     compose = "Compose"
 
 
-class HealthState(Enum):
+class HealthState(str, Enum):
 
     invalid = "Invalid"
     ok = "Ok"
@@ -28,7 +28,7 @@ class HealthState(Enum):
     unknown = "Unknown"
 
 
-class ApplicationStatus(Enum):
+class ApplicationStatus(str, Enum):
 
     invalid = "Invalid"
     ready = "Ready"
@@ -38,14 +38,14 @@ class ApplicationStatus(Enum):
     failed = "Failed"
 
 
-class ApplicationTypeDefinitionKind(Enum):
+class ApplicationTypeDefinitionKind(str, Enum):
 
     invalid = "Invalid"
     service_fabric_application_package = "ServiceFabricApplicationPackage"
     compose = "Compose"
 
 
-class ApplicationTypeStatus(Enum):
+class ApplicationTypeStatus(str, Enum):
 
     invalid = "Invalid"
     provisioning = "Provisioning"
@@ -54,13 +54,13 @@ class ApplicationTypeStatus(Enum):
     failed = "Failed"
 
 
-class UpgradeKind(Enum):
+class UpgradeKind(str, Enum):
 
     invalid = "Invalid"
     rolling = "Rolling"
 
 
-class UpgradeMode(Enum):
+class UpgradeMode(str, Enum):
 
     invalid = "Invalid"
     unmonitored_auto = "UnmonitoredAuto"
@@ -68,14 +68,14 @@ class UpgradeMode(Enum):
     monitored = "Monitored"
 
 
-class FailureAction(Enum):
+class FailureAction(str, Enum):
 
     invalid = "Invalid"
     rollback = "Rollback"
     manual = "Manual"
 
 
-class UpgradeDomainState(Enum):
+class UpgradeDomainState(str, Enum):
 
     invalid = "Invalid"
     pending = "Pending"
@@ -83,7 +83,7 @@ class UpgradeDomainState(Enum):
     completed = "Completed"
 
 
-class UpgradeState(Enum):
+class UpgradeState(str, Enum):
 
     invalid = "Invalid"
     rolling_back_in_progress = "RollingBackInProgress"
@@ -94,7 +94,7 @@ class UpgradeState(Enum):
     failed = "Failed"
 
 
-class NodeUpgradePhase(Enum):
+class NodeUpgradePhase(str, Enum):
 
     invalid = "Invalid"
     pre_upgrade_safety_check = "PreUpgradeSafetyCheck"
@@ -102,7 +102,7 @@ class NodeUpgradePhase(Enum):
     post_upgrade_safety_check = "PostUpgradeSafetyCheck"
 
 
-class FailureReason(Enum):
+class FailureReason(str, Enum):
 
     none = "None"
     interrupted = "Interrupted"
@@ -111,14 +111,14 @@ class FailureReason(Enum):
     overall_upgrade_timeout = "OverallUpgradeTimeout"
 
 
-class DeactivationIntent(Enum):
+class DeactivationIntent(str, Enum):
 
     pause = "Pause"
     restart = "Restart"
     remove_data = "RemoveData"
 
 
-class DeployedApplicationStatus(Enum):
+class DeployedApplicationStatus(str, Enum):
 
     invalid = "Invalid"
     downloading = "Downloading"
@@ -128,7 +128,7 @@ class DeployedApplicationStatus(Enum):
     deactivating = "Deactivating"
 
 
-class ReplicaRole(Enum):
+class ReplicaRole(str, Enum):
 
     unknown = "Unknown"
     none = "None"
@@ -137,7 +137,7 @@ class ReplicaRole(Enum):
     active_secondary = "ActiveSecondary"
 
 
-class ReconfigurationPhase(Enum):
+class ReconfigurationPhase(str, Enum):
 
     unknown = "Unknown"
     none = "None"
@@ -149,7 +149,7 @@ class ReconfigurationPhase(Enum):
     abort_phase_zero = "AbortPhaseZero"
 
 
-class ReconfigurationType(Enum):
+class ReconfigurationType(str, Enum):
 
     unknown = "Unknown"
     swap_primary = "SwapPrimary"
@@ -157,7 +157,7 @@ class ReconfigurationType(Enum):
     other = "Other"
 
 
-class EntityKind(Enum):
+class EntityKind(str, Enum):
 
     invalid = "Invalid"
     node = "Node"
@@ -170,7 +170,7 @@ class EntityKind(Enum):
     cluster = "Cluster"
 
 
-class HealthEvaluationKind(Enum):
+class HealthEvaluationKind(str, Enum):
 
     invalid = "Invalid"
     event = "Event"
@@ -196,7 +196,7 @@ class HealthEvaluationKind(Enum):
     application_type_applications = "ApplicationTypeApplications"
 
 
-class NodeDeactivationIntent(Enum):
+class NodeDeactivationIntent(str, Enum):
 
     invalid = "Invalid"
     pause = "Pause"
@@ -205,7 +205,7 @@ class NodeDeactivationIntent(Enum):
     remove_node = "RemoveNode"
 
 
-class NodeDeactivationStatus(Enum):
+class NodeDeactivationStatus(str, Enum):
 
     none = "None"
     safety_check_in_progress = "SafetyCheckInProgress"
@@ -213,7 +213,7 @@ class NodeDeactivationStatus(Enum):
     completed = "Completed"
 
 
-class NodeDeactivationTaskType(Enum):
+class NodeDeactivationTaskType(str, Enum):
 
     invalid = "Invalid"
     infrastructure = "Infrastructure"
@@ -221,7 +221,7 @@ class NodeDeactivationTaskType(Enum):
     client = "Client"
 
 
-class NodeStatus(Enum):
+class NodeStatus(str, Enum):
 
     invalid = "Invalid"
     up = "Up"
@@ -233,7 +233,7 @@ class NodeStatus(Enum):
     removed = "Removed"
 
 
-class ServicePartitionStatus(Enum):
+class ServicePartitionStatus(str, Enum):
 
     invalid = "Invalid"
     ready = "Ready"
@@ -243,7 +243,7 @@ class ServicePartitionStatus(Enum):
     deleting = "Deleting"
 
 
-class ServiceStatus(Enum):
+class ServiceStatus(str, Enum):
 
     unknown = "Unknown"
     active = "Active"
@@ -253,21 +253,21 @@ class ServiceStatus(Enum):
     failed = "Failed"
 
 
-class ProvisionApplicationTypeKind(Enum):
+class ProvisionApplicationTypeKind(str, Enum):
 
     invalid = "Invalid"
     image_store_path = "ImageStorePath"
     external_store = "ExternalStore"
 
 
-class UpgradeType(Enum):
+class UpgradeType(str, Enum):
 
     invalid = "Invalid"
     rolling = "Rolling"
     rolling_force_restart = "Rolling_ForceRestart"
 
 
-class SafetyCheckKind(Enum):
+class SafetyCheckKind(str, Enum):
 
     invalid = "Invalid"
     ensure_seed_node_quorum = "EnsureSeedNodeQuorum"
@@ -279,26 +279,26 @@ class SafetyCheckKind(Enum):
     ensure_availability = "EnsureAvailability"
 
 
-class CreateFabricDump(Enum):
+class CreateFabricDump(str, Enum):
 
     false = "False"
     true = "True"
 
 
-class ServicePackageActivationMode(Enum):
+class ServicePackageActivationMode(str, Enum):
 
     shared_process = "SharedProcess"
     exclusive_process = "ExclusiveProcess"
 
 
-class ServiceKind(Enum):
+class ServiceKind(str, Enum):
 
     invalid = "Invalid"
     stateless = "Stateless"
     stateful = "Stateful"
 
 
-class ServicePlacementPolicyType(Enum):
+class ServicePlacementPolicyType(str, Enum):
 
     invalid = "Invalid"
     invalid_domain = "InvalidDomain"
@@ -308,21 +308,21 @@ class ServicePlacementPolicyType(Enum):
     non_partially_place_service = "NonPartiallyPlaceService"
 
 
-class HostType(Enum):
+class HostType(str, Enum):
 
     invalid = "Invalid"
     exe_host = "ExeHost"
     container_host = "ContainerHost"
 
 
-class HostIsolationMode(Enum):
+class HostIsolationMode(str, Enum):
 
     none = "None"
     process = "Process"
     hyper_v = "HyperV"
 
 
-class DeploymentStatus(Enum):
+class DeploymentStatus(str, Enum):
 
     invalid = "Invalid"
     downloading = "Downloading"
@@ -332,7 +332,7 @@ class DeploymentStatus(Enum):
     deactivating = "Deactivating"
 
 
-class EntryPointStatus(Enum):
+class EntryPointStatus(str, Enum):
 
     invalid = "Invalid"
     pending = "Pending"
@@ -342,7 +342,7 @@ class EntryPointStatus(Enum):
     stopped = "Stopped"
 
 
-class ChaosEventKind(Enum):
+class ChaosEventKind(str, Enum):
 
     invalid = "Invalid"
     started = "Started"
@@ -353,14 +353,14 @@ class ChaosEventKind(Enum):
     stopped = "Stopped"
 
 
-class Status(Enum):
+class Status(str, Enum):
 
     invalid = "Invalid"
     running = "Running"
     stopped = "Stopped"
 
 
-class ComposeDeploymentStatus(Enum):
+class ComposeDeploymentStatus(str, Enum):
 
     invalid = "Invalid"
     provisioning = "Provisioning"
@@ -372,7 +372,7 @@ class ComposeDeploymentStatus(Enum):
     upgrading = "Upgrading"
 
 
-class ComposeDeploymentUpgradeState(Enum):
+class ComposeDeploymentUpgradeState(str, Enum):
 
     invalid = "Invalid"
     provisioning_target = "ProvisioningTarget"
@@ -386,7 +386,7 @@ class ComposeDeploymentUpgradeState(Enum):
     failed = "Failed"
 
 
-class ServiceCorrelationScheme(Enum):
+class ServiceCorrelationScheme(str, Enum):
 
     invalid = "Invalid"
     affinity = "Affinity"
@@ -394,7 +394,7 @@ class ServiceCorrelationScheme(Enum):
     non_aligned_affinity = "NonAlignedAffinity"
 
 
-class MoveCost(Enum):
+class MoveCost(str, Enum):
 
     zero = "Zero"
     low = "Low"
@@ -402,7 +402,7 @@ class MoveCost(Enum):
     high = "High"
 
 
-class PartitionScheme(Enum):
+class PartitionScheme(str, Enum):
 
     invalid = "Invalid"
     singleton = "Singleton"
@@ -410,7 +410,7 @@ class PartitionScheme(Enum):
     named = "Named"
 
 
-class ServiceLoadMetricWeight(Enum):
+class ServiceLoadMetricWeight(str, Enum):
 
     zero = "Zero"
     low = "Low"
@@ -418,7 +418,7 @@ class ServiceLoadMetricWeight(Enum):
     high = "High"
 
 
-class ServiceOperationName(Enum):
+class ServiceOperationName(str, Enum):
 
     unknown = "Unknown"
     none = "None"
@@ -428,7 +428,7 @@ class ServiceOperationName(Enum):
     abort = "Abort"
 
 
-class ReplicatorOperationName(Enum):
+class ReplicatorOperationName(str, Enum):
 
     invalid = "Invalid"
     none = "None"
@@ -442,7 +442,7 @@ class ReplicatorOperationName(Enum):
     build = "Build"
 
 
-class PartitionAccessStatus(Enum):
+class PartitionAccessStatus(str, Enum):
 
     invalid = "Invalid"
     granted = "Granted"
@@ -451,20 +451,20 @@ class PartitionAccessStatus(Enum):
     no_write_quorum = "NoWriteQuorum"
 
 
-class FabricReplicaStatus(Enum):
+class FabricReplicaStatus(str, Enum):
 
     invalid = "Invalid"
     down = "Down"
     up = "Up"
 
 
-class ReplicaKind(Enum):
+class ReplicaKind(str, Enum):
 
     invalid = "Invalid"
     key_value_store = "KeyValueStore"
 
 
-class ServiceTypeRegistrationStatus(Enum):
+class ServiceTypeRegistrationStatus(str, Enum):
 
     invalid = "Invalid"
     disabled = "Disabled"
@@ -472,7 +472,7 @@ class ServiceTypeRegistrationStatus(Enum):
     registered = "Registered"
 
 
-class ServiceEndpointRole(Enum):
+class ServiceEndpointRole(str, Enum):
 
     invalid = "Invalid"
     stateless = "Stateless"
@@ -480,7 +480,7 @@ class ServiceEndpointRole(Enum):
     stateful_secondary = "StatefulSecondary"
 
 
-class OperationState(Enum):
+class OperationState(str, Enum):
 
     invalid = "Invalid"
     running = "Running"
@@ -491,7 +491,7 @@ class OperationState(Enum):
     force_cancelled = "ForceCancelled"
 
 
-class OperationType(Enum):
+class OperationType(str, Enum):
 
     invalid = "Invalid"
     partition_data_loss = "PartitionDataLoss"
@@ -500,7 +500,7 @@ class OperationType(Enum):
     node_transition = "NodeTransition"
 
 
-class PackageSharingPolicyScope(Enum):
+class PackageSharingPolicyScope(str, Enum):
 
     none = "None"
     all = "All"
@@ -509,7 +509,7 @@ class PackageSharingPolicyScope(Enum):
     data = "Data"
 
 
-class PropertyValueKind(Enum):
+class PropertyValueKind(str, Enum):
 
     invalid = "Invalid"
     binary = "Binary"
@@ -519,7 +519,7 @@ class PropertyValueKind(Enum):
     guid = "Guid"
 
 
-class PropertyBatchOperationKind(Enum):
+class PropertyBatchOperationKind(str, Enum):
 
     invalid = "Invalid"
     put = "Put"
@@ -530,14 +530,14 @@ class PropertyBatchOperationKind(Enum):
     check_value = "CheckValue"
 
 
-class PropertyBatchInfoKind(Enum):
+class PropertyBatchInfoKind(str, Enum):
 
     invalid = "Invalid"
     successful = "Successful"
     failed = "Failed"
 
 
-class ImpactLevel(Enum):
+class ImpactLevel(str, Enum):
 
     invalid = "Invalid"
     none = "None"
@@ -546,19 +546,19 @@ class ImpactLevel(Enum):
     remove_node = "RemoveNode"
 
 
-class RepairImpactKind(Enum):
+class RepairImpactKind(str, Enum):
 
     invalid = "Invalid"
     node = "Node"
 
 
-class RepairTargetKind(Enum):
+class RepairTargetKind(str, Enum):
 
     invalid = "Invalid"
     node = "Node"
 
 
-class State(Enum):
+class State(str, Enum):
 
     invalid = "Invalid"
     created = "Created"
@@ -570,7 +570,7 @@ class State(Enum):
     completed = "Completed"
 
 
-class ResultStatus(Enum):
+class ResultStatus(str, Enum):
 
     invalid = "Invalid"
     succeeded = "Succeeded"
@@ -580,7 +580,7 @@ class ResultStatus(Enum):
     pending = "Pending"
 
 
-class RepairTaskHealthCheckState(Enum):
+class RepairTaskHealthCheckState(str, Enum):
 
     not_started = "NotStarted"
     in_progress = "InProgress"
@@ -589,7 +589,7 @@ class RepairTaskHealthCheckState(Enum):
     timed_out = "TimedOut"
 
 
-class NodeStatusFilterOptionalQueryParam(Enum):
+class NodeStatusFilterOptionalQueryParam(str, Enum):
 
     default = "default"
     all = "all"
@@ -602,34 +602,34 @@ class NodeStatusFilterOptionalQueryParam(Enum):
     removed = "removed"
 
 
-class ReplicaHealthReportServiceKindRequiredQueryParam(Enum):
+class ReplicaHealthReportServiceKindRequiredQueryParam(str, Enum):
 
     stateless = "Stateless"
     stateful = "Stateful"
 
 
-class DataLossModeRequiredQueryParam(Enum):
+class DataLossModeRequiredQueryParam(str, Enum):
 
     invalid = "Invalid"
     partial_data_loss = "PartialDataLoss"
     full_data_loss = "FullDataLoss"
 
 
-class NodeTransitionTypeRequiredQueryParam(Enum):
+class NodeTransitionTypeRequiredQueryParam(str, Enum):
 
     invalid = "Invalid"
     start = "Start"
     stop = "Stop"
 
 
-class QuorumLossModeRequiredQueryParam(Enum):
+class QuorumLossModeRequiredQueryParam(str, Enum):
 
     invalid = "Invalid"
     quorum_replicas = "QuorumReplicas"
     all_replicas = "AllReplicas"
 
 
-class RestartPartitionModeRequiredQueryParam(Enum):
+class RestartPartitionModeRequiredQueryParam(str, Enum):
 
     invalid = "Invalid"
     all_replicas_or_instances = "AllReplicasOrInstances"

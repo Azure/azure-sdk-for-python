@@ -38,8 +38,8 @@ class ResourceUsageStatistics(Model):
         'maximum': {'key': 'maximum', 'type': 'long'},
     }
 
-    def __init__(self):
-        super(ResourceUsageStatistics, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceUsageStatistics, self).__init__(**kwargs)
         self.average = None
         self.minimum = None
         self.maximum = None

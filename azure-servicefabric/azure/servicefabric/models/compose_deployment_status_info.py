@@ -36,9 +36,9 @@ class ComposeDeploymentStatusInfo(Model):
         'status_details': {'key': 'StatusDetails', 'type': 'str'},
     }
 
-    def __init__(self, name=None, application_name=None, status=None, status_details=None):
-        super(ComposeDeploymentStatusInfo, self).__init__()
-        self.name = name
-        self.application_name = application_name
-        self.status = status
-        self.status_details = status_details
+    def __init__(self, **kwargs):
+        super(ComposeDeploymentStatusInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.application_name = kwargs.get('application_name', None)
+        self.status = kwargs.get('status', None)
+        self.status_details = kwargs.get('status_details', None)

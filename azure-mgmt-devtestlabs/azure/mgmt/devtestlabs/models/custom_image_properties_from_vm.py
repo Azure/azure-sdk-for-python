@@ -29,8 +29,8 @@ class CustomImagePropertiesFromVm(Model):
         'linux_os_info': {'key': 'linuxOsInfo', 'type': 'LinuxOsInfo'},
     }
 
-    def __init__(self, source_vm_id=None, windows_os_info=None, linux_os_info=None):
-        super(CustomImagePropertiesFromVm, self).__init__()
-        self.source_vm_id = source_vm_id
-        self.windows_os_info = windows_os_info
-        self.linux_os_info = linux_os_info
+    def __init__(self, **kwargs):
+        super(CustomImagePropertiesFromVm, self).__init__(**kwargs)
+        self.source_vm_id = kwargs.get('source_vm_id', None)
+        self.windows_os_info = kwargs.get('windows_os_info', None)
+        self.linux_os_info = kwargs.get('linux_os_info', None)

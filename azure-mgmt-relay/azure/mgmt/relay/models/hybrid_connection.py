@@ -62,10 +62,10 @@ class HybridConnection(Resource):
         'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
     }
 
-    def __init__(self, requires_client_authorization=None, user_metadata=None):
-        super(HybridConnection, self).__init__()
+    def __init__(self, **kwargs):
+        super(HybridConnection, self).__init__(**kwargs)
         self.created_at = None
         self.updated_at = None
         self.listener_count = None
-        self.requires_client_authorization = requires_client_authorization
-        self.user_metadata = user_metadata
+        self.requires_client_authorization = kwargs.get('requires_client_authorization', None)
+        self.user_metadata = kwargs.get('user_metadata', None)

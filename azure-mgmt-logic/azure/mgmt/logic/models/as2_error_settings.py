@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class AS2ErrorSettings(Model):
     """The AS2 agreement error settings.
 
-    :param suspend_duplicate_message: The value indicating whether to suspend
-     duplicate message.
+    All required parameters must be populated in order to send to Azure.
+
+    :param suspend_duplicate_message: Required. The value indicating whether
+     to suspend duplicate message.
     :type suspend_duplicate_message: bool
-    :param resend_if_mdn_not_received: The value indicating whether to resend
-     message If MDN is not received.
+    :param resend_if_mdn_not_received: Required. The value indicating whether
+     to resend message If MDN is not received.
     :type resend_if_mdn_not_received: bool
     """
 
@@ -33,6 +35,7 @@ class AS2ErrorSettings(Model):
         'resend_if_mdn_not_received': {'key': 'resendIfMdnNotReceived', 'type': 'bool'},
     }
 
-    def __init__(self, suspend_duplicate_message, resend_if_mdn_not_received):
-        self.suspend_duplicate_message = suspend_duplicate_message
-        self.resend_if_mdn_not_received = resend_if_mdn_not_received
+    def __init__(self, **kwargs):
+        super(AS2ErrorSettings, self).__init__(**kwargs)
+        self.suspend_duplicate_message = kwargs.get('suspend_duplicate_message', None)
+        self.resend_if_mdn_not_received = kwargs.get('resend_if_mdn_not_received', None)

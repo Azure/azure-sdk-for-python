@@ -16,10 +16,13 @@ class ServicePrincipalProperties(Model):
     """The Azure service principal used by Kubernetes for configuring load
     balancers.
 
-    :param client_id: The service principal client ID
+    All required parameters must be populated in order to send to Azure.
+
+    :param client_id: Required. The service principal client ID
     :type client_id: str
-    :param secret: The service principal secret. This is not returned in
-     response of GET/PUT on the resource. To see this please call listKeys.
+    :param secret: Required. The service principal secret. This is not
+     returned in response of GET/PUT on the resource. To see this please call
+     listKeys.
     :type secret: str
     """
 
@@ -33,7 +36,7 @@ class ServicePrincipalProperties(Model):
         'secret': {'key': 'secret', 'type': 'str'},
     }
 
-    def __init__(self, client_id, secret):
-        super(ServicePrincipalProperties, self).__init__()
-        self.client_id = client_id
-        self.secret = secret
+    def __init__(self, **kwargs):
+        super(ServicePrincipalProperties, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.secret = kwargs.get('secret', None)

@@ -58,8 +58,8 @@ class AppServiceCertificatePatchResource(ProxyOnlyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, kind=None, key_vault_id=None, key_vault_secret_name=None):
-        super(AppServiceCertificatePatchResource, self).__init__(kind=kind)
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+    def __init__(self, **kwargs):
+        super(AppServiceCertificatePatchResource, self).__init__(**kwargs)
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.provisioning_state = None

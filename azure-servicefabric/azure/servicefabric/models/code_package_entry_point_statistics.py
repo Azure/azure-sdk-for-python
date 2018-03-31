@@ -62,16 +62,16 @@ class CodePackageEntryPointStatistics(Model):
         'continuous_exit_failure_count': {'key': 'ContinuousExitFailureCount', 'type': 'str'},
     }
 
-    def __init__(self, last_exit_code=None, last_activation_time=None, last_exit_time=None, last_successful_activation_time=None, last_successful_exit_time=None, activation_count=None, activation_failure_count=None, continuous_activation_failure_count=None, exit_count=None, exit_failure_count=None, continuous_exit_failure_count=None):
-        super(CodePackageEntryPointStatistics, self).__init__()
-        self.last_exit_code = last_exit_code
-        self.last_activation_time = last_activation_time
-        self.last_exit_time = last_exit_time
-        self.last_successful_activation_time = last_successful_activation_time
-        self.last_successful_exit_time = last_successful_exit_time
-        self.activation_count = activation_count
-        self.activation_failure_count = activation_failure_count
-        self.continuous_activation_failure_count = continuous_activation_failure_count
-        self.exit_count = exit_count
-        self.exit_failure_count = exit_failure_count
-        self.continuous_exit_failure_count = continuous_exit_failure_count
+    def __init__(self, **kwargs):
+        super(CodePackageEntryPointStatistics, self).__init__(**kwargs)
+        self.last_exit_code = kwargs.get('last_exit_code', None)
+        self.last_activation_time = kwargs.get('last_activation_time', None)
+        self.last_exit_time = kwargs.get('last_exit_time', None)
+        self.last_successful_activation_time = kwargs.get('last_successful_activation_time', None)
+        self.last_successful_exit_time = kwargs.get('last_successful_exit_time', None)
+        self.activation_count = kwargs.get('activation_count', None)
+        self.activation_failure_count = kwargs.get('activation_failure_count', None)
+        self.continuous_activation_failure_count = kwargs.get('continuous_activation_failure_count', None)
+        self.exit_count = kwargs.get('exit_count', None)
+        self.exit_failure_count = kwargs.get('exit_failure_count', None)
+        self.continuous_exit_failure_count = kwargs.get('continuous_exit_failure_count', None)

@@ -87,8 +87,8 @@ class JobPipelineInformation(Model):
         'recurrences': {'key': 'recurrences', 'type': '[str]'},
     }
 
-    def __init__(self):
-        super(JobPipelineInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobPipelineInformation, self).__init__(**kwargs)
         self.pipeline_id = None
         self.pipeline_name = None
         self.pipeline_uri = None

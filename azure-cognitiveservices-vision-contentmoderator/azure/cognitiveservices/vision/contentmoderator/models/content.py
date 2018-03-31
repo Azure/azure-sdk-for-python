@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class Content(Model):
     """Content.
 
-    :param content_value: Content to evaluate for a job.
+    All required parameters must be populated in order to send to Azure.
+
+    :param content_value: Required. Content to evaluate for a job.
     :type content_value: str
     """
 
@@ -27,6 +29,6 @@ class Content(Model):
         'content_value': {'key': 'ContentValue', 'type': 'str'},
     }
 
-    def __init__(self, content_value):
-        super(Content, self).__init__()
-        self.content_value = content_value
+    def __init__(self, **kwargs):
+        super(Content, self).__init__(**kwargs)
+        self.content_value = kwargs.get('content_value', None)

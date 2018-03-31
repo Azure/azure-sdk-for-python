@@ -32,8 +32,9 @@ class WorkflowTriggerListCallbackUrlQueries(Model):
         'sig': {'key': 'sig', 'type': 'str'},
     }
 
-    def __init__(self, api_version=None, sp=None, sv=None, sig=None):
-        self.api_version = api_version
-        self.sp = sp
-        self.sv = sv
-        self.sig = sig
+    def __init__(self, **kwargs):
+        super(WorkflowTriggerListCallbackUrlQueries, self).__init__(**kwargs)
+        self.api_version = kwargs.get('api_version', None)
+        self.sp = kwargs.get('sp', None)
+        self.sv = kwargs.get('sv', None)
+        self.sig = kwargs.get('sig', None)

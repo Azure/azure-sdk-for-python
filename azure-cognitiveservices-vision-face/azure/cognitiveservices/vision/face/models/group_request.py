@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class GroupRequest(Model):
     """Request body for group request.
 
-    :param face_ids: Array of candidate faceId created by Face - Detect. The
-     maximum is 1000 faces
+    All required parameters must be populated in order to send to Azure.
+
+    :param face_ids: Required. Array of candidate faceId created by Face -
+     Detect. The maximum is 1000 faces
     :type face_ids: list[str]
     """
 
@@ -28,6 +30,6 @@ class GroupRequest(Model):
         'face_ids': {'key': 'faceIds', 'type': '[str]'},
     }
 
-    def __init__(self, face_ids):
-        super(GroupRequest, self).__init__()
-        self.face_ids = face_ids
+    def __init__(self, **kwargs):
+        super(GroupRequest, self).__init__(**kwargs)
+        self.face_ids = kwargs.get('face_ids', None)

@@ -20,12 +20,11 @@ class DeletedKeyBundle(KeyBundle):
     sending a request.
 
     :param key: The Json web key.
-    :type key: :class:`JsonWebKey <azure.keyvault.models.JsonWebKey>`
+    :type key: ~azure.keyvault.models.JsonWebKey
     :param attributes: The key management attributes.
-    :type attributes: :class:`KeyAttributes
-     <azure.keyvault.models.KeyAttributes>`
+    :type attributes: ~azure.keyvault.models.KeyAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this
      is a key backing a certificate, then managed will be true.
     :vartype managed: bool
@@ -55,8 +54,8 @@ class DeletedKeyBundle(KeyBundle):
         'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, key=None, attributes=None, tags=None, recovery_id=None):
-        super(DeletedKeyBundle, self).__init__(key=key, attributes=attributes, tags=tags)
-        self.recovery_id = recovery_id
+    def __init__(self, **kwargs):
+        super(DeletedKeyBundle, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None

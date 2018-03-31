@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class SyncStorageKeysInput(Model):
     """The request  body for a SyncStorageKeys API.
 
-    :param id: The id of the storage account resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The id of the storage account resource.
     :type id: str
     """
 
@@ -27,5 +29,6 @@ class SyncStorageKeysInput(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        self.id = id
+    def __init__(self, **kwargs):
+        super(SyncStorageKeysInput, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

@@ -23,6 +23,6 @@ class AppInsightsProperties(Model):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None):
-        super(AppInsightsProperties, self).__init__()
-        self.resource_id = resource_id
+    def __init__(self, **kwargs):
+        super(AppInsightsProperties, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)

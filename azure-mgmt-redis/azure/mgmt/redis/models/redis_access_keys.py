@@ -36,7 +36,7 @@ class RedisAccessKeys(Model):
         'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(RedisAccessKeys, self).__init__()
+    def __init__(self, **kwargs):
+        super(RedisAccessKeys, self).__init__(**kwargs)
         self.primary_key = None
         self.secondary_key = None

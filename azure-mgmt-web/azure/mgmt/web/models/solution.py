@@ -42,12 +42,12 @@ class Solution(Model):
         'metadata': {'key': 'metadata', 'type': '[[NameValuePair]]'},
     }
 
-    def __init__(self, id=None, display_name=None, order=None, description=None, type=None, data=None, metadata=None):
-        super(Solution, self).__init__()
-        self.id = id
-        self.display_name = display_name
-        self.order = order
-        self.description = description
-        self.type = type
-        self.data = data
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(Solution, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.order = kwargs.get('order', None)
+        self.description = kwargs.get('description', None)
+        self.type = kwargs.get('type', None)
+        self.data = kwargs.get('data', None)
+        self.metadata = kwargs.get('metadata', None)

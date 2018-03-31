@@ -29,7 +29,7 @@ class AutoUserSpecification(Model):
         'elevation_level': {'key': 'elevationLevel', 'type': 'ElevationLevel'},
     }
 
-    def __init__(self, scope=None, elevation_level=None):
-        super(AutoUserSpecification, self).__init__()
-        self.scope = scope
-        self.elevation_level = elevation_level
+    def __init__(self, **kwargs):
+        super(AutoUserSpecification, self).__init__(**kwargs)
+        self.scope = kwargs.get('scope', None)
+        self.elevation_level = kwargs.get('elevation_level', None)

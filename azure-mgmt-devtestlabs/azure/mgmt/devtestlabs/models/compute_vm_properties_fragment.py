@@ -44,12 +44,12 @@ class ComputeVmPropertiesFragment(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[ComputeDataDiskFragment]'},
     }
 
-    def __init__(self, statuses=None, os_type=None, vm_size=None, network_interface_id=None, os_disk_id=None, data_disk_ids=None, data_disks=None):
-        super(ComputeVmPropertiesFragment, self).__init__()
-        self.statuses = statuses
-        self.os_type = os_type
-        self.vm_size = vm_size
-        self.network_interface_id = network_interface_id
-        self.os_disk_id = os_disk_id
-        self.data_disk_ids = data_disk_ids
-        self.data_disks = data_disks
+    def __init__(self, **kwargs):
+        super(ComputeVmPropertiesFragment, self).__init__(**kwargs)
+        self.statuses = kwargs.get('statuses', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.network_interface_id = kwargs.get('network_interface_id', None)
+        self.os_disk_id = kwargs.get('os_disk_id', None)
+        self.data_disk_ids = kwargs.get('data_disk_ids', None)
+        self.data_disks = kwargs.get('data_disks', None)

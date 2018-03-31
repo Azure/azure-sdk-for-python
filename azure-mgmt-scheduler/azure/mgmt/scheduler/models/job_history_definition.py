@@ -25,8 +25,8 @@ class JobHistoryDefinition(Model):
     :ivar name: Gets the job history name.
     :vartype name: str
     :ivar properties: Gets or sets the job history properties.
-    :vartype properties: :class:`JobHistoryDefinitionProperties
-     <azure.mgmt.scheduler.models.JobHistoryDefinitionProperties>`
+    :vartype properties:
+     ~azure.mgmt.scheduler.models.JobHistoryDefinitionProperties
     """
 
     _validation = {
@@ -43,7 +43,8 @@ class JobHistoryDefinition(Model):
         'properties': {'key': 'properties', 'type': 'JobHistoryDefinitionProperties'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(JobHistoryDefinition, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None

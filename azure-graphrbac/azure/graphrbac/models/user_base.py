@@ -47,11 +47,11 @@ class UserBase(Model):
         'user_type': {'key': 'userType', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, immutable_id=None, usage_location=None, given_name=None, surname=None, user_type=None):
-        super(UserBase, self).__init__()
-        self.additional_properties = additional_properties
-        self.immutable_id = immutable_id
-        self.usage_location = usage_location
-        self.given_name = given_name
-        self.surname = surname
-        self.user_type = user_type
+    def __init__(self, **kwargs):
+        super(UserBase, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.immutable_id = kwargs.get('immutable_id', None)
+        self.usage_location = kwargs.get('usage_location', None)
+        self.given_name = kwargs.get('given_name', None)
+        self.surname = kwargs.get('surname', None)
+        self.user_type = kwargs.get('user_type', None)

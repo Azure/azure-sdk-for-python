@@ -40,9 +40,9 @@ class ChaosReport(Model):
         'history': {'key': 'History', 'type': '[ChaosEventWrapper]'},
     }
 
-    def __init__(self, chaos_parameters=None, status=None, continuation_token=None, history=None):
-        super(ChaosReport, self).__init__()
-        self.chaos_parameters = chaos_parameters
-        self.status = status
-        self.continuation_token = continuation_token
-        self.history = history
+    def __init__(self, **kwargs):
+        super(ChaosReport, self).__init__(**kwargs)
+        self.chaos_parameters = kwargs.get('chaos_parameters', None)
+        self.status = kwargs.get('status', None)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.history = kwargs.get('history', None)

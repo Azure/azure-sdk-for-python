@@ -15,23 +15,25 @@ from msrest.serialization import Model
 class X12ProcessingSettings(Model):
     """The X12 processing settings.
 
-    :param mask_security_info: The value indicating whether to mask security
-     information.
+    All required parameters must be populated in order to send to Azure.
+
+    :param mask_security_info: Required. The value indicating whether to mask
+     security information.
     :type mask_security_info: bool
-    :param convert_implied_decimal: The value indicating whether to convert
-     numerical type to implied decimal.
+    :param convert_implied_decimal: Required. The value indicating whether to
+     convert numerical type to implied decimal.
     :type convert_implied_decimal: bool
-    :param preserve_interchange: The value indicating whether to preserve
-     interchange.
+    :param preserve_interchange: Required. The value indicating whether to
+     preserve interchange.
     :type preserve_interchange: bool
-    :param suspend_interchange_on_error: The value indicating whether to
-     suspend interchange on error.
+    :param suspend_interchange_on_error: Required. The value indicating
+     whether to suspend interchange on error.
     :type suspend_interchange_on_error: bool
-    :param create_empty_xml_tags_for_trailing_separators: The value indicating
-     whether to create empty xml tags for trailing separators.
+    :param create_empty_xml_tags_for_trailing_separators: Required. The value
+     indicating whether to create empty xml tags for trailing separators.
     :type create_empty_xml_tags_for_trailing_separators: bool
-    :param use_dot_as_decimal_separator: The value indicating whether to use
-     dot as decimal separator.
+    :param use_dot_as_decimal_separator: Required. The value indicating
+     whether to use dot as decimal separator.
     :type use_dot_as_decimal_separator: bool
     """
 
@@ -53,10 +55,11 @@ class X12ProcessingSettings(Model):
         'use_dot_as_decimal_separator': {'key': 'useDotAsDecimalSeparator', 'type': 'bool'},
     }
 
-    def __init__(self, mask_security_info, convert_implied_decimal, preserve_interchange, suspend_interchange_on_error, create_empty_xml_tags_for_trailing_separators, use_dot_as_decimal_separator):
-        self.mask_security_info = mask_security_info
-        self.convert_implied_decimal = convert_implied_decimal
-        self.preserve_interchange = preserve_interchange
-        self.suspend_interchange_on_error = suspend_interchange_on_error
-        self.create_empty_xml_tags_for_trailing_separators = create_empty_xml_tags_for_trailing_separators
-        self.use_dot_as_decimal_separator = use_dot_as_decimal_separator
+    def __init__(self, **kwargs):
+        super(X12ProcessingSettings, self).__init__(**kwargs)
+        self.mask_security_info = kwargs.get('mask_security_info', None)
+        self.convert_implied_decimal = kwargs.get('convert_implied_decimal', None)
+        self.preserve_interchange = kwargs.get('preserve_interchange', None)
+        self.suspend_interchange_on_error = kwargs.get('suspend_interchange_on_error', None)
+        self.create_empty_xml_tags_for_trailing_separators = kwargs.get('create_empty_xml_tags_for_trailing_separators', None)
+        self.use_dot_as_decimal_separator = kwargs.get('use_dot_as_decimal_separator', None)

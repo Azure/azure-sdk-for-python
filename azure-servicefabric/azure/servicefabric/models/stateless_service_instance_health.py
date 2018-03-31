@@ -18,6 +18,8 @@ class StatelessServiceInstanceHealth(ReplicaHealth):
     unhealthy evaluations.
     .
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The HealthState representing the
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
@@ -37,7 +39,7 @@ class StatelessServiceInstanceHealth(ReplicaHealth):
     :type health_statistics: ~azure.servicefabric.models.HealthStatistics
     :param partition_id: Id of the partition to which this replica belongs.
     :type partition_id: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_id: Id of a stateless service instance. InstanceId is used
      by Service Fabric to uniquely identify an instance of a partition of a
@@ -61,7 +63,7 @@ class StatelessServiceInstanceHealth(ReplicaHealth):
         'instance_id': {'key': 'InstanceId', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, partition_id=None, instance_id=None):
-        super(StatelessServiceInstanceHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics, partition_id=partition_id)
-        self.instance_id = instance_id
+    def __init__(self, **kwargs):
+        super(StatelessServiceInstanceHealth, self).__init__(**kwargs)
+        self.instance_id = kwargs.get('instance_id', None)
         self.service_kind = 'Stateless'

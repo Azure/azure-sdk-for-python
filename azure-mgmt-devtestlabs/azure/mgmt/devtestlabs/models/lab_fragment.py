@@ -65,9 +65,9 @@ class LabFragment(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, lab_storage_type=None, premium_data_disks=None, provisioning_state=None, unique_identifier=None):
-        super(LabFragment, self).__init__(location=location, tags=tags)
-        self.lab_storage_type = lab_storage_type
-        self.premium_data_disks = premium_data_disks
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(LabFragment, self).__init__(**kwargs)
+        self.lab_storage_type = kwargs.get('lab_storage_type', None)
+        self.premium_data_disks = kwargs.get('premium_data_disks', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

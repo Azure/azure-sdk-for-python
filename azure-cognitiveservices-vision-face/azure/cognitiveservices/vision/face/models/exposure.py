@@ -30,7 +30,7 @@ class Exposure(Model):
         'value': {'key': 'value', 'type': 'float'},
     }
 
-    def __init__(self, exposure_level=None, value=None):
-        super(Exposure, self).__init__()
-        self.exposure_level = exposure_level
-        self.value = value
+    def __init__(self, **kwargs):
+        super(Exposure, self).__init__(**kwargs)
+        self.exposure_level = kwargs.get('exposure_level', None)
+        self.value = kwargs.get('value', None)

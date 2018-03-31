@@ -17,9 +17,18 @@ class BMSPOQueryObject(Model):
 
     :param backup_management_type: Backup management type. Possible values
      include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM', 'AzureBackupServer',
-     'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureSql', 'AzureStorage', 'AzureWorkload', 'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
+    :param workload_type: Workload type. Possible values include: 'Invalid',
+     'VM', 'FileFolder', 'AzureSqlDb', 'SQLDB', 'Exchange', 'Sharepoint',
+     'VMwareVM', 'SystemState', 'Client', 'GenericDataSource', 'SQLDataBase',
+     'AzureFileShare'
+    :type workload_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
+    :param container_name: Full name of the container whose Protectable
+     Objects should be returned.
+    :type container_name: str
     :param status: Backup status query parameter.
     :type status: str
     :param friendly_name: Friendly name.
@@ -28,11 +37,16 @@ class BMSPOQueryObject(Model):
 
     _attribute_map = {
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        'workload_type': {'key': 'workloadType', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
     }
 
-    def __init__(self, backup_management_type=None, status=None, friendly_name=None):
-        self.backup_management_type = backup_management_type
-        self.status = status
-        self.friendly_name = friendly_name
+    def __init__(self, **kwargs):
+        super(BMSPOQueryObject, self).__init__(**kwargs)
+        self.backup_management_type = kwargs.get('backup_management_type', None)
+        self.workload_type = kwargs.get('workload_type', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.status = kwargs.get('status', None)
+        self.friendly_name = kwargs.get('friendly_name', None)

@@ -18,20 +18,23 @@ class CreateVideoReviewsBodyItem(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param video_frames: Optional metadata details.
     :type video_frames:
      list[~azure.cognitiveservices.vision.contentmoderator.models.CreateVideoReviewsBodyItemVideoFramesItem]
     :param metadata: Optional metadata details.
     :type metadata:
      list[~azure.cognitiveservices.vision.contentmoderator.models.CreateVideoReviewsBodyItemMetadataItem]
-    :ivar type: Type of the content. Default value: "Video" .
+    :ivar type: Required. Type of the content. Default value: "Video" .
     :vartype type: str
-    :param content: Video content url to review.
+    :param content: Required. Video content url to review.
     :type content: str
-    :param content_id: Content Identifier.
+    :param content_id: Required. Content Identifier.
     :type content_id: str
-    :param status: Status of the video(Complete,Unpublished,Pending). Possible
-     values include: 'Complete', 'Unpublished', 'Pending'
+    :param status: Required. Status of the
+     video(Complete,Unpublished,Pending). Possible values include: 'Complete',
+     'Unpublished', 'Pending'
     :type status: str or
      ~azure.cognitiveservices.vision.contentmoderator.models.enum
     :param timescale: Timescale of the video.
@@ -60,12 +63,12 @@ class CreateVideoReviewsBodyItem(Model):
 
     type = "Video"
 
-    def __init__(self, content, content_id, status, video_frames=None, metadata=None, timescale=None, callback_endpoint=None):
-        super(CreateVideoReviewsBodyItem, self).__init__()
-        self.video_frames = video_frames
-        self.metadata = metadata
-        self.content = content
-        self.content_id = content_id
-        self.status = status
-        self.timescale = timescale
-        self.callback_endpoint = callback_endpoint
+    def __init__(self, **kwargs):
+        super(CreateVideoReviewsBodyItem, self).__init__(**kwargs)
+        self.video_frames = kwargs.get('video_frames', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.content = kwargs.get('content', None)
+        self.content_id = kwargs.get('content_id', None)
+        self.status = kwargs.get('status', None)
+        self.timescale = kwargs.get('timescale', None)
+        self.callback_endpoint = kwargs.get('callback_endpoint', None)

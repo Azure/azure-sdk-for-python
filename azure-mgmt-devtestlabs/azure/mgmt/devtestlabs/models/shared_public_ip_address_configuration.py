@@ -25,6 +25,6 @@ class SharedPublicIpAddressConfiguration(Model):
         'inbound_nat_rules': {'key': 'inboundNatRules', 'type': '[InboundNatRule]'},
     }
 
-    def __init__(self, inbound_nat_rules=None):
-        super(SharedPublicIpAddressConfiguration, self).__init__()
-        self.inbound_nat_rules = inbound_nat_rules
+    def __init__(self, **kwargs):
+        super(SharedPublicIpAddressConfiguration, self).__init__(**kwargs)
+        self.inbound_nat_rules = kwargs.get('inbound_nat_rules', None)

@@ -38,8 +38,8 @@ class BatchAccountKeys(Model):
         'secondary': {'key': 'secondary', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(BatchAccountKeys, self).__init__()
+    def __init__(self, **kwargs):
+        super(BatchAccountKeys, self).__init__(**kwargs)
         self.account_name = None
         self.primary = None
         self.secondary = None

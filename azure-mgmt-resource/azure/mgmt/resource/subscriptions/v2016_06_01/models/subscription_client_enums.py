@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class SubscriptionState(Enum):
+class SubscriptionState(str, Enum):
 
     enabled = "Enabled"
     warned = "Warned"
@@ -21,7 +21,7 @@ class SubscriptionState(Enum):
     deleted = "Deleted"
 
 
-class SpendingLimit(Enum):
+class SpendingLimit(str, Enum):
 
     on = "On"
     off = "Off"

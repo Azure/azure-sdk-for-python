@@ -34,9 +34,9 @@ class Frame(Model):
         'reviewer_result_tags': {'key': 'ReviewerResultTags', 'type': '[Tag]'},
     }
 
-    def __init__(self, timestamp=None, frame_image=None, metadata=None, reviewer_result_tags=None):
-        super(Frame, self).__init__()
-        self.timestamp = timestamp
-        self.frame_image = frame_image
-        self.metadata = metadata
-        self.reviewer_result_tags = reviewer_result_tags
+    def __init__(self, **kwargs):
+        super(Frame, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.frame_image = kwargs.get('frame_image', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.reviewer_result_tags = kwargs.get('reviewer_result_tags', None)

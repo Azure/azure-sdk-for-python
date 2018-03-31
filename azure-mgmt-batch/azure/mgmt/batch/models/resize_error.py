@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class ResizeError(Model):
     """An error that occurred when resizing a pool.
 
-    :param code: An identifier for the error. Codes are invariant and are
-     intended to be consumed programmatically.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. An identifier for the error. Codes are invariant
+     and are intended to be consumed programmatically.
     :type code: str
-    :param message: A message describing the error, intended to be suitable
-     for display in a user interface.
+    :param message: Required. A message describing the error, intended to be
+     suitable for display in a user interface.
     :type message: str
     :param details: Additional details about the error.
     :type details: list[~azure.mgmt.batch.models.ResizeError]
@@ -36,8 +38,8 @@ class ResizeError(Model):
         'details': {'key': 'details', 'type': '[ResizeError]'},
     }
 
-    def __init__(self, code, message, details=None):
-        super(ResizeError, self).__init__()
-        self.code = code
-        self.message = message
-        self.details = details
+    def __init__(self, **kwargs):
+        super(ResizeError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)

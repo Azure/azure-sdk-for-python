@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class PropertyDescription(Model):
     """Description of a Service Fabric property.
 
-    :param property_name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param property_name: Required. The name of the Service Fabric property.
     :type property_name: str
     :param custom_type_id: The property's custom type id. Using this property,
      the user is able to tag the type of the value of the property.
     :type custom_type_id: str
-    :param value: Describes a Service Fabric property value.
+    :param value: Required. Describes a Service Fabric property value.
     :type value: ~azure.servicefabric.models.PropertyValue
     """
 
@@ -35,8 +37,8 @@ class PropertyDescription(Model):
         'value': {'key': 'Value', 'type': 'PropertyValue'},
     }
 
-    def __init__(self, property_name, value, custom_type_id=None):
-        super(PropertyDescription, self).__init__()
-        self.property_name = property_name
-        self.custom_type_id = custom_type_id
-        self.value = value
+    def __init__(self, **kwargs):
+        super(PropertyDescription, self).__init__(**kwargs)
+        self.property_name = kwargs.get('property_name', None)
+        self.custom_type_id = kwargs.get('custom_type_id', None)
+        self.value = kwargs.get('value', None)

@@ -23,6 +23,6 @@ class AddDataLakeStoreParameters(Model):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, suffix=None):
-        super(AddDataLakeStoreParameters, self).__init__()
-        self.suffix = suffix
+    def __init__(self, **kwargs):
+        super(AddDataLakeStoreParameters, self).__init__(**kwargs)
+        self.suffix = kwargs.get('suffix', None)

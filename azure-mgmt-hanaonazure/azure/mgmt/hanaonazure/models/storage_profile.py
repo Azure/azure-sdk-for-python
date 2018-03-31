@@ -20,6 +20,9 @@ class StorageProfile(Model):
 
     :ivar nfs_ip_address: IP Address to connect to storage.
     :vartype nfs_ip_address: str
+    :param os_disks: Specifies information about the operating system disk
+     used by the hana instance.
+    :type os_disks: list[~azure.mgmt.hanaonazure.models.Disk]
     """
 
     _validation = {
@@ -28,8 +31,10 @@ class StorageProfile(Model):
 
     _attribute_map = {
         'nfs_ip_address': {'key': 'nfsIpAddress', 'type': 'str'},
+        'os_disks': {'key': 'osDisks', 'type': '[Disk]'},
     }
 
-    def __init__(self):
-        super(StorageProfile, self).__init__()
+    def __init__(self, **kwargs):
+        super(StorageProfile, self).__init__(**kwargs)
         self.nfs_ip_address = None
+        self.os_disks = kwargs.get('os_disks', None)

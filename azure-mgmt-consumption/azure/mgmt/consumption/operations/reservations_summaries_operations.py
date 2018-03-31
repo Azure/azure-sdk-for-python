@@ -22,7 +22,7 @@ class ReservationsSummariesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-31. Constant value: "2018-01-31".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-31. Constant value: "2018-03-31".
     """
 
     models = models
@@ -32,19 +32,16 @@ class ReservationsSummariesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-31"
+        self.api_version = "2018-03-31"
 
         self.config = config
 
     def list_by_reservation_order(
-            self, reservation_order_id, grain, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, reservation_order_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the reservations summaries for daily or monthly grain.
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
-        :param grain: Can be daily or monthly. Possible values include:
-         'DailyGrain', 'MonthlyGrain'
-        :type grain: str or ~azure.mgmt.consumption.models.Datagrain
         :param filter: Required only for daily grain. The properties/UsageDate
          for start date and end date. The filter supports 'le' and  'ge'
         :type filter: str
@@ -71,7 +68,7 @@ class ReservationsSummariesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['grain'] = self._serialize.query("grain", grain, 'str')
+                query_parameters['grain'] = self._serialize.query("self.config.grain", self.config.grain, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
@@ -112,16 +109,13 @@ class ReservationsSummariesOperations(object):
     list_by_reservation_order.metadata = {'url': '/providers/Microsoft.Capacity/reservationorders/{reservationOrderId}/providers/Microsoft.Consumption/reservationSummaries'}
 
     def list_by_reservation_order_and_reservation(
-            self, reservation_order_id, reservation_id, grain, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, reservation_order_id, reservation_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists the reservations summaries for daily or monthly grain.
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
         :param reservation_id: Id of the reservation
         :type reservation_id: str
-        :param grain: Can be daily or monthly. Possible values include:
-         'DailyGrain', 'MonthlyGrain'
-        :type grain: str or ~azure.mgmt.consumption.models.Datagrain
         :param filter: Required only for daily grain. The properties/UsageDate
          for start date and end date. The filter supports 'le' and  'ge'
         :type filter: str
@@ -149,7 +143,7 @@ class ReservationsSummariesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['grain'] = self._serialize.query("grain", grain, 'str')
+                query_parameters['grain'] = self._serialize.query("self.config.grain", self.config.grain, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')

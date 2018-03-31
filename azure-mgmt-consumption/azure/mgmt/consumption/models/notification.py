@@ -15,17 +15,19 @@ from msrest.serialization import Model
 class Notification(Model):
     """The notification associated with a budget.
 
-    :param enabled: The notification is enabled or not.
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. The notification is enabled or not.
     :type enabled: bool
-    :param operator: The comparison operator. Possible values include:
-     'EqualTo', 'GreaterThan', 'GreaterThanOrEqualTo'
+    :param operator: Required. The comparison operator. Possible values
+     include: 'EqualTo', 'GreaterThan', 'GreaterThanOrEqualTo'
     :type operator: str or ~azure.mgmt.consumption.models.OperatorType
-    :param threshold: Threshold value associated with a notification.
-     Notification is sent when the cost exceeded the threshold. It is always
-     percent and has to be between 0 and 1000.
+    :param threshold: Required. Threshold value associated with a
+     notification. Notification is sent when the cost exceeded the threshold.
+     It is always percent and has to be between 0 and 1000.
     :type threshold: decimal.Decimal
-    :param contact_emails: Email addresses to send the budget notification to
-     when the threshold is exceeded.
+    :param contact_emails: Required. Email addresses to send the budget
+     notification to when the threshold is exceeded.
     :type contact_emails: list[str]
     :param contact_roles: Contact roles to send the budget notification to
      when the threshold is exceeded.
@@ -52,11 +54,11 @@ class Notification(Model):
         'contact_groups': {'key': 'contactGroups', 'type': '[str]'},
     }
 
-    def __init__(self, enabled, operator, threshold, contact_emails, contact_roles=None, contact_groups=None):
-        super(Notification, self).__init__()
-        self.enabled = enabled
-        self.operator = operator
-        self.threshold = threshold
-        self.contact_emails = contact_emails
-        self.contact_roles = contact_roles
-        self.contact_groups = contact_groups
+    def __init__(self, **kwargs):
+        super(Notification, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.operator = kwargs.get('operator', None)
+        self.threshold = kwargs.get('threshold', None)
+        self.contact_emails = kwargs.get('contact_emails', None)
+        self.contact_roles = kwargs.get('contact_roles', None)
+        self.contact_groups = kwargs.get('contact_groups', None)

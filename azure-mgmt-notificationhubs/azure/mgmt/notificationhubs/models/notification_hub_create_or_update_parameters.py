@@ -18,18 +18,20 @@ class NotificationHubCreateOrUpdateParameters(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param notification_hub_create_or_update_parameters_name: The
      NotificationHub name.
     :type notification_hub_create_or_update_parameters_name: str
@@ -38,28 +40,22 @@ class NotificationHubCreateOrUpdateParameters(Resource):
     :type registration_ttl: str
     :param authorization_rules: The AuthorizationRules of the created
      NotificationHub
-    :type authorization_rules: list of
-     :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+    :type authorization_rules:
+     list[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties]
     :param apns_credential: The ApnsCredential of the created NotificationHub
-    :type apns_credential: :class:`ApnsCredential
-     <azure.mgmt.notificationhubs.models.ApnsCredential>`
+    :type apns_credential: ~azure.mgmt.notificationhubs.models.ApnsCredential
     :param wns_credential: The WnsCredential of the created NotificationHub
-    :type wns_credential: :class:`WnsCredential
-     <azure.mgmt.notificationhubs.models.WnsCredential>`
+    :type wns_credential: ~azure.mgmt.notificationhubs.models.WnsCredential
     :param gcm_credential: The GcmCredential of the created NotificationHub
-    :type gcm_credential: :class:`GcmCredential
-     <azure.mgmt.notificationhubs.models.GcmCredential>`
+    :type gcm_credential: ~azure.mgmt.notificationhubs.models.GcmCredential
     :param mpns_credential: The MpnsCredential of the created NotificationHub
-    :type mpns_credential: :class:`MpnsCredential
-     <azure.mgmt.notificationhubs.models.MpnsCredential>`
+    :type mpns_credential: ~azure.mgmt.notificationhubs.models.MpnsCredential
     :param adm_credential: The AdmCredential of the created NotificationHub
-    :type adm_credential: :class:`AdmCredential
-     <azure.mgmt.notificationhubs.models.AdmCredential>`
+    :type adm_credential: ~azure.mgmt.notificationhubs.models.AdmCredential
     :param baidu_credential: The BaiduCredential of the created
      NotificationHub
-    :type baidu_credential: :class:`BaiduCredential
-     <azure.mgmt.notificationhubs.models.BaiduCredential>`
+    :type baidu_credential:
+     ~azure.mgmt.notificationhubs.models.BaiduCredential
     """
 
     _validation = {
@@ -87,14 +83,14 @@ class NotificationHubCreateOrUpdateParameters(Resource):
         'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
     }
 
-    def __init__(self, location, tags=None, sku=None, notification_hub_create_or_update_parameters_name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
-        super(NotificationHubCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku)
-        self.notification_hub_create_or_update_parameters_name = notification_hub_create_or_update_parameters_name
-        self.registration_ttl = registration_ttl
-        self.authorization_rules = authorization_rules
-        self.apns_credential = apns_credential
-        self.wns_credential = wns_credential
-        self.gcm_credential = gcm_credential
-        self.mpns_credential = mpns_credential
-        self.adm_credential = adm_credential
-        self.baidu_credential = baidu_credential
+    def __init__(self, **kwargs):
+        super(NotificationHubCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.notification_hub_create_or_update_parameters_name = kwargs.get('notification_hub_create_or_update_parameters_name', None)
+        self.registration_ttl = kwargs.get('registration_ttl', None)
+        self.authorization_rules = kwargs.get('authorization_rules', None)
+        self.apns_credential = kwargs.get('apns_credential', None)
+        self.wns_credential = kwargs.get('wns_credential', None)
+        self.gcm_credential = kwargs.get('gcm_credential', None)
+        self.mpns_credential = kwargs.get('mpns_credential', None)
+        self.adm_credential = kwargs.get('adm_credential', None)
+        self.baidu_credential = kwargs.get('baidu_credential', None)

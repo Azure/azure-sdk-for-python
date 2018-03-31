@@ -15,13 +15,15 @@ from .operation_status_extended_info import OperationStatusExtendedInfo
 class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for list of jobs.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param job_ids: IDs of the jobs created for the protected item.
-    :type job_ids: list of str
+    :type job_ids: list[str]
     :param failed_jobs_error: Stores all the failed jobs along with the
      corresponding error codes.
-    :type failed_jobs_error: dict
+    :type failed_jobs_error: dict[str, str]
     """
 
     _validation = {
@@ -34,8 +36,8 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
         'failed_jobs_error': {'key': 'failedJobsError', 'type': '{str}'},
     }
 
-    def __init__(self, job_ids=None, failed_jobs_error=None):
-        super(OperationStatusJobsExtendedInfo, self).__init__()
-        self.job_ids = job_ids
-        self.failed_jobs_error = failed_jobs_error
+    def __init__(self, **kwargs):
+        super(OperationStatusJobsExtendedInfo, self).__init__(**kwargs)
+        self.job_ids = kwargs.get('job_ids', None)
+        self.failed_jobs_error = kwargs.get('failed_jobs_error', None)
         self.object_type = 'OperationStatusJobsExtendedInfo'

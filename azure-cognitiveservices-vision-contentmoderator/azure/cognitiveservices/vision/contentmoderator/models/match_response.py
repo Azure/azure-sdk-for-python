@@ -37,10 +37,10 @@ class MatchResponse(Model):
         'status': {'key': 'Status', 'type': 'Status'},
     }
 
-    def __init__(self, tracking_id=None, cache_id=None, is_match=None, matches=None, status=None):
-        super(MatchResponse, self).__init__()
-        self.tracking_id = tracking_id
-        self.cache_id = cache_id
-        self.is_match = is_match
-        self.matches = matches
-        self.status = status
+    def __init__(self, **kwargs):
+        super(MatchResponse, self).__init__(**kwargs)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.is_match = kwargs.get('is_match', None)
+        self.matches = kwargs.get('matches', None)
+        self.status = kwargs.get('status', None)

@@ -21,7 +21,7 @@ class PriceSheetProperties(Model):
     :ivar billing_period_id: The id of the billing period resource that the
      usage belongs to.
     :vartype billing_period_id: str
-    :ivar meter_id: The meter id
+    :ivar meter_id: The meter id (GUID)
     :vartype meter_id: str
     :ivar meter_details: The details about the meter. By default this is not
      populated, unless it's specified in $expand.
@@ -60,8 +60,8 @@ class PriceSheetProperties(Model):
         'currency_code': {'key': 'currencyCode', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(PriceSheetProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(PriceSheetProperties, self).__init__(**kwargs)
         self.billing_period_id = None
         self.meter_id = None
         self.meter_details = None

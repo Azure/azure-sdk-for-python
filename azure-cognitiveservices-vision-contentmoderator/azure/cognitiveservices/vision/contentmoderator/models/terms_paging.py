@@ -32,9 +32,9 @@ class TermsPaging(Model):
         'returned': {'key': 'Returned', 'type': 'int'},
     }
 
-    def __init__(self, total=None, limit=None, offset=None, returned=None):
-        super(TermsPaging, self).__init__()
-        self.total = total
-        self.limit = limit
-        self.offset = offset
-        self.returned = returned
+    def __init__(self, **kwargs):
+        super(TermsPaging, self).__init__(**kwargs)
+        self.total = kwargs.get('total', None)
+        self.limit = kwargs.get('limit', None)
+        self.offset = kwargs.get('offset', None)
+        self.returned = kwargs.get('returned', None)

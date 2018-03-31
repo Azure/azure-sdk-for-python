@@ -16,10 +16,13 @@ class AddStorageAccountWithAccountParameters(Model):
     """The parameters used to add a new Azure Storage account while creating a new
     Data Lake Analytics account.
 
-    :param name: The unique name of the Azure Storage account to add.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the Azure Storage account to
+     add.
     :type name: str
-    :param access_key: The access key associated with this Azure Storage
-     account that will be used to connect to it.
+    :param access_key: Required. The access key associated with this Azure
+     Storage account that will be used to connect to it.
     :type access_key: str
     :param suffix: The optional suffix for the storage account.
     :type suffix: str
@@ -36,8 +39,8 @@ class AddStorageAccountWithAccountParameters(Model):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name, access_key, suffix=None):
-        super(AddStorageAccountWithAccountParameters, self).__init__()
-        self.name = name
-        self.access_key = access_key
-        self.suffix = suffix
+    def __init__(self, **kwargs):
+        super(AddStorageAccountWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.access_key = kwargs.get('access_key', None)
+        self.suffix = kwargs.get('suffix', None)

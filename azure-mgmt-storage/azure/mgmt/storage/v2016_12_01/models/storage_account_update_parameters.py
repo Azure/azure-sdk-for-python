@@ -53,11 +53,11 @@ class StorageAccountUpdateParameters(Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
     }
 
-    def __init__(self, sku=None, tags=None, custom_domain=None, encryption=None, access_tier=None, enable_https_traffic_only=False):
-        super(StorageAccountUpdateParameters, self).__init__()
-        self.sku = sku
-        self.tags = tags
-        self.custom_domain = custom_domain
-        self.encryption = encryption
-        self.access_tier = access_tier
-        self.enable_https_traffic_only = enable_https_traffic_only
+    def __init__(self, **kwargs):
+        super(StorageAccountUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)
+        self.custom_domain = kwargs.get('custom_domain', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.access_tier = kwargs.get('access_tier', None)
+        self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)

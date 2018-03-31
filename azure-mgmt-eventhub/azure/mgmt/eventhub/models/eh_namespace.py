@@ -78,13 +78,13 @@ class EHNamespace(TrackedResource):
         'maximum_throughput_units': {'key': 'properties.maximumThroughputUnits', 'type': 'int'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, is_auto_inflate_enabled=None, maximum_throughput_units=None):
-        super(EHNamespace, self).__init__(location=location, tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(EHNamespace, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
         self.metric_id = None
-        self.is_auto_inflate_enabled = is_auto_inflate_enabled
-        self.maximum_throughput_units = maximum_throughput_units
+        self.is_auto_inflate_enabled = kwargs.get('is_auto_inflate_enabled', None)
+        self.maximum_throughput_units = kwargs.get('maximum_throughput_units', None)

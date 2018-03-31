@@ -40,10 +40,10 @@ class GlobalServiceConfiguration(Model):
         'auto_scale': {'key': 'autoScale', 'type': 'AutoScaleConfiguration'},
     }
 
-    def __init__(self, additional_properties=None, etag=None, ssl=None, service_auth=None, auto_scale=None):
-        super(GlobalServiceConfiguration, self).__init__()
-        self.additional_properties = additional_properties
-        self.etag = etag
-        self.ssl = ssl
-        self.service_auth = service_auth
-        self.auto_scale = auto_scale
+    def __init__(self, **kwargs):
+        super(GlobalServiceConfiguration, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.etag = kwargs.get('etag', None)
+        self.ssl = kwargs.get('ssl', None)
+        self.service_auth = kwargs.get('service_auth', None)
+        self.auto_scale = kwargs.get('auto_scale', None)

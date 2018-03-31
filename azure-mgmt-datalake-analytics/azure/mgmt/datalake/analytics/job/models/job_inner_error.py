@@ -84,8 +84,8 @@ class JobInnerError(Model):
         'inner_error': {'key': 'innerError', 'type': 'JobInnerError'},
     }
 
-    def __init__(self):
-        super(JobInnerError, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobInnerError, self).__init__(**kwargs)
         self.diagnostic_code = None
         self.severity = None
         self.details = None

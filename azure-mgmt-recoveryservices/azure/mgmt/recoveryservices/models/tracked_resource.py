@@ -18,6 +18,8 @@ class TrackedResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
     :ivar name: Resource name associated with the resource.
@@ -27,10 +29,10 @@ class TrackedResource(Resource):
     :vartype type: str
     :param e_tag: Optional ETag.
     :type e_tag: str
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -49,7 +51,7 @@ class TrackedResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, e_tag=None, tags=None):
-        super(TrackedResource, self).__init__(e_tag=e_tag)
-        self.location = location
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(TrackedResource, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

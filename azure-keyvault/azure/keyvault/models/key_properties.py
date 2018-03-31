@@ -33,8 +33,9 @@ class KeyProperties(Model):
         'reuse_key': {'key': 'reuse_key', 'type': 'bool'},
     }
 
-    def __init__(self, exportable=None, key_type=None, key_size=None, reuse_key=None):
-        self.exportable = exportable
-        self.key_type = key_type
-        self.key_size = key_size
-        self.reuse_key = reuse_key
+    def __init__(self, **kwargs):
+        super(KeyProperties, self).__init__(**kwargs)
+        self.exportable = kwargs.get('exportable', None)
+        self.key_type = kwargs.get('key_type', None)
+        self.key_size = kwargs.get('key_size', None)
+        self.reuse_key = kwargs.get('reuse_key', None)

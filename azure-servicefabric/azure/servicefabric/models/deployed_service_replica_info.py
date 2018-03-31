@@ -19,6 +19,8 @@ class DeployedServiceReplicaInfo(Model):
     sub-classes are: DeployedStatefulServiceReplicaInfo,
     DeployedStatelessServiceInstanceInfo
 
+    All required parameters must be populated in order to send to Azure.
+
     :param service_name: The full name of the service with 'fabric:' URI
      scheme.
     :type service_name: str
@@ -66,7 +68,7 @@ class DeployedServiceReplicaInfo(Model):
      replica. This will be zero if the replica is down. In hyper-v containers
      this host process id will be from different kernel.
     :type host_process_id: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -91,15 +93,15 @@ class DeployedServiceReplicaInfo(Model):
         'service_kind': {'Stateful': 'DeployedStatefulServiceReplicaInfo', 'Stateless': 'DeployedStatelessServiceInstanceInfo'}
     }
 
-    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, host_process_id=None):
-        super(DeployedServiceReplicaInfo, self).__init__()
-        self.service_name = service_name
-        self.service_type_name = service_type_name
-        self.service_manifest_name = service_manifest_name
-        self.code_package_name = code_package_name
-        self.partition_id = partition_id
-        self.replica_status = replica_status
-        self.address = address
-        self.service_package_activation_id = service_package_activation_id
-        self.host_process_id = host_process_id
+    def __init__(self, **kwargs):
+        super(DeployedServiceReplicaInfo, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.code_package_name = kwargs.get('code_package_name', None)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.replica_status = kwargs.get('replica_status', None)
+        self.address = kwargs.get('address', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)
+        self.host_process_id = kwargs.get('host_process_id', None)
         self.service_kind = None

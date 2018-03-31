@@ -23,5 +23,6 @@ class CallbackUrl(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CallbackUrl, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

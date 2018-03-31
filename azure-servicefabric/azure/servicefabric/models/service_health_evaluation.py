@@ -18,6 +18,8 @@ class ServiceHealthEvaluation(HealthEvaluation):
     evaluation is returned only when the aggregated health state is either
     Error or Warning.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica
      etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
@@ -27,7 +29,7 @@ class ServiceHealthEvaluation(HealthEvaluation):
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param service_name: Name of the service whose health evaluation is
      described by this object.
@@ -52,8 +54,8 @@ class ServiceHealthEvaluation(HealthEvaluation):
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, service_name=None, unhealthy_evaluations=None):
-        super(ServiceHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.service_name = service_name
-        self.unhealthy_evaluations = unhealthy_evaluations
+    def __init__(self, **kwargs):
+        super(ServiceHealthEvaluation, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
         self.kind = 'Service'

@@ -18,12 +18,15 @@ class JobInformationBasic(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar job_id: the job's unique identifier (a GUID).
     :vartype job_id: str
-    :param name: the friendly name of the job.
+    :param name: Required. the friendly name of the job.
     :type name: str
-    :param type: the job type of the current job (Hive, USql, or Scope (for
-     internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
+    :param type: Required. the job type of the current job (Hive, USql, or
+     Scope (for internal use only)). Possible values include: 'USql', 'Hive',
+     'Scope'
     :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
     :ivar submitter: the user or account that submitted the job.
     :vartype submitter: str
@@ -97,20 +100,20 @@ class JobInformationBasic(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name, type, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None, tags=None):
-        super(JobInformationBasic, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobInformationBasic, self).__init__(**kwargs)
         self.job_id = None
-        self.name = name
-        self.type = type
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
         self.submitter = None
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
+        self.degree_of_parallelism = kwargs.get('degree_of_parallelism', 1)
+        self.priority = kwargs.get('priority', None)
         self.submit_time = None
         self.start_time = None
         self.end_time = None
         self.state = None
         self.result = None
         self.log_folder = None
-        self.log_file_patterns = log_file_patterns
-        self.related = related
-        self.tags = tags
+        self.log_file_patterns = kwargs.get('log_file_patterns', None)
+        self.related = kwargs.get('related', None)
+        self.tags = kwargs.get('tags', None)

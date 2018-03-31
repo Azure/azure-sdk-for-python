@@ -21,7 +21,9 @@ class LocalBusiness(Place):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -107,8 +109,8 @@ class LocalBusiness(Place):
         '_type': {'EntertainmentBusiness': 'EntertainmentBusiness', 'FoodEstablishment': 'FoodEstablishment', 'LodgingBusiness': 'LodgingBusiness'}
     }
 
-    def __init__(self):
-        super(LocalBusiness, self).__init__()
+    def __init__(self, **kwargs):
+        super(LocalBusiness, self).__init__(**kwargs)
         self.price_range = None
         self.panoramas = None
         self.is_permanently_closed = None

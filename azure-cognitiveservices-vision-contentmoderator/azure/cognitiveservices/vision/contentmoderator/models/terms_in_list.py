@@ -23,6 +23,6 @@ class TermsInList(Model):
         'term': {'key': 'Term', 'type': 'str'},
     }
 
-    def __init__(self, term=None):
-        super(TermsInList, self).__init__()
-        self.term = term
+    def __init__(self, **kwargs):
+        super(TermsInList, self).__init__(**kwargs)
+        self.term = kwargs.get('term', None)

@@ -18,21 +18,24 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
-    :param properties: Properties of the Namespace AuthorizationRules.
-    :type properties: :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
+    :param properties: Required. Properties of the Namespace
+     AuthorizationRules.
+    :type properties:
+     ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
     """
 
     _validation = {
@@ -53,6 +56,6 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Resource):
         'properties': {'key': 'properties', 'type': 'SharedAccessAuthorizationRuleProperties'},
     }
 
-    def __init__(self, location, properties, tags=None, sku=None):
-        super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

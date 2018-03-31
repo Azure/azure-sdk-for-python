@@ -16,7 +16,9 @@ class UpdateComputePolicyWithAccountParameters(Model):
     """The parameters used to update a compute policy while updating a Data Lake
     Analytics account.
 
-    :param name: The unique name of the compute policy to update.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the compute policy to update.
     :type name: str
     :param object_id: The AAD object identifier for the entity to create a
      policy for.
@@ -49,10 +51,10 @@ class UpdateComputePolicyWithAccountParameters(Model):
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
     }
 
-    def __init__(self, name, object_id=None, object_type=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
-        super(UpdateComputePolicyWithAccountParameters, self).__init__()
-        self.name = name
-        self.object_id = object_id
-        self.object_type = object_type
-        self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
-        self.min_priority_per_job = min_priority_per_job
+    def __init__(self, **kwargs):
+        super(UpdateComputePolicyWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.object_id = kwargs.get('object_id', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.max_degree_of_parallelism_per_job = kwargs.get('max_degree_of_parallelism_per_job', None)
+        self.min_priority_per_job = kwargs.get('min_priority_per_job', None)

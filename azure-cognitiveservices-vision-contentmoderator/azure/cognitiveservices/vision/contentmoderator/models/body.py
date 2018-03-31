@@ -30,8 +30,8 @@ class Body(Model):
         'metadata': {'key': 'Metadata', 'type': 'BodyMetadata'},
     }
 
-    def __init__(self, name=None, description=None, metadata=None):
-        super(Body, self).__init__()
-        self.name = name
-        self.description = description
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(Body, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.metadata = kwargs.get('metadata', None)

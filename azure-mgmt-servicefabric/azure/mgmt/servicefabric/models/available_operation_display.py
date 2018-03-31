@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class AvailableOperationDisplay(Model):
-    """Operation supported by ServiceFabric resource provider.
+    """Operation supported by Service Fabric resource provider.
 
-    :param provider: Provider name
+    :param provider: The name of the provider.
     :type provider: str
-    :param resource: Resource name
+    :param resource: The resource on which the operation is performed
     :type resource: str
-    :param operation: Operation name
+    :param operation: The operation that can be performed.
     :type operation: str
     :param description: Operation description
     :type description: str
@@ -32,8 +32,9 @@ class AvailableOperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None, description=None):
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+    def __init__(self, **kwargs):
+        super(AvailableOperationDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)
+        self.description = kwargs.get('description', None)

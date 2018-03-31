@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class RegenerateKeyInput(Model):
     """The request body for a RegenerateKey API.
 
-    :param key_type: The keyType indicating which key you want to regenerate,
-     Primary or Secondary. Possible values include: 'Primary', 'Secondary'
-    :type key_type: str or :class:`KeyType <azure.mgmt.media.models.KeyType>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_type: Required. The keyType indicating which key you want to
+     regenerate, Primary or Secondary. Possible values include: 'Primary',
+     'Secondary'
+    :type key_type: str or ~azure.mgmt.media.models.KeyType
     """
 
     _validation = {
@@ -28,5 +31,6 @@ class RegenerateKeyInput(Model):
         'key_type': {'key': 'keyType', 'type': 'KeyType'},
     }
 
-    def __init__(self, key_type):
-        self.key_type = key_type
+    def __init__(self, **kwargs):
+        super(RegenerateKeyInput, self).__init__(**kwargs)
+        self.key_type = kwargs.get('key_type', None)

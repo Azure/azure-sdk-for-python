@@ -15,6 +15,8 @@ from .service_update_description import ServiceUpdateDescription
 class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     """Describes an update for a stateful service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param flags: Flags indicating whether other properties are set. Each of
      the associated properties corresponds to a flag, specified below, which,
      if set, indicate that the property is specified.
@@ -64,7 +66,7 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     :param default_move_cost: The move cost for the service. Possible values
      include: 'Zero', 'Low', 'Medium', 'High'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param target_replica_set_size: The target replica set size as a number.
     :type target_replica_set_size: int
@@ -102,11 +104,11 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'str'},
     }
 
-    def __init__(self, flags=None, placement_constraints=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, target_replica_set_size=None, min_replica_set_size=None, replica_restart_wait_duration_seconds=None, quorum_loss_wait_duration_seconds=None, stand_by_replica_keep_duration_seconds=None):
-        super(StatefulServiceUpdateDescription, self).__init__(flags=flags, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, load_metrics=load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost)
-        self.target_replica_set_size = target_replica_set_size
-        self.min_replica_set_size = min_replica_set_size
-        self.replica_restart_wait_duration_seconds = replica_restart_wait_duration_seconds
-        self.quorum_loss_wait_duration_seconds = quorum_loss_wait_duration_seconds
-        self.stand_by_replica_keep_duration_seconds = stand_by_replica_keep_duration_seconds
+    def __init__(self, **kwargs):
+        super(StatefulServiceUpdateDescription, self).__init__(**kwargs)
+        self.target_replica_set_size = kwargs.get('target_replica_set_size', None)
+        self.min_replica_set_size = kwargs.get('min_replica_set_size', None)
+        self.replica_restart_wait_duration_seconds = kwargs.get('replica_restart_wait_duration_seconds', None)
+        self.quorum_loss_wait_duration_seconds = kwargs.get('quorum_loss_wait_duration_seconds', None)
+        self.stand_by_replica_keep_duration_seconds = kwargs.get('stand_by_replica_keep_duration_seconds', None)
         self.service_kind = 'Stateful'

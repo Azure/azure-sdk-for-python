@@ -17,12 +17,12 @@ class SasDefinitionUpdateParameters(Model):
 
     :param parameters: Sas definition update metadata in the form of key-value
      pairs.
-    :type parameters: dict
+    :type parameters: dict[str, str]
     :param sas_definition_attributes: The attributes of the SAS definition.
-    :type sas_definition_attributes: :class:`SasDefinitionAttributes
-     <azure.keyvault.models.SasDefinitionAttributes>`
+    :type sas_definition_attributes:
+     ~azure.keyvault.models.SasDefinitionAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -31,7 +31,8 @@ class SasDefinitionUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, parameters=None, sas_definition_attributes=None, tags=None):
-        self.parameters = parameters
-        self.sas_definition_attributes = sas_definition_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SasDefinitionUpdateParameters, self).__init__(**kwargs)
+        self.parameters = kwargs.get('parameters', None)
+        self.sas_definition_attributes = kwargs.get('sas_definition_attributes', None)
+        self.tags = kwargs.get('tags', None)

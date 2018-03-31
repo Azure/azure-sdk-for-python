@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class RedisRegenerateKeyParameters(Model):
     """Specifies which Redis access keys to reset.
 
-    :param key_type: The Redis access key to regenerate. Possible values
-     include: 'Primary', 'Secondary'
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_type: Required. The Redis access key to regenerate. Possible
+     values include: 'Primary', 'Secondary'
     :type key_type: str or ~azure.mgmt.redis.models.RedisKeyType
     """
 
@@ -28,6 +30,6 @@ class RedisRegenerateKeyParameters(Model):
         'key_type': {'key': 'keyType', 'type': 'RedisKeyType'},
     }
 
-    def __init__(self, key_type):
-        super(RedisRegenerateKeyParameters, self).__init__()
-        self.key_type = key_type
+    def __init__(self, **kwargs):
+        super(RedisRegenerateKeyParameters, self).__init__(**kwargs)
+        self.key_type = kwargs.get('key_type', None)

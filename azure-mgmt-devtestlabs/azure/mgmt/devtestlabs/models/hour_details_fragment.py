@@ -23,6 +23,6 @@ class HourDetailsFragment(Model):
         'minute': {'key': 'minute', 'type': 'int'},
     }
 
-    def __init__(self, minute=None):
-        super(HourDetailsFragment, self).__init__()
-        self.minute = minute
+    def __init__(self, **kwargs):
+        super(HourDetailsFragment, self).__init__(**kwargs)
+        self.minute = kwargs.get('minute', None)

@@ -74,8 +74,8 @@ class ImportExportResponse(ProxyResource):
         'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ImportExportResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImportExportResponse, self).__init__(**kwargs)
         self.request_type = None
         self.request_id = None
         self.server_name = None

@@ -23,6 +23,6 @@ class TaskAddCollectionResult(Model):
         'value': {'key': 'value', 'type': '[TaskAddResult]'},
     }
 
-    def __init__(self, value=None):
-        super(TaskAddCollectionResult, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(TaskAddCollectionResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

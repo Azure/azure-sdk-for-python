@@ -30,5 +30,6 @@ class BackupKeyResult(Model):
         'value': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(BackupKeyResult, self).__init__(**kwargs)
         self.value = None

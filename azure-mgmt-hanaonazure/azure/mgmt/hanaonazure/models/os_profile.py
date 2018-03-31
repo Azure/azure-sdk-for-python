@@ -38,8 +38,8 @@ class OSProfile(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(OSProfile, self).__init__()
+    def __init__(self, **kwargs):
+        super(OSProfile, self).__init__(**kwargs)
         self.computer_name = None
         self.os_type = None
         self.version = None

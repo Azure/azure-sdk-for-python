@@ -46,8 +46,8 @@ class ImagesImageMetadata(Model):
         'aggregate_offer': {'key': 'aggregateOffer', 'type': 'AggregateOffer'},
     }
 
-    def __init__(self):
-        super(ImagesImageMetadata, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImagesImageMetadata, self).__init__(**kwargs)
         self.shopping_sources_count = None
         self.recipe_sources_count = None
         self.aggregate_offer = None

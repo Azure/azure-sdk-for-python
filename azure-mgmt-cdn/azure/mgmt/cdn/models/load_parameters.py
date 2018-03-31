@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class LoadParameters(Model):
     """Parameters required for content load.
 
-    :param content_paths: The path to the content to be loaded. Path should be
-     a relative file URL of the origin.
+    All required parameters must be populated in order to send to Azure.
+
+    :param content_paths: Required. The path to the content to be loaded. Path
+     should be a relative file URL of the origin.
     :type content_paths: list[str]
     """
 
@@ -28,6 +30,6 @@ class LoadParameters(Model):
         'content_paths': {'key': 'contentPaths', 'type': '[str]'},
     }
 
-    def __init__(self, content_paths):
-        super(LoadParameters, self).__init__()
-        self.content_paths = content_paths
+    def __init__(self, **kwargs):
+        super(LoadParameters, self).__init__(**kwargs)
+        self.content_paths = kwargs.get('content_paths', None)

@@ -40,9 +40,9 @@ class SiteCloneability(Model):
         'blocking_characteristics': {'key': 'blockingCharacteristics', 'type': '[SiteCloneabilityCriterion]'},
     }
 
-    def __init__(self, result=None, blocking_features=None, unsupported_features=None, blocking_characteristics=None):
-        super(SiteCloneability, self).__init__()
-        self.result = result
-        self.blocking_features = blocking_features
-        self.unsupported_features = unsupported_features
-        self.blocking_characteristics = blocking_characteristics
+    def __init__(self, **kwargs):
+        super(SiteCloneability, self).__init__(**kwargs)
+        self.result = kwargs.get('result', None)
+        self.blocking_features = kwargs.get('blocking_features', None)
+        self.unsupported_features = kwargs.get('unsupported_features', None)
+        self.blocking_characteristics = kwargs.get('blocking_characteristics', None)

@@ -16,14 +16,12 @@ class CertificateCreateParameters(Model):
     """The certificate create parameters.
 
     :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: :class:`CertificatePolicy
-     <azure.keyvault.models.CertificatePolicy>`
+    :type certificate_policy: ~azure.keyvault.models.CertificatePolicy
     :param certificate_attributes: The attributes of the certificate
      (optional).
-    :type certificate_attributes: :class:`CertificateAttributes
-     <azure.keyvault.models.CertificateAttributes>`
+    :type certificate_attributes: ~azure.keyvault.models.CertificateAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -32,7 +30,8 @@ class CertificateCreateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, certificate_policy=None, certificate_attributes=None, tags=None):
-        self.certificate_policy = certificate_policy
-        self.certificate_attributes = certificate_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(CertificateCreateParameters, self).__init__(**kwargs)
+        self.certificate_policy = kwargs.get('certificate_policy', None)
+        self.certificate_attributes = kwargs.get('certificate_attributes', None)
+        self.tags = kwargs.get('tags', None)

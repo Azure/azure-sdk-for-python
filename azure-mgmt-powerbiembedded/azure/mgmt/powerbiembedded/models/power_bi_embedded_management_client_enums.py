@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class AccessKeyName(Enum):
+class AccessKeyName(str, Enum):
 
     key1 = "key1"
     key2 = "key2"
 
 
-class CheckNameReason(Enum):
+class CheckNameReason(str, Enum):
 
     unavailable = "Unavailable"
     invalid = "Invalid"

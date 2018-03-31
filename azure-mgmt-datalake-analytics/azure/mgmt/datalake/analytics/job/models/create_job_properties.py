@@ -18,13 +18,15 @@ class CreateJobProperties(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: CreateUSqlJobProperties, CreateScopeJobProperties
 
+    All required parameters must be populated in order to send to Azure.
+
     :param runtime_version: the runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run. Please note that the maximum script size
-     is 3 MB.
+    :param script: Required. the script to run. Please note that the maximum
+     script size is 3 MB.
     :type script: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -43,8 +45,8 @@ class CreateJobProperties(Model):
         'type': {'USql': 'CreateUSqlJobProperties', 'Scope': 'CreateScopeJobProperties'}
     }
 
-    def __init__(self, script, runtime_version=None):
-        super(CreateJobProperties, self).__init__()
-        self.runtime_version = runtime_version
-        self.script = script
+    def __init__(self, **kwargs):
+        super(CreateJobProperties, self).__init__(**kwargs)
+        self.runtime_version = kwargs.get('runtime_version', None)
+        self.script = kwargs.get('script', None)
         self.type = None

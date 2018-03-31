@@ -85,8 +85,8 @@ class ReservationDetails(Resource):
         'total_reserved_quantity': {'key': 'properties.totalReservedQuantity', 'type': 'decimal'},
     }
 
-    def __init__(self):
-        super(ReservationDetails, self).__init__()
+    def __init__(self, **kwargs):
+        super(ReservationDetails, self).__init__(**kwargs)
         self.reservation_order_id = None
         self.reservation_id = None
         self.sku_name = None

@@ -9,8 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .feature_properties import FeatureProperties
-from .feature_result import FeatureResult
+try:
+    from .feature_properties_py3 import FeatureProperties
+    from .feature_result_py3 import FeatureResult
+except (SyntaxError, ImportError):
+    from .feature_properties import FeatureProperties
+    from .feature_result import FeatureResult
 from .feature_result_paged import FeatureResultPaged
 
 __all__ = [

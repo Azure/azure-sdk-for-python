@@ -34,8 +34,8 @@ class UpdateJobParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, degree_of_parallelism=None, priority=None, tags=None):
-        super(UpdateJobParameters, self).__init__()
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(UpdateJobParameters, self).__init__(**kwargs)
+        self.degree_of_parallelism = kwargs.get('degree_of_parallelism', None)
+        self.priority = kwargs.get('priority', None)
+        self.tags = kwargs.get('tags', None)

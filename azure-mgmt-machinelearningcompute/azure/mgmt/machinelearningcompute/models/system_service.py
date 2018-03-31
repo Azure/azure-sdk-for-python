@@ -18,8 +18,10 @@ class SystemService(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param system_service_type: The system service type. Possible values
-     include: 'None', 'ScoringFrontEnd', 'BatchFrontEnd'
+    All required parameters must be populated in order to send to Azure.
+
+    :param system_service_type: Required. The system service type. Possible
+     values include: 'None', 'ScoringFrontEnd', 'BatchFrontEnd'
     :type system_service_type: str or
      ~azure.mgmt.machinelearningcompute.models.SystemServiceType
     :ivar public_ip_address: The public IP address of the system service
@@ -40,8 +42,8 @@ class SystemService(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, system_service_type):
-        super(SystemService, self).__init__()
-        self.system_service_type = system_service_type
+    def __init__(self, **kwargs):
+        super(SystemService, self).__init__(**kwargs)
+        self.system_service_type = kwargs.get('system_service_type', None)
         self.public_ip_address = None
         self.version = None

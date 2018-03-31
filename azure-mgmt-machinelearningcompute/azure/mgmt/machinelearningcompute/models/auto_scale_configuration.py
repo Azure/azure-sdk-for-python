@@ -44,10 +44,10 @@ class AutoScaleConfiguration(Model):
         'refresh_period_in_seconds': {'key': 'refreshPeriodInSeconds', 'type': 'int'},
     }
 
-    def __init__(self, status="Disabled", min_replicas=1, max_replicas=100, target_utilization=None, refresh_period_in_seconds=None):
-        super(AutoScaleConfiguration, self).__init__()
-        self.status = status
-        self.min_replicas = min_replicas
-        self.max_replicas = max_replicas
-        self.target_utilization = target_utilization
-        self.refresh_period_in_seconds = refresh_period_in_seconds
+    def __init__(self, **kwargs):
+        super(AutoScaleConfiguration, self).__init__(**kwargs)
+        self.status = kwargs.get('status', "Disabled")
+        self.min_replicas = kwargs.get('min_replicas', 1)
+        self.max_replicas = kwargs.get('max_replicas', 100)
+        self.target_utilization = kwargs.get('target_utilization', None)
+        self.refresh_period_in_seconds = kwargs.get('refresh_period_in_seconds', None)

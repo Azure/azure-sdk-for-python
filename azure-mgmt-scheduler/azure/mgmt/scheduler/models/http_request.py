@@ -17,8 +17,7 @@ class HttpRequest(Model):
 
     :param authentication: Gets or sets the authentication method of the
      request.
-    :type authentication: :class:`HttpAuthentication
-     <azure.mgmt.scheduler.models.HttpAuthentication>`
+    :type authentication: ~azure.mgmt.scheduler.models.HttpAuthentication
     :param uri: Gets or sets the URI of the request.
     :type uri: str
     :param method: Gets or sets the method of the request.
@@ -26,7 +25,7 @@ class HttpRequest(Model):
     :param body: Gets or sets the request body.
     :type body: str
     :param headers: Gets or sets the headers.
-    :type headers: dict
+    :type headers: dict[str, str]
     """
 
     _attribute_map = {
@@ -37,9 +36,10 @@ class HttpRequest(Model):
         'headers': {'key': 'headers', 'type': '{str}'},
     }
 
-    def __init__(self, authentication=None, uri=None, method=None, body=None, headers=None):
-        self.authentication = authentication
-        self.uri = uri
-        self.method = method
-        self.body = body
-        self.headers = headers
+    def __init__(self, **kwargs):
+        super(HttpRequest, self).__init__(**kwargs)
+        self.authentication = kwargs.get('authentication', None)
+        self.uri = kwargs.get('uri', None)
+        self.method = kwargs.get('method', None)
+        self.body = kwargs.get('body', None)
+        self.headers = kwargs.get('headers', None)

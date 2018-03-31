@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class PoolEvaluateAutoScaleParameter(Model):
     """Options for evaluating an automatic scaling formula on a pool.
 
-    :param auto_scale_formula: The formula for the desired number of compute
-     nodes in the pool. The formula is validated and its results calculated,
-     but it is not applied to the pool. To apply the formula to the pool,
-     'Enable automatic scaling on a pool'. For more information about
+    All required parameters must be populated in order to send to Azure.
+
+    :param auto_scale_formula: Required. The formula for the desired number of
+     compute nodes in the pool. The formula is validated and its results
+     calculated, but it is not applied to the pool. To apply the formula to the
+     pool, 'Enable automatic scaling on a pool'. For more information about
      specifying this formula, see Automatically scale compute nodes in an Azure
      Batch pool
      (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
@@ -33,6 +35,6 @@ class PoolEvaluateAutoScaleParameter(Model):
         'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
     }
 
-    def __init__(self, auto_scale_formula):
-        super(PoolEvaluateAutoScaleParameter, self).__init__()
-        self.auto_scale_formula = auto_scale_formula
+    def __init__(self, **kwargs):
+        super(PoolEvaluateAutoScaleParameter, self).__init__(**kwargs)
+        self.auto_scale_formula = kwargs.get('auto_scale_formula', None)

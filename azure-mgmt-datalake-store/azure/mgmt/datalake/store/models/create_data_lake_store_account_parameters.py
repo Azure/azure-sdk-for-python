@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class CreateDataLakeStoreAccountParameters(Model):
     """CreateDataLakeStoreAccountParameters.
 
-    :param location: The resource location.
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The resource location.
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
@@ -80,17 +82,17 @@ class CreateDataLakeStoreAccountParameters(Model):
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
     }
 
-    def __init__(self, location, tags=None, identity=None, default_group=None, encryption_config=None, encryption_state=None, firewall_rules=None, firewall_state=None, firewall_allow_azure_ips=None, trusted_id_providers=None, trusted_id_provider_state=None, new_tier=None):
-        super(CreateDataLakeStoreAccountParameters, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.identity = identity
-        self.default_group = default_group
-        self.encryption_config = encryption_config
-        self.encryption_state = encryption_state
-        self.firewall_rules = firewall_rules
-        self.firewall_state = firewall_state
-        self.firewall_allow_azure_ips = firewall_allow_azure_ips
-        self.trusted_id_providers = trusted_id_providers
-        self.trusted_id_provider_state = trusted_id_provider_state
-        self.new_tier = new_tier
+    def __init__(self, **kwargs):
+        super(CreateDataLakeStoreAccountParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)
+        self.default_group = kwargs.get('default_group', None)
+        self.encryption_config = kwargs.get('encryption_config', None)
+        self.encryption_state = kwargs.get('encryption_state', None)
+        self.firewall_rules = kwargs.get('firewall_rules', None)
+        self.firewall_state = kwargs.get('firewall_state', None)
+        self.firewall_allow_azure_ips = kwargs.get('firewall_allow_azure_ips', None)
+        self.trusted_id_providers = kwargs.get('trusted_id_providers', None)
+        self.trusted_id_provider_state = kwargs.get('trusted_id_provider_state', None)
+        self.new_tier = kwargs.get('new_tier', None)

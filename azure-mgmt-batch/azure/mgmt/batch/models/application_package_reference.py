@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ApplicationPackageReference(Model):
     """Link to an application package inside the batch account.
 
-    :param id: The ID of the application package to install. This must be
-     inside the same batch account as the pool. This can either be a reference
-     to a specific version or the default version if one exists.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. The ID of the application package to install. This
+     must be inside the same batch account as the pool. This can either be a
+     reference to a specific version or the default version if one exists.
     :type id: str
     :param version: The version of the application to deploy. If omitted, the
      default version is deployed. If this is omitted, and no default version is
@@ -36,7 +38,7 @@ class ApplicationPackageReference(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, id, version=None):
-        super(ApplicationPackageReference, self).__init__()
-        self.id = id
-        self.version = version
+    def __init__(self, **kwargs):
+        super(ApplicationPackageReference, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.version = kwargs.get('version', None)

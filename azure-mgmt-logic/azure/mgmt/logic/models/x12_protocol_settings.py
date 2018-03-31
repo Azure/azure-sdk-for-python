@@ -15,42 +15,38 @@ from msrest.serialization import Model
 class X12ProtocolSettings(Model):
     """The X12 agreement protocol settings.
 
-    :param validation_settings: The X12 validation settings.
-    :type validation_settings: :class:`X12ValidationSettings
-     <azure.mgmt.logic.models.X12ValidationSettings>`
-    :param framing_settings: The X12 framing settings.
-    :type framing_settings: :class:`X12FramingSettings
-     <azure.mgmt.logic.models.X12FramingSettings>`
-    :param envelope_settings: The X12 envelope settings.
-    :type envelope_settings: :class:`X12EnvelopeSettings
-     <azure.mgmt.logic.models.X12EnvelopeSettings>`
-    :param acknowledgement_settings: The X12 acknowledgment settings.
-    :type acknowledgement_settings: :class:`X12AcknowledgementSettings
-     <azure.mgmt.logic.models.X12AcknowledgementSettings>`
-    :param message_filter: The X12 message filter.
-    :type message_filter: :class:`X12MessageFilter
-     <azure.mgmt.logic.models.X12MessageFilter>`
-    :param security_settings: The X12 security settings.
-    :type security_settings: :class:`X12SecuritySettings
-     <azure.mgmt.logic.models.X12SecuritySettings>`
-    :param processing_settings: The X12 processing settings.
-    :type processing_settings: :class:`X12ProcessingSettings
-     <azure.mgmt.logic.models.X12ProcessingSettings>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param validation_settings: Required. The X12 validation settings.
+    :type validation_settings: ~azure.mgmt.logic.models.X12ValidationSettings
+    :param framing_settings: Required. The X12 framing settings.
+    :type framing_settings: ~azure.mgmt.logic.models.X12FramingSettings
+    :param envelope_settings: Required. The X12 envelope settings.
+    :type envelope_settings: ~azure.mgmt.logic.models.X12EnvelopeSettings
+    :param acknowledgement_settings: Required. The X12 acknowledgment
+     settings.
+    :type acknowledgement_settings:
+     ~azure.mgmt.logic.models.X12AcknowledgementSettings
+    :param message_filter: Required. The X12 message filter.
+    :type message_filter: ~azure.mgmt.logic.models.X12MessageFilter
+    :param security_settings: Required. The X12 security settings.
+    :type security_settings: ~azure.mgmt.logic.models.X12SecuritySettings
+    :param processing_settings: Required. The X12 processing settings.
+    :type processing_settings: ~azure.mgmt.logic.models.X12ProcessingSettings
     :param envelope_overrides: The X12 envelope override settings.
-    :type envelope_overrides: list of :class:`X12EnvelopeOverride
-     <azure.mgmt.logic.models.X12EnvelopeOverride>`
+    :type envelope_overrides:
+     list[~azure.mgmt.logic.models.X12EnvelopeOverride]
     :param validation_overrides: The X12 validation override settings.
-    :type validation_overrides: list of :class:`X12ValidationOverride
-     <azure.mgmt.logic.models.X12ValidationOverride>`
+    :type validation_overrides:
+     list[~azure.mgmt.logic.models.X12ValidationOverride]
     :param message_filter_list: The X12 message filter list.
-    :type message_filter_list: list of :class:`X12MessageIdentifier
-     <azure.mgmt.logic.models.X12MessageIdentifier>`
-    :param schema_references: The X12 schema references.
-    :type schema_references: list of :class:`X12SchemaReference
-     <azure.mgmt.logic.models.X12SchemaReference>`
+    :type message_filter_list:
+     list[~azure.mgmt.logic.models.X12MessageIdentifier]
+    :param schema_references: Required. The X12 schema references.
+    :type schema_references: list[~azure.mgmt.logic.models.X12SchemaReference]
     :param x12_delimiter_overrides: The X12 delimiter override settings.
-    :type x12_delimiter_overrides: list of :class:`X12DelimiterOverrides
-     <azure.mgmt.logic.models.X12DelimiterOverrides>`
+    :type x12_delimiter_overrides:
+     list[~azure.mgmt.logic.models.X12DelimiterOverrides]
     """
 
     _validation = {
@@ -79,16 +75,17 @@ class X12ProtocolSettings(Model):
         'x12_delimiter_overrides': {'key': 'x12DelimiterOverrides', 'type': '[X12DelimiterOverrides]'},
     }
 
-    def __init__(self, validation_settings, framing_settings, envelope_settings, acknowledgement_settings, message_filter, security_settings, processing_settings, schema_references, envelope_overrides=None, validation_overrides=None, message_filter_list=None, x12_delimiter_overrides=None):
-        self.validation_settings = validation_settings
-        self.framing_settings = framing_settings
-        self.envelope_settings = envelope_settings
-        self.acknowledgement_settings = acknowledgement_settings
-        self.message_filter = message_filter
-        self.security_settings = security_settings
-        self.processing_settings = processing_settings
-        self.envelope_overrides = envelope_overrides
-        self.validation_overrides = validation_overrides
-        self.message_filter_list = message_filter_list
-        self.schema_references = schema_references
-        self.x12_delimiter_overrides = x12_delimiter_overrides
+    def __init__(self, **kwargs):
+        super(X12ProtocolSettings, self).__init__(**kwargs)
+        self.validation_settings = kwargs.get('validation_settings', None)
+        self.framing_settings = kwargs.get('framing_settings', None)
+        self.envelope_settings = kwargs.get('envelope_settings', None)
+        self.acknowledgement_settings = kwargs.get('acknowledgement_settings', None)
+        self.message_filter = kwargs.get('message_filter', None)
+        self.security_settings = kwargs.get('security_settings', None)
+        self.processing_settings = kwargs.get('processing_settings', None)
+        self.envelope_overrides = kwargs.get('envelope_overrides', None)
+        self.validation_overrides = kwargs.get('validation_overrides', None)
+        self.message_filter_list = kwargs.get('message_filter_list', None)
+        self.schema_references = kwargs.get('schema_references', None)
+        self.x12_delimiter_overrides = kwargs.get('x12_delimiter_overrides', None)

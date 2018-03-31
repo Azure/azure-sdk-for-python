@@ -20,6 +20,8 @@ class ServiceUpdateDescription(Model):
     sub-classes are: StatefulServiceUpdateDescription,
     StatelessServiceUpdateDescription
 
+    All required parameters must be populated in order to send to Azure.
+
     :param flags: Flags indicating whether other properties are set. Each of
      the associated properties corresponds to a flag, specified below, which,
      if set, indicate that the property is specified.
@@ -69,7 +71,7 @@ class ServiceUpdateDescription(Model):
     :param default_move_cost: The move cost for the service. Possible values
      include: 'Zero', 'Low', 'Medium', 'High'
     :type default_move_cost: str or ~azure.servicefabric.models.MoveCost
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -91,12 +93,12 @@ class ServiceUpdateDescription(Model):
         'service_kind': {'Stateful': 'StatefulServiceUpdateDescription', 'Stateless': 'StatelessServiceUpdateDescription'}
     }
 
-    def __init__(self, flags=None, placement_constraints=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None):
-        super(ServiceUpdateDescription, self).__init__()
-        self.flags = flags
-        self.placement_constraints = placement_constraints
-        self.correlation_scheme = correlation_scheme
-        self.load_metrics = load_metrics
-        self.service_placement_policies = service_placement_policies
-        self.default_move_cost = default_move_cost
+    def __init__(self, **kwargs):
+        super(ServiceUpdateDescription, self).__init__(**kwargs)
+        self.flags = kwargs.get('flags', None)
+        self.placement_constraints = kwargs.get('placement_constraints', None)
+        self.correlation_scheme = kwargs.get('correlation_scheme', None)
+        self.load_metrics = kwargs.get('load_metrics', None)
+        self.service_placement_policies = kwargs.get('service_placement_policies', None)
+        self.default_move_cost = kwargs.get('default_move_cost', None)
         self.service_kind = None

@@ -23,5 +23,6 @@ class SecretProperties(Model):
         'content_type': {'key': 'contentType', 'type': 'str'},
     }
 
-    def __init__(self, content_type=None):
-        self.content_type = content_type
+    def __init__(self, **kwargs):
+        super(SecretProperties, self).__init__(**kwargs)
+        self.content_type = kwargs.get('content_type', None)

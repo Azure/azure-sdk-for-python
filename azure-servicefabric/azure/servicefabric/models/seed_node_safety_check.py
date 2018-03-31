@@ -16,7 +16,9 @@ class SeedNodeSafetyCheck(SafetyCheck):
     """Represents a safety check for the seed nodes being performed by service
     fabric before continuing with node level operations.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
@@ -24,6 +26,10 @@ class SeedNodeSafetyCheck(SafetyCheck):
         'kind': {'required': True},
     }
 
-    def __init__(self):
-        super(SeedNodeSafetyCheck, self).__init__()
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SeedNodeSafetyCheck, self).__init__(**kwargs)
         self.kind = 'EnsureSeedNodeQuorum'

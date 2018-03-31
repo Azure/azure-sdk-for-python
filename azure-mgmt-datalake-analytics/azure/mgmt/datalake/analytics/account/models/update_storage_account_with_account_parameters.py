@@ -16,7 +16,10 @@ class UpdateStorageAccountWithAccountParameters(Model):
     """The parameters used to update an Azure Storage account while updating a
     Data Lake Analytics account.
 
-    :param name: The unique name of the Azure Storage account to update.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the Azure Storage account to
+     update.
     :type name: str
     :param access_key: The updated access key associated with this Azure
      Storage account that will be used to connect to it.
@@ -35,8 +38,8 @@ class UpdateStorageAccountWithAccountParameters(Model):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name, access_key=None, suffix=None):
-        super(UpdateStorageAccountWithAccountParameters, self).__init__()
-        self.name = name
-        self.access_key = access_key
-        self.suffix = suffix
+    def __init__(self, **kwargs):
+        super(UpdateStorageAccountWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.access_key = kwargs.get('access_key', None)
+        self.suffix = kwargs.get('suffix', None)

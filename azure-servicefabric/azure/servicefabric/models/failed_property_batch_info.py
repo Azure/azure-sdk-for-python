@@ -16,7 +16,9 @@ class FailedPropertyBatchInfo(PropertyBatchInfo):
     """Derived from PropertyBatchInfo. Represents the property batch failing.
     Contains information about the specific batch failure.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param error_message: The error message of the failed operation. Describes
      the exception thrown due to the first unsuccessful operation in the
@@ -37,8 +39,8 @@ class FailedPropertyBatchInfo(PropertyBatchInfo):
         'operation_index': {'key': 'OperationIndex', 'type': 'int'},
     }
 
-    def __init__(self, error_message=None, operation_index=None):
-        super(FailedPropertyBatchInfo, self).__init__()
-        self.error_message = error_message
-        self.operation_index = operation_index
+    def __init__(self, **kwargs):
+        super(FailedPropertyBatchInfo, self).__init__(**kwargs)
+        self.error_message = kwargs.get('error_message', None)
+        self.operation_index = kwargs.get('operation_index', None)
         self.kind = 'Failed'

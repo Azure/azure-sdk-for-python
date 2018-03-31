@@ -36,10 +36,10 @@ class ResourceRateCardInfo(Model):
         'meters': {'key': 'Meters', 'type': '[MeterInfo]'},
     }
 
-    def __init__(self, currency=None, locale=None, is_tax_included=None, offer_terms=None, meters=None):
-        super(ResourceRateCardInfo, self).__init__()
-        self.currency = currency
-        self.locale = locale
-        self.is_tax_included = is_tax_included
-        self.offer_terms = offer_terms
-        self.meters = meters
+    def __init__(self, **kwargs):
+        super(ResourceRateCardInfo, self).__init__(**kwargs)
+        self.currency = kwargs.get('currency', None)
+        self.locale = kwargs.get('locale', None)
+        self.is_tax_included = kwargs.get('is_tax_included', None)
+        self.offer_terms = kwargs.get('offer_terms', None)
+        self.meters = kwargs.get('meters', None)

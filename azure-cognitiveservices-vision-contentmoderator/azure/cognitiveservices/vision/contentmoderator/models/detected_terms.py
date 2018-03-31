@@ -34,9 +34,9 @@ class DetectedTerms(Model):
         'term': {'key': 'Term', 'type': 'str'},
     }
 
-    def __init__(self, index=None, original_index=None, list_id=None, term=None):
-        super(DetectedTerms, self).__init__()
-        self.index = index
-        self.original_index = original_index
-        self.list_id = list_id
-        self.term = term
+    def __init__(self, **kwargs):
+        super(DetectedTerms, self).__init__(**kwargs)
+        self.index = kwargs.get('index', None)
+        self.original_index = kwargs.get('original_index', None)
+        self.list_id = kwargs.get('list_id', None)
+        self.term = kwargs.get('term', None)

@@ -22,9 +22,11 @@ class VaultCertificatesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-06-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -37,7 +39,7 @@ class VaultCertificatesOperations(object):
 
     def create(
             self, resource_group_name, vault_name, certificate_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Upload a certificate for a resource.
+        """Uploads a certificate for a resource.
 
         :param resource_group_name: The name of the resource group where the
          recovery services vault is present.
@@ -47,26 +49,22 @@ class VaultCertificatesOperations(object):
         :param certificate_name: Certificate friendly name.
         :type certificate_name: str
         :param properties:
-        :type properties: :class:`RawCertificateData
-         <azure.mgmt.recoveryservices.models.RawCertificateData>`
+        :type properties:
+         ~azure.mgmt.recoveryservices.models.RawCertificateData
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`VaultCertificateResponse
-         <azure.mgmt.recoveryservices.models.VaultCertificateResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`VaultCertificateResponse
-         <azure.mgmt.recoveryservices.models.VaultCertificateResponse>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: VaultCertificateResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.recoveryservices.models.VaultCertificateResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         certificate_request = models.CertificateRequest(properties=properties)
 
         # Construct URL
-        url = '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/certificates/{certificateName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -95,7 +93,7 @@ class VaultCertificatesOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -112,3 +110,4 @@ class VaultCertificatesOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/Subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/certificates/{certificateName}'}

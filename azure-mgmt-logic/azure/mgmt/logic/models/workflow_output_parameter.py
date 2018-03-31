@@ -20,8 +20,7 @@ class WorkflowOutputParameter(WorkflowParameter):
 
     :param type: The type. Possible values include: 'NotSpecified', 'String',
      'SecureString', 'Int', 'Float', 'Bool', 'Array', 'Object', 'SecureObject'
-    :type type: str or :class:`ParameterType
-     <azure.mgmt.logic.models.ParameterType>`
+    :type type: str or ~azure.mgmt.logic.models.ParameterType
     :param value: The value.
     :type value: object
     :param metadata: The metadata.
@@ -44,6 +43,6 @@ class WorkflowOutputParameter(WorkflowParameter):
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None, description=None):
-        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata, description=description)
+    def __init__(self, **kwargs):
+        super(WorkflowOutputParameter, self).__init__(**kwargs)
         self.error = None

@@ -18,7 +18,9 @@ class ServicePlacementNonPartiallyPlaceServicePolicyDescription(ServicePlacement
     be created.
     .
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -26,6 +28,10 @@ class ServicePlacementNonPartiallyPlaceServicePolicyDescription(ServicePlacement
         'type': {'required': True},
     }
 
-    def __init__(self):
-        super(ServicePlacementNonPartiallyPlaceServicePolicyDescription, self).__init__()
+    _attribute_map = {
+        'type': {'key': 'Type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServicePlacementNonPartiallyPlaceServicePolicyDescription, self).__init__(**kwargs)
         self.type = 'NonPartiallyPlaceService'

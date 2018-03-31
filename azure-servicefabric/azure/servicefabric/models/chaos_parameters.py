@@ -100,14 +100,14 @@ class ChaosParameters(Model):
         'chaos_target_filter': {'key': 'ChaosTargetFilter', 'type': 'ChaosTargetFilter'},
     }
 
-    def __init__(self, time_to_run_in_seconds="4294967295", max_cluster_stabilization_timeout_in_seconds=60, max_concurrent_faults=1, enable_move_replica_faults=True, wait_time_between_faults_in_seconds=20, wait_time_between_iterations_in_seconds=30, cluster_health_policy=None, context=None, chaos_target_filter=None):
-        super(ChaosParameters, self).__init__()
-        self.time_to_run_in_seconds = time_to_run_in_seconds
-        self.max_cluster_stabilization_timeout_in_seconds = max_cluster_stabilization_timeout_in_seconds
-        self.max_concurrent_faults = max_concurrent_faults
-        self.enable_move_replica_faults = enable_move_replica_faults
-        self.wait_time_between_faults_in_seconds = wait_time_between_faults_in_seconds
-        self.wait_time_between_iterations_in_seconds = wait_time_between_iterations_in_seconds
-        self.cluster_health_policy = cluster_health_policy
-        self.context = context
-        self.chaos_target_filter = chaos_target_filter
+    def __init__(self, **kwargs):
+        super(ChaosParameters, self).__init__(**kwargs)
+        self.time_to_run_in_seconds = kwargs.get('time_to_run_in_seconds', "4294967295")
+        self.max_cluster_stabilization_timeout_in_seconds = kwargs.get('max_cluster_stabilization_timeout_in_seconds', 60)
+        self.max_concurrent_faults = kwargs.get('max_concurrent_faults', 1)
+        self.enable_move_replica_faults = kwargs.get('enable_move_replica_faults', True)
+        self.wait_time_between_faults_in_seconds = kwargs.get('wait_time_between_faults_in_seconds', 20)
+        self.wait_time_between_iterations_in_seconds = kwargs.get('wait_time_between_iterations_in_seconds', 30)
+        self.cluster_health_policy = kwargs.get('cluster_health_policy', None)
+        self.context = kwargs.get('context', None)
+        self.chaos_target_filter = kwargs.get('chaos_target_filter', None)

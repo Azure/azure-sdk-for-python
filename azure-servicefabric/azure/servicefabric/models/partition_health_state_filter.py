@@ -79,8 +79,8 @@ class PartitionHealthStateFilter(Model):
         'replica_filters': {'key': 'ReplicaFilters', 'type': '[ReplicaHealthStateFilter]'},
     }
 
-    def __init__(self, partition_id_filter=None, health_state_filter=0, replica_filters=None):
-        super(PartitionHealthStateFilter, self).__init__()
-        self.partition_id_filter = partition_id_filter
-        self.health_state_filter = health_state_filter
-        self.replica_filters = replica_filters
+    def __init__(self, **kwargs):
+        super(PartitionHealthStateFilter, self).__init__(**kwargs)
+        self.partition_id_filter = kwargs.get('partition_id_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)
+        self.replica_filters = kwargs.get('replica_filters', None)

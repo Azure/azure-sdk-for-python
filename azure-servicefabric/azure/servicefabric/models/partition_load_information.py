@@ -39,8 +39,8 @@ class PartitionLoadInformation(Model):
         'secondary_load_metric_reports': {'key': 'SecondaryLoadMetricReports', 'type': '[LoadMetricReport]'},
     }
 
-    def __init__(self, partition_id=None, primary_load_metric_reports=None, secondary_load_metric_reports=None):
-        super(PartitionLoadInformation, self).__init__()
-        self.partition_id = partition_id
-        self.primary_load_metric_reports = primary_load_metric_reports
-        self.secondary_load_metric_reports = secondary_load_metric_reports
+    def __init__(self, **kwargs):
+        super(PartitionLoadInformation, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.primary_load_metric_reports = kwargs.get('primary_load_metric_reports', None)
+        self.secondary_load_metric_reports = kwargs.get('secondary_load_metric_reports', None)

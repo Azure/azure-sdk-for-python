@@ -18,10 +18,13 @@ class CheckNameAvailabilityInput(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the resource. A name must be globally unique.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the resource. A name must be globally
+     unique.
     :type name: str
-    :ivar type: The type of the resource - mediaservices. Default value:
-     "mediaservices" .
+    :ivar type: Required. The type of the resource - mediaservices. Default
+     value: "mediaservices" .
     :vartype type: str
     """
 
@@ -37,5 +40,6 @@ class CheckNameAvailabilityInput(Model):
 
     type = "mediaservices"
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityInput, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

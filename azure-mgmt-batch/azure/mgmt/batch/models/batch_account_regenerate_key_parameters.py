@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class BatchAccountRegenerateKeyParameters(Model):
     """Parameters supplied to the RegenerateKey operation.
 
-    :param key_name: The type of account key to regenerate. Possible values
-     include: 'Primary', 'Secondary'
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. The type of account key to regenerate. Possible
+     values include: 'Primary', 'Secondary'
     :type key_name: str or ~azure.mgmt.batch.models.AccountKeyType
     """
 
@@ -28,6 +30,6 @@ class BatchAccountRegenerateKeyParameters(Model):
         'key_name': {'key': 'keyName', 'type': 'AccountKeyType'},
     }
 
-    def __init__(self, key_name):
-        super(BatchAccountRegenerateKeyParameters, self).__init__()
-        self.key_name = key_name
+    def __init__(self, **kwargs):
+        super(BatchAccountRegenerateKeyParameters, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)

@@ -12,14 +12,14 @@
 from enum import Enum
 
 
-class Gender(Enum):
+class Gender(str, Enum):
 
     male = "male"
     female = "female"
     genderless = "genderless"
 
 
-class GlassesType(Enum):
+class GlassesType(str, Enum):
 
     no_glasses = "noGlasses"
     reading_glasses = "readingGlasses"
@@ -27,7 +27,7 @@ class GlassesType(Enum):
     swimming_goggles = "swimmingGoggles"
 
 
-class HairColorType(Enum):
+class HairColorType(str, Enum):
 
     unknown = "unknown"
     white = "white"
@@ -39,41 +39,41 @@ class HairColorType(Enum):
     other = "other"
 
 
-class AccessoryType(Enum):
+class AccessoryType(str, Enum):
 
     head_wear = "headWear"
     glasses = "glasses"
     mask = "mask"
 
 
-class BlurLevel(Enum):
+class BlurLevel(str, Enum):
 
     low = "Low"
     medium = "Medium"
     high = "High"
 
 
-class ExposureLevel(Enum):
+class ExposureLevel(str, Enum):
 
     under_exposure = "UnderExposure"
     good_exposure = "GoodExposure"
     over_exposure = "OverExposure"
 
 
-class NoiseLevel(Enum):
+class NoiseLevel(str, Enum):
 
     low = "Low"
     medium = "Medium"
     high = "High"
 
 
-class FindSimilarMatchMode(Enum):
+class FindSimilarMatchMode(str, Enum):
 
     match_person = "matchPerson"
     match_face = "matchFace"
 
 
-class TrainingStatusType(Enum):
+class TrainingStatusType(str, Enum):
 
     nonstarted = "nonstarted"
     running = "running"
@@ -81,7 +81,7 @@ class TrainingStatusType(Enum):
     failed = "failed"
 
 
-class FaceAttributeType(Enum):
+class FaceAttributeType(str, Enum):
 
     age = "age"
     gender = "gender"
@@ -99,7 +99,7 @@ class FaceAttributeType(Enum):
     noise = "noise"
 
 
-class AzureRegions(Enum):
+class AzureRegions(str, Enum):
 
     westus = "westus"
     westeurope = "westeurope"

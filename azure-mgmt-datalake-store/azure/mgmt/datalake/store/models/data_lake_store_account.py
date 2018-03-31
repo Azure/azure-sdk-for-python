@@ -151,8 +151,8 @@ class DataLakeStoreAccount(Resource):
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
     }
 
-    def __init__(self):
-        super(DataLakeStoreAccount, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataLakeStoreAccount, self).__init__(**kwargs)
         self.identity = None
         self.account_id = None
         self.provisioning_state = None

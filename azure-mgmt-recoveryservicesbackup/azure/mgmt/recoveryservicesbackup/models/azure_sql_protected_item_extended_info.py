@@ -32,7 +32,8 @@ class AzureSqlProtectedItemExtendedInfo(Model):
         'policy_state': {'key': 'policyState', 'type': 'str'},
     }
 
-    def __init__(self, oldest_recovery_point=None, recovery_point_count=None, policy_state=None):
-        self.oldest_recovery_point = oldest_recovery_point
-        self.recovery_point_count = recovery_point_count
-        self.policy_state = policy_state
+    def __init__(self, **kwargs):
+        super(AzureSqlProtectedItemExtendedInfo, self).__init__(**kwargs)
+        self.oldest_recovery_point = kwargs.get('oldest_recovery_point', None)
+        self.recovery_point_count = kwargs.get('recovery_point_count', None)
+        self.policy_state = kwargs.get('policy_state', None)

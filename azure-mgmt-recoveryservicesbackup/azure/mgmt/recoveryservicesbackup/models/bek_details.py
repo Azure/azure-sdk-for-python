@@ -29,7 +29,8 @@ class BEKDetails(Model):
         'secret_data': {'key': 'secretData', 'type': 'str'},
     }
 
-    def __init__(self, secret_url=None, secret_vault_id=None, secret_data=None):
-        self.secret_url = secret_url
-        self.secret_vault_id = secret_vault_id
-        self.secret_data = secret_data
+    def __init__(self, **kwargs):
+        super(BEKDetails, self).__init__(**kwargs)
+        self.secret_url = kwargs.get('secret_url', None)
+        self.secret_vault_id = kwargs.get('secret_vault_id', None)
+        self.secret_data = kwargs.get('secret_data', None)

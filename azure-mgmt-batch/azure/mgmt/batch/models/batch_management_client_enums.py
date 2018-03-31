@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class PoolAllocationMode(Enum):
+class PoolAllocationMode(str, Enum):
 
     batch_service = "BatchService"
     user_subscription = "UserSubscription"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     invalid = "Invalid"
     creating = "Creating"
@@ -28,59 +28,59 @@ class ProvisioningState(Enum):
     cancelled = "Cancelled"
 
 
-class AccountKeyType(Enum):
+class AccountKeyType(str, Enum):
 
     primary = "Primary"
     secondary = "Secondary"
 
 
-class PackageState(Enum):
+class PackageState(str, Enum):
 
     pending = "Pending"
     active = "Active"
     unmapped = "Unmapped"
 
 
-class CertificateFormat(Enum):
+class CertificateFormat(str, Enum):
 
     pfx = "Pfx"
     cer = "Cer"
 
 
-class CertificateProvisioningState(Enum):
+class CertificateProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
     deleting = "Deleting"
     failed = "Failed"
 
 
-class PoolProvisioningState(Enum):
+class PoolProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
     deleting = "Deleting"
 
 
-class AllocationState(Enum):
+class AllocationState(str, Enum):
 
     steady = "Steady"
     resizing = "Resizing"
     stopping = "Stopping"
 
 
-class CachingType(Enum):
+class CachingType(str, Enum):
 
     none = "None"
     read_only = "ReadOnly"
     read_write = "ReadWrite"
 
 
-class StorageAccountType(Enum):
+class StorageAccountType(str, Enum):
 
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
 
 
-class ComputeNodeDeallocationOption(Enum):
+class ComputeNodeDeallocationOption(str, Enum):
 
     requeue = "Requeue"
     terminate = "Terminate"
@@ -88,56 +88,56 @@ class ComputeNodeDeallocationOption(Enum):
     retained_data = "RetainedData"
 
 
-class InterNodeCommunicationState(Enum):
+class InterNodeCommunicationState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class InboundEndpointProtocol(Enum):
+class InboundEndpointProtocol(str, Enum):
 
     tcp = "TCP"
     udp = "UDP"
 
 
-class NetworkSecurityGroupRuleAccess(Enum):
+class NetworkSecurityGroupRuleAccess(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
 
 
-class ComputeNodeFillType(Enum):
+class ComputeNodeFillType(str, Enum):
 
     spread = "Spread"
     pack = "Pack"
 
 
-class ElevationLevel(Enum):
+class ElevationLevel(str, Enum):
 
     non_admin = "NonAdmin"
     admin = "Admin"
 
 
-class AutoUserScope(Enum):
+class AutoUserScope(str, Enum):
 
     task = "Task"
     pool = "Pool"
 
 
-class CertificateStoreLocation(Enum):
+class CertificateStoreLocation(str, Enum):
 
     current_user = "CurrentUser"
     local_machine = "LocalMachine"
 
 
-class CertificateVisibility(Enum):
+class CertificateVisibility(str, Enum):
 
     start_task = "StartTask"
     task = "Task"
     remote_user = "RemoteUser"
 
 
-class NameAvailabilityReason(Enum):
+class NameAvailabilityReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"

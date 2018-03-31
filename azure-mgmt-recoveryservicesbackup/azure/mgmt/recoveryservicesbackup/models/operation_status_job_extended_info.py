@@ -15,7 +15,9 @@ from .operation_status_extended_info import OperationStatusExtendedInfo
 class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
     """Operation status job extended info.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param job_id: ID of the job created for this protected item.
     :type job_id: str
@@ -30,7 +32,7 @@ class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
         'job_id': {'key': 'jobId', 'type': 'str'},
     }
 
-    def __init__(self, job_id=None):
-        super(OperationStatusJobExtendedInfo, self).__init__()
-        self.job_id = job_id
+    def __init__(self, **kwargs):
+        super(OperationStatusJobExtendedInfo, self).__init__(**kwargs)
+        self.job_id = kwargs.get('job_id', None)
         self.object_type = 'OperationStatusJobExtendedInfo'

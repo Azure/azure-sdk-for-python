@@ -67,13 +67,13 @@ class DiagnosticDetectorResponse(ProxyOnlyResource):
         'response_meta_data': {'key': 'properties.responseMetaData', 'type': 'ResponseMetaData'},
     }
 
-    def __init__(self, kind=None, start_time=None, end_time=None, issue_detected=None, detector_definition=None, metrics=None, abnormal_time_periods=None, data=None, response_meta_data=None):
-        super(DiagnosticDetectorResponse, self).__init__(kind=kind)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.issue_detected = issue_detected
-        self.detector_definition = detector_definition
-        self.metrics = metrics
-        self.abnormal_time_periods = abnormal_time_periods
-        self.data = data
-        self.response_meta_data = response_meta_data
+    def __init__(self, **kwargs):
+        super(DiagnosticDetectorResponse, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.issue_detected = kwargs.get('issue_detected', None)
+        self.detector_definition = kwargs.get('detector_definition', None)
+        self.metrics = kwargs.get('metrics', None)
+        self.abnormal_time_periods = kwargs.get('abnormal_time_periods', None)
+        self.data = kwargs.get('data', None)
+        self.response_meta_data = kwargs.get('response_meta_data', None)

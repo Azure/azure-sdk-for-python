@@ -16,13 +16,14 @@ class SharedAccessAuthorizationRuleProperties(Model):
     """SharedAccessAuthorizationRule properties.
 
     :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.notificationhubs.models.AccessRights>`
+    :type rights: list[str or
+     ~azure.mgmt.notificationhubs.models.AccessRights]
     """
 
     _attribute_map = {
         'rights': {'key': 'rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, rights=None):
-        self.rights = rights
+    def __init__(self, **kwargs):
+        super(SharedAccessAuthorizationRuleProperties, self).__init__(**kwargs)
+        self.rights = kwargs.get('rights', None)

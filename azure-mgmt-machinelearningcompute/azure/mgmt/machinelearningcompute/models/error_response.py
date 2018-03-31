@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ErrorResponse(Model):
     """Error response information.
 
-    :param code: Error code.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code.
     :type code: str
-    :param message: Error message.
+    :param message: Required. Error message.
     :type message: str
     :param details: An array of error detail objects.
     :type details: list[~azure.mgmt.machinelearningcompute.models.ErrorDetail]
@@ -34,8 +36,8 @@ class ErrorResponse(Model):
         'details': {'key': 'details', 'type': '[ErrorDetail]'},
     }
 
-    def __init__(self, code, message, details=None):
-        super(ErrorResponse, self).__init__()
-        self.code = code
-        self.message = message
-        self.details = details
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)

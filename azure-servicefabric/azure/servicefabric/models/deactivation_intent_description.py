@@ -26,6 +26,6 @@ class DeactivationIntentDescription(Model):
         'deactivation_intent': {'key': 'DeactivationIntent', 'type': 'str'},
     }
 
-    def __init__(self, deactivation_intent=None):
-        super(DeactivationIntentDescription, self).__init__()
-        self.deactivation_intent = deactivation_intent
+    def __init__(self, **kwargs):
+        super(DeactivationIntentDescription, self).__init__(**kwargs)
+        self.deactivation_intent = kwargs.get('deactivation_intent', None)

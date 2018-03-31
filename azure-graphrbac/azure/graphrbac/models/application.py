@@ -18,6 +18,8 @@ class Application(DirectoryObject):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,7 +28,7 @@ class Application(DirectoryObject):
     :ivar deletion_timestamp: The time at which the directory object was
      deleted.
     :vartype deletion_timestamp: datetime
-    :param object_type: Constant filled by server.
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param app_id: The application ID.
     :type app_id: str
@@ -69,14 +71,14 @@ class Application(DirectoryObject):
         'oauth2_allow_implicit_flow': {'key': 'oauth2AllowImplicitFlow', 'type': 'bool'},
     }
 
-    def __init__(self, additional_properties=None, app_id=None, app_permissions=None, available_to_other_tenants=None, display_name=None, identifier_uris=None, reply_urls=None, homepage=None, oauth2_allow_implicit_flow=None):
-        super(Application, self).__init__(additional_properties=additional_properties)
-        self.app_id = app_id
-        self.app_permissions = app_permissions
-        self.available_to_other_tenants = available_to_other_tenants
-        self.display_name = display_name
-        self.identifier_uris = identifier_uris
-        self.reply_urls = reply_urls
-        self.homepage = homepage
-        self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
+    def __init__(self, **kwargs):
+        super(Application, self).__init__(**kwargs)
+        self.app_id = kwargs.get('app_id', None)
+        self.app_permissions = kwargs.get('app_permissions', None)
+        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.identifier_uris = kwargs.get('identifier_uris', None)
+        self.reply_urls = kwargs.get('reply_urls', None)
+        self.homepage = kwargs.get('homepage', None)
+        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
         self.object_type = 'Application'

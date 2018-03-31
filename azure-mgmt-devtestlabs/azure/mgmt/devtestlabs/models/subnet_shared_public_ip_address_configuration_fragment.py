@@ -24,6 +24,6 @@ class SubnetSharedPublicIpAddressConfigurationFragment(Model):
         'allowed_ports': {'key': 'allowedPorts', 'type': '[PortFragment]'},
     }
 
-    def __init__(self, allowed_ports=None):
-        super(SubnetSharedPublicIpAddressConfigurationFragment, self).__init__()
-        self.allowed_ports = allowed_ports
+    def __init__(self, **kwargs):
+        super(SubnetSharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
+        self.allowed_ports = kwargs.get('allowed_ports', None)

@@ -44,12 +44,12 @@ class FoundFaces(Model):
         'faces': {'key': 'Faces', 'type': '[Face]'},
     }
 
-    def __init__(self, status=None, tracking_id=None, cache_id=None, result=None, count=None, advanced_info=None, faces=None):
-        super(FoundFaces, self).__init__()
-        self.status = status
-        self.tracking_id = tracking_id
-        self.cache_id = cache_id
-        self.result = result
-        self.count = count
-        self.advanced_info = advanced_info
-        self.faces = faces
+    def __init__(self, **kwargs):
+        super(FoundFaces, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.result = kwargs.get('result', None)
+        self.count = kwargs.get('count', None)
+        self.advanced_info = kwargs.get('advanced_info', None)
+        self.faces = kwargs.get('faces', None)

@@ -159,31 +159,31 @@ class CloudTask(Model):
         'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, container_settings=None, resource_files=None, output_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
-        super(CloudTask, self).__init__()
-        self.id = id
-        self.display_name = display_name
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
-        self.exit_conditions = exit_conditions
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
-        self.command_line = command_line
-        self.container_settings = container_settings
-        self.resource_files = resource_files
-        self.output_files = output_files
-        self.environment_settings = environment_settings
-        self.affinity_info = affinity_info
-        self.constraints = constraints
-        self.user_identity = user_identity
-        self.execution_info = execution_info
-        self.node_info = node_info
-        self.multi_instance_settings = multi_instance_settings
-        self.stats = stats
-        self.depends_on = depends_on
-        self.application_package_references = application_package_references
-        self.authentication_token_settings = authentication_token_settings
+    def __init__(self, **kwargs):
+        super(CloudTask, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.url = kwargs.get('url', None)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.creation_time = kwargs.get('creation_time', None)
+        self.exit_conditions = kwargs.get('exit_conditions', None)
+        self.state = kwargs.get('state', None)
+        self.state_transition_time = kwargs.get('state_transition_time', None)
+        self.previous_state = kwargs.get('previous_state', None)
+        self.previous_state_transition_time = kwargs.get('previous_state_transition_time', None)
+        self.command_line = kwargs.get('command_line', None)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.resource_files = kwargs.get('resource_files', None)
+        self.output_files = kwargs.get('output_files', None)
+        self.environment_settings = kwargs.get('environment_settings', None)
+        self.affinity_info = kwargs.get('affinity_info', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.user_identity = kwargs.get('user_identity', None)
+        self.execution_info = kwargs.get('execution_info', None)
+        self.node_info = kwargs.get('node_info', None)
+        self.multi_instance_settings = kwargs.get('multi_instance_settings', None)
+        self.stats = kwargs.get('stats', None)
+        self.depends_on = kwargs.get('depends_on', None)
+        self.application_package_references = kwargs.get('application_package_references', None)
+        self.authentication_token_settings = kwargs.get('authentication_token_settings', None)

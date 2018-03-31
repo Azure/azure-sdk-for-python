@@ -18,7 +18,9 @@ class Sku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Name of this SKU. Default value: "Standard" .
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. Name of this SKU. Default value: "Standard" .
     :vartype name: str
     :param tier: The tier of this SKU. Possible values include: 'Standard'
     :type tier: str or ~azure.mgmt.relay.models.SkuTier
@@ -35,5 +37,6 @@ class Sku(Model):
 
     name = "Standard"
 
-    def __init__(self, tier=None):
-        self.tier = tier
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.tier = kwargs.get('tier', None)

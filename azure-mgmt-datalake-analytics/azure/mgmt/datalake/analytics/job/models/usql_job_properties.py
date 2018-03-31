@@ -18,13 +18,15 @@ class USqlJobProperties(JobProperties):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param runtime_version: the runtime version of the Data Lake Analytics
      engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: the script to run. Please note that the maximum script size
-     is 3 MB.
+    :param script: Required. the script to run. Please note that the maximum
+     script size is 3 MB.
     :type script: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :ivar resources: the list of resources that are required by the job
     :vartype resources:
@@ -105,11 +107,11 @@ class USqlJobProperties(JobProperties):
         'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
     }
 
-    def __init__(self, script, runtime_version=None, statistics=None, debug_data=None):
-        super(USqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
+    def __init__(self, **kwargs):
+        super(USqlJobProperties, self).__init__(**kwargs)
         self.resources = None
-        self.statistics = statistics
-        self.debug_data = debug_data
+        self.statistics = kwargs.get('statistics', None)
+        self.debug_data = kwargs.get('debug_data', None)
         self.diagnostics = None
         self.algebra_file_path = None
         self.total_compilation_time = None

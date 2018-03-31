@@ -18,12 +18,11 @@ class MonitorConfig(Model):
     :param profile_monitor_status: The profile-level monitoring status of the
      Traffic Manager profile. Possible values include: 'CheckingEndpoints',
      'Online', 'Degraded', 'Disabled', 'Inactive'
-    :type profile_monitor_status: str or :class:`ProfileMonitorStatus
-     <azure.mgmt.trafficmanager.models.ProfileMonitorStatus>`
+    :type profile_monitor_status: str or
+     ~azure.mgmt.trafficmanager.models.ProfileMonitorStatus
     :param protocol: The protocol (HTTP, HTTPS or TCP) used to probe for
      endpoint health. Possible values include: 'HTTP', 'HTTPS', 'TCP'
-    :type protocol: str or :class:`MonitorProtocol
-     <azure.mgmt.trafficmanager.models.MonitorProtocol>`
+    :type protocol: str or ~azure.mgmt.trafficmanager.models.MonitorProtocol
     :param port: The TCP port used to probe for endpoint health.
     :type port: long
     :param path: The path relative to the endpoint domain name used to probe
@@ -53,11 +52,12 @@ class MonitorConfig(Model):
         'tolerated_number_of_failures': {'key': 'toleratedNumberOfFailures', 'type': 'long'},
     }
 
-    def __init__(self, profile_monitor_status=None, protocol=None, port=None, path=None, interval_in_seconds=None, timeout_in_seconds=None, tolerated_number_of_failures=None):
-        self.profile_monitor_status = profile_monitor_status
-        self.protocol = protocol
-        self.port = port
-        self.path = path
-        self.interval_in_seconds = interval_in_seconds
-        self.timeout_in_seconds = timeout_in_seconds
-        self.tolerated_number_of_failures = tolerated_number_of_failures
+    def __init__(self, **kwargs):
+        super(MonitorConfig, self).__init__(**kwargs)
+        self.profile_monitor_status = kwargs.get('profile_monitor_status', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.port = kwargs.get('port', None)
+        self.path = kwargs.get('path', None)
+        self.interval_in_seconds = kwargs.get('interval_in_seconds', None)
+        self.timeout_in_seconds = kwargs.get('timeout_in_seconds', None)
+        self.tolerated_number_of_failures = kwargs.get('tolerated_number_of_failures', None)

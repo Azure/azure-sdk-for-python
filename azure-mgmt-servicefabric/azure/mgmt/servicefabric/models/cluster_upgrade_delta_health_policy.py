@@ -13,16 +13,34 @@ from msrest.serialization import Model
 
 
 class ClusterUpgradeDeltaHealthPolicy(Model):
-    """Delta health policy for the cluster.
+    """Describes the delta health policies for the cluster upgrade.
 
-    :param max_percent_delta_unhealthy_nodes: Additional unhealthy nodes
-     percentage
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_percent_delta_unhealthy_nodes: Required. The maximum allowed
+     percentage of nodes health degradation allowed during cluster upgrades.
+     The delta is measured between the state of the nodes at the beginning of
+     upgrade and the state of the nodes at the time of the health evaluation.
+     The check is performed after every upgrade domain upgrade completion to
+     make sure the global state of the cluster is within tolerated limits.
     :type max_percent_delta_unhealthy_nodes: int
-    :param max_percent_upgrade_domain_delta_unhealthy_nodes: Additional
-     unhealthy nodes percentage per upgrade domain
+    :param max_percent_upgrade_domain_delta_unhealthy_nodes: Required. The
+     maximum allowed percentage of upgrade domain nodes health degradation
+     allowed during cluster upgrades. The delta is measured between the state
+     of the upgrade domain nodes at the beginning of upgrade and the state of
+     the upgrade domain nodes at the time of the health evaluation. The check
+     is performed after every upgrade domain upgrade completion for all
+     completed upgrade domains to make sure the state of the upgrade domains is
+     within tolerated limits.
     :type max_percent_upgrade_domain_delta_unhealthy_nodes: int
-    :param max_percent_delta_unhealthy_applications: Additional unhealthy
-     applications percentage
+    :param max_percent_delta_unhealthy_applications: Required. The maximum
+     allowed percentage of applications health degradation allowed during
+     cluster upgrades. The delta is measured between the state of the
+     applications at the beginning of upgrade and the state of the applications
+     at the time of the health evaluation. The check is performed after every
+     upgrade domain upgrade completion to make sure the global state of the
+     cluster is within tolerated limits. System services are not included in
+     this.
     :type max_percent_delta_unhealthy_applications: int
     """
 
@@ -38,7 +56,8 @@ class ClusterUpgradeDeltaHealthPolicy(Model):
         'max_percent_delta_unhealthy_applications': {'key': 'maxPercentDeltaUnhealthyApplications', 'type': 'int'},
     }
 
-    def __init__(self, max_percent_delta_unhealthy_nodes, max_percent_upgrade_domain_delta_unhealthy_nodes, max_percent_delta_unhealthy_applications):
-        self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
-        self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes
-        self.max_percent_delta_unhealthy_applications = max_percent_delta_unhealthy_applications
+    def __init__(self, **kwargs):
+        super(ClusterUpgradeDeltaHealthPolicy, self).__init__(**kwargs)
+        self.max_percent_delta_unhealthy_nodes = kwargs.get('max_percent_delta_unhealthy_nodes', None)
+        self.max_percent_upgrade_domain_delta_unhealthy_nodes = kwargs.get('max_percent_upgrade_domain_delta_unhealthy_nodes', None)
+        self.max_percent_delta_unhealthy_applications = kwargs.get('max_percent_delta_unhealthy_applications', None)

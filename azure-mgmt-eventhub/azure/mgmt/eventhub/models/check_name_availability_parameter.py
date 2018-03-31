@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class CheckNameAvailabilityParameter(Model):
     """Parameter supplied to check Namespace name availability operation .
 
-    :param name: Name to check the namespace name availability
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name to check the namespace name availability
     :type name: str
     """
 
@@ -27,6 +29,6 @@ class CheckNameAvailabilityParameter(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        super(CheckNameAvailabilityParameter, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityParameter, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

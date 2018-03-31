@@ -588,20 +588,20 @@ class TaskOperations(object):
     get.metadata = {'url': '/jobs/{jobId}/tasks/{taskId}'}
 
     def update(
-            self, job_id, task_id, task_update_options=None, constraints=None, custom_headers=None, raw=False, **operation_config):
+            self, job_id, task_id, constraints=None, task_update_options=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of the specified task.
 
         :param job_id: The ID of the job containing the task.
         :type job_id: str
         :param task_id: The ID of the task to update.
         :type task_id: str
-        :param task_update_options: Additional parameters for the operation
-        :type task_update_options: ~azure.batch.models.TaskUpdateOptions
         :param constraints: Constraints that apply to this task. If omitted,
          the task is given the default constraints. For multi-instance tasks,
          updating the retention time applies only to the primary task and not
          subtasks.
         :type constraints: ~azure.batch.models.TaskConstraints
+        :param task_update_options: Additional parameters for the operation
+        :type task_update_options: ~azure.batch.models.TaskUpdateOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

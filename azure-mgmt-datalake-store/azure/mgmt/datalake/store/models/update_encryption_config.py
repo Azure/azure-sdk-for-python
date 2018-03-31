@@ -25,6 +25,6 @@ class UpdateEncryptionConfig(Model):
         'key_vault_meta_info': {'key': 'keyVaultMetaInfo', 'type': 'UpdateKeyVaultMetaInfo'},
     }
 
-    def __init__(self, key_vault_meta_info=None):
-        super(UpdateEncryptionConfig, self).__init__()
-        self.key_vault_meta_info = key_vault_meta_info
+    def __init__(self, **kwargs):
+        super(UpdateEncryptionConfig, self).__init__(**kwargs)
+        self.key_vault_meta_info = kwargs.get('key_vault_meta_info', None)

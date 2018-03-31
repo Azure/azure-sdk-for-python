@@ -12,7 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -23,7 +24,7 @@ class CertificateOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-09-01".
     """
 
@@ -72,7 +73,7 @@ class CertificateOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates'
+                url = self.list_by_batch_account.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
@@ -107,7 +108,7 @@ class CertificateOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -125,44 +126,13 @@ class CertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_batch_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates'}
 
-    def create(
+
+    def _create_initial(
             self, resource_group_name, account_name, certificate_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new certificate inside the specified account.
-
-        :param resource_group_name: The name of the resource group that
-         contains the Batch account.
-        :type resource_group_name: str
-        :param account_name: The name of the Batch account.
-        :type account_name: str
-        :param certificate_name: The identifier for the certificate. This must
-         be made up of algorithm and thumbprint separated by a dash, and must
-         match the certificate data in the request. For example SHA1-a3d1c5.
-        :type certificate_name: str
-        :param parameters: Additional parameters for certificate creation.
-        :type parameters:
-         ~azure.mgmt.batch.models.CertificateCreateOrUpdateParameters
-        :param if_match: The entity state (ETag) version of the certificate to
-         update. A value of "*" can be used to apply the operation only if the
-         certificate already exists. If omitted, this operation will always be
-         applied.
-        :type if_match: str
-        :param if_none_match: Set to '*' to allow a new certificate to be
-         created, but to prevent updating an existing certificate. Other values
-         will be ignored.
-        :type if_none_match: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns Certificate
-         or ClientRawResponse if raw=true
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batch.models.Certificate]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
@@ -193,35 +163,86 @@ class CertificateOperations(object):
         body_content = self._serialize.body(parameters, 'CertificateCreateOrUpdateParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
+        header_dict = {}
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Certificate', response)
+            header_dict = {
+                'ETag': 'str',
+            }
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def create(
+            self, resource_group_name, account_name, certificate_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a new certificate inside the specified account.
+
+        :param resource_group_name: The name of the resource group that
+         contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :param certificate_name: The identifier for the certificate. This must
+         be made up of algorithm and thumbprint separated by a dash, and must
+         match the certificate data in the request. For example SHA1-a3d1c5.
+        :type certificate_name: str
+        :param parameters: Additional parameters for certificate creation.
+        :type parameters:
+         ~azure.mgmt.batch.models.CertificateCreateOrUpdateParameters
+        :param if_match: The entity state (ETag) version of the certificate to
+         update. A value of "*" can be used to apply the operation only if the
+         certificate already exists. If omitted, this operation will always be
+         applied.
+        :type if_match: str
+        :param if_none_match: Set to '*' to allow a new certificate to be
+         created, but to prevent updating an existing certificate. Other values
+         will be ignored.
+        :type if_none_match: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Certificate or
+         ClientRawResponse<Certificate> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batch.models.Certificate]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.batch.models.Certificate]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            certificate_name=certificate_name,
+            parameters=parameters,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-            header_dict = {}
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Certificate', response)
-                header_dict = {
-                    'ETag': 'str',
-                }
+            header_dict = {
+                'ETag': 'str',
+            }
+            deserialized = self._deserialize('Certificate', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -230,16 +251,14 @@ class CertificateOperations(object):
 
             return deserialized
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}
 
     def update(
             self, resource_group_name, account_name, certificate_name, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
@@ -272,7 +291,7 @@ class CertificateOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
@@ -303,7 +322,7 @@ class CertificateOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -325,31 +344,13 @@ class CertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}
 
-    def delete(
+
+    def _delete_initial(
             self, resource_group_name, account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified certificate.
-
-        :param resource_group_name: The name of the resource group that
-         contains the Batch account.
-        :type resource_group_name: str
-        :param account_name: The name of the Batch account.
-        :type account_name: str
-        :param certificate_name: The identifier for the certificate. This must
-         be made up of algorithm and thumbprint separated by a dash, and must
-         match the certificate data in the request. For example SHA1-a3d1c5.
-        :type certificate_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
@@ -373,26 +374,57 @@ class CertificateOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            header_dict = {
+                'Location': 'str',
+                'Retry-After': 'int',
+            }
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+    def delete(
+            self, resource_group_name, account_name, certificate_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes the specified certificate.
+
+        :param resource_group_name: The name of the resource group that
+         contains the Batch account.
+        :type resource_group_name: str
+        :param account_name: The name of the Batch account.
+        :type account_name: str
+        :param certificate_name: The identifier for the certificate. This must
+         be made up of algorithm and thumbprint separated by a dash, and must
+         match the certificate data in the request. For example SHA1-a3d1c5.
+        :type certificate_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            certificate_name=certificate_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 client_raw_response.add_headers({
@@ -401,16 +433,14 @@ class CertificateOperations(object):
                 })
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}
 
     def get(
             self, resource_group_name, account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -436,7 +466,7 @@ class CertificateOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
@@ -461,7 +491,7 @@ class CertificateOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -483,6 +513,7 @@ class CertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}'}
 
     def cancel_deletion(
             self, resource_group_name, account_name, certificate_name, custom_headers=None, raw=False, **operation_config):
@@ -517,7 +548,7 @@ class CertificateOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}/cancelDelete'
+        url = self.cancel_deletion.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3, pattern=r'^[-\w\._]+$'),
@@ -542,7 +573,7 @@ class CertificateOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -564,3 +595,4 @@ class CertificateOperations(object):
             return client_raw_response
 
         return deserialized
+    cancel_deletion.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/certificates/{certificateName}/cancelDelete'}

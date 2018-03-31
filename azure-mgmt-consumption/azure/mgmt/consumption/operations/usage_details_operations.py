@@ -22,7 +22,7 @@ class UsageDetailsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-01-31. Constant value: "2018-01-31".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-31. Constant value: "2018-03-31".
     """
 
     models = models
@@ -32,12 +32,12 @@ class UsageDetailsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-31"
+        self.api_version = "2018-03-31"
 
         self.config = config
 
     def list(
-            self, expand=None, filter=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
+            self, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details for a scope by billing period. Usage details
         are available via this API only for May 1, 2014 or later.
 
@@ -48,9 +48,11 @@ class UsageDetailsOperations(object):
         :type expand: str
         :param filter: May be used to filter usageDetails by
          properties/usageEnd (Utc time), properties/usageStart (Utc time),
-         properties/resourceGroup, properties/instanceName or
-         properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
-         'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
+         properties/resourceGroup, properties/instanceName,
+         properties/instanceId or tags. The filter supports 'eq', 'lt', 'gt',
+         'le', 'ge', and 'and'. It does not currently support 'ne', 'or', or
+         'not'. Tag filter is a key value pair string where key and value is
+         separated by a colon (:).
         :type filter: str
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
@@ -60,6 +62,8 @@ class UsageDetailsOperations(object):
         :param top: May be used to limit the number of results to the most
          recent N usageDetails.
         :type top: int
+        :param query_options: Additional parameters for the operation
+        :type query_options: ~azure.mgmt.consumption.models.QueryOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -71,6 +75,10 @@ class UsageDetailsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
+        apply = None
+        if query_options is not None:
+            apply = query_options.apply
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -92,6 +100,8 @@ class UsageDetailsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
             else:
                 url = next_link
@@ -129,7 +139,7 @@ class UsageDetailsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/usageDetails'}
 
     def list_by_billing_period(
-            self, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details for a scope by billing period. Usage details
         are available via this API only for May 1, 2014 or later.
 
@@ -145,6 +155,8 @@ class UsageDetailsOperations(object):
          properties/resourceGroup, properties/instanceName or
          properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
          'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
+         Tag filter is a key value pair string where key and value is separated
+         by a colon (:).
         :type filter: str
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
@@ -154,6 +166,8 @@ class UsageDetailsOperations(object):
         :param top: May be used to limit the number of results to the most
          recent N usageDetails.
         :type top: int
+        :param query_options: Additional parameters for the operation
+        :type query_options: ~azure.mgmt.consumption.models.QueryOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -165,6 +179,10 @@ class UsageDetailsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
+        apply = None
+        if query_options is not None:
+            apply = query_options.apply
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -187,6 +205,8 @@ class UsageDetailsOperations(object):
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if apply is not None:
+                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
             else:
                 url = next_link

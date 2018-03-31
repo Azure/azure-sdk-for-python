@@ -16,13 +16,15 @@ class Int64RangePartitionInformation(PartitionInformation):
     """Describes the partition information for the integer range that is based on
     partition schemes.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: An internal ID used by Service Fabric to uniquely identify a
      partition. This is a randomly generated GUID when the service was created.
      The partition id is unique and does not change for the lifetime of the
      service. If the same service was deleted and recreated the ids of its
      partitions would be different.
     :type id: str
-    :param service_partition_kind: Constant filled by server.
+    :param service_partition_kind: Required. Constant filled by server.
     :type service_partition_kind: str
     :param low_key: Specifies the minimum key value handled by this partition.
     :type low_key: str
@@ -42,8 +44,8 @@ class Int64RangePartitionInformation(PartitionInformation):
         'high_key': {'key': 'HighKey', 'type': 'str'},
     }
 
-    def __init__(self, id=None, low_key=None, high_key=None):
-        super(Int64RangePartitionInformation, self).__init__(id=id)
-        self.low_key = low_key
-        self.high_key = high_key
+    def __init__(self, **kwargs):
+        super(Int64RangePartitionInformation, self).__init__(**kwargs)
+        self.low_key = kwargs.get('low_key', None)
+        self.high_key = kwargs.get('high_key', None)
         self.service_partition_kind = 'Int64Range'

@@ -15,6 +15,8 @@ from .dataset_storage_format import DatasetStorageFormat
 class JsonFormat(DatasetStorageFormat):
     """The data stored in JSON format.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -24,7 +26,7 @@ class JsonFormat(DatasetStorageFormat):
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param file_pattern: File pattern of JSON. To be more specific, the way of
      separating a collection of JSON objects. The default value is
@@ -72,11 +74,11 @@ class JsonFormat(DatasetStorageFormat):
         'json_path_definition': {'key': 'jsonPathDefinition', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, serializer=None, deserializer=None, file_pattern=None, nesting_separator=None, encoding_name=None, json_node_reference=None, json_path_definition=None):
-        super(JsonFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer)
-        self.file_pattern = file_pattern
-        self.nesting_separator = nesting_separator
-        self.encoding_name = encoding_name
-        self.json_node_reference = json_node_reference
-        self.json_path_definition = json_path_definition
+    def __init__(self, **kwargs):
+        super(JsonFormat, self).__init__(**kwargs)
+        self.file_pattern = kwargs.get('file_pattern', None)
+        self.nesting_separator = kwargs.get('nesting_separator', None)
+        self.encoding_name = kwargs.get('encoding_name', None)
+        self.json_node_reference = kwargs.get('json_node_reference', None)
+        self.json_path_definition = kwargs.get('json_path_definition', None)
         self.type = 'JsonFormat'

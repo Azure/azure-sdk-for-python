@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AzureRegionBaseUrl(Enum):
+class AzureRegionBaseUrl(str, Enum):
 
     westusapicognitivemicrosoftcom = "westus.api.cognitive.microsoft.com"
     westus2apicognitivemicrosoftcom = "westus2.api.cognitive.microsoft.com"

@@ -16,13 +16,15 @@ class ServiceAuthConfiguration(Model):
     """Global service auth configuration properties. These are the data-plane
     authorization keys and are used if a service doesn't define it's own.
 
-    :param primary_auth_key_hash: The primary auth key hash. This is not
-     returned in response of GET/PUT on the resource.. To see this please call
-     listKeys API.
+    All required parameters must be populated in order to send to Azure.
+
+    :param primary_auth_key_hash: Required. The primary auth key hash. This is
+     not returned in response of GET/PUT on the resource.. To see this please
+     call listKeys API.
     :type primary_auth_key_hash: str
-    :param secondary_auth_key_hash: The secondary auth key hash. This is not
-     returned in response of GET/PUT on the resource.. To see this please call
-     listKeys API.
+    :param secondary_auth_key_hash: Required. The secondary auth key hash.
+     This is not returned in response of GET/PUT on the resource.. To see this
+     please call listKeys API.
     :type secondary_auth_key_hash: str
     """
 
@@ -36,7 +38,7 @@ class ServiceAuthConfiguration(Model):
         'secondary_auth_key_hash': {'key': 'secondaryAuthKeyHash', 'type': 'str'},
     }
 
-    def __init__(self, primary_auth_key_hash, secondary_auth_key_hash):
-        super(ServiceAuthConfiguration, self).__init__()
-        self.primary_auth_key_hash = primary_auth_key_hash
-        self.secondary_auth_key_hash = secondary_auth_key_hash
+    def __init__(self, **kwargs):
+        super(ServiceAuthConfiguration, self).__init__(**kwargs)
+        self.primary_auth_key_hash = kwargs.get('primary_auth_key_hash', None)
+        self.secondary_auth_key_hash = kwargs.get('secondary_auth_key_hash', None)

@@ -26,7 +26,7 @@ class Dimension(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display_name=None):
-        super(Dimension, self).__init__()
-        self.name = name
-        self.display_name = display_name
+    def __init__(self, **kwargs):
+        super(Dimension, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)

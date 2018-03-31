@@ -18,13 +18,15 @@ class Zone(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
+    :param location: Required. Resource location.
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -81,12 +83,12 @@ class Zone(Resource):
         'resolution_virtual_networks': {'key': 'properties.resolutionVirtualNetworks', 'type': '[SubResource]'},
     }
 
-    def __init__(self, location, tags=None, etag=None, zone_type="Public", registration_virtual_networks=None, resolution_virtual_networks=None):
-        super(Zone, self).__init__(location=location, tags=tags)
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(Zone, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
         self.max_number_of_record_sets = None
         self.number_of_record_sets = None
         self.name_servers = None
-        self.zone_type = zone_type
-        self.registration_virtual_networks = registration_virtual_networks
-        self.resolution_virtual_networks = resolution_virtual_networks
+        self.zone_type = kwargs.get('zone_type', "Public")
+        self.registration_virtual_networks = kwargs.get('registration_virtual_networks', None)
+        self.resolution_virtual_networks = kwargs.get('resolution_virtual_networks', None)

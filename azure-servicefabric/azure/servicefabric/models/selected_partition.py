@@ -31,7 +31,7 @@ class SelectedPartition(Model):
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
     }
 
-    def __init__(self, service_name=None, partition_id=None):
-        super(SelectedPartition, self).__init__()
-        self.service_name = service_name
-        self.partition_id = partition_id
+    def __init__(self, **kwargs):
+        super(SelectedPartition, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.partition_id = kwargs.get('partition_id', None)

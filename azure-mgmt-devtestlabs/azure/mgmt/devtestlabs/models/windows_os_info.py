@@ -26,6 +26,6 @@ class WindowsOsInfo(Model):
         'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},
     }
 
-    def __init__(self, windows_os_state=None):
-        super(WindowsOsInfo, self).__init__()
-        self.windows_os_state = windows_os_state
+    def __init__(self, **kwargs):
+        super(WindowsOsInfo, self).__init__(**kwargs)
+        self.windows_os_state = kwargs.get('windows_os_state', None)

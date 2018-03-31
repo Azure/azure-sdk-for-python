@@ -42,10 +42,10 @@ class CostThresholdProperties(Model):
         'notification_sent': {'key': 'notificationSent', 'type': 'str'},
     }
 
-    def __init__(self, threshold_id=None, percentage_threshold=None, display_on_chart=None, send_notification_when_exceeded=None, notification_sent=None):
-        super(CostThresholdProperties, self).__init__()
-        self.threshold_id = threshold_id
-        self.percentage_threshold = percentage_threshold
-        self.display_on_chart = display_on_chart
-        self.send_notification_when_exceeded = send_notification_when_exceeded
-        self.notification_sent = notification_sent
+    def __init__(self, **kwargs):
+        super(CostThresholdProperties, self).__init__(**kwargs)
+        self.threshold_id = kwargs.get('threshold_id', None)
+        self.percentage_threshold = kwargs.get('percentage_threshold', None)
+        self.display_on_chart = kwargs.get('display_on_chart', None)
+        self.send_notification_when_exceeded = kwargs.get('send_notification_when_exceeded', None)
+        self.notification_sent = kwargs.get('notification_sent', None)

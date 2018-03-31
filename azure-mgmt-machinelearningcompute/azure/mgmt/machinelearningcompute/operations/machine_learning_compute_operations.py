@@ -22,7 +22,7 @@ class MachineLearningComputeOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The version of the Microsoft.MachineLearningCompute resource provider API to use. Constant value: "2017-08-01-preview".
     """
 
@@ -52,7 +52,7 @@ class MachineLearningComputeOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/providers/Microsoft.MachineLearningCompute/operations'
+        url = self.list_available_operations.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -70,7 +70,7 @@ class MachineLearningComputeOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -87,3 +87,4 @@ class MachineLearningComputeOperations(object):
             return client_raw_response
 
         return deserialized
+    list_available_operations.metadata = {'url': '/providers/Microsoft.MachineLearningCompute/operations'}

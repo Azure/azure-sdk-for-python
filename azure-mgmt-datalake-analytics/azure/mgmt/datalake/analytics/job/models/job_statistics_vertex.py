@@ -47,8 +47,8 @@ class JobStatisticsVertex(Model):
         'peak_mem_usage': {'key': 'peakMemUsage', 'type': 'long'},
     }
 
-    def __init__(self):
-        super(JobStatisticsVertex, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobStatisticsVertex, self).__init__(**kwargs)
         self.name = None
         self.vertex_id = None
         self.execution_time = None

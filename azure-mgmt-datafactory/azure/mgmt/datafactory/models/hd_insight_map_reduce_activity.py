@@ -15,16 +15,18 @@ from .execution_activity import ExecutionActivity
 class HDInsightMapReduceActivity(ExecutionActivity):
     """HDInsight MapReduce activity type.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
     :param depends_on: Activity depends on condition.
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
@@ -40,10 +42,10 @@ class HDInsightMapReduceActivity(ExecutionActivity):
      'Always', 'Failure'
     :type get_debug_info: str or
      ~azure.mgmt.datafactory.models.HDInsightActivityDebugInfoOption
-    :param class_name: Class name. Type: string (or Expression with resultType
-     string).
+    :param class_name: Required. Class name. Type: string (or Expression with
+     resultType string).
     :type class_name: object
-    :param jar_file_path: Jar path. Type: string (or Expression with
+    :param jar_file_path: Required. Jar path. Type: string (or Expression with
      resultType string).
     :type jar_file_path: object
     :param jar_linked_service: Jar linked service reference.
@@ -81,14 +83,14 @@ class HDInsightMapReduceActivity(ExecutionActivity):
         'defines': {'key': 'typeProperties.defines', 'type': '{object}'},
     }
 
-    def __init__(self, name, class_name, jar_file_path, additional_properties=None, description=None, depends_on=None, linked_service_name=None, policy=None, storage_linked_services=None, arguments=None, get_debug_info=None, jar_linked_service=None, jar_libs=None, defines=None):
-        super(HDInsightMapReduceActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, linked_service_name=linked_service_name, policy=policy)
-        self.storage_linked_services = storage_linked_services
-        self.arguments = arguments
-        self.get_debug_info = get_debug_info
-        self.class_name = class_name
-        self.jar_file_path = jar_file_path
-        self.jar_linked_service = jar_linked_service
-        self.jar_libs = jar_libs
-        self.defines = defines
+    def __init__(self, **kwargs):
+        super(HDInsightMapReduceActivity, self).__init__(**kwargs)
+        self.storage_linked_services = kwargs.get('storage_linked_services', None)
+        self.arguments = kwargs.get('arguments', None)
+        self.get_debug_info = kwargs.get('get_debug_info', None)
+        self.class_name = kwargs.get('class_name', None)
+        self.jar_file_path = kwargs.get('jar_file_path', None)
+        self.jar_linked_service = kwargs.get('jar_linked_service', None)
+        self.jar_libs = kwargs.get('jar_libs', None)
+        self.defines = kwargs.get('defines', None)
         self.type = 'HDInsightMapReduce'

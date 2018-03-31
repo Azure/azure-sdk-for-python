@@ -15,9 +15,13 @@ from msrest.serialization import Model
 class VerifyFaceToFaceRequest(Model):
     """Request body for verify operation.
 
-    :param face_id1: FaceId of the first face, comes from Face - Detect
+    All required parameters must be populated in order to send to Azure.
+
+    :param face_id1: Required. FaceId of the first face, comes from Face -
+     Detect
     :type face_id1: str
-    :param face_id2: FaceId of the second face, comes from Face - Detect
+    :param face_id2: Required. FaceId of the second face, comes from Face -
+     Detect
     :type face_id2: str
     """
 
@@ -31,7 +35,7 @@ class VerifyFaceToFaceRequest(Model):
         'face_id2': {'key': 'faceId2', 'type': 'str'},
     }
 
-    def __init__(self, face_id1, face_id2):
-        super(VerifyFaceToFaceRequest, self).__init__()
-        self.face_id1 = face_id1
-        self.face_id2 = face_id2
+    def __init__(self, **kwargs):
+        super(VerifyFaceToFaceRequest, self).__init__(**kwargs)
+        self.face_id1 = kwargs.get('face_id1', None)
+        self.face_id2 = kwargs.get('face_id2', None)

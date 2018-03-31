@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class GroupGetMemberGroupsParameters(Model):
     """Request parameters for GetMemberGroups API call.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param security_enabled_only: If true, only membership in security-enabled
-     groups should be checked. Otherwise, membership in all groups should be
-     checked.
+    :param security_enabled_only: Required. If true, only membership in
+     security-enabled groups should be checked. Otherwise, membership in all
+     groups should be checked.
     :type security_enabled_only: bool
     """
 
@@ -33,7 +35,7 @@ class GroupGetMemberGroupsParameters(Model):
         'security_enabled_only': {'key': 'securityEnabledOnly', 'type': 'bool'},
     }
 
-    def __init__(self, security_enabled_only, additional_properties=None):
-        super(GroupGetMemberGroupsParameters, self).__init__()
-        self.additional_properties = additional_properties
-        self.security_enabled_only = security_enabled_only
+    def __init__(self, **kwargs):
+        super(GroupGetMemberGroupsParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.security_enabled_only = kwargs.get('security_enabled_only', None)

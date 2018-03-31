@@ -45,13 +45,13 @@ class Emotion(Model):
         'surprise': {'key': 'surprise', 'type': 'float'},
     }
 
-    def __init__(self, anger=None, contempt=None, disgust=None, fear=None, happiness=None, neutral=None, sadness=None, surprise=None):
-        super(Emotion, self).__init__()
-        self.anger = anger
-        self.contempt = contempt
-        self.disgust = disgust
-        self.fear = fear
-        self.happiness = happiness
-        self.neutral = neutral
-        self.sadness = sadness
-        self.surprise = surprise
+    def __init__(self, **kwargs):
+        super(Emotion, self).__init__(**kwargs)
+        self.anger = kwargs.get('anger', None)
+        self.contempt = kwargs.get('contempt', None)
+        self.disgust = kwargs.get('disgust', None)
+        self.fear = kwargs.get('fear', None)
+        self.happiness = kwargs.get('happiness', None)
+        self.neutral = kwargs.get('neutral', None)
+        self.sadness = kwargs.get('sadness', None)
+        self.surprise = kwargs.get('surprise', None)

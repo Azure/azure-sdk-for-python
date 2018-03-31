@@ -31,6 +31,6 @@ class NodeHealthStateChunkList(EntityHealthStateChunkList):
         'items': {'key': 'Items', 'type': '[NodeHealthStateChunk]'},
     }
 
-    def __init__(self, total_count=None, items=None):
-        super(NodeHealthStateChunkList, self).__init__(total_count=total_count)
-        self.items = items
+    def __init__(self, **kwargs):
+        super(NodeHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

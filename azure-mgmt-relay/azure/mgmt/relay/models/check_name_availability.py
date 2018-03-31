@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class CheckNameAvailability(Model):
     """Description of the check name availability request properties.
 
-    :param name: The namespace name to check for availability. The namespace
-     name can contain only letters, numbers, and hyphens. The namespace must
-     start with a letter, and it must end with a letter or number.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The namespace name to check for availability. The
+     namespace name can contain only letters, numbers, and hyphens. The
+     namespace must start with a letter, and it must end with a letter or
+     number.
     :type name: str
     """
 
@@ -29,5 +32,6 @@ class CheckNameAvailability(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailability, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

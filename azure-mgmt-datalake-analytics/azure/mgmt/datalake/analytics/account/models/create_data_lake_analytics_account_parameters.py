@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class CreateDataLakeAnalyticsAccountParameters(Model):
     """The parameters to use for creating a Data Lake Analytics account.
 
-    :param location: The resource location.
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The resource location.
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
-    :param default_data_lake_store_account: The default Data Lake Store
-     account associated with this account.
+    :param default_data_lake_store_account: Required. The default Data Lake
+     Store account associated with this account.
     :type default_data_lake_store_account: str
-    :param data_lake_store_accounts: The list of Data Lake Store accounts
-     associated with this account.
+    :param data_lake_store_accounts: Required. The list of Data Lake Store
+     accounts associated with this account.
     :type data_lake_store_accounts:
      list[~azure.mgmt.datalake.analytics.account.models.AddDataLakeStoreWithAccountParameters]
     :param storage_accounts: The list of Azure Blob Storage accounts
@@ -101,20 +103,20 @@ class CreateDataLakeAnalyticsAccountParameters(Model):
         'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
     }
 
-    def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, storage_accounts=None, compute_policies=None, firewall_rules=None, firewall_state=None, firewall_allow_azure_ips=None, new_tier=None, max_job_count=3, max_degree_of_parallelism=30, max_degree_of_parallelism_per_job=None, min_priority_per_job=None, query_store_retention=30):
-        super(CreateDataLakeAnalyticsAccountParameters, self).__init__()
-        self.location = location
-        self.tags = tags
-        self.default_data_lake_store_account = default_data_lake_store_account
-        self.data_lake_store_accounts = data_lake_store_accounts
-        self.storage_accounts = storage_accounts
-        self.compute_policies = compute_policies
-        self.firewall_rules = firewall_rules
-        self.firewall_state = firewall_state
-        self.firewall_allow_azure_ips = firewall_allow_azure_ips
-        self.new_tier = new_tier
-        self.max_job_count = max_job_count
-        self.max_degree_of_parallelism = max_degree_of_parallelism
-        self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
-        self.min_priority_per_job = min_priority_per_job
-        self.query_store_retention = query_store_retention
+    def __init__(self, **kwargs):
+        super(CreateDataLakeAnalyticsAccountParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.default_data_lake_store_account = kwargs.get('default_data_lake_store_account', None)
+        self.data_lake_store_accounts = kwargs.get('data_lake_store_accounts', None)
+        self.storage_accounts = kwargs.get('storage_accounts', None)
+        self.compute_policies = kwargs.get('compute_policies', None)
+        self.firewall_rules = kwargs.get('firewall_rules', None)
+        self.firewall_state = kwargs.get('firewall_state', None)
+        self.firewall_allow_azure_ips = kwargs.get('firewall_allow_azure_ips', None)
+        self.new_tier = kwargs.get('new_tier', None)
+        self.max_job_count = kwargs.get('max_job_count', 3)
+        self.max_degree_of_parallelism = kwargs.get('max_degree_of_parallelism', 30)
+        self.max_degree_of_parallelism_per_job = kwargs.get('max_degree_of_parallelism_per_job', None)
+        self.min_priority_per_job = kwargs.get('min_priority_per_job', None)
+        self.query_store_retention = kwargs.get('query_store_retention', 30)

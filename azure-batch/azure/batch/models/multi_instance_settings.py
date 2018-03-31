@@ -17,14 +17,16 @@ class MultiInstanceSettings(Model):
 
     Multi-instance tasks are commonly used to support MPI tasks.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param number_of_instances: The number of compute nodes required by the
      task. If omitted, the default is 1.
     :type number_of_instances: int
-    :param coordination_command_line: The command line to run on all the
-     compute nodes to enable them to coordinate when the primary runs the main
-     task command. A typical coordination command line launches a background
-     service and verifies that the service is ready to process inter-node
-     messages.
+    :param coordination_command_line: Required. The command line to run on all
+     the compute nodes to enable them to coordinate when the primary runs the
+     main task command. A typical coordination command line launches a
+     background service and verifies that the service is ready to process
+     inter-node messages.
     :type coordination_command_line: str
     :param common_resource_files: A list of files that the Batch service will
      download before running the coordination command line. The difference
@@ -47,8 +49,8 @@ class MultiInstanceSettings(Model):
         'common_resource_files': {'key': 'commonResourceFiles', 'type': '[ResourceFile]'},
     }
 
-    def __init__(self, coordination_command_line, number_of_instances=None, common_resource_files=None):
-        super(MultiInstanceSettings, self).__init__()
-        self.number_of_instances = number_of_instances
-        self.coordination_command_line = coordination_command_line
-        self.common_resource_files = common_resource_files
+    def __init__(self, **kwargs):
+        super(MultiInstanceSettings, self).__init__(**kwargs)
+        self.number_of_instances = kwargs.get('number_of_instances', None)
+        self.coordination_command_line = kwargs.get('coordination_command_line', None)
+        self.common_resource_files = kwargs.get('common_resource_files', None)

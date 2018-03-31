@@ -66,9 +66,9 @@ class IntegrationRuntimeNodeMonitoringData(Model):
         'received_bytes': {'key': 'receivedBytes', 'type': 'float'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(IntegrationRuntimeNodeMonitoringData, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeNodeMonitoringData, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.node_name = None
         self.available_memory_in_mb = None
         self.cpu_utilization = None

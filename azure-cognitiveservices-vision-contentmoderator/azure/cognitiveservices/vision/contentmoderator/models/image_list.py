@@ -33,9 +33,9 @@ class ImageList(Model):
         'metadata': {'key': 'Metadata', 'type': 'ImageListMetadata'},
     }
 
-    def __init__(self, id=None, name=None, description=None, metadata=None):
-        super(ImageList, self).__init__()
-        self.id = id
-        self.name = name
-        self.description = description
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(ImageList, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.metadata = kwargs.get('metadata', None)

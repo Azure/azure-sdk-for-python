@@ -42,10 +42,11 @@ class MonitoringSummary(Model):
         'unsupported_provider_count': {'key': 'unsupportedProviderCount', 'type': 'int'},
     }
 
-    def __init__(self, un_healthy_vm_count=None, un_healthy_provider_count=None, events_count=None, deprecated_provider_count=None, supported_provider_count=None, unsupported_provider_count=None):
-        self.un_healthy_vm_count = un_healthy_vm_count
-        self.un_healthy_provider_count = un_healthy_provider_count
-        self.events_count = events_count
-        self.deprecated_provider_count = deprecated_provider_count
-        self.supported_provider_count = supported_provider_count
-        self.unsupported_provider_count = unsupported_provider_count
+    def __init__(self, **kwargs):
+        super(MonitoringSummary, self).__init__(**kwargs)
+        self.un_healthy_vm_count = kwargs.get('un_healthy_vm_count', None)
+        self.un_healthy_provider_count = kwargs.get('un_healthy_provider_count', None)
+        self.events_count = kwargs.get('events_count', None)
+        self.deprecated_provider_count = kwargs.get('deprecated_provider_count', None)
+        self.supported_provider_count = kwargs.get('supported_provider_count', None)
+        self.unsupported_provider_count = kwargs.get('unsupported_provider_count', None)

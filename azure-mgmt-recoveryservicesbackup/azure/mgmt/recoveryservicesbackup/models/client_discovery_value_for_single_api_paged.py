@@ -18,8 +18,8 @@ class ClientDiscoveryValueForSingleApiPaged(Paged):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'NextLink', 'type': 'str'},
-        'current_page': {'key': 'Value', 'type': '[ClientDiscoveryValueForSingleApi]'}
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ClientDiscoveryValueForSingleApi]'}
     }
 
     def __init__(self, *args, **kwargs):

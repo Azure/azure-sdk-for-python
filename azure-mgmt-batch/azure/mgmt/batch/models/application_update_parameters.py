@@ -31,8 +31,8 @@ class ApplicationUpdateParameters(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, allow_updates=None, default_version=None, display_name=None):
-        super(ApplicationUpdateParameters, self).__init__()
-        self.allow_updates = allow_updates
-        self.default_version = default_version
-        self.display_name = display_name
+    def __init__(self, **kwargs):
+        super(ApplicationUpdateParameters, self).__init__(**kwargs)
+        self.allow_updates = kwargs.get('allow_updates', None)
+        self.default_version = kwargs.get('default_version', None)
+        self.display_name = kwargs.get('display_name', None)

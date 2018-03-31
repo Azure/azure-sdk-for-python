@@ -55,13 +55,13 @@ class USqlTable(CatalogItem):
         'distribution_info': {'key': 'distributionInfo', 'type': 'USqlDistributionInfo'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, column_list=None, index_list=None, partition_key_list=None, external_table=None, distribution_info=None):
-        super(USqlTable, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.schema_name = schema_name
-        self.name = name
-        self.column_list = column_list
-        self.index_list = index_list
-        self.partition_key_list = partition_key_list
-        self.external_table = external_table
-        self.distribution_info = distribution_info
+    def __init__(self, **kwargs):
+        super(USqlTable, self).__init__(**kwargs)
+        self.database_name = kwargs.get('database_name', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.name = kwargs.get('name', None)
+        self.column_list = kwargs.get('column_list', None)
+        self.index_list = kwargs.get('index_list', None)
+        self.partition_key_list = kwargs.get('partition_key_list', None)
+        self.external_table = kwargs.get('external_table', None)
+        self.distribution_info = kwargs.get('distribution_info', None)

@@ -35,10 +35,10 @@ class ColorInfo(Model):
         'is_bw_img': {'key': 'isBWImg', 'type': 'bool'},
     }
 
-    def __init__(self, dominant_color_foreground=None, dominant_color_background=None, dominant_colors=None, accent_color=None, is_bw_img=None):
-        super(ColorInfo, self).__init__()
-        self.dominant_color_foreground = dominant_color_foreground
-        self.dominant_color_background = dominant_color_background
-        self.dominant_colors = dominant_colors
-        self.accent_color = accent_color
-        self.is_bw_img = is_bw_img
+    def __init__(self, **kwargs):
+        super(ColorInfo, self).__init__(**kwargs)
+        self.dominant_color_foreground = kwargs.get('dominant_color_foreground', None)
+        self.dominant_color_background = kwargs.get('dominant_color_background', None)
+        self.dominant_colors = kwargs.get('dominant_colors', None)
+        self.accent_color = kwargs.get('accent_color', None)
+        self.is_bw_img = kwargs.get('is_bw_img', None)

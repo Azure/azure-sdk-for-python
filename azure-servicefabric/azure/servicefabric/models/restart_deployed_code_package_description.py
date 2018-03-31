@@ -17,8 +17,10 @@ class RestartDeployedCodePackageDescription(Model):
     Fabric node.
     .
 
-    :param service_manifest_name: The name of service manifest that specified
-     this code package.
+    All required parameters must be populated in order to send to Azure.
+
+    :param service_manifest_name: Required. The name of service manifest that
+     specified this code package.
     :type service_manifest_name: str
     :param service_package_activation_id: The ActivationId of a deployed
      service package. If ServicePackageActivationMode specified at the time of
@@ -27,12 +29,12 @@ class RestartDeployedCodePackageDescription(Model):
      to 'SharedProcess'), then value of ServicePackageActivationId
      is always an empty string.
     :type service_package_activation_id: str
-    :param code_package_name: The name of the code package defined in the
-     service manifest.
+    :param code_package_name: Required. The name of the code package defined
+     in the service manifest.
     :type code_package_name: str
-    :param code_package_instance_id: The instance ID for currently running
-     entry point. For a code package setup entry point (if specified) runs
-     first and after it finishes main entry point is started.
+    :param code_package_instance_id: Required. The instance ID for currently
+     running entry point. For a code package setup entry point (if specified)
+     runs first and after it finishes main entry point is started.
      Each time entry point executable is run, its instance id will change. If 0
      is passed in as the code package instance ID, the API will restart the
      code package with whatever instance ID it is currently running.
@@ -56,9 +58,9 @@ class RestartDeployedCodePackageDescription(Model):
         'code_package_instance_id': {'key': 'CodePackageInstanceId', 'type': 'str'},
     }
 
-    def __init__(self, service_manifest_name, code_package_name, code_package_instance_id, service_package_activation_id=None):
-        super(RestartDeployedCodePackageDescription, self).__init__()
-        self.service_manifest_name = service_manifest_name
-        self.service_package_activation_id = service_package_activation_id
-        self.code_package_name = code_package_name
-        self.code_package_instance_id = code_package_instance_id
+    def __init__(self, **kwargs):
+        super(RestartDeployedCodePackageDescription, self).__init__(**kwargs)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)
+        self.code_package_name = kwargs.get('code_package_name', None)
+        self.code_package_instance_id = kwargs.get('code_package_instance_id', None)

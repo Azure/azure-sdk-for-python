@@ -43,8 +43,8 @@ class JobStateAuditRecord(Model):
         'details': {'key': 'details', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(JobStateAuditRecord, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobStateAuditRecord, self).__init__(**kwargs)
         self.new_state = None
         self.time_stamp = None
         self.requested_by_user = None

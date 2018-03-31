@@ -19,18 +19,20 @@ class CheckAvailabilityParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Resource name
+    :param name: Required. Resource name
     :type name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param is_availiable: True if the name is available and can be used to
      create new Namespace/NotificationHub. Otherwise false.
     :type is_availiable: bool
@@ -53,11 +55,12 @@ class CheckAvailabilityParameters(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, name, location, tags=None, sku=None, is_availiable=None):
+    def __init__(self, **kwargs):
+        super(CheckAvailabilityParameters, self).__init__(**kwargs)
         self.id = None
-        self.name = name
+        self.name = kwargs.get('name', None)
         self.type = None
-        self.location = location
-        self.tags = tags
-        self.sku = sku
-        self.is_availiable = is_availiable
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
+        self.is_availiable = kwargs.get('is_availiable', None)

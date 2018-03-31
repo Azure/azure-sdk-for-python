@@ -32,7 +32,8 @@ class AzureIaaSVMProtectedItemExtendedInfo(Model):
         'policy_inconsistent': {'key': 'policyInconsistent', 'type': 'bool'},
     }
 
-    def __init__(self, oldest_recovery_point=None, recovery_point_count=None, policy_inconsistent=None):
-        self.oldest_recovery_point = oldest_recovery_point
-        self.recovery_point_count = recovery_point_count
-        self.policy_inconsistent = policy_inconsistent
+    def __init__(self, **kwargs):
+        super(AzureIaaSVMProtectedItemExtendedInfo, self).__init__(**kwargs)
+        self.oldest_recovery_point = kwargs.get('oldest_recovery_point', None)
+        self.recovery_point_count = kwargs.get('recovery_point_count', None)
+        self.policy_inconsistent = kwargs.get('policy_inconsistent', None)

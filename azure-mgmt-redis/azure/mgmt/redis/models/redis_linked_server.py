@@ -30,6 +30,6 @@ class RedisLinkedServer(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(RedisLinkedServer, self).__init__()
+    def __init__(self, **kwargs):
+        super(RedisLinkedServer, self).__init__(**kwargs)
         self.id = None

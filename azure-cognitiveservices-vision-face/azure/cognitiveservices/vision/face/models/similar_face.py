@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class SimilarFace(Model):
     """Response body for find similar face operation.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param face_id: FaceId of candidate face when find by faceIds. faceId is
      created by Face - Detect and will expire 24 hours after the detection call
     :type face_id: str
@@ -22,8 +24,8 @@ class SimilarFace(Model):
      faceListId. persistedFaceId in face list is persisted and will not expire.
      As showed in below response
     :type persisted_face_id: str
-    :param confidence: Similarity confidence of the candidate face. The higher
-     confidence, the more similar. Range between [0,1].
+    :param confidence: Required. Similarity confidence of the candidate face.
+     The higher confidence, the more similar. Range between [0,1].
     :type confidence: float
     """
 
@@ -37,8 +39,8 @@ class SimilarFace(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, confidence, face_id=None, persisted_face_id=None):
-        super(SimilarFace, self).__init__()
-        self.face_id = face_id
-        self.persisted_face_id = persisted_face_id
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(SimilarFace, self).__init__(**kwargs)
+        self.face_id = kwargs.get('face_id', None)
+        self.persisted_face_id = kwargs.get('persisted_face_id', None)
+        self.confidence = kwargs.get('confidence', None)

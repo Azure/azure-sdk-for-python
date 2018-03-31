@@ -20,9 +20,11 @@ class TaskIdRange(Model):
     The start and end of the range are inclusive. For example, if a range has
     start 9 and end 12, then it represents tasks '9', '10', '11' and '12'.
 
-    :param start: The first task ID in the range.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start: Required. The first task ID in the range.
     :type start: int
-    :param end: The last task ID in the range.
+    :param end: Required. The last task ID in the range.
     :type end: int
     """
 
@@ -36,7 +38,7 @@ class TaskIdRange(Model):
         'end': {'key': 'end', 'type': 'int'},
     }
 
-    def __init__(self, start, end):
-        super(TaskIdRange, self).__init__()
-        self.start = start
-        self.end = end
+    def __init__(self, **kwargs):
+        super(TaskIdRange, self).__init__(**kwargs)
+        self.start = kwargs.get('start', None)
+        self.end = kwargs.get('end', None)

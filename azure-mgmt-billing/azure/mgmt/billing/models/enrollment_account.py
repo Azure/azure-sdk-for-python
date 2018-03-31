@@ -42,6 +42,6 @@ class EnrollmentAccount(Resource):
         'principal_name': {'key': 'properties.principalName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(EnrollmentAccount, self).__init__()
+    def __init__(self, **kwargs):
+        super(EnrollmentAccount, self).__init__(**kwargs)
         self.principal_name = None

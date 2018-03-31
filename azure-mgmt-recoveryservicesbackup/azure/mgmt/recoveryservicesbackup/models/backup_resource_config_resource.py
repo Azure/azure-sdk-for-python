@@ -28,12 +28,12 @@ class BackupResourceConfigResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: BackupResourceConfigResource properties
-    :type properties: :class:`BackupResourceConfig
-     <azure.mgmt.recoveryservicesbackup.models.BackupResourceConfig>`
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfig
     """
 
     _validation = {
@@ -52,6 +52,6 @@ class BackupResourceConfigResource(Resource):
         'properties': {'key': 'properties', 'type': 'BackupResourceConfig'},
     }
 
-    def __init__(self, location=None, tags=None, e_tag=None, properties=None):
-        super(BackupResourceConfigResource, self).__init__(location=location, tags=tags, e_tag=e_tag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(BackupResourceConfigResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

@@ -9,16 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .info_field import InfoField
-from .usage_aggregation import UsageAggregation
-from .rate_card_query_parameters import RateCardQueryParameters
-from .offer_term_info import OfferTermInfo
-from .meter_info import MeterInfo
-from .resource_rate_card_info import ResourceRateCardInfo
-from .monetary_credit import MonetaryCredit
-from .monetary_commitment import MonetaryCommitment
-from .recurring_charge import RecurringCharge
-from .error_response import ErrorResponse, ErrorResponseException
+try:
+    from .info_field_py3 import InfoField
+    from .usage_aggregation_py3 import UsageAggregation
+    from .rate_card_query_parameters_py3 import RateCardQueryParameters
+    from .offer_term_info_py3 import OfferTermInfo
+    from .meter_info_py3 import MeterInfo
+    from .resource_rate_card_info_py3 import ResourceRateCardInfo
+    from .monetary_credit_py3 import MonetaryCredit
+    from .monetary_commitment_py3 import MonetaryCommitment
+    from .recurring_charge_py3 import RecurringCharge
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+except (SyntaxError, ImportError):
+    from .info_field import InfoField
+    from .usage_aggregation import UsageAggregation
+    from .rate_card_query_parameters import RateCardQueryParameters
+    from .offer_term_info import OfferTermInfo
+    from .meter_info import MeterInfo
+    from .resource_rate_card_info import ResourceRateCardInfo
+    from .monetary_credit import MonetaryCredit
+    from .monetary_commitment import MonetaryCommitment
+    from .recurring_charge import RecurringCharge
+    from .error_response import ErrorResponse, ErrorResponseException
 from .usage_aggregation_paged import UsageAggregationPaged
 from .usage_management_client_enums import (
     AggregationGranularity,

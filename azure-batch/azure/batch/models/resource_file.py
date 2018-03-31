@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class ResourceFile(Model):
     """A file to be downloaded from Azure blob storage to a compute node.
 
-    :param blob_source: The URL of the file within Azure Blob Storage. This
-     URL must be readable using anonymous access; that is, the Batch service
-     does not present any credentials when downloading the blob. There are two
-     ways to get such a URL for a blob in Azure storage: include a Shared
-     Access Signature (SAS) granting read permissions on the blob, or set the
-     ACL for the blob or its container to allow public access.
+    All required parameters must be populated in order to send to Azure.
+
+    :param blob_source: Required. The URL of the file within Azure Blob
+     Storage. This URL must be readable using anonymous access; that is, the
+     Batch service does not present any credentials when downloading the blob.
+     There are two ways to get such a URL for a blob in Azure storage: include
+     a Shared Access Signature (SAS) granting read permissions on the blob, or
+     set the ACL for the blob or its container to allow public access.
     :type blob_source: str
-    :param file_path: The location on the compute node to which to download
-     the file, relative to the task's working directory.
+    :param file_path: Required. The location on the compute node to which to
+     download the file, relative to the task's working directory.
     :type file_path: str
     :param file_mode: The file permission mode attribute in octal format. This
      property applies only to files being downloaded to Linux compute nodes. It
@@ -44,8 +46,8 @@ class ResourceFile(Model):
         'file_mode': {'key': 'fileMode', 'type': 'str'},
     }
 
-    def __init__(self, blob_source, file_path, file_mode=None):
-        super(ResourceFile, self).__init__()
-        self.blob_source = blob_source
-        self.file_path = file_path
-        self.file_mode = file_mode
+    def __init__(self, **kwargs):
+        super(ResourceFile, self).__init__(**kwargs)
+        self.blob_source = kwargs.get('blob_source', None)
+        self.file_path = kwargs.get('file_path', None)
+        self.file_mode = kwargs.get('file_mode', None)

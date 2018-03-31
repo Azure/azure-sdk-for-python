@@ -62,13 +62,13 @@ class RemoteReplicatorStatus(Model):
         'remote_replicator_acknowledgement_status': {'key': 'RemoteReplicatorAcknowledgementStatus', 'type': 'RemoteReplicatorAcknowledgementStatus'},
     }
 
-    def __init__(self, replica_id=None, last_acknowledgement_processed_time_utc=None, last_received_replication_sequence_number=None, last_applied_replication_sequence_number=None, is_in_build=None, last_received_copy_sequence_number=None, last_applied_copy_sequence_number=None, remote_replicator_acknowledgement_status=None):
-        super(RemoteReplicatorStatus, self).__init__()
-        self.replica_id = replica_id
-        self.last_acknowledgement_processed_time_utc = last_acknowledgement_processed_time_utc
-        self.last_received_replication_sequence_number = last_received_replication_sequence_number
-        self.last_applied_replication_sequence_number = last_applied_replication_sequence_number
-        self.is_in_build = is_in_build
-        self.last_received_copy_sequence_number = last_received_copy_sequence_number
-        self.last_applied_copy_sequence_number = last_applied_copy_sequence_number
-        self.remote_replicator_acknowledgement_status = remote_replicator_acknowledgement_status
+    def __init__(self, **kwargs):
+        super(RemoteReplicatorStatus, self).__init__(**kwargs)
+        self.replica_id = kwargs.get('replica_id', None)
+        self.last_acknowledgement_processed_time_utc = kwargs.get('last_acknowledgement_processed_time_utc', None)
+        self.last_received_replication_sequence_number = kwargs.get('last_received_replication_sequence_number', None)
+        self.last_applied_replication_sequence_number = kwargs.get('last_applied_replication_sequence_number', None)
+        self.is_in_build = kwargs.get('is_in_build', None)
+        self.last_received_copy_sequence_number = kwargs.get('last_received_copy_sequence_number', None)
+        self.last_applied_copy_sequence_number = kwargs.get('last_applied_copy_sequence_number', None)
+        self.remote_replicator_acknowledgement_status = kwargs.get('remote_replicator_acknowledgement_status', None)

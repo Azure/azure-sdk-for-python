@@ -79,8 +79,8 @@ class DeployedServicePackageHealthStateFilter(Model):
         'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
     }
 
-    def __init__(self, service_manifest_name_filter=None, service_package_activation_id_filter=None, health_state_filter=0):
-        super(DeployedServicePackageHealthStateFilter, self).__init__()
-        self.service_manifest_name_filter = service_manifest_name_filter
-        self.service_package_activation_id_filter = service_package_activation_id_filter
-        self.health_state_filter = health_state_filter
+    def __init__(self, **kwargs):
+        super(DeployedServicePackageHealthStateFilter, self).__init__(**kwargs)
+        self.service_manifest_name_filter = kwargs.get('service_manifest_name_filter', None)
+        self.service_package_activation_id_filter = kwargs.get('service_package_activation_id_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)

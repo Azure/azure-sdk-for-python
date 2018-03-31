@@ -38,8 +38,8 @@ class JobDataPath(Model):
         'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self):
-        super(JobDataPath, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobDataPath, self).__init__(**kwargs)
         self.job_id = None
         self.command = None
         self.paths = None

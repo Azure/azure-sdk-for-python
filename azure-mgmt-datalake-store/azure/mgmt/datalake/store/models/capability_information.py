@@ -51,8 +51,8 @@ class CapabilityInformation(Model):
         'migration_state': {'key': 'migrationState', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(CapabilityInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(CapabilityInformation, self).__init__(**kwargs)
         self.subscription_id = None
         self.state = None
         self.max_account_count = None

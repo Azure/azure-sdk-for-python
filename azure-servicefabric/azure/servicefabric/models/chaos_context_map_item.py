@@ -16,9 +16,11 @@ class ChaosContextMapItem(Model):
     """Describes an item in the ChaosContextMap in ChaosParameters.
     .
 
-    :param key: The key for a ChaosContextMapItem.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key: Required. The key for a ChaosContextMapItem.
     :type key: str
-    :param value: The value for a ChaosContextMapItem.
+    :param value: Required. The value for a ChaosContextMapItem.
     :type value: str
     """
 
@@ -32,7 +34,7 @@ class ChaosContextMapItem(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key, value):
-        super(ChaosContextMapItem, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ChaosContextMapItem, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)

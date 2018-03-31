@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class TranscriptModerationBodyItem(Model):
     """Schema items of the body.
 
-    :param timestamp: Timestamp of the image.
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. Timestamp of the image.
     :type timestamp: str
-    :param terms: Optional metadata details.
+    :param terms: Required. Optional metadata details.
     :type terms:
      list[~azure.cognitiveservices.vision.contentmoderator.models.TranscriptModerationBodyItemTermsItem]
     """
@@ -32,7 +34,7 @@ class TranscriptModerationBodyItem(Model):
         'terms': {'key': 'Terms', 'type': '[TranscriptModerationBodyItemTermsItem]'},
     }
 
-    def __init__(self, timestamp, terms):
-        super(TranscriptModerationBodyItem, self).__init__()
-        self.timestamp = timestamp
-        self.terms = terms
+    def __init__(self, **kwargs):
+        super(TranscriptModerationBodyItem, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.terms = kwargs.get('terms', None)

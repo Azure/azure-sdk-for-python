@@ -13,17 +13,23 @@ from msrest.serialization import Model
 
 
 class DiagnosticsStorageAccountConfig(Model):
-    """Diagnostics storage account config.
+    """The storage account information for storing Service Fabric diagnostic logs.
 
-    :param storage_account_name: Diagnostics storage account name
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_account_name: Required. The Azure storage account name.
     :type storage_account_name: str
-    :param protected_account_key_name: Protected Diagnostics storage key name
+    :param protected_account_key_name: Required. The protected diagnostics
+     storage key name.
     :type protected_account_key_name: str
-    :param blob_endpoint: Diagnostics storage account blob endpoint
+    :param blob_endpoint: Required. The blob endpoint of the azure storage
+     account.
     :type blob_endpoint: str
-    :param queue_endpoint: Diagnostics storage account queue endpoint
+    :param queue_endpoint: Required. The queue endpoint of the azure storage
+     account.
     :type queue_endpoint: str
-    :param table_endpoint: Diagnostics storage account table endpoint
+    :param table_endpoint: Required. The table endpoint of the azure storage
+     account.
     :type table_endpoint: str
     """
 
@@ -43,9 +49,10 @@ class DiagnosticsStorageAccountConfig(Model):
         'table_endpoint': {'key': 'tableEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, storage_account_name, protected_account_key_name, blob_endpoint, queue_endpoint, table_endpoint):
-        self.storage_account_name = storage_account_name
-        self.protected_account_key_name = protected_account_key_name
-        self.blob_endpoint = blob_endpoint
-        self.queue_endpoint = queue_endpoint
-        self.table_endpoint = table_endpoint
+    def __init__(self, **kwargs):
+        super(DiagnosticsStorageAccountConfig, self).__init__(**kwargs)
+        self.storage_account_name = kwargs.get('storage_account_name', None)
+        self.protected_account_key_name = kwargs.get('protected_account_key_name', None)
+        self.blob_endpoint = kwargs.get('blob_endpoint', None)
+        self.queue_endpoint = kwargs.get('queue_endpoint', None)
+        self.table_endpoint = kwargs.get('table_endpoint', None)

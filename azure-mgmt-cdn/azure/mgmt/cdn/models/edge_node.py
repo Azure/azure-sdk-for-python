@@ -19,13 +19,15 @@ class EdgeNode(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param ip_address_groups: List of ip address groups.
+    :param ip_address_groups: Required. List of ip address groups.
     :type ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
     """
 
@@ -43,6 +45,6 @@ class EdgeNode(ProxyResource):
         'ip_address_groups': {'key': 'properties.ipAddressGroups', 'type': '[IpAddressGroup]'},
     }
 
-    def __init__(self, ip_address_groups):
-        super(EdgeNode, self).__init__()
-        self.ip_address_groups = ip_address_groups
+    def __init__(self, **kwargs):
+        super(EdgeNode, self).__init__(**kwargs)
+        self.ip_address_groups = kwargs.get('ip_address_groups', None)

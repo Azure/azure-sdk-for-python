@@ -15,29 +15,30 @@ from msrest.serialization import Model
 class ClientDiscoveryValueForSingleApi(Model):
     """Available operation details.
 
-    :param name: Name
+    :param name: Name of the Operation.
     :type name: str
     :param display: Contains the localized display information for this
      particular operation
-    :type display: :class:`ClientDiscoveryDisplay
-     <azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryDisplay>`
+    :type display:
+     ~azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryDisplay
     :param origin: The intended executor of the operation;governs the display
      of the operation in the RBAC UX and the audit logs UX
     :type origin: str
-    :param properties: Properties
-    :type properties: :class:`ClientDiscoveryForProperties
-     <azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryForProperties>`
+    :param properties: ShoeBox properties for the given operation.
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ClientDiscoveryForProperties
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'display': {'key': 'Display', 'type': 'ClientDiscoveryDisplay'},
-        'origin': {'key': 'Origin', 'type': 'str'},
-        'properties': {'key': 'Properties', 'type': 'ClientDiscoveryForProperties'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'ClientDiscoveryDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ClientDiscoveryForProperties'},
     }
 
-    def __init__(self, name=None, display=None, origin=None, properties=None):
-        self.name = name
-        self.display = display
-        self.origin = origin
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ClientDiscoveryValueForSingleApi, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)

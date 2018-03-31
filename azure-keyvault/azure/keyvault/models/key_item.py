@@ -21,10 +21,9 @@ class KeyItem(Model):
     :param kid: Key identifier.
     :type kid: str
     :param attributes: The key management attributes.
-    :type attributes: :class:`KeyAttributes
-     <azure.keyvault.models.KeyAttributes>`
+    :type attributes: ~azure.keyvault.models.KeyAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this
      is a key backing a certificate, then managed will be true.
     :vartype managed: bool
@@ -41,8 +40,9 @@ class KeyItem(Model):
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
-    def __init__(self, kid=None, attributes=None, tags=None):
-        self.kid = kid
-        self.attributes = attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(KeyItem, self).__init__(**kwargs)
+        self.kid = kwargs.get('kid', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
         self.managed = None

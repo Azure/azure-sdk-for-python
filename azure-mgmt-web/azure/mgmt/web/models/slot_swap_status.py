@@ -39,8 +39,8 @@ class SlotSwapStatus(Model):
         'destination_slot_name': {'key': 'destinationSlotName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SlotSwapStatus, self).__init__()
+    def __init__(self, **kwargs):
+        super(SlotSwapStatus, self).__init__(**kwargs)
         self.timestamp_utc = None
         self.source_slot_name = None
         self.destination_slot_name = None

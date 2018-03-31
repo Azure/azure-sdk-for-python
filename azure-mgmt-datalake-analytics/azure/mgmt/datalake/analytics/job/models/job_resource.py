@@ -33,8 +33,8 @@ class JobResource(Model):
         'type': {'key': 'type', 'type': 'JobResourceType'},
     }
 
-    def __init__(self, name=None, resource_path=None, type=None):
-        super(JobResource, self).__init__()
-        self.name = name
-        self.resource_path = resource_path
-        self.type = type
+    def __init__(self, **kwargs):
+        super(JobResource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.resource_path = kwargs.get('resource_path', None)
+        self.type = kwargs.get('type', None)

@@ -27,7 +27,7 @@ class WeekDetailsFragment(Model):
         'time': {'key': 'time', 'type': 'str'},
     }
 
-    def __init__(self, weekdays=None, time=None):
-        super(WeekDetailsFragment, self).__init__()
-        self.weekdays = weekdays
-        self.time = time
+    def __init__(self, **kwargs):
+        super(WeekDetailsFragment, self).__init__(**kwargs)
+        self.weekdays = kwargs.get('weekdays', None)
+        self.time = kwargs.get('time', None)

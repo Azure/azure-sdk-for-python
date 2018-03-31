@@ -15,6 +15,8 @@ from .deployed_service_replica_info import DeployedServiceReplicaInfo
 class DeployedStatelessServiceInstanceInfo(DeployedServiceReplicaInfo):
     """Information about a stateless service instance deployed on a node.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param service_name: The full name of the service with 'fabric:' URI
      scheme.
     :type service_name: str
@@ -62,7 +64,7 @@ class DeployedStatelessServiceInstanceInfo(DeployedServiceReplicaInfo):
      replica. This will be zero if the replica is down. In hyper-v containers
      this host process id will be from different kernel.
     :type host_process_id: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_id: Id of a stateless service instance. InstanceId is used
      by Service Fabric to uniquely identify an instance of a partition of a
@@ -90,7 +92,7 @@ class DeployedStatelessServiceInstanceInfo(DeployedServiceReplicaInfo):
         'instance_id': {'key': 'InstanceId', 'type': 'str'},
     }
 
-    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, host_process_id=None, instance_id=None):
-        super(DeployedStatelessServiceInstanceInfo, self).__init__(service_name=service_name, service_type_name=service_type_name, service_manifest_name=service_manifest_name, code_package_name=code_package_name, partition_id=partition_id, replica_status=replica_status, address=address, service_package_activation_id=service_package_activation_id, host_process_id=host_process_id)
-        self.instance_id = instance_id
+    def __init__(self, **kwargs):
+        super(DeployedStatelessServiceInstanceInfo, self).__init__(**kwargs)
+        self.instance_id = kwargs.get('instance_id', None)
         self.service_kind = 'Stateless'

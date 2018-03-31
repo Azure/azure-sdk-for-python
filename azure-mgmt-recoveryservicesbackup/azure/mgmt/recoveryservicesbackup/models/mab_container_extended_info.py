@@ -20,11 +20,12 @@ class MabContainerExtendedInfo(Model):
     :param backup_item_type: Type of backup items associated with this
      container. Possible values include: 'Invalid', 'VM', 'FileFolder',
      'AzureSqlDb', 'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM',
-     'SystemState', 'Client', 'GenericDataSource'
-    :type backup_item_type: str or :class:`BackupItemType
-     <azure.mgmt.recoveryservicesbackup.models.BackupItemType>`
+     'SystemState', 'Client', 'GenericDataSource', 'SQLDataBase',
+     'AzureFileShare'
+    :type backup_item_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupItemType
     :param backup_items: List of backup items associated with this container.
-    :type backup_items: list of str
+    :type backup_items: list[str]
     :param policy_name: Backup policy associated with this container.
     :type policy_name: str
     :param last_backup_status: Latest backup status of this container.
@@ -39,9 +40,10 @@ class MabContainerExtendedInfo(Model):
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
     }
 
-    def __init__(self, last_refreshed_at=None, backup_item_type=None, backup_items=None, policy_name=None, last_backup_status=None):
-        self.last_refreshed_at = last_refreshed_at
-        self.backup_item_type = backup_item_type
-        self.backup_items = backup_items
-        self.policy_name = policy_name
-        self.last_backup_status = last_backup_status
+    def __init__(self, **kwargs):
+        super(MabContainerExtendedInfo, self).__init__(**kwargs)
+        self.last_refreshed_at = kwargs.get('last_refreshed_at', None)
+        self.backup_item_type = kwargs.get('backup_item_type', None)
+        self.backup_items = kwargs.get('backup_items', None)
+        self.policy_name = kwargs.get('policy_name', None)
+        self.last_backup_status = kwargs.get('last_backup_status', None)

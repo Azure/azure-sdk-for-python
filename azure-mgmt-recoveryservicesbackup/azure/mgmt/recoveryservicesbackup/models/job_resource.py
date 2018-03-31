@@ -28,12 +28,11 @@ class JobResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: JobResource properties
-    :type properties: :class:`Job
-     <azure.mgmt.recoveryservicesbackup.models.Job>`
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.Job
     """
 
     _validation = {
@@ -52,6 +51,6 @@ class JobResource(Resource):
         'properties': {'key': 'properties', 'type': 'Job'},
     }
 
-    def __init__(self, location=None, tags=None, e_tag=None, properties=None):
-        super(JobResource, self).__init__(location=location, tags=tags, e_tag=e_tag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(JobResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

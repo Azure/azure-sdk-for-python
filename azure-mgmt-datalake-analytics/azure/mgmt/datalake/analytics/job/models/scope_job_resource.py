@@ -26,7 +26,7 @@ class ScopeJobResource(Model):
         'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, name=None, path=None):
-        super(ScopeJobResource, self).__init__()
-        self.name = name
-        self.path = path
+    def __init__(self, **kwargs):
+        super(ScopeJobResource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.path = kwargs.get('path', None)

@@ -12,8 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrest.exceptions import DeserializationError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -24,7 +24,7 @@ class JobOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-09-01-preview".
     """
 
@@ -82,7 +82,7 @@ class JobOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobs'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True)
@@ -140,6 +140,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/jobs'}
 
     def create(
             self, account_name, job_identity, parameters, custom_headers=None, raw=False, **operation_config):
@@ -165,7 +166,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -210,6 +211,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/jobs/{jobIdentity}'}
 
     def get(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
@@ -231,7 +233,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -272,12 +274,13 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/jobs/{jobIdentity}'}
 
 
     def _update_initial(
             self, account_name, job_identity, parameters=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/jobs/{jobIdentity}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -327,7 +330,7 @@ class JobOperations(object):
         return deserialized
 
     def update(
-            self, account_name, job_identity, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, job_identity, parameters=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates the job information for the specified job ID. (Only for use
         internally with Scope job type.).
 
@@ -341,13 +344,16 @@ class JobOperations(object):
         :type parameters:
          ~azure.mgmt.datalake.analytics.job.models.UpdateJobParameters
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns
-         JobInformation or ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns JobInformation or
+         ClientRawResponse<JobInformation> if raw==True
         :rtype:
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datalake.analytics.job.models.JobInformation]
-         or ~msrest.pipeline.ClientRawResponse
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.datalake.analytics.job.models.JobInformation]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -358,30 +364,8 @@ class JobOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 201, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             deserialized = self._deserialize('JobInformation', response)
 
             if raw:
@@ -390,12 +374,14 @@ class JobOperations(object):
 
             return deserialized
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/jobs/{jobIdentity}'}
 
     def get_statistics(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
@@ -417,7 +403,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}/GetStatistics'
+        url = self.get_statistics.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -458,6 +444,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get_statistics.metadata = {'url': '/jobs/{jobIdentity}/GetStatistics'}
 
     def get_debug_data_path(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
@@ -480,7 +467,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/jobs/{jobIdentity}/GetDebugDataPath'
+        url = self.get_debug_data_path.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -521,12 +508,13 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get_debug_data_path.metadata = {'url': '/jobs/{jobIdentity}/GetDebugDataPath'}
 
 
     def _cancel_initial(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/jobs/{jobIdentity}/CancelJob'
+        url = self.cancel.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -562,7 +550,7 @@ class JobOperations(object):
             return client_raw_response
 
     def cancel(
-            self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
+            self, account_name, job_identity, custom_headers=None, raw=False, polling=True, **operation_config):
         """Cancels the running job specified by the job ID.
 
         :param account_name: The Azure Data Lake Analytics account to execute
@@ -572,12 +560,14 @@ class JobOperations(object):
          across all jobs submitted to the service.
         :type job_identity: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._cancel_initial(
@@ -587,46 +577,26 @@ class JobOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    cancel.metadata = {'url': '/jobs/{jobIdentity}/CancelJob'}
 
 
     def _yield_method_initial(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/jobs/{jobIdentity}/YieldJob'
+        url = self.yield_method.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True),
@@ -662,7 +632,7 @@ class JobOperations(object):
             return client_raw_response
 
     def yield_method(
-            self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
+            self, account_name, job_identity, custom_headers=None, raw=False, polling=True, **operation_config):
         """Pauses the specified job and places it back in the job queue, behind
         other jobs of equal or higher importance, based on priority. (Only for
         use internally with Scope job type.).
@@ -674,12 +644,14 @@ class JobOperations(object):
          across all jobs submitted to the service.
         :type job_identity: str
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: An instance of AzureOperationPoller that returns None or
-         ClientRawResponse if raw=true
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrest.pipeline.ClientRawResponse
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._yield_method_initial(
@@ -689,40 +661,20 @@ class JobOperations(object):
             raw=True,
             **operation_config
         )
-        if raw:
-            return raw_result
-
-        # Construct and send request
-        def long_running_send():
-            return raw_result.response
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            header_parameters = {}
-            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
-            return self._client.send(
-                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    yield_method.metadata = {'url': '/jobs/{jobIdentity}/YieldJob'}
 
     def build(
             self, account_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -746,7 +698,7 @@ class JobOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/buildJob'
+        url = self.build.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaJobDnsSuffix': self._serialize.url("self.config.adla_job_dns_suffix", self.config.adla_job_dns_suffix, 'str', skip_quote=True)
@@ -790,3 +742,4 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    build.metadata = {'url': '/buildJob'}

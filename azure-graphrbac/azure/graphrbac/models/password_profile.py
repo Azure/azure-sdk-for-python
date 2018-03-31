@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class PasswordProfile(Model):
     """The password profile associated with a user.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param password: Password
+    :param password: Required. Password
     :type password: str
     :param force_change_password_next_login: Whether to force a password
      change on next login.
@@ -35,8 +37,8 @@ class PasswordProfile(Model):
         'force_change_password_next_login': {'key': 'forceChangePasswordNextLogin', 'type': 'bool'},
     }
 
-    def __init__(self, password, additional_properties=None, force_change_password_next_login=None):
-        super(PasswordProfile, self).__init__()
-        self.additional_properties = additional_properties
-        self.password = password
-        self.force_change_password_next_login = force_change_password_next_login
+    def __init__(self, **kwargs):
+        super(PasswordProfile, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.password = kwargs.get('password', None)
+        self.force_change_password_next_login = kwargs.get('force_change_password_next_login', None)

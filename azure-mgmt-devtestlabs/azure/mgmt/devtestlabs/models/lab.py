@@ -91,15 +91,15 @@ class Lab(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, lab_storage_type=None, premium_data_disks=None, provisioning_state=None, unique_identifier=None):
-        super(Lab, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(Lab, self).__init__(**kwargs)
         self.default_storage_account = None
         self.default_premium_storage_account = None
         self.artifacts_storage_account = None
         self.premium_data_disk_storage_account = None
         self.vault_name = None
-        self.lab_storage_type = lab_storage_type
+        self.lab_storage_type = kwargs.get('lab_storage_type', None)
         self.created_date = None
-        self.premium_data_disks = premium_data_disks
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.premium_data_disks = kwargs.get('premium_data_disks', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

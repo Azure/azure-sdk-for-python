@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class CustomImagePropertiesCustom(Model):
     """Properties for creating a custom image from a VHD.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param image_name: The image name.
     :type image_name: str
     :param sys_prep: Indicates whether sysprep has been run on the VHD.
     :type sys_prep: bool
-    :param os_type: The OS type of the custom image (i.e. Windows, Linux).
-     Possible values include: 'Windows', 'Linux', 'None'
+    :param os_type: Required. The OS type of the custom image (i.e. Windows,
+     Linux). Possible values include: 'Windows', 'Linux', 'None'
     :type os_type: str or ~azure.mgmt.devtestlabs.models.CustomImageOsType
     """
 
@@ -34,8 +36,8 @@ class CustomImagePropertiesCustom(Model):
         'os_type': {'key': 'osType', 'type': 'str'},
     }
 
-    def __init__(self, os_type, image_name=None, sys_prep=None):
-        super(CustomImagePropertiesCustom, self).__init__()
-        self.image_name = image_name
-        self.sys_prep = sys_prep
-        self.os_type = os_type
+    def __init__(self, **kwargs):
+        super(CustomImagePropertiesCustom, self).__init__(**kwargs)
+        self.image_name = kwargs.get('image_name', None)
+        self.sys_prep = kwargs.get('sys_prep', None)
+        self.os_type = kwargs.get('os_type', None)

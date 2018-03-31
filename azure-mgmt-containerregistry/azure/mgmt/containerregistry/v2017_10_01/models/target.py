@@ -42,11 +42,12 @@ class Target(Model):
         'tag': {'key': 'tag', 'type': 'str'},
     }
 
-    def __init__(self, media_type=None, size=None, digest=None, length=None, repository=None, url=None, tag=None):
-        self.media_type = media_type
-        self.size = size
-        self.digest = digest
-        self.length = length
-        self.repository = repository
-        self.url = url
-        self.tag = tag
+    def __init__(self, **kwargs):
+        super(Target, self).__init__(**kwargs)
+        self.media_type = kwargs.get('media_type', None)
+        self.size = kwargs.get('size', None)
+        self.digest = kwargs.get('digest', None)
+        self.length = kwargs.get('length', None)
+        self.repository = kwargs.get('repository', None)
+        self.url = kwargs.get('url', None)
+        self.tag = kwargs.get('tag', None)

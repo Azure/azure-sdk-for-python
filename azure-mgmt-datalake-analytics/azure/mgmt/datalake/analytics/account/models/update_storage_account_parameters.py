@@ -27,7 +27,7 @@ class UpdateStorageAccountParameters(Model):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, access_key=None, suffix=None):
-        super(UpdateStorageAccountParameters, self).__init__()
-        self.access_key = access_key
-        self.suffix = suffix
+    def __init__(self, **kwargs):
+        super(UpdateStorageAccountParameters, self).__init__(**kwargs)
+        self.access_key = kwargs.get('access_key', None)
+        self.suffix = kwargs.get('suffix', None)

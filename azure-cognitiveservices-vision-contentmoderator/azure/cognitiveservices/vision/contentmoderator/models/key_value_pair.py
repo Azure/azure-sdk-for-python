@@ -26,7 +26,7 @@ class KeyValuePair(Model):
         'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, key=None, value=None):
-        super(KeyValuePair, self).__init__()
-        self.key = key
-        self.value = value
+    def __init__(self, **kwargs):
+        super(KeyValuePair, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)

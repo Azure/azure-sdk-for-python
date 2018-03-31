@@ -15,6 +15,8 @@ from .resource_certificate_details import ResourceCertificateDetails
 class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
     """Certificate details representing the Vault credentials for AAD.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param certificate: The base64 encoded certificate raw data string.
     :type certificate: bytearray
     :param friendly_name: Certificate friendlyname.
@@ -31,18 +33,20 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
     :type valid_from: datetime
     :param valid_to: Certificate Validity End Date time.
     :type valid_to: datetime
-    :param auth_type: Polymorphic Discriminator
+    :param auth_type: Required. Constant filled by server.
     :type auth_type: str
-    :param aad_authority: AAD tenant authority.
+    :param aad_authority: Required. AAD tenant authority.
     :type aad_authority: str
-    :param aad_tenant_id: AAD tenant Id.
+    :param aad_tenant_id: Required. AAD tenant Id.
     :type aad_tenant_id: str
-    :param service_principal_client_id: AAD service principal clientId.
+    :param service_principal_client_id: Required. AAD service principal
+     clientId.
     :type service_principal_client_id: str
-    :param service_principal_object_id: AAD service principal ObjectId.
+    :param service_principal_object_id: Required. AAD service principal
+     ObjectId.
     :type service_principal_object_id: str
-    :param azure_management_endpoint_audience: Azure Management Endpoint
-     Audience.
+    :param azure_management_endpoint_audience: Required. Azure Management
+     Endpoint Audience.
     :type azure_management_endpoint_audience: str
     """
 
@@ -72,11 +76,11 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):
         'azure_management_endpoint_audience': {'key': 'azureManagementEndpointAudience', 'type': 'str'},
     }
 
-    def __init__(self, aad_authority, aad_tenant_id, service_principal_client_id, service_principal_object_id, azure_management_endpoint_audience, certificate=None, friendly_name=None, issuer=None, resource_id=None, subject=None, thumbprint=None, valid_from=None, valid_to=None):
-        super(ResourceCertificateAndAadDetails, self).__init__(certificate=certificate, friendly_name=friendly_name, issuer=issuer, resource_id=resource_id, subject=subject, thumbprint=thumbprint, valid_from=valid_from, valid_to=valid_to)
-        self.aad_authority = aad_authority
-        self.aad_tenant_id = aad_tenant_id
-        self.service_principal_client_id = service_principal_client_id
-        self.service_principal_object_id = service_principal_object_id
-        self.azure_management_endpoint_audience = azure_management_endpoint_audience
+    def __init__(self, **kwargs):
+        super(ResourceCertificateAndAadDetails, self).__init__(**kwargs)
+        self.aad_authority = kwargs.get('aad_authority', None)
+        self.aad_tenant_id = kwargs.get('aad_tenant_id', None)
+        self.service_principal_client_id = kwargs.get('service_principal_client_id', None)
+        self.service_principal_object_id = kwargs.get('service_principal_object_id', None)
+        self.azure_management_endpoint_audience = kwargs.get('azure_management_endpoint_audience', None)
         self.auth_type = 'AzureActiveDirectory'

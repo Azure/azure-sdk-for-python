@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class ServicePrincipalCreateParameters(Model):
     """Request parameters for creating a new service principal.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param app_id: application Id
+    :param app_id: Required. application Id
     :type app_id: str
-    :param account_enabled: Whether the account is enabled
+    :param account_enabled: Required. Whether the account is enabled
     :type account_enabled: bool
     :param key_credentials: A collection of KeyCredential objects.
     :type key_credentials: list[~azure.graphrbac.models.KeyCredential]
@@ -42,10 +44,10 @@ class ServicePrincipalCreateParameters(Model):
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, app_id, account_enabled, additional_properties=None, key_credentials=None, password_credentials=None):
-        super(ServicePrincipalCreateParameters, self).__init__()
-        self.additional_properties = additional_properties
-        self.app_id = app_id
-        self.account_enabled = account_enabled
-        self.key_credentials = key_credentials
-        self.password_credentials = password_credentials
+    def __init__(self, **kwargs):
+        super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.app_id = kwargs.get('app_id', None)
+        self.account_enabled = kwargs.get('account_enabled', None)
+        self.key_credentials = kwargs.get('key_credentials', None)
+        self.password_credentials = kwargs.get('password_credentials', None)

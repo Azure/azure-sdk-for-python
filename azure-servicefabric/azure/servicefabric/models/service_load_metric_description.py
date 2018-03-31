@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class ServiceLoadMetricDescription(Model):
     """Specifies a metric to load balance a service during runtime.
 
-    :param name: The name of the metric. If the service chooses to report load
-     during runtime, the load metric name should match the name that is
-     specified in Name exactly. Note that metric names are case sensitive.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the metric. If the service chooses to
+     report load during runtime, the load metric name should match the name
+     that is specified in Name exactly. Note that metric names are case
+     sensitive.
     :type name: str
     :param weight: The service load metric relative weight, compared to other
      metrics configured for this service, as a number. Possible values include:
@@ -48,10 +51,10 @@ class ServiceLoadMetricDescription(Model):
         'default_load': {'key': 'DefaultLoad', 'type': 'int'},
     }
 
-    def __init__(self, name, weight=None, primary_default_load=None, secondary_default_load=None, default_load=None):
-        super(ServiceLoadMetricDescription, self).__init__()
-        self.name = name
-        self.weight = weight
-        self.primary_default_load = primary_default_load
-        self.secondary_default_load = secondary_default_load
-        self.default_load = default_load
+    def __init__(self, **kwargs):
+        super(ServiceLoadMetricDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.weight = kwargs.get('weight', None)
+        self.primary_default_load = kwargs.get('primary_default_load', None)
+        self.secondary_default_load = kwargs.get('secondary_default_load', None)
+        self.default_load = kwargs.get('default_load', None)

@@ -58,15 +58,15 @@ class MeterInfo(Model):
         'included_quantity': {'key': 'IncludedQuantity', 'type': 'float'},
     }
 
-    def __init__(self, meter_id=None, meter_name=None, meter_category=None, meter_sub_category=None, unit=None, meter_tags=None, meter_region=None, meter_rates=None, effective_date=None, included_quantity=None):
-        super(MeterInfo, self).__init__()
-        self.meter_id = meter_id
-        self.meter_name = meter_name
-        self.meter_category = meter_category
-        self.meter_sub_category = meter_sub_category
-        self.unit = unit
-        self.meter_tags = meter_tags
-        self.meter_region = meter_region
-        self.meter_rates = meter_rates
-        self.effective_date = effective_date
-        self.included_quantity = included_quantity
+    def __init__(self, **kwargs):
+        super(MeterInfo, self).__init__(**kwargs)
+        self.meter_id = kwargs.get('meter_id', None)
+        self.meter_name = kwargs.get('meter_name', None)
+        self.meter_category = kwargs.get('meter_category', None)
+        self.meter_sub_category = kwargs.get('meter_sub_category', None)
+        self.unit = kwargs.get('unit', None)
+        self.meter_tags = kwargs.get('meter_tags', None)
+        self.meter_region = kwargs.get('meter_region', None)
+        self.meter_rates = kwargs.get('meter_rates', None)
+        self.effective_date = kwargs.get('effective_date', None)
+        self.included_quantity = kwargs.get('included_quantity', None)

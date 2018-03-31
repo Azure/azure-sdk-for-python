@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class CsmSlotEntity(Model):
     """Deployment slot parameters.
 
-    :param target_slot: Destination deployment slot during swap operation.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_slot: Required. Destination deployment slot during swap
+     operation.
     :type target_slot: str
-    :param preserve_vnet: <code>true</code> to preserve Virtual Network to the
-     slot during swap; otherwise, <code>false</code>.
+    :param preserve_vnet: Required. <code>true</code> to preserve Virtual
+     Network to the slot during swap; otherwise, <code>false</code>.
     :type preserve_vnet: bool
     """
 
@@ -32,7 +35,7 @@ class CsmSlotEntity(Model):
         'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
     }
 
-    def __init__(self, target_slot, preserve_vnet):
-        super(CsmSlotEntity, self).__init__()
-        self.target_slot = target_slot
-        self.preserve_vnet = preserve_vnet
+    def __init__(self, **kwargs):
+        super(CsmSlotEntity, self).__init__(**kwargs)
+        self.target_slot = kwargs.get('target_slot', None)
+        self.preserve_vnet = kwargs.get('preserve_vnet', None)

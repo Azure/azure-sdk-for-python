@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class EndpointRangeDescription(Model):
     """Port range details.
 
-    :param start_port: Starting port of a range of ports
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_port: Required. Starting port of a range of ports
     :type start_port: int
-    :param end_port: End port of a range of ports
+    :param end_port: Required. End port of a range of ports
     :type end_port: int
     """
 
@@ -31,6 +33,7 @@ class EndpointRangeDescription(Model):
         'end_port': {'key': 'endPort', 'type': 'int'},
     }
 
-    def __init__(self, start_port, end_port):
-        self.start_port = start_port
-        self.end_port = end_port
+    def __init__(self, **kwargs):
+        super(EndpointRangeDescription, self).__init__(**kwargs)
+        self.start_port = kwargs.get('start_port', None)
+        self.end_port = kwargs.get('end_port', None)

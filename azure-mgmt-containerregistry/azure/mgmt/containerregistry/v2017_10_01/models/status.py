@@ -40,7 +40,8 @@ class Status(Model):
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(Status, self).__init__(**kwargs)
         self.display_status = None
         self.message = None
         self.timestamp = None

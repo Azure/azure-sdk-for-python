@@ -67,7 +67,7 @@ class ReplicaHealthStateFilter(Model):
         'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
     }
 
-    def __init__(self, replica_or_instance_id_filter=None, health_state_filter=0):
-        super(ReplicaHealthStateFilter, self).__init__()
-        self.replica_or_instance_id_filter = replica_or_instance_id_filter
-        self.health_state_filter = health_state_filter
+    def __init__(self, **kwargs):
+        super(ReplicaHealthStateFilter, self).__init__(**kwargs)
+        self.replica_or_instance_id_filter = kwargs.get('replica_or_instance_id_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)

@@ -47,8 +47,8 @@ class EventType(Resource):
         'schema_url': {'key': 'properties.schemaUrl', 'type': 'str'},
     }
 
-    def __init__(self, display_name=None, description=None, schema_url=None):
-        super(EventType, self).__init__()
-        self.display_name = display_name
-        self.description = description
-        self.schema_url = schema_url
+    def __init__(self, **kwargs):
+        super(EventType, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.schema_url = kwargs.get('schema_url', None)

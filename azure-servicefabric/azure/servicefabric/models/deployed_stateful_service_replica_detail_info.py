@@ -17,6 +17,8 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
     DeployedServiceReplicaQueryResult will contain duplicate data like
     ServiceKind, ServiceName, PartitionId and replicaId.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param service_name: Full hierarchical name of the service in URI format
      starting with `fabric:`.
     :type service_name: str
@@ -38,7 +40,7 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
     :param reported_load: List of load reported by replica.
     :type reported_load:
      list[~azure.servicefabric.models.LoadMetricReportInfo]
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param replica_id: Id of a stateful service replica. ReplicaId is used by
      Service Fabric to uniquely identify a replica of a partition. It is unique
@@ -100,13 +102,13 @@ class DeployedStatefulServiceReplicaDetailInfo(DeployedServiceReplicaDetailInfo)
         'deployed_service_replica_query_result': {'key': 'DeployedServiceReplicaQueryResult', 'type': 'DeployedStatefulServiceReplicaInfo'},
     }
 
-    def __init__(self, service_name=None, partition_id=None, current_service_operation=None, current_service_operation_start_time_utc=None, reported_load=None, replica_id=None, current_replicator_operation=None, read_status=None, write_status=None, replicator_status=None, replica_status=None, deployed_service_replica_query_result=None):
-        super(DeployedStatefulServiceReplicaDetailInfo, self).__init__(service_name=service_name, partition_id=partition_id, current_service_operation=current_service_operation, current_service_operation_start_time_utc=current_service_operation_start_time_utc, reported_load=reported_load)
-        self.replica_id = replica_id
-        self.current_replicator_operation = current_replicator_operation
-        self.read_status = read_status
-        self.write_status = write_status
-        self.replicator_status = replicator_status
-        self.replica_status = replica_status
-        self.deployed_service_replica_query_result = deployed_service_replica_query_result
+    def __init__(self, **kwargs):
+        super(DeployedStatefulServiceReplicaDetailInfo, self).__init__(**kwargs)
+        self.replica_id = kwargs.get('replica_id', None)
+        self.current_replicator_operation = kwargs.get('current_replicator_operation', None)
+        self.read_status = kwargs.get('read_status', None)
+        self.write_status = kwargs.get('write_status', None)
+        self.replicator_status = kwargs.get('replicator_status', None)
+        self.replica_status = kwargs.get('replica_status', None)
+        self.deployed_service_replica_query_result = kwargs.get('deployed_service_replica_query_result', None)
         self.service_kind = 'Stateful'

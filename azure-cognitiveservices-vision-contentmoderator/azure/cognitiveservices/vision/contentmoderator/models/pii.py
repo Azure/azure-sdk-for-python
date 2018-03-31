@@ -36,9 +36,9 @@ class PII(Model):
         'address': {'key': 'Address', 'type': '[Address]'},
     }
 
-    def __init__(self, email=None, ipa=None, phone=None, address=None):
-        super(PII, self).__init__()
-        self.email = email
-        self.ipa = ipa
-        self.phone = phone
-        self.address = address
+    def __init__(self, **kwargs):
+        super(PII, self).__init__(**kwargs)
+        self.email = kwargs.get('email', None)
+        self.ipa = kwargs.get('ipa', None)
+        self.phone = kwargs.get('phone', None)
+        self.address = kwargs.get('address', None)

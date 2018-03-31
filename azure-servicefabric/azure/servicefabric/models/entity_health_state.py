@@ -28,6 +28,6 @@ class EntityHealthState(Model):
         'aggregated_health_state': {'key': 'AggregatedHealthState', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None):
-        super(EntityHealthState, self).__init__()
-        self.aggregated_health_state = aggregated_health_state
+    def __init__(self, **kwargs):
+        super(EntityHealthState, self).__init__(**kwargs)
+        self.aggregated_health_state = kwargs.get('aggregated_health_state', None)

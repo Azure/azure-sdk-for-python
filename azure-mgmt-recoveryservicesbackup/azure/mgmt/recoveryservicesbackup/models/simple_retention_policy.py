@@ -15,11 +15,13 @@ from .retention_policy import RetentionPolicy
 class SimpleRetentionPolicy(RetentionPolicy):
     """Simple policy retention.
 
-    :param retention_policy_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param retention_policy_type: Required. Constant filled by server.
     :type retention_policy_type: str
     :param retention_duration: Retention duration of the protection policy.
-    :type retention_duration: :class:`RetentionDuration
-     <azure.mgmt.recoveryservicesbackup.models.RetentionDuration>`
+    :type retention_duration:
+     ~azure.mgmt.recoveryservicesbackup.models.RetentionDuration
     """
 
     _validation = {
@@ -31,7 +33,7 @@ class SimpleRetentionPolicy(RetentionPolicy):
         'retention_duration': {'key': 'retentionDuration', 'type': 'RetentionDuration'},
     }
 
-    def __init__(self, retention_duration=None):
-        super(SimpleRetentionPolicy, self).__init__()
-        self.retention_duration = retention_duration
+    def __init__(self, **kwargs):
+        super(SimpleRetentionPolicy, self).__init__(**kwargs)
+        self.retention_duration = kwargs.get('retention_duration', None)
         self.retention_policy_type = 'SimpleRetentionPolicy'

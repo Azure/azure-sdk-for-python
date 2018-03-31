@@ -28,7 +28,7 @@ class ParentGroupInfo(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
-    def __init__(self, parent_id=None, display_name=None):
-        super(ParentGroupInfo, self).__init__()
-        self.parent_id = parent_id
-        self.display_name = display_name
+    def __init__(self, **kwargs):
+        super(ParentGroupInfo, self).__init__(**kwargs)
+        self.parent_id = kwargs.get('parent_id', None)
+        self.display_name = kwargs.get('display_name', None)

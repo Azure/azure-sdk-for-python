@@ -176,8 +176,8 @@ class JobStatisticsVertexStage(Model):
         'used_vertex_peak_mem_size': {'key': 'usedVertexPeakMemSize', 'type': 'ResourceUsageStatistics'},
     }
 
-    def __init__(self, max_data_read_vertex=None, max_execution_time_vertex=None, max_peak_mem_usage_vertex=None, allocated_container_cpu_core_count=None, allocated_container_mem_size=None, used_vertex_cpu_core_count=None, used_vertex_peak_mem_size=None):
-        super(JobStatisticsVertexStage, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobStatisticsVertexStage, self).__init__(**kwargs)
         self.data_read = None
         self.data_read_cross_pod = None
         self.data_read_intra_pod = None
@@ -200,13 +200,13 @@ class JobStatisticsVertexStage(Model):
         self.total_succeeded_time = None
         self.total_peak_mem_usage = None
         self.total_execution_time = None
-        self.max_data_read_vertex = max_data_read_vertex
-        self.max_execution_time_vertex = max_execution_time_vertex
-        self.max_peak_mem_usage_vertex = max_peak_mem_usage_vertex
+        self.max_data_read_vertex = kwargs.get('max_data_read_vertex', None)
+        self.max_execution_time_vertex = kwargs.get('max_execution_time_vertex', None)
+        self.max_peak_mem_usage_vertex = kwargs.get('max_peak_mem_usage_vertex', None)
         self.estimated_vertex_cpu_core_count = None
         self.estimated_vertex_peak_cpu_core_count = None
         self.estimated_vertex_mem_size = None
-        self.allocated_container_cpu_core_count = allocated_container_cpu_core_count
-        self.allocated_container_mem_size = allocated_container_mem_size
-        self.used_vertex_cpu_core_count = used_vertex_cpu_core_count
-        self.used_vertex_peak_mem_size = used_vertex_peak_mem_size
+        self.allocated_container_cpu_core_count = kwargs.get('allocated_container_cpu_core_count', None)
+        self.allocated_container_mem_size = kwargs.get('allocated_container_mem_size', None)
+        self.used_vertex_cpu_core_count = kwargs.get('used_vertex_cpu_core_count', None)
+        self.used_vertex_peak_mem_size = kwargs.get('used_vertex_peak_mem_size', None)

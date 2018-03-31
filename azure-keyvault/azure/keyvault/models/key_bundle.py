@@ -19,12 +19,11 @@ class KeyBundle(Model):
     sending a request.
 
     :param key: The Json web key.
-    :type key: :class:`JsonWebKey <azure.keyvault.models.JsonWebKey>`
+    :type key: ~azure.keyvault.models.JsonWebKey
     :param attributes: The key management attributes.
-    :type attributes: :class:`KeyAttributes
-     <azure.keyvault.models.KeyAttributes>`
+    :type attributes: ~azure.keyvault.models.KeyAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this
      is a key backing a certificate, then managed will be true.
     :vartype managed: bool
@@ -41,8 +40,9 @@ class KeyBundle(Model):
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
-    def __init__(self, key=None, attributes=None, tags=None):
-        self.key = key
-        self.attributes = attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(KeyBundle, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
         self.managed = None

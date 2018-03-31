@@ -30,7 +30,8 @@ class MabFileFolderProtectedItemExtendedInfo(Model):
         'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
     }
 
-    def __init__(self, last_refreshed_at=None, oldest_recovery_point=None, recovery_point_count=None):
-        self.last_refreshed_at = last_refreshed_at
-        self.oldest_recovery_point = oldest_recovery_point
-        self.recovery_point_count = recovery_point_count
+    def __init__(self, **kwargs):
+        super(MabFileFolderProtectedItemExtendedInfo, self).__init__(**kwargs)
+        self.last_refreshed_at = kwargs.get('last_refreshed_at', None)
+        self.oldest_recovery_point = kwargs.get('oldest_recovery_point', None)
+        self.recovery_point_count = kwargs.get('recovery_point_count', None)

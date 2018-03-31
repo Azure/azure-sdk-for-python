@@ -18,11 +18,13 @@ class OperationalizationCluster(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Specifies the resource ID.
     :vartype id: str
     :ivar name: Specifies the name of the resource.
     :vartype name: str
-    :param location: Specifies the location of the resource.
+    :param location: Required. Specifies the location of the resource.
     :type location: str
     :ivar type: Specifies the type of the resource.
     :vartype type: str
@@ -44,8 +46,8 @@ class OperationalizationCluster(Resource):
      resource provider.
     :vartype provisioning_errors:
      list[~azure.mgmt.machinelearningcompute.models.ErrorResponseWrapper]
-    :param cluster_type: The cluster type. Possible values include: 'ACS',
-     'Local'
+    :param cluster_type: Required. The cluster type. Possible values include:
+     'ACS', 'Local'
     :type cluster_type: str or
      ~azure.mgmt.machinelearningcompute.models.ClusterType
     :param storage_account: Storage Account properties.
@@ -98,16 +100,16 @@ class OperationalizationCluster(Resource):
         'global_service_configuration': {'key': 'properties.globalServiceConfiguration', 'type': 'GlobalServiceConfiguration'},
     }
 
-    def __init__(self, location, cluster_type, tags=None, description=None, storage_account=None, container_registry=None, container_service=None, app_insights=None, global_service_configuration=None):
-        super(OperationalizationCluster, self).__init__(location=location, tags=tags)
-        self.description = description
+    def __init__(self, **kwargs):
+        super(OperationalizationCluster, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
         self.created_on = None
         self.modified_on = None
         self.provisioning_state = None
         self.provisioning_errors = None
-        self.cluster_type = cluster_type
-        self.storage_account = storage_account
-        self.container_registry = container_registry
-        self.container_service = container_service
-        self.app_insights = app_insights
-        self.global_service_configuration = global_service_configuration
+        self.cluster_type = kwargs.get('cluster_type', None)
+        self.storage_account = kwargs.get('storage_account', None)
+        self.container_registry = kwargs.get('container_registry', None)
+        self.container_service = kwargs.get('container_service', None)
+        self.app_insights = kwargs.get('app_insights', None)
+        self.global_service_configuration = kwargs.get('global_service_configuration', None)

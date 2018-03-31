@@ -109,7 +109,7 @@ class TextAnalyticsAPI(object):
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = '/v2.0/keyPhrases'
+        url = self.key_phrases.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -145,6 +145,7 @@ class TextAnalyticsAPI(object):
             return client_raw_response
 
         return deserialized
+    key_phrases.metadata = {'url': '/v2.0/keyPhrases'}
 
     def detect_language(
             self, documents=None, custom_headers=None, raw=False, **operation_config):
@@ -172,7 +173,7 @@ class TextAnalyticsAPI(object):
         input = models.BatchInput(documents=documents)
 
         # Construct URL
-        url = '/v2.0/languages'
+        url = self.detect_language.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -208,6 +209,7 @@ class TextAnalyticsAPI(object):
             return client_raw_response
 
         return deserialized
+    detect_language.metadata = {'url': '/v2.0/languages'}
 
     def sentiment(
             self, documents=None, custom_headers=None, raw=False, **operation_config):
@@ -240,7 +242,7 @@ class TextAnalyticsAPI(object):
         input = models.MultiLanguageBatchInput(documents=documents)
 
         # Construct URL
-        url = '/v2.0/sentiment'
+        url = self.sentiment.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -276,3 +278,4 @@ class TextAnalyticsAPI(object):
             return client_raw_response
 
         return deserialized
+    sentiment.metadata = {'url': '/v2.0/sentiment'}

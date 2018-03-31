@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class ExportRDBParameters(Model):
     """Parameters for Redis export operation.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param format: File format.
     :type format: str
-    :param prefix: Prefix to use for exported files.
+    :param prefix: Required. Prefix to use for exported files.
     :type prefix: str
-    :param container: Container name to export to.
+    :param container: Required. Container name to export to.
     :type container: str
     """
 
@@ -34,8 +36,8 @@ class ExportRDBParameters(Model):
         'container': {'key': 'container', 'type': 'str'},
     }
 
-    def __init__(self, prefix, container, format=None):
-        super(ExportRDBParameters, self).__init__()
-        self.format = format
-        self.prefix = prefix
-        self.container = container
+    def __init__(self, **kwargs):
+        super(ExportRDBParameters, self).__init__(**kwargs)
+        self.format = kwargs.get('format', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.container = kwargs.get('container', None)

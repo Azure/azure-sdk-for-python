@@ -43,9 +43,9 @@ class EntityHealth(Model):
         'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None):
-        super(EntityHealth, self).__init__()
-        self.aggregated_health_state = aggregated_health_state
-        self.health_events = health_events
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.health_statistics = health_statistics
+    def __init__(self, **kwargs):
+        super(EntityHealth, self).__init__(**kwargs)
+        self.aggregated_health_state = kwargs.get('aggregated_health_state', None)
+        self.health_events = kwargs.get('health_events', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.health_statistics = kwargs.get('health_statistics', None)

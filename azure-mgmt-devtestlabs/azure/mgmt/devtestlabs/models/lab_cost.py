@@ -81,15 +81,15 @@ class LabCost(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, target_cost=None, currency_code=None, start_date_time=None, end_date_time=None, created_date=None, provisioning_state=None, unique_identifier=None):
-        super(LabCost, self).__init__(location=location, tags=tags)
-        self.target_cost = target_cost
+    def __init__(self, **kwargs):
+        super(LabCost, self).__init__(**kwargs)
+        self.target_cost = kwargs.get('target_cost', None)
         self.lab_cost_summary = None
         self.lab_cost_details = None
         self.resource_costs = None
-        self.currency_code = currency_code
-        self.start_date_time = start_date_time
-        self.end_date_time = end_date_time
-        self.created_date = created_date
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.currency_code = kwargs.get('currency_code', None)
+        self.start_date_time = kwargs.get('start_date_time', None)
+        self.end_date_time = kwargs.get('end_date_time', None)
+        self.created_date = kwargs.get('created_date', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

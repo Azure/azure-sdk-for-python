@@ -9,30 +9,56 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .check_name_availability_request_parameters import CheckNameAvailabilityRequestParameters
-from .check_name_availability_response import CheckNameAvailabilityResponse
-from .sku import Sku
-from .check_availability_parameters import CheckAvailabilityParameters
-from .check_availability_result import CheckAvailabilityResult
-from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
-from .namespace_patch_parameters import NamespacePatchParameters
-from .namespace_resource import NamespaceResource
-from .shared_access_authorization_rule_properties import SharedAccessAuthorizationRuleProperties
-from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
-from .resource_list_keys import ResourceListKeys
-from .policykey_resource import PolicykeyResource
-from .apns_credential import ApnsCredential
-from .wns_credential import WnsCredential
-from .gcm_credential import GcmCredential
-from .mpns_credential import MpnsCredential
-from .adm_credential import AdmCredential
-from .baidu_credential import BaiduCredential
-from .notification_hub_create_or_update_parameters import NotificationHubCreateOrUpdateParameters
-from .notification_hub_resource import NotificationHubResource
-from .pns_credentials_resource import PnsCredentialsResource
-from .resource import Resource
-from .sub_resource import SubResource
+try:
+    from .check_name_availability_request_parameters_py3 import CheckNameAvailabilityRequestParameters
+    from .check_name_availability_response_py3 import CheckNameAvailabilityResponse
+    from .sku_py3 import Sku
+    from .check_availability_parameters_py3 import CheckAvailabilityParameters
+    from .check_availability_result_py3 import CheckAvailabilityResult
+    from .namespace_create_or_update_parameters_py3 import NamespaceCreateOrUpdateParameters
+    from .namespace_patch_parameters_py3 import NamespacePatchParameters
+    from .namespace_resource_py3 import NamespaceResource
+    from .shared_access_authorization_rule_properties_py3 import SharedAccessAuthorizationRuleProperties
+    from .shared_access_authorization_rule_create_or_update_parameters_py3 import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+    from .shared_access_authorization_rule_resource_py3 import SharedAccessAuthorizationRuleResource
+    from .resource_list_keys_py3 import ResourceListKeys
+    from .policykey_resource_py3 import PolicykeyResource
+    from .apns_credential_py3 import ApnsCredential
+    from .wns_credential_py3 import WnsCredential
+    from .gcm_credential_py3 import GcmCredential
+    from .mpns_credential_py3 import MpnsCredential
+    from .adm_credential_py3 import AdmCredential
+    from .baidu_credential_py3 import BaiduCredential
+    from .notification_hub_create_or_update_parameters_py3 import NotificationHubCreateOrUpdateParameters
+    from .notification_hub_resource_py3 import NotificationHubResource
+    from .pns_credentials_resource_py3 import PnsCredentialsResource
+    from .resource_py3 import Resource
+    from .sub_resource_py3 import SubResource
+except (SyntaxError, ImportError):
+    from .check_name_availability_request_parameters import CheckNameAvailabilityRequestParameters
+    from .check_name_availability_response import CheckNameAvailabilityResponse
+    from .sku import Sku
+    from .check_availability_parameters import CheckAvailabilityParameters
+    from .check_availability_result import CheckAvailabilityResult
+    from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
+    from .namespace_patch_parameters import NamespacePatchParameters
+    from .namespace_resource import NamespaceResource
+    from .shared_access_authorization_rule_properties import SharedAccessAuthorizationRuleProperties
+    from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
+    from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
+    from .resource_list_keys import ResourceListKeys
+    from .policykey_resource import PolicykeyResource
+    from .apns_credential import ApnsCredential
+    from .wns_credential import WnsCredential
+    from .gcm_credential import GcmCredential
+    from .mpns_credential import MpnsCredential
+    from .adm_credential import AdmCredential
+    from .baidu_credential import BaiduCredential
+    from .notification_hub_create_or_update_parameters import NotificationHubCreateOrUpdateParameters
+    from .notification_hub_resource import NotificationHubResource
+    from .pns_credentials_resource import PnsCredentialsResource
+    from .resource import Resource
+    from .sub_resource import SubResource
 from .namespace_resource_paged import NamespaceResourcePaged
 from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
 from .notification_hub_resource_paged import NotificationHubResourcePaged

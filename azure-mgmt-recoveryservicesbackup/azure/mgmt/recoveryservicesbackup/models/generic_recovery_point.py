@@ -15,7 +15,9 @@ from .recovery_point import RecoveryPoint
 class GenericRecoveryPoint(RecoveryPoint):
     """Generic backup copy.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param friendly_name: Friendly name of the backup copy.
     :type friendly_name: str
@@ -40,10 +42,10 @@ class GenericRecoveryPoint(RecoveryPoint):
         'recovery_point_additional_info': {'key': 'recoveryPointAdditionalInfo', 'type': 'str'},
     }
 
-    def __init__(self, friendly_name=None, recovery_point_type=None, recovery_point_time=None, recovery_point_additional_info=None):
-        super(GenericRecoveryPoint, self).__init__()
-        self.friendly_name = friendly_name
-        self.recovery_point_type = recovery_point_type
-        self.recovery_point_time = recovery_point_time
-        self.recovery_point_additional_info = recovery_point_additional_info
+    def __init__(self, **kwargs):
+        super(GenericRecoveryPoint, self).__init__(**kwargs)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.recovery_point_type = kwargs.get('recovery_point_type', None)
+        self.recovery_point_time = kwargs.get('recovery_point_time', None)
+        self.recovery_point_additional_info = kwargs.get('recovery_point_additional_info', None)
         self.object_type = 'GenericRecoveryPoint'

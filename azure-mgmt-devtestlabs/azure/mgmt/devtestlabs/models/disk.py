@@ -81,15 +81,15 @@ class Disk(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, disk_type=None, disk_size_gi_b=None, leased_by_lab_vm_id=None, disk_blob_name=None, disk_uri=None, host_caching=None, managed_disk_id=None, provisioning_state=None, unique_identifier=None):
-        super(Disk, self).__init__(location=location, tags=tags)
-        self.disk_type = disk_type
-        self.disk_size_gi_b = disk_size_gi_b
-        self.leased_by_lab_vm_id = leased_by_lab_vm_id
-        self.disk_blob_name = disk_blob_name
-        self.disk_uri = disk_uri
+    def __init__(self, **kwargs):
+        super(Disk, self).__init__(**kwargs)
+        self.disk_type = kwargs.get('disk_type', None)
+        self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)
+        self.leased_by_lab_vm_id = kwargs.get('leased_by_lab_vm_id', None)
+        self.disk_blob_name = kwargs.get('disk_blob_name', None)
+        self.disk_uri = kwargs.get('disk_uri', None)
         self.created_date = None
-        self.host_caching = host_caching
-        self.managed_disk_id = managed_disk_id
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.host_caching = kwargs.get('host_caching', None)
+        self.managed_disk_id = kwargs.get('managed_disk_id', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

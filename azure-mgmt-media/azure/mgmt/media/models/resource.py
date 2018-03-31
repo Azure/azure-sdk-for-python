@@ -29,7 +29,7 @@ class Resource(Model):
      East US, Southeast Asia, and so forth).
     :type location: str
     :param tags: Tags to help categorize the resource in the Azure portal.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -46,9 +46,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

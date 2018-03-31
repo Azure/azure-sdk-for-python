@@ -19,6 +19,8 @@ class EventHealthEvaluation(HealthEvaluation):
     results in Error or Warning.
     .
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica
      etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
@@ -28,7 +30,7 @@ class EventHealthEvaluation(HealthEvaluation):
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param consider_warning_as_error: Indicates whether warnings are treated
      with the same severity as errors. The field is specified in the health
@@ -52,8 +54,8 @@ class EventHealthEvaluation(HealthEvaluation):
         'unhealthy_event': {'key': 'UnhealthyEvent', 'type': 'HealthEvent'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, consider_warning_as_error=None, unhealthy_event=None):
-        super(EventHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.consider_warning_as_error = consider_warning_as_error
-        self.unhealthy_event = unhealthy_event
+    def __init__(self, **kwargs):
+        super(EventHealthEvaluation, self).__init__(**kwargs)
+        self.consider_warning_as_error = kwargs.get('consider_warning_as_error', None)
+        self.unhealthy_event = kwargs.get('unhealthy_event', None)
         self.kind = 'Event'

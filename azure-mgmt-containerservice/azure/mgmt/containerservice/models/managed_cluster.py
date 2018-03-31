@@ -18,13 +18,15 @@ class ManagedCluster(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -76,12 +78,12 @@ class ManagedCluster(Resource):
         'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ContainerServiceServicePrincipalProfile'},
     }
 
-    def __init__(self, location, tags=None, dns_prefix=None, kubernetes_version=None, agent_pool_profiles=None, linux_profile=None, service_principal_profile=None):
-        super(ManagedCluster, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(ManagedCluster, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.dns_prefix = dns_prefix
+        self.dns_prefix = kwargs.get('dns_prefix', None)
         self.fqdn = None
-        self.kubernetes_version = kubernetes_version
-        self.agent_pool_profiles = agent_pool_profiles
-        self.linux_profile = linux_profile
-        self.service_principal_profile = service_principal_profile
+        self.kubernetes_version = kwargs.get('kubernetes_version', None)
+        self.agent_pool_profiles = kwargs.get('agent_pool_profiles', None)
+        self.linux_profile = kwargs.get('linux_profile', None)
+        self.service_principal_profile = kwargs.get('service_principal_profile', None)

@@ -18,10 +18,9 @@ class SecretUpdateParameters(Model):
     :param content_type: Type of the secret value such as a password.
     :type content_type: str
     :param secret_attributes: The secret management attributes.
-    :type secret_attributes: :class:`SecretAttributes
-     <azure.keyvault.models.SecretAttributes>`
+    :type secret_attributes: ~azure.keyvault.models.SecretAttributes
     :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -30,7 +29,8 @@ class SecretUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, content_type=None, secret_attributes=None, tags=None):
-        self.content_type = content_type
-        self.secret_attributes = secret_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SecretUpdateParameters, self).__init__(**kwargs)
+        self.content_type = kwargs.get('content_type', None)
+        self.secret_attributes = kwargs.get('secret_attributes', None)
+        self.tags = kwargs.get('tags', None)

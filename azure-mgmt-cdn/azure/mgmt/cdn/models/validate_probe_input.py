@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ValidateProbeInput(Model):
     """Input of the validate probe API.
 
-    :param probe_url: The probe URL to validate.
+    All required parameters must be populated in order to send to Azure.
+
+    :param probe_url: Required. The probe URL to validate.
     :type probe_url: str
     """
 
@@ -27,6 +29,6 @@ class ValidateProbeInput(Model):
         'probe_url': {'key': 'probeURL', 'type': 'str'},
     }
 
-    def __init__(self, probe_url):
-        super(ValidateProbeInput, self).__init__()
-        self.probe_url = probe_url
+    def __init__(self, **kwargs):
+        super(ValidateProbeInput, self).__init__(**kwargs)
+        self.probe_url = kwargs.get('probe_url', None)

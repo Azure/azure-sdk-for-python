@@ -18,21 +18,23 @@ class SharedAccessAuthorizationRuleResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.notificationhubs.models.AccessRights>`
+    :type rights: list[str or
+     ~azure.mgmt.notificationhubs.models.AccessRights]
     """
 
     _validation = {
@@ -52,6 +54,6 @@ class SharedAccessAuthorizationRuleResource(Resource):
         'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, location, tags=None, sku=None, rights=None):
-        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, tags=tags, sku=sku)
-        self.rights = rights
+    def __init__(self, **kwargs):
+        super(SharedAccessAuthorizationRuleResource, self).__init__(**kwargs)
+        self.rights = kwargs.get('rights', None)

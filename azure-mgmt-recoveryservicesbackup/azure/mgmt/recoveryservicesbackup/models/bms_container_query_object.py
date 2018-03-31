@@ -15,19 +15,26 @@ from msrest.serialization import Model
 class BMSContainerQueryObject(Model):
     """The query filters that can be used with the list containers API.
 
-    :param backup_management_type: Backup management type for this container.
-     Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param backup_management_type: Required. Backup management type for this
+     container. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param container_type: Type of container for filter. Possible values
      include: 'Invalid', 'Unknown', 'IaasVMContainer',
      'IaasVMServiceContainer', 'DPMContainer', 'AzureBackupServerContainer',
-     'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter'
-    :type container_type: str or :class:`ContainerType
-     <azure.mgmt.recoveryservicesbackup.models.ContainerType>`
+     'MABContainer', 'Cluster', 'AzureSqlContainer', 'Windows', 'VCenter',
+     'VMAppContainer', 'SQLAGWorkLoadContainer', 'StorageContainer',
+     'GenericContainer'
+    :type container_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ContainerType
     :param backup_engine_name: Backup engine name
     :type backup_engine_name: str
+    :param fabric_name: Fabric name for filter
+    :type fabric_name: str
     :param status: Status of registration of this container with the Recovery
      Services Vault.
     :type status: str
@@ -43,13 +50,16 @@ class BMSContainerQueryObject(Model):
         'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
         'container_type': {'key': 'containerType', 'type': 'str'},
         'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
+        'fabric_name': {'key': 'fabricName', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
     }
 
-    def __init__(self, backup_management_type, container_type=None, backup_engine_name=None, status=None, friendly_name=None):
-        self.backup_management_type = backup_management_type
-        self.container_type = container_type
-        self.backup_engine_name = backup_engine_name
-        self.status = status
-        self.friendly_name = friendly_name
+    def __init__(self, **kwargs):
+        super(BMSContainerQueryObject, self).__init__(**kwargs)
+        self.backup_management_type = kwargs.get('backup_management_type', None)
+        self.container_type = kwargs.get('container_type', None)
+        self.backup_engine_name = kwargs.get('backup_engine_name', None)
+        self.fabric_name = kwargs.get('fabric_name', None)
+        self.status = kwargs.get('status', None)
+        self.friendly_name = kwargs.get('friendly_name', None)

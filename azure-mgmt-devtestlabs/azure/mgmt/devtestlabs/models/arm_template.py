@@ -74,8 +74,8 @@ class ArmTemplate(Resource):
         'parameters_value_files_info': {'key': 'properties.parametersValueFilesInfo', 'type': '[ParametersValueFileInfo]'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(ArmTemplate, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(ArmTemplate, self).__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.publisher = None

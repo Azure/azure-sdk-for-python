@@ -44,12 +44,12 @@ class OCR(Model):
         'candidates': {'key': 'Candidates', 'type': '[Candidate]'},
     }
 
-    def __init__(self, status=None, metadata=None, tracking_id=None, cache_id=None, language=None, text=None, candidates=None):
-        super(OCR, self).__init__()
-        self.status = status
-        self.metadata = metadata
-        self.tracking_id = tracking_id
-        self.cache_id = cache_id
-        self.language = language
-        self.text = text
-        self.candidates = candidates
+    def __init__(self, **kwargs):
+        super(OCR, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.tracking_id = kwargs.get('tracking_id', None)
+        self.cache_id = kwargs.get('cache_id', None)
+        self.language = kwargs.get('language', None)
+        self.text = kwargs.get('text', None)
+        self.candidates = kwargs.get('candidates', None)

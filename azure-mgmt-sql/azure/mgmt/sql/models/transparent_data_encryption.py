@@ -47,7 +47,7 @@ class TransparentDataEncryption(ProxyResource):
         'status': {'key': 'properties.status', 'type': 'TransparentDataEncryptionStatus'},
     }
 
-    def __init__(self, status=None):
-        super(TransparentDataEncryption, self).__init__()
+    def __init__(self, **kwargs):
+        super(TransparentDataEncryption, self).__init__(**kwargs)
         self.location = None
-        self.status = status
+        self.status = kwargs.get('status', None)

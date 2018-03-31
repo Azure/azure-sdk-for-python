@@ -23,18 +23,22 @@ class ApplicationUpgradeDescription(Model):
     GetApplicationInfo query and then supply those values as Parameters in this
     ApplicationUpgradeDescription.
 
-    :param name: The name of the target application, including the 'fabric:'
-     URI scheme.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the target application, including the
+     'fabric:' URI scheme.
     :type name: str
-    :param target_application_type_version: The target application type
-     version (found in the application manifest) for the application upgrade.
+    :param target_application_type_version: Required. The target application
+     type version (found in the application manifest) for the application
+     upgrade.
     :type target_application_type_version: str
-    :param parameters: List of application parameters with overridden values
-     from their default values specified in the application manifest.
+    :param parameters: Required. List of application parameters with
+     overridden values from their default values specified in the application
+     manifest.
     :type parameters: list[~azure.servicefabric.models.ApplicationParameter]
-    :param upgrade_kind: The kind of upgrade out of the following possible
-     values. Possible values include: 'Invalid', 'Rolling'. Default value:
-     "Rolling" .
+    :param upgrade_kind: Required. The kind of upgrade out of the following
+     possible values. Possible values include: 'Invalid', 'Rolling'. Default
+     value: "Rolling" .
     :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
     :param rolling_upgrade_mode: The mode used to monitor health during a
      rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
@@ -81,14 +85,14 @@ class ApplicationUpgradeDescription(Model):
         'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
     }
 
-    def __init__(self, name, target_application_type_version, parameters, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds=None, force_restart=None, monitoring_policy=None, application_health_policy=None):
-        super(ApplicationUpgradeDescription, self).__init__()
-        self.name = name
-        self.target_application_type_version = target_application_type_version
-        self.parameters = parameters
-        self.upgrade_kind = upgrade_kind
-        self.rolling_upgrade_mode = rolling_upgrade_mode
-        self.upgrade_replica_set_check_timeout_in_seconds = upgrade_replica_set_check_timeout_in_seconds
-        self.force_restart = force_restart
-        self.monitoring_policy = monitoring_policy
-        self.application_health_policy = application_health_policy
+    def __init__(self, **kwargs):
+        super(ApplicationUpgradeDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.target_application_type_version = kwargs.get('target_application_type_version', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.upgrade_kind = kwargs.get('upgrade_kind', "Rolling")
+        self.rolling_upgrade_mode = kwargs.get('rolling_upgrade_mode', "UnmonitoredAuto")
+        self.upgrade_replica_set_check_timeout_in_seconds = kwargs.get('upgrade_replica_set_check_timeout_in_seconds', None)
+        self.force_restart = kwargs.get('force_restart', None)
+        self.monitoring_policy = kwargs.get('monitoring_policy', None)
+        self.application_health_policy = kwargs.get('application_health_policy', None)

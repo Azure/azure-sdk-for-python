@@ -83,15 +83,15 @@ class ScheduleFragment(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, status=None, task_type=None, weekly_recurrence=None, daily_recurrence=None, hourly_recurrence=None, time_zone_id=None, notification_settings=None, target_resource_id=None, provisioning_state=None, unique_identifier=None):
-        super(ScheduleFragment, self).__init__(location=location, tags=tags)
-        self.status = status
-        self.task_type = task_type
-        self.weekly_recurrence = weekly_recurrence
-        self.daily_recurrence = daily_recurrence
-        self.hourly_recurrence = hourly_recurrence
-        self.time_zone_id = time_zone_id
-        self.notification_settings = notification_settings
-        self.target_resource_id = target_resource_id
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(ScheduleFragment, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.task_type = kwargs.get('task_type', None)
+        self.weekly_recurrence = kwargs.get('weekly_recurrence', None)
+        self.daily_recurrence = kwargs.get('daily_recurrence', None)
+        self.hourly_recurrence = kwargs.get('hourly_recurrence', None)
+        self.time_zone_id = kwargs.get('time_zone_id', None)
+        self.notification_settings = kwargs.get('notification_settings', None)
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

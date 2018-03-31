@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class PropertyInfo(Model):
     """Information about a Service Fabric property.
 
-    :param name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the Service Fabric property.
     :type name: str
     :param value: Describes a Service Fabric property value.
     :type value: ~azure.servicefabric.models.PropertyValue
-    :param metadata: The metadata associated with a property, including the
-     property's name.
+    :param metadata: Required. The metadata associated with a property,
+     including the property's name.
     :type metadata: ~azure.servicefabric.models.PropertyMetadata
     """
 
@@ -35,8 +37,8 @@ class PropertyInfo(Model):
         'metadata': {'key': 'Metadata', 'type': 'PropertyMetadata'},
     }
 
-    def __init__(self, name, metadata, value=None):
-        super(PropertyInfo, self).__init__()
-        self.name = name
-        self.value = value
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(PropertyInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+        self.metadata = kwargs.get('metadata', None)

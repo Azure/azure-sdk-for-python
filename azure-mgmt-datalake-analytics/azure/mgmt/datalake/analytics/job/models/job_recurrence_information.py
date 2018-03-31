@@ -72,8 +72,8 @@ class JobRecurrenceInformation(Model):
         'last_submit_time': {'key': 'lastSubmitTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(JobRecurrenceInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobRecurrenceInformation, self).__init__(**kwargs)
         self.recurrence_id = None
         self.recurrence_name = None
         self.num_jobs_failed = None

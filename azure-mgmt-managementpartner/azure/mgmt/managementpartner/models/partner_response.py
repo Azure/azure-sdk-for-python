@@ -26,6 +26,8 @@ class PartnerResponse(Model):
     :vartype name: str
     :param partner_id: This is the partner id
     :type partner_id: str
+    :param partner_name: This is the partner name
+    :type partner_name: str
     :param tenant_id: This is the tenant id.
     :type tenant_id: str
     :param object_id: This is the object id.
@@ -54,6 +56,7 @@ class PartnerResponse(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'partner_id': {'key': 'properties.partnerId', 'type': 'str'},
+        'partner_name': {'key': 'properties.partnerName', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'object_id': {'key': 'properties.objectId', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
@@ -63,16 +66,17 @@ class PartnerResponse(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, etag=None, partner_id=None, tenant_id=None, object_id=None, version=None, updated_time=None, created_time=None, state=None):
-        super(PartnerResponse, self).__init__()
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(PartnerResponse, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
         self.id = None
         self.name = None
-        self.partner_id = partner_id
-        self.tenant_id = tenant_id
-        self.object_id = object_id
-        self.version = version
-        self.updated_time = updated_time
-        self.created_time = created_time
-        self.state = state
+        self.partner_id = kwargs.get('partner_id', None)
+        self.partner_name = kwargs.get('partner_name', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.object_id = kwargs.get('object_id', None)
+        self.version = kwargs.get('version', None)
+        self.updated_time = kwargs.get('updated_time', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.state = kwargs.get('state', None)
         self.type = None

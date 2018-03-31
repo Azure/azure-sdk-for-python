@@ -33,7 +33,7 @@ class VaultExtendedInfoResource(Resource):
     :type encryption_key: str
     :param encryption_key_thumbprint: Encryption key thumbprint.
     :type encryption_key_thumbprint: str
-    :param algorithm: Algorithm.
+    :param algorithm: Algorithm for Vault ExtendedInfo
     :type algorithm: str
     """
 
@@ -54,9 +54,9 @@ class VaultExtendedInfoResource(Resource):
         'algorithm': {'key': 'properties.algorithm', 'type': 'str'},
     }
 
-    def __init__(self, e_tag=None, integrity_key=None, encryption_key=None, encryption_key_thumbprint=None, algorithm=None):
-        super(VaultExtendedInfoResource, self).__init__(e_tag=e_tag)
-        self.integrity_key = integrity_key
-        self.encryption_key = encryption_key
-        self.encryption_key_thumbprint = encryption_key_thumbprint
-        self.algorithm = algorithm
+    def __init__(self, **kwargs):
+        super(VaultExtendedInfoResource, self).__init__(**kwargs)
+        self.integrity_key = kwargs.get('integrity_key', None)
+        self.encryption_key = kwargs.get('encryption_key', None)
+        self.encryption_key_thumbprint = kwargs.get('encryption_key_thumbprint', None)
+        self.algorithm = kwargs.get('algorithm', None)

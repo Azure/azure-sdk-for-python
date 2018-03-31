@@ -24,6 +24,6 @@ class UpgradeOrchestrationServiceState(Model):
         'service_state': {'key': 'ServiceState', 'type': 'str'},
     }
 
-    def __init__(self, service_state=None):
-        super(UpgradeOrchestrationServiceState, self).__init__()
-        self.service_state = service_state
+    def __init__(self, **kwargs):
+        super(UpgradeOrchestrationServiceState, self).__init__(**kwargs)
+        self.service_state = kwargs.get('service_state', None)

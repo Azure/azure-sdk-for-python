@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class PasswordCredentialsUpdateParameters(Model):
     """Request parameters for a PasswordCredentials update operation.
 
-    :param value: A collection of PasswordCredentials.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. A collection of PasswordCredentials.
     :type value: list[~azure.graphrbac.models.PasswordCredential]
     """
 
@@ -27,6 +29,6 @@ class PasswordCredentialsUpdateParameters(Model):
         'value': {'key': 'value', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, value):
-        super(PasswordCredentialsUpdateParameters, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(PasswordCredentialsUpdateParameters, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

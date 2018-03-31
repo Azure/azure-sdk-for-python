@@ -17,12 +17,13 @@ class RegenerateActionParameter(Model):
 
     :param key_type: The key type. Possible values include: 'NotSpecified',
      'Primary', 'Secondary'
-    :type key_type: str or :class:`KeyType <azure.mgmt.logic.models.KeyType>`
+    :type key_type: str or ~azure.mgmt.logic.models.KeyType
     """
 
     _attribute_map = {
         'key_type': {'key': 'keyType', 'type': 'KeyType'},
     }
 
-    def __init__(self, key_type=None):
-        self.key_type = key_type
+    def __init__(self, **kwargs):
+        super(RegenerateActionParameter, self).__init__(**kwargs)
+        self.key_type = kwargs.get('key_type', None)

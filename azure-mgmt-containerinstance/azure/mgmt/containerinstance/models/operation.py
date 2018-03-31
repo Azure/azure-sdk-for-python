@@ -15,19 +15,22 @@ from msrest.serialization import Model
 class Operation(Model):
     """An operation for Azure Container Instance service.
 
-    :param name: The name of the operation.
-    :type name: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the operation.
+    :vartype name: str
     :param display: The display information of the operation.
     :type display: ~azure.mgmt.containerinstance.models.OperationDisplay
-    :param origin: The intended executor of the operation. Possible values
+    :ivar origin: The intended executor of the operation. Possible values
      include: 'User', 'System'
-    :type origin: str or
+    :vartype origin: str or
      ~azure.mgmt.containerinstance.models.ContainerInstanceOperationsOrigin
     """
 
     _validation = {
-        'name': {'required': True},
-        'display': {'required': True},
+        'name': {'readonly': True},
+        'origin': {'readonly': True},
     }
 
     _attribute_map = {
@@ -36,8 +39,8 @@ class Operation(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, name, display, origin=None):
-        super(Operation, self).__init__()
-        self.name = name
-        self.display = display
-        self.origin = origin
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.display = kwargs.get('display', None)
+        self.origin = None

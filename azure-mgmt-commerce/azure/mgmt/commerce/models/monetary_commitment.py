@@ -15,10 +15,12 @@ from .offer_term_info import OfferTermInfo
 class MonetaryCommitment(OfferTermInfo):
     """Indicates that a monetary commitment is required for this offer.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Constant filled by server.
+    :param name: Required. Constant filled by server.
     :type name: str
     :param tiered_discount: The list of key/value pairs for the tiered meter
      rates, in the format 'key':'value' where key = price, and value = the
@@ -41,8 +43,8 @@ class MonetaryCommitment(OfferTermInfo):
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
     }
 
-    def __init__(self, effective_date=None, tiered_discount=None, excluded_meter_ids=None):
-        super(MonetaryCommitment, self).__init__(effective_date=effective_date)
-        self.tiered_discount = tiered_discount
-        self.excluded_meter_ids = excluded_meter_ids
+    def __init__(self, **kwargs):
+        super(MonetaryCommitment, self).__init__(**kwargs)
+        self.tiered_discount = kwargs.get('tiered_discount', None)
+        self.excluded_meter_ids = kwargs.get('excluded_meter_ids', None)
         self.name = 'Monetary Commitment'

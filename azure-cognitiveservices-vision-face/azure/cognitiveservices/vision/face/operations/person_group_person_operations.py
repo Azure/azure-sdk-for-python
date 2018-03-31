@@ -57,7 +57,7 @@ class PersonGroupPersonOperations(object):
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -94,6 +94,7 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
+    create.metadata = {'url': '/persongroups/{personGroupId}/persons'}
 
     def list(
             self, person_group_id, start=None, top=None, custom_headers=None, raw=False, **operation_config):
@@ -121,7 +122,7 @@ class PersonGroupPersonOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -158,6 +159,7 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/persongroups/{personGroupId}/persons'}
 
     def delete(
             self, person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
@@ -179,7 +181,7 @@ class PersonGroupPersonOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -206,6 +208,7 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}'}
 
     def get(
             self, person_group_id, person_id, custom_headers=None, raw=False, **operation_config):
@@ -228,7 +231,7 @@ class PersonGroupPersonOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -262,6 +265,7 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}'}
 
     def update(
             self, person_group_id, person_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
@@ -288,7 +292,7 @@ class PersonGroupPersonOperations(object):
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -319,6 +323,7 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}'}
 
     def delete_face(
             self, person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
@@ -343,7 +348,7 @@ class PersonGroupPersonOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'
+        url = self.delete_face.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -371,6 +376,7 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_face.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
 
     def get_face(
             self, person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
@@ -396,7 +402,7 @@ class PersonGroupPersonOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'
+        url = self.get_face.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -431,6 +437,7 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
+    get_face.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
 
     def update_face(
             self, person_group_id, person_id, persisted_face_id, user_data=None, custom_headers=None, raw=False, **operation_config):
@@ -459,7 +466,7 @@ class PersonGroupPersonOperations(object):
         body = models.UpdatePersonFaceRequest(user_data=user_data)
 
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'
+        url = self.update_face.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -491,6 +498,7 @@ class PersonGroupPersonOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_face.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces/{persistedFaceId}'}
 
     def add_person_face_from_url(
             self, person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
@@ -526,7 +534,7 @@ class PersonGroupPersonOperations(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}/persistedFaces'
+        url = self.add_person_face_from_url.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -568,6 +576,7 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
+    add_person_face_from_url.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces'}
 
     def add_person_face_from_stream(
             self, person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -606,7 +615,7 @@ class PersonGroupPersonOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/persongroups/{personGroupId}/persons/{personId}/persistedFaces'
+        url = self.add_person_face_from_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'personGroupId': self._serialize.url("person_group_id", person_group_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -648,3 +657,4 @@ class PersonGroupPersonOperations(object):
             return client_raw_response
 
         return deserialized
+    add_person_face_from_stream.metadata = {'url': '/persongroups/{personGroupId}/persons/{personId}/persistedFaces'}

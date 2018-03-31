@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class AddStorageAccountParameters(Model):
     """The parameters used to add a new Azure Storage account.
 
-    :param access_key: The access key associated with this Azure Storage
-     account that will be used to connect to it.
+    All required parameters must be populated in order to send to Azure.
+
+    :param access_key: Required. The access key associated with this Azure
+     Storage account that will be used to connect to it.
     :type access_key: str
     :param suffix: The optional suffix for the storage account.
     :type suffix: str
@@ -31,7 +33,7 @@ class AddStorageAccountParameters(Model):
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, access_key, suffix=None):
-        super(AddStorageAccountParameters, self).__init__()
-        self.access_key = access_key
-        self.suffix = suffix
+    def __init__(self, **kwargs):
+        super(AddStorageAccountParameters, self).__init__(**kwargs)
+        self.access_key = kwargs.get('access_key', None)
+        self.suffix = kwargs.get('suffix', None)

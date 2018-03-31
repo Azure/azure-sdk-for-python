@@ -30,8 +30,8 @@ class Phone(Model):
         'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, country_code=None, text=None, index=None):
-        super(Phone, self).__init__()
-        self.country_code = country_code
-        self.text = text
-        self.index = index
+    def __init__(self, **kwargs):
+        super(Phone, self).__init__(**kwargs)
+        self.country_code = kwargs.get('country_code', None)
+        self.text = kwargs.get('text', None)
+        self.index = kwargs.get('index', None)

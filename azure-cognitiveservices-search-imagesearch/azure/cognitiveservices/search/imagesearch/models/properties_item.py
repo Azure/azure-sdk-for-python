@@ -21,9 +21,11 @@ class PropertiesItem(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar text: Text representation of an item.
     :vartype text: str
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
     """
 
@@ -41,7 +43,7 @@ class PropertiesItem(Model):
         '_type': {'Rating': 'Rating'}
     }
 
-    def __init__(self):
-        super(PropertiesItem, self).__init__()
+    def __init__(self, **kwargs):
+        super(PropertiesItem, self).__init__(**kwargs)
         self.text = None
         self._type = None

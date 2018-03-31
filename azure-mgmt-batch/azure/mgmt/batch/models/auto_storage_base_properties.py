@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class AutoStorageBaseProperties(Model):
     """The properties related to the auto-storage account.
 
-    :param storage_account_id: The resource ID of the storage account to be
-     used for auto-storage account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param storage_account_id: Required. The resource ID of the storage
+     account to be used for auto-storage account.
     :type storage_account_id: str
     """
 
@@ -28,6 +30,6 @@ class AutoStorageBaseProperties(Model):
         'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
     }
 
-    def __init__(self, storage_account_id):
-        super(AutoStorageBaseProperties, self).__init__()
-        self.storage_account_id = storage_account_id
+    def __init__(self, **kwargs):
+        super(AutoStorageBaseProperties, self).__init__(**kwargs)
+        self.storage_account_id = kwargs.get('storage_account_id', None)

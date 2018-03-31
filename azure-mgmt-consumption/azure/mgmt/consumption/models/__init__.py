@@ -9,28 +9,55 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .meter_details import MeterDetails
-from .usage_detail import UsageDetail
-from .marketplace import Marketplace
-from .reservation_summaries import ReservationSummaries
-from .reservation_details import ReservationDetails
-from .budget_time_period import BudgetTimePeriod
-from .filters import Filters
-from .current_spend import CurrentSpend
-from .notification import Notification
-from .budget import Budget
-from .error_details import ErrorDetails
-from .error_response import ErrorResponse, ErrorResponseException
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .resource import Resource
-from .proxy_resource import ProxyResource
-from .price_sheet_properties import PriceSheetProperties
-from .price_sheet_result import PriceSheetResult
+try:
+    from .meter_details_py3 import MeterDetails
+    from .usage_detail_py3 import UsageDetail
+    from .marketplace_py3 import Marketplace
+    from .reservation_summaries_py3 import ReservationSummaries
+    from .reservation_details_py3 import ReservationDetails
+    from .reservation_recommendations_py3 import ReservationRecommendations
+    from .budget_time_period_py3 import BudgetTimePeriod
+    from .filters_py3 import Filters
+    from .current_spend_py3 import CurrentSpend
+    from .notification_py3 import Notification
+    from .budget_py3 import Budget
+    from .error_details_py3 import ErrorDetails
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .resource_py3 import Resource
+    from .resource_attributes_py3 import ResourceAttributes
+    from .proxy_resource_py3 import ProxyResource
+    from .price_sheet_properties_py3 import PriceSheetProperties
+    from .price_sheet_result_py3 import PriceSheetResult
+    from .query_options_py3 import QueryOptions
+except (SyntaxError, ImportError):
+    from .meter_details import MeterDetails
+    from .usage_detail import UsageDetail
+    from .marketplace import Marketplace
+    from .reservation_summaries import ReservationSummaries
+    from .reservation_details import ReservationDetails
+    from .reservation_recommendations import ReservationRecommendations
+    from .budget_time_period import BudgetTimePeriod
+    from .filters import Filters
+    from .current_spend import CurrentSpend
+    from .notification import Notification
+    from .budget import Budget
+    from .error_details import ErrorDetails
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .resource import Resource
+    from .resource_attributes import ResourceAttributes
+    from .proxy_resource import ProxyResource
+    from .price_sheet_properties import PriceSheetProperties
+    from .price_sheet_result import PriceSheetResult
+    from .query_options import QueryOptions
 from .usage_detail_paged import UsageDetailPaged
 from .marketplace_paged import MarketplacePaged
 from .reservation_summaries_paged import ReservationSummariesPaged
 from .reservation_details_paged import ReservationDetailsPaged
+from .reservation_recommendations_paged import ReservationRecommendationsPaged
 from .budget_paged import BudgetPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
@@ -46,6 +73,7 @@ __all__ = [
     'Marketplace',
     'ReservationSummaries',
     'ReservationDetails',
+    'ReservationRecommendations',
     'BudgetTimePeriod',
     'Filters',
     'CurrentSpend',
@@ -56,13 +84,16 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'Resource',
+    'ResourceAttributes',
     'ProxyResource',
     'PriceSheetProperties',
     'PriceSheetResult',
+    'QueryOptions',
     'UsageDetailPaged',
     'MarketplacePaged',
     'ReservationSummariesPaged',
     'ReservationDetailsPaged',
+    'ReservationRecommendationsPaged',
     'BudgetPaged',
     'OperationPaged',
     'CategoryType',

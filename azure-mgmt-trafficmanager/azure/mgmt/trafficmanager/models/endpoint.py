@@ -36,8 +36,8 @@ class Endpoint(ProxyResource):
     :param endpoint_status: The status of the endpoint. If the endpoint is
      Enabled, it is probed for endpoint health and is included in the traffic
      routing method. Possible values include: 'Enabled', 'Disabled'
-    :type endpoint_status: str or :class:`EndpointStatus
-     <azure.mgmt.trafficmanager.models.EndpointStatus>`
+    :type endpoint_status: str or
+     ~azure.mgmt.trafficmanager.models.EndpointStatus
     :param weight: The weight of this endpoint when using the 'Weighted'
      traffic routing method. Possible values are from 1 to 1000.
     :type weight: long
@@ -53,8 +53,8 @@ class Endpoint(ProxyResource):
     :param endpoint_monitor_status: The monitoring status of the endpoint.
      Possible values include: 'CheckingEndpoint', 'Online', 'Degraded',
      'Disabled', 'Inactive', 'Stopped'
-    :type endpoint_monitor_status: str or :class:`EndpointMonitorStatus
-     <azure.mgmt.trafficmanager.models.EndpointMonitorStatus>`
+    :type endpoint_monitor_status: str or
+     ~azure.mgmt.trafficmanager.models.EndpointMonitorStatus
     :param min_child_endpoints: The minimum number of endpoints that must be
      available in the child profile in order for the parent profile to be
      considered available. Only applicable to endpoint of type
@@ -63,7 +63,7 @@ class Endpoint(ProxyResource):
     :param geo_mapping: The list of countries/regions mapped to this endpoint
      when using the ‘Geographic’ traffic routing method. Please consult Traffic
      Manager Geographic documentation for a full list of accepted values.
-    :type geo_mapping: list of str
+    :type geo_mapping: list[str]
     """
 
     _validation = {
@@ -87,14 +87,14 @@ class Endpoint(ProxyResource):
         'geo_mapping': {'key': 'properties.geoMapping', 'type': '[str]'},
     }
 
-    def __init__(self, target_resource_id=None, target=None, endpoint_status=None, weight=None, priority=None, endpoint_location=None, endpoint_monitor_status=None, min_child_endpoints=None, geo_mapping=None):
-        super(Endpoint, self).__init__()
-        self.target_resource_id = target_resource_id
-        self.target = target
-        self.endpoint_status = endpoint_status
-        self.weight = weight
-        self.priority = priority
-        self.endpoint_location = endpoint_location
-        self.endpoint_monitor_status = endpoint_monitor_status
-        self.min_child_endpoints = min_child_endpoints
-        self.geo_mapping = geo_mapping
+    def __init__(self, **kwargs):
+        super(Endpoint, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.target = kwargs.get('target', None)
+        self.endpoint_status = kwargs.get('endpoint_status', None)
+        self.weight = kwargs.get('weight', None)
+        self.priority = kwargs.get('priority', None)
+        self.endpoint_location = kwargs.get('endpoint_location', None)
+        self.endpoint_monitor_status = kwargs.get('endpoint_monitor_status', None)
+        self.min_child_endpoints = kwargs.get('min_child_endpoints', None)
+        self.geo_mapping = kwargs.get('geo_mapping', None)

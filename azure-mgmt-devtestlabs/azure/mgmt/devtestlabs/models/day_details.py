@@ -23,6 +23,6 @@ class DayDetails(Model):
         'time': {'key': 'time', 'type': 'str'},
     }
 
-    def __init__(self, time=None):
-        super(DayDetails, self).__init__()
-        self.time = time
+    def __init__(self, **kwargs):
+        super(DayDetails, self).__init__(**kwargs)
+        self.time = kwargs.get('time', None)

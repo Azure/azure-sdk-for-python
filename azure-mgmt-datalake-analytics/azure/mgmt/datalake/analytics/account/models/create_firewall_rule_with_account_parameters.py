@@ -16,13 +16,17 @@ class CreateFirewallRuleWithAccountParameters(Model):
     """The parameters used to create a new firewall rule while creating a new Data
     Lake Analytics account.
 
-    :param name: The unique name of the firewall rule to create.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The unique name of the firewall rule to create.
     :type name: str
-    :param start_ip_address: The start IP address for the firewall rule. This
-     can be either ipv4 or ipv6. Start and End should be in the same protocol.
+    :param start_ip_address: Required. The start IP address for the firewall
+     rule. This can be either ipv4 or ipv6. Start and End should be in the same
+     protocol.
     :type start_ip_address: str
-    :param end_ip_address: The end IP address for the firewall rule. This can
-     be either ipv4 or ipv6. Start and End should be in the same protocol.
+    :param end_ip_address: Required. The end IP address for the firewall rule.
+     This can be either ipv4 or ipv6. Start and End should be in the same
+     protocol.
     :type end_ip_address: str
     """
 
@@ -38,8 +42,8 @@ class CreateFirewallRuleWithAccountParameters(Model):
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, name, start_ip_address, end_ip_address):
-        super(CreateFirewallRuleWithAccountParameters, self).__init__()
-        self.name = name
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
+    def __init__(self, **kwargs):
+        super(CreateFirewallRuleWithAccountParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.start_ip_address = kwargs.get('start_ip_address', None)
+        self.end_ip_address = kwargs.get('end_ip_address', None)

@@ -18,18 +18,20 @@ class NamespaceResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param sku: The sku of the created namespace
-    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :type sku: ~azure.mgmt.notificationhubs.models.Sku
     :param namespace_resource_name: The name of the namespace.
     :type namespace_resource_name: str
     :param provisioning_state: Provisioning state of the Namespace.
@@ -59,8 +61,8 @@ class NamespaceResource(Resource):
     :type critical: bool
     :param namespace_type: The namespace type. Possible values include:
      'Messaging', 'NotificationHub'
-    :type namespace_type: str or :class:`NamespaceType
-     <azure.mgmt.notificationhubs.models.NamespaceType>`
+    :type namespace_type: str or
+     ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {
@@ -90,16 +92,16 @@ class NamespaceResource(Resource):
         'namespace_type': {'key': 'properties.namespaceType', 'type': 'NamespaceType'},
     }
 
-    def __init__(self, location, tags=None, sku=None, namespace_resource_name=None, provisioning_state=None, region=None, status=None, created_at=None, service_bus_endpoint=None, subscription_id=None, scale_unit=None, enabled=None, critical=None, namespace_type=None):
-        super(NamespaceResource, self).__init__(location=location, tags=tags, sku=sku)
-        self.namespace_resource_name = namespace_resource_name
-        self.provisioning_state = provisioning_state
-        self.region = region
-        self.status = status
-        self.created_at = created_at
-        self.service_bus_endpoint = service_bus_endpoint
-        self.subscription_id = subscription_id
-        self.scale_unit = scale_unit
-        self.enabled = enabled
-        self.critical = critical
-        self.namespace_type = namespace_type
+    def __init__(self, **kwargs):
+        super(NamespaceResource, self).__init__(**kwargs)
+        self.namespace_resource_name = kwargs.get('namespace_resource_name', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.region = kwargs.get('region', None)
+        self.status = kwargs.get('status', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.service_bus_endpoint = kwargs.get('service_bus_endpoint', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.scale_unit = kwargs.get('scale_unit', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.critical = kwargs.get('critical', None)
+        self.namespace_type = kwargs.get('namespace_type', None)

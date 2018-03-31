@@ -16,8 +16,10 @@ class JobExecutionInformation(Model):
     """Contains information about the execution of a job in the Azure Batch
     service.
 
-    :param start_time: The start time of the job. This is the time at which
-     the job was created.
+    All required parameters must be populated in order to send to Azure.
+
+    :param start_time: Required. The start time of the job. This is the time
+     at which the job was created.
     :type start_time: datetime
     :param end_time: The completion time of the job. This property is set only
      if the job is in the completed state.
@@ -62,10 +64,10 @@ class JobExecutionInformation(Model):
         'terminate_reason': {'key': 'terminateReason', 'type': 'str'},
     }
 
-    def __init__(self, start_time, end_time=None, pool_id=None, scheduling_error=None, terminate_reason=None):
-        super(JobExecutionInformation, self).__init__()
-        self.start_time = start_time
-        self.end_time = end_time
-        self.pool_id = pool_id
-        self.scheduling_error = scheduling_error
-        self.terminate_reason = terminate_reason
+    def __init__(self, **kwargs):
+        super(JobExecutionInformation, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.pool_id = kwargs.get('pool_id', None)
+        self.scheduling_error = kwargs.get('scheduling_error', None)
+        self.terminate_reason = kwargs.get('terminate_reason', None)

@@ -93,8 +93,8 @@ class JobErrorDetails(Model):
         'start_offset': {'key': 'startOffset', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(JobErrorDetails, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobErrorDetails, self).__init__(**kwargs)
         self.description = None
         self.details = None
         self.end_offset = None

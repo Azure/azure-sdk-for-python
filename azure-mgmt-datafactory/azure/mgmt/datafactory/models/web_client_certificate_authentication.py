@@ -18,15 +18,17 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
     authentication; the server must also provide valid credentials to the
     client.
 
-    :param url: The URL of the web service endpoint, e.g.
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. The URL of the web service endpoint, e.g.
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Constant filled by server.
+    :param authentication_type: Required. Constant filled by server.
     :type authentication_type: str
-    :param pfx: Base64-encoded contents of a PFX file.
+    :param pfx: Required. Base64-encoded contents of a PFX file.
     :type pfx: ~azure.mgmt.datafactory.models.SecretBase
-    :param password: Password for the PFX file.
+    :param password: Required. Password for the PFX file.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     """
 
@@ -44,8 +46,8 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
         'password': {'key': 'password', 'type': 'SecretBase'},
     }
 
-    def __init__(self, url, pfx, password):
-        super(WebClientCertificateAuthentication, self).__init__(url=url)
-        self.pfx = pfx
-        self.password = password
+    def __init__(self, **kwargs):
+        super(WebClientCertificateAuthentication, self).__init__(**kwargs)
+        self.pfx = kwargs.get('pfx', None)
+        self.password = kwargs.get('password', None)
         self.authentication_type = 'ClientCertificate'

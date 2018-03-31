@@ -15,10 +15,12 @@ from .offer_term_info import OfferTermInfo
 class MonetaryCredit(OfferTermInfo):
     """Indicates that this is a monetary credit offer.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param effective_date: Indicates the date from which the offer term is
      effective.
     :type effective_date: datetime
-    :param name: Constant filled by server.
+    :param name: Required. Constant filled by server.
     :type name: str
     :param credit: The amount of credit provided under the terms of the given
      offer level.
@@ -39,8 +41,8 @@ class MonetaryCredit(OfferTermInfo):
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
     }
 
-    def __init__(self, effective_date=None, credit=None, excluded_meter_ids=None):
-        super(MonetaryCredit, self).__init__(effective_date=effective_date)
-        self.credit = credit
-        self.excluded_meter_ids = excluded_meter_ids
+    def __init__(self, **kwargs):
+        super(MonetaryCredit, self).__init__(**kwargs)
+        self.credit = kwargs.get('credit', None)
+        self.excluded_meter_ids = kwargs.get('excluded_meter_ids', None)
         self.name = 'Monetary Credit'

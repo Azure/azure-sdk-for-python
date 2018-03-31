@@ -26,7 +26,7 @@ class BatchAccountUpdateParameters(Model):
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
     }
 
-    def __init__(self, tags=None, auto_storage=None):
-        super(BatchAccountUpdateParameters, self).__init__()
-        self.tags = tags
-        self.auto_storage = auto_storage
+    def __init__(self, **kwargs):
+        super(BatchAccountUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.auto_storage = kwargs.get('auto_storage', None)

@@ -25,6 +25,6 @@ class LinuxOsInfo(Model):
         'linux_os_state': {'key': 'linuxOsState', 'type': 'str'},
     }
 
-    def __init__(self, linux_os_state=None):
-        super(LinuxOsInfo, self).__init__()
-        self.linux_os_state = linux_os_state
+    def __init__(self, **kwargs):
+        super(LinuxOsInfo, self).__init__(**kwargs)
+        self.linux_os_state = kwargs.get('linux_os_state', None)

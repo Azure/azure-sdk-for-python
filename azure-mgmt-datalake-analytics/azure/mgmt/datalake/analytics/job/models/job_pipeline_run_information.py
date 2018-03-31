@@ -35,7 +35,7 @@ class JobPipelineRunInformation(Model):
         'last_submit_time': {'key': 'lastSubmitTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(JobPipelineRunInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobPipelineRunInformation, self).__init__(**kwargs)
         self.run_id = None
         self.last_submit_time = None

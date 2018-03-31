@@ -19,7 +19,9 @@ class CheckNameAvailabilityRequestParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: Resource name
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Resource name
     :type name: str
     :ivar type: Resource type
     :vartype type: str
@@ -35,6 +37,7 @@ class CheckNameAvailabilityRequestParameters(Model):
         'type': {'key': 'Type', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityRequestParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.type = None

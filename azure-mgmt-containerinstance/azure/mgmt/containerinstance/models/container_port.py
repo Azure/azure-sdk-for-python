@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class ContainerPort(Model):
     """The port exposed on the container instance.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param protocol: The protocol associated with the port. Possible values
      include: 'TCP', 'UDP'
     :type protocol: str or
      ~azure.mgmt.containerinstance.models.ContainerNetworkProtocol
-    :param port: The port number exposed within the container group.
+    :param port: Required. The port number exposed within the container group.
     :type port: int
     """
 
@@ -32,7 +34,7 @@ class ContainerPort(Model):
         'port': {'key': 'port', 'type': 'int'},
     }
 
-    def __init__(self, port, protocol=None):
-        super(ContainerPort, self).__init__()
-        self.protocol = protocol
-        self.port = port
+    def __init__(self, **kwargs):
+        super(ContainerPort, self).__init__(**kwargs)
+        self.protocol = kwargs.get('protocol', None)
+        self.port = kwargs.get('port', None)

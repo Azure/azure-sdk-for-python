@@ -21,14 +21,13 @@ class ClusterCodeVersionsResult(Model):
     :type name: str
     :param type: The result resource type
     :type type: str
-    :param code_version: The ServiceFabric runtime version of the cluster
+    :param code_version: The Service Fabric runtime version of the cluster.
     :type code_version: str
-    :param support_expiry_utc: The date of expiry of support of the version
+    :param support_expiry_utc: The date of expiry of support of the version.
     :type support_expiry_utc: str
-    :param environment: Cluster operating system. Possible values include:
-     'Windows', 'Linux'
-    :type environment: str or :class:`enum
-     <azure.mgmt.servicefabric.models.enum>`
+    :param environment: Indicates if this version is for Windows or Linux
+     operating system. Possible values include: 'Windows', 'Linux'
+    :type environment: str or ~azure.mgmt.servicefabric.models.enum
     """
 
     _attribute_map = {
@@ -40,10 +39,11 @@ class ClusterCodeVersionsResult(Model):
         'environment': {'key': 'properties.environment', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, code_version=None, support_expiry_utc=None, environment=None):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.code_version = code_version
-        self.support_expiry_utc = support_expiry_utc
-        self.environment = environment
+    def __init__(self, **kwargs):
+        super(ClusterCodeVersionsResult, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.code_version = kwargs.get('code_version', None)
+        self.support_expiry_utc = kwargs.get('support_expiry_utc', None)
+        self.environment = kwargs.get('environment', None)

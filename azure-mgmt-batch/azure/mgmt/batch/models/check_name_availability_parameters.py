@@ -18,9 +18,11 @@ class CheckNameAvailabilityParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name to check for availability
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name to check for availability
     :type name: str
-    :ivar type: The resource type. Must be set to
+    :ivar type: Required. The resource type. Must be set to
      Microsoft.Batch/batchAccounts. Default value:
      "Microsoft.Batch/batchAccounts" .
     :vartype type: str
@@ -38,6 +40,6 @@ class CheckNameAvailabilityParameters(Model):
 
     type = "Microsoft.Batch/batchAccounts"
 
-    def __init__(self, name):
-        super(CheckNameAvailabilityParameters, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

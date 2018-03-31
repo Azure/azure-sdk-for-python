@@ -19,12 +19,15 @@ class JobInformation(JobInformationBasic):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar job_id: the job's unique identifier (a GUID).
     :vartype job_id: str
-    :param name: the friendly name of the job.
+    :param name: Required. the friendly name of the job.
     :type name: str
-    :param type: the job type of the current job (Hive, USql, or Scope (for
-     internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
+    :param type: Required. the job type of the current job (Hive, USql, or
+     Scope (for internal use only)). Possible values include: 'USql', 'Hive',
+     'Scope'
     :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
     :ivar submitter: the user or account that submitted the job.
     :vartype submitter: str
@@ -73,7 +76,7 @@ class JobInformation(JobInformationBasic):
      various operations have been performed on this job.
     :vartype state_audit_records:
      list[~azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord]
-    :param properties: the job specific properties.
+    :param properties: Required. the job specific properties.
     :type properties: ~azure.mgmt.datalake.analytics.job.models.JobProperties
     """
 
@@ -114,8 +117,8 @@ class JobInformation(JobInformationBasic):
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None, tags=None):
-        super(JobInformation, self).__init__(name=name, type=type, degree_of_parallelism=degree_of_parallelism, priority=priority, log_file_patterns=log_file_patterns, related=related, tags=tags)
+    def __init__(self, **kwargs):
+        super(JobInformation, self).__init__(**kwargs)
         self.error_message = None
         self.state_audit_records = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)

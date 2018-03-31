@@ -34,9 +34,9 @@ class TermsData(Model):
         'tracking_id': {'key': 'TrackingId', 'type': 'str'},
     }
 
-    def __init__(self, language=None, terms=None, status=None, tracking_id=None):
-        super(TermsData, self).__init__()
-        self.language = language
-        self.terms = terms
-        self.status = status
-        self.tracking_id = tracking_id
+    def __init__(self, **kwargs):
+        super(TermsData, self).__init__(**kwargs)
+        self.language = kwargs.get('language', None)
+        self.terms = kwargs.get('terms', None)
+        self.status = kwargs.get('status', None)
+        self.tracking_id = kwargs.get('tracking_id', None)

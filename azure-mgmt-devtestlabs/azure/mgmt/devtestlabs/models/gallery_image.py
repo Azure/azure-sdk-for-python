@@ -64,11 +64,11 @@ class GalleryImage(Resource):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, location=None, tags=None, author=None, description=None, image_reference=None, icon=None, enabled=None):
-        super(GalleryImage, self).__init__(location=location, tags=tags)
-        self.author = author
+    def __init__(self, **kwargs):
+        super(GalleryImage, self).__init__(**kwargs)
+        self.author = kwargs.get('author', None)
         self.created_date = None
-        self.description = description
-        self.image_reference = image_reference
-        self.icon = icon
-        self.enabled = enabled
+        self.description = kwargs.get('description', None)
+        self.image_reference = kwargs.get('image_reference', None)
+        self.icon = kwargs.get('icon', None)
+        self.enabled = kwargs.get('enabled', None)

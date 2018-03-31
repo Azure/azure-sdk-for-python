@@ -29,8 +29,8 @@ class OperationResponse(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display=None, origin=None):
-        super(OperationResponse, self).__init__()
-        self.name = name
-        self.display = display
-        self.origin = origin
+    def __init__(self, **kwargs):
+        super(OperationResponse, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)

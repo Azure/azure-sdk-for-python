@@ -23,5 +23,6 @@ class RegenerateKeyOutput(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, key=None):
-        self.key = key
+    def __init__(self, **kwargs):
+        super(RegenerateKeyOutput, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)

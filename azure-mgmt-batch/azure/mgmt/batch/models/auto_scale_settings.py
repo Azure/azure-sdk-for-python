@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class AutoScaleSettings(Model):
     """AutoScale settings for the pool.
 
-    :param formula: A formula for the desired number of compute nodes in the
-     pool.
+    All required parameters must be populated in order to send to Azure.
+
+    :param formula: Required. A formula for the desired number of compute
+     nodes in the pool.
     :type formula: str
     :param evaluation_interval: The time interval at which to automatically
      adjust the pool size according to the autoscale formula. If omitted, the
@@ -33,7 +35,7 @@ class AutoScaleSettings(Model):
         'evaluation_interval': {'key': 'evaluationInterval', 'type': 'duration'},
     }
 
-    def __init__(self, formula, evaluation_interval=None):
-        super(AutoScaleSettings, self).__init__()
-        self.formula = formula
-        self.evaluation_interval = evaluation_interval
+    def __init__(self, **kwargs):
+        super(AutoScaleSettings, self).__init__(**kwargs)
+        self.formula = kwargs.get('formula', None)
+        self.evaluation_interval = kwargs.get('evaluation_interval', None)

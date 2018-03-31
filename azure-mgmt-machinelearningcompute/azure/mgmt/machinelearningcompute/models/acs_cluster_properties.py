@@ -18,10 +18,13 @@ class AcsClusterProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar cluster_fqdn: The FQDN of the cluster.
     :vartype cluster_fqdn: str
-    :param orchestrator_type: Type of orchestrator. It cannot be changed once
-     the cluster is created. Possible values include: 'Kubernetes', 'None'
+    :param orchestrator_type: Required. Type of orchestrator. It cannot be
+     changed once the cluster is created. Possible values include:
+     'Kubernetes', 'None'
     :type orchestrator_type: str or
      ~azure.mgmt.machinelearningcompute.models.OrchestratorType
     :param orchestrator_properties: Orchestrator specific properties
@@ -73,12 +76,12 @@ class AcsClusterProperties(Model):
         'agent_vm_size': {'key': 'agentVmSize', 'type': 'str'},
     }
 
-    def __init__(self, orchestrator_type, orchestrator_properties=None, system_services=None, master_count=1, agent_count=2, agent_vm_size="Standard_D3_v2"):
-        super(AcsClusterProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(AcsClusterProperties, self).__init__(**kwargs)
         self.cluster_fqdn = None
-        self.orchestrator_type = orchestrator_type
-        self.orchestrator_properties = orchestrator_properties
-        self.system_services = system_services
-        self.master_count = master_count
-        self.agent_count = agent_count
-        self.agent_vm_size = agent_vm_size
+        self.orchestrator_type = kwargs.get('orchestrator_type', None)
+        self.orchestrator_properties = kwargs.get('orchestrator_properties', None)
+        self.system_services = kwargs.get('system_services', None)
+        self.master_count = kwargs.get('master_count', 1)
+        self.agent_count = kwargs.get('agent_count', 2)
+        self.agent_vm_size = kwargs.get('agent_vm_size', "Standard_D3_v2")

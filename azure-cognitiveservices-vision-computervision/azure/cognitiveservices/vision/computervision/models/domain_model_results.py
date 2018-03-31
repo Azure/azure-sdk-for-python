@@ -33,8 +33,8 @@ class DomainModelResults(Model):
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, celebrities=None, request_id=None, metadata=None):
-        super(DomainModelResults, self).__init__()
-        self.celebrities = celebrities
-        self.request_id = request_id
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(DomainModelResults, self).__init__(**kwargs)
+        self.celebrities = kwargs.get('celebrities', None)
+        self.request_id = kwargs.get('request_id', None)
+        self.metadata = kwargs.get('metadata', None)

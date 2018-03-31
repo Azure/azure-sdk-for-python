@@ -30,6 +30,6 @@ class ChaosContext(Model):
         'map': {'key': 'Map', 'type': 'object'},
     }
 
-    def __init__(self, map=None):
-        super(ChaosContext, self).__init__()
-        self.map = map
+    def __init__(self, **kwargs):
+        super(ChaosContext, self).__init__(**kwargs)
+        self.map = kwargs.get('map', None)

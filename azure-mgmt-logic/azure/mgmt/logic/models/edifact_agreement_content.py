@@ -15,12 +15,12 @@ from msrest.serialization import Model
 class EdifactAgreementContent(Model):
     """The Edifact agreement content.
 
-    :param receive_agreement: The EDIFACT one-way receive agreement.
-    :type receive_agreement: :class:`EdifactOneWayAgreement
-     <azure.mgmt.logic.models.EdifactOneWayAgreement>`
-    :param send_agreement: The EDIFACT one-way send agreement.
-    :type send_agreement: :class:`EdifactOneWayAgreement
-     <azure.mgmt.logic.models.EdifactOneWayAgreement>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param receive_agreement: Required. The EDIFACT one-way receive agreement.
+    :type receive_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
+    :param send_agreement: Required. The EDIFACT one-way send agreement.
+    :type send_agreement: ~azure.mgmt.logic.models.EdifactOneWayAgreement
     """
 
     _validation = {
@@ -33,6 +33,7 @@ class EdifactAgreementContent(Model):
         'send_agreement': {'key': 'sendAgreement', 'type': 'EdifactOneWayAgreement'},
     }
 
-    def __init__(self, receive_agreement, send_agreement):
-        self.receive_agreement = receive_agreement
-        self.send_agreement = send_agreement
+    def __init__(self, **kwargs):
+        super(EdifactAgreementContent, self).__init__(**kwargs)
+        self.receive_agreement = kwargs.get('receive_agreement', None)
+        self.send_agreement = kwargs.get('send_agreement', None)

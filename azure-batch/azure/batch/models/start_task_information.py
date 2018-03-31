@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class StartTaskInformation(Model):
     """Information about a start task running on a compute node.
 
-    :param state: The state of the start task on the compute node. Possible
-     values include: 'running', 'completed'
+    All required parameters must be populated in order to send to Azure.
+
+    :param state: Required. The state of the start task on the compute node.
+     Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.StartTaskState
-    :param start_time: The time at which the start task started running. This
-     value is reset every time the task is restarted or retried (that is, this
-     is the most recent time at which the start task started running).
+    :param start_time: Required. The time at which the start task started
+     running. This value is reset every time the task is restarted or retried
+     (that is, this is the most recent time at which the start task started
+     running).
     :type start_time: datetime
     :param end_time: The time at which the start task stopped running. This is
      the end time of the most recent run of the start task, if that run has
@@ -46,11 +49,11 @@ class StartTaskInformation(Model):
      property is set only if the task is in the completed state and encountered
      a failure.
     :type failure_info: ~azure.batch.models.TaskFailureInformation
-    :param retry_count: The number of times the task has been retried by the
-     Batch service. Task application failures (non-zero exit code) are retried,
-     pre-processing errors (the task could not be run) and file upload errors
-     are not retried. The Batch service will retry the task up to the limit
-     specified by the constraints.
+    :param retry_count: Required. The number of times the task has been
+     retried by the Batch service. Task application failures (non-zero exit
+     code) are retried, pre-processing errors (the task could not be run) and
+     file upload errors are not retried. The Batch service will retry the task
+     up to the limit specified by the constraints.
     :type retry_count: int
     :param last_retry_time: The most recent time at which a retry of the task
      started running. This element is present only if the task was retried
@@ -83,14 +86,14 @@ class StartTaskInformation(Model):
         'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, state, start_time, retry_count, end_time=None, exit_code=None, container_info=None, failure_info=None, last_retry_time=None, result=None):
-        super(StartTaskInformation, self).__init__()
-        self.state = state
-        self.start_time = start_time
-        self.end_time = end_time
-        self.exit_code = exit_code
-        self.container_info = container_info
-        self.failure_info = failure_info
-        self.retry_count = retry_count
-        self.last_retry_time = last_retry_time
-        self.result = result
+    def __init__(self, **kwargs):
+        super(StartTaskInformation, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.container_info = kwargs.get('container_info', None)
+        self.failure_info = kwargs.get('failure_info', None)
+        self.retry_count = kwargs.get('retry_count', None)
+        self.last_retry_time = kwargs.get('last_retry_time', None)
+        self.result = kwargs.get('result', None)

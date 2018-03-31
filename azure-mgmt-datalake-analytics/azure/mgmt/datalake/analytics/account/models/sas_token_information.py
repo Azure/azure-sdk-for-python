@@ -31,6 +31,6 @@ class SasTokenInformation(Model):
         'access_token': {'key': 'accessToken', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SasTokenInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(SasTokenInformation, self).__init__(**kwargs)
         self.access_token = None

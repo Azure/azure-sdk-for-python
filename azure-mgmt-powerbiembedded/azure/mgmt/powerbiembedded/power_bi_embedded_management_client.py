@@ -14,7 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.workspace_collections_operations import WorkspaceCollectionsOperations
 from .operations.workspaces_operations import WorkspacesOperations
@@ -43,14 +44,12 @@ class PowerBIEmbeddedManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(PowerBIEmbeddedManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('powerbiembeddedmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-powerbiembedded/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -104,15 +103,14 @@ class PowerBIEmbeddedManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationList
-         <azure.mgmt.powerbiembedded.models.OperationList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: OperationList or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.powerbiembedded.models.OperationList or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.PowerBI/operations'
+        url = self.get_available_operations.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -130,7 +128,7 @@ class PowerBIEmbeddedManagementClient(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -145,3 +143,4 @@ class PowerBIEmbeddedManagementClient(object):
             return client_raw_response
 
         return deserialized
+    get_available_operations.metadata = {'url': '/providers/Microsoft.PowerBI/operations'}

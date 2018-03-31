@@ -37,7 +37,7 @@ class SentimentBatchResultItem(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SentimentBatchResultItem, self).__init__()
+    def __init__(self, **kwargs):
+        super(SentimentBatchResultItem, self).__init__(**kwargs)
         self.score = None
         self.id = None

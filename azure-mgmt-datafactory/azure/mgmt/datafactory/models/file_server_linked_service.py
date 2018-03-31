@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class FileServerLinkedService(LinkedService):
     """File system linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class FileServerLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: Host name of the server. Type: string (or Expression with
-     resultType string).
+    :param host: Required. Host name of the server. Type: string (or
+     Expression with resultType string).
     :type host: object
     :param user_id: User ID to logon the server. Type: string (or Expression
      with resultType string).
@@ -63,10 +65,10 @@ class FileServerLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, user_id=None, password=None, encrypted_credential=None):
-        super(FileServerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.user_id = user_id
-        self.password = password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(FileServerLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.user_id = kwargs.get('user_id', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'FileServer'

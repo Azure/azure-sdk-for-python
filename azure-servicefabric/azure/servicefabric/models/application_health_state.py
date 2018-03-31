@@ -33,6 +33,6 @@ class ApplicationHealthState(EntityHealthState):
         'name': {'key': 'Name', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, name=None):
-        super(ApplicationHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.name = name
+    def __init__(self, **kwargs):
+        super(ApplicationHealthState, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

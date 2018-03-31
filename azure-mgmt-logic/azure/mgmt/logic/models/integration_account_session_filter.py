@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class IntegrationAccountSessionFilter(Model):
     """The integration account session filter.
 
-    :param changed_time: The changed time of integration account sessions.
+    All required parameters must be populated in order to send to Azure.
+
+    :param changed_time: Required. The changed time of integration account
+     sessions.
     :type changed_time: datetime
     """
 
@@ -27,5 +30,6 @@ class IntegrationAccountSessionFilter(Model):
         'changed_time': {'key': 'changedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, changed_time):
-        self.changed_time = changed_time
+    def __init__(self, **kwargs):
+        super(IntegrationAccountSessionFilter, self).__init__(**kwargs)
+        self.changed_time = kwargs.get('changed_time', None)

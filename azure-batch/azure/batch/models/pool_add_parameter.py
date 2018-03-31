@@ -15,20 +15,22 @@ from msrest.serialization import Model
 class PoolAddParameter(Model):
     """A pool in the Azure Batch service to add.
 
-    :param id: A string that uniquely identifies the pool within the account.
-     The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The
-     ID is case-preserving and case-insensitive (that is, you may not have two
-     pool IDs within an account that differ only by case).
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. A string that uniquely identifies the pool within the
+     account. The ID can contain any combination of alphanumeric characters
+     including hyphens and underscores, and cannot contain more than 64
+     characters. The ID is case-preserving and case-insensitive (that is, you
+     may not have two pool IDs within an account that differ only by case).
     :type id: str
     :param display_name: The display name for the pool. The display name need
      not be unique and can contain any Unicode characters up to a maximum
      length of 1024.
     :type display_name: str
-    :param vm_size: The size of virtual machines in the pool. All virtual
-     machines in a pool are the same size. For information about available
-     sizes of virtual machines for Cloud Services pools (pools created with
-     cloudServiceConfiguration), see Sizes for Cloud Services
+    :param vm_size: Required. The size of virtual machines in the pool. All
+     virtual machines in a pool are the same size. For information about
+     available sizes of virtual machines for Cloud Services pools (pools
+     created with cloudServiceConfiguration), see Sizes for Cloud Services
      (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
      Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
      A2V2. For information about available VM sizes for pools using images from
@@ -170,26 +172,26 @@ class PoolAddParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, id, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated_nodes=None, target_low_priority_nodes=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None):
-        super(PoolAddParameter, self).__init__()
-        self.id = id
-        self.display_name = display_name
-        self.vm_size = vm_size
-        self.cloud_service_configuration = cloud_service_configuration
-        self.virtual_machine_configuration = virtual_machine_configuration
-        self.resize_timeout = resize_timeout
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
-        self.enable_auto_scale = enable_auto_scale
-        self.auto_scale_formula = auto_scale_formula
-        self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
-        self.enable_inter_node_communication = enable_inter_node_communication
-        self.network_configuration = network_configuration
-        self.start_task = start_task
-        self.certificate_references = certificate_references
-        self.application_package_references = application_package_references
-        self.application_licenses = application_licenses
-        self.max_tasks_per_node = max_tasks_per_node
-        self.task_scheduling_policy = task_scheduling_policy
-        self.user_accounts = user_accounts
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(PoolAddParameter, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.cloud_service_configuration = kwargs.get('cloud_service_configuration', None)
+        self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)
+        self.resize_timeout = kwargs.get('resize_timeout', None)
+        self.target_dedicated_nodes = kwargs.get('target_dedicated_nodes', None)
+        self.target_low_priority_nodes = kwargs.get('target_low_priority_nodes', None)
+        self.enable_auto_scale = kwargs.get('enable_auto_scale', None)
+        self.auto_scale_formula = kwargs.get('auto_scale_formula', None)
+        self.auto_scale_evaluation_interval = kwargs.get('auto_scale_evaluation_interval', None)
+        self.enable_inter_node_communication = kwargs.get('enable_inter_node_communication', None)
+        self.network_configuration = kwargs.get('network_configuration', None)
+        self.start_task = kwargs.get('start_task', None)
+        self.certificate_references = kwargs.get('certificate_references', None)
+        self.application_package_references = kwargs.get('application_package_references', None)
+        self.application_licenses = kwargs.get('application_licenses', None)
+        self.max_tasks_per_node = kwargs.get('max_tasks_per_node', None)
+        self.task_scheduling_policy = kwargs.get('task_scheduling_policy', None)
+        self.user_accounts = kwargs.get('user_accounts', None)
+        self.metadata = kwargs.get('metadata', None)

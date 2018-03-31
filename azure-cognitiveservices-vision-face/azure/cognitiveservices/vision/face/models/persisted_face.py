@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class PersistedFace(Model):
     """PersonFace object.
 
-    :param persisted_face_id: The persistedFaceId of the target face, which is
-     persisted and will not expire. Different from faceId created by Face -
-     Detect and will expire in 24 hours after the detection call.
+    All required parameters must be populated in order to send to Azure.
+
+    :param persisted_face_id: Required. The persistedFaceId of the target
+     face, which is persisted and will not expire. Different from faceId
+     created by Face - Detect and will expire in 24 hours after the detection
+     call.
     :type persisted_face_id: str
     :param user_data: User-provided data attached to the face. The size limit
      is 1KB.
@@ -34,7 +37,7 @@ class PersistedFace(Model):
         'user_data': {'key': 'userData', 'type': 'str'},
     }
 
-    def __init__(self, persisted_face_id, user_data=None):
-        super(PersistedFace, self).__init__()
-        self.persisted_face_id = persisted_face_id
-        self.user_data = user_data
+    def __init__(self, **kwargs):
+        super(PersistedFace, self).__init__(**kwargs)
+        self.persisted_face_id = kwargs.get('persisted_face_id', None)
+        self.user_data = kwargs.get('user_data', None)

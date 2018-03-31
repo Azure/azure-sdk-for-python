@@ -28,12 +28,11 @@ class ProtectedItemResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: ProtectedItemResource properties
-    :type properties: :class:`ProtectedItem
-     <azure.mgmt.recoveryservicesbackup.models.ProtectedItem>`
+    :type properties: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItem
     """
 
     _validation = {
@@ -52,6 +51,6 @@ class ProtectedItemResource(Resource):
         'properties': {'key': 'properties', 'type': 'ProtectedItem'},
     }
 
-    def __init__(self, location=None, tags=None, e_tag=None, properties=None):
-        super(ProtectedItemResource, self).__init__(location=location, tags=tags, e_tag=e_tag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ProtectedItemResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

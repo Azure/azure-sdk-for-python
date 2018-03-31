@@ -34,6 +34,8 @@ class JobPreparationTask(Model):
     not previously complete. If the compute node is reimaged, the Job
     Preparation task is run again before scheduling any task of the job.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: A string that uniquely identifies the Job Preparation task
      within the job. The ID can contain any combination of alphanumeric
      characters including hyphens and underscores and cannot contain more than
@@ -44,12 +46,12 @@ class JobPreparationTask(Model):
      TaskIdSameAsJobPreparationTask; if you are calling the REST API directly,
      the HTTP status code is 409 (Conflict).
     :type id: str
-    :param command_line: The command line of the Job Preparation task. The
-     command line does not run under a shell, and therefore cannot take
-     advantage of shell features such as environment variable expansion. If you
-     want to take advantage of such features, you should invoke the shell in
-     the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux.
+    :param command_line: Required. The command line of the Job Preparation
+     task. The command line does not run under a shell, and therefore cannot
+     take advantage of shell features such as environment variable expansion.
+     If you want to take advantage of such features, you should invoke the
+     shell in the command line, for example using "cmd /c MyCommand" in Windows
+     or "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Preparation task runs. When this is specified, all directories
@@ -113,14 +115,14 @@ class JobPreparationTask(Model):
         'rerun_on_node_reboot_after_success': {'key': 'rerunOnNodeRebootAfterSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, command_line, id=None, container_settings=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, user_identity=None, rerun_on_node_reboot_after_success=None):
-        super(JobPreparationTask, self).__init__()
-        self.id = id
-        self.command_line = command_line
-        self.container_settings = container_settings
-        self.resource_files = resource_files
-        self.environment_settings = environment_settings
-        self.constraints = constraints
-        self.wait_for_success = wait_for_success
-        self.user_identity = user_identity
-        self.rerun_on_node_reboot_after_success = rerun_on_node_reboot_after_success
+    def __init__(self, **kwargs):
+        super(JobPreparationTask, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.command_line = kwargs.get('command_line', None)
+        self.container_settings = kwargs.get('container_settings', None)
+        self.resource_files = kwargs.get('resource_files', None)
+        self.environment_settings = kwargs.get('environment_settings', None)
+        self.constraints = kwargs.get('constraints', None)
+        self.wait_for_success = kwargs.get('wait_for_success', None)
+        self.user_identity = kwargs.get('user_identity', None)
+        self.rerun_on_node_reboot_after_success = kwargs.get('rerun_on_node_reboot_after_success', None)

@@ -15,13 +15,16 @@ from .base_job_parameters import BaseJobParameters
 class CreateJobParameters(BaseJobParameters):
     """The parameters used to submit a new Data Lake Analytics job.
 
-    :param type: the job type of the current job (Hive, USql, or Scope (for
-     internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. the job type of the current job (Hive, USql, or
+     Scope (for internal use only)). Possible values include: 'USql', 'Hive',
+     'Scope'
     :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
-    :param properties: the job specific properties.
+    :param properties: Required. the job specific properties.
     :type properties:
      ~azure.mgmt.datalake.analytics.job.models.CreateJobProperties
-    :param name: the friendly name of the job to submit.
+    :param name: Required. the friendly name of the job to submit.
     :type name: str
     :param degree_of_parallelism: the degree of parallelism to use for this
      job. This must be greater than 0, if set to less than 0 it will default to
@@ -56,10 +59,10 @@ class CreateJobParameters(BaseJobParameters):
         'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
     }
 
-    def __init__(self, type, properties, name, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None):
-        super(CreateJobParameters, self).__init__(type=type, properties=properties)
-        self.name = name
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
-        self.log_file_patterns = log_file_patterns
-        self.related = related
+    def __init__(self, **kwargs):
+        super(CreateJobParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.degree_of_parallelism = kwargs.get('degree_of_parallelism', 1)
+        self.priority = kwargs.get('priority', None)
+        self.log_file_patterns = kwargs.get('log_file_patterns', None)
+        self.related = kwargs.get('related', None)

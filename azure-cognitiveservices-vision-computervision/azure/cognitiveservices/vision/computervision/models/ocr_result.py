@@ -47,9 +47,9 @@ class OcrResult(Model):
         'regions': {'key': 'regions', 'type': '[OcrRegion]'},
     }
 
-    def __init__(self, language=None, text_angle=None, orientation=None, regions=None):
-        super(OcrResult, self).__init__()
-        self.language = language
-        self.text_angle = text_angle
-        self.orientation = orientation
-        self.regions = regions
+    def __init__(self, **kwargs):
+        super(OcrResult, self).__init__(**kwargs)
+        self.language = kwargs.get('language', None)
+        self.text_angle = kwargs.get('text_angle', None)
+        self.orientation = kwargs.get('orientation', None)
+        self.regions = kwargs.get('regions', None)

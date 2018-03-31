@@ -22,7 +22,7 @@ class LocationOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-09-01".
     """
 
@@ -56,7 +56,7 @@ class LocationOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'
+        url = self.get_quotas.metadata['url']
         path_format_arguments = {
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -79,7 +79,7 @@ class LocationOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -96,6 +96,7 @@ class LocationOperations(object):
             return client_raw_response
 
         return deserialized
+    get_quotas.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'}
 
     def check_name_availability(
             self, location_name, name, custom_headers=None, raw=False, **operation_config):
@@ -119,7 +120,7 @@ class LocationOperations(object):
         parameters = models.CheckNameAvailabilityParameters(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/checkNameAvailability'
+        url = self.check_name_availability.metadata['url']
         path_format_arguments = {
             'locationName': self._serialize.url("location_name", location_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -146,7 +147,7 @@ class LocationOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -163,3 +164,4 @@ class LocationOperations(object):
             return client_raw_response
 
         return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/checkNameAvailability'}

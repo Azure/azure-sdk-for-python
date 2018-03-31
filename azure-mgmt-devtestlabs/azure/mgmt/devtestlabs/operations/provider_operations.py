@@ -55,7 +55,7 @@ class ProviderOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.DevTestLab/operations'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -96,3 +96,4 @@ class ProviderOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.DevTestLab/operations'}

@@ -15,11 +15,13 @@ from .operation_status_extended_info import OperationStatusExtendedInfo
 class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
     """Operation status extended info for ILR provision action.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param recovery_target: Target details for file / folder restore.
-    :type recovery_target: :class:`InstantItemRecoveryTarget
-     <azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget>`
+    :type recovery_target:
+     ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget
     """
 
     _validation = {
@@ -31,7 +33,7 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
         'recovery_target': {'key': 'recoveryTarget', 'type': 'InstantItemRecoveryTarget'},
     }
 
-    def __init__(self, recovery_target=None):
-        super(OperationStatusProvisionILRExtendedInfo, self).__init__()
-        self.recovery_target = recovery_target
+    def __init__(self, **kwargs):
+        super(OperationStatusProvisionILRExtendedInfo, self).__init__(**kwargs)
+        self.recovery_target = kwargs.get('recovery_target', None)
         self.object_type = 'OperationStatusProvisionILRExtendedInfo'

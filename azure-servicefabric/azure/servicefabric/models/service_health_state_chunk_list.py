@@ -26,6 +26,6 @@ class ServiceHealthStateChunkList(Model):
         'items': {'key': 'Items', 'type': '[ServiceHealthStateChunk]'},
     }
 
-    def __init__(self, items=None):
-        super(ServiceHealthStateChunkList, self).__init__()
-        self.items = items
+    def __init__(self, **kwargs):
+        super(ServiceHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

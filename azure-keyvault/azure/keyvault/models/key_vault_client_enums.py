@@ -12,15 +12,24 @@
 from enum import Enum
 
 
-class JsonWebKeyType(Enum):
+class JsonWebKeyType(str, Enum):
 
     ec = "EC"
+    ec_hsm = "EC-HSM"
     rsa = "RSA"
     rsa_hsm = "RSA-HSM"
     oct = "oct"
 
 
-class DeletionRecoveryLevel(Enum):
+class JsonWebKeyCurveName(str, Enum):
+
+    p_256 = "P-256"
+    p_384 = "P-384"
+    p_521 = "P-521"
+    secp256_k1 = "SECP256K1"
+
+
+class DeletionRecoveryLevel(str, Enum):
 
     purgeable = "Purgeable"
     recoverable_purgeable = "Recoverable+Purgeable"
@@ -28,7 +37,7 @@ class DeletionRecoveryLevel(Enum):
     recoverable_protected_subscription = "Recoverable+ProtectedSubscription"
 
 
-class KeyUsageType(Enum):
+class KeyUsageType(str, Enum):
 
     digital_signature = "digitalSignature"
     non_repudiation = "nonRepudiation"
@@ -41,13 +50,13 @@ class KeyUsageType(Enum):
     decipher_only = "decipherOnly"
 
 
-class ActionType(Enum):
+class ActionType(str, Enum):
 
     email_contacts = "EmailContacts"
     auto_renew = "AutoRenew"
 
 
-class JsonWebKeyOperation(Enum):
+class JsonWebKeyOperation(str, Enum):
 
     encrypt = "encrypt"
     decrypt = "decrypt"
@@ -57,14 +66,14 @@ class JsonWebKeyOperation(Enum):
     unwrap_key = "unwrapKey"
 
 
-class JsonWebKeyEncryptionAlgorithm(Enum):
+class JsonWebKeyEncryptionAlgorithm(str, Enum):
 
     rsa_oaep = "RSA-OAEP"
     rsa_oaep_256 = "RSA-OAEP-256"
     rsa1_5 = "RSA1_5"
 
 
-class JsonWebKeySignatureAlgorithm(Enum):
+class JsonWebKeySignatureAlgorithm(str, Enum):
 
     ps256 = "PS256"
     ps384 = "PS384"
@@ -73,3 +82,7 @@ class JsonWebKeySignatureAlgorithm(Enum):
     rs384 = "RS384"
     rs512 = "RS512"
     rsnull = "RSNULL"
+    es256 = "ES256"
+    es384 = "ES384"
+    es512 = "ES512"
+    ecdsa256 = "ECDSA256"

@@ -52,8 +52,8 @@ class BillingPeriod(Resource):
         'invoice_ids': {'key': 'properties.invoiceIds', 'type': '[str]'},
     }
 
-    def __init__(self):
-        super(BillingPeriod, self).__init__()
+    def __init__(self, **kwargs):
+        super(BillingPeriod, self).__init__(**kwargs)
         self.billing_period_start_date = None
         self.billing_period_end_date = None
         self.invoice_ids = None

@@ -103,7 +103,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/models'
+        url = self.list_models.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -135,6 +135,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    list_models.metadata = {'url': '/models'}
 
     def analyze_image(
             self, url, visual_features=None, details=None, language="en", custom_headers=None, raw=False, **operation_config):
@@ -188,7 +189,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/analyze'
+        url = self.analyze_image.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -230,6 +231,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image.metadata = {'url': '/analyze'}
 
     def generate_thumbnail(
             self, width, height, url, smart_cropping=False, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -270,7 +272,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/generateThumbnail'
+        url = self.generate_thumbnail.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -310,6 +312,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    generate_thumbnail.metadata = {'url': '/generateThumbnail'}
 
     def recognize_printed_text(
             self, url, detect_orientation=True, language="unk", custom_headers=None, raw=False, **operation_config):
@@ -350,7 +353,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/ocr'
+        url = self.recognize_printed_text.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -389,6 +392,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    recognize_printed_text.metadata = {'url': '/ocr'}
 
     def describe_image(
             self, url, max_candidates="1", custom_headers=None, raw=False, **operation_config):
@@ -422,7 +426,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/describe'
+        url = self.describe_image.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -460,6 +464,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    describe_image.metadata = {'url': '/describe'}
 
     def tag_image(
             self, url, custom_headers=None, raw=False, **operation_config):
@@ -489,7 +494,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/tag'
+        url = self.tag_image.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -525,6 +530,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    tag_image.metadata = {'url': '/tag'}
 
     def analyze_image_by_domain(
             self, model, url, custom_headers=None, raw=False, **operation_config):
@@ -558,7 +564,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/models/{model}/analyze'
+        url = self.analyze_image_by_domain.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'model': self._serialize.url("model", model, 'DomainModels')
@@ -595,6 +601,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image_by_domain.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_text(
             self, url, detect_handwriting=False, custom_headers=None, raw=False, **operation_config):
@@ -622,7 +629,7 @@ class ComputerVisionAPI(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/recognizeText'
+        url = self.recognize_text.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -656,6 +663,7 @@ class ComputerVisionAPI(object):
                 'Operation-Location': 'str',
             })
             return client_raw_response
+    recognize_text.metadata = {'url': '/recognizeText'}
 
     def get_text_operation_result(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
@@ -679,7 +687,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/textOperations/{operationId}'
+        url = self.get_text_operation_result.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
@@ -712,6 +720,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    get_text_operation_result.metadata = {'url': '/textOperations/{operationId}'}
 
     def analyze_image_in_stream(
             self, image, visual_features=None, details=None, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
@@ -763,7 +772,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/analyze'
+        url = self.analyze_image_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -805,6 +814,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image_in_stream.metadata = {'url': '/analyze'}
 
     def generate_thumbnail_in_stream(
             self, width, height, image, smart_cropping=False, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -843,7 +853,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/generateThumbnail'
+        url = self.generate_thumbnail_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -883,6 +893,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    generate_thumbnail_in_stream.metadata = {'url': '/generateThumbnail'}
 
     def recognize_printed_text_in_stream(
             self, image, detect_orientation=True, language="unk", custom_headers=None, raw=False, callback=None, **operation_config):
@@ -926,7 +937,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/ocr'
+        url = self.recognize_printed_text_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -965,6 +976,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    recognize_printed_text_in_stream.metadata = {'url': '/ocr'}
 
     def describe_image_in_stream(
             self, image, max_candidates="1", custom_headers=None, raw=False, callback=None, **operation_config):
@@ -1001,7 +1013,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/describe'
+        url = self.describe_image_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -1039,6 +1051,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    describe_image_in_stream.metadata = {'url': '/describe'}
 
     def tag_image_in_stream(
             self, image, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -1071,7 +1084,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/tag'
+        url = self.tag_image_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -1107,6 +1120,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    tag_image_in_stream.metadata = {'url': '/tag'}
 
     def analyze_image_by_domain_in_stream(
             self, model, image, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -1141,7 +1155,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/models/{model}/analyze'
+        url = self.analyze_image_by_domain_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'model': self._serialize.url("model", model, 'str')
@@ -1178,6 +1192,7 @@ class ComputerVisionAPI(object):
             return client_raw_response
 
         return deserialized
+    analyze_image_by_domain_in_stream.metadata = {'url': '/models/{model}/analyze'}
 
     def recognize_text_in_stream(
             self, image, detect_handwriting=False, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -1208,7 +1223,7 @@ class ComputerVisionAPI(object):
          :class:`ComputerVisionErrorException<azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorException>`
         """
         # Construct URL
-        url = '/recognizeText'
+        url = self.recognize_text_in_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -1242,3 +1257,4 @@ class ComputerVisionAPI(object):
                 'Operation-Location': 'str',
             })
             return client_raw_response
+    recognize_text_in_stream.metadata = {'url': '/recognizeText'}

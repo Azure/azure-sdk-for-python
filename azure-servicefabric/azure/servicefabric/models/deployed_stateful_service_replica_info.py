@@ -15,6 +15,8 @@ from .deployed_service_replica_info import DeployedServiceReplicaInfo
 class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
     """Information about a stateful service replica deployed on a node.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param service_name: The full name of the service with 'fabric:' URI
      scheme.
     :type service_name: str
@@ -62,7 +64,7 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
      replica. This will be zero if the replica is down. In hyper-v containers
      this host process id will be from different kernel.
     :type host_process_id: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param replica_id: Id of a stateful service replica. ReplicaId is used by
      Service Fabric to uniquely identify a replica of a partition. It is unique
@@ -103,9 +105,9 @@ class DeployedStatefulServiceReplicaInfo(DeployedServiceReplicaInfo):
         'reconfiguration_information': {'key': 'ReconfigurationInformation', 'type': 'ReconfigurationInformation'},
     }
 
-    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, host_process_id=None, replica_id=None, replica_role=None, reconfiguration_information=None):
-        super(DeployedStatefulServiceReplicaInfo, self).__init__(service_name=service_name, service_type_name=service_type_name, service_manifest_name=service_manifest_name, code_package_name=code_package_name, partition_id=partition_id, replica_status=replica_status, address=address, service_package_activation_id=service_package_activation_id, host_process_id=host_process_id)
-        self.replica_id = replica_id
-        self.replica_role = replica_role
-        self.reconfiguration_information = reconfiguration_information
+    def __init__(self, **kwargs):
+        super(DeployedStatefulServiceReplicaInfo, self).__init__(**kwargs)
+        self.replica_id = kwargs.get('replica_id', None)
+        self.replica_role = kwargs.get('replica_role', None)
+        self.reconfiguration_information = kwargs.get('reconfiguration_information', None)
         self.service_kind = 'Stateful'

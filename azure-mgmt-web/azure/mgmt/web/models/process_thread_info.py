@@ -80,18 +80,18 @@ class ProcessThreadInfo(ProxyOnlyResource):
         'wait_reason': {'key': 'properties.waitReason', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, process_thread_info_id=None, href=None, process=None, start_address=None, current_priority=None, priority_level=None, base_priority=None, start_time=None, total_processor_time=None, user_processor_time=None, priviledged_processor_time=None, state=None, wait_reason=None):
-        super(ProcessThreadInfo, self).__init__(kind=kind)
-        self.process_thread_info_id = process_thread_info_id
-        self.href = href
-        self.process = process
-        self.start_address = start_address
-        self.current_priority = current_priority
-        self.priority_level = priority_level
-        self.base_priority = base_priority
-        self.start_time = start_time
-        self.total_processor_time = total_processor_time
-        self.user_processor_time = user_processor_time
-        self.priviledged_processor_time = priviledged_processor_time
-        self.state = state
-        self.wait_reason = wait_reason
+    def __init__(self, **kwargs):
+        super(ProcessThreadInfo, self).__init__(**kwargs)
+        self.process_thread_info_id = kwargs.get('process_thread_info_id', None)
+        self.href = kwargs.get('href', None)
+        self.process = kwargs.get('process', None)
+        self.start_address = kwargs.get('start_address', None)
+        self.current_priority = kwargs.get('current_priority', None)
+        self.priority_level = kwargs.get('priority_level', None)
+        self.base_priority = kwargs.get('base_priority', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.total_processor_time = kwargs.get('total_processor_time', None)
+        self.user_processor_time = kwargs.get('user_processor_time', None)
+        self.priviledged_processor_time = kwargs.get('priviledged_processor_time', None)
+        self.state = kwargs.get('state', None)
+        self.wait_reason = kwargs.get('wait_reason', None)

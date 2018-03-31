@@ -22,7 +22,7 @@ class ObjectsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "1.6".
     """
 
@@ -53,7 +53,7 @@ class ObjectsOperations(object):
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
-        url = '/{tenantID}/me'
+        url = self.get_current_user.metadata['url']
         path_format_arguments = {
             'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
         }
@@ -90,6 +90,7 @@ class ObjectsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_current_user.metadata = {'url': '/{tenantID}/me'}
 
     def get_objects_by_object_ids(
             self, parameters, custom_headers=None, raw=False, **operation_config):
@@ -111,7 +112,7 @@ class ObjectsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{tenantID}/getObjectsByObjectIds'
+                url = self.get_objects_by_object_ids.metadata['url']
                 path_format_arguments = {
                     'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
                 }
@@ -165,3 +166,4 @@ class ObjectsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_objects_by_object_ids.metadata = {'url': '/{tenantID}/getObjectsByObjectIds'}

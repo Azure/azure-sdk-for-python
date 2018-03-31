@@ -41,6 +41,6 @@ class ReplicaHealthStateChunk(EntityHealthStateChunk):
         'replica_or_instance_id': {'key': 'ReplicaOrInstanceId', 'type': 'str'},
     }
 
-    def __init__(self, health_state=None, replica_or_instance_id=None):
-        super(ReplicaHealthStateChunk, self).__init__(health_state=health_state)
-        self.replica_or_instance_id = replica_or_instance_id
+    def __init__(self, **kwargs):
+        super(ReplicaHealthStateChunk, self).__init__(**kwargs)
+        self.replica_or_instance_id = kwargs.get('replica_or_instance_id', None)

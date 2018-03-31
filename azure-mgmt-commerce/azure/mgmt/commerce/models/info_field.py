@@ -24,6 +24,6 @@ class InfoField(Model):
         'project': {'key': 'project', 'type': 'str'},
     }
 
-    def __init__(self, project=None):
-        super(InfoField, self).__init__()
-        self.project = project
+    def __init__(self, **kwargs):
+        super(InfoField, self).__init__(**kwargs)
+        self.project = kwargs.get('project', None)

@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class ContainerServiceDiagnosticsProfile(Model):
     """Profile for diagnostics on the container service cluster.
 
-    :param vm_diagnostics: Profile for diagnostics on the container service
-     VMs.
+    All required parameters must be populated in order to send to Azure.
+
+    :param vm_diagnostics: Required. Profile for diagnostics on the container
+     service VMs.
     :type vm_diagnostics:
      ~azure.mgmt.containerservice.models.ContainerServiceVMDiagnostics
     """
@@ -29,6 +31,6 @@ class ContainerServiceDiagnosticsProfile(Model):
         'vm_diagnostics': {'key': 'vmDiagnostics', 'type': 'ContainerServiceVMDiagnostics'},
     }
 
-    def __init__(self, vm_diagnostics):
-        super(ContainerServiceDiagnosticsProfile, self).__init__()
-        self.vm_diagnostics = vm_diagnostics
+    def __init__(self, **kwargs):
+        super(ContainerServiceDiagnosticsProfile, self).__init__(**kwargs)
+        self.vm_diagnostics = kwargs.get('vm_diagnostics', None)

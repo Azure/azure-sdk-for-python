@@ -28,10 +28,9 @@ class WorkspaceCollection(Model):
     :param location: Azure location
     :type location: str
     :param tags:
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar sku:
-    :vartype sku: :class:`AzureSku
-     <azure.mgmt.powerbiembedded.models.AzureSku>`
+    :vartype sku: ~azure.mgmt.powerbiembedded.models.AzureSku
     :param properties: Properties
     :type properties: object
     """
@@ -52,10 +51,11 @@ class WorkspaceCollection(Model):
 
     sku = AzureSku()
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, properties=None):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.location = location
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(WorkspaceCollection, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)

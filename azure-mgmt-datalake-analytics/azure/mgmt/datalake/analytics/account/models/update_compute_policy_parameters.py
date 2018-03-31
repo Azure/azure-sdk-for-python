@@ -44,9 +44,9 @@ class UpdateComputePolicyParameters(Model):
         'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
     }
 
-    def __init__(self, object_id=None, object_type=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None):
-        super(UpdateComputePolicyParameters, self).__init__()
-        self.object_id = object_id
-        self.object_type = object_type
-        self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
-        self.min_priority_per_job = min_priority_per_job
+    def __init__(self, **kwargs):
+        super(UpdateComputePolicyParameters, self).__init__(**kwargs)
+        self.object_id = kwargs.get('object_id', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.max_degree_of_parallelism_per_job = kwargs.get('max_degree_of_parallelism_per_job', None)
+        self.min_priority_per_job = kwargs.get('min_priority_per_job', None)

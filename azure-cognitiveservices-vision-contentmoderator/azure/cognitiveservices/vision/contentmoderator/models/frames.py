@@ -27,7 +27,7 @@ class Frames(Model):
         'video_frames': {'key': 'VideoFrames', 'type': '[Frame]'},
     }
 
-    def __init__(self, review_id=None, video_frames=None):
-        super(Frames, self).__init__()
-        self.review_id = review_id
-        self.video_frames = video_frames
+    def __init__(self, **kwargs):
+        super(Frames, self).__init__(**kwargs)
+        self.review_id = kwargs.get('review_id', None)
+        self.video_frames = kwargs.get('video_frames', None)

@@ -34,7 +34,7 @@ class DeploymentConfiguration(Model):
         'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
     }
 
-    def __init__(self, cloud_service_configuration=None, virtual_machine_configuration=None):
-        super(DeploymentConfiguration, self).__init__()
-        self.cloud_service_configuration = cloud_service_configuration
-        self.virtual_machine_configuration = virtual_machine_configuration
+    def __init__(self, **kwargs):
+        super(DeploymentConfiguration, self).__init__(**kwargs)
+        self.cloud_service_configuration = kwargs.get('cloud_service_configuration', None)
+        self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)

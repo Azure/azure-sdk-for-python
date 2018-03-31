@@ -23,5 +23,6 @@ class GenerateUpgradedDefinitionParameters(Model):
         'target_schema_version': {'key': 'targetSchemaVersion', 'type': 'str'},
     }
 
-    def __init__(self, target_schema_version=None):
-        self.target_schema_version = target_schema_version
+    def __init__(self, **kwargs):
+        super(GenerateUpgradedDefinitionParameters, self).__init__(**kwargs)
+        self.target_schema_version = kwargs.get('target_schema_version', None)

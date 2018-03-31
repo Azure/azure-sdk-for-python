@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class CallbackConfig(Model):
     """The configuration of service URI and custom headers for the webhook.
 
-    :param service_uri: The service URI for the webhook to post notifications.
+    All required parameters must be populated in order to send to Azure.
+
+    :param service_uri: Required. The service URI for the webhook to post
+     notifications.
     :type service_uri: str
     :param custom_headers: Custom headers that will be added to the webhook
      notifications.
@@ -31,6 +34,7 @@ class CallbackConfig(Model):
         'custom_headers': {'key': 'customHeaders', 'type': '{str}'},
     }
 
-    def __init__(self, service_uri, custom_headers=None):
-        self.service_uri = service_uri
-        self.custom_headers = custom_headers
+    def __init__(self, **kwargs):
+        super(CallbackConfig, self).__init__(**kwargs)
+        self.service_uri = kwargs.get('service_uri', None)
+        self.custom_headers = kwargs.get('custom_headers', None)

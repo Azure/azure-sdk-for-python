@@ -15,17 +15,19 @@ from msrest.serialization import Model
 class ComposeDeploymentUpgradeDescription(Model):
     """Describes the parameters for a compose deployment upgrade.
 
-    :param deployment_name: The name of the deployment.
+    All required parameters must be populated in order to send to Azure.
+
+    :param deployment_name: Required. The name of the deployment.
     :type deployment_name: str
-    :param compose_file_content: The content of the compose file that
-     describes the deployment to create.
+    :param compose_file_content: Required. The content of the compose file
+     that describes the deployment to create.
     :type compose_file_content: str
     :param registry_credential: Credential information to connect to container
      registry.
     :type registry_credential: ~azure.servicefabric.models.RegistryCredential
-    :param upgrade_kind: The kind of upgrade out of the following possible
-     values. Possible values include: 'Invalid', 'Rolling'. Default value:
-     "Rolling" .
+    :param upgrade_kind: Required. The kind of upgrade out of the following
+     possible values. Possible values include: 'Invalid', 'Rolling'. Default
+     value: "Rolling" .
     :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
     :param rolling_upgrade_mode: The mode used to monitor health during a
      rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
@@ -71,14 +73,14 @@ class ComposeDeploymentUpgradeDescription(Model):
         'application_health_policy': {'key': 'ApplicationHealthPolicy', 'type': 'ApplicationHealthPolicy'},
     }
 
-    def __init__(self, deployment_name, compose_file_content, registry_credential=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds=None, force_restart=None, monitoring_policy=None, application_health_policy=None):
-        super(ComposeDeploymentUpgradeDescription, self).__init__()
-        self.deployment_name = deployment_name
-        self.compose_file_content = compose_file_content
-        self.registry_credential = registry_credential
-        self.upgrade_kind = upgrade_kind
-        self.rolling_upgrade_mode = rolling_upgrade_mode
-        self.upgrade_replica_set_check_timeout_in_seconds = upgrade_replica_set_check_timeout_in_seconds
-        self.force_restart = force_restart
-        self.monitoring_policy = monitoring_policy
-        self.application_health_policy = application_health_policy
+    def __init__(self, **kwargs):
+        super(ComposeDeploymentUpgradeDescription, self).__init__(**kwargs)
+        self.deployment_name = kwargs.get('deployment_name', None)
+        self.compose_file_content = kwargs.get('compose_file_content', None)
+        self.registry_credential = kwargs.get('registry_credential', None)
+        self.upgrade_kind = kwargs.get('upgrade_kind', "Rolling")
+        self.rolling_upgrade_mode = kwargs.get('rolling_upgrade_mode', "UnmonitoredAuto")
+        self.upgrade_replica_set_check_timeout_in_seconds = kwargs.get('upgrade_replica_set_check_timeout_in_seconds', None)
+        self.force_restart = kwargs.get('force_restart', None)
+        self.monitoring_policy = kwargs.get('monitoring_policy', None)
+        self.application_health_policy = kwargs.get('application_health_policy', None)

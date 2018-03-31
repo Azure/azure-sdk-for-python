@@ -24,7 +24,7 @@ class AzureIaaSVMErrorInfo(Model):
     :type error_string: str
     :param recommendations: List of localized recommendations for above error
      code.
-    :type recommendations: list of str
+    :type recommendations: list[str]
     """
 
     _attribute_map = {
@@ -34,8 +34,9 @@ class AzureIaaSVMErrorInfo(Model):
         'recommendations': {'key': 'recommendations', 'type': '[str]'},
     }
 
-    def __init__(self, error_code=None, error_title=None, error_string=None, recommendations=None):
-        self.error_code = error_code
-        self.error_title = error_title
-        self.error_string = error_string
-        self.recommendations = recommendations
+    def __init__(self, **kwargs):
+        super(AzureIaaSVMErrorInfo, self).__init__(**kwargs)
+        self.error_code = kwargs.get('error_code', None)
+        self.error_title = kwargs.get('error_title', None)
+        self.error_string = kwargs.get('error_string', None)
+        self.recommendations = kwargs.get('recommendations', None)

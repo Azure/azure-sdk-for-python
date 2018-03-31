@@ -18,19 +18,22 @@ class RedisLinkedServerWithProperties(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param linked_redis_cache_id: Fully qualified resourceId of the linked
-     redis cache.
+    :param linked_redis_cache_id: Required. Fully qualified resourceId of the
+     linked redis cache.
     :type linked_redis_cache_id: str
-    :param linked_redis_cache_location: Location of the linked redis cache.
+    :param linked_redis_cache_location: Required. Location of the linked redis
+     cache.
     :type linked_redis_cache_location: str
-    :param server_role: Role of the linked server. Possible values include:
-     'Primary', 'Secondary'
+    :param server_role: Required. Role of the linked server. Possible values
+     include: 'Primary', 'Secondary'
     :type server_role: str or ~azure.mgmt.redis.models.ReplicationRole
     :ivar provisioning_state: Terminal state of the link between primary and
      secondary redis cache.
@@ -57,9 +60,9 @@ class RedisLinkedServerWithProperties(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, linked_redis_cache_id, linked_redis_cache_location, server_role):
-        super(RedisLinkedServerWithProperties, self).__init__()
-        self.linked_redis_cache_id = linked_redis_cache_id
-        self.linked_redis_cache_location = linked_redis_cache_location
-        self.server_role = server_role
+    def __init__(self, **kwargs):
+        super(RedisLinkedServerWithProperties, self).__init__(**kwargs)
+        self.linked_redis_cache_id = kwargs.get('linked_redis_cache_id', None)
+        self.linked_redis_cache_location = kwargs.get('linked_redis_cache_location', None)
+        self.server_role = kwargs.get('server_role', None)
         self.provisioning_state = None

@@ -94,23 +94,23 @@ class NodeInfo(Model):
         'node_down_at': {'key': 'NodeDownAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name=None, ip_address_or_fqdn=None, type=None, code_version=None, config_version=None, node_status=None, node_up_time_in_seconds=None, health_state=None, is_seed_node=None, upgrade_domain=None, fault_domain=None, id=None, instance_id=None, node_deactivation_info=None, is_stopped=None, node_down_time_in_seconds=None, node_up_at=None, node_down_at=None):
-        super(NodeInfo, self).__init__()
-        self.name = name
-        self.ip_address_or_fqdn = ip_address_or_fqdn
-        self.type = type
-        self.code_version = code_version
-        self.config_version = config_version
-        self.node_status = node_status
-        self.node_up_time_in_seconds = node_up_time_in_seconds
-        self.health_state = health_state
-        self.is_seed_node = is_seed_node
-        self.upgrade_domain = upgrade_domain
-        self.fault_domain = fault_domain
-        self.id = id
-        self.instance_id = instance_id
-        self.node_deactivation_info = node_deactivation_info
-        self.is_stopped = is_stopped
-        self.node_down_time_in_seconds = node_down_time_in_seconds
-        self.node_up_at = node_up_at
-        self.node_down_at = node_down_at
+    def __init__(self, **kwargs):
+        super(NodeInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.ip_address_or_fqdn = kwargs.get('ip_address_or_fqdn', None)
+        self.type = kwargs.get('type', None)
+        self.code_version = kwargs.get('code_version', None)
+        self.config_version = kwargs.get('config_version', None)
+        self.node_status = kwargs.get('node_status', None)
+        self.node_up_time_in_seconds = kwargs.get('node_up_time_in_seconds', None)
+        self.health_state = kwargs.get('health_state', None)
+        self.is_seed_node = kwargs.get('is_seed_node', None)
+        self.upgrade_domain = kwargs.get('upgrade_domain', None)
+        self.fault_domain = kwargs.get('fault_domain', None)
+        self.id = kwargs.get('id', None)
+        self.instance_id = kwargs.get('instance_id', None)
+        self.node_deactivation_info = kwargs.get('node_deactivation_info', None)
+        self.is_stopped = kwargs.get('is_stopped', None)
+        self.node_down_time_in_seconds = kwargs.get('node_down_time_in_seconds', None)
+        self.node_up_at = kwargs.get('node_up_at', None)
+        self.node_down_at = kwargs.get('node_down_at', None)

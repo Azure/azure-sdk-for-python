@@ -30,7 +30,7 @@ class PartitionRestartProgress(Model):
         'restart_partition_result': {'key': 'RestartPartitionResult', 'type': 'RestartPartitionResult'},
     }
 
-    def __init__(self, state=None, restart_partition_result=None):
-        super(PartitionRestartProgress, self).__init__()
-        self.state = state
-        self.restart_partition_result = restart_partition_result
+    def __init__(self, **kwargs):
+        super(PartitionRestartProgress, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.restart_partition_result = kwargs.get('restart_partition_result', None)

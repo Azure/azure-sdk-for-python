@@ -49,9 +49,9 @@ class DeletedSite(Model):
         'slot': {'key': 'slot', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(DeletedSite, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(DeletedSite, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.deleted_timestamp = None
         self.subscription = None
         self.resource_group = None

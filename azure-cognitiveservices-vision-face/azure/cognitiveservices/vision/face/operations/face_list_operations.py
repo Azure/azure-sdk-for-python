@@ -57,7 +57,7 @@ class FaceListOperations(object):
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
-        url = '/facelists/{faceListId}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -87,6 +87,7 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create.metadata = {'url': '/facelists/{faceListId}'}
 
     def get(
             self, face_list_id, custom_headers=None, raw=False, **operation_config):
@@ -106,7 +107,7 @@ class FaceListOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/facelists/{faceListId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -139,6 +140,7 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/facelists/{faceListId}'}
 
     def update(
             self, face_list_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
@@ -163,7 +165,7 @@ class FaceListOperations(object):
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
         # Construct URL
-        url = '/facelists/{faceListId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -193,6 +195,7 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update.metadata = {'url': '/facelists/{faceListId}'}
 
     def delete(
             self, face_list_id, custom_headers=None, raw=False, **operation_config):
@@ -212,7 +215,7 @@ class FaceListOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/facelists/{faceListId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -238,6 +241,7 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/facelists/{faceListId}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -256,7 +260,7 @@ class FaceListOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/facelists'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True)
         }
@@ -288,6 +292,7 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/facelists'}
 
     def delete_face(
             self, face_list_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
@@ -311,7 +316,7 @@ class FaceListOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/facelists/{faceListId}/persistedFaces/{persistedFaceId}'
+        url = self.delete_face.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$'),
@@ -338,6 +343,7 @@ class FaceListOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_face.metadata = {'url': '/facelists/{faceListId}/persistedFaces/{persistedFaceId}'}
 
     def add_face_from_url(
             self, face_list_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
@@ -372,7 +378,7 @@ class FaceListOperations(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/facelists/{faceListId}/persistedFaces'
+        url = self.add_face_from_url.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -413,6 +419,7 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
+    add_face_from_url.metadata = {'url': '/facelists/{faceListId}/persistedFaces'}
 
     def add_face_from_stream(
             self, face_list_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -450,7 +457,7 @@ class FaceListOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
         # Construct URL
-        url = '/facelists/{faceListId}/persistedFaces'
+        url = self.add_face_from_stream.metadata['url']
         path_format_arguments = {
             'AzureRegion': self._serialize.url("self.config.azure_region", self.config.azure_region, 'AzureRegions', skip_quote=True),
             'faceListId': self._serialize.url("face_list_id", face_list_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -491,3 +498,4 @@ class FaceListOperations(object):
             return client_raw_response
 
         return deserialized
+    add_face_from_stream.metadata = {'url': '/facelists/{faceListId}/persistedFaces'}

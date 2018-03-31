@@ -24,6 +24,6 @@ class DetachDiskProperties(Model):
         'leased_by_lab_vm_id': {'key': 'leasedByLabVmId', 'type': 'str'},
     }
 
-    def __init__(self, leased_by_lab_vm_id=None):
-        super(DetachDiskProperties, self).__init__()
-        self.leased_by_lab_vm_id = leased_by_lab_vm_id
+    def __init__(self, **kwargs):
+        super(DetachDiskProperties, self).__init__(**kwargs)
+        self.leased_by_lab_vm_id = kwargs.get('leased_by_lab_vm_id', None)

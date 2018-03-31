@@ -15,14 +15,16 @@ from .restore_request import RestoreRequest
 class IaasVMRestoreRequest(RestoreRequest):
     """IaaS VM workload-specific restore.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param recovery_point_id: ID of the backup copy to be recovered.
     :type recovery_point_id: str
     :param recovery_type: Type of this recovery. Possible values include:
      'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks'
-    :type recovery_type: str or :class:`RecoveryType
-     <azure.mgmt.recoveryservicesbackup.models.RecoveryType>`
+    :type recovery_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM which is being
      recovered.
     :type source_resource_id: str
@@ -60,12 +62,12 @@ class IaasVMRestoreRequest(RestoreRequest):
      while restoring the VM. If this is false, VM will be restored to the same
      cloud service as it was at the time of backup.
     :type create_new_cloud_service: bool
-    :param original_storage_account_option:
+    :param original_storage_account_option: Original SA Option
     :type original_storage_account_option: bool
     :param encryption_details: Details needed if the VM was encrypted at the
      time of backup.
-    :type encryption_details: :class:`EncryptionDetails
-     <azure.mgmt.recoveryservicesbackup.models.EncryptionDetails>`
+    :type encryption_details:
+     ~azure.mgmt.recoveryservicesbackup.models.EncryptionDetails
     """
 
     _validation = {
@@ -90,20 +92,20 @@ class IaasVMRestoreRequest(RestoreRequest):
         'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
     }
 
-    def __init__(self, recovery_point_id=None, recovery_type=None, source_resource_id=None, target_virtual_machine_id=None, target_resource_group_id=None, storage_account_id=None, virtual_network_id=None, subnet_id=None, target_domain_name_id=None, region=None, affinity_group=None, create_new_cloud_service=None, original_storage_account_option=None, encryption_details=None):
-        super(IaasVMRestoreRequest, self).__init__()
-        self.recovery_point_id = recovery_point_id
-        self.recovery_type = recovery_type
-        self.source_resource_id = source_resource_id
-        self.target_virtual_machine_id = target_virtual_machine_id
-        self.target_resource_group_id = target_resource_group_id
-        self.storage_account_id = storage_account_id
-        self.virtual_network_id = virtual_network_id
-        self.subnet_id = subnet_id
-        self.target_domain_name_id = target_domain_name_id
-        self.region = region
-        self.affinity_group = affinity_group
-        self.create_new_cloud_service = create_new_cloud_service
-        self.original_storage_account_option = original_storage_account_option
-        self.encryption_details = encryption_details
+    def __init__(self, **kwargs):
+        super(IaasVMRestoreRequest, self).__init__(**kwargs)
+        self.recovery_point_id = kwargs.get('recovery_point_id', None)
+        self.recovery_type = kwargs.get('recovery_type', None)
+        self.source_resource_id = kwargs.get('source_resource_id', None)
+        self.target_virtual_machine_id = kwargs.get('target_virtual_machine_id', None)
+        self.target_resource_group_id = kwargs.get('target_resource_group_id', None)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
+        self.virtual_network_id = kwargs.get('virtual_network_id', None)
+        self.subnet_id = kwargs.get('subnet_id', None)
+        self.target_domain_name_id = kwargs.get('target_domain_name_id', None)
+        self.region = kwargs.get('region', None)
+        self.affinity_group = kwargs.get('affinity_group', None)
+        self.create_new_cloud_service = kwargs.get('create_new_cloud_service', None)
+        self.original_storage_account_option = kwargs.get('original_storage_account_option', None)
+        self.encryption_details = kwargs.get('encryption_details', None)
         self.object_type = 'IaasVMRestoreRequest'

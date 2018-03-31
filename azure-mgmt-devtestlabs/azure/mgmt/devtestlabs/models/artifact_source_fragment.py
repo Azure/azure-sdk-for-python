@@ -79,15 +79,15 @@ class ArtifactSourceFragment(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, display_name=None, uri=None, source_type=None, folder_path=None, arm_template_folder_path=None, branch_ref=None, security_token=None, status=None, provisioning_state=None, unique_identifier=None):
-        super(ArtifactSourceFragment, self).__init__(location=location, tags=tags)
-        self.display_name = display_name
-        self.uri = uri
-        self.source_type = source_type
-        self.folder_path = folder_path
-        self.arm_template_folder_path = arm_template_folder_path
-        self.branch_ref = branch_ref
-        self.security_token = security_token
-        self.status = status
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(ArtifactSourceFragment, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.uri = kwargs.get('uri', None)
+        self.source_type = kwargs.get('source_type', None)
+        self.folder_path = kwargs.get('folder_path', None)
+        self.arm_template_folder_path = kwargs.get('arm_template_folder_path', None)
+        self.branch_ref = kwargs.get('branch_ref', None)
+        self.security_token = kwargs.get('security_token', None)
+        self.status = kwargs.get('status', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.unique_identifier = kwargs.get('unique_identifier', None)

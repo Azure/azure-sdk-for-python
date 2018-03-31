@@ -15,14 +15,17 @@ from .job import Job
 class AzureIaaSVMJob(Job):
     """Azure IaaS VM workload-specifc job object.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param entity_friendly_name: Friendly name of the entity on which the
      current job is executing.
     :type entity_friendly_name: str
     :param backup_management_type: Backup management type to execute the
      current job. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB',
-     'DPM', 'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'DPM', 'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: The operation name.
     :type operation: str
     :param status: Job status.
@@ -33,23 +36,23 @@ class AzureIaaSVMJob(Job):
     :type end_time: datetime
     :param activity_id: ActivityId of job.
     :type activity_id: str
-    :param job_type: Polymorphic Discriminator
+    :param job_type: Required. Constant filled by server.
     :type job_type: str
     :param duration: Time elapsed during the execution of this job.
     :type duration: timedelta
     :param actions_info: Gets or sets the state/actions applicable on this job
      like cancel/retry.
-    :type actions_info: list of str or :class:`JobSupportedAction
-     <azure.mgmt.recoveryservicesbackup.models.JobSupportedAction>`
+    :type actions_info: list[str or
+     ~azure.mgmt.recoveryservicesbackup.models.JobSupportedAction]
     :param error_details: Error details on execution of this job.
-    :type error_details: list of :class:`AzureIaaSVMErrorInfo
-     <azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMErrorInfo>`
+    :type error_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMErrorInfo]
     :param virtual_machine_version: Specifies whether the backup item is a
      Classic or an Azure Resource Manager VM.
     :type virtual_machine_version: str
     :param extended_info: Additional information for this job.
-    :type extended_info: :class:`AzureIaaSVMJobExtendedInfo
-     <azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMJobExtendedInfo>`
+    :type extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMJobExtendedInfo
     """
 
     _validation = {
@@ -72,11 +75,11 @@ class AzureIaaSVMJob(Job):
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMJobExtendedInfo'},
     }
 
-    def __init__(self, entity_friendly_name=None, backup_management_type=None, operation=None, status=None, start_time=None, end_time=None, activity_id=None, duration=None, actions_info=None, error_details=None, virtual_machine_version=None, extended_info=None):
-        super(AzureIaaSVMJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id)
-        self.duration = duration
-        self.actions_info = actions_info
-        self.error_details = error_details
-        self.virtual_machine_version = virtual_machine_version
-        self.extended_info = extended_info
+    def __init__(self, **kwargs):
+        super(AzureIaaSVMJob, self).__init__(**kwargs)
+        self.duration = kwargs.get('duration', None)
+        self.actions_info = kwargs.get('actions_info', None)
+        self.error_details = kwargs.get('error_details', None)
+        self.virtual_machine_version = kwargs.get('virtual_machine_version', None)
+        self.extended_info = kwargs.get('extended_info', None)
         self.job_type = 'AzureIaaSVMJob'
