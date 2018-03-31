@@ -16,6 +16,8 @@ class PolicyContentFormat(str, Enum):
 
     xml = "xml"
     xml_link = "xml-link"
+    rawxml = "rawxml"
+    rawxml_link = "rawxml-link"
 
 
 class Protocol(str, Enum):
