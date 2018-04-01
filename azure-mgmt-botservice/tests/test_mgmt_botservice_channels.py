@@ -73,7 +73,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         )
         
         self.assertIsNotNone(channel)
-        #is_enabled being true means that the service has managed to get the channel working fine.
+        #is_enabled being true means that the service has managed to get the channel working.
         self.assertTrue(channel.properties.properties.is_enabled)
 
         channel = self.client.channels.delete(
@@ -145,19 +145,54 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #         channel_properties = channel
     #     )
 
-    def test_sms_channel(self):
-        from azure.mgmt.botservice.models import SmsChannel,SmsChannelProperties
-        channel = SmsChannel(
-            properties = SmsChannelProperties(
-                phone = '+15153258725',
-                account_sid = 'AC421cab6999e0c8c0d1a90c6643db8f05',
-                auth_token = '507d2f4f9a832fdd042d05c500b3a88f',
-                is_enabled = True,
-                is_validated = False 
-            )
-        )
+    # def test_sms_channel(self):
+    #     from azure.mgmt.botservice.models import SmsChannel,SmsChannelProperties
+    #     channel = SmsChannel(
+    #         properties = SmsChannelProperties(
+    #             phone = '+15153258725',
+    #             account_sid = 'AC421cab6999e0c8c0d1a90c6643db8f05',
+    #             auth_token = '507d2f4f9a832fdd042d05c500b3a88f',
+    #             is_enabled = True,
+    #             is_validated = False 
+    #         )
+    #     )
     
-        self.validateGetAndDeleteChannel(
-            channel_name = 'SmsChannel',
-            channel_properties = channel
-        )
+    #     self.validateGetAndDeleteChannel(
+    #         channel_name = 'SmsChannel',
+    #         channel_properties = channel
+    #     )
+
+    # def test_webchat_channel(self):
+    #     from azure.mgmt.botservice.models import WebChatChannel,WebChatChannelProperties,WebChatSite
+    #     channel = WebChatChannel(
+    #         properties = WebChatChannelProperties(
+    #             sites = [WebChatSite(
+    #                 site_name = 'Default',
+    #                 is_enabled = True,
+    #                 enable_preview = True
+    #             )]
+    #         )
+    #     )
+        
+    #     self.validateGetAndDeleteChannel(
+    #         channel_name = 'WebChatChannel',
+    #         channel_properties = channel
+    #     )
+
+    # def test_directline_channel(self):
+    #     from azure.mgmt.botservice.models import DirectLineChannel,DirectLineChannelProperties,DirectLineSite
+    #     channel = DirectLineChannel(
+    #         properties = DirectLineChannelProperties(
+    #             sites = [DirectLineSite(
+    #                 site_name = 'Default',
+    #                 is_enabled = True,
+    #                 is_v1_enabled = False,
+    #                 is_v3_enabled = True
+    #             )]
+    #         )
+    #     )
+        
+    #     self.validateGetAndDeleteChannel(
+    #         channel_name = 'DirectLineChannel',
+    #         channel_properties = channel
+    #     )
