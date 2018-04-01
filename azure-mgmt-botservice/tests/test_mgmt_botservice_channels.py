@@ -16,14 +16,14 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         #create a bot here
         self.client = self.create_mgmt_client(AzureBotService)
         self.resource_group_name = 'testpythonrg'
-        self.resource_name = 'testpythonbot11'
+        self.resource_name = 'testpythonbot13'
         location = 'global'
         sku_name = 'Free'
         kind= 'Bot'
         display_name = "this is a test bot"
         description= "this is a description for a test bot"
         endpoint = "https://bing.com/messages/"
-        msa_app_id = "41a220b9-6571-4f0b-bbd2-43f1c1d82f52"
+        msa_app_id = "41a220b9-6571-4f0b-bbd2-43f1c1d82f53"
         developer_app_insight_key = '59513bad-10a7-4d41-b4d0-b1c34c6af52a'
         developer_app_insights_api_key = 'w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv2r'
         developer_app_insights_application_id = 'cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b'
@@ -62,7 +62,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         self.client.channels.create(
             resource_group_name = self.resource_group_name,
             resource_name = self.resource_name,
-            channel_name = 'EmailChannel',
+            channel_name = channel_name,
             parameters = botChannel 
         )
 
@@ -88,20 +88,20 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
                 channel_name = channel_name
             )
 
-    def test_email_channel(self):
-        from azure.mgmt.botservice.models import EmailChannel,EmailChannelProperties
-        channel = EmailChannel(
-            properties = EmailChannelProperties(
-                email_address = 'swagatm2@outlook.com',
-                password = 'Redmond1!',
-                is_enabled = True
-            )
-        )
+    # def test_email_channel(self):
+    #     from azure.mgmt.botservice.models import EmailChannel,EmailChannelProperties
+    #     channel = EmailChannel(
+    #         properties = EmailChannelProperties(
+    #             email_address = 'swagatm2@outlook.com',
+    #             password = 'Redmond1!',
+    #             is_enabled = True
+    #         )
+    #     )
 
-        self.validateGetAndDeleteChannel(
-            channel_name = 'EmailChannel',
-            channel_properties = channel
-        )
+    #     self.validateGetAndDeleteChannel(
+    #         channel_name = 'EmailChannel',
+    #         channel_properties = channel
+    #     )
 
     # def test_msteams_channel(self):
     #     from azure.mgmt.botservice.models import MsTeamsChannel,MsTeamsChannelProperties
@@ -111,42 +111,24 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #             enable_messaging = True, 
     #         )
     #     )
-    #     botChannel = BotChannel(
-    #         location = 'global',
-    #         properties = channel
-    #     )
-    #     self.client.channels.create(
-    #         resource_group_name = self.resource_group_name,
-    #         resource_name = self.resource_name,
-    #         # resource_group_name = 'swagatmwebappbottest',
-    #         # resource_name = 'swagatmwebappbottest',
-    #         channel_name = 'MsTeamsChannel',
-    #         parameters = botChannel 
-    #     )
-        
+       
     #     self.validateGetAndDeleteChannel(
-    #         channel_name = 'MsTeamsChannel'
+    #         channel_name = 'MsTeamsChannel',
+    #         channel_properties = channel
     #     )
     
-    # def test_skype_channel(self):
-    #     from azure.mgmt.botservice.models import SkypeChannel,SkypeChannelProperties
-    #     channel = SkypeChannel(
-    #         properties = SkypeChannelProperties(
-    #             is_enabled = is_enabled,
-    #             enable_messaging = enable_messaging,
-    #         )
-    #     )
-    #     botChannel = BotChannel(
-    #         location = 'global',
-    #         properties = channel
-    #     )
-    #     #todo: change client factor in init file or make this a command
-    #     return client.channels.create(
-    #         resource_group_name = resource_group_name,
-    #         resource_name = resource_name,
-    #         channel_name = 'SkypeChannel',
-    #         parameters = botChannel 
-    #     )
+    def test_skype_channel(self):
+        from azure.mgmt.botservice.models import SkypeChannel,SkypeChannelProperties
+        channel = SkypeChannel(
+            properties = SkypeChannelProperties(
+                is_enabled = True,
+                enable_messaging = True,
+            )
+        )
+        self.validateGetAndDeleteChannel(
+            channel_name = 'SkypeChannel',
+            channel_properties = channel
+        )
 
     # def test_telegram_channel(self):
     #     from azure.mgmt.botservice.models import TelegramChannel,TelegramChannelProperties
