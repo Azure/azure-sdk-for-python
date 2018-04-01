@@ -125,6 +125,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
                 enable_messaging = True,
             )
         )
+
         self.validateGetAndDeleteChannel(
             channel_name = 'SkypeChannel',
             channel_properties = channel
@@ -138,18 +139,10 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #             is_enabled = True,
     #         )
     #     )
-    #     botChannel = BotChannel(
-    #         location = 'global',
-    #         properties = channel
-    #     )
-    #     self.client.channels.create(
-    #         resource_group_name = self.resource_group_name,
-    #         resource_name = self.resource_name,
-    #         channel_name = 'TelegramChannel',
-    #         parameters = botChannel 
-    #     )
+
     #     self.validateGetAndDeleteChannel(
-    #         channel_name = 'TelegramChannel'
+    #         channel_name = 'TelegramChannel',
+    #         channel_properties = channel
     #     )
 
     # def test_sms_channel(self):
