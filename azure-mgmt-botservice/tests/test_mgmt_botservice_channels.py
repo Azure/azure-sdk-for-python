@@ -117,19 +117,19 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #         channel_properties = channel
     #     )
     
-    def test_skype_channel(self):
-        from azure.mgmt.botservice.models import SkypeChannel,SkypeChannelProperties
-        channel = SkypeChannel(
-            properties = SkypeChannelProperties(
-                is_enabled = True,
-                enable_messaging = True,
-            )
-        )
+    # def test_skype_channel(self):
+    #     from azure.mgmt.botservice.models import SkypeChannel,SkypeChannelProperties
+    #     channel = SkypeChannel(
+    #         properties = SkypeChannelProperties(
+    #             is_enabled = True,
+    #             enable_messaging = True,
+    #         )
+    #     )
 
-        self.validateGetAndDeleteChannel(
-            channel_name = 'SkypeChannel',
-            channel_properties = channel
-        )
+    #     self.validateGetAndDeleteChannel(
+    #         channel_name = 'SkypeChannel',
+    #         channel_properties = channel
+    #     )
 
     # def test_telegram_channel(self):
     #     from azure.mgmt.botservice.models import TelegramChannel,TelegramChannelProperties
@@ -145,54 +145,19 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #         channel_properties = channel
     #     )
 
-    # def test_sms_channel(self):
-    #     from azure.mgmt.botservice.models import SmsChannel,SmsChannelProperties
-    #     channel = SmsChannel(
-    #         properties = SmsChannelProperties(
-    #             phone = '+15153258725',
-    #             account_sid = 'AC421cab6999e0c8c0d1a90c6643db8f05',
-    #             auth_token = '507d2f4f9a832fdd042d05c500b3a88f',
-    #             is_enabled = True,
-    #             is_validated = False 
-    #         )
-    #     )
-    #     botChannel = BotChannel(
-    #         location = 'global',
-    #         properties = channel
-    #     )
-    #     #todo: change client factor in init file or make this a command
-    #     self.client.channels.create(
-    #         resource_group_name = self.resource_group_name,
-    #         resource_name = self.resource_name,
-    #         channel_name = 'SmsChannel',
-    #         parameters = botChannel 
-    #     )    
+    def test_sms_channel(self):
+        from azure.mgmt.botservice.models import SmsChannel,SmsChannelProperties
+        channel = SmsChannel(
+            properties = SmsChannelProperties(
+                phone = '+15153258725',
+                account_sid = 'AC421cab6999e0c8c0d1a90c6643db8f05',
+                auth_token = '507d2f4f9a832fdd042d05c500b3a88f',
+                is_enabled = True,
+                is_validated = False 
+            )
+        )
     
-    #     self.validateGetAndDeleteChannel(
-    #         channel_name = 'SmsChannel'
-    #     )
-
-    # def test_slack_channel(self):
-    #     from azure.mgmt.botservice.models import SlackChannel,SlackChannelProperties
-    #     channel = SlackChannel(
-    #         properties = SlackChannelProperties(
-    #             client_id = '130828831840.338719758214',
-    #             client_secret = 'f8bbe76c52f8e339622b5c17e5004d26',
-    #             verification_token = 'AhWzLaEjsy8uVgIsxFTZhDwd',
-    #             is_enabled = True
-    #         )
-    #     )
-    #     botChannel = BotChannel(
-    #         location = 'global',
-    #         properties = channel
-    #     )
-    #     self.client.channels.create(
-    #         resource_group_name = self.resource_group_name,
-    #         resource_name = self.resource_name,
-    #         channel_name = 'SlackChannel',
-    #         parameters = botChannel 
-    #     )
-    
-    #     self.validateGetAndDeleteChannel(
-    #         channel_name = 'SlackChannel'
-    #     )
+        self.validateGetAndDeleteChannel(
+            channel_name = 'SmsChannel',
+            channel_properties = channel
+        )
