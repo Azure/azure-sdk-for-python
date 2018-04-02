@@ -12,23 +12,18 @@
 from msrest.serialization import Model
 
 
-class VaultProperties(Model):
+class VaultPatchProperties(Model):
     """Properties of the vault.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param tenant_id: Required. The Azure Active Directory tenant ID that
-     should be used for authenticating requests to the key vault.
+    :param tenant_id: The Azure Active Directory tenant ID that should be used
+     for authenticating requests to the key vault.
     :type tenant_id: str
-    :param sku: Required. SKU details
+    :param sku: SKU details
     :type sku: ~azure.mgmt.keyvault.models.Sku
     :param access_policies: An array of 0 to 16 identities that have access to
      the key vault. All identities in the array must use the same tenant ID as
      the key vault's tenant ID.
     :type access_policies: list[~azure.mgmt.keyvault.models.AccessPolicyEntry]
-    :param vault_uri: The URI of the vault for performing operations on keys
-     and secrets.
-    :type vault_uri: str
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from the
      key vault.
@@ -60,16 +55,10 @@ class VaultProperties(Model):
     :type network_acls: ~azure.mgmt.keyvault.models.NetworkRuleSet
     """
 
-    _validation = {
-        'tenant_id': {'required': True},
-        'sku': {'required': True},
-    }
-
     _attribute_map = {
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'access_policies': {'key': 'accessPolicies', 'type': '[AccessPolicyEntry]'},
-        'vault_uri': {'key': 'vaultUri', 'type': 'str'},
         'enabled_for_deployment': {'key': 'enabledForDeployment', 'type': 'bool'},
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
@@ -79,16 +68,15 @@ class VaultProperties(Model):
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, **kwargs):
-        super(VaultProperties, self).__init__(**kwargs)
-        self.tenant_id = kwargs.get('tenant_id', None)
-        self.sku = kwargs.get('sku', None)
-        self.access_policies = kwargs.get('access_policies', None)
-        self.vault_uri = kwargs.get('vault_uri', None)
-        self.enabled_for_deployment = kwargs.get('enabled_for_deployment', None)
-        self.enabled_for_disk_encryption = kwargs.get('enabled_for_disk_encryption', None)
-        self.enabled_for_template_deployment = kwargs.get('enabled_for_template_deployment', None)
-        self.enable_soft_delete = kwargs.get('enable_soft_delete', None)
-        self.create_mode = kwargs.get('create_mode', None)
-        self.enable_purge_protection = kwargs.get('enable_purge_protection', None)
-        self.network_acls = kwargs.get('network_acls', None)
+    def __init__(self, *, tenant_id: str=None, sku=None, access_policies=None, enabled_for_deployment: bool=None, enabled_for_disk_encryption: bool=None, enabled_for_template_deployment: bool=None, enable_soft_delete: bool=None, create_mode=None, enable_purge_protection: bool=None, network_acls=None, **kwargs) -> None:
+        super(VaultPatchProperties, self).__init__(**kwargs)
+        self.tenant_id = tenant_id
+        self.sku = sku
+        self.access_policies = access_policies
+        self.enabled_for_deployment = enabled_for_deployment
+        self.enabled_for_disk_encryption = enabled_for_disk_encryption
+        self.enabled_for_template_deployment = enabled_for_template_deployment
+        self.enable_soft_delete = enable_soft_delete
+        self.create_mode = create_mode
+        self.enable_purge_protection = enable_purge_protection
+        self.network_acls = network_acls

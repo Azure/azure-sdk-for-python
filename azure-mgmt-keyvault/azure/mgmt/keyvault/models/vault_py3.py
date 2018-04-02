@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """Key Vault resource.
+class Vault(Resource):
+    """Resource information with extended details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,6 +31,8 @@ class Resource(Model):
     :type location: str
     :param tags: The tags that will be assigned to the key vault.
     :type tags: dict[str, str]
+    :param properties: Required. Properties of the vault
+    :type properties: ~azure.mgmt.keyvault.models.VaultProperties
     """
 
     _validation = {
@@ -38,6 +40,7 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -46,12 +49,9 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'VaultProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, location: str, properties, tags=None, **kwargs) -> None:
+        super(Vault, self).__init__(location=location, tags=tags, **kwargs)
+        self.properties = properties

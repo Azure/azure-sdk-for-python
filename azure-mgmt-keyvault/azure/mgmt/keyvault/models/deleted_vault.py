@@ -41,9 +41,9 @@ class DeletedVault(Model):
         'properties': {'key': 'properties', 'type': 'DeletedVaultProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(DeletedVault, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeletedVault, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)

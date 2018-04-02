@@ -12,25 +12,26 @@
 from msrest.serialization import Model
 
 
-class VirtualNetworkRule(Model):
-    """A rule governing the accesibility of a vault from a specific virtual
-    network.
+class IPRule(Model):
+    """A rule governing the accesibility of a vault from a specific ip address or
+    ip range.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Full resource id of a vnet subnet, such as
-     '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
-    :type id: str
+    :param value: Required. An IPv4 address range in CIDR notation, such as
+     '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all addresses that
+     start with 124.56.78).
+    :type value: str
     """
 
     _validation = {
-        'id': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualNetworkRule, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+    def __init__(self, *, value: str, **kwargs) -> None:
+        super(IPRule, self).__init__(**kwargs)
+        self.value = value

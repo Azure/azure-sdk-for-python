@@ -40,6 +40,6 @@ class Sku(Model):
 
     family = "A"
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
