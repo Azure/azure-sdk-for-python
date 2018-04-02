@@ -25,7 +25,8 @@ class VerificationIPFlowParameters(Model):
     :type direction: str or ~azure.mgmt.network.v2018_02_01.models.Direction
     :param protocol: Required. Protocol to be verified on. Possible values
      include: 'TCP', 'UDP'
-    :type protocol: str or ~azure.mgmt.network.v2018_02_01.models.Protocol
+    :type protocol: str or
+     ~azure.mgmt.network.v2018_02_01.models.IpFlowProtocol
     :param local_port: Required. The local port. Acceptable values are a
      single integer in the range (0-65535). Support for * for the source port,
      which depends on the direction.
