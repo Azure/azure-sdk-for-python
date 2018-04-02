@@ -22,6 +22,12 @@ class ConnectivityParameters(Model):
     :param destination: Required.
     :type destination:
      ~azure.mgmt.network.v2018_02_01.models.ConnectivityDestination
+    :param protocol: Network protocol. Possible values include: 'Tcp', 'Http',
+     'Https', 'Icmp'
+    :type protocol: str or ~azure.mgmt.network.v2018_02_01.models.Protocol
+    :param protocol_configuration:
+    :type protocol_configuration:
+     ~azure.mgmt.network.v2018_02_01.models.ProtocolConfiguration
     """
 
     _validation = {
@@ -32,9 +38,13 @@ class ConnectivityParameters(Model):
     _attribute_map = {
         'source': {'key': 'source', 'type': 'ConnectivitySource'},
         'destination': {'key': 'destination', 'type': 'ConnectivityDestination'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'protocol_configuration': {'key': 'protocolConfiguration', 'type': 'ProtocolConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(ConnectivityParameters, self).__init__(**kwargs)
         self.source = kwargs.get('source', None)
         self.destination = kwargs.get('destination', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.protocol_configuration = kwargs.get('protocol_configuration', None)

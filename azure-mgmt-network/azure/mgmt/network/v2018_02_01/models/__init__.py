@@ -136,6 +136,9 @@ try:
     from .flow_log_information_py3 import FlowLogInformation
     from .connectivity_source_py3 import ConnectivitySource
     from .connectivity_destination_py3 import ConnectivityDestination
+    from .http_header_py3 import HTTPHeader
+    from .http_configuration_py3 import HTTPConfiguration
+    from .protocol_configuration_py3 import ProtocolConfiguration
     from .connectivity_parameters_py3 import ConnectivityParameters
     from .connectivity_issue_py3 import ConnectivityIssue
     from .connectivity_hop_py3 import ConnectivityHop
@@ -326,6 +329,9 @@ except (SyntaxError, ImportError):
     from .flow_log_information import FlowLogInformation
     from .connectivity_source import ConnectivitySource
     from .connectivity_destination import ConnectivityDestination
+    from .http_header import HTTPHeader
+    from .http_configuration import HTTPConfiguration
+    from .protocol_configuration import ProtocolConfiguration
     from .connectivity_parameters import ConnectivityParameters
     from .connectivity_issue import ConnectivityIssue
     from .connectivity_hop import ConnectivityHop
@@ -471,15 +477,18 @@ from .network_management_client_enums import (
     ProvisioningState,
     AssociationType,
     Direction,
-    Protocol,
+    IpFlowProtocol,
     NextHopType,
     PcProtocol,
     PcStatus,
     PcError,
+    Protocol,
+    HTTPMethod,
     Origin,
     Severity,
     IssueType,
     ConnectionStatus,
+    ConnectionMonitorSourceStatus,
     ConnectionState,
     EvaluationState,
     VirtualNetworkPeeringState,
@@ -628,6 +637,9 @@ __all__ = [
     'FlowLogInformation',
     'ConnectivitySource',
     'ConnectivityDestination',
+    'HTTPHeader',
+    'HTTPConfiguration',
+    'ProtocolConfiguration',
     'ConnectivityParameters',
     'ConnectivityIssue',
     'ConnectivityHop',
@@ -772,15 +784,18 @@ __all__ = [
     'ProvisioningState',
     'AssociationType',
     'Direction',
-    'Protocol',
+    'IpFlowProtocol',
     'NextHopType',
     'PcProtocol',
     'PcStatus',
     'PcError',
+    'Protocol',
+    'HTTPMethod',
     'Origin',
     'Severity',
     'IssueType',
     'ConnectionStatus',
+    'ConnectionMonitorSourceStatus',
     'ConnectionState',
     'EvaluationState',
     'VirtualNetworkPeeringState',
