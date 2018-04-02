@@ -127,6 +127,7 @@ from .application_stack import ApplicationStack
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
 from .resource_health_metadata import ResourceHealthMetadata
+from .billing_meter import BillingMeter
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
 from .geo_region import GeoRegion
 from .hosting_environment_deployment_info import HostingEnvironmentDeploymentInfo
@@ -235,6 +236,7 @@ from .source_control_paged import SourceControlPaged
 from .geo_region_paged import GeoRegionPaged
 from .identifier_paged import IdentifierPaged
 from .premier_add_on_offer_paged import PremierAddOnOfferPaged
+from .billing_meter_paged import BillingMeterPaged
 from .site_paged import SitePaged
 from .backup_item_paged import BackupItemPaged
 from .site_config_resource_paged import SiteConfigResourcePaged
@@ -446,6 +448,7 @@ __all__ = [
     'Recommendation',
     'RecommendationRule',
     'ResourceHealthMetadata',
+    'BillingMeter',
     'CsmMoveResourceEnvelope',
     'GeoRegion',
     'HostingEnvironmentDeploymentInfo',
@@ -554,6 +557,7 @@ __all__ = [
     'GeoRegionPaged',
     'IdentifierPaged',
     'PremierAddOnOfferPaged',
+    'BillingMeterPaged',
     'SitePaged',
     'BackupItemPaged',
     'SiteConfigResourcePaged',
