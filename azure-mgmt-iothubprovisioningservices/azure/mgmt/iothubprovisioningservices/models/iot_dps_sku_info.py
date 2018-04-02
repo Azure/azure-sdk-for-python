@@ -36,8 +36,8 @@ class IotDpsSkuInfo(Model):
         'capacity': {'key': 'capacity', 'type': 'long'},
     }
 
-    def __init__(self, name=None, capacity=None):
-        super(IotDpsSkuInfo, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(IotDpsSkuInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.tier = None
-        self.capacity = capacity
+        self.capacity = kwargs.get('capacity', None)

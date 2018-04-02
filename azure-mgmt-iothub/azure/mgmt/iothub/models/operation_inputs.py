@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class OperationInputs(Model):
     """Input values.
 
-    :param name: The name of the IoT hub to check.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the IoT hub to check.
     :type name: str
     """
 
@@ -24,8 +26,9 @@ class OperationInputs(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(OperationInputs, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
