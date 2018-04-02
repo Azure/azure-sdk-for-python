@@ -37,9 +37,9 @@ class NetworkRuleSet(Model):
         'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, bypass=None, default_action=None, ip_rules=None, virtual_network_rules=None, **kwargs) -> None:
         super(NetworkRuleSet, self).__init__(**kwargs)
-        self.bypass = kwargs.get('bypass', None)
-        self.default_action = kwargs.get('default_action', None)
-        self.ip_rules = kwargs.get('ip_rules', None)
-        self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.bypass = bypass
+        self.default_action = default_action
+        self.ip_rules = ip_rules
+        self.virtual_network_rules = virtual_network_rules
