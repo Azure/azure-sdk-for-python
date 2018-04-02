@@ -46,6 +46,20 @@ class WebTestKind(Enum):
     multistep = "multistep"
 
 
+class ItemScope(Enum):
+
+    shared = "shared"
+    user = "user"
+
+
+class ItemType(Enum):
+
+    query = "query"
+    function = "function"
+    folder = "folder"
+    recent = "recent"
+
+
 class FavoriteSourceType(Enum):
 
     retention = "retention"
@@ -56,3 +70,18 @@ class FavoriteSourceType(Enum):
     funnel = "funnel"
     impact = "impact"
     segmentation = "segmentation"
+
+
+class ItemScopePath(Enum):
+
+    analytics_items = "analyticsItems"
+    myanalytics_items = "myanalyticsItems"
+
+
+class ItemTypeParameter(Enum):
+
+    none = "none"
+    query = "query"
+    function = "function"
+    folder = "folder"
+    recent = "recent"
