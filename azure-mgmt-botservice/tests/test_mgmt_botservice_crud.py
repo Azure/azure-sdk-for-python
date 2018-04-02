@@ -24,7 +24,7 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
         self.developer_app_insights_application_id = 'cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b'
 
     def validate_bot_properties(self, bot):
-        self.assertEqual(bot.id, f'/subscriptions/{self.client.config.subscription_id}/resourceGroups/{self.resource_group_name}/providers/Microsoft.BotService/botServices/{self.resource_name}')
+        self.assertEqual(bot.id, '/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.BotService/botServices/{2}'.format(self.client.config.subscription_id,self.resource_group_name,self.resource_name))
         self.assertEqual(bot.name, self.resource_name)
         self.assertEqual(bot.location, self.location)
         self.assertEqual(bot.sku.name, self.sku_name)
