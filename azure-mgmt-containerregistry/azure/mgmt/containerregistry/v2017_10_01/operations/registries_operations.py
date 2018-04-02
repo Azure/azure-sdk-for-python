@@ -41,7 +41,7 @@ class RegistriesOperations(object):
 
 
     def _import_image_initial(
-            self, resource_group_name, registry_name, import_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, registry_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.import_image.metadata['url']
         path_format_arguments = {
@@ -66,7 +66,7 @@ class RegistriesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(import_parameters, 'ImportImageParameters')
+        body_content = self._serialize.body(parameters, 'ImportImageParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -83,17 +83,18 @@ class RegistriesOperations(object):
             return client_raw_response
 
     def import_image(
-            self, resource_group_name, registry_name, import_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Copies an image to this registry from the specified registry.
+            self, resource_group_name, registry_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Copies an image to this container registry from the specified container
+        registry.
 
         :param resource_group_name: The name of the resource group to which
          the container registry belongs.
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param import_parameters: The parameters specifying the image to copy
-         and the source registry.
-        :type import_parameters:
+        :param parameters: The parameters specifying the image to copy and the
+         source container registry.
+        :type parameters:
          ~azure.mgmt.containerregistry.v2017_10_01.models.ImportImageParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -109,7 +110,7 @@ class RegistriesOperations(object):
         raw_result = self._import_image_initial(
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            import_parameters=import_parameters,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

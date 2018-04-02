@@ -17,19 +17,29 @@ class ImportSource(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource_id: Required. The resource identifier of the source Azure
+    :param resource_id: Required. The resource identifier of the target Azure
      Container Registry.
     :type resource_id: str
+    :param source_image: Required. Repository name of the source image.
+     Specify an image by repository ('hello-world'). This will use the 'latest'
+     tag.
+     Specify an image by tag ('hello-world:latest').
+     Specify an image by sha256-based manifest digest
+     ('hello-world@sha256:abc123').
+    :type source_image: str
     """
 
     _validation = {
         'resource_id': {'required': True},
+        'source_image': {'required': True},
     }
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'source_image': {'key': 'sourceImage', 'type': 'str'},
     }
 
-    def __init__(self, *, resource_id: str, **kwargs) -> None:
+    def __init__(self, *, resource_id: str, source_image: str, **kwargs) -> None:
         super(ImportSource, self).__init__(**kwargs)
         self.resource_id = resource_id
+        self.source_image = source_image
