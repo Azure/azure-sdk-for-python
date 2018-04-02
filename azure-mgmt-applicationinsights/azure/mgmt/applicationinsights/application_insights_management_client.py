@@ -28,6 +28,7 @@ from .operations.favorites_operations import FavoritesOperations
 from .operations.favorite_operations import FavoriteOperations
 from .operations.web_test_locations_operations import WebTestLocationsOperations
 from .operations.web_tests_operations import WebTestsOperations
+from .operations.analytics_item_operations import AnalyticsItemOperations
 from . import models
 
 
@@ -99,6 +100,8 @@ class ApplicationInsightsManagementClient(object):
     :vartype web_test_locations: azure.mgmt.applicationinsights.operations.WebTestLocationsOperations
     :ivar web_tests: WebTests operations
     :vartype web_tests: azure.mgmt.applicationinsights.operations.WebTestsOperations
+    :ivar analytics_item: AnalyticsItem operations
+    :vartype analytics_item: azure.mgmt.applicationinsights.operations.AnalyticsItemOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -148,4 +151,6 @@ class ApplicationInsightsManagementClient(object):
         self.web_test_locations = WebTestLocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_tests = WebTestsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.analytics_item = AnalyticsItemOperations(
             self._client, self.config, self._serialize, self._deserialize)
