@@ -95,7 +95,7 @@ class MetricAlertsStatusOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insight/metricAlerts/{ruleName}/status'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status'}
 
     def list_by_name(
             self, resource_group_name, rule_name, status_name, custom_headers=None, raw=False, **operation_config):
@@ -159,4 +159,4 @@ class MetricAlertsStatusOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insight/metricAlerts/{ruleName}/status/{statusName}'}
+    list_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status/{statusName}'}
