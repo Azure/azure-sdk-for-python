@@ -15,9 +15,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         super(BotServiceChannelsTestCase, self).setUp()
         #create a bot here
         self.client = self.create_mgmt_client(AzureBotService)
-        # self.resource_group_name = 'testpythonrg'
         self.resource_name = self.get_resource_name('azurebotservice')
-        
     
     def createBot(self):
         location = 'global'
@@ -96,38 +94,38 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
                 channel_name = channel_name
             )
 
-    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
-    # def test_email_channel(self, resource_group):
-    #     self.resource_group_name = resource_group.name
-    #     from azure.mgmt.botservice.models import EmailChannel,EmailChannelProperties
-    #     channel = EmailChannel(
-    #         properties = EmailChannelProperties(
-    #             email_address = 'swagatm2@outlook.com',
-    #             password = 'Botuser123@',
-    #             is_enabled = True
-    #         )
-    #     )
-
-    #     self.validateCreateGetAndDeleteChannel(
-    #         channel_name = 'EmailChannel',
-    #         channel_properties = channel
-    #     )
-
     @ResourceGroupPreparer(name_prefix='pythonsdkbot')
-    def test_msteams_channel(self, resource_group):
-        from azure.mgmt.botservice.models import MsTeamsChannel,MsTeamsChannelProperties
+    def test_email_channel(self, resource_group):
         self.resource_group_name = resource_group.name
-        channel = MsTeamsChannel(
-            properties = MsTeamsChannelProperties(
-                is_enabled = True, 
-                enable_messaging = True, 
+        from azure.mgmt.botservice.models import EmailChannel,EmailChannelProperties
+        channel = EmailChannel(
+            properties = EmailChannelProperties(
+                email_address = 'swagatm2@outlook.com',
+                password = 'Botuser123@',
+                is_enabled = True
             )
         )
-       
+
         self.validateCreateGetAndDeleteChannel(
-            channel_name = 'MsTeamsChannel',
+            channel_name = 'EmailChannel',
             channel_properties = channel
         )
+
+    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    # def test_msteams_channel(self, resource_group):
+    #     from azure.mgmt.botservice.models import MsTeamsChannel,MsTeamsChannelProperties
+    #     self.resource_group_name = resource_group.name
+    #     channel = MsTeamsChannel(
+    #         properties = MsTeamsChannelProperties(
+    #             is_enabled = True, 
+    #             enable_messaging = True, 
+    #         )
+    #     )
+       
+    #     self.validateCreateGetAndDeleteChannel(
+    #         channel_name = 'MsTeamsChannel',
+    #         channel_properties = channel
+    #     )
     
     # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
     # def test_skype_channel(self, resource_group):
@@ -145,37 +143,37 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #         channel_properties = channel
     #     )
 
-    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
-    # def test_telegram_channel(self, resource_group):
-    #     from azure.mgmt.botservice.models import TelegramChannel,TelegramChannelProperties
-        # self.resource_group_name = resource_group.name
-    #     channel = TelegramChannel(
-    #         properties = TelegramChannelProperties(
-    #             access_token = '520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4',
-    #             is_enabled = True,
-    #         )
-    #     )
+    @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    def test_telegram_channel(self, resource_group):
+        from azure.mgmt.botservice.models import TelegramChannel,TelegramChannelProperties
+        self.resource_group_name = resource_group.name
+        channel = TelegramChannel(
+            properties = TelegramChannelProperties(
+                access_token = '520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4',
+                is_enabled = True,
+            )
+        )
 
-    #     self.validateCreateGetAndDeleteChannel(
-    #         channel_name = 'TelegramChannel',
-    #         channel_properties = channel
-    #     )
+        self.validateCreateGetAndDeleteChannel(
+            channel_name = 'TelegramChannel',
+            channel_properties = channel
+        )
 
-    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
-    # def test_sms_channel(self, resource_group):
-    #     from azure.mgmt.botservice.models import SmsChannel,SmsChannelProperties
-        # self.resource_group_name = resource_group.name
-    #     channel = SmsChannel(
-    #         properties = SmsChannelProperties(
-    #             phone = '+15153258725',
-    #             account_sid = 'AC421cab6999e0c8c0d1a90c6643db8f05',
-    #             auth_token = '507d2f4f9a832fdd042d05c500b3a88f',
-    #             is_enabled = True,
-    #             is_validated = False 
-    #         )
-    #     )
+    @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    def test_sms_channel(self, resource_group):
+        from azure.mgmt.botservice.models import SmsChannel,SmsChannelProperties
+        self.resource_group_name = resource_group.name
+        channel = SmsChannel(
+            properties = SmsChannelProperties(
+                phone = '+15153258725',
+                account_sid = 'AC421cab6999e0c8c0d1a90c6643db8f05',
+                auth_token = '507d2f4f9a832fdd042d05c500b3a88f',
+                is_enabled = True,
+                is_validated = False 
+            )
+        )
     
-    #     self.validateCreateGetAndDeleteChannel(
-    #         channel_name = 'SmsChannel',
-    #         channel_properties = channel
-    #     )
+        self.validateCreateGetAndDeleteChannel(
+            channel_name = 'SmsChannel',
+            channel_properties = channel
+        )

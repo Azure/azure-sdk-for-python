@@ -2,10 +2,10 @@ interactions:
 - request:
     body: '{"location": "global", "sku": {"name": "Free"}, "kind": "Bot", "properties":
       {"displayName": "this is a test bot", "description": "this is a description
-      for a test bot", "endpoint": "https://bing.com/messages/", "msaAppId": "41a220b9-6571-4f0b-bbd2-43f1c1d82f53",
-      "developerAppInsightKey": "59513bad-10a7-4d41-b4d0-b1c34c6af52a", "developerAppInsightsApiKey":
-      "w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv2r", "developerAppInsightsApplicationId":
-      "cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b"}}'
+      for a test bot", "endpoint": "https://bing.com/messages/", "msaAppId": "056d9ad9-17a9-4cc7-aebb-43bf6f293a08",
+      "developerAppInsightKey": "59513bad-10a7-4d41-b4d0-b1c34c6af511", "developerAppInsightsApiKey":
+      "w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv11", "developerAppInsightsApplicationId":
+      "cf03484e-3fdb-4b5e-9ad7-94bde32e5a11"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
@@ -16,23 +16,23 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13","name":"testpythonbot13","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-01T03%3A54%3A56.9655635Z''\"","location":"global","sku":{"name":""},"kind":"Bot","properties":{"displayName":"this
-        is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f53","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb","name":"azurebotservice247414eb","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T18%3A49%3A49.1365318Z''\"","location":"global","sku":{"name":""},"kind":"Bot","properties":{"displayName":"this
+        is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"056d9ad9-17a9-4cc7-aebb-43bf6f293a08","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af511","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a11","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['926']
+      content-length: ['950']
       content-type: [application/json; charset=utf-8]
-      date: ['Sun, 01 Apr 2018 03:54:57 GMT']
-      etag: [W/"datetime'2018-04-01T03%3A54%3A56.9655635Z'"]
+      date: ['Mon, 02 Apr 2018 18:49:48 GMT']
+      etag: [W/"datetime'2018-04-02T18%3A49%3A49.1365318Z'"]
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
       x-powered-by: [ASP.NET]
     status: {code: 201, message: Created}
 - request:
@@ -49,24 +49,24 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13/channels/TelegramChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb/channels/TelegramChannel?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13/channels/TelegramChannel","name":"testpythonbot13/TelegramChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"e0209736c34a248a54ff15d19f48ebd04/1/2018
-        3:55:37 AM\"","location":"global","properties":{"properties":{"accessToken":"520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4","isValidated":true,"isEnabled":true},"etag":"W/\"e0209736c34a248a54ff15d19f48ebd04/1/2018
-        3:55:37 AM\"","channelName":"TelegramChannel","location":"global","provisioningState":"Succeeded"}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb/channels/TelegramChannel","name":"azurebotservice247414eb/TelegramChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"2f68e80acd919f46f3fa3489e9ee9d974/2/2018
+        6:50:01 PM\"","location":"global","properties":{"properties":{"accessToken":"520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4","isValidated":true,"isEnabled":true},"etag":"W/\"2f68e80acd919f46f3fa3489e9ee9d974/2/2018
+        6:50:01 PM\"","channelName":"TelegramChannel","location":"global","provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['630']
+      content-length: ['654']
       content-type: [application/json; charset=utf-8]
-      date: ['Sun, 01 Apr 2018 03:55:36 GMT']
-      etag: ['W/"e0209736c34a248a54ff15d19f48ebd04/1/2018 3:55:37 AM"']
+      date: ['Mon, 02 Apr 2018 18:50:00 GMT']
+      etag: ['W/"2f68e80acd919f46f3fa3489e9ee9d974/2/2018 6:50:01 PM"']
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
       x-powered-by: [ASP.NET]
     status: {code: 201, message: Created}
 - request:
@@ -80,17 +80,17 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13/channels/TelegramChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb/channels/TelegramChannel?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13/channels/TelegramChannel","name":"testpythonbot13/TelegramChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"bf7d8f5819a02ef6633eaa8074317d124/1/2018
-        3:55:56 AM\"","location":"global","properties":{"properties":{"accessToken":"520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4","isValidated":true,"isEnabled":true},"etag":"W/\"bf7d8f5819a02ef6633eaa8074317d124/1/2018
-        3:55:56 AM\"","channelName":"TelegramChannel","location":"global","provisioningState":"Succeeded"}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb/channels/TelegramChannel","name":"azurebotservice247414eb/TelegramChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"bf7d8f5819a02ef6633eaa8074317d124/2/2018
+        6:50:02 PM\"","location":"global","properties":{"properties":{"accessToken":"520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4","isValidated":true,"isEnabled":true},"etag":"W/\"bf7d8f5819a02ef6633eaa8074317d124/2/2018
+        6:50:02 PM\"","channelName":"TelegramChannel","location":"global","provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['630']
+      content-length: ['654']
       content-type: [application/json; charset=utf-8]
-      date: ['Sun, 01 Apr 2018 03:55:56 GMT']
-      etag: ['W/"bf7d8f5819a02ef6633eaa8074317d124/1/2018 3:55:56 AM"']
+      date: ['Mon, 02 Apr 2018 18:50:02 GMT']
+      etag: ['W/"bf7d8f5819a02ef6633eaa8074317d124/2/2018 6:50:02 PM"']
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
@@ -113,20 +113,20 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13/channels/TelegramChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb/channels/TelegramChannel?api-version=2017-12-01
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Sun, 01 Apr 2018 03:56:01 GMT']
+      date: ['Mon, 02 Apr 2018 18:50:04 GMT']
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-writes: ['1195']
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
@@ -140,15 +140,15 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13/channels/TelegramChannel?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb/channels/TelegramChannel?api-version=2017-12-01
   response:
-    body: {string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.BotService/botServices/testpythonbot13/channels/TelegramChannel''
-        under resource group ''testpythonrg'' was not found."}}'}
+    body: {string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.BotService/botServices/azurebotservice247414eb/channels/TelegramChannel''
+        under resource group ''pythonsdkbot247414eb'' was not found."}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['189']
+      content-length: ['205']
       content-type: [application/json; charset=utf-8]
-      date: ['Sun, 01 Apr 2018 03:56:02 GMT']
+      date: ['Mon, 02 Apr 2018 18:50:05 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
@@ -167,13 +167,13 @@ interactions:
           msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testpythonrg/providers/Microsoft.BotService/botServices/testpythonbot13?api-version=2017-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbot247414eb/providers/Microsoft.BotService/botServices/azurebotservice247414eb?api-version=2017-12-01
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Sun, 01 Apr 2018 03:56:21 GMT']
+      date: ['Mon, 02 Apr 2018 18:50:11 GMT']
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
