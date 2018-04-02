@@ -8,7 +8,6 @@ from azure.mgmt.botservice.models import (
     ErrorException,
     sku
 )
-import pdb
 
 class BotServiceChannelsTestCase(AzureMgmtTestCase):
     def setUp(self):

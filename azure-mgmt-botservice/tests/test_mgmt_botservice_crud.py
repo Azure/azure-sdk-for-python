@@ -39,8 +39,6 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(name_prefix='python_test_bot')
     def test_bot_operations(self, resource_group):
-        import pdb
-        pdb.set_trace()
         self.resource_group_name = resource_group.name
         bot = self.client.bots.create(
             resource_group_name = self.resource_group_name,

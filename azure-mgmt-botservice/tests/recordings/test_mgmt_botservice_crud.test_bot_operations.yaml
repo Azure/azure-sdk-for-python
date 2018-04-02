@@ -18,21 +18,21 @@ interactions:
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac","name":"azurebotserviceadda12ac","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T04%3A38%3A06.5150259Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac","name":"azurebotserviceadda12ac","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T20%3A35%3A44.223083Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f51","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['955']
+      content-length: ['954']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 02 Apr 2018 04:38:06 GMT']
-      etag: [W/"datetime'2018-04-02T04%3A38%3A06.5150259Z'"]
+      date: ['Mon, 02 Apr 2018 20:35:44 GMT']
+      etag: [W/"datetime'2018-04-02T20%3A35%3A44.223083Z'"]
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
       x-powered-by: [ASP.NET]
     status: {code: 201, message: Created}
 - request:
@@ -48,21 +48,21 @@ interactions:
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac","name":"azurebotserviceadda12ac","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T04%3A38%3A06.5150259Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac","name":"azurebotserviceadda12ac","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T20%3A35%3A44.223083Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f51","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['955']
+      content-length: ['954']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 02 Apr 2018 04:38:08 GMT']
-      etag: [W/"datetime'2018-04-02T04%3A38%3A06.5150259Z'"]
+      date: ['Mon, 02 Apr 2018 20:35:45 GMT']
+      etag: [W/"datetime'2018-04-02T20%3A35%3A44.223083Z'"]
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
-      vary: ['Accept-Encoding,Accept-Encoding']
+      vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
@@ -84,14 +84,14 @@ interactions:
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac?api-version=2017-12-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac","name":"azurebotserviceadda12ac","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T04%3A38%3A11.327936Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_test_botadda12ac/providers/Microsoft.BotService/botServices/azurebotserviceadda12ac","name":"azurebotserviceadda12ac","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T20%3A35%3A48.4210844Z''\"","location":"global","sku":{"name":"F0"},"kind":"Bot","properties":{"displayName":"this
         is a test bot","description":"this is another description","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"41a220b9-6571-4f0b-bbd2-43f1c1d82f51","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af52a","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['945']
+      content-length: ['946']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 02 Apr 2018 04:38:11 GMT']
-      etag: [W/"datetime'2018-04-02T04%3A38%3A11.327936Z'"]
+      date: ['Mon, 02 Apr 2018 20:35:48 GMT']
+      etag: [W/"datetime'2018-04-02T20%3A35%3A48.4210844Z'"]
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
@@ -121,7 +121,7 @@ interactions:
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Mon, 02 Apr 2018 04:38:17 GMT']
+      date: ['Mon, 02 Apr 2018 20:35:53 GMT']
       expires: ['-1']
       pragma: [no-cache]
       request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
@@ -150,7 +150,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['183']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 02 Apr 2018 04:38:18 GMT']
+      date: ['Mon, 02 Apr 2018 20:35:54 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
