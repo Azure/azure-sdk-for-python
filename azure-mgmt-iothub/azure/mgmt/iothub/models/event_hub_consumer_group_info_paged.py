@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class StrPaged(Paged):
+class EventHubConsumerGroupInfoPaged(Paged):
     """
-    A paging container for iterating over a list of str object
+    A paging container for iterating over a list of :class:`EventHubConsumerGroupInfo <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[str]'}
+        'current_page': {'key': 'value', 'type': '[EventHubConsumerGroupInfo]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(StrPaged, self).__init__(*args, **kwargs)
+        super(EventHubConsumerGroupInfoPaged, self).__init__(*args, **kwargs)
