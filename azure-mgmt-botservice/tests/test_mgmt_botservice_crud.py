@@ -1,4 +1,4 @@
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from azure.mgmt.botservice import AzureBotService
 from azure.mgmt.botservice.models import (
     Bot,
@@ -6,14 +6,13 @@ from azure.mgmt.botservice.models import (
     sku,
     ErrorException
 )
-import json
 
 class CoreBotServiceTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(CoreBotServiceTestCase, self).setUp()
         self.client = self.create_mgmt_client(AzureBotService)
-        self.resource_group_name = 'testpythonrg'
-        self.resource_name = 'testpythonbot12'
+        # self.resource_name = 'testpythonbot12'
+        self.resource_name = self.get_resource_name('azurebotservice')
         self.location = 'global'
         self.sku_name = 'F0'
         self.kind= 'Bot'
@@ -39,7 +38,11 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
         self.assertEqual(bot.properties.developer_app_insights_api_key, None) #this password should not be returned in the response
         self.assertEqual(bot.properties.developer_app_insights_application_id, self.developer_app_insights_application_id)
 
-    def test_bot_operations(self):
+    @ResourceGroupPreparer(name_prefix='python_test_bot')
+    def test_bot_operations(self, resource_group):
+        import pdb
+        pdb.set_trace()
+        self.resource_group_name = resource_group.name
         bot = self.client.bots.create(
             resource_group_name = self.resource_group_name,
             resource_name = self.resource_name,

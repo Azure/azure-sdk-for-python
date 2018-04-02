@@ -11,7 +11,6 @@
   "azure-mgmt-botservice/tests/test_mgmt_botservice.py": true,
   "azure-mgmt-botservice/tests/test_mgmt_botservice_channels.py::BotServiceChannelsTestCase::test_directline_channel": true,
   "azure-mgmt-botservice/tests/test_mgmt_botservice_channels.py::BotServiceChannelsTestCase::test_webchat_channel": true,
-  "azure-mgmt-botservice/tests/test_mgmt_botservice_crud.py::CoreBotServiceTestCase::test_bot_operations": true,
   "azure-mgmt-compute/tests/test_mgmt_compute.py": true,
   "azure-mgmt-compute/tests/test_mgmt_managed_disks.py": true,
   "azure-mgmt-compute/tests/test_mgmt_msi.py": true,
