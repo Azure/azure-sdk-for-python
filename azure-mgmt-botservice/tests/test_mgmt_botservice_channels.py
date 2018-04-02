@@ -1,4 +1,4 @@
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from azure.mgmt.botservice import AzureBotService
 from azure.mgmt.botservice.models import Bot, BotProperties,sku,BotChannel,ErrorException
 from azure.mgmt.botservice.models import (
@@ -15,18 +15,21 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         super(BotServiceChannelsTestCase, self).setUp()
         #create a bot here
         self.client = self.create_mgmt_client(AzureBotService)
-        self.resource_group_name = 'testpythonrg'
-        self.resource_name = 'testpythonbot13'
+        # self.resource_group_name = 'testpythonrg'
+        self.resource_name = self.get_resource_name('azurebotservice')
+        
+    
+    def createBot(self):
         location = 'global'
         sku_name = 'Free'
         kind= 'Bot'
         display_name = "this is a test bot"
         description= "this is a description for a test bot"
         endpoint = "https://bing.com/messages/"
-        msa_app_id = "41a220b9-6571-4f0b-bbd2-43f1c1d82f53"
-        developer_app_insight_key = '59513bad-10a7-4d41-b4d0-b1c34c6af52a'
-        developer_app_insights_api_key = 'w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv2r'
-        developer_app_insights_application_id = 'cf03484e-3fdb-4b5e-9ad7-94bde32e5a2b'
+        msa_app_id = "056d9ad9-17a9-4cc7-aebb-43bf6f293a08"
+        developer_app_insight_key = '59513bad-10a7-4d41-b4d0-b1c34c6af511'
+        developer_app_insights_api_key = 'w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv11'
+        developer_app_insights_application_id = 'cf03484e-3fdb-4b5e-9ad7-94bde32e5a11'
         bot = self.client.bots.create(
             resource_group_name = self.resource_group_name,
             resource_name = self.resource_name,
@@ -53,7 +56,9 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
             resource_name = self.resource_name
         )
 
-    def validateGetAndDeleteChannel(self, channel_name, channel_properties):
+    def validateCreateGetAndDeleteChannel(self, channel_name, channel_properties):
+        self.createBot()
+
         botChannel = BotChannel(
             location = 'global',
             properties = channel_properties
@@ -74,7 +79,10 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
         
         self.assertIsNotNone(channel)
         #is_enabled being true means that the service has managed to get the channel working.
-        self.assertTrue(channel.properties.properties.is_enabled)
+        if channel_name == 'DirectLineChannel':
+            self.assertTrue(channel.properties.properties.sites[0].is_enabled)
+        else:
+            self.assertTrue(channel.properties.properties.is_enabled)
 
         channel = self.client.channels.delete(
             resource_group_name = self.resource_group_name,
@@ -88,37 +96,43 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
                 channel_name = channel_name
             )
 
-    # def test_email_channel(self):
+    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    # def test_email_channel(self, resource_group):
+    #     self.resource_group_name = resource_group.name
     #     from azure.mgmt.botservice.models import EmailChannel,EmailChannelProperties
     #     channel = EmailChannel(
     #         properties = EmailChannelProperties(
     #             email_address = 'swagatm2@outlook.com',
-    #             password = 'Redmond1!',
+    #             password = 'Botuser123@',
     #             is_enabled = True
     #         )
     #     )
 
-    #     self.validateGetAndDeleteChannel(
+    #     self.validateCreateGetAndDeleteChannel(
     #         channel_name = 'EmailChannel',
     #         channel_properties = channel
     #     )
 
-    # def test_msteams_channel(self):
-    #     from azure.mgmt.botservice.models import MsTeamsChannel,MsTeamsChannelProperties
-    #     channel = MsTeamsChannel(
-    #         properties = MsTeamsChannelProperties(
-    #             is_enabled = True, 
-    #             enable_messaging = True, 
-    #         )
-    #     )
+    @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    def test_msteams_channel(self, resource_group):
+        from azure.mgmt.botservice.models import MsTeamsChannel,MsTeamsChannelProperties
+        self.resource_group_name = resource_group.name
+        channel = MsTeamsChannel(
+            properties = MsTeamsChannelProperties(
+                is_enabled = True, 
+                enable_messaging = True, 
+            )
+        )
        
-    #     self.validateGetAndDeleteChannel(
-    #         channel_name = 'MsTeamsChannel',
-    #         channel_properties = channel
-    #     )
+        self.validateCreateGetAndDeleteChannel(
+            channel_name = 'MsTeamsChannel',
+            channel_properties = channel
+        )
     
-    # def test_skype_channel(self):
+    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    # def test_skype_channel(self, resource_group):
     #     from azure.mgmt.botservice.models import SkypeChannel,SkypeChannelProperties
+        # self.resource_group_name = resource_group.name
     #     channel = SkypeChannel(
     #         properties = SkypeChannelProperties(
     #             is_enabled = True,
@@ -126,13 +140,15 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #         )
     #     )
 
-    #     self.validateGetAndDeleteChannel(
+    #     self.validateCreateGetAndDeleteChannel(
     #         channel_name = 'SkypeChannel',
     #         channel_properties = channel
     #     )
 
-    # def test_telegram_channel(self):
+    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    # def test_telegram_channel(self, resource_group):
     #     from azure.mgmt.botservice.models import TelegramChannel,TelegramChannelProperties
+        # self.resource_group_name = resource_group.name
     #     channel = TelegramChannel(
     #         properties = TelegramChannelProperties(
     #             access_token = '520413022:AAF12lBf6s4tSqntaXEZnvrn6XOVrjQ6YN4',
@@ -140,13 +156,15 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #         )
     #     )
 
-    #     self.validateGetAndDeleteChannel(
+    #     self.validateCreateGetAndDeleteChannel(
     #         channel_name = 'TelegramChannel',
     #         channel_properties = channel
     #     )
 
-    # def test_sms_channel(self):
+    # @ResourceGroupPreparer(name_prefix='pythonsdkbot')
+    # def test_sms_channel(self, resource_group):
     #     from azure.mgmt.botservice.models import SmsChannel,SmsChannelProperties
+        # self.resource_group_name = resource_group.name
     #     channel = SmsChannel(
     #         properties = SmsChannelProperties(
     #             phone = '+15153258725',
@@ -157,42 +175,7 @@ class BotServiceChannelsTestCase(AzureMgmtTestCase):
     #         )
     #     )
     
-    #     self.validateGetAndDeleteChannel(
+    #     self.validateCreateGetAndDeleteChannel(
     #         channel_name = 'SmsChannel',
-    #         channel_properties = channel
-    #     )
-
-    # def test_webchat_channel(self):
-    #     from azure.mgmt.botservice.models import WebChatChannel,WebChatChannelProperties,WebChatSite
-    #     channel = WebChatChannel(
-    #         properties = WebChatChannelProperties(
-    #             sites = [WebChatSite(
-    #                 site_name = 'Default',
-    #                 is_enabled = True,
-    #                 enable_preview = True
-    #             )]
-    #         )
-    #     )
-        
-    #     self.validateGetAndDeleteChannel(
-    #         channel_name = 'WebChatChannel',
-    #         channel_properties = channel
-    #     )
-
-    # def test_directline_channel(self):
-    #     from azure.mgmt.botservice.models import DirectLineChannel,DirectLineChannelProperties,DirectLineSite
-    #     channel = DirectLineChannel(
-    #         properties = DirectLineChannelProperties(
-    #             sites = [DirectLineSite(
-    #                 site_name = 'Default',
-    #                 is_enabled = True,
-    #                 is_v1_enabled = False,
-    #                 is_v3_enabled = True
-    #             )]
-    #         )
-    #     )
-        
-    #     self.validateGetAndDeleteChannel(
-    #         channel_name = 'DirectLineChannel',
     #         channel_properties = channel
     #     )

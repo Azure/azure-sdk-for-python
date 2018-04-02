@@ -11,7 +11,6 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(CoreBotServiceTestCase, self).setUp()
         self.client = self.create_mgmt_client(AzureBotService)
-        # self.resource_name = 'testpythonbot12'
         self.resource_name = self.get_resource_name('azurebotservice')
         self.location = 'global'
         self.sku_name = 'F0'
