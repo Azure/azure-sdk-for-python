@@ -12,11 +12,13 @@
 from .resource import Resource
 
 
-class EventType(Resource):
-    """Event Type for a subject under a topic.
+class TrackedResource(Resource):
+    """Definition of a Tracked Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified identifier of the resource
     :vartype id: str
@@ -24,31 +26,28 @@ class EventType(Resource):
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
-    :param display_name: Display name of the event type.
-    :type display_name: str
-    :param description: Description of the event type.
-    :type description: str
-    :param schema_url: Url of the schema for this event type.
-    :type schema_url: str
+    :param location: Required. Location of the resource
+    :type location: str
+    :param tags: Tags of the resource
+    :type tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'schema_url': {'key': 'properties.schemaUrl', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(EventType, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.description = kwargs.get('description', None)
-        self.schema_url = kwargs.get('schema_url', None)
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(TrackedResource, self).__init__(, **kwargs)
+        self.location = location
+        self.tags = tags

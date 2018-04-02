@@ -58,7 +58,7 @@ class Topic(TrackedResource):
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Topic, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(Topic, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.endpoint = None
