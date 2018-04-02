@@ -11,4 +11,5 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     packages=find_packages(),
+    long_description="Specific tools for Azure SDK for Python testing"
 )
