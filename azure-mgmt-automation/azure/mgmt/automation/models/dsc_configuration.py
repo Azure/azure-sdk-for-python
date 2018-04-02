@@ -9,25 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class DscConfiguration(Resource):
+class DscConfiguration(TrackedResource):
     """Definition of the configuration type.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param location: The Azure Region where the resource lives
+    :type location: str
     :param provisioning_state: Gets or sets the provisioning state of the
      configuration. Possible values include: 'Succeeded'
     :type provisioning_state: str or
@@ -58,15 +58,14 @@ class DscConfiguration(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'DscConfigurationProvisioningState'},
         'job_count': {'key': 'properties.jobCount', 'type': 'int'},
         'parameters': {'key': 'properties.parameters', 'type': '{DscConfigurationParameter}'},
@@ -79,8 +78,8 @@ class DscConfiguration(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, provisioning_state=None, job_count=None, parameters=None, source=None, state=None, log_verbose=None, creation_time=None, last_modified_time=None, description=None, etag=None):
-        super(DscConfiguration, self).__init__(location=location, tags=tags)
+    def __init__(self, tags=None, location=None, provisioning_state=None, job_count=None, parameters=None, source=None, state=None, log_verbose=None, creation_time=None, last_modified_time=None, description=None, etag=None):
+        super(DscConfiguration, self).__init__(tags=tags, location=location)
         self.provisioning_state = provisioning_state
         self.job_count = job_count
         self.parameters = parameters

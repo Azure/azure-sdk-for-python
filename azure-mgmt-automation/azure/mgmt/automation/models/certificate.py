@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Certificate(Model):
+class Certificate(ProxyResource):
     """Definition of the certificate.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the resource.
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Gets the name of the certificate.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
     :ivar thumbprint: Gets the thumbprint of the certificate.
     :vartype thumbprint: str
@@ -63,9 +63,6 @@ class Certificate(Model):
 
     def __init__(self, description=None):
         super(Certificate, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
         self.thumbprint = None
         self.expiry_time = None
         self.is_exportable = None

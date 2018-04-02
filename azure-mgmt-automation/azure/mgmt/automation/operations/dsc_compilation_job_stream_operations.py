@@ -22,7 +22,7 @@ class DscCompilationJobStreamOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-10-31".
+    :ivar api_version: Client Api Version. Constant value: "2018-01-15".
     """
 
     models = models
@@ -32,7 +32,7 @@ class DscCompilationJobStreamOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-10-31"
+        self.api_version = "2018-01-15"
 
         self.config = config
 
@@ -40,9 +40,9 @@ class DscCompilationJobStreamOperations(object):
             self, resource_group_name, automation_account_name, job_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve all the job streams for the compilation Job.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param job_id: The job id.
         :type job_id: str
@@ -60,7 +60,7 @@ class DscCompilationJobStreamOperations(object):
         # Construct URL
         url = self.list_by_job.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -98,4 +98,4 @@ class DscCompilationJobStreamOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_job.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{jobId}/streams/'}
+    list_by_job.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{jobId}/streams'}

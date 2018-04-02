@@ -12,9 +12,8 @@
 from .resource import Resource
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,6 +24,10 @@ class ProxyResource(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: The Azure Region where the resource lives
+    :type location: str
     """
 
     _validation = {
@@ -33,5 +36,15 @@ class ProxyResource(Resource):
         'type': {'readonly': True},
     }
 
-    def __init__(self):
-        super(ProxyResource, self).__init__()
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, tags=None, location=None):
+        super(TrackedResource, self).__init__()
+        self.tags = tags
+        self.location = location
