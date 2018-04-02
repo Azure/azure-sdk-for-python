@@ -1262,9 +1262,7 @@ class NetworkWatchersOperations(object):
 
 
     def _check_connectivity_initial(
-            self, resource_group_name, network_watcher_name, source, destination, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ConnectivityParameters(source=source, destination=destination)
-
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.check_connectivity.metadata['url']
         path_format_arguments = {
@@ -1315,7 +1313,7 @@ class NetworkWatchersOperations(object):
         return deserialized
 
     def check_connectivity(
-            self, resource_group_name, network_watcher_name, source, destination, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, network_watcher_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Verifies the possibility of establishing a direct TCP connection from a
         virtual machine to a given endpoint including another VM or an
         arbitrary remote server.
@@ -1325,12 +1323,10 @@ class NetworkWatchersOperations(object):
         :type resource_group_name: str
         :param network_watcher_name: The name of the network watcher resource.
         :type network_watcher_name: str
-        :param source:
-        :type source:
-         ~azure.mgmt.network.v2018_02_01.models.ConnectivitySource
-        :param destination:
-        :type destination:
-         ~azure.mgmt.network.v2018_02_01.models.ConnectivityDestination
+        :param parameters: Parameters that determine how the connectivity
+         check will be performed.
+        :type parameters:
+         ~azure.mgmt.network.v2018_02_01.models.ConnectivityParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1347,8 +1343,7 @@ class NetworkWatchersOperations(object):
         raw_result = self._check_connectivity_initial(
             resource_group_name=resource_group_name,
             network_watcher_name=network_watcher_name,
-            source=source,
-            destination=destination,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
