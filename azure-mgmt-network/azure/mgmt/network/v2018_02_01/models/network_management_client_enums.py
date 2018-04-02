@@ -311,7 +311,7 @@ class Direction(str, Enum):
     outbound = "Outbound"
 
 
-class Protocol(str, Enum):
+class IpFlowProtocol(str, Enum):
 
     tcp = "TCP"
     udp = "UDP"
@@ -352,6 +352,19 @@ class PcError(str, Enum):
     storage_failed = "StorageFailed"
 
 
+class Protocol(str, Enum):
+
+    tcp = "Tcp"
+    http = "Http"
+    https = "Https"
+    icmp = "Icmp"
+
+
+class HTTPMethod(str, Enum):
+
+    get = "Get"
+
+
 class Origin(str, Enum):
 
     local = "Local"
@@ -384,6 +397,13 @@ class ConnectionStatus(str, Enum):
     connected = "Connected"
     disconnected = "Disconnected"
     degraded = "Degraded"
+
+
+class ConnectionMonitorSourceStatus(str, Enum):
+
+    uknown = "Uknown"
+    active = "Active"
+    inactive = "Inactive"
 
 
 class ConnectionState(str, Enum):
