@@ -16,13 +16,13 @@ class CertificateListDescription(Model):
     """The JSON-serialized array of Certificate objects.
 
     :param value: The array of Certificate objects.
-    :type value: list of :class:`CertificateDescription
-     <azure.mgmt.iothub.models.CertificateDescription>`
+    :type value: list[~azure.mgmt.iothub.models.CertificateDescription]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[CertificateDescription]'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, **kwargs):
+        super(CertificateListDescription, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
