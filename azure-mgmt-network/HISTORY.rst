@@ -3,12 +3,18 @@
 Release History
 ===============
 
-XXXXXXXXXXXX
-++++++++++++
+2.0.0rc2 (2018-04-03)
++++++++++++++++++++++
 
 **Features**
 
 - All clients now support Azure profiles.
+- API version 2018-02-01 is now the default
+- Express Route Circuit Connection (considered preview)
+- Express Route Provider APIs
+- GetTopologyOperation supports query parameter
+- Feature work for setting Custom IPsec/IKE policy for Virtual Network Gateway point-to-site clients
+- DDoS Protection Plans
 
 2.0.0rc1 (2018-03-07)
 +++++++++++++++++++++
