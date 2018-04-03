@@ -12,6 +12,9 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ..version import VERSION
 
 
@@ -47,7 +50,7 @@ class ManagementLinkClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLinkClient(object):
+class ManagementLinkClient(MultiApiClientMixin):
     """Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link.
 
     :ivar config: Configuration for client.
@@ -61,20 +64,30 @@ class ManagementLinkClient(object):
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
-    :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION = '2016-09-01'
-    DEFAULT_PROFILE = None
+    _PROFILE_TAG = "azure.mgmt.resource.links.ManagementLinkClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
-    def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        super(ManagementLinkClient, self).__init__(
+            credentials=credentials,
+            subscription_id=subscription_id,
+            api_version=api_version,
+            base_url=base_url,
+            profile=profile
+        )
 
         self.config = ManagementLinkClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
-
-        self.api_version = api_version
-        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
 
@@ -99,7 +112,7 @@ class ManagementLinkClient(object):
 
            * 2016-09-01: :class:`ResourceLinksOperations<azure.mgmt.resource.links.v2016_09_01.operations.ResourceLinksOperations>`
         """
-        api_version = self.profile.get('resource_links', self.api_version)
+        api_version = self._get_api_version('resource_links')
         if api_version == '2016-09-01':
             from .v2016_09_01.operations import ResourceLinksOperations as OperationClass
         else:
