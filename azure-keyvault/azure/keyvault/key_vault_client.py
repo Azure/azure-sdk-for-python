@@ -37,7 +37,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
 
         super(KeyVaultClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-keyvault,/{}'.format(VERSION))
+        self.add_user_agent('azure-keyvault/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
