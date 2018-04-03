@@ -1,6 +1,5 @@
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from azure.mgmt.botservice import AzureBotService
-from azure.mgmt.botservice.models import Bot, BotProperties,sku,BotChannel,ErrorException
 from azure.mgmt.botservice.models import (
     Bot,
     BotProperties,
