@@ -40,9 +40,9 @@ class KeyItem(Model):
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
-    def __init__(self, kid=None, attributes=None, tags=None):
-        super(KeyItem, self).__init__()
-        self.kid = kid
-        self.attributes = attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(KeyItem, self).__init__(**kwargs)
+        self.kid = kwargs.get('kid', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
         self.managed = None

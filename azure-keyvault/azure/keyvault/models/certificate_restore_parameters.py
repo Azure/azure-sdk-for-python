@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class CertificateRestoreParameters(Model):
     """The certificate restore parameters.
 
-    :param certificate_bundle_backup: The backup blob associated with a
-     certificate bundle.
+    All required parameters must be populated in order to send to Azure.
+
+    :param certificate_bundle_backup: Required. The backup blob associated
+     with a certificate bundle.
     :type certificate_bundle_backup: bytes
     """
 
@@ -28,6 +30,6 @@ class CertificateRestoreParameters(Model):
         'certificate_bundle_backup': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self, certificate_bundle_backup):
-        super(CertificateRestoreParameters, self).__init__()
-        self.certificate_bundle_backup = certificate_bundle_backup
+    def __init__(self, **kwargs):
+        super(CertificateRestoreParameters, self).__init__(**kwargs)
+        self.certificate_bundle_backup = kwargs.get('certificate_bundle_backup', None)

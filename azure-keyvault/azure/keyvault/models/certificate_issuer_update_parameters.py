@@ -33,9 +33,9 @@ class CertificateIssuerUpdateParameters(Model):
         'attributes': {'key': 'attributes', 'type': 'IssuerAttributes'},
     }
 
-    def __init__(self, provider=None, credentials=None, organization_details=None, attributes=None):
-        super(CertificateIssuerUpdateParameters, self).__init__()
-        self.provider = provider
-        self.credentials = credentials
-        self.organization_details = organization_details
-        self.attributes = attributes
+    def __init__(self, **kwargs):
+        super(CertificateIssuerUpdateParameters, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.organization_details = kwargs.get('organization_details', None)
+        self.attributes = kwargs.get('attributes', None)

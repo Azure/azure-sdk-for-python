@@ -32,8 +32,8 @@ class IssuerParameters(Model):
         'certificate_transparency': {'key': 'cert_transparency', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, certificate_type=None, certificate_transparency=None):
-        super(IssuerParameters, self).__init__()
-        self.name = name
-        self.certificate_type = certificate_type
-        self.certificate_transparency = certificate_transparency
+    def __init__(self, **kwargs):
+        super(IssuerParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.certificate_type = kwargs.get('certificate_type', None)
+        self.certificate_transparency = kwargs.get('certificate_transparency', None)
