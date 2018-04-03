@@ -29,7 +29,7 @@ class CheckNameAvailabilityResponseBody(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, valid: bool=None, message: str=None, **kwargs) -> None:
         super(CheckNameAvailabilityResponseBody, self).__init__(**kwargs)
-        self.valid = kwargs.get('valid', None)
-        self.message = kwargs.get('message', None)
+        self.valid = valid
+        self.message = message

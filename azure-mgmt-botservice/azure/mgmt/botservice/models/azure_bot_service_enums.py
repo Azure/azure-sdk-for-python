@@ -12,27 +12,22 @@
 from enum import Enum
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     f0 = "F0"
     s1 = "S1"
 
 
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     free = "Free"
     standard = "Standard"
+    premium = "Premium"
 
 
-class Kind(Enum):
+class Kind(str, Enum):
 
     sdk = "sdk"
     designer = "designer"
     bot = "bot"
     function = "function"
-
-
-class ChannelName(Enum):
-
-    facebook_channel = "FacebookChannel"
-    email_channel = "EmailChannel"

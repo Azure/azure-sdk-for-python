@@ -12,23 +12,25 @@
 from msrest.serialization import Model
 
 
-class BotProperties(Model):
+class BotResourceProperties(Model):
     """The parameters to provide for the Bot.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param display_name: The Name of the bot
+    All required parameters must be populated in order to send to Azure.
+
+    :param display_name: Required. The Name of the bot
     :type display_name: str
     :param description: The description of the bot
     :type description: str
     :param icon_url: The Icon Url of the bot
     :type icon_url: str
-    :param endpoint: The bot's endpoint
+    :param endpoint: Required. The bot's endpoint
     :type endpoint: str
     :ivar endpoint_version: The bot's endpoint version
     :vartype endpoint_version: str
-    :param msa_app_id: Microsoft App Id for the bot
+    :param msa_app_id: Required. Microsoft App Id for the bot
     :type msa_app_id: str
     :ivar configured_channels: Collection of channels for which the bot is
      configured
@@ -74,7 +76,8 @@ class BotProperties(Model):
         'luis_key': {'key': 'luisKey', 'type': 'str'},
     }
 
-    def __init__(self, display_name, endpoint, msa_app_id, description=None, icon_url=None, developer_app_insight_key=None, developer_app_insights_api_key=None, developer_app_insights_application_id=None, luis_app_ids=None, luis_key=None):
+    def __init__(self, *, display_name: str, endpoint: str, msa_app_id: str, description: str=None, icon_url: str=None, developer_app_insight_key: str=None, developer_app_insights_api_key: str=None, developer_app_insights_application_id: str=None, luis_app_ids=None, luis_key: str=None, **kwargs) -> None:
+        super(BotResourceProperties, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
         self.icon_url = icon_url

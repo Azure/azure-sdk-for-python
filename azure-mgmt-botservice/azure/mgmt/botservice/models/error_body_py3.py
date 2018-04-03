@@ -12,24 +12,28 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityResponseBody(Model):
-    """The response returned on a check bot name availability request by Bot
-    Service Management.
+class ErrorBody(Model):
+    """Bot Service error body.
 
-    :param valid: boolean indicating whether the bot name is available for
-     use.
-    :type valid: bool
-    :param message: description indicating why the bot name is invalid, if it
-     is not available.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. error code
+    :type code: str
+    :param message: Required. error message
     :type message: str
     """
 
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
     _attribute_map = {
-        'valid': {'key': 'valid', 'type': 'bool'},
+        'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckNameAvailabilityResponseBody, self).__init__(**kwargs)
-        self.valid = kwargs.get('valid', None)
-        self.message = kwargs.get('message', None)
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
+        super(ErrorBody, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
