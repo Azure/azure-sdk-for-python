@@ -26,7 +26,7 @@ class VaultPatchParameters(Model):
         'properties': {'key': 'properties', 'type': 'VaultPatchProperties'},
     }
 
-    def __init__(self, tags=None, properties=None):
-        super(VaultPatchParameters, self).__init__()
-        self.tags = tags
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(VaultPatchParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)

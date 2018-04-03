@@ -24,6 +24,6 @@ class Action(Model):
         'action_type': {'key': 'action_type', 'type': 'ActionType'},
     }
 
-    def __init__(self, action_type=None):
-        super(Action, self).__init__()
-        self.action_type = action_type
+    def __init__(self, **kwargs):
+        super(Action, self).__init__(**kwargs)
+        self.action_type = kwargs.get('action_type', None)

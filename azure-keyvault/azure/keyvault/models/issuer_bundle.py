@@ -43,10 +43,10 @@ class IssuerBundle(Model):
         'attributes': {'key': 'attributes', 'type': 'IssuerAttributes'},
     }
 
-    def __init__(self, provider=None, credentials=None, organization_details=None, attributes=None):
-        super(IssuerBundle, self).__init__()
+    def __init__(self, **kwargs):
+        super(IssuerBundle, self).__init__(**kwargs)
         self.id = None
-        self.provider = provider
-        self.credentials = credentials
-        self.organization_details = organization_details
-        self.attributes = attributes
+        self.provider = kwargs.get('provider', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.organization_details = kwargs.get('organization_details', None)
+        self.attributes = kwargs.get('attributes', None)

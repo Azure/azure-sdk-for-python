@@ -24,6 +24,6 @@ class ServiceSpecification(Model):
         'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
     }
 
-    def __init__(self, log_specifications=None):
-        super(ServiceSpecification, self).__init__()
-        self.log_specifications = log_specifications
+    def __init__(self, **kwargs):
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.log_specifications = kwargs.get('log_specifications', None)

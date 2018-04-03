@@ -72,8 +72,8 @@ class DeletedCertificateBundle(CertificateBundle):
         'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, cer=None, content_type=None, attributes=None, tags=None, recovery_id=None):
-        super(DeletedCertificateBundle, self).__init__(cer=cer, content_type=content_type, attributes=attributes, tags=tags)
-        self.recovery_id = recovery_id
+    def __init__(self, **kwargs):
+        super(DeletedCertificateBundle, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None

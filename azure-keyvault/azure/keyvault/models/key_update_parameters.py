@@ -30,8 +30,8 @@ class KeyUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, key_ops=None, key_attributes=None, tags=None):
-        super(KeyUpdateParameters, self).__init__()
-        self.key_ops = key_ops
-        self.key_attributes = key_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(KeyUpdateParameters, self).__init__(**kwargs)
+        self.key_ops = kwargs.get('key_ops', None)
+        self.key_attributes = kwargs.get('key_attributes', None)
+        self.tags = kwargs.get('tags', None)

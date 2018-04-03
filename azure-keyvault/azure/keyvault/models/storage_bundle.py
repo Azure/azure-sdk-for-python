@@ -57,8 +57,8 @@ class StorageBundle(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
-        super(StorageBundle, self).__init__()
+    def __init__(self, **kwargs):
+        super(StorageBundle, self).__init__(**kwargs)
         self.id = None
         self.resource_id = None
         self.active_key_name = None

@@ -16,7 +16,9 @@ class VirtualNetworkRule(Model):
     """A rule governing the accesibility of a vault from a specific virtual
     network.
 
-    :param id: Full resource id of a vnet subnet, such as
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
     :type id: str
     """
@@ -29,6 +31,6 @@ class VirtualNetworkRule(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id):
-        super(VirtualNetworkRule, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(VirtualNetworkRule, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

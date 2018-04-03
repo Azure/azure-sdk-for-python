@@ -18,10 +18,12 @@ class VaultCheckNameAvailabilityParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The vault name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The vault name.
     :type name: str
-    :ivar type: The type of resource, Microsoft.KeyVault/vaults. Default
-     value: "Microsoft.KeyVault/vaults" .
+    :ivar type: Required. The type of resource, Microsoft.KeyVault/vaults.
+     Default value: "Microsoft.KeyVault/vaults" .
     :vartype type: str
     """
 
@@ -37,6 +39,6 @@ class VaultCheckNameAvailabilityParameters(Model):
 
     type = "Microsoft.KeyVault/vaults"
 
-    def __init__(self, name):
-        super(VaultCheckNameAvailabilityParameters, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(VaultCheckNameAvailabilityParameters, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

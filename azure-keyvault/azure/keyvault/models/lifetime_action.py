@@ -27,7 +27,7 @@ class LifetimeAction(Model):
         'action': {'key': 'action', 'type': 'Action'},
     }
 
-    def __init__(self, trigger=None, action=None):
-        super(LifetimeAction, self).__init__()
-        self.trigger = trigger
-        self.action = action
+    def __init__(self, **kwargs):
+        super(LifetimeAction, self).__init__(**kwargs)
+        self.trigger = kwargs.get('trigger', None)
+        self.action = kwargs.get('action', None)

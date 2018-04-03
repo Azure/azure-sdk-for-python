@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class VaultAccessPolicyProperties(Model):
     """Properties of the vault access policy.
 
-    :param access_policies: An array of 0 to 16 identities that have access to
-     the key vault. All identities in the array must use the same tenant ID as
-     the key vault's tenant ID.
+    All required parameters must be populated in order to send to Azure.
+
+    :param access_policies: Required. An array of 0 to 16 identities that have
+     access to the key vault. All identities in the array must use the same
+     tenant ID as the key vault's tenant ID.
     :type access_policies: list[~azure.mgmt.keyvault.models.AccessPolicyEntry]
     """
 
@@ -29,6 +31,6 @@ class VaultAccessPolicyProperties(Model):
         'access_policies': {'key': 'accessPolicies', 'type': '[AccessPolicyEntry]'},
     }
 
-    def __init__(self, access_policies):
-        super(VaultAccessPolicyProperties, self).__init__()
-        self.access_policies = access_policies
+    def __init__(self, **kwargs):
+        super(VaultAccessPolicyProperties, self).__init__(**kwargs)
+        self.access_policies = kwargs.get('access_policies', None)

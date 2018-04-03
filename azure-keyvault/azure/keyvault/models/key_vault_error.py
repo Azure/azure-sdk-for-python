@@ -31,8 +31,8 @@ class KeyVaultError(Model):
         'error': {'key': 'error', 'type': 'Error'},
     }
 
-    def __init__(self):
-        super(KeyVaultError, self).__init__()
+    def __init__(self, **kwargs):
+        super(KeyVaultError, self).__init__(**kwargs)
         self.error = None
 
 

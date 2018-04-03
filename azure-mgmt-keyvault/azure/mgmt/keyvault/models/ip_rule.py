@@ -16,7 +16,9 @@ class IPRule(Model):
     """A rule governing the accesibility of a vault from a specific ip address or
     ip range.
 
-    :param value: An IPv4 address range in CIDR notation, such as
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. An IPv4 address range in CIDR notation, such as
      '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all addresses that
      start with 124.56.78).
     :type value: str
@@ -30,6 +32,6 @@ class IPRule(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, value):
-        super(IPRule, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(IPRule, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

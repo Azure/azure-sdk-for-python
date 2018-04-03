@@ -26,7 +26,7 @@ class OrganizationDetails(Model):
         'admin_details': {'key': 'admin_details', 'type': '[AdministratorDetails]'},
     }
 
-    def __init__(self, id=None, admin_details=None):
-        super(OrganizationDetails, self).__init__()
-        self.id = id
-        self.admin_details = admin_details
+    def __init__(self, **kwargs):
+        super(OrganizationDetails, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.admin_details = kwargs.get('admin_details', None)
