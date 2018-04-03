@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class RunCommandInputParameter(Model):
     """Describes the properties of a run command parameter.
 
-    :param name: The run command parameter name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The run command parameter name.
     :type name: str
-    :param value: The run command parameter value.
+    :param value: Required. The run command parameter value.
     :type value: str
     """
 
@@ -31,7 +33,7 @@ class RunCommandInputParameter(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name, value):
-        super(RunCommandInputParameter, self).__init__()
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(RunCommandInputParameter, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

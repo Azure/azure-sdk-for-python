@@ -48,6 +48,13 @@ class DatabaseOperation(ProxyResource):
     :vartype error_severity: int
     :ivar is_user_error: Whether or not the error is a user error.
     :vartype is_user_error: bool
+    :ivar estimated_completion_time: The estimated completion time of the
+     operation.
+    :vartype estimated_completion_time: datetime
+    :ivar description: The operation description.
+    :vartype description: str
+    :ivar is_cancellable: Whether the operation can be cancelled.
+    :vartype is_cancellable: bool
     """
 
     _validation = {
@@ -65,6 +72,9 @@ class DatabaseOperation(ProxyResource):
         'error_description': {'readonly': True},
         'error_severity': {'readonly': True},
         'is_user_error': {'readonly': True},
+        'estimated_completion_time': {'readonly': True},
+        'description': {'readonly': True},
+        'is_cancellable': {'readonly': True},
     }
 
     _attribute_map = {
@@ -82,6 +92,9 @@ class DatabaseOperation(ProxyResource):
         'error_description': {'key': 'properties.errorDescription', 'type': 'str'},
         'error_severity': {'key': 'properties.errorSeverity', 'type': 'int'},
         'is_user_error': {'key': 'properties.isUserError', 'type': 'bool'},
+        'estimated_completion_time': {'key': 'properties.estimatedCompletionTime', 'type': 'iso-8601'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
     }
 
     def __init__(self):
@@ -97,3 +110,6 @@ class DatabaseOperation(ProxyResource):
         self.error_description = None
         self.error_severity = None
         self.is_user_error = None
+        self.estimated_completion_time = None
+        self.description = None
+        self.is_cancellable = None

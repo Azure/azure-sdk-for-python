@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
 import uuid
+from msrest.pipeline import ClientRawResponse
 
 from .. import models
 
@@ -21,16 +21,18 @@ class InvoicesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2017-04-24-preview. Constant value: "2017-04-24-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-01-preview. Constant value: "2018-03-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-24-preview"
+        self.api_version = "2018-03-01-preview"
 
         self.config = config
 
@@ -39,7 +41,10 @@ class InvoicesOperations(object):
         """Lists the available invoices for a subscription in reverse
         chronological order beginning with the most recent invoice. In preview,
         invoices are available via this API only for invoice periods which end
-        December 1, 2016 or later.
+        December 1, 2016 or later.  This is only supported for Azure Web-Direct
+        subscriptions. Other subscription types which were not purchased
+        directly through the Azure web portal are not supported through this
+        preview API.
 
         :param expand: May be used to expand the downloadUrl property within a
          list of invoices. This enables download links to be generated for
@@ -63,7 +68,9 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`InvoicePaged <azure.mgmt.billing.models.InvoicePaged>`
+        :return: An iterator like instance of Invoice
+        :rtype:
+         ~azure.mgmt.billing.models.InvoicePaged[~azure.mgmt.billing.models.Invoice]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -71,7 +78,7 @@ class InvoicesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -106,7 +113,7 @@ class InvoicesOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -122,11 +129,15 @@ class InvoicesOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices'}
 
     def get(
             self, invoice_name, custom_headers=None, raw=False, **operation_config):
         """Gets a named invoice resource. When getting a single invoice, the
-        downloadUrl property is expanded automatically.
+        downloadUrl property is expanded automatically.  This is only supported
+        for Azure Web-Direct subscriptions. Other subscription types which were
+        not purchased directly through the Azure web portal are not supported
+        through this preview API.
 
         :param invoice_name: The name of an invoice resource.
         :type invoice_name: str
@@ -135,14 +146,14 @@ class InvoicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Invoice <azure.mgmt.billing.models.Invoice>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Invoice or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Invoice or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices/{invoiceName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'invoiceName': self._serialize.url("invoice_name", invoice_name, 'str')
@@ -165,7 +176,7 @@ class InvoicesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -180,25 +191,29 @@ class InvoicesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices/{invoiceName}'}
 
     def get_latest(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets the most recent invoice. When getting a single invoice, the
-        downloadUrl property is expanded automatically.
+        downloadUrl property is expanded automatically.  This is only supported
+        for Azure Web-Direct subscriptions. Other subscription types which were
+        not purchased directly through the Azure web portal are not supported
+        through this preview API.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Invoice <azure.mgmt.billing.models.Invoice>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: Invoice or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Invoice or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices/latest'
+        url = self.get_latest.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -220,7 +235,7 @@ class InvoicesOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -235,3 +250,4 @@ class InvoicesOperations(object):
             return client_raw_response
 
         return deserialized
+    get_latest.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices/latest'}

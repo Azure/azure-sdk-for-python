@@ -13,7 +13,10 @@ from .server_properties_for_create import ServerPropertiesForCreate
 
 
 class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
-    """The properties to a new server by restoring from a geo replicated backup.
+    """The properties used to create a new server by restoring to a different
+    region from a geo replicated backup.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
@@ -23,9 +26,9 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
      ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
-    :param create_mode: Constant filled by server.
+    :param create_mode: Required. Constant filled by server.
     :type create_mode: str
-    :param source_server_id: The source server id to restore from.
+    :param source_server_id: Required. The source server id to restore from.
     :type source_server_id: str
     """
 
@@ -42,7 +45,7 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
         'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
     }
 
-    def __init__(self, source_server_id, version=None, ssl_enforcement=None, storage_profile=None):
-        super(ServerPropertiesForGeoRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile)
-        self.source_server_id = source_server_id
+    def __init__(self, **kwargs):
+        super(ServerPropertiesForGeoRestore, self).__init__(**kwargs)
+        self.source_server_id = kwargs.get('source_server_id', None)
         self.create_mode = 'GeoRestore'

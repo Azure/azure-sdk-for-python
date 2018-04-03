@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class ClusterCreateParameters(Model):
     """Parameters supplied to the Create operation.
 
-    :param location: The region in which to create the cluster.
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The region in which to create the cluster.
     :type location: str
     :param tags: The user specified tags associated with the Cluster.
-    :type tags: dict
-    :param vm_size: The size of the virtual machines in the cluster. All
-     virtual machines in a cluster are the same size. For information about
+    :type tags: dict[str, str]
+    :param vm_size: Required. The size of the virtual machines in the cluster.
+     All virtual machines in a cluster are the same size. For information about
      available VM sizes for clusters using images from the Virtual Machines
      Marketplace (see Sizes for Virtual Machines (Linux) or Sizes for Virtual
      Machines (Windows). Batch AI service supports all Azure VM sizes except
@@ -30,23 +32,21 @@ class ClusterCreateParameters(Model):
     :param vm_priority: dedicated or lowpriority. Default is dedicated.
      Possible values include: 'dedicated', 'lowpriority'. Default value:
      "dedicated" .
-    :type vm_priority: str or :class:`VmPriority
-     <azure.mgmt.batchai.models.VmPriority>`
+    :type vm_priority: str or ~azure.mgmt.batchai.models.VmPriority
     :param scale_settings: Desired scale for the cluster.
-    :type scale_settings: :class:`ScaleSettings
-     <azure.mgmt.batchai.models.ScaleSettings>`
+    :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
     :param virtual_machine_configuration: Settings for OS image and mounted
      data volumes.
-    :type virtual_machine_configuration: :class:`VirtualMachineConfiguration
-     <azure.mgmt.batchai.models.VirtualMachineConfiguration>`
+    :type virtual_machine_configuration:
+     ~azure.mgmt.batchai.models.VirtualMachineConfiguration
     :param node_setup: Setup to be done on all compute nodes in the cluster.
-    :type node_setup: :class:`NodeSetup <azure.mgmt.batchai.models.NodeSetup>`
-    :param user_account_settings: Settings for user account that will be
-     created on all compute nodes of the cluster.
-    :type user_account_settings: :class:`UserAccountSettings
-     <azure.mgmt.batchai.models.UserAccountSettings>`
+    :type node_setup: ~azure.mgmt.batchai.models.NodeSetup
+    :param user_account_settings: Required. Settings for user account that
+     will be created on all compute nodes of the cluster.
+    :type user_account_settings:
+     ~azure.mgmt.batchai.models.UserAccountSettings
     :param subnet: Specifies the identifier of the subnet. .
-    :type subnet: :class:`ResourceId <azure.mgmt.batchai.models.ResourceId>`
+    :type subnet: ~azure.mgmt.batchai.models.ResourceId
     """
 
     _validation = {
@@ -67,13 +67,14 @@ class ClusterCreateParameters(Model):
         'subnet': {'key': 'properties.subnet', 'type': 'ResourceId'},
     }
 
-    def __init__(self, location, vm_size, user_account_settings, tags=None, vm_priority="dedicated", scale_settings=None, virtual_machine_configuration=None, node_setup=None, subnet=None):
-        self.location = location
-        self.tags = tags
-        self.vm_size = vm_size
-        self.vm_priority = vm_priority
-        self.scale_settings = scale_settings
-        self.virtual_machine_configuration = virtual_machine_configuration
-        self.node_setup = node_setup
-        self.user_account_settings = user_account_settings
-        self.subnet = subnet
+    def __init__(self, **kwargs):
+        super(ClusterCreateParameters, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.vm_priority = kwargs.get('vm_priority', "dedicated")
+        self.scale_settings = kwargs.get('scale_settings', None)
+        self.virtual_machine_configuration = kwargs.get('virtual_machine_configuration', None)
+        self.node_setup = kwargs.get('node_setup', None)
+        self.user_account_settings = kwargs.get('user_account_settings', None)
+        self.subnet = kwargs.get('subnet', None)

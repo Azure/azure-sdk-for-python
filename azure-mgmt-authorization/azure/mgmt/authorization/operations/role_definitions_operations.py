@@ -22,16 +22,18 @@ class RoleDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2015-07-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-01-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-07-01"
+        self.api_version = "2018-01-01-preview"
 
         self.config = config
 
@@ -54,7 +56,7 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
@@ -77,7 +79,7 @@ class RoleDefinitionsOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -94,6 +96,7 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'}
 
     def get(
             self, scope, role_definition_id, custom_headers=None, raw=False, **operation_config):
@@ -114,7 +117,7 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
@@ -137,7 +140,7 @@ class RoleDefinitionsOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -154,6 +157,7 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'}
 
     def create_or_update(
             self, scope, role_definition_id, role_definition, custom_headers=None, raw=False, **operation_config):
@@ -176,7 +180,7 @@ class RoleDefinitionsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
             'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str')
@@ -203,7 +207,7 @@ class RoleDefinitionsOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             exp = CloudError(response)
@@ -220,68 +224,7 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def get_by_id(
-            self, role_definition_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a role definition by ID.
-
-        :param role_definition_id: The fully qualified role definition ID. Use
-         the format,
-         /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
-         for subscription level role definitions, or
-         /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
-         for tenant level role definitions.
-        :type role_definition_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: RoleDefinition or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.authorization.models.RoleDefinition or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/{roleDefinitionId}'
-        path_format_arguments = {
-            'roleDefinitionId': self._serialize.url("role_definition_id", role_definition_id, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RoleDefinition', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
+    create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'}
 
     def list(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
@@ -306,7 +249,7 @@ class RoleDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -335,7 +278,7 @@ class RoleDefinitionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -353,3 +296,67 @@ class RoleDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions'}
+
+    def get_by_id(
+            self, role_id, custom_headers=None, raw=False, **operation_config):
+        """Gets a role definition by ID.
+
+        :param role_id: The fully qualified role definition ID. Use the
+         format,
+         /subscriptions/{guid}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
+         for subscription level role definitions, or
+         /providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}
+         for tenant level role definitions.
+        :type role_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RoleDefinition or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.authorization.models.RoleDefinition or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_by_id.metadata['url']
+        path_format_arguments = {
+            'roleId': self._serialize.url("role_id", role_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RoleDefinition', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_by_id.metadata = {'url': '/{roleId}'}

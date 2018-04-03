@@ -12,6 +12,9 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ..version import VERSION
 
 
@@ -52,7 +55,7 @@ class FeatureClientConfiguration(AzureConfiguration):
         self.api_version = api_version
 
 
-class FeatureClient(object):
+class FeatureClient(MultiApiClientMixin):
     """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality.
 
     :ivar config: Configuration for client.
@@ -66,21 +69,30 @@ class FeatureClient(object):
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
-    :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION = '2015-12-01'
-    DEFAULT_PROFILE = None
+    _PROFILE_TAG = "azure.mgmt.resource.features.FeatureClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
-    def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        super(FeatureClient, self).__init__(
+            credentials=credentials,
+            subscription_id=subscription_id,
+            api_version=api_version,
+            base_url=base_url,
+            profile=profile
+        )
 
         self.config = FeatureClientConfiguration(credentials, subscription_id, api_version, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
-
-        self.api_version = api_version
-        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
 
@@ -105,7 +117,7 @@ class FeatureClient(object):
 
            * 2015-12-01: :class:`FeaturesOperations<azure.mgmt.resource.features.v2015_12_01.operations.FeaturesOperations>`
         """
-        api_version = self.profile.get('features', self.api_version)
+        api_version = self._get_api_version('features')
         if api_version == '2015-12-01':
             from .v2015_12_01.operations import FeaturesOperations as OperationClass
         else:

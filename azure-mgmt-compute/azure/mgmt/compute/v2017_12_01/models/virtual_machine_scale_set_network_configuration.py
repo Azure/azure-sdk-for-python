@@ -16,9 +16,11 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     """Describes a virtual machine scale set network profile's network
     configurations.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource Id
     :type id: str
-    :param name: The network configuration name.
+    :param name: Required. The network configuration name.
     :type name: str
     :param primary: Specifies the primary network interface in case the
      virtual machine has more than 1 network interface.
@@ -33,8 +35,8 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
      interfaces.
     :type dns_settings:
      ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
-    :param ip_configurations: Specifies the IP configurations of the network
-     interface.
+    :param ip_configurations: Required. Specifies the IP configurations of the
+     network interface.
     :type ip_configurations:
      list[~azure.mgmt.compute.v2017_12_01.models.VirtualMachineScaleSetIPConfiguration]
     :param enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
@@ -57,12 +59,12 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
     }
 
-    def __init__(self, name, ip_configurations, id=None, primary=None, enable_accelerated_networking=None, network_security_group=None, dns_settings=None, enable_ip_forwarding=None):
-        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id)
-        self.name = name
-        self.primary = primary
-        self.enable_accelerated_networking = enable_accelerated_networking
-        self.network_security_group = network_security_group
-        self.dns_settings = dns_settings
-        self.ip_configurations = ip_configurations
-        self.enable_ip_forwarding = enable_ip_forwarding
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.primary = kwargs.get('primary', None)
+        self.enable_accelerated_networking = kwargs.get('enable_accelerated_networking', None)
+        self.network_security_group = kwargs.get('network_security_group', None)
+        self.dns_settings = kwargs.get('dns_settings', None)
+        self.ip_configurations = kwargs.get('ip_configurations', None)
+        self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)

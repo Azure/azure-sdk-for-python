@@ -39,7 +39,10 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                 name, {'location': self.location}
             )
         else:
-            self.resource = self.resource or FakeResource(name=name, id='')
+            self.resource = self.resource or FakeResource(
+                name=name,
+                id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/"+name
+            )
         return {
             self.parameter_name: self.resource,
             self.parameter_name_for_location: self.location,

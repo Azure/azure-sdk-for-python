@@ -21,8 +21,7 @@ class Operation(Model):
      {provider}/{resource}/{operation}
     :type name: str
     :param display: The object that describes the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.batchai.models.OperationDisplay>`
+    :type display: ~azure.mgmt.batchai.models.OperationDisplay
     :param origin: The intended executor of the operation.
     :type origin: str
     :param properties: Properties of the operation.
@@ -36,8 +35,9 @@ class Operation(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, name=None, display=None, origin=None, properties=None):
-        self.name = name
-        self.display = display
-        self.origin = origin
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)

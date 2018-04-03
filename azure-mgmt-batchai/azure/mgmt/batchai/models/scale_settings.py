@@ -19,11 +19,9 @@ class ScaleSettings(Model):
     the supplied limits) based on the pending jobs on the cluster.
 
     :param manual: The scale for the cluster by manual settings.
-    :type manual: :class:`ManualScaleSettings
-     <azure.mgmt.batchai.models.ManualScaleSettings>`
+    :type manual: ~azure.mgmt.batchai.models.ManualScaleSettings
     :param auto_scale: The scale for the cluster by autoscale settings.
-    :type auto_scale: :class:`AutoScaleSettings
-     <azure.mgmt.batchai.models.AutoScaleSettings>`
+    :type auto_scale: ~azure.mgmt.batchai.models.AutoScaleSettings
     """
 
     _attribute_map = {
@@ -31,6 +29,7 @@ class ScaleSettings(Model):
         'auto_scale': {'key': 'autoScale', 'type': 'AutoScaleSettings'},
     }
 
-    def __init__(self, manual=None, auto_scale=None):
-        self.manual = manual
-        self.auto_scale = auto_scale
+    def __init__(self, **kwargs):
+        super(ScaleSettings, self).__init__(**kwargs)
+        self.manual = kwargs.get('manual', None)
+        self.auto_scale = kwargs.get('auto_scale', None)

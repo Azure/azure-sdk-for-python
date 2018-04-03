@@ -19,7 +19,7 @@ _FILE_SERVER_CREATION_TIMEOUT_SEC = helpers.MINUTE * 10
 class FileServerTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(FileServerTestCase, self).setUp()
-        self.client = self.create_mgmt_client(BatchAIManagementClient)  # type: BatchAIManagementClient
+        self.client = helpers.create_batchai_client(self)  # type: BatchAIManagementClient
         self.file_server_name = self.get_resource_name('fileserver')
 
     @ResourceGroupPreparer(location=helpers.LOCATION)
@@ -40,14 +40,14 @@ class FileServerTestCase(AzureMgmtTestCase):
                                           'STANDARD_D1', 1,
                                           storage_account.name, storage_account_key,
                                           file_servers=[models.FileServerReference(
-                                              file_server=models.ResourceId(server.id),
+                                              file_server=models.ResourceId(id=server.id),
                                               relative_mount_path='nfs',
                                               mount_options="rw")])
         cluster2 = helpers.create_cluster(self.client, location, resource_group.name, 'cluster2',
                                           'STANDARD_D1', 1,
                                           storage_account.name, storage_account_key,
                                           file_servers=[models.FileServerReference(
-                                              file_server=models.ResourceId(server.id),
+                                              file_server=models.ResourceId(id=server.id),
                                               relative_mount_path='nfs',
                                               mount_options="rw")])
         # Verify the file server is reported.
@@ -81,7 +81,8 @@ class FileServerTestCase(AzureMgmtTestCase):
         job2 = helpers.create_custom_job(self.client, resource_group.name, location, cluster1.id,
                                          'container_publisher', 1,
                                          'echo hi from container >> $AZ_BATCHAI_MOUNT_ROOT/nfs/container.txt',
-                                         container=models.ContainerSettings(models.ImageSourceRegistry(image="ubuntu")))
+                                         container=models.ContainerSettings(
+                                             image_source_registry=models.ImageSourceRegistry(image="ubuntu")))
         self.assertEqual(
             helpers.wait_for_job_completion(self.is_live, self.client, resource_group.name, job2.name, helpers.MINUTE),
             models.ExecutionState.succeeded)

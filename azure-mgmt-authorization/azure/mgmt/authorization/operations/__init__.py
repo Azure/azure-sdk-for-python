@@ -10,15 +10,15 @@
 # --------------------------------------------------------------------------
 
 from .classic_administrators_operations import ClassicAdministratorsOperations
-from .permissions_operations import PermissionsOperations
 from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
+from .permissions_operations import PermissionsOperations
 from .role_assignments_operations import RoleAssignmentsOperations
 from .role_definitions_operations import RoleDefinitionsOperations
 
 __all__ = [
     'ClassicAdministratorsOperations',
-    'PermissionsOperations',
     'ProviderOperationsMetadataOperations',
+    'PermissionsOperations',
     'RoleAssignmentsOperations',
     'RoleDefinitionsOperations',
 ]

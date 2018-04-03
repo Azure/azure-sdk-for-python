@@ -34,9 +34,9 @@ class TopologyResource(Model):
         'associations': {'key': 'associations', 'type': '[TopologyAssociation]'},
     }
 
-    def __init__(self, name=None, id=None, location=None, associations=None):
-        super(TopologyResource, self).__init__()
-        self.name = name
-        self.id = id
-        self.location = location
-        self.associations = associations
+    def __init__(self, **kwargs):
+        super(TopologyResource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
+        self.location = kwargs.get('location', None)
+        self.associations = kwargs.get('associations', None)

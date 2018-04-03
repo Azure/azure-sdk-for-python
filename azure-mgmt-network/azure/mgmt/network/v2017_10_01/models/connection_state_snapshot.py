@@ -47,10 +47,10 @@ class ConnectionStateSnapshot(Model):
         'hops': {'key': 'hops', 'type': '[ConnectivityHop]'},
     }
 
-    def __init__(self, connection_state=None, start_time=None, end_time=None, evaluation_state=None):
-        super(ConnectionStateSnapshot, self).__init__()
-        self.connection_state = connection_state
-        self.start_time = start_time
-        self.end_time = end_time
-        self.evaluation_state = evaluation_state
+    def __init__(self, **kwargs):
+        super(ConnectionStateSnapshot, self).__init__(**kwargs)
+        self.connection_state = kwargs.get('connection_state', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.evaluation_state = kwargs.get('evaluation_state', None)
         self.hops = None

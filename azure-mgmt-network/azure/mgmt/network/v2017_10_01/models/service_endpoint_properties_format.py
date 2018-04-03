@@ -29,8 +29,8 @@ class ServiceEndpointPropertiesFormat(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, service=None, locations=None, provisioning_state=None):
-        super(ServiceEndpointPropertiesFormat, self).__init__()
-        self.service = service
-        self.locations = locations
-        self.provisioning_state = provisioning_state
+    def __init__(self, **kwargs):
+        super(ServiceEndpointPropertiesFormat, self).__init__(**kwargs)
+        self.service = kwargs.get('service', None)
+        self.locations = kwargs.get('locations', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)

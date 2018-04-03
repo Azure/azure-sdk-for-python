@@ -12,6 +12,9 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ..version import VERSION
 
 
@@ -47,7 +50,7 @@ class PolicyClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class PolicyClient(object):
+class PolicyClient(MultiApiClientMixin):
     """To manage and control access to your resources, you can define customized policies and assign them at a scope.
 
     :ivar config: Configuration for client.
@@ -61,21 +64,30 @@ class PolicyClient(object):
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
-    :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION='2016-12-01'
-    DEFAULT_PROFILE=None
+    _PROFILE_TAG = "azure.mgmt.resource.policy.PolicyClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
-    def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        super(PolicyClient, self).__init__(
+            credentials=credentials,
+            subscription_id=subscription_id,
+            api_version=api_version,
+            base_url=base_url,
+            profile=profile
+        )
 
         self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
-
-        self.api_version = api_version
-        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
 
@@ -115,7 +127,7 @@ class PolicyClient(object):
            * 2016-12-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations>`
            * 2017-06-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyAssignmentsOperations>`
         """
-        api_version = self.profile.get('policy_assignments', self.api_version)
+        api_version = self._get_api_version('policy_assignments')
         if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyAssignmentsOperations as OperationClass
         elif api_version == '2016-04-01':
@@ -137,7 +149,7 @@ class PolicyClient(object):
            * 2016-12-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations>`
            * 2017-06-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyDefinitionsOperations>`
         """
-        api_version = self.profile.get('policy_definitions', self.api_version)
+        api_version = self._get_api_version('policy_definitions')
         if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyDefinitionsOperations as OperationClass
         elif api_version == '2016-04-01':
@@ -156,7 +168,7 @@ class PolicyClient(object):
 
            * 2017-06-01-preview: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicySetDefinitionsOperations>`
         """
-        api_version = self.profile.get('policy_set_definitions', self.api_version)
+        api_version = self._get_api_version('policy_set_definitions')
         if api_version == '2017-06-01-preview':
             from .v2017_06_01_preview.operations import PolicySetDefinitionsOperations as OperationClass
         else:

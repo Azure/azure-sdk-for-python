@@ -15,17 +15,21 @@ from msrest.serialization import Model
 class NodeStateCounts(Model):
     """Counts of various compute node states on the cluster.
 
-    :param idle_node_count: Number of compute nodes in idle state.
+    All required parameters must be populated in order to send to Azure.
+
+    :param idle_node_count: Required. Number of compute nodes in idle state.
     :type idle_node_count: int
-    :param running_node_count: Number of compute nodes which are running jobs.
+    :param running_node_count: Required. Number of compute nodes which are
+     running jobs.
     :type running_node_count: int
-    :param preparing_node_count: Number of compute nodes which are being
-     prepared.
+    :param preparing_node_count: Required. Number of compute nodes which are
+     being prepared.
     :type preparing_node_count: int
-    :param unusable_node_count: Number of compute nodes which are unusable.
+    :param unusable_node_count: Required. Number of compute nodes which are
+     unusable.
     :type unusable_node_count: int
-    :param leaving_node_count: Number of compute nodes which are leaving the
-     cluster.
+    :param leaving_node_count: Required. Number of compute nodes which are
+     leaving the cluster.
     :type leaving_node_count: int
     """
 
@@ -45,9 +49,10 @@ class NodeStateCounts(Model):
         'leaving_node_count': {'key': 'leavingNodeCount', 'type': 'int'},
     }
 
-    def __init__(self, idle_node_count, running_node_count, preparing_node_count, unusable_node_count, leaving_node_count):
-        self.idle_node_count = idle_node_count
-        self.running_node_count = running_node_count
-        self.preparing_node_count = preparing_node_count
-        self.unusable_node_count = unusable_node_count
-        self.leaving_node_count = leaving_node_count
+    def __init__(self, **kwargs):
+        super(NodeStateCounts, self).__init__(**kwargs)
+        self.idle_node_count = kwargs.get('idle_node_count', None)
+        self.running_node_count = kwargs.get('running_node_count', None)
+        self.preparing_node_count = kwargs.get('preparing_node_count', None)
+        self.unusable_node_count = kwargs.get('unusable_node_count', None)
+        self.leaving_node_count = kwargs.get('leaving_node_count', None)

@@ -23,7 +23,7 @@ class ApplicationDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2017-09-01".
     """
 
@@ -61,7 +61,7 @@ class ApplicationDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
@@ -100,12 +100,13 @@ class ApplicationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}
 
 
     def _delete_initial(
             self, resource_group_name, application_definition_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
@@ -197,12 +198,13 @@ class ApplicationDefinitionsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}
 
 
     def _create_or_update_initial(
             self, resource_group_name, application_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
@@ -317,6 +319,7 @@ class ApplicationDefinitionsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -340,7 +343,7 @@ class ApplicationDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -384,6 +387,7 @@ class ApplicationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions'}
 
     def get_by_id(
             self, application_definition_id, custom_headers=None, raw=False, **operation_config):
@@ -407,7 +411,7 @@ class ApplicationDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{applicationDefinitionId}'
+        url = self.get_by_id.metadata['url']
         path_format_arguments = {
             'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True)
         }
@@ -444,12 +448,13 @@ class ApplicationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_by_id.metadata = {'url': '/{applicationDefinitionId}'}
 
 
     def _delete_by_id_initial(
             self, application_definition_id, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/{applicationDefinitionId}'
+        url = self.delete_by_id.metadata['url']
         path_format_arguments = {
             'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True)
         }
@@ -537,12 +542,13 @@ class ApplicationDefinitionsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    delete_by_id.metadata = {'url': '/{applicationDefinitionId}'}
 
 
     def _create_or_update_by_id_initial(
             self, application_definition_id, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/{applicationDefinitionId}'
+        url = self.create_or_update_by_id.metadata['url']
         path_format_arguments = {
             'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True)
         }
@@ -653,3 +659,4 @@ class ApplicationDefinitionsOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    create_or_update_by_id.metadata = {'url': '/{applicationDefinitionId}'}

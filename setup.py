@@ -31,7 +31,6 @@ meta_package = ['azure-mgmt', 'azure']
 
 # So content packages are:
 content_package = [p for p in packages if p not in meta_package+nspkg_packages]
-content_package.insert(0, "azure-common")
 
 # Package final:
 if "install" in sys.argv:

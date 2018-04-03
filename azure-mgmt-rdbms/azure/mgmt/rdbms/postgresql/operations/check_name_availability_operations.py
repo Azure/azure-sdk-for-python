@@ -22,8 +22,8 @@ class CheckNameAvailabilityOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the request. Constant value: "2017-12-01-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for the request. Constant value: "2017-12-01".
     """
 
     models = models
@@ -33,7 +33,7 @@ class CheckNameAvailabilityOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-12-01-preview"
+        self.api_version = "2017-12-01"
 
         self.config = config
 
@@ -58,7 +58,7 @@ class CheckNameAvailabilityOperations(object):
         name_availability_request = models.NameAvailabilityRequest(name=name, type=type)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/checkNameAvailability'
+        url = self.execute.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -101,3 +101,4 @@ class CheckNameAvailabilityOperations(object):
             return client_raw_response
 
         return deserialized
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/checkNameAvailability'}

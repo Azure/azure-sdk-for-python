@@ -63,9 +63,13 @@ def get_client_from_cli_profile(client_class, **kwargs):
             'credentials': kwargs.get('credentials', credentials),
             'subscription_id': kwargs.get('subscription_id', subscription_id)
         })
-    if 'base_url' not in kwargs:
-        cloud = get_cli_active_cloud()
-        # api_version_profile = cloud.profile # TBC using _shared
+    cloud = get_cli_active_cloud()
+    args = get_arg_spec(client_class.__init__).args
+    if 'adla_job_dns_suffix' in args and 'adla_job_dns_suffix' not in kwargs:  # Datalake
+        # Let it raise here with AttributeError at worst, this would mean this cloud does not define
+        # ADL endpoint and no manual suffix was given
+        parameters['adla_job_dns_suffix'] = cloud.suffixes.azure_datalake_analytics_catalog_and_job_endpoint
+    elif 'base_url' in args and 'base_url' not in kwargs:
         parameters['base_url'] = cloud.endpoints.resource_manager
     parameters.update(kwargs)
     return _instantiate_client(client_class, **parameters)

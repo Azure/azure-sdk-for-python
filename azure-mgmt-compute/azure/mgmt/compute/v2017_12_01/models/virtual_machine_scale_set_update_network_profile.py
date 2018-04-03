@@ -25,6 +25,6 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetUpdateNetworkConfiguration]'},
     }
 
-    def __init__(self, network_interface_configurations=None):
-        super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__()
-        self.network_interface_configurations = network_interface_configurations
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__(**kwargs)
+        self.network_interface_configurations = kwargs.get('network_interface_configurations', None)

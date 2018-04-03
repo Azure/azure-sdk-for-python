@@ -31,6 +31,7 @@ class CaaRecord(Model):
     }
 
     def __init__(self, flags=None, tag=None, value=None):
+        super(CaaRecord, self).__init__()
         self.flags = flags
         self.tag = tag
         self.value = value

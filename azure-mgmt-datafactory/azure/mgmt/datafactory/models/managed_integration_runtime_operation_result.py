@@ -18,6 +18,9 @@ class ManagedIntegrationRuntimeOperationResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :ivar type: The operation type. Could be start or stop.
     :vartype type: str
     :ivar start_time: The start time of the operation.
@@ -42,6 +45,7 @@ class ManagedIntegrationRuntimeOperationResult(Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'result': {'key': 'result', 'type': 'str'},
@@ -50,8 +54,9 @@ class ManagedIntegrationRuntimeOperationResult(Model):
         'activity_id': {'key': 'activityId', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, additional_properties=None):
         super(ManagedIntegrationRuntimeOperationResult, self).__init__()
+        self.additional_properties = additional_properties
         self.type = None
         self.start_time = None
         self.result = None

@@ -24,4 +24,5 @@ class CloudTaskListSubtasksResult(Model):
     }
 
     def __init__(self, value=None):
+        super(CloudTaskListSubtasksResult, self).__init__()
         self.value = value

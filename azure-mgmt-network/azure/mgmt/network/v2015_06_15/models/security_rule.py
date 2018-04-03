@@ -15,12 +15,15 @@ from .sub_resource import SubResource
 class SecurityRule(SubResource):
     """Network security rule.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource Identifier.
     :type id: str
     :param description: A description for this rule. Restricted to 140 chars.
     :type description: str
-    :param protocol: Network protocol this rule applies to. Possible values
-     are 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp', 'Udp', '*'
+    :param protocol: Required. Network protocol this rule applies to. Possible
+     values are 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp', 'Udp',
+     '*'
     :type protocol: str or
      ~azure.mgmt.network.v2015_06_15.models.SecurityRuleProtocol
     :param source_port_range: The source port or range. Integer or range
@@ -30,18 +33,19 @@ class SecurityRule(SubResource):
      range between 0 and 65535. Asterix '*' can also be used to match all
      ports.
     :type destination_port_range: str
-    :param source_address_prefix: The CIDR or source IP range. Asterix '*' can
-     also be used to match all source IPs. Default tags such as
+    :param source_address_prefix: Required. The CIDR or source IP range.
+     Asterix '*' can also be used to match all source IPs. Default tags such as
      'VirtualNetwork', 'AzureLoadBalancer' and 'Internet' can also be used. If
      this is an ingress rule, specifies where network traffic originates from.
     :type source_address_prefix: str
-    :param destination_address_prefix: The destination address prefix. CIDR or
-     source IP range. Asterix '*' can also be used to match all source IPs.
-     Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and 'Internet'
-     can also be used.
+    :param destination_address_prefix: Required. The destination address
+     prefix. CIDR or source IP range. Asterix '*' can also be used to match all
+     source IPs. Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and
+     'Internet' can also be used.
     :type destination_address_prefix: str
-    :param access: The network traffic is allowed or denied. Possible values
-     are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
+    :param access: Required. The network traffic is allowed or denied.
+     Possible values are: 'Allow' and 'Deny'. Possible values include: 'Allow',
+     'Deny'
     :type access: str or
      ~azure.mgmt.network.v2015_06_15.models.SecurityRuleAccess
     :param priority: The priority of the rule. The value can be between 100
@@ -49,10 +53,10 @@ class SecurityRule(SubResource):
      collection. The lower the priority number, the higher the priority of the
      rule.
     :type priority: int
-    :param direction: The direction of the rule. The direction specifies if
-     rule will be evaluated on incoming or outcoming traffic. Possible values
-     are: 'Inbound' and 'Outbound'. Possible values include: 'Inbound',
-     'Outbound'
+    :param direction: Required. The direction of the rule. The direction
+     specifies if rule will be evaluated on incoming or outcoming traffic.
+     Possible values are: 'Inbound' and 'Outbound'. Possible values include:
+     'Inbound', 'Outbound'
     :type direction: str or
      ~azure.mgmt.network.v2015_06_15.models.SecurityRuleDirection
     :param provisioning_state: The provisioning state of the public IP
@@ -90,17 +94,17 @@ class SecurityRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, source_address_prefix, destination_address_prefix, access, direction, id=None, description=None, source_port_range=None, destination_port_range=None, priority=None, provisioning_state=None, name=None, etag=None):
-        super(SecurityRule, self).__init__(id=id)
-        self.description = description
-        self.protocol = protocol
-        self.source_port_range = source_port_range
-        self.destination_port_range = destination_port_range
-        self.source_address_prefix = source_address_prefix
-        self.destination_address_prefix = destination_address_prefix
-        self.access = access
-        self.priority = priority
-        self.direction = direction
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(SecurityRule, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.source_port_range = kwargs.get('source_port_range', None)
+        self.destination_port_range = kwargs.get('destination_port_range', None)
+        self.source_address_prefix = kwargs.get('source_address_prefix', None)
+        self.destination_address_prefix = kwargs.get('destination_address_prefix', None)
+        self.access = kwargs.get('access', None)
+        self.priority = kwargs.get('priority', None)
+        self.direction = kwargs.get('direction', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
