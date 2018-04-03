@@ -46,6 +46,7 @@ from .web_test import WebTest
 from .workbook import Workbook
 from .workbook_list_result import WorkbookListResult
 from .link_properties import LinkProperties
+from .workbook_payload import WorkbookPayload
 from .error_field_contract import ErrorFieldContract
 from .workbook_error_response import WorkbookErrorResponse, WorkbookErrorResponseException
 from .operation_paged import OperationPaged
@@ -103,6 +104,7 @@ __all__ = [
     'Workbook',
     'WorkbookListResult',
     'LinkProperties',
+    'WorkbookPayload',
     'ErrorFieldContract',
     'WorkbookErrorResponse', 'WorkbookErrorResponseException',
     'OperationPaged',
