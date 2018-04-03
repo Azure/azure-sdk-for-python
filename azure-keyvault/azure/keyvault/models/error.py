@@ -38,8 +38,8 @@ class Error(Model):
         'inner_error': {'key': 'innererror', 'type': 'Error'},
     }
 
-    def __init__(self):
-        super(Error, self).__init__()
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
         self.inner_error = None

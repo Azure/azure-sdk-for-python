@@ -189,7 +189,7 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
                                              object_id=self.settings.CLIENT_OID,
                                              permissions=permissions or self.default_permissions)]
         properties = VaultProperties(tenant_id=self.settings.TENANT_ID,
-                                     sku=Sku(sku or SkuName.premium.value),
+                                     sku=Sku(name=sku or SkuName.premium.value),
                                      access_policies=access_policies,
                                      vault_uri=None,
                                      enabled_for_deployment=enabled_for_deployment,

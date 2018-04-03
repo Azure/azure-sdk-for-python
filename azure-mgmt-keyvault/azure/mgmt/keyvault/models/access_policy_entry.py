@@ -16,18 +16,20 @@ class AccessPolicyEntry(Model):
     """An identity that have access to the key vault. All identities in the array
     must use the same tenant ID as the key vault's tenant ID.
 
-    :param tenant_id: The Azure Active Directory tenant ID that should be used
-     for authenticating requests to the key vault.
+    All required parameters must be populated in order to send to Azure.
+
+    :param tenant_id: Required. The Azure Active Directory tenant ID that
+     should be used for authenticating requests to the key vault.
     :type tenant_id: str
-    :param object_id: The object ID of a user, service principal or security
-     group in the Azure Active Directory tenant for the vault. The object ID
-     must be unique for the list of access policies.
+    :param object_id: Required. The object ID of a user, service principal or
+     security group in the Azure Active Directory tenant for the vault. The
+     object ID must be unique for the list of access policies.
     :type object_id: str
     :param application_id:  Application ID of the client making request on
      behalf of a principal
     :type application_id: str
-    :param permissions: Permissions the identity has for keys, secrets and
-     certificates.
+    :param permissions: Required. Permissions the identity has for keys,
+     secrets and certificates.
     :type permissions: ~azure.mgmt.keyvault.models.Permissions
     """
 
@@ -44,9 +46,9 @@ class AccessPolicyEntry(Model):
         'permissions': {'key': 'permissions', 'type': 'Permissions'},
     }
 
-    def __init__(self, tenant_id, object_id, permissions, application_id=None):
-        super(AccessPolicyEntry, self).__init__()
-        self.tenant_id = tenant_id
-        self.object_id = object_id
-        self.application_id = application_id
-        self.permissions = permissions
+    def __init__(self, **kwargs):
+        super(AccessPolicyEntry, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.object_id = kwargs.get('object_id', None)
+        self.application_id = kwargs.get('application_id', None)
+        self.permissions = kwargs.get('permissions', None)

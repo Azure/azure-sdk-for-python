@@ -33,9 +33,9 @@ class Permissions(Model):
         'storage': {'key': 'storage', 'type': '[str]'},
     }
 
-    def __init__(self, keys=None, secrets=None, certificates=None, storage=None):
-        super(Permissions, self).__init__()
-        self.keys = keys
-        self.secrets = secrets
-        self.certificates = certificates
-        self.storage = storage
+    def __init__(self, **kwargs):
+        super(Permissions, self).__init__(**kwargs)
+        self.keys = kwargs.get('keys', None)
+        self.secrets = kwargs.get('secrets', None)
+        self.certificates = kwargs.get('certificates', None)
+        self.storage = kwargs.get('storage', None)

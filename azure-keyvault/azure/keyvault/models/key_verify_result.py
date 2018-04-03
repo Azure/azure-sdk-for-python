@@ -30,6 +30,6 @@ class KeyVerifyResult(Model):
         'value': {'key': 'value', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(KeyVerifyResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(KeyVerifyResult, self).__init__(**kwargs)
         self.value = None

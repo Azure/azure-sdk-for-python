@@ -38,10 +38,10 @@ class StorageAccountUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, active_key_name=None, auto_regenerate_key=None, regeneration_period=None, storage_account_attributes=None, tags=None):
-        super(StorageAccountUpdateParameters, self).__init__()
-        self.active_key_name = active_key_name
-        self.auto_regenerate_key = auto_regenerate_key
-        self.regeneration_period = regeneration_period
-        self.storage_account_attributes = storage_account_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(StorageAccountUpdateParameters, self).__init__(**kwargs)
+        self.active_key_name = kwargs.get('active_key_name', None)
+        self.auto_regenerate_key = kwargs.get('auto_regenerate_key', None)
+        self.regeneration_period = kwargs.get('regeneration_period', None)
+        self.storage_account_attributes = kwargs.get('storage_account_attributes', None)
+        self.tags = kwargs.get('tags', None)

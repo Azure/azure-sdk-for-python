@@ -46,8 +46,8 @@ class DeletedVaultProperties(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
-        super(DeletedVaultProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeletedVaultProperties, self).__init__(**kwargs)
         self.vault_id = None
         self.location = None
         self.deletion_date = None
