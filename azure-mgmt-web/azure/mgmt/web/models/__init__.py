@@ -120,11 +120,11 @@ from .analysis_definition import AnalysisDefinition
 from .data_table_response_column import DataTableResponseColumn
 from .data_table_response_object import DataTableResponseObject
 from .detector_info import DetectorInfo
+from .rendering import Rendering
+from .diagnostic_data import DiagnosticData
 from .detector_response import DetectorResponse
 from .diagnostic_analysis import DiagnosticAnalysis
 from .diagnostic_category import DiagnosticCategory
-from .rendering import Rendering
-from .diagnostic_data import DiagnosticData
 from .diagnostic_detector_response import DiagnosticDetectorResponse
 from .stack_minor_version import StackMinorVersion
 from .stack_major_version import StackMajorVersion
@@ -448,11 +448,11 @@ __all__ = [
     'DataTableResponseColumn',
     'DataTableResponseObject',
     'DetectorInfo',
+    'Rendering',
+    'DiagnosticData',
     'DetectorResponse',
     'DiagnosticAnalysis',
     'DiagnosticCategory',
-    'Rendering',
-    'DiagnosticData',
     'DiagnosticDetectorResponse',
     'StackMinorVersion',
     'StackMajorVersion',
