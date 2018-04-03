@@ -379,7 +379,7 @@ class NetworkManagementClient(MultiApiClientMixin):
 
            * 2018-02-01: :class:`DdosProtectionPlansOperations<azure.mgmt.network.v2018_02_01.operations.DdosProtectionPlansOperations>`
         """
-        api_version = self.profile.get('ddos_protection_plans', self.api_version)
+        api_version = self._get_api_version('ddos_protection_plans')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import DdosProtectionPlansOperations as OperationClass
         else:
@@ -466,7 +466,7 @@ class NetworkManagementClient(MultiApiClientMixin):
 
            * 2018-02-01: :class:`ExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCircuitConnectionsOperations>`
         """
-        api_version = self.profile.get('express_route_circuit_connections', self.api_version)
+        api_version = self._get_api_version('express_route_circuit_connections')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
         else:
@@ -565,7 +565,7 @@ class NetworkManagementClient(MultiApiClientMixin):
 
            * 2018-02-01: :class:`ExpressRouteCrossConnectionPeeringsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCrossConnectionPeeringsOperations>`
         """
-        api_version = self.profile.get('express_route_cross_connection_peerings', self.api_version)
+        api_version = self._get_api_version('express_route_cross_connection_peerings')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
         else:
@@ -578,7 +578,7 @@ class NetworkManagementClient(MultiApiClientMixin):
 
            * 2018-02-01: :class:`ExpressRouteCrossConnectionsOperations<azure.mgmt.network.v2018_02_01.operations.ExpressRouteCrossConnectionsOperations>`
         """
-        api_version = self.profile.get('express_route_cross_connections', self.api_version)
+        api_version = self._get_api_version('express_route_cross_connections')
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import ExpressRouteCrossConnectionsOperations as OperationClass
         else:
