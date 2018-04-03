@@ -76,8 +76,8 @@ class NetworkManagementClient(MultiApiClientMixin):
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
-    :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION = '2017-11-01'
