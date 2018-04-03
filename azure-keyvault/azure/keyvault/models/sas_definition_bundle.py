@@ -59,8 +59,8 @@ class SasDefinitionBundle(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
-        super(SasDefinitionBundle, self).__init__()
+    def __init__(self, **kwargs):
+        super(SasDefinitionBundle, self).__init__(**kwargs)
         self.id = None
         self.secret_id = None
         self.template_uri = None

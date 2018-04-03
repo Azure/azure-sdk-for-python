@@ -52,8 +52,8 @@ class DeletedCertificateItem(CertificateItem):
         'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, id=None, attributes=None, tags=None, x509_thumbprint=None, recovery_id=None):
-        super(DeletedCertificateItem, self).__init__(id=id, attributes=attributes, tags=tags, x509_thumbprint=x509_thumbprint)
-        self.recovery_id = recovery_id
+    def __init__(self, **kwargs):
+        super(DeletedCertificateItem, self).__init__(**kwargs)
+        self.recovery_id = kwargs.get('recovery_id', None)
         self.scheduled_purge_date = None
         self.deleted_date = None
