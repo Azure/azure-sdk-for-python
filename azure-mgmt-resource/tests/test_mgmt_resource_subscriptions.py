@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.resource.subscriptions.models
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase
 
 class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
 
@@ -20,7 +18,6 @@ class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
             azure.mgmt.resource.SubscriptionClient
         )
 
-    @record
     def test_subscriptions(self):
         subs = list(self.subscriptions_client.subscriptions.list())
         self.assertGreater(len(subs), 0)
@@ -33,7 +30,6 @@ class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
         sub = self.subscriptions_client.subscriptions.get(self.settings.SUBSCRIPTION_ID)
         self.assertEqual(sub.subscription_id, self.settings.SUBSCRIPTION_ID)
 
-    @record
     def test_tenants(self):
         tenants = list(self.subscriptions_client.tenants.list())
         self.assertGreater(len(tenants), 0)

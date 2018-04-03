@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.resource
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 class MgmtResourceLocksTest(AzureMgmtTestCase):
 
@@ -19,15 +17,13 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         self.locks_client = self.create_mgmt_client(
             azure.mgmt.resource.ManagementLockClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
-    def test_locks(self):
+    @ResourceGroupPreparer()
+    def test_locks(self, resource_group, location):
         lock_name = 'pylockrg'
 
         lock = self.locks_client.management_locks.create_or_update_at_resource_group_level(
-            self.group_name,
+            resource_group.name,
             lock_name,
             {
                 'level': 'CanNotDelete'
@@ -36,12 +32,12 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         self.assertIsNotNone(lock)
 
         locks = list(self.locks_client.management_locks.list_at_resource_group_level(
-            self.group_name
+            resource_group.name
         ))
         self.assertEqual(len(locks), 1)
 
         lock = self.locks_client.management_locks.delete_at_resource_group_level(
-            self.group_name,
+            resource_group.name,
             lock_name
         )
 

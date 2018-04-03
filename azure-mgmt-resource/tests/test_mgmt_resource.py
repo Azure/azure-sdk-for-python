@@ -9,15 +9,15 @@ import unittest
 
 import azure.mgmt.resource.resources.models
 import azure.common.exceptions
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 class MgmtResourceTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtResourceTest, self).setUp()
+        self.resource_client = self.create_mgmt_client(
+            azure.mgmt.resource.ResourceManagementClient
+        )
 
-    @record
     def test_tag_operations(self):
         tag_name = 'tag1'
         tag_value = 'value1'
@@ -51,8 +51,8 @@ class MgmtResourceTest(AzureMgmtTestCase):
             tag_name
         )
 
-    @record
     def test_resource_groups(self):
+        group_name = "test_mgmt_resource_test_resource_groups457f1050"
         # Create or update
         params_create = azure.mgmt.resource.resources.models.ResourceGroup(
             location=self.region,
@@ -61,18 +61,18 @@ class MgmtResourceTest(AzureMgmtTestCase):
             },
         )
         result_create = self.resource_client.resource_groups.create_or_update(
-            self.group_name,
+            group_name,
             params_create,
         )
 
         # Get
-        result_get = self.resource_client.resource_groups.get(self.group_name)
-        self.assertEqual(result_get.name, self.group_name)
+        result_get = self.resource_client.resource_groups.get(group_name)
+        self.assertEqual(result_get.name, group_name)
         self.assertEqual(result_get.tags['tag1'], 'value1')
 
         # Check existence
         result_check = self.resource_client.resource_groups.check_existence(
-            self.group_name,
+            group_name,
         )
         self.assertTrue(result_check)
 
@@ -98,7 +98,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
             },
         )
         result_patch = self.resource_client.resource_groups.update(
-            self.group_name,
+            group_name,
             params_patch,
         )
         self.assertEqual(result_patch.tags['tag1'], 'valueA')
@@ -106,33 +106,27 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         # List resources
         resources = list(self.resource_client.resources.list_by_resource_group(
-            self.group_name
+            group_name
         ))
 
         # Export template
         template = self.resource_client.resource_groups.export_template(
-            self.group_name,
+            group_name,
             ['*']
         )
         self.assertTrue(hasattr(template, 'template'))
 
         # Delete
-        result_delete = self.resource_client.resource_groups.delete(self.group_name)
+        result_delete = self.resource_client.resource_groups.delete(group_name)
         result_delete.wait()
 
-    @record
-    def test_resources(self):
-        # WARNING: For some strange url parsing reason, this test has to be recorded twice:
-        # - Once in Python 2.7 for 2.7/3.3/3.4 (...Microsoft.Compute//availabilitySets...)
-        # - Once in Python 3.5 (...Microsoft.Compute/availabilitySets...)
-        # I don't know why 3.5 has one / and 2.7-3.4 two /
-        # I don't really care, being that Azure accept both URLs...
-        self.create_resource_group()
+    @ResourceGroupPreparer()
+    def test_resources(self, resource_group, location):
 
         resource_name = self.get_resource_name("pytestavset")
 
         resource_exist = self.resource_client.resources.check_existence(
-            resource_group_name=self.group_name,
+            resource_group_name=resource_group.name,
             resource_provider_namespace="Microsoft.Compute",
             parent_resource_path="",
             resource_type="availabilitySets",
@@ -142,7 +136,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertFalse(resource_exist)
 
         create_result = self.resource_client.resources.create_or_update(
-            resource_group_name=self.group_name,
+            resource_group_name=resource_group.name,
             resource_provider_namespace="Microsoft.Compute",
             parent_resource_path="",
             resource_type="availabilitySets",
@@ -154,7 +148,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(result.name, resource_name)
 
         get_result = self.resource_client.resources.get(
-            resource_group_name=self.group_name,
+            resource_group_name=resource_group.name,
             resource_provider_namespace="Microsoft.Compute",
             parent_resource_path="",
             resource_type="availabilitySets",
@@ -171,11 +165,11 @@ class MgmtResourceTest(AzureMgmtTestCase):
         new_group_name = self.get_resource_name("pynewgroup")
         new_group = self.resource_client.resource_groups.create_or_update(
             new_group_name,
-            {'location': self.region},
+            {'location': location},
         )
 
         async_move = self.resource_client.resources.move_resources(
-            self.group_name,
+            resource_group.name,
             [get_result.id],
             new_group.id
         )
@@ -197,15 +191,14 @@ class MgmtResourceTest(AzureMgmtTestCase):
         async_delete.wait()
         
 
-    @record
-    def test_deployments(self):
-        self.create_resource_group()
+    @ResourceGroupPreparer()
+    def test_deployments(self, resource_group, location):
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestdeployment")
 
         deployment_exists = self.resource_client.deployments.check_existence(
-            self.group_name,
+            resource_group.name,
             deployment_name
         )
         self.assertFalse(deployment_exists)
@@ -253,7 +246,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
 
         deployment_create_result = self.resource_client.deployments.create_or_update(
-            self.group_name,
+            resource_group.name,
             deployment_name,
             deployment_params,
         )
@@ -261,7 +254,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(deployment_name, deployment_create_result.name)
 
         deployment_list_result = self.resource_client.deployments.list_by_resource_group(
-            self.group_name,
+            resource_group.name,
             None,
         )
         deployment_list_result = list(deployment_list_result)
@@ -269,20 +262,20 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(deployment_name, deployment_list_result[0].name)
 
         deployment_get_result = self.resource_client.deployments.get(
-            self.group_name,
+            resource_group.name,
             deployment_name,
         )
         self.assertEqual(deployment_name, deployment_get_result.name)
 
         deployment_operations = list(self.resource_client.deployment_operations.list(
-            self.group_name,
+            resource_group.name,
             deployment_name
         ))
         self.assertGreater(len(deployment_operations), 1)
 
         deployment_operation = deployment_operations[0]
         deployment_operation_get = self.resource_client.deployment_operations.get(
-            self.group_name,
+            resource_group.name,
             deployment_name,
             deployment_operation.operation_id
         )
@@ -291,14 +284,14 @@ class MgmtResourceTest(AzureMgmtTestCase):
         # Should throw, since the deployment is done => cannot be cancelled
         with self.assertRaises(azure.common.exceptions.CloudError) as cm:
             self.resource_client.deployments.cancel(
-                self.group_name,
+                resource_group.name,
                 deployment_name
             )
         self.assertIn('cannot be cancelled', cm.exception.message)
 
         # Validate
         validation =self.resource_client.deployments.validate(
-            self.group_name,
+            resource_group.name,
             deployment_name,
             {'mode': azure.mgmt.resource.resources.models.DeploymentMode.incremental}
         )
@@ -306,21 +299,20 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         # Export template
         export =self.resource_client.deployments.export_template(
-            self.group_name,
+            resource_group.name,
             deployment_name
         )
         self.assertTrue(hasattr(export, 'template'))
 
         # Delete the template
         async_delete = self.resource_client.deployments.delete(
-            self.group_name,
+            resource_group.name,
             deployment_name
         )
         async_delete.wait()
 
-    @record
-    def test_deployments_linked_template(self):
-        self.create_resource_group()
+    @ResourceGroupPreparer()
+    def test_deployments_linked_template(self, resource_group, location):
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestlinked")
@@ -338,7 +330,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
 
         deployment_create_result = self.resource_client.deployments.create_or_update(
-            self.group_name,
+            resource_group.name,
             deployment_name,
             deployment_params,
         )
@@ -346,7 +338,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(deployment_name, deployment_create_result.name)
 
         deployment_list_result = self.resource_client.deployments.list_by_resource_group(
-            self.group_name,
+            resource_group.name,
             None,
         )
         deployment_list_result = list(deployment_list_result)
@@ -354,14 +346,13 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(deployment_name, deployment_list_result[0].name)
 
         deployment_get_result = self.resource_client.deployments.get(
-            self.group_name,
+            resource_group.name,
             deployment_name,
         )
         self.assertEqual(deployment_name, deployment_get_result.name)
 
-    @record
-    def test_deployments_linked_template_error(self):
-        self.create_resource_group()
+    @ResourceGroupPreparer()
+    def test_deployments_linked_template_error(self, resource_group, location):
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestlinked")
@@ -380,22 +371,19 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         with self.assertRaises(azure.common.exceptions.CloudError) as err:
             self.resource_client.deployments.create_or_update(
-                self.group_name,
+                resource_group.name,
                 deployment_name,
                 deployment_params,
             )
         cloud_error = err.exception
         self.assertTrue(cloud_error.message)        
 
-
-    @record
     def test_provider_locations(self):
         result_get = self.resource_client.providers.get('Microsoft.Web')
         for resource in result_get.resource_types:
             if resource.resource_type == 'sites':
                 self.assertIn('West US', resource.locations)
 
-    @record
     def test_providers(self):
         self.resource_client.providers.unregister('Microsoft.Batch')
         self.resource_client.providers.get('Microsoft.Batch')
