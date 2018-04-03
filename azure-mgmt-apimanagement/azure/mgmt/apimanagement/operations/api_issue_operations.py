@@ -15,15 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ApiPolicyOperations(object):
-    """ApiPolicyOperations operations.
+class ApiIssueOperations(object):
+    """ApiIssueOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
-    :ivar policy_id: The identifier of the Policy. Constant value: "policy".
     """
 
     models = models
@@ -34,94 +33,24 @@ class ApiPolicyOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2018-01-01"
-        self.policy_id = "policy"
 
         self.config = config
 
-    def list_by_api(
-            self, resource_group_name, service_name, api_id, custom_headers=None, raw=False, **operation_config):
-        """Get the policy configuration at the API level.
+    def head(
+            self, resource_group_name, service_name, api_id, issue_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the entity state (Etag) version of the Issue for an API specified
+        by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
         :type api_id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: PolicyCollection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.PolicyCollection or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.list_by_api.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-        header_dict = {}
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('PolicyCollection', response)
-            header_dict = {
-                'ETag': 'str',
-            }
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_by_api.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies'}
-
-    def get_entity_tag(
-            self, resource_group_name, service_name, api_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the entity state (Etag) version of the API policy specified by its
-        identifier.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param service_name: The name of the API Management service.
-        :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
-        :type api_id: str
+        :param issue_id: Issue identifier. Must be unique in the current API
+         Management service instance.
+        :type issue_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -133,12 +62,12 @@ class ApiPolicyOperations(object):
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_entity_tag.metadata['url']
+        url = self.head.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -170,27 +99,29 @@ class ApiPolicyOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies/{policyId}'}
+    head.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
 
     def get(
-            self, resource_group_name, service_name, api_id, custom_headers=None, raw=False, **operation_config):
-        """Get the policy configuration at the API level.
+            self, resource_group_name, service_name, api_id, issue_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the details of the Issue for an API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
         :type api_id: str
+        :param issue_id: Issue identifier. Must be unique in the current API
+         Management service instance.
+        :type issue_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.PolicyContract or
+        :return: IssueContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.IssueContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
@@ -200,8 +131,8 @@ class ApiPolicyOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -231,7 +162,7 @@ class ApiPolicyOperations(object):
         header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PolicyContract', response)
+            deserialized = self._deserialize('IssueContract', response)
             header_dict = {
                 'ETag': 'str',
             }
@@ -242,50 +173,46 @@ class ApiPolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies/{policyId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, api_id, policy_content, if_match=None, content_format="xml", custom_headers=None, raw=False, **operation_config):
-        """Creates or updates policy configuration for the API.
+            self, resource_group_name, service_name, api_id, issue_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+        """Creates a new Issue for an API or updates an existing one.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
         :type api_id: str
-        :param policy_content: Json escaped Xml Encoded contents of the
-         Policy.
-        :type policy_content: str
-        :param if_match: ETag of the Entity. Not required when creating an
-         entity, but required when updating an entity.
+        :param issue_id: Issue identifier. Must be unique in the current API
+         Management service instance.
+        :type issue_id: str
+        :param parameters: Create parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.IssueContract
+        :param if_match: ETag of the Issue Entity. ETag should match the
+         current entity state from the header response of the GET request or it
+         should be * for unconditional update.
         :type if_match: str
-        :param content_format: Format of the policyContent. Possible values
-         include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'
-        :type content_format: str or
-         ~azure.mgmt.apimanagement.models.PolicyContentFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PolicyContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.PolicyContract or
+        :return: IssueContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.IssueContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.PolicyContract(policy_content=policy_content, content_format=content_format)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -307,7 +234,7 @@ class ApiPolicyOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'PolicyContract')
+        body_content = self._serialize.body(parameters, 'IssueContract')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -320,32 +247,34 @@ class ApiPolicyOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('PolicyContract', response)
+            deserialized = self._deserialize('IssueContract', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('PolicyContract', response)
+            deserialized = self._deserialize('IssueContract', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies/{policyId}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
 
     def delete(
-            self, resource_group_name, service_name, api_id, if_match, custom_headers=None, raw=False, **operation_config):
-        """Deletes the policy configuration at the Api.
+            self, resource_group_name, service_name, api_id, issue_id, if_match, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified Issue from an API.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
         :type api_id: str
-        :param if_match: ETag of the Entity. ETag should match the current
-         entity state from the header response of the GET request or it should
-         be * for unconditional update.
+        :param issue_id: Issue identifier. Must be unique in the current API
+         Management service instance.
+        :type issue_id: str
+        :param if_match: ETag of the Issue Entity. ETag should match the
+         current entity state from the header response of the GET request or it
+         should be * for unconditional update.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -362,8 +291,8 @@ class ApiPolicyOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -387,10 +316,10 @@ class ApiPolicyOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/policies/{policyId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}

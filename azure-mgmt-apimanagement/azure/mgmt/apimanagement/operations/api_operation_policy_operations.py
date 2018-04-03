@@ -273,7 +273,7 @@ class ApiOperationPolicyOperations(object):
          entity, but required when updating an entity.
         :type if_match: str
         :param content_format: Format of the policyContent. Possible values
-         include: 'xml', 'xml-link'
+         include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'
         :type content_format: str or
          ~azure.mgmt.apimanagement.models.PolicyContentFormat
         :param dict custom_headers: headers that will be added to the request

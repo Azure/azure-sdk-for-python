@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class PolicyContract(Resource):
-    """Policy Contract details.
+class IssueCommentContract(Resource):
+    """Issue Comment Contract details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,32 +26,34 @@ class PolicyContract(Resource):
     :vartype name: str
     :ivar type: Resource type for API Management resource.
     :vartype type: str
-    :param policy_content: Required. Json escaped Xml Encoded contents of the
-     Policy.
-    :type policy_content: str
-    :param content_format: Format of the policyContent. Possible values
-     include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'. Default value: "xml"
-     .
-    :type content_format: str or
-     ~azure.mgmt.apimanagement.models.PolicyContentFormat
+    :param text: Required. Comment text.
+    :type text: str
+    :param created_date: Date and time when the comment was created.
+    :type created_date: datetime
+    :param user_id: Required. A resource identifier for the user who left the
+     comment.
+    :type user_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'policy_content': {'required': True},
+        'text': {'required': True},
+        'user_id': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'policy_content': {'key': 'properties.policyContent', 'type': 'str'},
-        'content_format': {'key': 'properties.contentFormat', 'type': 'str'},
+        'text': {'key': 'properties.text', 'type': 'str'},
+        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
+        'user_id': {'key': 'properties.userId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(PolicyContract, self).__init__(**kwargs)
-        self.policy_content = kwargs.get('policy_content', None)
-        self.content_format = kwargs.get('content_format', "xml")
+        super(IssueCommentContract, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.created_date = kwargs.get('created_date', None)
+        self.user_id = kwargs.get('user_id', None)
