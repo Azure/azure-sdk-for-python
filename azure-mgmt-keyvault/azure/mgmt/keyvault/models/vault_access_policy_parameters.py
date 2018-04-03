@@ -18,6 +18,8 @@ class VaultAccessPolicyParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource id of the access policy.
     :vartype id: str
     :ivar name: The resource name of the access policy.
@@ -26,7 +28,7 @@ class VaultAccessPolicyParameters(Model):
     :vartype type: str
     :ivar location: The resource type of the the access policy.
     :vartype location: str
-    :param properties: Properties of the access policy
+    :param properties: Required. Properties of the access policy
     :type properties: ~azure.mgmt.keyvault.models.VaultAccessPolicyProperties
     """
 
@@ -46,10 +48,10 @@ class VaultAccessPolicyParameters(Model):
         'properties': {'key': 'properties', 'type': 'VaultAccessPolicyProperties'},
     }
 
-    def __init__(self, properties):
-        super(VaultAccessPolicyParameters, self).__init__()
+    def __init__(self, **kwargs):
+        super(VaultAccessPolicyParameters, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)
