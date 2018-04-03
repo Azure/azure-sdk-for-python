@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class BotResourcePaged(Paged):
+class BotPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`BotResource <azure.mgmt.botservice.models.BotResource>` object
+    A paging container for iterating over a list of :class:`Bot <azure.mgmt.botservice.models.Bot>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[BotResource]'}
+        'current_page': {'key': 'value', 'type': '[Bot]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(BotResourcePaged, self).__init__(*args, **kwargs)
+        super(BotPaged, self).__init__(*args, **kwargs)

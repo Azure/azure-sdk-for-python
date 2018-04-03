@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class BotResource(Resource):
+class Bot(Resource):
     """Bot resource definition.
 
     Variables are only populated by the server, and will be ignored when
@@ -36,7 +36,7 @@ class BotResource(Resource):
     :param etag: Entity Tag
     :type etag: str
     :param properties: The set of properties specific to bot resource
-    :type properties: ~azure.mgmt.botservice.models.BotResourceProperties
+    :type properties: ~azure.mgmt.botservice.models.BotProperties
     """
 
     _validation = {
@@ -54,9 +54,9 @@ class BotResource(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BotResourceProperties'},
+        'properties': {'key': 'properties', 'type': 'BotProperties'},
     }
 
     def __init__(self, *, location: str=None, tags=None, sku=None, kind=None, etag: str=None, properties=None, **kwargs) -> None:
-        super(BotResource, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag, **kwargs)
+        super(Bot, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag, **kwargs)
         self.properties = properties
