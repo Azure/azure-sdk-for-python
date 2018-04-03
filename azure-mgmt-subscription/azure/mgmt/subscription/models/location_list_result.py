@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.serialization import Model
 
+
+class LocationListResult(Model):
+    """Location list operation response.
+
+    :param value: An array of locations.
+    :type value: list[~azure.mgmt.subscription.models.Location]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Location]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LocationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class LocationPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Location <azure.mgmt.subscription.models.Location>` object
+class LocationListResult(Model):
+    """Location list operation response.
+
+    :param value: An array of locations.
+    :type value: list[~azure.mgmt.subscription.models.Location]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Location]'}
+        'value': {'key': 'value', 'type': '[Location]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(LocationPaged, self).__init__(*args, **kwargs)
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(LocationListResult, self).__init__(**kwargs)
+        self.value = value
