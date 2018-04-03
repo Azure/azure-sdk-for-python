@@ -80,7 +80,7 @@ class NetworkManagementClient(MultiApiClientMixin):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2017-11-01'
+    DEFAULT_API_VERSION = '2018-02-01'
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -118,16 +118,18 @@ class NetworkManagementClient(MultiApiClientMixin):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2018_011_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2018_02_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
          raw=true
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2018_01_01.models.DnsNameAvailabilityResult>` or
+         <azure.mgmt.network.v2018_02_01.models.DnsNameAvailabilityResult>` or
          :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = self._get_api_version('check_dns_name_availability')
-        if api_version == '2018-01-01':
+        if api_version == '2018-02-01':
+            from .v2018_02_01 import NetworkManagementClient as ClientClass
+        elif api_version == '2018-01-01':
             from .v2018_01_01 import NetworkManagementClient as ClientClass
         elif api_version == '2017-11-01':
             from .v2017_11_01 import NetworkManagementClient as ClientClass
