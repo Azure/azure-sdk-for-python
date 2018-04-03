@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Webhook(Model):
+class Webhook(ProxyResource):
     """Definition of the webhook type.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the resource.
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Gets the name of the webhook.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Gets the type of the resource.
+    :ivar type: The type of the resource.
     :vartype type: str
     :param is_enabled: Gets or sets the value of the enabled flag of the
      webhook. Default value: False .
@@ -73,9 +73,6 @@ class Webhook(Model):
 
     def __init__(self, is_enabled=False, uri=None, expiry_time=None, last_invoked_time=None, parameters=None, runbook=None, run_on=None, creation_time=None, last_modified_time=None, description=None):
         super(Webhook, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
         self.is_enabled = is_enabled
         self.uri = uri
         self.expiry_time = expiry_time

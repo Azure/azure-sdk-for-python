@@ -20,14 +20,19 @@ class DscNodeUpdateParameters(Model):
     :param node_configuration: Gets or sets the configuration of the node.
     :type node_configuration:
      ~azure.mgmt.automation.models.DscNodeConfigurationAssociationProperty
+    :param properties:
+    :type properties:
+     ~azure.mgmt.automation.models.DscNodeUpdateParametersProperties
     """
 
     _attribute_map = {
         'node_id': {'key': 'nodeId', 'type': 'str'},
         'node_configuration': {'key': 'nodeConfiguration', 'type': 'DscNodeConfigurationAssociationProperty'},
+        'properties': {'key': 'properties', 'type': 'DscNodeUpdateParametersProperties'},
     }
 
-    def __init__(self, node_id=None, node_configuration=None):
+    def __init__(self, node_id=None, node_configuration=None, properties=None):
         super(DscNodeUpdateParameters, self).__init__()
         self.node_id = node_id
         self.node_configuration = node_configuration
+        self.properties = properties

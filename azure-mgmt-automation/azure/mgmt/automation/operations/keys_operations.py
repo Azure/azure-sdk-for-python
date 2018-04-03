@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class FieldsOperations(object):
-    """FieldsOperations operations.
+class KeysOperations(object):
+    """KeysOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,26 +36,22 @@ class FieldsOperations(object):
 
         self.config = config
 
-    def list_by_type(
-            self, resource_group_name, automation_account_name, module_name, type_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve a list of fields of a given type identified by module name.
+    def list_by_automation_account(
+            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieve the automation keys for an account.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
-        :param module_name: The name of module.
-        :type module_name: str
-        :param type_name: The name of type.
-        :type type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of TypeField
+        :return: An iterator like instance of Key
         :rtype:
-         ~azure.mgmt.automation.models.TypeFieldPaged[~azure.mgmt.automation.models.TypeField]
+         ~azure.mgmt.automation.models.KeyPaged[~azure.mgmt.automation.models.Key]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
@@ -63,12 +59,10 @@ class FieldsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_type.metadata['url']
+                url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-                    'moduleName': self._serialize.url("module_name", module_name, 'str'),
-                    'typeName': self._serialize.url("type_name", type_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -92,7 +86,7 @@ class FieldsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
+            request = self._client.post(url, query_parameters)
             response = self._client.send(
                 request, header_parameters, stream=False, **operation_config)
 
@@ -102,12 +96,12 @@ class FieldsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.TypeFieldPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.KeyPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.TypeFieldPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.KeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_type.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/modules/{moduleName}/types/{typeName}/fields'}
+    list_by_automation_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/listKeys'}

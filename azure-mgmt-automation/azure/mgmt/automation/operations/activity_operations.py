@@ -41,7 +41,7 @@ class ActivityOperations(object):
         """Retrieve the activity in the module identified by module name and
         activity name.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -63,7 +63,7 @@ class ActivityOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'moduleName': self._serialize.url("module_name", module_name, 'str'),
             'activityName': self._serialize.url("activity_name", activity_name, 'str'),
@@ -108,7 +108,7 @@ class ActivityOperations(object):
             self, resource_group_name, automation_account_name, module_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of activities in the module identified by module name.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -131,7 +131,7 @@ class ActivityOperations(object):
                 # Construct URL
                 url = self.list_by_module.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'moduleName': self._serialize.url("module_name", module_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')

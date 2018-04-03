@@ -41,7 +41,7 @@ class TestJobStreamsOperations(object):
         """Retrieve a test job stream of the test job identified by runbook name
         and stream id.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -64,7 +64,7 @@ class TestJobStreamsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str'),
             'jobStreamId': self._serialize.url("job_stream_id", job_stream_id, 'str')
@@ -108,7 +108,7 @@ class TestJobStreamsOperations(object):
             self, resource_group_name, automation_account_name, runbook_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of test job streams identified by runbook name.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -134,7 +134,7 @@ class TestJobStreamsOperations(object):
                 url = self.list_by_test_job.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
                 }

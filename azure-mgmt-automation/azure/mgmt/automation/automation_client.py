@@ -17,17 +17,12 @@ from .operations.automation_account_operations import AutomationAccountOperation
 from .operations.operations import Operations
 from .operations.statistics_operations import StatisticsOperations
 from .operations.usages_operations import UsagesOperations
+from .operations.keys_operations import KeysOperations
 from .operations.certificate_operations import CertificateOperations
 from .operations.connection_operations import ConnectionOperations
 from .operations.connection_type_operations import ConnectionTypeOperations
 from .operations.credential_operations import CredentialOperations
-from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
-from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
 from .operations.dsc_configuration_operations import DscConfigurationOperations
-from .operations.agent_registration_information_operations import AgentRegistrationInformationOperations
-from .operations.dsc_node_operations import DscNodeOperations
-from .operations.node_reports_operations import NodeReportsOperations
-from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
 from .operations.hybrid_runbook_worker_group_operations import HybridRunbookWorkerGroupOperations
 from .operations.job_schedule_operations import JobScheduleOperations
 from .operations.linked_workspace_operations import LinkedWorkspaceOperations
@@ -49,6 +44,12 @@ from .operations.source_control_operations import SourceControlOperations
 from .operations.source_control_sync_job_operations import SourceControlSyncJobOperations
 from .operations.job_operations import JobOperations
 from .operations.job_stream_operations import JobStreamOperations
+from .operations.agent_registration_information_operations import AgentRegistrationInformationOperations
+from .operations.dsc_node_operations import DscNodeOperations
+from .operations.node_reports_operations import NodeReportsOperations
+from .operations.dsc_compilation_job_operations import DscCompilationJobOperations
+from .operations.dsc_compilation_job_stream_operations import DscCompilationJobStreamOperations
+from .operations.dsc_node_configuration_operations import DscNodeConfigurationOperations
 from . import models
 
 
@@ -100,6 +101,8 @@ class AutomationClient(object):
     :vartype statistics: azure.mgmt.automation.operations.StatisticsOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.automation.operations.UsagesOperations
+    :ivar keys: Keys operations
+    :vartype keys: azure.mgmt.automation.operations.KeysOperations
     :ivar certificate: Certificate operations
     :vartype certificate: azure.mgmt.automation.operations.CertificateOperations
     :ivar connection: Connection operations
@@ -108,20 +111,8 @@ class AutomationClient(object):
     :vartype connection_type: azure.mgmt.automation.operations.ConnectionTypeOperations
     :ivar credential: Credential operations
     :vartype credential: azure.mgmt.automation.operations.CredentialOperations
-    :ivar dsc_compilation_job: DscCompilationJob operations
-    :vartype dsc_compilation_job: azure.mgmt.automation.operations.DscCompilationJobOperations
-    :ivar dsc_compilation_job_stream: DscCompilationJobStream operations
-    :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
     :ivar dsc_configuration: DscConfiguration operations
     :vartype dsc_configuration: azure.mgmt.automation.operations.DscConfigurationOperations
-    :ivar agent_registration_information: AgentRegistrationInformation operations
-    :vartype agent_registration_information: azure.mgmt.automation.operations.AgentRegistrationInformationOperations
-    :ivar dsc_node: DscNode operations
-    :vartype dsc_node: azure.mgmt.automation.operations.DscNodeOperations
-    :ivar node_reports: NodeReports operations
-    :vartype node_reports: azure.mgmt.automation.operations.NodeReportsOperations
-    :ivar dsc_node_configuration: DscNodeConfiguration operations
-    :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
     :ivar hybrid_runbook_worker_group: HybridRunbookWorkerGroup operations
     :vartype hybrid_runbook_worker_group: azure.mgmt.automation.operations.HybridRunbookWorkerGroupOperations
     :ivar job_schedule: JobSchedule operations
@@ -164,6 +155,18 @@ class AutomationClient(object):
     :vartype job: azure.mgmt.automation.operations.JobOperations
     :ivar job_stream: JobStream operations
     :vartype job_stream: azure.mgmt.automation.operations.JobStreamOperations
+    :ivar agent_registration_information: AgentRegistrationInformation operations
+    :vartype agent_registration_information: azure.mgmt.automation.operations.AgentRegistrationInformationOperations
+    :ivar dsc_node: DscNode operations
+    :vartype dsc_node: azure.mgmt.automation.operations.DscNodeOperations
+    :ivar node_reports: NodeReports operations
+    :vartype node_reports: azure.mgmt.automation.operations.NodeReportsOperations
+    :ivar dsc_compilation_job: DscCompilationJob operations
+    :vartype dsc_compilation_job: azure.mgmt.automation.operations.DscCompilationJobOperations
+    :ivar dsc_compilation_job_stream: DscCompilationJobStream operations
+    :vartype dsc_compilation_job_stream: azure.mgmt.automation.operations.DscCompilationJobStreamOperations
+    :ivar dsc_node_configuration: DscNodeConfiguration operations
+    :vartype dsc_node_configuration: azure.mgmt.automation.operations.DscNodeConfigurationOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -193,6 +196,8 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.keys = KeysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.certificate = CertificateOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.connection = ConnectionOperations(
@@ -201,19 +206,7 @@ class AutomationClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.credential = CredentialOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_compilation_job = DscCompilationJobOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.dsc_configuration = DscConfigurationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.agent_registration_information = AgentRegistrationInformationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_node = DscNodeOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.node_reports = NodeReportsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.dsc_node_configuration = DscNodeConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.hybrid_runbook_worker_group = HybridRunbookWorkerGroupOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -256,4 +249,16 @@ class AutomationClient(object):
         self.job = JobOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.job_stream = JobStreamOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.agent_registration_information = AgentRegistrationInformationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_node = DscNodeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.node_reports = NodeReportsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_compilation_job = DscCompilationJobOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_compilation_job_stream = DscCompilationJobStreamOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.dsc_node_configuration = DscNodeConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)

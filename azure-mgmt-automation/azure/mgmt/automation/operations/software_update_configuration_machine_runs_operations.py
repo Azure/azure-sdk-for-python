@@ -41,7 +41,7 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
             self, resource_group_name, automation_account_name, software_update_configuration_machine_run_id, client_request_id=None, custom_headers=None, raw=False, **operation_config):
         """Get a single software update configuration machine run by Id.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
@@ -66,7 +66,7 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
         url = self.get_by_id.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'softwareUpdateConfigurationMachineRunId': self._serialize.url("software_update_configuration_machine_run_id", software_update_configuration_machine_run_id, 'str')
         }
@@ -113,7 +113,7 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
             self, resource_group_name, automation_account_name, client_request_id=None, filter=None, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Return list of software update configuration machine runs.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
@@ -145,7 +145,7 @@ class SoftwareUpdateConfigurationMachineRunsOperations(object):
         url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

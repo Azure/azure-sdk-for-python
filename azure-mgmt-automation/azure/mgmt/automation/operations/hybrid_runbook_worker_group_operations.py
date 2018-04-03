@@ -40,7 +40,7 @@ class HybridRunbookWorkerGroupOperations(object):
             self, resource_group_name, automation_account_name, hybrid_runbook_worker_group_name, custom_headers=None, raw=False, **operation_config):
         """Delete a hybrid runbook worker group.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: Automation account name.
         :type automation_account_name: str
@@ -60,7 +60,7 @@ class HybridRunbookWorkerGroupOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'hybridRunbookWorkerGroupName': self._serialize.url("hybrid_runbook_worker_group_name", hybrid_runbook_worker_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -97,7 +97,7 @@ class HybridRunbookWorkerGroupOperations(object):
             self, resource_group_name, automation_account_name, hybrid_runbook_worker_group_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a hybrid runbook worker group.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -118,7 +118,7 @@ class HybridRunbookWorkerGroupOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'hybridRunbookWorkerGroupName': self._serialize.url("hybrid_runbook_worker_group_name", hybrid_runbook_worker_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -162,7 +162,7 @@ class HybridRunbookWorkerGroupOperations(object):
             self, resource_group_name, automation_account_name, hybrid_runbook_worker_group_name, credential=None, custom_headers=None, raw=False, **operation_config):
         """Update a hybrid runbook worker group.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -188,7 +188,7 @@ class HybridRunbookWorkerGroupOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'hybridRunbookWorkerGroupName': self._serialize.url("hybrid_runbook_worker_group_name", hybrid_runbook_worker_group_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -236,7 +236,7 @@ class HybridRunbookWorkerGroupOperations(object):
             self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of hybrid runbook worker groups.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -257,7 +257,7 @@ class HybridRunbookWorkerGroupOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
