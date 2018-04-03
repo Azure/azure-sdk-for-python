@@ -3,6 +3,13 @@
 Release History
 ===============
 
+XXXXXXXXXXXX
+++++++++++++
+
+**Features**
+
+- All clients now support Azure profiles.
+
 2.0.0rc1 (2018-03-07)
 +++++++++++++++++++++
 
