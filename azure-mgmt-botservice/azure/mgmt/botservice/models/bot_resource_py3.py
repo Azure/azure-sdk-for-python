@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """Azure resource.
+class BotResource(Resource):
+    """Bot resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,6 +35,8 @@ class Resource(Model):
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag
     :type etag: str
+    :param properties: The set of properties specific to bot resource
+    :type properties: ~azure.mgmt.botservice.models.BotResourceProperties
     """
 
     _validation = {
@@ -52,15 +54,9 @@ class Resource(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'BotResourceProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.location = kwargs.get('location', None)
-        self.type = None
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-        self.kind = kwargs.get('kind', None)
-        self.etag = kwargs.get('etag', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, kind=None, etag: str=None, properties=None, **kwargs) -> None:
+        super(BotResource, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag, **kwargs)
+        self.properties = properties

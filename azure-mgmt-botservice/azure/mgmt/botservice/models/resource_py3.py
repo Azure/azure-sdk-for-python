@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class Bot(Resource):
-    """Bot resource definition.
+class Resource(Model):
+    """Azure resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,8 +35,6 @@ class Bot(Resource):
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag
     :type etag: str
-    :param properties: The set of properties specific to bot resource
-    :type properties: ~azure.mgmt.botservice.models.BotProperties
     """
 
     _validation = {
@@ -54,9 +52,15 @@ class Bot(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BotProperties'},
     }
 
-    def __init__(self, location=None, tags=None, sku=None, kind=None, etag=None, properties=None):
-        super(Bot, self).__init__(location=location, tags=tags, sku=sku, kind=kind, etag=etag)
-        self.properties = properties
+    def __init__(self, *, location: str=None, tags=None, sku=None, kind=None, etag: str=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.location = location
+        self.type = None
+        self.tags = tags
+        self.sku = sku
+        self.kind = kind
+        self.etag = etag

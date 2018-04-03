@@ -12,15 +12,13 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityRequestBody(Model):
-    """The request body for a request to Bot Service Management to check
-    availability of a bot name.
+class CheckNameAvaialabilityRequestBody(Model):
+    """The request body for a check bot name availability request to Bot Service
+    Management.
 
-    :param name: the name of the bot for which availability needs to be
-     checked.
+    :param name: name of the bot, that needs to be checked for availability.
     :type name: str
-    :param type: the type of the bot for which availability needs to be
-     checked
+    :param type: resource type for the bot.
     :type type: str
     """
 
@@ -29,6 +27,7 @@ class CheckNameAvailabilityRequestBody(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None, type=None):
-        self.name = name
-        self.type = type
+    def __init__(self, **kwargs):
+        super(CheckNameAvaialabilityRequestBody, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
