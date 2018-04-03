@@ -150,6 +150,13 @@
     ],
     "service_name": "Billing"
   },
+  "azure-mgmt-botservice": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.botservice"
+    ],
+    "service_name": "Bot Service"
+  },
   "azure-mgmt-cdn": {
     "category ": "Management",
     "namespaces": [
