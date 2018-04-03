@@ -227,8 +227,8 @@ class KeyVaultAuthentication(OAuthTokenAuthentication):
         self.auth = KeyVaultAuthBase(authorization_callback)
         self._callback = authorization_callback
         
-    def signed_session(self):
-        session = requests.Session()
+    def signed_session(self, session=None):
+        session = session or super(KeyVaultAuthentication, self).signed_session()
         session.auth = self.auth
         return session
 
