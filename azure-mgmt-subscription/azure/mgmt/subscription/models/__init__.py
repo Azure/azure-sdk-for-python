@@ -20,6 +20,7 @@ try:
     from .operation_py3 import Operation
     from .operation_list_result_py3 import OperationListResult
     from .location_py3 import Location
+    from .location_list_result_py3 import LocationListResult
     from .subscription_policies_py3 import SubscriptionPolicies
     from .subscription_py3 import Subscription
     from .tenant_id_description_py3 import TenantIdDescription
@@ -34,10 +35,10 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .operation_list_result import OperationListResult
     from .location import Location
+    from .location_list_result import LocationListResult
     from .subscription_policies import SubscriptionPolicies
     from .subscription import Subscription
     from .tenant_id_description import TenantIdDescription
-from .location_paged import LocationPaged
 from .subscription_paged import SubscriptionPaged
 from .tenant_id_description_paged import TenantIdDescriptionPaged
 from .subscription_client_enums import (
@@ -57,10 +58,10 @@ __all__ = [
     'Operation',
     'OperationListResult',
     'Location',
+    'LocationListResult',
     'SubscriptionPolicies',
     'Subscription',
     'TenantIdDescription',
-    'LocationPaged',
     'SubscriptionPaged',
     'TenantIdDescriptionPaged',
     'OfferType',
