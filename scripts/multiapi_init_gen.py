@@ -108,7 +108,7 @@ def build_operation_group(module_name, operation_name, versions):
     template_intro_doc= '        """Instance depends on the API version:\n\n'
     template_inside_doc="           * {api_version}: :class:`{clsname}<{module_name}.{api_version_module}.operations.{clsname}>`\n"
     template_end_doc='        """\n'
-    template_code_prefix="        api_version = self.profile.get('{attr}', self.api_version)"
+    template_code_prefix="        api_version = self._get_api_version('{attr}')"
     template_if = """        {first}if api_version == '{api_version}':
             from .{api_version_module}.operations import {clsname} as OperationClass"""
     template_end_def = """        else:

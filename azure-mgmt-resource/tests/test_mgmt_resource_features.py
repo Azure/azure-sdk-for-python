@@ -8,9 +8,7 @@
 import unittest
 
 import azure.mgmt.resource.features.models
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
-
+from devtools_testutils import AzureMgmtTestCase
 
 class MgmtResourceFeaturesTest(AzureMgmtTestCase):
 
@@ -20,7 +18,6 @@ class MgmtResourceFeaturesTest(AzureMgmtTestCase):
             azure.mgmt.resource.FeatureClient
         )
 
-    @record
     def test_features(self):
         features = list(self.features_client.features.list_all())
         self.assertGreater(len(features), 0)
