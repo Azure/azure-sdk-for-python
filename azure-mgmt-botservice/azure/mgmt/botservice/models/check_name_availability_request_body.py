@@ -12,23 +12,24 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailabilityResponseBody(Model):
-    """The response body returned for a request to Bot Service Management to check
+class CheckNameAvailabilityRequestBody(Model):
+    """The request body for a request to Bot Service Management to check
     availability of a bot name.
 
-    :param valid: indicates if the bot name is valid.
-    :type valid: bool
-    :param message: additional message from the bot management api showing why
-     a bot name is not available
-    :type message: str
+    :param name: the name of the bot for which availability needs to be
+     checked.
+    :type name: str
+    :param type: the type of the bot for which availability needs to be
+     checked
+    :type type: str
     """
 
     _attribute_map = {
-        'valid': {'key': 'valid', 'type': 'bool'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(CheckNameAvailabilityResponseBody, self).__init__(**kwargs)
-        self.valid = kwargs.get('valid', None)
-        self.message = kwargs.get('message', None)
+        super(CheckNameAvailabilityRequestBody, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)

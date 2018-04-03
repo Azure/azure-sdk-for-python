@@ -13,14 +13,13 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityResponseBody(Model):
-    """The response returned on a check bot name availability request by Bot
-    Service Management.
+    """The response body returned for a request to Bot Service Management to check
+    availability of a bot name.
 
-    :param valid: boolean indicating whether the bot name is available for
-     use.
+    :param valid: indicates if the bot name is valid.
     :type valid: bool
-    :param message: description indicating why the bot name is invalid, if it
-     is not available.
+    :param message: additional message from the bot management api showing why
+     a bot name is not available
     :type message: str
     """
 
