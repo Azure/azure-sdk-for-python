@@ -29,7 +29,7 @@ class DetectorResponse(ProxyOnlyResource):
     :param metadata: metadata for the detector
     :type metadata: ~azure.mgmt.web.models.DetectorInfo
     :param dataset: Data Set
-    :type dataset: ~azure.mgmt.web.models.DiagnosticData
+    :type dataset: list[~azure.mgmt.web.models.Solution]
     """
 
     _validation = {
@@ -44,7 +44,7 @@ class DetectorResponse(ProxyOnlyResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'metadata': {'key': 'properties.metadata', 'type': 'DetectorInfo'},
-        'dataset': {'key': 'properties.dataset', 'type': 'DiagnosticData'},
+        'dataset': {'key': 'properties.dataset', 'type': '[Solution]'},
     }
 
     def __init__(self, kind=None, metadata=None, dataset=None):
