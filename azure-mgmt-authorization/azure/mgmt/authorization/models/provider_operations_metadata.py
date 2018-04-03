@@ -38,10 +38,11 @@ class ProviderOperationsMetadata(Model):
         'operations': {'key': 'operations', 'type': '[ProviderOperation]'},
     }
 
-    def __init__(self, id=None, name=None, type=None, display_name=None, resource_types=None, operations=None):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.display_name = display_name
-        self.resource_types = resource_types
-        self.operations = operations
+    def __init__(self, **kwargs):
+        super(ProviderOperationsMetadata, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.resource_types = kwargs.get('resource_types', None)
+        self.operations = kwargs.get('operations', None)

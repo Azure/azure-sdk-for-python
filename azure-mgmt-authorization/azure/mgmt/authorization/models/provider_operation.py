@@ -25,6 +25,8 @@ class ProviderOperation(Model):
     :type origin: str
     :param properties: The operation properties.
     :type properties: object
+    :param is_data_action: The dataAction flag to specify the operation type.
+    :type is_data_action: bool
     """
 
     _attribute_map = {
@@ -33,11 +35,14 @@ class ProviderOperation(Model):
         'description': {'key': 'description', 'type': 'str'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, display_name=None, description=None, origin=None, properties=None):
-        self.name = name
-        self.display_name = display_name
-        self.description = description
-        self.origin = origin
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ProviderOperation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)
+        self.is_data_action = kwargs.get('is_data_action', None)

@@ -18,13 +18,15 @@ class VirtualMachineScaleSetVM(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -129,19 +131,19 @@ class VirtualMachineScaleSetVM(Resource):
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, location, tags=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, plan=None):
-        super(VirtualMachineScaleSetVM, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetVM, self).__init__(**kwargs)
         self.instance_id = None
         self.sku = None
         self.latest_model_applied = None
         self.instance_view = None
-        self.hardware_profile = hardware_profile
-        self.storage_profile = storage_profile
-        self.os_profile = os_profile
-        self.network_profile = network_profile
-        self.diagnostics_profile = diagnostics_profile
-        self.availability_set = availability_set
-        self.provisioning_state = provisioning_state
-        self.license_type = license_type
-        self.plan = plan
+        self.hardware_profile = kwargs.get('hardware_profile', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.os_profile = kwargs.get('os_profile', None)
+        self.network_profile = kwargs.get('network_profile', None)
+        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
+        self.availability_set = kwargs.get('availability_set', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.license_type = kwargs.get('license_type', None)
+        self.plan = kwargs.get('plan', None)
         self.resources = None

@@ -31,7 +31,7 @@ class BillingPeriod(Resource):
      billing period.
     :vartype billing_period_end_date: date
     :ivar invoice_ids: Array of invoice ids that associated with.
-    :vartype invoice_ids: list of str
+    :vartype invoice_ids: list[str]
     """
 
     _validation = {

@@ -6,6 +6,91 @@
     ],
     "service_name": "Batch"
   },
+  "azure-cognitiveservices-language-spellcheck": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.language.spellcheck"
+    ],
+    "service_name": "Cognitive Services Language Spellcheck"
+  },
+  "azure-cognitiveservices-language-textanalytics": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.language.textanalytics"
+    ],
+    "service_name": "Cognitive Services Language TextAnalytics"
+  },
+  "azure-cognitiveservices-search-customsearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.customsearch"
+    ],
+    "service_name": "Cognitive Services Search CustomSearch"
+  },
+  "azure-cognitiveservices-search-entitysearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.entitysearch"
+    ],
+    "service_name": "Cognitive Services Search EntitySearch"
+  },
+  "azure-cognitiveservices-search-imagesearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.imagesearch"
+    ],
+    "service_name": "Cognitive Services Search ImageSearch"
+  },
+  "azure-cognitiveservices-search-newssearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.newssearch"
+    ],
+    "service_name": "Cognitive Services Search NewsSearch"
+  },
+  "azure-cognitiveservices-search-videosearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.videosearch"
+    ],
+    "service_name": "Cognitive Services Search VideoSearch"
+  },
+  "azure-cognitiveservices-search-websearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.websearch"
+    ],
+    "service_name": "Cognitive Services Search WebSearch"
+  },
+  "azure-cognitiveservices-vision-computervision": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.computervision"
+    ],
+    "service_name": "Cognitive Services Vision ComputerVision"
+  },
+  "azure-cognitiveservices-vision-contentmoderator": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.contentmoderator"
+    ],
+    "service_name": "Cognitive Services Vision ContentModerator"
+  },
+  "azure-cognitiveservices-vision-customvision": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.customvision.prediction",
+      "azure.cognitiveservices.vision.customvision.training"
+    ],
+    "service_name": "Cognitive Services Vision CustomVision"
+  },
+  "azure-cognitiveservices-vision-face": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.vision.face"
+    ],
+    "service_name": "Cognitive Services Vision Face"
+  },
   "azure-common": {
     "service_name": "Other"
   },

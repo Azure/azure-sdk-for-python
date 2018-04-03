@@ -16,10 +16,9 @@ class ClusterUpdateParameters(Model):
     """Parameters supplied to the Update operation.
 
     :param tags: The user specified tags associated with the Cluster.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param scale_settings: Desired scale for the cluster.
-    :type scale_settings: :class:`ScaleSettings
-     <azure.mgmt.batchai.models.ScaleSettings>`
+    :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
     """
 
     _attribute_map = {
@@ -27,6 +26,7 @@ class ClusterUpdateParameters(Model):
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
     }
 
-    def __init__(self, tags=None, scale_settings=None):
-        self.tags = tags
-        self.scale_settings = scale_settings
+    def __init__(self, **kwargs):
+        super(ClusterUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.scale_settings = kwargs.get('scale_settings', None)

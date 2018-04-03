@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.8.6 (2018-03-22)
+++++++++++++++++++
+
+**Features**
+
+- Added support for List and Cancel operation on Azure database and elastic pool REST API
+- Added support for Auto-tuning REST API
+
 0.8.5 (2018-01-18)
 ++++++++++++++++++
 

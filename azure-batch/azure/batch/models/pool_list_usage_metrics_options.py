@@ -49,6 +49,7 @@ class PoolListUsageMetricsOptions(Model):
     """
 
     def __init__(self, start_time=None, end_time=None, filter=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
+        super(PoolListUsageMetricsOptions, self).__init__()
         self.start_time = start_time
         self.end_time = end_time
         self.filter = filter

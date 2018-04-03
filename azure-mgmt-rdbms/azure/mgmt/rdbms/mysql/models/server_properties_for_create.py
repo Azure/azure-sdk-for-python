@@ -19,6 +19,8 @@ class ServerPropertiesForCreate(Model):
     sub-classes are: ServerPropertiesForDefaultCreate,
     ServerPropertiesForRestore, ServerPropertiesForGeoRestore
 
+    All required parameters must be populated in order to send to Azure.
+
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
@@ -27,7 +29,7 @@ class ServerPropertiesForCreate(Model):
      ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
-    :param create_mode: Constant filled by server.
+    :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     """
 
@@ -46,9 +48,9 @@ class ServerPropertiesForCreate(Model):
         'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore'}
     }
 
-    def __init__(self, version=None, ssl_enforcement=None, storage_profile=None):
-        super(ServerPropertiesForCreate, self).__init__()
-        self.version = version
-        self.ssl_enforcement = ssl_enforcement
-        self.storage_profile = storage_profile
+    def __init__(self, **kwargs):
+        super(ServerPropertiesForCreate, self).__init__(**kwargs)
+        self.version = kwargs.get('version', None)
+        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
         self.create_mode = None

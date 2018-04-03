@@ -22,7 +22,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-08-01".
     """
 
@@ -59,7 +59,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
@@ -106,6 +106,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools'}
 
     def get(
             self, resource_group_name, load_balancer_name, backend_address_pool_name, custom_headers=None, raw=False, **operation_config):
@@ -129,7 +130,7 @@ class LoadBalancerBackendAddressPoolsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools/{backendAddressPoolName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'loadBalancerName': self._serialize.url("load_balancer_name", load_balancer_name, 'str'),
@@ -171,3 +172,4 @@ class LoadBalancerBackendAddressPoolsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/backendAddressPools/{backendAddressPoolName}'}

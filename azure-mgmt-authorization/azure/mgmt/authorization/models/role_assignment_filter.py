@@ -17,11 +17,16 @@ class RoleAssignmentFilter(Model):
 
     :param principal_id: Returns role assignment of the specific principal.
     :type principal_id: str
+    :param can_delegate: The Delegation flag for the roleassignment
+    :type can_delegate: bool
     """
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
+        'can_delegate': {'key': 'canDelegate', 'type': 'bool'},
     }
 
-    def __init__(self, principal_id=None):
-        self.principal_id = principal_id
+    def __init__(self, **kwargs):
+        super(RoleAssignmentFilter, self).__init__(**kwargs)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.can_delegate = kwargs.get('can_delegate', None)

@@ -15,26 +15,51 @@ from msrest.serialization import Model
 class RoleDefinition(Model):
     """Role definition.
 
-    :param id: The role definition ID.
-    :type id: str
-    :param name: The role definition name.
-    :type name: str
-    :param type: The role definition type.
-    :type type: str
-    :param properties: Role definition properties.
-    :type properties:
-     ~azure.mgmt.authorization.models.RoleDefinitionProperties
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The role definition ID.
+    :vartype id: str
+    :ivar name: The role definition name.
+    :vartype name: str
+    :ivar type: The role definition type.
+    :vartype type: str
+    :param role_name: The role name.
+    :type role_name: str
+    :param description: The role definition description.
+    :type description: str
+    :param role_type: The role type.
+    :type role_type: str
+    :param permissions: Role definition permissions.
+    :type permissions: list[~azure.mgmt.authorization.models.Permission]
+    :param assignable_scopes: Role definition assignable scopes.
+    :type assignable_scopes: list[str]
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'RoleDefinitionProperties'},
+        'role_name': {'key': 'properties.roleName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'role_type': {'key': 'properties.type', 'type': 'str'},
+        'permissions': {'key': 'properties.permissions', 'type': '[Permission]'},
+        'assignable_scopes': {'key': 'properties.assignableScopes', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, name=None, type=None, properties=None):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(RoleDefinition, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.role_name = kwargs.get('role_name', None)
+        self.description = kwargs.get('description', None)
+        self.role_type = kwargs.get('role_type', None)
+        self.permissions = kwargs.get('permissions', None)
+        self.assignable_scopes = kwargs.get('assignable_scopes', None)

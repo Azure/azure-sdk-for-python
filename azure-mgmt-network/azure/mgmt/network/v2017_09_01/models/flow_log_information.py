@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class FlowLogInformation(Model):
     """Information on the configuration of flow log.
 
-    :param target_resource_id: The ID of the resource to configure for flow
-     logging.
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. The ID of the resource to configure
+     for flow logging.
     :type target_resource_id: str
-    :param storage_id: ID of the storage account which is used to store the
-     flow log.
+    :param storage_id: Required. ID of the storage account which is used to
+     store the flow log.
     :type storage_id: str
-    :param enabled: Flag to enable/disable flow logging.
+    :param enabled: Required. Flag to enable/disable flow logging.
     :type enabled: bool
     :param retention_policy:
     :type retention_policy:
@@ -41,9 +43,9 @@ class FlowLogInformation(Model):
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicyParameters'},
     }
 
-    def __init__(self, target_resource_id, storage_id, enabled, retention_policy=None):
-        super(FlowLogInformation, self).__init__()
-        self.target_resource_id = target_resource_id
-        self.storage_id = storage_id
-        self.enabled = enabled
-        self.retention_policy = retention_policy
+    def __init__(self, **kwargs):
+        super(FlowLogInformation, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.storage_id = kwargs.get('storage_id', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.retention_policy = kwargs.get('retention_policy', None)

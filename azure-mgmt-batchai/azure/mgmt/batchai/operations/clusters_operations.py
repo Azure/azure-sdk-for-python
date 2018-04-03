@@ -12,7 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -23,51 +24,26 @@ class ClustersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Specifies the version of API used for this request. Constant value: "2017-09-01-preview".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Specifies the version of API used for this request. Constant value: "2018-03-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01-preview"
+        self.api_version = "2018-03-01"
 
         self.config = config
 
-    def create(
-            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Adds a cluster. A cluster is a collection of compute nodes. Multiple
-        jobs can be run on the same cluster.
 
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster within the specified
-         resource group. Cluster names can only contain a combination of
-         alphanumeric characters along with dash (-) and underscore (_). The
-         name must be from 1 through 64 characters long.
-        :type cluster_name: str
-        :param parameters: The parameters to provide for cluster creation.
-        :type parameters: :class:`ClusterCreateParameters
-         <azure.mgmt.batchai.models.ClusterCreateParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Cluster
-         <azure.mgmt.batchai.models.Cluster>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_initial(
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -93,31 +69,65 @@ class ClustersOperations(object):
         body_content = self._serialize.body(parameters, 'ClusterCreateParameters')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+        if response.status_code == 200:
+            deserialized = self._deserialize('Cluster', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create(
+            self, resource_group_name, cluster_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Adds a cluster. A cluster is a collection of compute nodes. Multiple
+        jobs can be run on the same cluster.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster within the specified
+         resource group. Cluster names can only contain a combination of
+         alphanumeric characters along with dash (-) and underscore (_). The
+         name must be from 1 through 64 characters long.
+        :type cluster_name: str
+        :param parameters: The parameters to provide for cluster creation.
+        :type parameters: ~azure.mgmt.batchai.models.ClusterCreateParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Cluster or
+         ClientRawResponse<Cluster> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batchai.models.Cluster]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.batchai.models.Cluster]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('Cluster', response)
+            deserialized = self._deserialize('Cluster', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -125,16 +135,14 @@ class ClustersOperations(object):
 
             return deserialized
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
     def update(
             self, resource_group_name, cluster_name, tags=None, scale_settings=None, custom_headers=None, raw=False, **operation_config):
@@ -149,26 +157,23 @@ class ClustersOperations(object):
          name must be from 1 through 64 characters long.
         :type cluster_name: str
         :param tags: The user specified tags associated with the Cluster.
-        :type tags: dict
+        :type tags: dict[str, str]
         :param scale_settings: Desired scale for the cluster
-        :type scale_settings: :class:`ScaleSettings
-         <azure.mgmt.batchai.models.ScaleSettings>`
+        :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Cluster <azure.mgmt.batchai.models.Cluster>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Cluster <azure.mgmt.batchai.models.Cluster>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Cluster or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batchai.models.Cluster or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ClusterUpdateParameters(tags=tags, scale_settings=scale_settings)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -196,7 +201,7 @@ class ClustersOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -213,34 +218,13 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
-    def delete(
+
+    def _delete_initial(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a Cluster.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster within the specified
-         resource group. Cluster names can only contain a combination of
-         alphanumeric characters along with dash (-) and underscore (_). The
-         name must be from 1 through 64 characters long.
-        :type cluster_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         or :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -263,40 +247,62 @@ class ClustersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
+    def delete(
+            self, resource_group_name, cluster_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a Cluster.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster within the specified
+         resource group. Cluster names can only contain a combination of
+         alphanumeric characters along with dash (-) and underscore (_). The
+         name must be from 1 through 64 characters long.
+        :type cluster_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
         def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
+        lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
     def get(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
@@ -315,15 +321,13 @@ class ClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: :class:`Cluster <azure.mgmt.batchai.models.Cluster>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`Cluster <azure.mgmt.batchai.models.Cluster>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+        :return: Cluster or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batchai.models.Cluster or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -347,7 +351,7 @@ class ClustersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -364,6 +368,7 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}'}
 
     def list_remote_login_information(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
@@ -382,17 +387,16 @@ class ClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`RemoteLoginInformation
-         <azure.mgmt.batchai.models.RemoteLoginInformation>`
-        :rtype: :class:`RemoteLoginInformationPaged
-         <azure.mgmt.batchai.models.RemoteLoginInformationPaged>`
+        :return: An iterator like instance of RemoteLoginInformation
+        :rtype:
+         ~azure.mgmt.batchai.models.RemoteLoginInformationPaged[~azure.mgmt.batchai.models.RemoteLoginInformation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}/listRemoteLoginInformation'
+                url = self.list_remote_login_information.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'clusterName': self._serialize.url("cluster_name", cluster_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._]+$'),
@@ -421,7 +425,7 @@ class ClustersOperations(object):
             # Construct and send request
             request = self._client.post(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -439,22 +443,23 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_remote_login_information.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters/{clusterName}/listRemoteLoginInformation'}
 
     def list(
             self, clusters_list_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the Clusters associated with the subscription.
 
         :param clusters_list_options: Additional parameters for the operation
-        :type clusters_list_options: :class:`ClustersListOptions
-         <azure.mgmt.batchai.models.ClustersListOptions>`
+        :type clusters_list_options:
+         ~azure.mgmt.batchai.models.ClustersListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Cluster
-         <azure.mgmt.batchai.models.Cluster>`
-        :rtype: :class:`ClusterPaged <azure.mgmt.batchai.models.ClusterPaged>`
+        :return: An iterator like instance of Cluster
+        :rtype:
+         ~azure.mgmt.batchai.models.ClusterPaged[~azure.mgmt.batchai.models.Cluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         filter = None
@@ -471,7 +476,7 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/clusters'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -504,7 +509,7 @@ class ClustersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -522,6 +527,7 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/clusters'}
 
     def list_by_resource_group(
             self, resource_group_name, clusters_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
@@ -534,16 +540,15 @@ class ClustersOperations(object):
         :param clusters_list_by_resource_group_options: Additional parameters
          for the operation
         :type clusters_list_by_resource_group_options:
-         :class:`ClustersListByResourceGroupOptions
-         <azure.mgmt.batchai.models.ClustersListByResourceGroupOptions>`
+         ~azure.mgmt.batchai.models.ClustersListByResourceGroupOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of :class:`Cluster
-         <azure.mgmt.batchai.models.Cluster>`
-        :rtype: :class:`ClusterPaged <azure.mgmt.batchai.models.ClusterPaged>`
+        :return: An iterator like instance of Cluster
+        :rtype:
+         ~azure.mgmt.batchai.models.ClusterPaged[~azure.mgmt.batchai.models.Cluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         filter = None
@@ -560,7 +565,7 @@ class ClustersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -594,7 +599,7 @@ class ClustersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -612,3 +617,4 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/clusters'}

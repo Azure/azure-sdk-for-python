@@ -3,13 +3,50 @@
 Release History
 ===============
 
-1.8.0a1 (2017-XX-XX)
-++++++++++++++++++++
+XXXXXXXXXXXX
+++++++++++++
 
 **Features**
 
+- All clients now support Azure profiles.
+
+2.0.0rc1 (2018-03-07)
++++++++++++++++++++++
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**Network Breaking changes**
+
+- Operation network_watcher.get_topology changed method signature
+
+**Features**
+
+- Add API Version 2018-01-01. Not default yet in this version.
 - Add ConnectionMonitor operation group (2017-10/11-01)
-- Add target_virtual_network / target_subet to topology_parameter (2017-10/11-01)
+- Add target_virtual_network / target_subnet to topology_parameter (2017-10/11-01)
 - Add idle_timeout_in_minutes / enable_floating_ip to inbound_nat_pool (2017-11-01)
 
 **Bugfixes**

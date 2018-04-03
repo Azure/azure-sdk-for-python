@@ -24,4 +24,5 @@ class NsRecord(Model):
     }
 
     def __init__(self, nsdname=None):
+        super(NsRecord, self).__init__()
         self.nsdname = nsdname

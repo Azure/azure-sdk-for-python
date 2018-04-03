@@ -35,8 +35,8 @@ class VpnClientConfiguration(Model):
         'vpn_client_revoked_certificates': {'key': 'vpnClientRevokedCertificates', 'type': '[VpnClientRevokedCertificate]'},
     }
 
-    def __init__(self, vpn_client_address_pool=None, vpn_client_root_certificates=None, vpn_client_revoked_certificates=None):
-        super(VpnClientConfiguration, self).__init__()
-        self.vpn_client_address_pool = vpn_client_address_pool
-        self.vpn_client_root_certificates = vpn_client_root_certificates
-        self.vpn_client_revoked_certificates = vpn_client_revoked_certificates
+    def __init__(self, **kwargs):
+        super(VpnClientConfiguration, self).__init__(**kwargs)
+        self.vpn_client_address_pool = kwargs.get('vpn_client_address_pool', None)
+        self.vpn_client_root_certificates = kwargs.get('vpn_client_root_certificates', None)
+        self.vpn_client_revoked_certificates = kwargs.get('vpn_client_revoked_certificates', None)

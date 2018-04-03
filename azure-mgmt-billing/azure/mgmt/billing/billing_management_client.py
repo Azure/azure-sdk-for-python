@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.billing_periods_operations import BillingPeriodsOperations
 from .operations.invoices_operations import InvoicesOperations
 from .operations.operations import Operations
@@ -39,14 +40,12 @@ class BillingManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(BillingManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('billingmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-billing/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -54,17 +53,19 @@ class BillingManagementClientConfiguration(AzureConfiguration):
 
 
 class BillingManagementClient(object):
-    """Billing client provides access to billing resources for Azure Web-Direct subscriptions. Other subscription types which were not purchased directly through the Azure web portal are not supported through this preview API.
+    """Billing client provides access to billing resources for Azure subscriptions.
 
     :ivar config: Configuration for client.
     :vartype config: BillingManagementClientConfiguration
 
+    :ivar enrollment_accounts: EnrollmentAccounts operations
+    :vartype enrollment_accounts: azure.mgmt.billing.operations.EnrollmentAccountsOperations
     :ivar billing_periods: BillingPeriods operations
-    :vartype billing_periods: .operations.BillingPeriodsOperations
+    :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
     :ivar invoices: Invoices operations
-    :vartype invoices: .operations.InvoicesOperations
+    :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.billing.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -81,10 +82,12 @@ class BillingManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-24-preview'
+        self.api_version = '2018-03-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.enrollment_accounts = EnrollmentAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.billing_periods = BillingPeriodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoices = InvoicesOperations(

@@ -17,21 +17,22 @@ class Dataset(Model):
     data stores, such as tables, files, folders, and documents.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: VerticaTableDataset, NetezzaTableDataset,
-    ZohoObjectDataset, XeroObjectDataset, SquareObjectDataset,
-    SparkObjectDataset, ShopifyObjectDataset, ServiceNowObjectDataset,
-    QuickBooksObjectDataset, PrestoObjectDataset, PhoenixObjectDataset,
-    PaypalObjectDataset, MarketoObjectDataset, MariaDBTableDataset,
-    MagentoObjectDataset, JiraObjectDataset, ImpalaObjectDataset,
-    HubspotObjectDataset, HiveObjectDataset, HBaseObjectDataset,
-    GreenplumTableDataset, GoogleBigQueryObjectDataset, EloquaObjectDataset,
-    DrillTableDataset, CouchbaseTableDataset, ConcurObjectDataset,
-    AzurePostgreSqlTableDataset, AmazonMWSObjectDataset, HttpDataset,
-    AzureSearchIndexDataset, WebTableDataset, SqlServerTableDataset,
-    SapEccResourceDataset, SapCloudForCustomerResourceDataset,
-    SalesforceObjectDataset, RelationalTableDataset, AzureMySqlTableDataset,
-    OracleTableDataset, ODataResourceDataset, MongoDbCollectionDataset,
-    FileShareDataset, AzureDataLakeStoreDataset, DynamicsEntityDataset,
+    sub-classes are: SalesforceMarketingCloudObjectDataset,
+    VerticaTableDataset, NetezzaTableDataset, ZohoObjectDataset,
+    XeroObjectDataset, SquareObjectDataset, SparkObjectDataset,
+    ShopifyObjectDataset, ServiceNowObjectDataset, QuickBooksObjectDataset,
+    PrestoObjectDataset, PhoenixObjectDataset, PaypalObjectDataset,
+    MarketoObjectDataset, MariaDBTableDataset, MagentoObjectDataset,
+    JiraObjectDataset, ImpalaObjectDataset, HubspotObjectDataset,
+    HiveObjectDataset, HBaseObjectDataset, GreenplumTableDataset,
+    GoogleBigQueryObjectDataset, EloquaObjectDataset, DrillTableDataset,
+    CouchbaseTableDataset, ConcurObjectDataset, AzurePostgreSqlTableDataset,
+    AmazonMWSObjectDataset, HttpDataset, AzureSearchIndexDataset,
+    WebTableDataset, SqlServerTableDataset, SapEccResourceDataset,
+    SapCloudForCustomerResourceDataset, SalesforceObjectDataset,
+    RelationalTableDataset, AzureMySqlTableDataset, OracleTableDataset,
+    ODataResourceDataset, MongoDbCollectionDataset, FileShareDataset,
+    AzureDataLakeStoreDataset, DynamicsEntityDataset,
     DocumentDbCollectionDataset, CustomDataset, CassandraTableDataset,
     AzureSqlDWTableDataset, AzureSqlTableDataset, AzureTableDataset,
     AzureBlobDataset, AmazonS3Dataset
@@ -50,6 +51,9 @@ class Dataset(Model):
     :param parameters: Parameters for dataset.
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
     :param type: Constant filled by server.
     :type type: str
     """
@@ -65,18 +69,20 @@ class Dataset(Model):
         'structure': {'key': 'structure', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'type': {'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'RelationalTable': 'RelationalTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
+        'type': {'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'RelationalTable': 'RelationalTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None):
+    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, parameters=None, annotations=None):
         super(Dataset, self).__init__()
         self.additional_properties = additional_properties
         self.description = description
         self.structure = structure
         self.linked_service_name = linked_service_name
         self.parameters = parameters
+        self.annotations = annotations
         self.type = None
