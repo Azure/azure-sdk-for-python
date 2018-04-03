@@ -68,15 +68,15 @@ class VaultPatchProperties(Model):
         'network_acls': {'key': 'networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, tenant_id=None, sku=None, access_policies=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None, enable_purge_protection=None, network_acls=None):
-        super(VaultPatchProperties, self).__init__()
-        self.tenant_id = tenant_id
-        self.sku = sku
-        self.access_policies = access_policies
-        self.enabled_for_deployment = enabled_for_deployment
-        self.enabled_for_disk_encryption = enabled_for_disk_encryption
-        self.enabled_for_template_deployment = enabled_for_template_deployment
-        self.enable_soft_delete = enable_soft_delete
-        self.create_mode = create_mode
-        self.enable_purge_protection = enable_purge_protection
-        self.network_acls = network_acls
+    def __init__(self, **kwargs):
+        super(VaultPatchProperties, self).__init__(**kwargs)
+        self.tenant_id = kwargs.get('tenant_id', None)
+        self.sku = kwargs.get('sku', None)
+        self.access_policies = kwargs.get('access_policies', None)
+        self.enabled_for_deployment = kwargs.get('enabled_for_deployment', None)
+        self.enabled_for_disk_encryption = kwargs.get('enabled_for_disk_encryption', None)
+        self.enabled_for_template_deployment = kwargs.get('enabled_for_template_deployment', None)
+        self.enable_soft_delete = kwargs.get('enable_soft_delete', None)
+        self.create_mode = kwargs.get('create_mode', None)
+        self.enable_purge_protection = kwargs.get('enable_purge_protection', None)
+        self.network_acls = kwargs.get('network_acls', None)
