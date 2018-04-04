@@ -49,11 +49,11 @@ class ApplicationInsightsComponentDataVolumeCap(Model):
         'max_history_cap': {'key': 'MaxHistoryCap', 'type': 'float'},
     }
 
-    def __init__(self, cap=None, warning_threshold=None, stop_send_notification_when_hit_threshold=None, stop_send_notification_when_hit_cap=None):
-        super(ApplicationInsightsComponentDataVolumeCap, self).__init__()
-        self.cap = cap
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentDataVolumeCap, self).__init__(**kwargs)
+        self.cap = kwargs.get('cap', None)
         self.reset_time = None
-        self.warning_threshold = warning_threshold
-        self.stop_send_notification_when_hit_threshold = stop_send_notification_when_hit_threshold
-        self.stop_send_notification_when_hit_cap = stop_send_notification_when_hit_cap
+        self.warning_threshold = kwargs.get('warning_threshold', None)
+        self.stop_send_notification_when_hit_threshold = kwargs.get('stop_send_notification_when_hit_threshold', None)
+        self.stop_send_notification_when_hit_cap = kwargs.get('stop_send_notification_when_hit_cap', None)
         self.max_history_cap = None
