@@ -11,7 +11,6 @@
 
 from .operations import Operations
 from .namespaces_operations import NamespacesOperations
-from .messaging_plan_operations import MessagingPlanOperations
 from .disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from .event_hubs_operations import EventHubsOperations
 from .consumer_groups_operations import ConsumerGroupsOperations
@@ -20,7 +19,6 @@ from .regions_operations import RegionsOperations
 __all__ = [
     'Operations',
     'NamespacesOperations',
-    'MessagingPlanOperations',
     'DisasterRecoveryConfigsOperations',
     'EventHubsOperations',
     'ConsumerGroupsOperations',
