@@ -19,6 +19,7 @@ from .classification_category3 import ClassificationCategory3
 from .classification import Classification
 from .status import Status
 from .email import Email
+from .ssn import SSN
 from .ipa import IPA
 from .phone import Phone
 from .address import Address
@@ -84,6 +85,7 @@ __all__ = [
     'Classification',
     'Status',
     'Email',
+    'SSN',
     'IPA',
     'Phone',
     'Address',

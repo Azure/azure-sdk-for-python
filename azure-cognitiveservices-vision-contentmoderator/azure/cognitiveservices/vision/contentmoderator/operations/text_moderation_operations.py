@@ -34,7 +34,7 @@ class TextModerationOperations(object):
         self.config = config
 
     def screen_text(
-            self, language, text_content_type, text_content, autocorrect=False, pii=False, list_id=None, classify=False, custom_headers=None, raw=False, **operation_config):
+            self, language, text_content_type, text_content, autocorrect=False, pii=False, list_id=None, classify=False, custom_headers=None, raw=False, callback=None, **operation_config):
         """Detect profanity and match against custom and shared blacklists.
 
         Detects profanity in more than 100 languages and match against custom
@@ -46,7 +46,7 @@ class TextModerationOperations(object):
          'text/plain', 'text/html', 'text/xml', 'text/markdown'
         :type text_content_type: str
         :param text_content: Content to screen.
-        :type text_content: str
+        :type text_content: Generator
         :param autocorrect: Autocorrect text.
         :type autocorrect: bool
         :param pii: Detect personal identifiable information.
@@ -58,6 +58,11 @@ class TextModerationOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Screen or ClientRawResponse if raw=true
@@ -93,7 +98,7 @@ class TextModerationOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("text_content_type", text_content_type, 'str')
 
         # Construct body
-        body_content = self._serialize.body(text_content, 'str')
+        body_content = self._client.stream_upload(text_content, callback)
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
@@ -116,7 +121,7 @@ class TextModerationOperations(object):
     screen_text.metadata = {'url': '/contentmoderator/moderate/v1.0/ProcessText/Screen/'}
 
     def detect_language(
-            self, text_content_type, text_content, custom_headers=None, raw=False, **operation_config):
+            self, text_content_type, text_content, custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation will detect the language of given input content. Returns
         the <a href="http://www-01.sil.org/iso639-3/codes.asp">ISO 639-3
         code</a> for the predominant language comprising the submitted text.
@@ -126,10 +131,15 @@ class TextModerationOperations(object):
          'text/plain', 'text/html', 'text/xml', 'text/markdown'
         :type text_content_type: str
         :param text_content: Content to screen.
-        :type text_content: str
+        :type text_content: Generator
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: DetectedLanguage or ClientRawResponse if raw=true
@@ -157,7 +167,7 @@ class TextModerationOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("text_content_type", text_content_type, 'str')
 
         # Construct body
-        body_content = self._serialize.body(text_content, 'str')
+        body_content = self._client.stream_upload(text_content, callback)
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
