@@ -61,7 +61,7 @@ setup(
     long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azurekeyvault@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -80,7 +80,7 @@ setup(
     install_requires=[
         'msrestazure>=0.4.15',
         'msrest>=0.4.17',
-        'azure-common~=1.1.5',
+        'azure-common~=1.1',
         'cryptography>=2.1.4',
         'requests>=2.18.4'
     ],
