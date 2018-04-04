@@ -15,7 +15,6 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
-from .operations.messaging_plan_operations import MessagingPlanOperations
 from .operations.disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from .operations.event_hubs_operations import EventHubsOperations
 from .operations.consumer_groups_operations import ConsumerGroupsOperations
@@ -67,8 +66,6 @@ class EventHubManagementClient(object):
     :vartype operations: azure.mgmt.eventhub.operations.Operations
     :ivar namespaces: Namespaces operations
     :vartype namespaces: azure.mgmt.eventhub.operations.NamespacesOperations
-    :ivar messaging_plan: MessagingPlan operations
-    :vartype messaging_plan: azure.mgmt.eventhub.operations.MessagingPlanOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
     :vartype disaster_recovery_configs: azure.mgmt.eventhub.operations.DisasterRecoveryConfigsOperations
     :ivar event_hubs: EventHubs operations
@@ -102,8 +99,6 @@ class EventHubManagementClient(object):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.messaging_plan = MessagingPlanOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)

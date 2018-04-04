@@ -28,7 +28,6 @@ from .error_response import ErrorResponse, ErrorResponseException
 from .arm_disaster_recovery import ArmDisasterRecovery
 from .messaging_regions_properties import MessagingRegionsProperties
 from .messaging_regions import MessagingRegions
-from .messaging_plan import MessagingPlan
 from .operation_paged import OperationPaged
 from .eh_namespace_paged import EHNamespacePaged
 from .authorization_rule_paged import AuthorizationRulePaged
@@ -68,7 +67,6 @@ __all__ = [
     'ArmDisasterRecovery',
     'MessagingRegionsProperties',
     'MessagingRegions',
-    'MessagingPlan',
     'OperationPaged',
     'EHNamespacePaged',
     'AuthorizationRulePaged',
