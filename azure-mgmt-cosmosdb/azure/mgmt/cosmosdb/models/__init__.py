@@ -14,6 +14,7 @@ try:
     from .capability_py3 import Capability
     from .location_py3 import Location
     from .failover_policy_py3 import FailoverPolicy
+    from .virtual_network_rule_py3 import VirtualNetworkRule
     from .database_account_py3 import DatabaseAccount
     from .failover_policies_py3 import FailoverPolicies
     from .resource_py3 import Resource
@@ -41,6 +42,7 @@ except (SyntaxError, ImportError):
     from .capability import Capability
     from .location import Location
     from .failover_policy import FailoverPolicy
+    from .virtual_network_rule import VirtualNetworkRule
     from .database_account import DatabaseAccount
     from .failover_policies import FailoverPolicies
     from .resource import Resource
@@ -85,6 +87,7 @@ __all__ = [
     'Capability',
     'Location',
     'FailoverPolicy',
+    'VirtualNetworkRule',
     'DatabaseAccount',
     'FailoverPolicies',
     'Resource',
