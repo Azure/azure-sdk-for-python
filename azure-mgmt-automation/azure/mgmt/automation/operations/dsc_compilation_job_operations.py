@@ -11,6 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.exceptions import DeserializationError
+from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
 
@@ -22,7 +24,7 @@ class DscCompilationJobOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-10-31".
+    :ivar api_version: Client Api Version. Constant value: "2018-01-15".
     """
 
     models = models
@@ -32,41 +34,19 @@ class DscCompilationJobOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-10-31"
+        self.api_version = "2018-01-15"
 
         self.config = config
 
-    def create(
-            self, resource_group_name, automation_account_name, compilation_job_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates the Dsc compilation job of the configuration.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param automation_account_name: The automation account name.
-        :type automation_account_name: str
-        :param compilation_job_id: The the DSC configuration Id.
-        :type compilation_job_id: str
-        :param parameters: The parameters supplied to the create compilation
-         job operation.
-        :type parameters:
-         ~azure.mgmt.automation.models.DscCompilationJobCreateParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DscCompilationJob or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.automation.models.DscCompilationJob or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
-        """
+    def _create_initial(
+            self, resource_group_name, automation_account_name, compilation_job_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'compilationJobId': self._serialize.url("compilation_job_id", compilation_job_id, 'str'),
+            'compilationJobName': self._serialize.url("compilation_job_name", compilation_job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -106,18 +86,89 @@ class DscCompilationJobOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobId}'}
+
+    def create(
+            self, resource_group_name, automation_account_name, compilation_job_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates the Dsc compilation job of the configuration.
+
+        :param resource_group_name: Name of an Azure Resource group.
+        :type resource_group_name: str
+        :param automation_account_name: The name of the automation account.
+        :type automation_account_name: str
+        :param compilation_job_name: The the DSC configuration Id.
+        :type compilation_job_name: str
+        :param parameters: The parameters supplied to the create compilation
+         job operation.
+        :type parameters:
+         ~azure.mgmt.automation.models.DscCompilationJobCreateParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :return: An instance of AzureOperationPoller that returns
+         DscCompilationJob or ClientRawResponse if raw=true
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.automation.models.DscCompilationJob]
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            automation_account_name=automation_account_name,
+            compilation_job_name=compilation_job_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [201]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            deserialized = self._deserialize('DscCompilationJob', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobName}'}
 
     def get(
-            self, resource_group_name, automation_account_name, compilation_job_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, compilation_job_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the Dsc configuration compilation job identified by job id.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
-        :param compilation_job_id: The Dsc configuration compilation job id.
-        :type compilation_job_id: str
+        :param compilation_job_name: The the DSC configuration Id.
+        :type compilation_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -132,9 +183,9 @@ class DscCompilationJobOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
-            'compilationJobId': self._serialize.url("compilation_job_id", compilation_job_id, 'str'),
+            'compilationJobName': self._serialize.url("compilation_job_name", compilation_job_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -170,15 +221,15 @@ class DscCompilationJobOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{compilationJobName}'}
 
     def list_by_automation_account(
             self, resource_group_name, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of dsc compilation jobs.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -199,7 +250,7 @@ class DscCompilationJobOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -250,9 +301,9 @@ class DscCompilationJobOperations(object):
             self, resource_group_name, automation_account_name, job_id, job_stream_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the job stream identified by job stream id.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param job_id: The job id.
         :type job_id: str
@@ -272,7 +323,7 @@ class DscCompilationJobOperations(object):
         # Construct URL
         url = self.get_stream.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'jobStreamId': self._serialize.url("job_stream_id", job_stream_id, 'str'),

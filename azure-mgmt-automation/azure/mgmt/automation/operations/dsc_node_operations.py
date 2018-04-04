@@ -22,7 +22,7 @@ class DscNodeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-10-31".
+    :ivar api_version: Client Api Version. Constant value: "2018-01-15".
     """
 
     models = models
@@ -32,7 +32,7 @@ class DscNodeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-10-31"
+        self.api_version = "2018-01-15"
 
         self.config = config
 
@@ -40,9 +40,9 @@ class DscNodeOperations(object):
             self, resource_group_name, automation_account_name, node_id, custom_headers=None, raw=False, **operation_config):
         """Delete the dsc node identified by node id.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: Automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param node_id: The node id.
         :type node_id: str
@@ -60,7 +60,7 @@ class DscNodeOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -104,9 +104,9 @@ class DscNodeOperations(object):
             self, resource_group_name, automation_account_name, node_id, custom_headers=None, raw=False, **operation_config):
         """Retrieve the dsc node identified by node id.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param node_id: The node id.
         :type node_id: str
@@ -124,7 +124,7 @@ class DscNodeOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -165,20 +165,19 @@ class DscNodeOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}'}
 
     def update(
-            self, resource_group_name, automation_account_name, node_id, node_id1=None, node_configuration=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, node_id, dsc_node_update_parameters, custom_headers=None, raw=False, **operation_config):
         """Update the dsc node.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param node_id: Parameters supplied to the update dsc node.
         :type node_id: str
-        :param node_id1: Gets or sets the id of the dsc node.
-        :type node_id1: str
-        :param node_configuration: Gets or sets the configuration of the node.
-        :type node_configuration:
-         ~azure.mgmt.automation.models.DscNodeConfigurationAssociationProperty
+        :param dsc_node_update_parameters: Parameters supplied to the update
+         dsc node.
+        :type dsc_node_update_parameters:
+         ~azure.mgmt.automation.models.DscNodeUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -190,12 +189,10 @@ class DscNodeOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
-        parameters = models.DscNodeUpdateParameters(node_configuration=node_configuration)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -217,7 +214,7 @@ class DscNodeOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DscNodeUpdateParameters')
+        body_content = self._serialize.body(dsc_node_update_parameters, 'DscNodeUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
@@ -243,9 +240,9 @@ class DscNodeOperations(object):
             self, resource_group_name, automation_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of dsc nodes.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
-        :param automation_account_name: The automation account name.
+        :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -266,7 +263,7 @@ class DscNodeOperations(object):
                 # Construct URL
                 url = self.list_by_automation_account.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
                     'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }

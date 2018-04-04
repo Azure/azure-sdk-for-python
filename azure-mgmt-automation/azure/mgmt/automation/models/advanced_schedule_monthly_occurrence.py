@@ -19,7 +19,7 @@ class AdvancedScheduleMonthlyOccurrence(Model):
      between 1 and 5
     :type occurrence: int
     :param day: Day of the occurrence. Must be one of monday, tuesday,
-     wednesday,thursday, friday, saturday, sunday. Possible values include:
+     wednesday, thursday, friday, saturday, sunday. Possible values include:
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
      'Sunday'
     :type day: str or ~azure.mgmt.automation.models.ScheduleDay

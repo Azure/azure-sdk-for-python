@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class Credential(Model):
+class Credential(ProxyResource):
     """Definition of the credential.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the id of the resource.
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Gets the name of the credential.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
     :ivar user_name: Gets the user name of the credential.
     :vartype user_name: str
@@ -55,9 +55,6 @@ class Credential(Model):
 
     def __init__(self, description=None):
         super(Credential, self).__init__()
-        self.id = None
-        self.name = None
-        self.type = None
         self.user_name = None
         self.creation_time = None
         self.last_modified_time = None

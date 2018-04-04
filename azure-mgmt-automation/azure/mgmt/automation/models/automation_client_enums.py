@@ -12,6 +12,42 @@
 from enum import Enum
 
 
+class AutomationKeyName(Enum):
+
+    primary = "primary"
+    secondary = "secondary"
+
+
+class AutomationKeyPermissions(Enum):
+
+    full = "Full"
+
+
+class JobProvisioningState(Enum):
+
+    failed = "Failed"
+    succeeded = "Succeeded"
+    suspended = "Suspended"
+    processing = "Processing"
+
+
+class JobStatus(Enum):
+
+    new = "New"
+    activating = "Activating"
+    running = "Running"
+    completed = "Completed"
+    failed = "Failed"
+    stopped = "Stopped"
+    blocked = "Blocked"
+    suspended = "Suspended"
+    disconnected = "Disconnected"
+    suspending = "Suspending"
+    stopping = "Stopping"
+    resuming = "Resuming"
+    removing = "Removing"
+
+
 class RunbookTypeEnum(Enum):
 
     script = "Script"
@@ -102,31 +138,6 @@ class AgentRegistrationKeyName(Enum):
     secondary = "secondary"
 
 
-class JobProvisioningState(Enum):
-
-    failed = "Failed"
-    succeeded = "Succeeded"
-    suspended = "Suspended"
-    processing = "Processing"
-
-
-class JobStatus(Enum):
-
-    new = "New"
-    activating = "Activating"
-    running = "Running"
-    completed = "Completed"
-    failed = "Failed"
-    stopped = "Stopped"
-    blocked = "Blocked"
-    suspended = "Suspended"
-    disconnected = "Disconnected"
-    suspending = "Suspending"
-    stopping = "Stopping"
-    resuming = "Resuming"
-    removing = "Removing"
-
-
 class JobStreamType(Enum):
 
     progress = "Progress"
@@ -198,12 +209,10 @@ class ScheduleFrequency(Enum):
     month = "Month"
 
 
-class LinuxUpdateClasses(Enum):
+class OperatingSystemType(Enum):
 
-    unclassified = "Unclassified"
-    critical = "Critical"
-    security = "Security"
-    other = "Other"
+    windows = "Windows"
+    linux = "Linux"
 
 
 class WindowsUpdateClasses(Enum):
@@ -219,10 +228,12 @@ class WindowsUpdateClasses(Enum):
     updates = "Updates"
 
 
-class OperatingSystemType(Enum):
+class LinuxUpdateClasses(Enum):
 
-    windows = "Windows"
-    linux = "Linux"
+    unclassified = "Unclassified"
+    critical = "Critical"
+    security = "Security"
+    other = "Other"
 
 
 class SourceType(Enum):

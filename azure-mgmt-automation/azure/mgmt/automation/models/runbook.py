@@ -9,25 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Runbook(Resource):
+class Runbook(TrackedResource):
     """Definition of the runbook type.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Fully qualified resource Id for the resource
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param location: The Azure Region where the resource lives
+    :type location: str
     :param runbook_type: Gets or sets the type of the runbook. Possible values
      include: 'Script', 'Graph', 'PowerShellWorkflow', 'PowerShell',
      'GraphPowerShellWorkflow', 'GraphPowerShell'
@@ -74,15 +74,14 @@ class Runbook(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'runbook_type': {'key': 'properties.runbookType', 'type': 'str'},
         'publish_content_link': {'key': 'properties.publishContentLink', 'type': 'ContentLink'},
         'state': {'key': 'properties.state', 'type': 'str'},
@@ -101,8 +100,8 @@ class Runbook(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, runbook_type=None, publish_content_link=None, state=None, log_verbose=None, log_progress=None, log_activity_trace=None, job_count=None, parameters=None, output_types=None, draft=None, provisioning_state=None, last_modified_by=None, creation_time=None, last_modified_time=None, description=None, etag=None):
-        super(Runbook, self).__init__(location=location, tags=tags)
+    def __init__(self, tags=None, location=None, runbook_type=None, publish_content_link=None, state=None, log_verbose=None, log_progress=None, log_activity_trace=None, job_count=None, parameters=None, output_types=None, draft=None, provisioning_state=None, last_modified_by=None, creation_time=None, last_modified_time=None, description=None, etag=None):
+        super(Runbook, self).__init__(tags=tags, location=location)
         self.runbook_type = runbook_type
         self.publish_content_link = publish_content_link
         self.state = state

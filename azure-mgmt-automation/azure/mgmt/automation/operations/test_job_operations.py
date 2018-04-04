@@ -40,7 +40,7 @@ class TestJobOperations(object):
             self, resource_group_name, automation_account_name, runbook_name, parameters=None, run_on=None, custom_headers=None, raw=False, **operation_config):
         """Create a test job of the runbook.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -69,7 +69,7 @@ class TestJobOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -116,7 +116,7 @@ class TestJobOperations(object):
             self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the test job for the specified runbook.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -137,7 +137,7 @@ class TestJobOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -180,7 +180,7 @@ class TestJobOperations(object):
             self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Resume the test job.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -200,7 +200,7 @@ class TestJobOperations(object):
         url = self.resume.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -236,7 +236,7 @@ class TestJobOperations(object):
             self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Stop the test job.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -256,7 +256,7 @@ class TestJobOperations(object):
         url = self.stop.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
@@ -292,7 +292,7 @@ class TestJobOperations(object):
             self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
         """Suspend the test job.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
@@ -312,7 +312,7 @@ class TestJobOperations(object):
         url = self.suspend.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._]+$'),
             'automationAccountName': self._serialize.url("automation_account_name", automation_account_name, 'str'),
             'runbookName': self._serialize.url("runbook_name", runbook_name, 'str')
         }
