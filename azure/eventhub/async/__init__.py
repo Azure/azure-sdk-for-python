@@ -3,10 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-"""
-Async APIs.
-"""
-
 import logging
 import queue
 import asyncio
@@ -30,13 +26,29 @@ log = logging.getLogger(__name__)
 
 class EventHubClientAsync(EventHubClient):
     """
-    The L{EventHubClient} class defines a high level interface for sending
-    events to and receiving events from the Azure Event Hubs service.
+    The EventHubClient class defines a high level interface for asynchronously
+    sending events to and receiving events from the Azure Event Hubs service.
     """
+
     def _create_auth(self, auth_uri, username, password):
+        """
+        Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
+        the session.
+
+        :param auth_uri: The URI to authenticate against.
+        :type auth_uri: str
+        :param username: The name of the shared access policy.
+        :type username: str
+        :param password: The shared access key.
+        :type password: str
+        """
         return SASTokenAsync.from_shared_access_key(auth_uri, username, password)
 
     def _create_connection_async(self):
+        """
+        Create a new ~uamqp.ConnectionAsync instance that will be shared between all
+        AsyncSender/AsyncReceiver clients.
+        """
         if not self.connection:
             log.info("{}: Creating connection with address={}".format(
                 self.container_id, self.address.geturl()))
@@ -48,15 +60,27 @@ class EventHubClientAsync(EventHubClient):
                 debug=self.debug)
 
     async def _close_connection_async(self):
+        """
+        Close and destroy the connection async.
+        """
         if self.connection:
             await self.connection.destroy_async()
             self.connection = None
 
     async def _close_clients_async(self):
+        """
+        Close all open AsyncSender/AsyncReceiver clients.
+        """
         for client in self.clients:
             await client.close_async()
 
     async def run_async(self):
+        """
+        Run the EventHubClient asynchronously.
+        Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
+
+        :returns: ~azure.eventhub.EventHubClientAsync
+        """
         log.info("{}: Starting {} clients".format(self.container_id, len(self.clients)))
         self._create_connection_async()
         for client in self.clients:
@@ -65,7 +89,7 @@ class EventHubClientAsync(EventHubClient):
 
     async def stop_async(self):
         """
-        Stop the client.
+        Stop the EventHubClient and all its Sender/Receiver clients.
         """
         log.info("{}: Stopping {} clients".format(self.container_id, len(self.clients)))
         self.stopped = True
@@ -73,6 +97,10 @@ class EventHubClientAsync(EventHubClient):
         await self._close_connection_async()
 
     async def get_eventhub_info_async(self):
+        """
+        Get details on the specified EventHub async.
+        :returns: dict
+        """
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
         async with AMQPClientAsync(target, auth=self.auth, debug=self.debug) as mgmt_client:
@@ -87,16 +115,16 @@ class EventHubClientAsync(EventHubClient):
 
     def add_async_receiver(self, consumer_group, partition, offset=None, prefetch=300, loop=None):
         """
-        Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
-
-        @param receiver: receiver to process the received event data. It must
-        override the 'on_event_data' method to handle incoming events.
-
-        @param consumer_group: the consumer group to which the receiver belongs.
-
-        @param partition: the id of the event hub partition.
-
-        @param offset: the initial L{Offset} to receive events.
+        Add an async receiver to the client for a particular consumer group and partition.
+        :param consumer_group: The name of the consumer group.
+        :type consumer_group: str
+        :param partition: The ID of the partition.
+        :type partition: str
+        :param offset: The offset from which to start receiving.
+        :type offset: ~azure.eventhub.Offset
+        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :type prefetch: int
+        :returns: ~azure.eventhub.ReceiverAsync
         """
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
@@ -109,16 +137,19 @@ class EventHubClientAsync(EventHubClient):
 
     def add_async_epoch_receiver(self, consumer_group, partition, epoch, prefetch=300, loop=None):
         """
-        Registers a L{Receiver} to process L{EventData} objects received from an Event Hub partition.
-
-        @param receiver: receiver to process the received event data. It must
-        override the 'on_event_data' method to handle incoming events.
-
-        @param consumer_group: the consumer group to which the receiver belongs.
-
-        @param partition: the id of the event hub partition.
-
-        @param offset: the initial L{Offset} to receive events.
+        Add an async receiver to the client with an epoch value. Only a single epoch receiver
+        can connect to a partition at any given time - additional epoch receivers must have
+        a higher epoch value or they will be rejected. If a 2nd epoch receiver has
+        connected, the first will be closed.
+        :param consumer_group: The name of the consumer group.
+        :type consumer_group: str
+        :param partition: The ID of the partition.
+        :type partition: str
+        :param epoch: The epoch value for the receiver.
+        :type epoch: int
+        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :type prefetch: int
+        :returns: ~azure.eventhub.ReceiverAsync
         """
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, self.address.path, consumer_group, partition)
@@ -128,12 +159,13 @@ class EventHubClientAsync(EventHubClient):
 
     def add_async_sender(self, partition=None, loop=None):
         """
-        Registers a L{Sender} to publish L{EventData} objects to an Event Hub or one of its partitions.
-
-        @param sender: sender to publish event data.
-
-        @param partition: the id of the destination event hub partition. If not specified, events will
-        be distributed across partitions based on the default distribution logic.
+        Add an async sender to the client to send ~azure.eventhub.EventData object
+        to an EventHub.
+        :param partition: Optionally specify a particular partition to send to.
+         If omitted, the events will be distributed to available partitions via
+         round-robin
+        :type parition: str
+        :returns: ~azure.eventhub.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if partition:
@@ -144,9 +176,18 @@ class EventHubClientAsync(EventHubClient):
 
 class AsyncSender(Sender):
     """
-    Implements the async API of a L{Sender}.
+    Implements the async API of a Sender.
     """
+
     def __init__(self, client, target, loop=None):
+        """
+        Instantiate an EventHub event SenderAsync client.
+        :param client: The parent EventHubClient.
+        :type client: ~azure.eventhub.EventHubClient.
+        :param target: The URI of the EventHub to send to.
+        :type target: str
+        :param loop: An event loop.
+        """
         self.loop = loop or asyncio.get_event_loop()
         self._handler = SendClientAsync(
             target,
@@ -159,26 +200,38 @@ class AsyncSender(Sender):
 
     async def send(self, event_data):
         """
-        Sends an event data.
-
-        @param event_data: the L{EventData} to be sent.
+        Sends an event data and asynchronously waits until 
+        acknowledgement is received or operation times out.
+        :param event_data: The event to be sent.
+        :type event_data: ~azure.eventhub.EventData
+        :raises: ~azure.eventhub.EventHubError if the message fails to
+         send.
         """
-        event_data.message.on_send_complete = self.on_outcome
+        event_data.message.on_send_complete = self._on_outcome
         await self._handler.send_message_async(event_data.message)
         if self._outcome != constants.MessageSendResult.Ok:
             raise Sender._error(self._outcome, self._condition)
 
-    def on_result(self, outcome, condition):
-        """
-        Called when the send task is completed.
-        """
-        AsyncSender._error(outcome, condition)
 
 class AsyncReceiver(Receiver):
     """
-    Implements the async API of a L{Receiver}.
+    Implements the async API of a Receiver.
     """
+
     def __init__(self, client, source, prefetch=300, epoch=None, loop=None):
+        """
+        Instantiate an async receiver.
+        :param client: The parent EventHubClient.
+        :type client: ~azure.eventhub.EventHubClient
+        :param source: The source EventHub from which to receive events.
+        :type source: ~uamqp.Source
+        :param prefetch: The number of events to prefetch from the service
+         for processing. Default is 300.
+        :type prefetch: int
+        :param epoch: An optional epoch value.
+        :type epoch: int
+        :param loop: An event loop.
+        """
         self.loop = loop or asyncio.get_event_loop()
         self.offset = None
         self._callback = None
@@ -197,22 +250,20 @@ class AsyncReceiver(Receiver):
             timeout=self.timeout,
             loop=self.loop)
 
-    def on_message(self, event):
-        """ Handle message received event """
-        self.delivered += 1
-        event_data = EventData.create(event)
-        if self._callback:
-            self._callback(event_data)
-        self.offset = event_data.offset
-        return event_data
-
     async def receive(self, max_batch_size=None, callback=None, timeout=None):
         """
-        Receive events asynchronously.
-        @param count: max number of events to receive. The result may be less.
-
-        Returns a list of L{EventData} objects. An empty list means no data is
-        available. None means the receiver is closed (eof).
+        Receive events asynchronously from the EventHub.
+        :param max_batch_size: Receive a batch of events. Batch size will
+         be up to the maximum specified, but will return as soon as service
+         returns no new events. If combined with a timeout and no events are
+         retrieve before the time, the result will be empty. If no batch
+         size is supplied, the prefetch size will be the maximum.
+        :type max_batch_size: int
+        :param callback: A callback to be run for each received event. This must
+         be a function that accepts a single argument - the event data. This callback
+         will be run before the message is returned in the result generator.
+        :type callback: func[~azure.eventhub.EventData]
+        :returns: list[~azure.eventhub.EventData]
         """
         self._callback = callback
         timeout_ms = 1000 * timeout if timeout else 0

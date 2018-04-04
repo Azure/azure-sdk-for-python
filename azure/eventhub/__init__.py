@@ -3,12 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-"""
-The module provides a client to connect to Azure Event Hubs. All service specifics
-should be implemented in this module.
-
-"""
-
 import logging
 import datetime
 import sys
@@ -417,37 +411,21 @@ class Receiver:
          be up to the maximum specified, but will return as soon as service
          returns no new events. If combined with a timeout and no events are
          retrieve before the time, the result will be empty. If no batch
-         size is supplied, returned generator will continue to iterate over
-         received events indefinitely (or until timeout reached.).
+         size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
         :param callback: A callback to be run for each received event. This must
          be a function that accepts a single argument - the event data. This callback
          will be run before the message is returned in the result generator.
         :type callback: func[~azure.eventhub.EventData]
-        :returns: Generator[~azure.eventhub.EventData]
+        :returns: list[~azure.eventhub.EventData]
         """
         timeout_ms = 1000 * timeout if timeout else 0
         self._callback = callback
-        if max_batch_size:
-            message_iter = self._handler.receive_message_batch(
-                max_batch_size=max_batch_size,
-                on_message_received=self.on_message,
-                timeout=timeout_ms)
-            for event_data in message_iter:
-                yield event_data
-        else:
-            receive_timeout = time.time() + timeout if timeout else None
-            message_iter = self._handler.receive_message_batch(
-                on_message_received=self.on_message,
-                timeout=timeout_ms)
-            while message_iter and (not receive_timeout or time.time() < receive_timeout):
-                for event_data in message_iter:
-                    yield event_data
-                if receive_timeout:
-                    timeout_ms = int((receive_timeout - time.time()) * 1000)
-                message_iter = self._handler.receive_message_batch(
-                    on_message_received=self.on_message,
-                    timeout=timeout_ms)
+        batch = self._handler.receive_message_batch(
+            max_batch_size=max_batch_size,
+            on_message_received=self.on_message,
+            timeout=timeout_ms)
+        return batch
 
     def selector(self, default):
         """
