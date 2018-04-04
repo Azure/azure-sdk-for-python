@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class ClassificationCategory3(Model):
-    """The category3 score details of the text. <a
+class Score(Model):
+    """The classification score details of the text. <a
     href="https://aka.ms/textClassifyCategories">Click here</a> for more
     details on category classification.
 
-    :param score: The category3 score.
+    :param score: The category score.
     :type score: float
     """
 
@@ -26,5 +26,5 @@ class ClassificationCategory3(Model):
     }
 
     def __init__(self, score=None):
-        super(ClassificationCategory3, self).__init__()
+        super(Score, self).__init__()
         self.score = score

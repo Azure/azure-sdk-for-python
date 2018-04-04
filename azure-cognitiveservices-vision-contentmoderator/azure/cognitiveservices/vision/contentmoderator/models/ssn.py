@@ -12,19 +12,21 @@
 from msrest.serialization import Model
 
 
-class ClassificationCategory1(Model):
-    """The category1 score details of the text. <a
-    href="https://aka.ms/textClassifyCategories">Click here</a> for more
-    details on category classification.
+class SSN(Model):
+    """Detected SSN details.
 
-    :param score: The category1 score.
-    :type score: float
+    :param text: Detected SSN in the input text content.
+    :type text: str
+    :param index: Index(Location) of the SSN in the input text content.
+    :type index: int
     """
 
     _attribute_map = {
-        'score': {'key': 'Score', 'type': 'float'},
+        'text': {'key': 'Text', 'type': 'str'},
+        'index': {'key': 'Index', 'type': 'int'},
     }
 
-    def __init__(self, score=None):
-        super(ClassificationCategory1, self).__init__()
-        self.score = score
+    def __init__(self, text=None, index=None):
+        super(SSN, self).__init__()
+        self.text = text
+        self.index = index

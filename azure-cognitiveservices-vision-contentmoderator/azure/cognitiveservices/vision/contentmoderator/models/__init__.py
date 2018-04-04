@@ -13,12 +13,11 @@ from .key_value_pair import KeyValuePair
 from .tag import Tag
 from .frame import Frame
 from .frames import Frames
-from .classification_category1 import ClassificationCategory1
-from .classification_category2 import ClassificationCategory2
-from .classification_category3 import ClassificationCategory3
+from .score import Score
 from .classification import Classification
 from .status import Status
 from .email import Email
+from .ssn import SSN
 from .ipa import IPA
 from .phone import Phone
 from .address import Address
@@ -78,12 +77,11 @@ __all__ = [
     'Tag',
     'Frame',
     'Frames',
-    'ClassificationCategory1',
-    'ClassificationCategory2',
-    'ClassificationCategory3',
+    'Score',
     'Classification',
     'Status',
     'Email',
+    'SSN',
     'IPA',
     'Phone',
     'Address',
