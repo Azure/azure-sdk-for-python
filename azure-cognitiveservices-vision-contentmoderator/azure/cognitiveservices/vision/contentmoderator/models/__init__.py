@@ -13,7 +13,9 @@ from .key_value_pair import KeyValuePair
 from .tag import Tag
 from .frame import Frame
 from .frames import Frames
-from .score import Score
+from .classification_category1 import ClassificationCategory1
+from .classification_category2 import ClassificationCategory2
+from .classification_category3 import ClassificationCategory3
 from .classification import Classification
 from .status import Status
 from .email import Email
@@ -77,7 +79,9 @@ __all__ = [
     'Tag',
     'Frame',
     'Frames',
-    'Score',
+    'ClassificationCategory1',
+    'ClassificationCategory2',
+    'ClassificationCategory3',
     'Classification',
     'Status',
     'Email',
