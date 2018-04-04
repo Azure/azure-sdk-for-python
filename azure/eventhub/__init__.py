@@ -26,7 +26,7 @@ from uamqp import authentication
 from uamqp import constants, types
 
 
-__version__ = "0.2.0a1"
+__version__ = "0.2.0a2"
 
 log = logging.getLogger(__name__)
 
