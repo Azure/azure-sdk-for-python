@@ -13,7 +13,7 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class WorkbookErrorResponse(Model):
+class WorkbookError(Model):
     """Error message body that will indicate why the operation failed.
 
     :param code: Service-defined error code. This code serves as a sub-status
@@ -34,14 +34,14 @@ class WorkbookErrorResponse(Model):
     }
 
     def __init__(self, code=None, message=None, details=None):
-        super(WorkbookErrorResponse, self).__init__()
+        super(WorkbookError, self).__init__()
         self.code = code
         self.message = message
         self.details = details
 
 
-class WorkbookErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'WorkbookErrorResponse'.
+class WorkbookErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'WorkbookError'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -49,4 +49,4 @@ class WorkbookErrorResponseException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(WorkbookErrorResponseException, self).__init__(deserialize, response, 'WorkbookErrorResponse', *args)
+        super(WorkbookErrorException, self).__init__(deserialize, response, 'WorkbookError', *args)

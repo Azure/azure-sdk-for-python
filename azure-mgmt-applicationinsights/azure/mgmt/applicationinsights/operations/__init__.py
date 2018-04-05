@@ -25,6 +25,7 @@ from .favorite_operations import FavoriteOperations
 from .web_test_locations_operations import WebTestLocationsOperations
 from .web_tests_operations import WebTestsOperations
 from .workbooks_operations import WorkbooksOperations
+from .workbook_operations import WorkbookOperations
 
 __all__ = [
     'Operations',
@@ -43,4 +44,5 @@ __all__ = [
     'WebTestLocationsOperations',
     'WebTestsOperations',
     'WorkbooksOperations',
+    'WorkbookOperations',
 ]

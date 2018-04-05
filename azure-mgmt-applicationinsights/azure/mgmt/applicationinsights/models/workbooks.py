@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class WorkbookListResult(Model):
+class Workbooks(Model):
     """Workbook list result.
 
     :param value: An array of workbooks.
@@ -24,5 +24,5 @@ class WorkbookListResult(Model):
     }
 
     def __init__(self, value=None):
-        super(WorkbookListResult, self).__init__()
+        super(Workbooks, self).__init__()
         self.value = value
