@@ -9,9 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_url import ImageUrl
-from .image_tag_prediction_model import ImageTagPredictionModel
-from .image_prediction_result_model import ImagePredictionResultModel
+try:
+    from .image_url_py3 import ImageUrl
+    from .image_tag_prediction_model_py3 import ImageTagPredictionModel
+    from .image_prediction_result_model_py3 import ImagePredictionResultModel
+except (SyntaxError, ImportError):
+    from .image_url import ImageUrl
+    from .image_tag_prediction_model import ImageTagPredictionModel
+    from .image_prediction_result_model import ImagePredictionResultModel
 
 __all__ = [
     'ImageUrl',

@@ -38,8 +38,8 @@ class Domain(Model):
         'exportable': {'key': 'Exportable', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(Domain, self).__init__()
+    def __init__(self, **kwargs):
+        super(Domain, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.exportable = None

@@ -28,7 +28,7 @@ class ApiKeys(Model):
         'prediction_keys': {'key': 'PredictionKeys', 'type': 'KeyPair'},
     }
 
-    def __init__(self, training_keys=None, prediction_keys=None):
-        super(ApiKeys, self).__init__()
-        self.training_keys = training_keys
-        self.prediction_keys = prediction_keys
+    def __init__(self, **kwargs):
+        super(ApiKeys, self).__init__(**kwargs)
+        self.training_keys = kwargs.get('training_keys', None)
+        self.prediction_keys = kwargs.get('prediction_keys', None)
