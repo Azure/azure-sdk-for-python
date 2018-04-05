@@ -18,6 +18,9 @@ class PII(Model):
     :param email:
     :type email:
      list[~azure.cognitiveservices.vision.contentmoderator.models.Email]
+    :param ssn:
+    :type ssn:
+     list[~azure.cognitiveservices.vision.contentmoderator.models.SSN]
     :param ipa:
     :type ipa:
      list[~azure.cognitiveservices.vision.contentmoderator.models.IPA]
@@ -31,14 +34,16 @@ class PII(Model):
 
     _attribute_map = {
         'email': {'key': 'Email', 'type': '[Email]'},
+        'ssn': {'key': 'SSN', 'type': '[SSN]'},
         'ipa': {'key': 'IPA', 'type': '[IPA]'},
         'phone': {'key': 'Phone', 'type': '[Phone]'},
         'address': {'key': 'Address', 'type': '[Address]'},
     }
 
-    def __init__(self, email=None, ipa=None, phone=None, address=None):
+    def __init__(self, email=None, ssn=None, ipa=None, phone=None, address=None):
         super(PII, self).__init__()
         self.email = email
+        self.ssn = ssn
         self.ipa = ipa
         self.phone = phone
         self.address = address
