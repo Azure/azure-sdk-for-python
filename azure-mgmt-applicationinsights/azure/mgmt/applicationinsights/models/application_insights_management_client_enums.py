@@ -46,6 +46,12 @@ class WebTestKind(Enum):
     multistep = "multistep"
 
 
+class SharedTypeKind(Enum):
+
+    user = "user"
+    shared = "shared"
+
+
 class FavoriteSourceType(Enum):
 
     retention = "retention"
@@ -56,3 +62,11 @@ class FavoriteSourceType(Enum):
     funnel = "funnel"
     impact = "impact"
     segmentation = "segmentation"
+
+
+class CategoryType(Enum):
+
+    workbook = "workbook"
+    tsg = "TSG"
+    performance = "performance"
+    retention = "retention"
