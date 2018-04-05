@@ -56,12 +56,12 @@ class Project(Model):
         'thumbnail_uri': {'key': 'ThumbnailUri', 'type': 'str'},
     }
 
-    def __init__(self, name=None, description=None, settings=None):
-        super(Project, self).__init__()
+    def __init__(self, **kwargs):
+        super(Project, self).__init__(**kwargs)
         self.id = None
-        self.name = name
-        self.description = description
-        self.settings = settings
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.settings = kwargs.get('settings', None)
         self.current_iteration_id = None
         self.created = None
         self.last_modified = None

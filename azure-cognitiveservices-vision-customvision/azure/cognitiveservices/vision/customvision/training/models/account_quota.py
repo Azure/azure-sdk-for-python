@@ -46,8 +46,8 @@ class AccountQuota(Model):
         'per_project': {'key': 'PerProject', 'type': '[PerProjectQuota]'},
     }
 
-    def __init__(self):
-        super(AccountQuota, self).__init__()
+    def __init__(self, **kwargs):
+        super(AccountQuota, self).__init__(**kwargs)
         self.tier = None
         self.projects = None
         self.predictions = None

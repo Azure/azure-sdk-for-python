@@ -49,8 +49,8 @@ class IterationPerformance(Model):
         'recall_std_deviation': {'key': 'RecallStdDeviation', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(IterationPerformance, self).__init__()
+    def __init__(self, **kwargs):
+        super(IterationPerformance, self).__init__(**kwargs)
         self.per_tag_performance = None
         self.precision = None
         self.precision_std_deviation = None

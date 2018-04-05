@@ -26,7 +26,7 @@ class KeyPair(Model):
         'secondary_key': {'key': 'SecondaryKey', 'type': 'str'},
     }
 
-    def __init__(self, primary_key=None, secondary_key=None):
-        super(KeyPair, self).__init__()
-        self.primary_key = primary_key
-        self.secondary_key = secondary_key
+    def __init__(self, **kwargs):
+        super(KeyPair, self).__init__(**kwargs)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)

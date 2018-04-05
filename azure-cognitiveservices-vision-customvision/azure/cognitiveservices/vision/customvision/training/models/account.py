@@ -44,8 +44,8 @@ class Account(Model):
         'quotas': {'key': 'Quotas', 'type': 'AccountQuota'},
     }
 
-    def __init__(self):
-        super(Account, self).__init__()
+    def __init__(self, **kwargs):
+        super(Account, self).__init__(**kwargs)
         self.user_name = None
         self.email = None
         self.keys = None

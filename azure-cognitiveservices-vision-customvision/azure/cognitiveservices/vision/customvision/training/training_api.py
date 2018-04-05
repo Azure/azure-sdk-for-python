@@ -82,7 +82,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/account'
+        url = self.get_account_info.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -111,6 +111,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_account_info.metadata = {'url': '/account'}
 
     def get_domains(
             self, custom_headers=None, raw=False, **operation_config):
@@ -129,7 +130,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/domains'
+        url = self.get_domains.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -158,6 +159,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_domains.metadata = {'url': '/domains'}
 
     def get_domain(
             self, domain_id, custom_headers=None, raw=False, **operation_config):
@@ -178,7 +180,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/domains/{domainId}'
+        url = self.get_domain.metadata['url']
         path_format_arguments = {
             'domainId': self._serialize.url("domain_id", domain_id, 'str')
         }
@@ -211,6 +213,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_domain.metadata = {'url': '/domains/{domainId}'}
 
     def get_tagged_images(
             self, project_id, iteration_id=None, tag_ids=None, order_by=None, take=50, skip=0, custom_headers=None, raw=False, **operation_config):
@@ -254,7 +257,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/images/tagged'
+        url = self.get_tagged_images.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -297,6 +300,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_tagged_images.metadata = {'url': '/projects/{projectId}/images/tagged'}
 
     def get_untagged_images(
             self, project_id, iteration_id=None, order_by=None, take=50, skip=0, custom_headers=None, raw=False, **operation_config):
@@ -333,7 +337,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/images/untagged'
+        url = self.get_untagged_images.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -374,6 +378,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_untagged_images.metadata = {'url': '/projects/{projectId}/images/untagged'}
 
     def create_images_from_data(
             self, project_id, image_data, tag_ids=None, custom_headers=None, raw=False, **operation_config):
@@ -403,7 +408,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/images'
+        url = self.create_images_from_data.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -444,6 +449,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    create_images_from_data.metadata = {'url': '/projects/{projectId}/images'}
 
     def delete_images(
             self, project_id, image_ids, custom_headers=None, raw=False, **operation_config):
@@ -465,7 +471,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/images'
+        url = self.delete_images.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -492,6 +498,7 @@ class TrainingApi(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_images.metadata = {'url': '/projects/{projectId}/images'}
 
     def create_images_from_files(
             self, project_id, images=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
@@ -519,7 +526,7 @@ class TrainingApi(object):
         batch = models.ImageFileCreateBatch(images=images, tag_ids=tag_ids)
 
         # Construct URL
-        url = '/projects/{projectId}/images/files'
+        url = self.create_images_from_files.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -556,6 +563,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    create_images_from_files.metadata = {'url': '/projects/{projectId}/images/files'}
 
     def create_images_from_urls(
             self, project_id, images=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
@@ -583,7 +591,7 @@ class TrainingApi(object):
         batch = models.ImageUrlCreateBatch(images=images, tag_ids=tag_ids)
 
         # Construct URL
-        url = '/projects/{projectId}/images/urls'
+        url = self.create_images_from_urls.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -620,6 +628,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    create_images_from_urls.metadata = {'url': '/projects/{projectId}/images/urls'}
 
     def create_images_from_predictions(
             self, project_id, images=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
@@ -647,7 +656,7 @@ class TrainingApi(object):
         batch = models.ImageIdCreateBatch(images=images, tag_ids=tag_ids)
 
         # Construct URL
-        url = '/projects/{projectId}/images/predictions'
+        url = self.create_images_from_predictions.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -684,6 +693,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    create_images_from_predictions.metadata = {'url': '/projects/{projectId}/images/predictions'}
 
     def post_image_tags(
             self, project_id, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -709,7 +719,7 @@ class TrainingApi(object):
         batch = models.ImageTagCreateBatch(tags=tags)
 
         # Construct URL
-        url = '/projects/{projectId}/images/tags'
+        url = self.post_image_tags.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -746,6 +756,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    post_image_tags.metadata = {'url': '/projects/{projectId}/images/tags'}
 
     def delete_image_tags(
             self, project_id, image_ids, tag_ids, custom_headers=None, raw=False, **operation_config):
@@ -769,7 +780,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/images/tags'
+        url = self.delete_image_tags.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -797,6 +808,7 @@ class TrainingApi(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_image_tags.metadata = {'url': '/projects/{projectId}/images/tags'}
 
     def query_prediction_results(
             self, project_id, query, custom_headers=None, raw=False, **operation_config):
@@ -821,7 +833,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/predictions/query'
+        url = self.query_prediction_results.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -858,6 +870,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    query_prediction_results.metadata = {'url': '/projects/{projectId}/predictions/query'}
 
     def delete_prediction(
             self, project_id, ids, custom_headers=None, raw=False, **operation_config):
@@ -879,7 +892,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/predictions'
+        url = self.delete_prediction.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -906,6 +919,7 @@ class TrainingApi(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_prediction.metadata = {'url': '/projects/{projectId}/predictions'}
 
     def quick_test_image_url(
             self, project_id, iteration_id=None, url=None, custom_headers=None, raw=False, **operation_config):
@@ -934,7 +948,7 @@ class TrainingApi(object):
         image_url = models.ImageUrl(url=url)
 
         # Construct URL
-        url = '/projects/{projectId}/quicktest/url'
+        url = self.quick_test_image_url.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -973,6 +987,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    quick_test_image_url.metadata = {'url': '/projects/{projectId}/quicktest/url'}
 
     def quick_test_image(
             self, project_id, image_data, iteration_id=None, custom_headers=None, raw=False, **operation_config):
@@ -999,7 +1014,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/quicktest/image'
+        url = self.quick_test_image.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1040,6 +1055,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    quick_test_image.metadata = {'url': '/projects/{projectId}/quicktest/image'}
 
     def get_projects(
             self, custom_headers=None, raw=False, **operation_config):
@@ -1058,7 +1074,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects'
+        url = self.get_projects.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1087,6 +1103,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_projects.metadata = {'url': '/projects'}
 
     def create_project(
             self, name, description=None, domain_id=None, custom_headers=None, raw=False, **operation_config):
@@ -1112,7 +1129,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects'
+        url = self.create_project.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1146,6 +1163,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    create_project.metadata = {'url': '/projects'}
 
     def get_project(
             self, project_id, custom_headers=None, raw=False, **operation_config):
@@ -1166,7 +1184,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}'
+        url = self.get_project.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1199,6 +1217,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_project.metadata = {'url': '/projects/{projectId}'}
 
     def delete_project(
             self, project_id, custom_headers=None, raw=False, **operation_config):
@@ -1217,7 +1236,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}'
+        url = self.delete_project.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1243,6 +1262,7 @@ class TrainingApi(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_project.metadata = {'url': '/projects/{projectId}'}
 
     def update_project(
             self, project_id, updated_project, custom_headers=None, raw=False, **operation_config):
@@ -1266,7 +1286,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}'
+        url = self.update_project.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1303,6 +1323,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    update_project.metadata = {'url': '/projects/{projectId}'}
 
     def train_project(
             self, project_id, custom_headers=None, raw=False, **operation_config):
@@ -1323,7 +1344,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/train'
+        url = self.train_project.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1356,6 +1377,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    train_project.metadata = {'url': '/projects/{projectId}/train'}
 
     def get_iterations(
             self, project_id, custom_headers=None, raw=False, **operation_config):
@@ -1376,7 +1398,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/iterations'
+        url = self.get_iterations.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1409,6 +1431,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_iterations.metadata = {'url': '/projects/{projectId}/iterations'}
 
     def get_iteration(
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
@@ -1431,7 +1454,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/iterations/{iterationId}'
+        url = self.get_iteration.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
@@ -1465,6 +1488,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
 
     def delete_iteration(
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
@@ -1485,7 +1509,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/iterations/{iterationId}'
+        url = self.delete_iteration.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
@@ -1512,6 +1536,7 @@ class TrainingApi(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
 
     def update_iteration(
             self, project_id, iteration_id, name=None, is_default=None, custom_headers=None, raw=False, **operation_config):
@@ -1541,7 +1566,7 @@ class TrainingApi(object):
         updated_iteration = models.Iteration(name=name, is_default=is_default)
 
         # Construct URL
-        url = '/projects/{projectId}/iterations/{iterationId}'
+        url = self.update_iteration.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
@@ -1579,6 +1604,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    update_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
 
     def get_iteration_performance(
             self, project_id, iteration_id, threshold, custom_headers=None, raw=False, **operation_config):
@@ -1604,7 +1630,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/iterations/{iterationId}/performance'
+        url = self.get_iteration_performance.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
@@ -1639,6 +1665,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_iteration_performance.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/performance'}
 
     def get_exports(
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
@@ -1661,7 +1688,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/iterations/{iterationId}/export'
+        url = self.get_exports.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
@@ -1695,6 +1722,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_exports.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/export'}
 
     def export_iteration(
             self, project_id, iteration_id, platform, custom_headers=None, raw=False, **operation_config):
@@ -1719,7 +1747,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/iterations/{iterationId}/export'
+        url = self.export_iteration.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
@@ -1754,6 +1782,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    export_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/export'}
 
     def get_tags(
             self, project_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
@@ -1776,7 +1805,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/tags'
+        url = self.get_tags.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1811,6 +1840,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_tags.metadata = {'url': '/projects/{projectId}/tags'}
 
     def create_tag(
             self, project_id, name, description=None, custom_headers=None, raw=False, **operation_config):
@@ -1835,7 +1865,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/tags'
+        url = self.create_tag.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str')
         }
@@ -1871,6 +1901,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    create_tag.metadata = {'url': '/projects/{projectId}/tags'}
 
     def get_tag(
             self, project_id, tag_id, iteration_id=None, custom_headers=None, raw=False, **operation_config):
@@ -1896,7 +1927,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/tags/{tagId}'
+        url = self.get_tag.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'tagId': self._serialize.url("tag_id", tag_id, 'str')
@@ -1932,6 +1963,7 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    get_tag.metadata = {'url': '/projects/{projectId}/tags/{tagId}'}
 
     def delete_tag(
             self, project_id, tag_id, custom_headers=None, raw=False, **operation_config):
@@ -1952,7 +1984,7 @@ class TrainingApi(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/projects/{projectId}/tags/{tagId}'
+        url = self.delete_tag.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'tagId': self._serialize.url("tag_id", tag_id, 'str')
@@ -1979,6 +2011,7 @@ class TrainingApi(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_tag.metadata = {'url': '/projects/{projectId}/tags/{tagId}'}
 
     def update_tag(
             self, project_id, tag_id, name=None, description=None, custom_headers=None, raw=False, **operation_config):
@@ -2007,7 +2040,7 @@ class TrainingApi(object):
         updated_tag = models.Tag(name=name, description=description)
 
         # Construct URL
-        url = '/projects/{projectId}/tags/{tagId}'
+        url = self.update_tag.metadata['url']
         path_format_arguments = {
             'projectId': self._serialize.url("project_id", project_id, 'str'),
             'tagId': self._serialize.url("tag_id", tag_id, 'str')
@@ -2045,3 +2078,4 @@ class TrainingApi(object):
             return client_raw_response
 
         return deserialized
+    update_tag.metadata = {'url': '/projects/{projectId}/tags/{tagId}'}
