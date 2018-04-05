@@ -42,8 +42,8 @@ class ImageCreateResult(Model):
         'image': {'key': 'Image', 'type': 'Image'},
     }
 
-    def __init__(self):
-        super(ImageCreateResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImageCreateResult, self).__init__(**kwargs)
         self.source_url = None
         self.status = None
         self.image = None

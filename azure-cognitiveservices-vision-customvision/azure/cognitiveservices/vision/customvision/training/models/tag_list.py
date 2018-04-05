@@ -39,8 +39,8 @@ class TagList(Model):
         'total_untagged_images': {'key': 'TotalUntaggedImages', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(TagList, self).__init__()
+    def __init__(self, **kwargs):
+        super(TagList, self).__init__(**kwargs)
         self.tags = None
         self.total_tagged_images = None
         self.total_untagged_images = None

@@ -55,8 +55,8 @@ class Prediction(Model):
         'thumbnail_uri': {'key': 'ThumbnailUri', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(Prediction, self).__init__()
+    def __init__(self, **kwargs):
+        super(Prediction, self).__init__(**kwargs)
         self.id = None
         self.project = None
         self.iteration = None
