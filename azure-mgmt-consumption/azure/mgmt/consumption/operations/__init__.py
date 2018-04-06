@@ -17,6 +17,7 @@ from .reservation_recommendations_operations import ReservationRecommendationsOp
 from .budgets_operations import BudgetsOperations
 from .operations import Operations
 from .price_sheet_operations import PriceSheetOperations
+from .cost_allocation_tags_operations import CostAllocationTagsOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -27,4 +28,5 @@ __all__ = [
     'BudgetsOperations',
     'Operations',
     'PriceSheetOperations',
+    'CostAllocationTagsOperations',
 ]

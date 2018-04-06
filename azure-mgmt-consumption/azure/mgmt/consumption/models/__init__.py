@@ -20,6 +20,8 @@ from .filters import Filters
 from .current_spend import CurrentSpend
 from .notification import Notification
 from .budget import Budget
+from .cost_allocation_tag import CostAllocationTag
+from .cost_allocation_tags import CostAllocationTags
 from .error_details import ErrorDetails
 from .error_response import ErrorResponse, ErrorResponseException
 from .operation_display import OperationDisplay
@@ -56,6 +58,8 @@ __all__ = [
     'CurrentSpend',
     'Notification',
     'Budget',
+    'CostAllocationTag',
+    'CostAllocationTags',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',

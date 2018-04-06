@@ -21,6 +21,7 @@ from .operations.reservation_recommendations_operations import ReservationRecomm
 from .operations.budgets_operations import BudgetsOperations
 from .operations.operations import Operations
 from .operations.price_sheet_operations import PriceSheetOperations
+from .operations.cost_allocation_tags_operations import CostAllocationTagsOperations
 from . import models
 
 
@@ -34,21 +35,16 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param grain: Can be daily or monthly. Possible values include:
-     'DailyGrain', 'MonthlyGrain'
-    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, grain, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if grain is None:
-            raise ValueError("Parameter 'grain' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -59,7 +55,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.grain = grain
 
 
 class ConsumptionManagementClient(object):
@@ -84,22 +79,21 @@ class ConsumptionManagementClient(object):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
+    :ivar cost_allocation_tags: CostAllocationTags operations
+    :vartype cost_allocation_tags: azure.mgmt.consumption.operations.CostAllocationTagsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param grain: Can be daily or monthly. Possible values include:
-     'DailyGrain', 'MonthlyGrain'
-    :type grain: str or ~azure.mgmt.consumption.models.Datagrain
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, grain, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, grain, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -122,4 +116,6 @@ class ConsumptionManagementClient(object):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.cost_allocation_tags = CostAllocationTagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
