@@ -51,7 +51,7 @@ class ResourceHealthMetadataOperations(object):
         :rtype:
          ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -87,7 +87,7 @@ class ResourceHealthMetadataOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -122,7 +122,7 @@ class ResourceHealthMetadataOperations(object):
         :rtype:
          ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -159,7 +159,7 @@ class ResourceHealthMetadataOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -196,7 +196,7 @@ class ResourceHealthMetadataOperations(object):
         :rtype:
          ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -234,7 +234,7 @@ class ResourceHealthMetadataOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -269,7 +269,7 @@ class ResourceHealthMetadataOperations(object):
         :rtype: ~azure.mgmt.web.models.ResourceHealthMetadata or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_site.metadata['url']
@@ -299,7 +299,7 @@ class ResourceHealthMetadataOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -338,7 +338,7 @@ class ResourceHealthMetadataOperations(object):
         :rtype:
          ~azure.mgmt.web.models.ResourceHealthMetadataPaged[~azure.mgmt.web.models.ResourceHealthMetadata]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -377,7 +377,7 @@ class ResourceHealthMetadataOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -415,7 +415,7 @@ class ResourceHealthMetadataOperations(object):
         :rtype: ~azure.mgmt.web.models.ResourceHealthMetadata or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_site_slot.metadata['url']
@@ -446,7 +446,7 @@ class ResourceHealthMetadataOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

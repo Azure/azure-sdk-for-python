@@ -84,8 +84,6 @@ from .domain_control_center_sso_request import DomainControlCenterSsoRequest
 from .domain_ownership_identifier import DomainOwnershipIdentifier
 from .domain_patch_resource import DomainPatchResource
 from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
-from .error_response_error_details_item import ErrorResponseErrorDetailsItem
-from .error_response_error import ErrorResponseError
 from .error_response import ErrorResponse, ErrorResponseException
 from .tld_legal_agreement import TldLegalAgreement
 from .top_level_domain import TopLevelDomain
@@ -101,6 +99,9 @@ from .app_service_environment import AppServiceEnvironment
 from .localizable_string import LocalizableString
 from .csm_usage_quota import CsmUsageQuota
 from .error_entity import ErrorEntity
+from .default_error_response_error_details_item import DefaultErrorResponseErrorDetailsItem
+from .default_error_response_error import DefaultErrorResponseError
+from .default_error_response import DefaultErrorResponse, DefaultErrorResponseException
 from .operation import Operation
 from .resource_metric_property import ResourceMetricProperty
 from .resource_metric_value import ResourceMetricValue
@@ -412,8 +413,6 @@ __all__ = [
     'DomainOwnershipIdentifier',
     'DomainPatchResource',
     'DomainRecommendationSearchParameters',
-    'ErrorResponseErrorDetailsItem',
-    'ErrorResponseError',
     'ErrorResponse', 'ErrorResponseException',
     'TldLegalAgreement',
     'TopLevelDomain',
@@ -429,6 +428,9 @@ __all__ = [
     'LocalizableString',
     'CsmUsageQuota',
     'ErrorEntity',
+    'DefaultErrorResponseErrorDetailsItem',
+    'DefaultErrorResponseError',
+    'DefaultErrorResponse', 'DefaultErrorResponseException',
     'Operation',
     'ResourceMetricProperty',
     'ResourceMetricValue',

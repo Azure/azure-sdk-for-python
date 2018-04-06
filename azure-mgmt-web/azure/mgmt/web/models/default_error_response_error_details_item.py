@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ErrorResponseError(Model):
-    """Error model.
+class DefaultErrorResponseErrorDetailsItem(Model):
+    """Detailed errors.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,31 +24,22 @@ class ErrorResponseError(Model):
     :vartype message: str
     :ivar target: Detailed error description and debugging information.
     :vartype target: str
-    :param details:
-    :type details: list[~azure.mgmt.web.models.ErrorResponseErrorDetailsItem]
-    :ivar innererror: More information to debug error.
-    :vartype innererror: str
     """
 
     _validation = {
         'code': {'required': True, 'readonly': True},
         'message': {'required': True, 'readonly': True},
         'target': {'readonly': True},
-        'innererror': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseErrorDetailsItem]'},
-        'innererror': {'key': 'innererror', 'type': 'str'},
     }
 
-    def __init__(self, details=None):
-        super(ErrorResponseError, self).__init__()
+    def __init__(self):
+        super(DefaultErrorResponseErrorDetailsItem, self).__init__()
         self.code = None
         self.message = None
         self.target = None
-        self.details = details
-        self.innererror = None

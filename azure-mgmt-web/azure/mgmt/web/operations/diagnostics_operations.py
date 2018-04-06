@@ -56,7 +56,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -94,7 +94,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -137,7 +137,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_hosting_environment_detector_response.metadata['url']
@@ -174,7 +174,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -208,7 +208,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -246,7 +246,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -289,7 +289,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_detector_response.metadata['url']
@@ -326,7 +326,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -360,7 +360,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -398,7 +398,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -435,7 +435,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category.metadata['url']
@@ -466,7 +466,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -502,7 +502,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -541,7 +541,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -580,7 +580,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis.metadata['url']
@@ -612,7 +612,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -656,7 +656,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis.metadata['url']
@@ -694,7 +694,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -730,7 +730,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -769,7 +769,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -808,7 +808,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -848,7 +848,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -893,7 +893,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector.metadata['url']
@@ -931,7 +931,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -967,7 +967,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DetectorResponsePaged[~azure.mgmt.web.models.DetectorResponse]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1006,7 +1006,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1051,7 +1051,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_detector_response_slot.metadata['url']
@@ -1089,7 +1089,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1125,7 +1125,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DiagnosticCategoryPaged[~azure.mgmt.web.models.DiagnosticCategory]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1164,7 +1164,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1203,7 +1203,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticCategory or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_diagnostic_category_slot.metadata['url']
@@ -1235,7 +1235,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1273,7 +1273,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.AnalysisDefinitionPaged[~azure.mgmt.web.models.AnalysisDefinition]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1313,7 +1313,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1354,7 +1354,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.get_site_analysis_slot.metadata['url']
@@ -1387,7 +1387,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1433,7 +1433,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticAnalysis or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_analysis_slot.metadata['url']
@@ -1472,7 +1472,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -1510,7 +1510,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1550,7 +1550,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1591,7 +1591,7 @@ class DiagnosticsOperations(object):
         :rtype:
          ~azure.mgmt.web.models.DetectorDefinitionPaged[~azure.mgmt.web.models.DetectorDefinition]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1632,7 +1632,7 @@ class DiagnosticsOperations(object):
                 request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DefaultErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -1679,7 +1679,7 @@ class DiagnosticsOperations(object):
         :rtype: ~azure.mgmt.web.models.DiagnosticDetectorResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.web.models.ErrorResponseException>`
+         :class:`DefaultErrorResponseException<azure.mgmt.web.models.DefaultErrorResponseException>`
         """
         # Construct URL
         url = self.execute_site_detector_slot.metadata['url']
@@ -1718,7 +1718,7 @@ class DiagnosticsOperations(object):
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DefaultErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
