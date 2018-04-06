@@ -184,7 +184,6 @@ try:
     from .virtual_network_gateway_sku_py3 import VirtualNetworkGatewaySku
     from .vpn_client_root_certificate_py3 import VpnClientRootCertificate
     from .vpn_client_revoked_certificate_py3 import VpnClientRevokedCertificate
-    from .ipsec_policy_py3 import IpsecPolicy
     from .vpn_client_configuration_py3 import VpnClientConfiguration
     from .bgp_settings_py3 import BgpSettings
     from .bgp_peer_status_py3 import BgpPeerStatus
@@ -195,10 +194,10 @@ try:
     from .gateway_route_list_result_py3 import GatewayRouteListResult
     from .tunnel_connection_health_py3 import TunnelConnectionHealth
     from .local_network_gateway_py3 import LocalNetworkGateway
+    from .ipsec_policy_py3 import IpsecPolicy
     from .virtual_network_gateway_connection_py3 import VirtualNetworkGatewayConnection
     from .connection_reset_shared_key_py3 import ConnectionResetSharedKey
     from .connection_shared_key_py3 import ConnectionSharedKey
-    from .vpn_client_ipsec_parameters_py3 import VpnClientIPsecParameters
     from .virtual_network_connection_gateway_reference_py3 import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity_py3 import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters_py3 import VpnDeviceScriptParameters
@@ -377,7 +376,6 @@ except (SyntaxError, ImportError):
     from .virtual_network_gateway_sku import VirtualNetworkGatewaySku
     from .vpn_client_root_certificate import VpnClientRootCertificate
     from .vpn_client_revoked_certificate import VpnClientRevokedCertificate
-    from .ipsec_policy import IpsecPolicy
     from .vpn_client_configuration import VpnClientConfiguration
     from .bgp_settings import BgpSettings
     from .bgp_peer_status import BgpPeerStatus
@@ -388,10 +386,10 @@ except (SyntaxError, ImportError):
     from .gateway_route_list_result import GatewayRouteListResult
     from .tunnel_connection_health import TunnelConnectionHealth
     from .local_network_gateway import LocalNetworkGateway
+    from .ipsec_policy import IpsecPolicy
     from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
     from .connection_reset_shared_key import ConnectionResetSharedKey
     from .connection_shared_key import ConnectionSharedKey
-    from .vpn_client_ipsec_parameters import VpnClientIPsecParameters
     from .virtual_network_connection_gateway_reference import VirtualNetworkConnectionGatewayReference
     from .virtual_network_gateway_connection_list_entity import VirtualNetworkGatewayConnectionListEntity
     from .vpn_device_script_parameters import VpnDeviceScriptParameters
@@ -497,17 +495,17 @@ from .network_management_client_enums import (
     VirtualNetworkGatewaySkuName,
     VirtualNetworkGatewaySkuTier,
     VpnClientProtocol,
+    BgpPeerState,
+    ProcessorArchitecture,
+    AuthenticationMethod,
+    VirtualNetworkGatewayConnectionStatus,
+    VirtualNetworkGatewayConnectionType,
     IpsecEncryption,
     IpsecIntegrity,
     IkeEncryption,
     IkeIntegrity,
     DhGroup,
     PfsGroup,
-    BgpPeerState,
-    ProcessorArchitecture,
-    AuthenticationMethod,
-    VirtualNetworkGatewayConnectionStatus,
-    VirtualNetworkGatewayConnectionType,
 )
 
 __all__ = [
@@ -685,7 +683,6 @@ __all__ = [
     'VirtualNetworkGatewaySku',
     'VpnClientRootCertificate',
     'VpnClientRevokedCertificate',
-    'IpsecPolicy',
     'VpnClientConfiguration',
     'BgpSettings',
     'BgpPeerStatus',
@@ -696,10 +693,10 @@ __all__ = [
     'GatewayRouteListResult',
     'TunnelConnectionHealth',
     'LocalNetworkGateway',
+    'IpsecPolicy',
     'VirtualNetworkGatewayConnection',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
-    'VpnClientIPsecParameters',
     'VirtualNetworkConnectionGatewayReference',
     'VirtualNetworkGatewayConnectionListEntity',
     'VpnDeviceScriptParameters',
@@ -804,15 +801,15 @@ __all__ = [
     'VirtualNetworkGatewaySkuName',
     'VirtualNetworkGatewaySkuTier',
     'VpnClientProtocol',
+    'BgpPeerState',
+    'ProcessorArchitecture',
+    'AuthenticationMethod',
+    'VirtualNetworkGatewayConnectionStatus',
+    'VirtualNetworkGatewayConnectionType',
     'IpsecEncryption',
     'IpsecIntegrity',
     'IkeEncryption',
     'IkeIntegrity',
     'DhGroup',
     'PfsGroup',
-    'BgpPeerState',
-    'ProcessorArchitecture',
-    'AuthenticationMethod',
-    'VirtualNetworkGatewayConnectionStatus',
-    'VirtualNetworkGatewayConnectionType',
 ]
