@@ -138,27 +138,16 @@ class RunbookDraftOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-        header_dict = {}
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
             header_dict = {
                 'location': 'str',
             }
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            try:
-                client_raw_response.add_headers(header_dict)
-            except DeserializationError:
-                pass # Deserialization of Headers here can fail
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
-
-        return deserialized
 
     def replace_content(
             self, resource_group_name, automation_account_name, runbook_name, runbook_content, custom_headers=None, raw=False, **operation_config):
@@ -175,9 +164,9 @@ class RunbookDraftOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns str or
+        :return: An instance of AzureOperationPoller that returns None or
          ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[str] or
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
@@ -210,20 +199,15 @@ class RunbookDraftOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202]:
+            if response.status_code not in [202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
-            header_dict = {
-                'location': 'str',
-            }
-            deserialized = self._deserialize('str', response)
-
             if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
+                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response.add_headers({
+                    'location': 'str',
+                })
                 return client_raw_response
-
-            return deserialized
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
@@ -328,27 +312,16 @@ class RunbookDraftOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-        header_dict = {}
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('str', response)
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
             header_dict = {
                 'location': 'str',
             }
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            try:
-                client_raw_response.add_headers(header_dict)
-            except DeserializationError:
-                pass # Deserialization of Headers here can fail
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
-
-        return deserialized
 
     def publish(
             self, resource_group_name, automation_account_name, runbook_name, custom_headers=None, raw=False, **operation_config):
@@ -364,9 +337,9 @@ class RunbookDraftOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :return: An instance of AzureOperationPoller that returns str or
+        :return: An instance of AzureOperationPoller that returns None or
          ClientRawResponse if raw=true
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[str] or
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
@@ -398,20 +371,15 @@ class RunbookDraftOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202]:
+            if response.status_code not in [202]:
                 raise models.ErrorResponseException(self._deserialize, response)
 
-            header_dict = {
-                'location': 'str',
-            }
-            deserialized = self._deserialize('str', response)
-
             if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
+                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response.add_headers({
+                    'location': 'str',
+                })
                 return client_raw_response
-
-            return deserialized
 
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
