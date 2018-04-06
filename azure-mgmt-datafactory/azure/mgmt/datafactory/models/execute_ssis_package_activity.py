@@ -40,12 +40,31 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :type runtime: str or ~azure.mgmt.datafactory.models.SSISExecutionRuntime
     :param logging_level: The logging level of SSIS package execution.
     :type logging_level: str
-    :param environment_path: The environment path to execution the SSIS
-     package.
+    :param environment_path: The environment path to execute the SSIS package.
     :type environment_path: str
     :param connect_via: Required. The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param project_parameters: The project level parameters to execute the
+     SSIS package.
+    :type project_parameters: dict[str,
+     ~azure.mgmt.datafactory.models.SSISExecutionParameter]
+    :param package_parameters: The package level parameters to execute the
+     SSIS package.
+    :type package_parameters: dict[str,
+     ~azure.mgmt.datafactory.models.SSISExecutionParameter]
+    :param project_connection_managers: The project level connection managers
+     to execute the SSIS package.
+    :type project_connection_managers: dict[str, dict[str,
+     ~azure.mgmt.datafactory.models.SSISExecutionParameter]]
+    :param package_connection_managers: The package level connection managers
+     to execute the SSIS package.
+    :type package_connection_managers: dict[str, dict[str,
+     ~azure.mgmt.datafactory.models.SSISExecutionParameter]]
+    :param property_overrides: The property overrides to execute the SSIS
+     package.
+    :type property_overrides: dict[str,
+     ~azure.mgmt.datafactory.models.SSISPropertyOverride]
     """
 
     _validation = {
@@ -68,6 +87,11 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'logging_level': {'key': 'typeProperties.loggingLevel', 'type': 'str'},
         'environment_path': {'key': 'typeProperties.environmentPath', 'type': 'str'},
         'connect_via': {'key': 'typeProperties.connectVia', 'type': 'IntegrationRuntimeReference'},
+        'project_parameters': {'key': 'typeProperties.projectParameters', 'type': '{SSISExecutionParameter}'},
+        'package_parameters': {'key': 'typeProperties.packageParameters', 'type': '{SSISExecutionParameter}'},
+        'project_connection_managers': {'key': 'typeProperties.projectConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
+        'package_connection_managers': {'key': 'typeProperties.packageConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
+        'property_overrides': {'key': 'typeProperties.propertyOverrides', 'type': '{SSISPropertyOverride}'},
     }
 
     def __init__(self, **kwargs):
@@ -77,4 +101,9 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         self.logging_level = kwargs.get('logging_level', None)
         self.environment_path = kwargs.get('environment_path', None)
         self.connect_via = kwargs.get('connect_via', None)
+        self.project_parameters = kwargs.get('project_parameters', None)
+        self.package_parameters = kwargs.get('package_parameters', None)
+        self.project_connection_managers = kwargs.get('project_connection_managers', None)
+        self.package_connection_managers = kwargs.get('package_connection_managers', None)
+        self.property_overrides = kwargs.get('property_overrides', None)
         self.type = 'ExecuteSSISPackage'
