@@ -4,6 +4,7 @@ import pkgutil
 import re
 import sys
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 try:
     import msrestazure
@@ -13,9 +14,19 @@ except:  # Install msrestazure. Would be best to mock it, since we don't need it
 
 try:
     import azure.profiles
-except:  # Install azure-common. Would be best to mock it, since we don't need it, but all scenarios I know are fine with a pip install for now
-    import subprocess
-    subprocess.call("pip install -e azure-common", shell=True)  # Use shell to use venv if available
+    import azure.profiles.multiapiclient
+except:
+    patch_profiles = patch.dict('sys.modules', {
+        "azure.profiles": MagicMock(),
+        "azure.profiles.multiapiclient": MagicMock()}
+    )
+    patch_profiles.start()
+
+# try:
+#     import azure.profiles
+# except:  # Install azure-common. Would be best to mock it, since we don't need it, but all scenarios I know are fine with a pip install for now
+#     import subprocess
+#     subprocess.call("pip install -e azure-common", shell=True)  # Use shell to use venv if available
 
     # The following DOES not work, since it bypasses venv for some reason
     # import pip
