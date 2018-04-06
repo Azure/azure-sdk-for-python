@@ -41,8 +41,8 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination):
         'endpoint_base_url': {'key': 'properties.endpointBaseUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(WebHookEventSubscriptionDestination, self).__init__(**kwargs)
-        self.endpoint_url = kwargs.get('endpoint_url', None)
+    def __init__(self, *, endpoint_url: str=None, **kwargs) -> None:
+        super(WebHookEventSubscriptionDestination, self).__init__(, **kwargs)
+        self.endpoint_url = endpoint_url
         self.endpoint_base_url = None
         self.endpoint_type = 'WebHook'

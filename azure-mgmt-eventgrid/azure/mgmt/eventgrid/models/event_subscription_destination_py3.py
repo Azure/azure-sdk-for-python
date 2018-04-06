@@ -37,6 +37,6 @@ class EventSubscriptionDestination(Model):
         'endpoint_type': {'WebHook': 'WebHookEventSubscriptionDestination', 'EventHub': 'EventHubEventSubscriptionDestination'}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(EventSubscriptionDestination, self).__init__(**kwargs)
         self.endpoint_type = None
