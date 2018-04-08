@@ -278,6 +278,12 @@ class VirtualMachinePriorityTypes(str, Enum):
     low = "Low"
 
 
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+
+    deallocate = "Deallocate"
+    delete = "Delete"
+
+
 class VirtualMachineScaleSetSkuScaleType(str, Enum):
 
     automatic = "Automatic"
