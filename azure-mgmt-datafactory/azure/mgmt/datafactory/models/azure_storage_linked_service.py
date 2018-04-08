@@ -35,7 +35,7 @@ class AzureStorageLinkedService(LinkedService):
     :type type: str
     :param connection_string: The connection string. It is mutually exclusive
      with sasUri property.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :type connection_string: object
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually
      exclusive with connectionString property.
     :type sas_uri: ~azure.mgmt.datafactory.models.SecretBase
@@ -56,7 +56,7 @@ class AzureStorageLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'sas_uri': {'key': 'typeProperties.sasUri', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }

@@ -58,6 +58,7 @@ try:
     from .operation_service_specification_py3 import OperationServiceSpecification
     from .operation_py3 import Operation
     from .operation_list_response_py3 import OperationListResponse
+    from .responsys_linked_service_py3 import ResponsysLinkedService
     from .azure_databricks_linked_service_py3 import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service_py3 import AzureDataLakeAnalyticsLinkedService
     from .hd_insight_on_demand_linked_service_py3 import HDInsightOnDemandLinkedService
@@ -131,6 +132,7 @@ try:
     from .sql_server_linked_service_py3 import SqlServerLinkedService
     from .azure_sql_dw_linked_service_py3 import AzureSqlDWLinkedService
     from .azure_storage_linked_service_py3 import AzureStorageLinkedService
+    from .responsys_object_dataset_py3 import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset_py3 import SalesforceMarketingCloudObjectDataset
     from .vertica_table_dataset_py3 import VerticaTableDataset
     from .netezza_table_dataset_py3 import NetezzaTableDataset
@@ -213,6 +215,7 @@ try:
     from .web_activity_py3 import WebActivity
     from .redshift_unload_settings_py3 import RedshiftUnloadSettings
     from .amazon_redshift_source_py3 import AmazonRedshiftSource
+    from .responsys_source_py3 import ResponsysSource
     from .salesforce_marketing_cloud_source_py3 import SalesforceMarketingCloudSource
     from .vertica_source_py3 import VerticaSource
     from .netezza_source_py3 import NetezzaSource
@@ -379,6 +382,7 @@ except (SyntaxError, ImportError):
     from .operation_service_specification import OperationServiceSpecification
     from .operation import Operation
     from .operation_list_response import OperationListResponse
+    from .responsys_linked_service import ResponsysLinkedService
     from .azure_databricks_linked_service import AzureDatabricksLinkedService
     from .azure_data_lake_analytics_linked_service import AzureDataLakeAnalyticsLinkedService
     from .hd_insight_on_demand_linked_service import HDInsightOnDemandLinkedService
@@ -452,6 +456,7 @@ except (SyntaxError, ImportError):
     from .sql_server_linked_service import SqlServerLinkedService
     from .azure_sql_dw_linked_service import AzureSqlDWLinkedService
     from .azure_storage_linked_service import AzureStorageLinkedService
+    from .responsys_object_dataset import ResponsysObjectDataset
     from .salesforce_marketing_cloud_object_dataset import SalesforceMarketingCloudObjectDataset
     from .vertica_table_dataset import VerticaTableDataset
     from .netezza_table_dataset import NetezzaTableDataset
@@ -534,6 +539,7 @@ except (SyntaxError, ImportError):
     from .web_activity import WebActivity
     from .redshift_unload_settings import RedshiftUnloadSettings
     from .amazon_redshift_source import AmazonRedshiftSource
+    from .responsys_source import ResponsysSource
     from .salesforce_marketing_cloud_source import SalesforceMarketingCloudSource
     from .vertica_source import VerticaSource
     from .netezza_source import NetezzaSource
@@ -768,6 +774,7 @@ __all__ = [
     'OperationServiceSpecification',
     'Operation',
     'OperationListResponse',
+    'ResponsysLinkedService',
     'AzureDatabricksLinkedService',
     'AzureDataLakeAnalyticsLinkedService',
     'HDInsightOnDemandLinkedService',
@@ -841,6 +848,7 @@ __all__ = [
     'SqlServerLinkedService',
     'AzureSqlDWLinkedService',
     'AzureStorageLinkedService',
+    'ResponsysObjectDataset',
     'SalesforceMarketingCloudObjectDataset',
     'VerticaTableDataset',
     'NetezzaTableDataset',
@@ -923,6 +931,7 @@ __all__ = [
     'WebActivity',
     'RedshiftUnloadSettings',
     'AmazonRedshiftSource',
+    'ResponsysSource',
     'SalesforceMarketingCloudSource',
     'VerticaSource',
     'NetezzaSource',
