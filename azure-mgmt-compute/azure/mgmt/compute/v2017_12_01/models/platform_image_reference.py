@@ -18,13 +18,13 @@ class PlatformImageReference(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar publisher: Publisher
+    :ivar publisher: Image publisher
     :vartype publisher: str
-    :ivar offer: Offer
+    :ivar offer: Offer type
     :vartype offer: str
-    :ivar sku: Sku
+    :ivar sku: Sku type
     :vartype sku: str
-    :ivar version: Version
+    :ivar version: Version of the image
     :vartype version: str
     :ivar uri: Specifies the virtual hard disk's uri.
     :vartype uri: str
