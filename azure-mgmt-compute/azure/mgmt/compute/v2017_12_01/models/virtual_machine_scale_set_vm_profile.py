@@ -65,7 +65,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'str'},
-        'eviction_policy': {'key': 'evictionPolicy', 'type': 'VirtualMachineEvictionPolicyTypes'},
+        'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
