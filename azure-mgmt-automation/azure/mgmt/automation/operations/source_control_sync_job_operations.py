@@ -37,7 +37,7 @@ class SourceControlSyncJobOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, automation_account_name, source_control_name, source_control_sync_job_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, source_control_name, source_control_sync_job_id, commit_id=None, custom_headers=None, raw=False, **operation_config):
         """Creates the sync job for a source control.
 
         :param resource_group_name: Name of an Azure Resource group.
@@ -48,6 +48,8 @@ class SourceControlSyncJobOperations(object):
         :type source_control_name: str
         :param source_control_sync_job_id: The source control sync job id.
         :type source_control_sync_job_id: str
+        :param commit_id: Sets the commit id of the source control sync job.
+        :type commit_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -59,6 +61,8 @@ class SourceControlSyncJobOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.automation.models.ErrorResponseException>`
         """
+        parameters = models.SourceControlSyncJobCreateParameters(commit_id=commit_id)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -84,9 +88,13 @@ class SourceControlSyncJobOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(parameters, 'SourceControlSyncJobCreateParameters')
+
         # Construct and send request
         request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.ErrorResponseException(self._deserialize, response)

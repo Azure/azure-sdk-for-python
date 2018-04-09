@@ -124,6 +124,7 @@ from .source_control_create_or_update_parameters import SourceControlCreateOrUpd
 from .source_control import SourceControl
 from .source_control_update_parameters import SourceControlUpdateParameters
 from .source_control_sync_job import SourceControlSyncJob
+from .source_control_sync_job_create_parameters import SourceControlSyncJobCreateParameters
 from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
 from .source_control_sync_job_by_id import SourceControlSyncJobById
 from .dsc_node import DscNode
@@ -298,6 +299,7 @@ __all__ = [
     'SourceControl',
     'SourceControlUpdateParameters',
     'SourceControlSyncJob',
+    'SourceControlSyncJobCreateParameters',
     'SourceControlSyncJobByIdErrors',
     'SourceControlSyncJobById',
     'DscNode',
