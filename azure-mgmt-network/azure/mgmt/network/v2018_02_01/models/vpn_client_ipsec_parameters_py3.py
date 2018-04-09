@@ -12,18 +12,16 @@
 from msrest.serialization import Model
 
 
-class IpsecPolicy(Model):
-    """An IPSec Policy configuration for a virtual network gateway connection.
+class VpnClientIPsecParameters(Model):
+    """An IPSec parameters for a virtual network gateway P2S connection.
 
     All required parameters must be populated in order to send to Azure.
 
     :param sa_life_time_seconds: Required. The IPSec Security Association
-     (also called Quick Mode or Phase 2 SA) lifetime in seconds for a site to
-     site VPN tunnel.
+     (also called Quick Mode or Phase 2 SA) lifetime in seconds for P2S client.
     :type sa_life_time_seconds: int
     :param sa_data_size_kilobytes: Required. The IPSec Security Association
-     (also called Quick Mode or Phase 2 SA) payload size in KB for a site to
-     site VPN tunnel.
+     (also called Quick Mode or Phase 2 SA) payload size in KB for P2S client..
     :type sa_data_size_kilobytes: int
     :param ipsec_encryption: Required. The IPSec encryption algorithm (IKE
      phase 1). Possible values include: 'None', 'DES', 'DES3', 'AES128',
@@ -77,13 +75,13 @@ class IpsecPolicy(Model):
         'pfs_group': {'key': 'pfsGroup', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(IpsecPolicy, self).__init__(**kwargs)
-        self.sa_life_time_seconds = kwargs.get('sa_life_time_seconds', None)
-        self.sa_data_size_kilobytes = kwargs.get('sa_data_size_kilobytes', None)
-        self.ipsec_encryption = kwargs.get('ipsec_encryption', None)
-        self.ipsec_integrity = kwargs.get('ipsec_integrity', None)
-        self.ike_encryption = kwargs.get('ike_encryption', None)
-        self.ike_integrity = kwargs.get('ike_integrity', None)
-        self.dh_group = kwargs.get('dh_group', None)
-        self.pfs_group = kwargs.get('pfs_group', None)
+    def __init__(self, *, sa_life_time_seconds: int, sa_data_size_kilobytes: int, ipsec_encryption, ipsec_integrity, ike_encryption, ike_integrity, dh_group, pfs_group, **kwargs) -> None:
+        super(VpnClientIPsecParameters, self).__init__(**kwargs)
+        self.sa_life_time_seconds = sa_life_time_seconds
+        self.sa_data_size_kilobytes = sa_data_size_kilobytes
+        self.ipsec_encryption = ipsec_encryption
+        self.ipsec_integrity = ipsec_integrity
+        self.ike_encryption = ike_encryption
+        self.ike_integrity = ike_integrity
+        self.dh_group = dh_group
+        self.pfs_group = pfs_group

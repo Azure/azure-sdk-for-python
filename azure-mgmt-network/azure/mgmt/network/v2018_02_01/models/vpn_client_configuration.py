@@ -31,6 +31,10 @@ class VpnClientConfiguration(Model):
      gateway.
     :type vpn_client_protocols: list[str or
      ~azure.mgmt.network.v2018_02_01.models.VpnClientProtocol]
+    :param vpn_client_ipsec_policies: VpnClientIpsecPolicies for virtual
+     network gateway P2S client.
+    :type vpn_client_ipsec_policies:
+     list[~azure.mgmt.network.v2018_02_01.models.IpsecPolicy]
     :param radius_server_address: The radius server address property of the
      VirtualNetworkGateway resource for vpn client connection.
     :type radius_server_address: str
@@ -44,6 +48,7 @@ class VpnClientConfiguration(Model):
         'vpn_client_root_certificates': {'key': 'vpnClientRootCertificates', 'type': '[VpnClientRootCertificate]'},
         'vpn_client_revoked_certificates': {'key': 'vpnClientRevokedCertificates', 'type': '[VpnClientRevokedCertificate]'},
         'vpn_client_protocols': {'key': 'vpnClientProtocols', 'type': '[str]'},
+        'vpn_client_ipsec_policies': {'key': 'vpnClientIpsecPolicies', 'type': '[IpsecPolicy]'},
         'radius_server_address': {'key': 'radiusServerAddress', 'type': 'str'},
         'radius_server_secret': {'key': 'radiusServerSecret', 'type': 'str'},
     }
@@ -54,5 +59,6 @@ class VpnClientConfiguration(Model):
         self.vpn_client_root_certificates = kwargs.get('vpn_client_root_certificates', None)
         self.vpn_client_revoked_certificates = kwargs.get('vpn_client_revoked_certificates', None)
         self.vpn_client_protocols = kwargs.get('vpn_client_protocols', None)
+        self.vpn_client_ipsec_policies = kwargs.get('vpn_client_ipsec_policies', None)
         self.radius_server_address = kwargs.get('radius_server_address', None)
         self.radius_server_secret = kwargs.get('radius_server_secret', None)

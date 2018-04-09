@@ -12,18 +12,16 @@
 from msrest.serialization import Model
 
 
-class IpsecPolicy(Model):
-    """An IPSec Policy configuration for a virtual network gateway connection.
+class VpnClientIPsecParameters(Model):
+    """An IPSec parameters for a virtual network gateway P2S connection.
 
     All required parameters must be populated in order to send to Azure.
 
     :param sa_life_time_seconds: Required. The IPSec Security Association
-     (also called Quick Mode or Phase 2 SA) lifetime in seconds for a site to
-     site VPN tunnel.
+     (also called Quick Mode or Phase 2 SA) lifetime in seconds for P2S client.
     :type sa_life_time_seconds: int
     :param sa_data_size_kilobytes: Required. The IPSec Security Association
-     (also called Quick Mode or Phase 2 SA) payload size in KB for a site to
-     site VPN tunnel.
+     (also called Quick Mode or Phase 2 SA) payload size in KB for P2S client..
     :type sa_data_size_kilobytes: int
     :param ipsec_encryption: Required. The IPSec encryption algorithm (IKE
      phase 1). Possible values include: 'None', 'DES', 'DES3', 'AES128',
@@ -78,7 +76,7 @@ class IpsecPolicy(Model):
     }
 
     def __init__(self, **kwargs):
-        super(IpsecPolicy, self).__init__(**kwargs)
+        super(VpnClientIPsecParameters, self).__init__(**kwargs)
         self.sa_life_time_seconds = kwargs.get('sa_life_time_seconds', None)
         self.sa_data_size_kilobytes = kwargs.get('sa_data_size_kilobytes', None)
         self.ipsec_encryption = kwargs.get('ipsec_encryption', None)

@@ -467,6 +467,75 @@ class VpnClientProtocol(str, Enum):
     sstp = "SSTP"
 
 
+class IpsecEncryption(str, Enum):
+
+    none = "None"
+    des = "DES"
+    des3 = "DES3"
+    aes128 = "AES128"
+    aes192 = "AES192"
+    aes256 = "AES256"
+    gcmaes128 = "GCMAES128"
+    gcmaes192 = "GCMAES192"
+    gcmaes256 = "GCMAES256"
+
+
+class IpsecIntegrity(str, Enum):
+
+    md5 = "MD5"
+    sha1 = "SHA1"
+    sha256 = "SHA256"
+    gcmaes128 = "GCMAES128"
+    gcmaes192 = "GCMAES192"
+    gcmaes256 = "GCMAES256"
+
+
+class IkeEncryption(str, Enum):
+
+    des = "DES"
+    des3 = "DES3"
+    aes128 = "AES128"
+    aes192 = "AES192"
+    aes256 = "AES256"
+    gcmaes256 = "GCMAES256"
+    gcmaes128 = "GCMAES128"
+
+
+class IkeIntegrity(str, Enum):
+
+    md5 = "MD5"
+    sha1 = "SHA1"
+    sha256 = "SHA256"
+    sha384 = "SHA384"
+    gcmaes256 = "GCMAES256"
+    gcmaes128 = "GCMAES128"
+
+
+class DhGroup(str, Enum):
+
+    none = "None"
+    dh_group1 = "DHGroup1"
+    dh_group2 = "DHGroup2"
+    dh_group14 = "DHGroup14"
+    dh_group2048 = "DHGroup2048"
+    ecp256 = "ECP256"
+    ecp384 = "ECP384"
+    dh_group24 = "DHGroup24"
+
+
+class PfsGroup(str, Enum):
+
+    none = "None"
+    pfs1 = "PFS1"
+    pfs2 = "PFS2"
+    pfs2048 = "PFS2048"
+    ecp256 = "ECP256"
+    ecp384 = "ECP384"
+    pfs24 = "PFS24"
+    pfs14 = "PFS14"
+    pfsmm = "PFSMM"
+
+
 class BgpPeerState(str, Enum):
 
     unknown = "Unknown"
@@ -502,66 +571,3 @@ class VirtualNetworkGatewayConnectionType(str, Enum):
     vnet2_vnet = "Vnet2Vnet"
     express_route = "ExpressRoute"
     vpn_client = "VPNClient"
-
-
-class IpsecEncryption(str, Enum):
-
-    none = "None"
-    des = "DES"
-    des3 = "DES3"
-    aes128 = "AES128"
-    aes192 = "AES192"
-    aes256 = "AES256"
-    gcmaes128 = "GCMAES128"
-    gcmaes192 = "GCMAES192"
-    gcmaes256 = "GCMAES256"
-
-
-class IpsecIntegrity(str, Enum):
-
-    md5 = "MD5"
-    sha1 = "SHA1"
-    sha256 = "SHA256"
-    gcmaes128 = "GCMAES128"
-    gcmaes192 = "GCMAES192"
-    gcmaes256 = "GCMAES256"
-
-
-class IkeEncryption(str, Enum):
-
-    des = "DES"
-    des3 = "DES3"
-    aes128 = "AES128"
-    aes192 = "AES192"
-    aes256 = "AES256"
-
-
-class IkeIntegrity(str, Enum):
-
-    md5 = "MD5"
-    sha1 = "SHA1"
-    sha256 = "SHA256"
-    sha384 = "SHA384"
-
-
-class DhGroup(str, Enum):
-
-    none = "None"
-    dh_group1 = "DHGroup1"
-    dh_group2 = "DHGroup2"
-    dh_group14 = "DHGroup14"
-    dh_group2048 = "DHGroup2048"
-    ecp256 = "ECP256"
-    ecp384 = "ECP384"
-    dh_group24 = "DHGroup24"
-
-
-class PfsGroup(str, Enum):
-
-    none = "None"
-    pfs1 = "PFS1"
-    pfs2 = "PFS2"
-    pfs2048 = "PFS2048"
-    ecp256 = "ECP256"
-    ecp384 = "ECP384"
-    pfs24 = "PFS24"
