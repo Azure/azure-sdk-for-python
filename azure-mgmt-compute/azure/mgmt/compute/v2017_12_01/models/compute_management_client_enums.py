@@ -284,6 +284,21 @@ class VirtualMachineScaleSetSkuScaleType(str, Enum):
     none = "None"
 
 
+class UpgradeState(str, Enum):
+
+    rolling_forward = "RollingForward"
+    cancelled = "Cancelled"
+    completed = "Completed"
+    faulted = "Faulted"
+
+
+class UpgradeOperationInvoker(str, Enum):
+
+    unknown = "Unknown"
+    user = "User"
+    platform = "Platform"
+
+
 class RollingUpgradeStatusCode(str, Enum):
 
     rolling_forward = "RollingForward"
