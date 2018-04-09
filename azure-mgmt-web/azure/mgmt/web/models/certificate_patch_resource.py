@@ -18,6 +18,8 @@ class CertificatePatchResource(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -44,7 +46,7 @@ class CertificatePatchResource(ProxyOnlyResource):
     :vartype issue_date: datetime
     :ivar expiration_date: Certificate expriration date.
     :vartype expiration_date: datetime
-    :param password: Certificate password.
+    :param password: Required. Certificate password.
     :type password: str
     :ivar thumbprint: Certificate thumbprint.
     :vartype thumbprint: str
@@ -126,25 +128,25 @@ class CertificatePatchResource(ProxyOnlyResource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
-    def __init__(self, password, kind=None, host_names=None, pfx_blob=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
-        super(CertificatePatchResource, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(CertificatePatchResource, self).__init__(**kwargs)
         self.friendly_name = None
         self.subject_name = None
-        self.host_names = host_names
-        self.pfx_blob = pfx_blob
+        self.host_names = kwargs.get('host_names', None)
+        self.pfx_blob = kwargs.get('pfx_blob', None)
         self.site_name = None
         self.self_link = None
         self.issuer = None
         self.issue_date = None
         self.expiration_date = None
-        self.password = password
+        self.password = kwargs.get('password', None)
         self.thumbprint = None
         self.valid = None
         self.cer_blob = None
         self.public_key_hash = None
         self.hosting_environment_profile = None
-        self.key_vault_id = key_vault_id
-        self.key_vault_secret_name = key_vault_secret_name
+        self.key_vault_id = kwargs.get('key_vault_id', None)
+        self.key_vault_secret_name = kwargs.get('key_vault_secret_name', None)
         self.key_vault_secret_status = None
         self.geo_region = None
-        self.server_farm_id = server_farm_id
+        self.server_farm_id = kwargs.get('server_farm_id', None)

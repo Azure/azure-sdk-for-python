@@ -41,11 +41,11 @@ class DiagnosticMetricSet(Model):
         'values': {'key': 'values', 'type': '[DiagnosticMetricSample]'},
     }
 
-    def __init__(self, name=None, unit=None, start_time=None, end_time=None, time_grain=None, values=None):
-        super(DiagnosticMetricSet, self).__init__()
-        self.name = name
-        self.unit = unit
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_grain = time_grain
-        self.values = values
+    def __init__(self, **kwargs):
+        super(DiagnosticMetricSet, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.unit = kwargs.get('unit', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.time_grain = kwargs.get('time_grain', None)
+        self.values = kwargs.get('values', None)

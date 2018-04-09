@@ -63,8 +63,8 @@ class MetricDefinition(ProxyOnlyResource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(MetricDefinition, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(MetricDefinition, self).__init__(**kwargs)
         self.metric_definition_name = None
         self.unit = None
         self.primary_aggregation_type = None

@@ -64,9 +64,9 @@ class VnetRoute(ProxyOnlyResource):
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
-        super(VnetRoute, self).__init__(kind=kind)
-        self.vnet_route_name = vnet_route_name
-        self.start_address = start_address
-        self.end_address = end_address
-        self.route_type = route_type
+    def __init__(self, **kwargs):
+        super(VnetRoute, self).__init__(**kwargs)
+        self.vnet_route_name = kwargs.get('vnet_route_name', None)
+        self.start_address = kwargs.get('start_address', None)
+        self.end_address = kwargs.get('end_address', None)
+        self.route_type = kwargs.get('route_type', None)

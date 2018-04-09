@@ -48,7 +48,7 @@ class VnetValidationTestFailure(ProxyOnlyResource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, test_name=None, details=None):
-        super(VnetValidationTestFailure, self).__init__(kind=kind)
-        self.test_name = test_name
-        self.details = details
+    def __init__(self, **kwargs):
+        super(VnetValidationTestFailure, self).__init__(**kwargs)
+        self.test_name = kwargs.get('test_name', None)
+        self.details = kwargs.get('details', None)

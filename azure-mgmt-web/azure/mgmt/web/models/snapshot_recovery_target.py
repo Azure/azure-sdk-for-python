@@ -31,7 +31,7 @@ class SnapshotRecoveryTarget(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, location=None, id=None):
-        super(SnapshotRecoveryTarget, self).__init__()
-        self.location = location
-        self.id = id
+    def __init__(self, **kwargs):
+        super(SnapshotRecoveryTarget, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.id = kwargs.get('id', None)

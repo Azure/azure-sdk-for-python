@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class SiteSeal(Model):
     """Site seal.
 
-    :param html: HTML snippet
+    All required parameters must be populated in order to send to Azure.
+
+    :param html: Required. HTML snippet
     :type html: str
     """
 
@@ -27,6 +29,6 @@ class SiteSeal(Model):
         'html': {'key': 'html', 'type': 'str'},
     }
 
-    def __init__(self, html):
-        super(SiteSeal, self).__init__()
-        self.html = html
+    def __init__(self, **kwargs):
+        super(SiteSeal, self).__init__(**kwargs)
+        self.html = kwargs.get('html', None)

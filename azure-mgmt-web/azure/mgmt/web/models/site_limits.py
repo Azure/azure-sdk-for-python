@@ -29,8 +29,8 @@ class SiteLimits(Model):
         'max_disk_size_in_mb': {'key': 'maxDiskSizeInMb', 'type': 'long'},
     }
 
-    def __init__(self, max_percentage_cpu=None, max_memory_in_mb=None, max_disk_size_in_mb=None):
-        super(SiteLimits, self).__init__()
-        self.max_percentage_cpu = max_percentage_cpu
-        self.max_memory_in_mb = max_memory_in_mb
-        self.max_disk_size_in_mb = max_disk_size_in_mb
+    def __init__(self, **kwargs):
+        super(SiteLimits, self).__init__(**kwargs)
+        self.max_percentage_cpu = kwargs.get('max_percentage_cpu', None)
+        self.max_memory_in_mb = kwargs.get('max_memory_in_mb', None)
+        self.max_disk_size_in_mb = kwargs.get('max_disk_size_in_mb', None)

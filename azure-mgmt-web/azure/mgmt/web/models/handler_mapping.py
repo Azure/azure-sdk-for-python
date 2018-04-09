@@ -34,8 +34,8 @@ class HandlerMapping(Model):
         'arguments': {'key': 'arguments', 'type': 'str'},
     }
 
-    def __init__(self, extension=None, script_processor=None, arguments=None):
-        super(HandlerMapping, self).__init__()
-        self.extension = extension
-        self.script_processor = script_processor
-        self.arguments = arguments
+    def __init__(self, **kwargs):
+        super(HandlerMapping, self).__init__(**kwargs)
+        self.extension = kwargs.get('extension', None)
+        self.script_processor = kwargs.get('script_processor', None)
+        self.arguments = kwargs.get('arguments', None)

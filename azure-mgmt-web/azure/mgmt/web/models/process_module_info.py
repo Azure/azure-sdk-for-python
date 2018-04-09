@@ -75,16 +75,16 @@ class ProcessModuleInfo(ProxyOnlyResource):
         'language': {'key': 'properties.language', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, base_address=None, file_name=None, href=None, file_path=None, module_memory_size=None, file_version=None, file_description=None, product=None, product_version=None, is_debug=None, language=None):
-        super(ProcessModuleInfo, self).__init__(kind=kind)
-        self.base_address = base_address
-        self.file_name = file_name
-        self.href = href
-        self.file_path = file_path
-        self.module_memory_size = module_memory_size
-        self.file_version = file_version
-        self.file_description = file_description
-        self.product = product
-        self.product_version = product_version
-        self.is_debug = is_debug
-        self.language = language
+    def __init__(self, **kwargs):
+        super(ProcessModuleInfo, self).__init__(**kwargs)
+        self.base_address = kwargs.get('base_address', None)
+        self.file_name = kwargs.get('file_name', None)
+        self.href = kwargs.get('href', None)
+        self.file_path = kwargs.get('file_path', None)
+        self.module_memory_size = kwargs.get('module_memory_size', None)
+        self.file_version = kwargs.get('file_version', None)
+        self.file_description = kwargs.get('file_description', None)
+        self.product = kwargs.get('product', None)
+        self.product_version = kwargs.get('product_version', None)
+        self.is_debug = kwargs.get('is_debug', None)
+        self.language = kwargs.get('language', None)

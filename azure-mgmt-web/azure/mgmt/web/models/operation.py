@@ -45,13 +45,13 @@ class Operation(Model):
         'geo_master_operation_id': {'key': 'geoMasterOperationId', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, status=None, errors=None, created_time=None, modified_time=None, expiration_time=None, geo_master_operation_id=None):
-        super(Operation, self).__init__()
-        self.id = id
-        self.name = name
-        self.status = status
-        self.errors = errors
-        self.created_time = created_time
-        self.modified_time = modified_time
-        self.expiration_time = expiration_time
-        self.geo_master_operation_id = geo_master_operation_id
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.status = kwargs.get('status', None)
+        self.errors = kwargs.get('errors', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.modified_time = kwargs.get('modified_time', None)
+        self.expiration_time = kwargs.get('expiration_time', None)
+        self.geo_master_operation_id = kwargs.get('geo_master_operation_id', None)

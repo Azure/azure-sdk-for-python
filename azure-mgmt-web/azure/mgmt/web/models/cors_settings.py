@@ -25,6 +25,6 @@ class CorsSettings(Model):
         'allowed_origins': {'key': 'allowedOrigins', 'type': '[str]'},
     }
 
-    def __init__(self, allowed_origins=None):
-        super(CorsSettings, self).__init__()
-        self.allowed_origins = allowed_origins
+    def __init__(self, **kwargs):
+        super(CorsSettings, self).__init__(**kwargs)
+        self.allowed_origins = kwargs.get('allowed_origins', None)
