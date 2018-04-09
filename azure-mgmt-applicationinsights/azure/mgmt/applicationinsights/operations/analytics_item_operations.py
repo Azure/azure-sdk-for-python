@@ -38,7 +38,7 @@ class AnalyticsItemOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, resource_name, scope_path, scope="shared", type="None", include_content=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, scope_path, scope="shared", type="none", include_content=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of Analytics Items defined within an Application Insights
         component.
 

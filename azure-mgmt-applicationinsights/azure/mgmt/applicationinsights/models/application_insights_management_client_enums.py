@@ -60,6 +60,12 @@ class ItemType(Enum):
     recent = "recent"
 
 
+class SharedTypeKind(Enum):
+
+    user = "user"
+    shared = "shared"
+
+
 class FavoriteSourceType(Enum):
 
     retention = "retention"
@@ -85,3 +91,11 @@ class ItemTypeParameter(Enum):
     function = "function"
     folder = "folder"
     recent = "recent"
+
+
+class CategoryType(Enum):
+
+    workbook = "workbook"
+    tsg = "TSG"
+    performance = "performance"
+    retention = "retention"
