@@ -9,8 +9,8 @@ import inspect
 from collections import namedtuple
 from requests.auth import AuthBase
 from requests.cookies import extract_cookies_to_jar
-from azure.keyvault import HttpChallenge
-from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
+from .http_challenge import HttpChallenge
+from . import http_bearer_challenge_cache as ChallengeCache
 from msrest.authentication import OAuthTokenAuthentication
 from .http_message_security import HttpMessageSecurity
 from .internal import _RsaKey
