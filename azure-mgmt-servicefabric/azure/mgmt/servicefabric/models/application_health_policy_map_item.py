@@ -12,16 +12,16 @@
 from msrest.serialization import Model
 
 
-class ServiceTypeHealthPolicyMapItem(Model):
-    """Defines an item in ServiceTypeHealthPolicyMap.
+class ApplicationHealthPolicyMapItem(Model):
+    """Defines an item in ApplicationHealthPolicyMap.
     .
 
-    :param key: The key of the service type health policy map item. This is
-     the name of the service type.
+    :param key: The key of the application health policy map item. This is the
+     name of the application.
     :type key: str
-    :param value: The value of the service type health policy map item. This
-     is the ServiceTypeHealthPolicy for this service type.
-    :type value: ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy
+    :param value: The value of the application health policy map item. This is
+     the ApplicationHealthPolicy for this application.
+    :type value: ~azure.mgmt.servicefabric.models.ApplicationHealthPolicy
     """
 
     _validation = {
@@ -31,10 +31,10 @@ class ServiceTypeHealthPolicyMapItem(Model):
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'ServiceTypeHealthPolicy'},
+        'value': {'key': 'value', 'type': 'ApplicationHealthPolicy'},
     }
 
     def __init__(self, key, value):
-        super(ServiceTypeHealthPolicyMapItem, self).__init__()
+        super(ApplicationHealthPolicyMapItem, self).__init__()
         self.key = key
         self.value = value

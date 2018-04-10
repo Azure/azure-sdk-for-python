@@ -15,14 +15,23 @@ from msrest.serialization import Model
 class ApplicationUpgradePolicy(Model):
     """Describes the policy for a monitored application upgrade.
 
-    :param upgrade_replica_set_check_timeout:
+    :param upgrade_replica_set_check_timeout: The maximum amount of time to
+     block processing of an upgrade domain and prevent loss of availability
+     when there are unexpected issues. When this timeout expires, processing of
+     the upgrade domain will proceed regardless of availability loss issues.
+     The timeout is reset at the start of each upgrade domain. Valid values are
+     between 0 and 42949672925 inclusive. (unsigned 32-bit integer).
     :type upgrade_replica_set_check_timeout: long
-    :param force_restart:
+    :param force_restart: If true, then processes are forcefully restarted
+     during upgrade even when the code version has not changed (the upgrade
+     only changes configuration or data).
     :type force_restart: bool
-    :param rolling_upgrade_monitoring_policy:
+    :param rolling_upgrade_monitoring_policy: The policy used for monitoring
+     the application upgrade
     :type rolling_upgrade_monitoring_policy:
      ~azure.mgmt.servicefabric.models.RollingUpgradeMonitoringPolicy
-    :param application_health_policy:
+    :param application_health_policy: Defines a health policy used to evaluate
+     the health of an application or one of its children entities.
     :type application_health_policy:
      ~azure.mgmt.servicefabric.models.ApplicationHealthPolicy
     """

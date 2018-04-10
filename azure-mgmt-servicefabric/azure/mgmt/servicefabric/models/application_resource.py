@@ -18,20 +18,23 @@ class ApplicationResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Resource location.
+    :param location: Azure resource location.
     :type location: str
-    :param type_version:
+    :param type_version: The version of the application type as defined in the
+     application manifest.
     :type type_version: str
-    :param parameters:
+    :param parameters: List of application parameters with overridden values
+     from their default values specified in the application manifest.
     :type parameters:
      list[~azure.mgmt.servicefabric.models.ApplicationParameter]
-    :param upgrade_policy:
+    :param upgrade_policy: Describes the policy for a monitored application
+     upgrade.
     :type upgrade_policy:
      ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
     :param minimum_nodes: The minimum number of nodes where Service Fabric
@@ -47,15 +50,17 @@ class ApplicationResource(ProxyResource):
      nodes. By default, the value of this property is zero and it means that
      the services can be placed on any node. Default value: 0 .
     :type maximum_nodes: long
-    :param remove_application_capacity: The version of the application type
+    :param remove_application_capacity: Remove the current application
+     capacity settings.
     :type remove_application_capacity: bool
-    :param metrics:
+    :param metrics: List of application capacity metric description.
     :type metrics:
      list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
-    :param type_name:
+    :param type_name: The application type name as defined in the application
+     manifest.
     :type type_name: str
     """
 
@@ -63,7 +68,6 @@ class ApplicationResource(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'minimum_nodes': {'minimum': 0},
         'maximum_nodes': {'minimum': 0},
         'provisioning_state': {'readonly': True},
@@ -85,7 +89,7 @@ class ApplicationResource(ProxyResource):
         'type_name': {'key': 'properties.typeName', 'type': 'str'},
     }
 
-    def __init__(self, location, type_version=None, parameters=None, upgrade_policy=None, minimum_nodes=None, maximum_nodes=0, remove_application_capacity=None, metrics=None, type_name=None):
+    def __init__(self, location=None, type_version=None, parameters=None, upgrade_policy=None, minimum_nodes=None, maximum_nodes=0, remove_application_capacity=None, metrics=None, type_name=None):
         super(ApplicationResource, self).__init__(location=location)
         self.type_version = type_version
         self.parameters = parameters

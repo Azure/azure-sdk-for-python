@@ -18,3 +18,52 @@ class ProvisioningState(Enum):
     succeeded = "Succeeded"
     failed = "Failed"
     canceled = "Canceled"
+
+
+class ServiceKind(Enum):
+
+    invalid = "Invalid"
+    stateless = "Stateless"
+    stateful = "Stateful"
+
+
+class ServiceCorrelationScheme(Enum):
+
+    invalid = "Invalid"
+    affinity = "Affinity"
+    aligned_affinity = "AlignedAffinity"
+    non_aligned_affinity = "NonAlignedAffinity"
+
+
+class ServiceLoadMetricWeight(Enum):
+
+    zero = "Zero"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class ServicePlacementPolicyType(Enum):
+
+    invalid = "Invalid"
+    invalid_domain = "InvalidDomain"
+    required_domain = "RequiredDomain"
+    preferred_primary_domain = "PreferredPrimaryDomain"
+    required_domain_distribution = "RequiredDomainDistribution"
+    non_partially_place_service = "NonPartiallyPlaceService"
+
+
+class PartitionScheme(Enum):
+
+    invalid = "Invalid"
+    singleton = "Singleton"
+    uniform_int64_range = "UniformInt64Range"
+    named = "Named"
+
+
+class MoveCost(Enum):
+
+    zero = "Zero"
+    low = "Low"
+    medium = "Medium"
+    high = "High"

@@ -18,13 +18,13 @@ class ServiceResourceUpdate(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Resource location.
+    :param location: Azure resource location.
     :type location: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -32,18 +32,21 @@ class ServiceResourceUpdate(ProxyResource):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme:
+    :param correlation_scheme: A list that describes the correlation of the
+     service with other services.
     :type correlation_scheme:
      list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics:
+    :param service_load_metrics: The service load metrics is given as an array
+     of ServiceLoadMetricDescription objects.
     :type service_load_metrics:
      list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies:
+    :param service_placement_policies: A list that describes the correlation
+     of the service with other services.
     :type service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Possible values include: 'Zero', 'Low',
-     'Medium', 'High'
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.enum
+    :param default_move_cost: Specifies the move cost for the service.
+     Possible values include: 'Zero', 'Low', 'Medium', 'High'
+    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     :param service_kind: Constant filled by server.
     :type service_kind: str
     """
@@ -52,7 +55,6 @@ class ServiceResourceUpdate(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'service_kind': {'required': True},
     }
 
@@ -69,7 +71,7 @@ class ServiceResourceUpdate(ProxyResource):
         'service_kind': {'key': 'properties.serviceKind', 'type': 'str'},
     }
 
-    def __init__(self, location, service_kind, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None):
+    def __init__(self, service_kind, location=None, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None):
         super(ServiceResourceUpdate, self).__init__(location=location)
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme
