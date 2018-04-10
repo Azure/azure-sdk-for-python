@@ -23,7 +23,7 @@ class UpgradeOperationHistoryStatus(Model):
     :vartype code: str or ~azure.mgmt.compute.v2017_12_01.models.UpgradeState
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: datetime
-    :ivar end_time: Start time of the upgrade.
+    :ivar end_time: End time of the upgrade.
     :vartype end_time: datetime
     """
 

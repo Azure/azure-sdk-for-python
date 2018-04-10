@@ -27,14 +27,13 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
      ~azure.mgmt.compute.v2017_12_01.models.RollingUpgradeProgressInfo
     :ivar error: Error Details for this upgrade if there are any.
     :vartype error: ~azure.mgmt.compute.v2017_12_01.models.ApiError
-    :ivar started_by: Error Details for this upgrade if there are any.
-     Possible values include: 'Unknown', 'User', 'Platform'
+    :ivar started_by: Invoker of the Upgrade Operation. Possible values
+     include: 'Unknown', 'User', 'Platform'
     :vartype started_by: str or
      ~azure.mgmt.compute.v2017_12_01.models.UpgradeOperationInvoker
-    :ivar target_image_reference: Error Details for this upgrade if there are
-     any.
+    :ivar target_image_reference: Image Reference details
     :vartype target_image_reference:
-     ~azure.mgmt.compute.v2017_12_01.models.PlatformImageReference
+     ~azure.mgmt.compute.v2017_12_01.models.ImageReference
     """
 
     _validation = {
@@ -50,7 +49,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
         'progress': {'key': 'progress', 'type': 'RollingUpgradeProgressInfo'},
         'error': {'key': 'error', 'type': 'ApiError'},
         'started_by': {'key': 'startedBy', 'type': 'UpgradeOperationInvoker'},
-        'target_image_reference': {'key': 'targetImageReference', 'type': 'PlatformImageReference'},
+        'target_image_reference': {'key': 'targetImageReference', 'type': 'ImageReference'},
     }
 
     def __init__(self, **kwargs):

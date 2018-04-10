@@ -24,13 +24,14 @@ class UpgradeOperationHistoricalStatusInfo(Model):
      ~azure.mgmt.compute.v2017_12_01.models.UpgradeOperationHistoricalStatusInfoProperties
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
-    :type location: str
+    :ivar location: Resource location
+    :vartype location: str
     """
 
     _validation = {
         'properties': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,4 +44,4 @@ class UpgradeOperationHistoricalStatusInfo(Model):
         super(UpgradeOperationHistoricalStatusInfo, self).__init__(**kwargs)
         self.properties = None
         self.type = None
-        self.location = kwargs.get('location', None)
+        self.location = None

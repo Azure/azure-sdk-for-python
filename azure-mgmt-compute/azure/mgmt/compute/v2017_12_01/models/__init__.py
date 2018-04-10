@@ -107,7 +107,6 @@ try:
     from .virtual_machine_scale_set_sku_capacity_py3 import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku_py3 import VirtualMachineScaleSetSku
     from .upgrade_operation_history_status_py3 import UpgradeOperationHistoryStatus
-    from .platform_image_reference_py3 import PlatformImageReference
     from .rolling_upgrade_progress_info_py3 import RollingUpgradeProgressInfo
     from .api_error_base_py3 import ApiErrorBase
     from .inner_error_py3 import InnerError
@@ -234,7 +233,6 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_sku_capacity import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku import VirtualMachineScaleSetSku
     from .upgrade_operation_history_status import UpgradeOperationHistoryStatus
-    from .platform_image_reference import PlatformImageReference
     from .rolling_upgrade_progress_info import RollingUpgradeProgressInfo
     from .api_error_base import ApiErrorBase
     from .inner_error import InnerError
@@ -400,7 +398,6 @@ __all__ = [
     'VirtualMachineScaleSetSkuCapacity',
     'VirtualMachineScaleSetSku',
     'UpgradeOperationHistoryStatus',
-    'PlatformImageReference',
     'RollingUpgradeProgressInfo',
     'ApiErrorBase',
     'InnerError',
