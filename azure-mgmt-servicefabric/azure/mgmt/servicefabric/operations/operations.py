@@ -21,7 +21,7 @@ class Operations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     """
 
     models = models
@@ -36,11 +36,14 @@ class Operations(object):
 
     def list(
             self, api_version, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available ServiceFabric Resource Manager REST API
+        """Lists all of the available Service Fabric resource provider API
         operations.
 
-        :param api_version: The version of the ServiceFabric resouce provider
-         api
+        Get the list of available Service Fabric resource provider API
+        operations.
+
+        :param api_version: The version of the Service Fabric resouce provider
+         API
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -57,7 +60,7 @@ class Operations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.ServiceFabric/operations'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -96,3 +99,4 @@ class Operations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.ServiceFabric/operations'}

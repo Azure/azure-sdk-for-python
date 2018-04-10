@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_properties_base import ServicePropertiesBase
+from .service_resource_properties_base import ServiceResourcePropertiesBase
 
 
-class ServiceProperties(ServicePropertiesBase):
+class ServiceResourceProperties(ServiceResourcePropertiesBase):
     """The service resource properties.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: StatelessServiceProperties, StatefulServiceProperties
+    sub-classes are: StatefulServiceProperties, StatelessServiceProperties
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,24 +27,27 @@ class ServiceProperties(ServicePropertiesBase):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme:
+    :param correlation_scheme: A list that describes the correlation of the
+     service with other services.
     :type correlation_scheme:
      list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics:
+    :param service_load_metrics: The service load metrics is given as an array
+     of ServiceLoadMetricDescription objects.
     :type service_load_metrics:
      list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies:
+    :param service_placement_policies: A list that describes the correlation
+     of the service with other services.
     :type service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Possible values include: 'Zero', 'Low',
-     'Medium', 'High'
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.enum
+    :param default_move_cost: Specifies the move cost for the service.
+     Possible values include: 'Zero', 'Low', 'Medium', 'High'
+    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
     :param service_type_name: The name of the service type
     :type service_type_name: str
-    :param partition_description:
+    :param partition_description: Describes how the service is partitioned.
     :type partition_description:
      ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
     :param service_kind: Constant filled by server.
@@ -69,13 +72,13 @@ class ServiceProperties(ServicePropertiesBase):
     }
 
     _subtype_map = {
-        'service_kind': {'Stateless': 'StatelessServiceProperties', 'Stateful': 'StatefulServiceProperties'}
+        'service_kind': {'Stateful': 'StatefulServiceProperties', 'Stateless': 'StatelessServiceProperties'}
     }
 
     def __init__(self, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, service_type_name=None, partition_description=None):
-        super(ServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost)
+        super(ServiceResourceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost)
         self.provisioning_state = None
         self.service_type_name = service_type_name
         self.partition_description = partition_description
         self.service_kind = None
-        self.service_kind = 'ServiceProperties'
+        self.service_kind = 'ServiceResourceProperties'
