@@ -33,7 +33,8 @@ class SqlServerLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string.
+    :param connection_string: Required. The connection string. Type: string,
+     SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
     :param user_name: The on-premises Windows authentication user name. Type:
      string (or Expression with resultType string).

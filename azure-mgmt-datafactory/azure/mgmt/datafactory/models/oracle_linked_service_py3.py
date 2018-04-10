@@ -33,7 +33,8 @@ class OracleLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string.
+    :param connection_string: Required. The connection string. Type: string,
+     SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime

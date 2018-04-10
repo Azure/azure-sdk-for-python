@@ -34,7 +34,8 @@ class OdbcLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param connection_string: Required. The non-access credential portion of
-     the connection string as well as an optional encrypted credential.
+     the connection string as well as an optional encrypted credential. Type:
+     string, SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
     :param authentication_type: Type of authentication used to connect to the
      ODBC data store. Possible values are: Anonymous and Basic. Type: string

@@ -33,7 +33,9 @@ class AzureSqlDWLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string.
+    :param connection_string: Required. The connection string. Type: string,
+     SecureString or AzureKeyVaultSecretReference. Type: string, SecureString
+     or AzureKeyVaultSecretReference.
     :type connection_string: object
     :param service_principal_id: The ID of the service principal used to
      authenticate against Azure SQL Data Warehouse. Type: string (or Expression

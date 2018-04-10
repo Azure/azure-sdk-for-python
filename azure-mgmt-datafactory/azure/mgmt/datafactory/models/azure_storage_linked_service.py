@@ -34,7 +34,8 @@ class AzureStorageLinkedService(LinkedService):
     :param type: Required. Constant filled by server.
     :type type: str
     :param connection_string: The connection string. It is mutually exclusive
-     with sasUri property.
+     with sasUri property. Type: string, SecureString or
+     AzureKeyVaultSecretReference.
     :type connection_string: object
     :param sas_uri: SAS URI of the Azure Storage resource. It is mutually
      exclusive with connectionString property.
