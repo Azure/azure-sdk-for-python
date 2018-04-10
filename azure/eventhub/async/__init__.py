@@ -19,7 +19,7 @@ from azure.eventhub import (
 from uamqp.async import SASTokenAsync
 from uamqp.async import ConnectionAsync
 from uamqp import Message, AMQPClientAsync, SendClientAsync, ReceiveClientAsync, Source
-from uamqp import constants, types
+from uamqp import constants, types, errors
 
 log = logging.getLogger(__name__)
 
@@ -164,13 +164,11 @@ class EventHubClientAsync(EventHubClient):
         :param partition: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
          round-robin
-        :type parition: str
+        :type partition: str
         :returns: ~azure.eventhub.SenderAsync
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
-        if partition:
-            target += "/Partitions/" + partition
-        handler = AsyncSender(self, target, loop=loop)
+        handler = AsyncSender(self, target, partition=partition, loop=loop)
         self.clients.append(handler._handler)
         return handler
 
@@ -179,7 +177,7 @@ class AsyncSender(Sender):
     Implements the async API of a Sender.
     """
 
-    def __init__(self, client, target, loop=None):
+    def __init__(self, client, target, partition=None, loop=None):
         """
         Instantiate an EventHub event SenderAsync client.
         :param client: The parent EventHubClient.
@@ -188,6 +186,9 @@ class AsyncSender(Sender):
         :type target: str
         :param loop: An event loop.
         """
+        self.partition = partition
+        if partition:
+            target += "/Partitions/" + partition
         self.loop = loop or asyncio.get_event_loop()
         self._handler = SendClientAsync(
             target,
@@ -207,10 +208,15 @@ class AsyncSender(Sender):
         :raises: ~azure.eventhub.EventHubError if the message fails to
          send.
         """
+        if event_data.partition_key and self.partition:
+            raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
-        await self._handler.send_message_async(event_data.message)
-        if self._outcome != constants.MessageSendResult.Ok:
-            raise Sender._error(self._outcome, self._condition)
+        try:
+            await self._handler.send_message_async(event_data.message)
+            if self._outcome != constants.MessageSendResult.Ok:
+                raise Sender._error(self._outcome, self._condition)
+        except Exception as e:
+            raise EventHubError("Send failed: {}".format(e))
 
 
 class AsyncReceiver(Receiver):
@@ -265,10 +271,23 @@ class AsyncReceiver(Receiver):
         :type callback: func[~azure.eventhub.EventData]
         :returns: list[~azure.eventhub.EventData]
         """
-        self._callback = callback
-        timeout_ms = 1000 * timeout if timeout else 0
-        batch = await self._handler.receive_message_batch_async(
-            max_batch_size=max_batch_size,
-            on_message_received=self.on_message,
-            timeout=timeout_ms)
-        return batch
+        try:
+            self._callback = callback
+            timeout_ms = 1000 * timeout if timeout else 0
+            batch = await self._handler.receive_message_batch_async(
+                max_batch_size=max_batch_size,
+                on_message_received=self.on_message,
+                timeout=timeout_ms)
+            return batch
+        except errors.AMQPConnectionError as e:
+            message = "Failed to open receiver: {}".format(e)
+            message += "\nPlease check that the partition key is valid "
+            if self.epoch:
+                message += "and that a higher epoch receiver is " \
+                           "not already running for this partition."
+            else:
+                message += "and whether an epoch receiver is " \
+                           "already running for this partition."
+            raise EventHubError(message)
+        except Exception as e:
+            raise EventHubError("Receive failed: {}".format(e))

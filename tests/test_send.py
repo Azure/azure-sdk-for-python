@@ -38,6 +38,22 @@ def test_send_with_partition_key(connection_str, receivers):
                 found_partition_keys[message.partition_key] = index
 
 
+def test_send_and_receive_large_body_size(connection_str, receivers):
+    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    sender = client.add_sender()
+    client.run()
+    payload = 250 * 1024
+    sender.send(EventData("A" * payload))
+    client.stop()
+
+    received = []
+    for r in receivers:
+        received.extend(r.receive(timeout=1))
+
+    assert len(received) == 1
+    assert len(list(received[0].body)[0]) == payload
+
+
 def test_send_and_receive_zero_length_body(connection_str, receivers):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     sender = client.add_sender()

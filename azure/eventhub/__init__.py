@@ -23,10 +23,10 @@ from uamqp import SendClient, ReceiveClient
 from uamqp import Message, BatchMessage
 from uamqp import Source, Target
 from uamqp import authentication
-from uamqp import constants, types
+from uamqp import constants, types, errors
 
 
-__version__ = "0.2.0a2"
+__version__ = "0.2.0b1"
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +54,6 @@ def _parse_conn_str(conn_str):
 def _build_uri(address, entity):
     parsed = urlparse(address)
     if parsed.path:
-        print(parsed.path)
         return address
     if not entity:
         raise ValueError("No EventHub specified")
@@ -112,7 +111,7 @@ class EventHubClient(object):
          not included in the connection string.
         """
         address, policy, key, entity = _parse_conn_str(conn_str)
-        entity = entity or eventhub
+        entity = eventhub or entity
         address = _build_uri(address, entity)
         return cls(address, username=policy, password=key, **kwargs)
 
@@ -150,7 +149,8 @@ class EventHubClient(object):
         Sender/Receiver clients.
         """
         if not self.connection:
-            log.info("{}: Creating connection with address={}".format(self.container_id, self.address.geturl()))
+            log.info("{}: Creating connection with address={}".format(
+                self.container_id, self.address.geturl()))
             self.connection = Connection(
                 self.address.hostname,
                 self.auth,
@@ -198,11 +198,20 @@ class EventHubClient(object):
     def get_eventhub_info(self):
         """
         Get details on the specified EventHub.
+        Keys in the details dictionary include:
+         -'name'
+         -'type'
+         -'created_at'
+         -'partition_count'
+         -'partition_ids'
         :returns: dict
         """
+        self._create_connection()
         eh_name = self.address.path.lstrip('/')
         target = "amqps://{}/{}".format(self.address.hostname, eh_name)
-        with uamqp.AMQPClient(target, auth=self.auth, debug=self.debug) as mgmt_client:
+        mgmt_client = uamqp.AMQPClient(target, auth=self.auth, debug=self.debug)
+        mgmt_client.open(self.connection)
+        try:
             mgmt_msg = Message(application_properties={'name': eh_name})
             response = mgmt_client.mgmt_request(
                 mgmt_msg,
@@ -211,6 +220,10 @@ class EventHubClient(object):
                 status_code_field=b'status-code',
                 description_fields=b'status-description')
             return response.get_data()
+        except:
+            raise
+        finally:
+            mgmt_client.close()
 
     def add_receiver(self, consumer_group, partition, offset=None, prefetch=300):
         """
@@ -267,9 +280,7 @@ class EventHubClient(object):
         :returns: ~azure.eventhub.Sender
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
-        if partition:
-            target += "/Partitions/" + partition
-        handler = Sender(self, target)
+        handler = Sender(self, target, partition=partition)
         self.clients.append(handler._handler)
         return handler
 
@@ -280,7 +291,7 @@ class Sender:
     """
     TIMEOUT = 60.0
 
-    def __init__(self, client, target):
+    def __init__(self, client, target, partition=None):
         """
         Instantiate an EventHub event Sender client.
         :param client: The parent EventHubClient.
@@ -288,6 +299,9 @@ class Sender:
         :param target: The URI of the EventHub to send to.
         :type target: str
         """
+        self.partition = partition
+        if partition:
+            target += "/Partitions/" + partition
         self._handler = SendClient(
             target,
             auth=client.auth,
@@ -305,10 +319,15 @@ class Sender:
         :raises: ~azure.eventhub.EventHubError if the message fails to
          send.
         """
+        if event_data.partition_key and self.partition:
+            raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
-        self._handler.send_message(event_data.message)
-        if self._outcome != constants.MessageSendResult.Ok:
-            raise Sender._error(self._outcome, self._condition)
+        try:
+            self._handler.send_message(event_data.message)
+            if self._outcome != constants.MessageSendResult.Ok:
+                raise Sender._error(self._outcome, self._condition)
+        except Exception as e:
+            raise EventHubError("Send failed: {}".format(e))
 
     def transfer(self, event_data, callback=None):
         """
@@ -319,6 +338,8 @@ class Sender:
          This must be a function that accepts two arguments.
         :type callback: func[~uamqp.constants.MessageSendResult, ~azure.eventhub.EventHubError]
         """
+        if event_data.partition_key and self.partition:
+            raise ValueError("EventData partition key cannot be used with a partition sender.")
         if callback:
             event_data.message.on_send_complete = lambda o, c: callback(o, Sender._error(o, c))
         self._handler.queue_message(event_data.message)
@@ -327,7 +348,10 @@ class Sender:
         """
         Wait until all transferred events have been sent.
         """
-        self._handler.wait()
+        try:
+            self._handler.wait()
+        except Exception as e:
+            raise EventHubError("Send failed: {}".format(e))
 
     def _on_outcome(self, outcome, condition):
         """
@@ -398,7 +422,7 @@ class Receiver:
         :returns: ~azure.eventhub.EventData.
         """
         self.delivered += 1
-        event_data = EventData.create(event)
+        event_data = EventData(message=event)
         if self._callback:
             self._callback(event_data)
         self.offset = event_data.offset
@@ -419,13 +443,26 @@ class Receiver:
         :type callback: func[~azure.eventhub.EventData]
         :returns: list[~azure.eventhub.EventData]
         """
-        timeout_ms = 1000 * timeout if timeout else 0
-        self._callback = callback
-        batch = self._handler.receive_message_batch(
-            max_batch_size=max_batch_size,
-            on_message_received=self.on_message,
-            timeout=timeout_ms)
-        return batch
+        try:
+            timeout_ms = 1000 * timeout if timeout else 0
+            self._callback = callback
+            batch = self._handler.receive_message_batch(
+                max_batch_size=max_batch_size,
+                on_message_received=self.on_message,
+                timeout=timeout_ms)
+            return batch
+        except errors.AMQPConnectionError as e:
+            message = "Failed to open receiver: {}".format(e)
+            message += "\nPlease check that the partition key is valid "
+            if self.epoch:
+                message += ("and that a higher epoch receiver is not "
+                           "already running for this partition.")
+            else:
+                message += ("and whether an epoch receiver is "
+                            "already running for this partition.")
+            raise EventHubError(message)
+        except Exception as e:
+            raise EventHubError("Receive failed: {}".format(e))
 
     def selector(self, default):
         """
@@ -448,21 +485,37 @@ class EventData(object):
     PROP_SEQ_NUMBER = b"x-opt-sequence-number"
     PROP_OFFSET = b"x-opt-offset"
     PROP_PARTITION_KEY = b"x-opt-partition-key"
+    PROP_TIMESTAMP = b"x-opt-enqueued-time"
 
-    def __init__(self, body=None, batch=None):
+    def __init__(self, body=None, batch=None, message=None):
         """
         Initialize EventData
         :param body: The data to send in a single message.
-        :type body: str or bytes
+        :type body: str, bytes or list
         :param batch: A data generator to send batched messages.
         :type batch: Generator
+        :param message: The received message.
+        :type message: ~uamqp.Message
         """
-        if batch:
-            self.message = BatchMessage(data=batch, multi_messages=True)
-        elif body:
-            self.message = Message(body)
+        self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._properties = {}
+        if batch:
+            self.message = BatchMessage(data=batch, multi_messages=True)
+        elif message:
+            self.message = message
+            self._annotations = message.annotations
+            self._properties = message.application_properties
+        else:
+            if isinstance(body, list) and len(body) > 0:
+                self.message = Message(body[0])
+                for more in body[1:]:
+                    self.message._body.append(more)
+            elif body is None:
+                raise ValueError("EventData cannot be None.")
+            else:
+                self.message = Message(body)
+
 
     @property
     def sequence_number(self):
@@ -481,12 +534,23 @@ class EventData(object):
         return self._annotations.get(EventData.PROP_OFFSET, None)
 
     @property
+    def enqueued_time(self):
+        """
+        The enqueued timestamp of the event data object.
+        :returns: datetime.datetime
+        """
+        timestamp = self._annotations.get(EventData.PROP_TIMESTAMP, None)
+        if timestamp:
+            return datetime.datetime.fromtimestamp(float(timestamp)/1000)
+        return None
+
+    @property
     def partition_key(self):
         """
         The partition key of the event data object.
         :returns: bytes
         """
-        return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
+        return self._annotations.get(self._partition_key, None)
 
     @partition_key.setter
     def partition_key(self, value):
@@ -496,8 +560,8 @@ class EventData(object):
         :type value: str or bytes
         """
         annotations = dict(self._annotations)
-        annotations[types.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
-        self.message.message_annotations = annotations
+        annotations[self._partition_key] = value
+        self.message.annotations = annotations
         self._annotations = annotations
 
     @property
@@ -508,6 +572,17 @@ class EventData(object):
         """
         return self._properties
 
+    @properties.setter
+    def properties(self, value):
+        """
+        Application defined properties on the message.
+        :param value: The application properties for the EventData.
+        :type value: dict
+        """
+        self._properties = value
+        properties = dict(self._properties)
+        self.message.application_properties = properties
+
     @property
     def body(self):
         """
@@ -515,19 +590,6 @@ class EventData(object):
         :returns: bytes or generator[bytes]
         """
         return self.message.get_data()
-
-    @classmethod
-    def create(cls, message):
-        """
-        Creates an event data object from an AMQP message.
-        :param message: The received message.
-        :type message: ~uamqp.Message
-        """
-        event_data = EventData()
-        event_data.message = message
-        event_data._annotations = message.message_annotations
-        event_data._properties = message.application_properties
-        return event_data
 
 
 class Offset(object):
@@ -541,10 +603,10 @@ class Offset(object):
       >>> offset = Offset("12345")
     Events from the specified offset:
       >>> offset = Offset("12345", True)
-    Events after current time:
+    Events after a datetime:
       >>> offset = Offset(datetime.datetime.utcnow())
-    Events after a specific timestmp:
-      >>> offset = Offset(timestamp(1506968696002))
+    Events after a specific sequence number:
+      >>> offset = Offset(1506968696002)
     """
 
     def __init__(self, value, inclusive=False):
@@ -563,14 +625,13 @@ class Offset(object):
         Creates a selector expression of the offset.
         :returns: bytes
         """
+        operator = ">=" if self.inclusive else ">"
         if isinstance(self.value, datetime.datetime):
-            epoch = datetime.datetime.utcfromtimestamp(0)
-            milli_seconds = timestamp((self.value - epoch).total_seconds() * 1000.0)  # TODO
-            return ("amqp.annotation.x-opt-enqueued-time > '{}'".format(milli_seconds)).encode('utf-8')
+            timestamp = (time.mktime(self.value.timetuple()) * 1000) + (self.value.microsecond/1000)
+            return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
         elif isinstance(self.value, int):
-            return ("amqp.annotation.x-opt-enqueued-time > '{}'".format(self.value)).encode('utf-8')
+            return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         else:
-            operator = ">=" if self.inclusive else ">"
             return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
 
