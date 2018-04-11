@@ -2,8 +2,16 @@
 
 Release History
 ===============
+1.0.0b1 (2018-04-10)
++++++++++++++++++++
+
+* Upgraded to autorest 3.0 generated code
+* Breaking change in models requiring all init args be specified by keyword
+
+
 1.0.0a2 (2018-03-28)
 ++++++++++++++++++++
+
 * Upgrading to API version 7.0-preview
 * Adding elliptic curve key support
 * Adding managed storage account key backup, restore and soft delete support
