@@ -4,16 +4,14 @@
 # -----------------------------------------------------------------------------------
 
 import asyncio
-import sys
+import pytest
 
 
-def test_get_partition_ids(partition_manager):
+def test_eph_start(eph):
     """
-    Test that partition manger returns all the partitions for an event hub
+    Test that the processing host starts correctly
     """
-    sys.excepthook = _execpt_hook
+    pytest.skip("Not working yet")
     loop = asyncio.get_event_loop()
-    is_live, mgr = partition_manager
-    if is_live:
-        pids = loop.run_until_complete(mgr.get_partition_ids_async())
-        assert pids == ["0", "1"]
+    loop.run_until_complete(eph.open_async())
+    loop.run_until_complete(eph.close_async())

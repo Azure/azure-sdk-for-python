@@ -7,6 +7,7 @@
 import os
 import asyncio
 import pytest
+import time
 
 from azure import eventhub
 from azure.eventhub import EventData, Offset, EventHubError
@@ -19,16 +20,20 @@ async def test_receive_single_event_async(connection_str, senders):
 
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0")
-    await client.run_async()
-    messages = []
-    received = await receiver.receive(timeout=2)
-    while received:
-        messages.extend(received)
+    try:
+        await client.run_async()
+        messages = []
         received = await receiver.receive(timeout=2)
+        while received:
+            messages.extend(received)
+            received = await receiver.receive(timeout=2)
 
-    assert len(messages) >= 1
-    assert list(messages[-1].body)[0] == b"Receiving a single event"
-    await client.stop_async()
+        assert len(messages) >= 1
+        assert list(messages[-1].body)[0] == b"Receiving a single event"
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 @pytest.mark.asyncio
@@ -36,15 +41,18 @@ async def test_receive_end_of_stream_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", offset=Offset('@latest'))
     await client.run_async()
+    try:
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Receiving only a single event"))
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 1
 
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Receiving only a single event"))
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 1
-
-    assert list(received[-1].body)[0] == b"Receiving only a single event"
-    await client.stop_async()
+        assert list(received[-1].body)[0] == b"Receiving only a single event"
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 @pytest.mark.asyncio
@@ -52,22 +60,26 @@ async def test_receive_with_offset_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", offset=Offset('@latest'))
     await client.run_async()
+    try:
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Data"))
+        time.sleep(1)
+        received = await receiver.receive(timeout=3)
+        assert len(received) == 1
+        offset = received[0].offset
 
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Data"))
-    received = await receiver.receive(timeout=3)
-    assert len(received) == 1
-    offset = received[0].offset
-
-    offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset))
-    await client.run_async()
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Message after offset"))
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 1
-    await client.stop_async()
+        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset))
+        await client.run_async()
+        received = await offset_receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Message after offset"))
+        received = await offset_receiver.receive(timeout=2)
+        assert len(received) == 1
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 @pytest.mark.asyncio
@@ -75,19 +87,23 @@ async def test_receive_with_inclusive_offset_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", offset=Offset('@latest'))
     await client.run_async()
+    try:
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Data"))
+        time.sleep(1)
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 1
+        offset = received[0].offset
 
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Data"))
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 1
-    offset = received[0].offset
-
-    offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset, inclusive=True))
-    await client.run_async()
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 1
-    await client.stop_async()
+        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset, inclusive=True))
+        await client.run_async()
+        received = await offset_receiver.receive(timeout=2)
+        assert len(received) == 1
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 @pytest.mark.asyncio
@@ -95,22 +111,26 @@ async def test_receive_with_datetime_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", offset=Offset('@latest'))
     await client.run_async()
+    try:
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Data"))
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 1
+        offset = received[0].enqueued_time
 
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Data"))
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 1
-    offset = received[0].enqueued_time
-
-    offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset))
-    await client.run_async()
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Message after timestamp"))
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 1
-    await client.stop_async()
+        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset))
+        await client.run_async()
+        received = await offset_receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Message after timestamp"))
+        time.sleep(1)
+        received = await offset_receiver.receive(timeout=4)
+        assert len(received) == 1
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 @pytest.mark.asyncio
@@ -118,22 +138,26 @@ async def test_receive_with_sequence_no_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", offset=Offset('@latest'))
     await client.run_async()
+    try:
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Data"))
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 1
+        offset = received[0].sequence_number
 
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Data"))
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 1
-    offset = received[0].sequence_number
-
-    offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset))
-    await client.run_async()
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Message next in sequence"))
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 1
-    await client.stop_async()
+        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset))
+        await client.run_async()
+        received = await offset_receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Message next in sequence"))
+        time.sleep(1)
+        received = await offset_receiver.receive(timeout=4)
+        assert len(received) == 1
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 @pytest.mark.asyncio
@@ -141,19 +165,22 @@ async def test_receive_with_inclusive_sequence_no_async(connection_str, senders)
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", offset=Offset('@latest'))
     await client.run_async()
+    try:
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 0
+        senders[0].send(EventData(b"Data"))
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 1
+        offset = received[0].sequence_number
 
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 0
-    senders[0].send(EventData(b"Data"))
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 1
-    offset = received[0].sequence_number
-
-    offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset, inclusive=True))
-    await client.run_async()
-    received = await offset_receiver.receive(timeout=2)
-    assert len(received) == 1
-    await client.stop_async()
+        offset_receiver = client.add_async_receiver("$default", "0", offset=Offset(offset, inclusive=True))
+        await client.run_async()
+        received = await offset_receiver.receive(timeout=4)
+        assert len(received) == 1
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 @pytest.mark.asyncio
@@ -161,14 +188,17 @@ async def test_receive_batch_async(connection_str, senders):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", prefetch=500, offset=Offset('@latest'))
     await client.run_async()
-
-    received = await receiver.receive(timeout=2)
-    assert len(received) == 0
-    for i in range(10):
-        senders[0].send(EventData(b"Data"))
-    received = await receiver.receive(max_batch_size=5, timeout=2)
-    assert len(received) == 5
-    await client.stop_async()
+    try:
+        received = await receiver.receive(timeout=2)
+        assert len(received) == 0
+        for i in range(10):
+            senders[0].send(EventData(b"Data"))
+        received = await receiver.receive(max_batch_size=5, timeout=4)
+        assert len(received) == 5
+    except:
+        raise
+    finally:
+        await client.stop_async()
 
 
 async def pump(receiver):

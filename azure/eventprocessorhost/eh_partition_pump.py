@@ -114,7 +114,7 @@ class PartitionReceiver:
         while self.eh_partition_pump.pump_status != "Errored" and not self.eh_partition_pump.is_closing():
             if self.eh_partition_pump.partition_receive_handler:
                 try:
-                    msgs = self.eh_partition_pump.partition_receive_handler.receive(
+                    msgs = await self.eh_partition_pump.partition_receive_handler.receive(
                             max_batch_size=self.max_batch_size,
                             timeout=self.recieve_timeout)
                 except Exception as e:

@@ -6,12 +6,10 @@
 import asyncio
 
 
-def test_eph_start(eph):
+def test_get_partition_ids(partition_manager):
     """
-    Test that the processing host starts correctly
+    Test that partition manger returns all the partitions for an event hub
     """
-    is_live, host = eph
     loop = asyncio.get_event_loop()
-    if is_live:
-        loop.run_until_complete(host.open_async())
-        loop.run_until_complete(host.close_async())
+    pids = loop.run_until_complete(partition_manager.get_partition_ids_async())
+    assert pids == ["0", "1"]

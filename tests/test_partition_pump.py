@@ -11,9 +11,7 @@ def test_open_async(partition_pump):
     Test that partition pump opens sucessfully
     """
     loop = asyncio.get_event_loop()
-    is_live, pump = partition_pump
-    if is_live:
-        loop.run_until_complete(pump.open_async())  # Simulate Open
+    loop.run_until_complete(partition_pump.open_async())  # Simulate Open
 
 def test_process_events_async(partition_pump):
     """
@@ -21,20 +19,16 @@ def test_process_events_async(partition_pump):
     properly
     """
     loop = asyncio.get_event_loop()
-    is_live, pump = partition_pump
-    if is_live:
-        loop.run_until_complete(pump.open_async())  # Simulate Open
-        _mock_events = ["event1", "event2"]  # Mock Events
-        loop.run_until_complete(pump.process_events_async(_mock_events))  # Simulate Process
+    loop.run_until_complete(partition_pump.open_async())  # Simulate Open
+    _mock_events = ["event1", "event2"]  # Mock Events
+    loop.run_until_complete(partition_pump.process_events_async(_mock_events))  # Simulate Process
 
 def test_close_async(partition_pump):
     """
     Test that partition pump closes
     """
     loop = asyncio.get_event_loop()
-    is_live, pump = partition_pump
-    if is_live:
-        loop.run_until_complete(pump.open_async())  # Simulate Open
-        _mock_events = ["event1", "event2"]  # Mock Events
-        loop.run_until_complete(pump.process_events_async(_mock_events))  # Simulate Process
-        loop.run_until_complete(pump.close_async("Finished"))  # Simulate Close
+    loop.run_until_complete(partition_pump.open_async())  # Simulate Open
+    _mock_events = ["event1", "event2"]  # Mock Events
+    loop.run_until_complete(partition_pump.process_events_async(_mock_events))  # Simulate Process
+    loop.run_until_complete(partition_pump.close_async("Finished"))  # Simulate Close
