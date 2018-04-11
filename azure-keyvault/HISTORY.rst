@@ -3,7 +3,7 @@
 Release History
 ===============
 1.0.0b1 (2018-04-10)
-+++++++++++++++++++
+++++++++++++++++++++
 
 * Upgraded to autorest 3.0 generated code
 * Breaking change in models requiring all init args be specified by keyword
