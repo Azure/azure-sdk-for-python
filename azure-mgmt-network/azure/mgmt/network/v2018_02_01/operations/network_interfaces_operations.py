@@ -25,6 +25,8 @@ class NetworkInterfacesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: Client API version. Constant value: "2018-02-01".
+    :ivar api_version: Client API version. Constant value: "2018-02-01".
     """
 
     models = models
@@ -34,14 +36,14 @@ class NetworkInterfacesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2018-02-01"
+        self.api_version = "2018-02-01"
 
         self.config = config
 
 
     def _delete_initial(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -53,7 +55,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -139,8 +141,6 @@ class NetworkInterfacesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -152,7 +152,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -190,8 +190,6 @@ class NetworkInterfacesOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, network_interface_name, parameters, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -203,7 +201,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -298,8 +296,6 @@ class NetworkInterfacesOperations(object):
             self, resource_group_name, network_interface_name, tags=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.TagsObject(tags=tags)
 
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
@@ -311,7 +307,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -411,8 +407,6 @@ class NetworkInterfacesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2018_02_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-01"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -425,7 +419,7 @@ class NetworkInterfacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -480,8 +474,6 @@ class NetworkInterfacesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2018_02_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-01"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -495,7 +487,7 @@ class NetworkInterfacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -537,8 +529,6 @@ class NetworkInterfacesOperations(object):
 
     def _get_effective_route_table_initial(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.get_effective_route_table.metadata['url']
         path_format_arguments = {
@@ -550,7 +540,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -633,8 +623,6 @@ class NetworkInterfacesOperations(object):
 
     def _list_effective_network_security_groups_initial(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.list_effective_network_security_groups.metadata['url']
         path_format_arguments = {
@@ -646,7 +634,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -749,8 +737,6 @@ class NetworkInterfacesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2018_02_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-30"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -766,7 +752,7 @@ class NetworkInterfacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -824,8 +810,6 @@ class NetworkInterfacesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.NetworkInterfacePaged[~azure.mgmt.network.v2018_02_01.models.NetworkInterface]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-30"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -840,7 +824,7 @@ class NetworkInterfacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -904,8 +888,6 @@ class NetworkInterfacesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-30"
-
         # Construct URL
         url = self.get_virtual_machine_scale_set_network_interface.metadata['url']
         path_format_arguments = {
@@ -919,7 +901,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -980,8 +962,6 @@ class NetworkInterfacesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.NetworkInterfaceIPConfigurationPaged[~azure.mgmt.network.v2018_02_01.models.NetworkInterfaceIPConfiguration]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-30"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -998,7 +978,7 @@ class NetworkInterfacesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -1069,8 +1049,6 @@ class NetworkInterfacesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-03-30"
-
         # Construct URL
         url = self.get_virtual_machine_scale_set_ip_configuration.metadata['url']
         path_format_arguments = {
@@ -1085,7 +1063,7 @@ class NetworkInterfacesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
