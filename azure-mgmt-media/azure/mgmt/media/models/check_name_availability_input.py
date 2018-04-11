@@ -13,33 +13,21 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityInput(Model):
-    """The request body for CheckNameAvailability API.
+    """The input to the check name availability request.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the resource. A name must be globally
-     unique.
+    :param name: The account name.
     :type name: str
-    :ivar type: Required. The type of the resource - mediaservices. Default
-     value: "mediaservices" .
-    :vartype type: str
+    :param type: The account type. For a Media Services account, this should
+     be 'MediaServices'.
+    :type type: str
     """
-
-    _validation = {
-        'name': {'required': True, 'max_length': 24, 'min_length': 3, 'pattern': r'^[a-z0-9]{3,24}$'},
-        'type': {'required': True, 'constant': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "mediaservices"
-
     def __init__(self, **kwargs):
         super(CheckNameAvailabilityInput, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)

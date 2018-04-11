@@ -10,9 +10,29 @@
 # --------------------------------------------------------------------------
 
 from .operations import Operations
-from .media_service_operations import MediaServiceOperations
+from .mediaservices_operations import MediaservicesOperations
+from .providers_operations import ProvidersOperations
+from .assets_operations import AssetsOperations
+from .content_key_policies_operations import ContentKeyPoliciesOperations
+from .transforms_operations import TransformsOperations
+from .jobs_operations import JobsOperations
+from .streaming_policies_operations import StreamingPoliciesOperations
+from .streaming_locators_operations import StreamingLocatorsOperations
+from .live_events_operations import LiveEventsOperations
+from .live_outputs_operations import LiveOutputsOperations
+from .streaming_endpoints_operations import StreamingEndpointsOperations
 
 __all__ = [
     'Operations',
-    'MediaServiceOperations',
+    'MediaservicesOperations',
+    'ProvidersOperations',
+    'AssetsOperations',
+    'ContentKeyPoliciesOperations',
+    'TransformsOperations',
+    'JobsOperations',
+    'StreamingPoliciesOperations',
+    'StreamingLocatorsOperations',
+    'LiveEventsOperations',
+    'LiveOutputsOperations',
+    'StreamingEndpointsOperations',
 ]

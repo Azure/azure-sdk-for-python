@@ -13,33 +13,31 @@ from msrest.serialization import Model
 
 
 class StorageAccount(Model):
-    """The properties of a storage account associated with this resource.
+    """The storage account details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The id of the storage account resource. Media
-     Services relies on tables and queues as well as blobs, so the primary
-     storage account must be a Standard Storage account (either
-     Microsoft.ClassicStorage or Microsoft.Storage). Blob only storage accounts
-     can be added as secondary storage accounts (isPrimary false).
+    :param id: The ID of the storage account resource. Media Services relies
+     on tables and queues as well as blobs, so the primary storage account must
+     be a Standard Storage account (either Microsoft.ClassicStorage or
+     Microsoft.Storage). Blob only storage accounts can be added as secondary
+     storage accounts.
     :type id: str
-    :param is_primary: Required. Is this storage account resource the primary
-     storage account for the Media Service resource. Blob only storage must set
-     this to false.
-    :type is_primary: bool
+    :param type: Required. The type of the storage account. Possible values
+     include: 'Primary', 'Secondary'
+    :type type: str or ~azure.mgmt.media.models.StorageAccountType
     """
 
     _validation = {
-        'id': {'required': True},
-        'is_primary': {'required': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'is_primary': {'key': 'isPrimary', 'type': 'bool'},
+        'type': {'key': 'type', 'type': 'StorageAccountType'},
     }
 
     def __init__(self, **kwargs):
         super(StorageAccount, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
-        self.is_primary = kwargs.get('is_primary', None)
+        self.type = kwargs.get('type', None)

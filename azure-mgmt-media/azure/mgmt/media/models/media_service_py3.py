@@ -9,31 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class MediaService(Resource):
-    """The properties of a Media Service resource.
+class MediaService(TrackedResource):
+    """A Media Services account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The id of the resource.
+    :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The geographic location of the resource. This must be one
-     of the supported and registered Azure Geo Regions (for example, West US,
-     East US, Southeast Asia, and so forth).
-    :type location: str
-    :param tags: Tags to help categorize the resource in the Azure portal.
+    :param tags: Resource tags.
     :type tags: dict[str, str]
-    :ivar api_endpoints: Read-only property that lists the Media Services REST
-     API endpoints for this resource. If supplied on a PUT or PATCH, the value
-     will be ignored.
-    :vartype api_endpoints: list[~azure.mgmt.media.models.ApiEndpoint]
+    :param location: The Azure Region of the resource.
+    :type location: str
+    :ivar media_service_id: The Media Services account ID.
+    :vartype media_service_id: str
     :param storage_accounts: The storage accounts for this resource.
     :type storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
     """
@@ -42,20 +38,20 @@ class MediaService(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'api_endpoints': {'readonly': True},
+        'media_service_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'api_endpoints': {'key': 'properties.apiEndpoints', 'type': '[ApiEndpoint]'},
+        'location': {'key': 'location', 'type': 'str'},
+        'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
         'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, storage_accounts=None, **kwargs) -> None:
-        super(MediaService, self).__init__(location=location, tags=tags, **kwargs)
-        self.api_endpoints = None
+    def __init__(self, *, tags=None, location: str=None, storage_accounts=None, **kwargs) -> None:
+        super(MediaService, self).__init__(tags=tags, location=location, **kwargs)
+        self.media_service_id = None
         self.storage_accounts = storage_accounts

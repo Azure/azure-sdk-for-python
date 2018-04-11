@@ -13,34 +13,28 @@ from msrest.serialization import Model
 
 
 class OperationDisplay(Model):
-    """The object that represents the operation.
+    """Operation details.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar provider: Service provider: Microsoft.Media
-    :vartype provider: str
-    :ivar resource: Resource on which the operation is performed: Invoice,
-     etc.
-    :vartype resource: str
-    :ivar operation: Operation type: Read, write, delete, etc.
-    :vartype operation: str
+    :param provider: The service provider.
+    :type provider: str
+    :param resource: Resource on which the operation is performed.
+    :type resource: str
+    :param operation: The operation type.
+    :type operation: str
+    :param description: The operation description.
+    :type description: str
     """
-
-    _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-    }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
         'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+        self.description = description
