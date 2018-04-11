@@ -12,6 +12,8 @@
 from .operations import Operations
 from .namespaces_operations import NamespacesOperations
 from .disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
+from .migration_configurations_operations import MigrationConfigurationsOperations
+from .migration_config_operations import MigrationConfigOperations
 from .queues_operations import QueuesOperations
 from .topics_operations import TopicsOperations
 from .subscriptions_operations import SubscriptionsOperations
@@ -24,6 +26,8 @@ __all__ = [
     'Operations',
     'NamespacesOperations',
     'DisasterRecoveryConfigsOperations',
+    'MigrationConfigurationsOperations',
+    'MigrationConfigOperations',
     'QueuesOperations',
     'TopicsOperations',
     'SubscriptionsOperations',

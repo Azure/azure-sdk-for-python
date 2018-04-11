@@ -86,3 +86,10 @@ class RoleDisasterRecovery(str, Enum):
     primary = "Primary"
     primary_not_replicating = "PrimaryNotReplicating"
     secondary = "Secondary"
+
+
+class ProvisioningStateMC(str, Enum):
+
+    accepted = "Accepted"
+    succeeded = "Succeeded"
+    failed = "Failed"

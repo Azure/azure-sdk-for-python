@@ -40,6 +40,7 @@ try:
     from .capture_description_py3 import CaptureDescription
     from .eventhub_py3 import Eventhub
     from .arm_disaster_recovery_py3 import ArmDisasterRecovery
+    from .migration_config_properties_py3 import MigrationConfigProperties
 except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .resource import Resource
@@ -71,10 +72,12 @@ except (SyntaxError, ImportError):
     from .capture_description import CaptureDescription
     from .eventhub import Eventhub
     from .arm_disaster_recovery import ArmDisasterRecovery
+    from .migration_config_properties import MigrationConfigProperties
 from .operation_paged import OperationPaged
 from .sb_namespace_paged import SBNamespacePaged
 from .sb_authorization_rule_paged import SBAuthorizationRulePaged
 from .arm_disaster_recovery_paged import ArmDisasterRecoveryPaged
+from .migration_config_properties_paged import MigrationConfigPropertiesPaged
 from .sb_queue_paged import SBQueuePaged
 from .sb_topic_paged import SBTopicPaged
 from .sb_subscription_paged import SBSubscriptionPaged
@@ -92,6 +95,7 @@ from .service_bus_management_client_enums import (
     EncodingCaptureDescription,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    ProvisioningStateMC,
 )
 
 __all__ = [
@@ -125,10 +129,12 @@ __all__ = [
     'CaptureDescription',
     'Eventhub',
     'ArmDisasterRecovery',
+    'MigrationConfigProperties',
     'OperationPaged',
     'SBNamespacePaged',
     'SBAuthorizationRulePaged',
     'ArmDisasterRecoveryPaged',
+    'MigrationConfigPropertiesPaged',
     'SBQueuePaged',
     'SBTopicPaged',
     'SBSubscriptionPaged',
@@ -145,4 +151,5 @@ __all__ = [
     'EncodingCaptureDescription',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'ProvisioningStateMC',
 ]
