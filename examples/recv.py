@@ -6,9 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub partition and processing
-the event in on_event_data callback.
-
+An example to show receiving events from an Event Hub partition.
 """
 import os
 import sys

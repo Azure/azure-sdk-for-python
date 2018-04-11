@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-An example to show receiving events from an Event Hub partition.
+An example to show batch sending events to an Event Hub.
 """
 
 # pylint: disable=C0111
@@ -27,8 +27,9 @@ USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
 
-def callback(a, b):
-    print(a, b)
+def callback(outcome, condition):
+    logger.info("Message sent. Outcome: {}, Condition: {}".format(
+        outcome, condition))
 
 
 def data_generator():

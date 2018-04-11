@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-An example to show receiving events from an Event Hub partition.
+An example to show sending events to an Event Hub.
 """
 
 # pylint: disable=C0111

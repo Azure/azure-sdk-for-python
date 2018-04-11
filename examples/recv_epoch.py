@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show running the EventHubClient in background.
+An example to show receiving events from an Event Hub partition as an epoch receiver.
 """
 
 import os
@@ -34,7 +34,7 @@ PARTITION = "0"
 
 
 async def pump(client, epoch):
-    receiver = client.add_async_receiver(CONSUMER_GROUP, PARTITION, prefetch=2)
+    receiver = client.add_async_epoch_receiver(CONSUMER_GROUP, PARTITION, epoch=epoch)
     await client.run_async()
     total = 0
     start_time = time.time()

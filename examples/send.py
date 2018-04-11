@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-An example to show receiving events from an Event Hub partition.
+An example to show sending events to an Event Hub partition.
 """
 
 # pylint: disable=C0111
@@ -32,7 +32,7 @@ try:
         raise ValueError("No EventHubs URL supplied.")
 
     client = EventHubClient(ADDRESS, debug=False, username=USER, password=KEY)
-    sender = client.add_sender()
+    sender = client.add_sender(partition="1")
     client.run()
     try:
         start_time = time.time()

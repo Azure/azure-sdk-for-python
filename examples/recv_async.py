@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show running the EventHubClient in background.
+An example to show running concurrent receivers.
 """
 
 import os

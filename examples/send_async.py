@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-An example to show receiving events from an Event Hub partition.
+An example to show sending events asynchronously to an Event Hub with partition keys.
 """
 
 # pylint: disable=C0111
@@ -36,7 +36,9 @@ async def run(client):
 
 async def send(snd, count):
     for i in range(count):
-        await snd.send(EventData(str(i)))
+        data = EventData(str(i)
+        data.partition_key = b'SamplePartitionKey'
+        await snd.send(data))
 
 try:
     if not ADDRESS:
