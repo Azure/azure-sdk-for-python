@@ -39,12 +39,9 @@ class EndpointsOperations(object):
         self.config = config
 
     def list_by_profile(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists existing CDN endpoints.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -65,7 +62,7 @@ class EndpointsOperations(object):
                 # Construct URL
                 url = self.list_by_profile.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -111,13 +108,10 @@ class EndpointsOperations(object):
     list_by_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints'}
 
     def get(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Gets an existing CDN endpoint with the specified endpoint name under
         the specified subscription, resource group and profile.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -138,7 +132,7 @@ class EndpointsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -180,11 +174,11 @@ class EndpointsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, profile_name, endpoint_name, endpoint, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, endpoint, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -232,13 +226,10 @@ class EndpointsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, profile_name, endpoint_name, endpoint, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, endpoint, custom_headers=None, raw=False, **operation_config):
         """Creates a new CDN endpoint with the specified endpoint name under the
         specified subscription, resource group and profile.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -259,7 +250,6 @@ class EndpointsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             endpoint=endpoint,
@@ -307,11 +297,11 @@ class EndpointsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, profile_name, endpoint_name, endpoint_update_properties, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, endpoint_update_properties, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -357,16 +347,13 @@ class EndpointsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, profile_name, endpoint_name, endpoint_update_properties, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, endpoint_update_properties, custom_headers=None, raw=False, **operation_config):
         """Updates an existing CDN endpoint with the specified endpoint name under
         the specified subscription, resource group and profile. Only tags and
         Origin HostHeader can be updated after creating an endpoint. To update
         origins, use the Update Origin operation. To update custom domains, use
         the Update Custom Domain operation.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -388,7 +375,6 @@ class EndpointsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             endpoint_update_properties=endpoint_update_properties,
@@ -436,11 +422,11 @@ class EndpointsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -473,13 +459,10 @@ class EndpointsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing CDN endpoint with the specified endpoint name under
         the specified subscription, resource group and profile.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -497,7 +480,6 @@ class EndpointsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             custom_headers=custom_headers,
@@ -540,11 +522,11 @@ class EndpointsOperations(object):
 
 
     def _start_initial(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.start.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -586,12 +568,9 @@ class EndpointsOperations(object):
         return deserialized
 
     def start(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Starts an existing CDN endpoint that is on a stopped state.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -610,7 +589,6 @@ class EndpointsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._start_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             custom_headers=custom_headers,
@@ -657,11 +635,11 @@ class EndpointsOperations(object):
 
 
     def _stop_initial(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.stop.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -703,12 +681,9 @@ class EndpointsOperations(object):
         return deserialized
 
     def stop(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Stops an existing running CDN endpoint.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -727,7 +702,6 @@ class EndpointsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._stop_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             custom_headers=custom_headers,
@@ -774,13 +748,13 @@ class EndpointsOperations(object):
 
 
     def _purge_content_initial(
-            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
         content_file_paths = models.PurgeParameters(content_paths=content_paths)
 
         # Construct URL
         url = self.purge_content.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -817,12 +791,9 @@ class EndpointsOperations(object):
             return client_raw_response
 
     def purge_content(
-            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
         """Removes a content from CDN.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -843,7 +814,6 @@ class EndpointsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._purge_content_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             content_paths=content_paths,
@@ -887,13 +857,13 @@ class EndpointsOperations(object):
 
 
     def _load_content_initial(
-            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
         content_file_paths = models.LoadParameters(content_paths=content_paths)
 
         # Construct URL
         url = self.load_content.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -930,12 +900,9 @@ class EndpointsOperations(object):
             return client_raw_response
 
     def load_content(
-            self, resource_group_name, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, content_paths, custom_headers=None, raw=False, **operation_config):
         """Pre-loads a content to CDN. Available for Verizon Profiles.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -956,7 +923,6 @@ class EndpointsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._load_content_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             content_paths=content_paths,
@@ -999,13 +965,10 @@ class EndpointsOperations(object):
     load_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/load'}
 
     def validate_custom_domain(
-            self, resource_group_name, profile_name, endpoint_name, host_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, host_name, custom_headers=None, raw=False, **operation_config):
         """Validates the custom domain mapping to ensure it maps to the correct
         CDN endpoint in DNS.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -1031,7 +994,7 @@ class EndpointsOperations(object):
         # Construct URL
         url = self.validate_custom_domain.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -1076,13 +1039,10 @@ class EndpointsOperations(object):
     validate_custom_domain.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/validateCustomDomain'}
 
     def list_resource_usage(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Checks the quota and usage of geo filters and custom domains under the
         given endpoint.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -1106,7 +1066,7 @@ class EndpointsOperations(object):
                 # Construct URL
                 url = self.list_resource_usage.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
                     'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
