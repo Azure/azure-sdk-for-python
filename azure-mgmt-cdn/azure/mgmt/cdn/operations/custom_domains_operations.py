@@ -39,12 +39,9 @@ class CustomDomainsOperations(object):
         self.config = config
 
     def list_by_endpoint(
-            self, resource_group_name, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Lists all of the existing custom domains within an endpoint.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -68,7 +65,7 @@ class CustomDomainsOperations(object):
                 # Construct URL
                 url = self.list_by_endpoint.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
                     'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -115,12 +112,9 @@ class CustomDomainsOperations(object):
     list_by_endpoint.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains'}
 
     def get(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
         """Gets an exisitng custom domain within an endpoint.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -144,7 +138,7 @@ class CustomDomainsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -187,13 +181,13 @@ class CustomDomainsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, host_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_domain_name, host_name, custom_headers=None, raw=False, **operation_config):
         custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
 
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -242,12 +236,9 @@ class CustomDomainsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, host_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_domain_name, host_name, custom_headers=None, raw=False, **operation_config):
         """Creates a new custom domain within an endpoint.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -272,7 +263,6 @@ class CustomDomainsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             custom_domain_name=custom_domain_name,
@@ -321,11 +311,11 @@ class CustomDomainsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -366,12 +356,9 @@ class CustomDomainsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing custom domain within an endpoint.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -393,7 +380,6 @@ class CustomDomainsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_name=endpoint_name,
             custom_domain_name=custom_domain_name,
@@ -440,12 +426,9 @@ class CustomDomainsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'}
 
     def disable_custom_https(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
         """Disable https delivery of the custom domain.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -469,7 +452,7 @@ class CustomDomainsOperations(object):
         # Construct URL
         url = self.disable_custom_https.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
@@ -511,12 +494,9 @@ class CustomDomainsOperations(object):
     disable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'}
 
     def enable_custom_https(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
         """Enable https delivery of the custom domain.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -540,7 +520,7 @@ class CustomDomainsOperations(object):
         # Construct URL
         url = self.enable_custom_https.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
             'customDomainName': self._serialize.url("custom_domain_name", custom_domain_name, 'str'),
