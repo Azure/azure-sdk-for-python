@@ -50,11 +50,6 @@ class VirtualMachineScaleSetVMProfile(Model):
      values include: 'Regular', 'Low'
     :type priority: str or
      ~azure.mgmt.compute.v2017_12_01.models.VirtualMachinePriorityTypes
-    :param eviction_policy: Specifies the eviction policy for virtual machines
-     in the low priority scale set. <br><br>Minimum api-version:
-     2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
-    :type eviction_policy: str or
-     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineEvictionPolicyTypes
     """
 
     _attribute_map = {
@@ -65,7 +60,6 @@ class VirtualMachineScaleSetVMProfile(Model):
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'str'},
-        'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -77,4 +71,3 @@ class VirtualMachineScaleSetVMProfile(Model):
         self.extension_profile = kwargs.get('extension_profile', None)
         self.license_type = kwargs.get('license_type', None)
         self.priority = kwargs.get('priority', None)
-        self.eviction_policy = kwargs.get('eviction_policy', None)
