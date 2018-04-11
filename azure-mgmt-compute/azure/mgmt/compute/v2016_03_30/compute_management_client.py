@@ -16,10 +16,10 @@ from .version import VERSION
 from .operations.availability_sets_operations import AvailabilitySetsOperations
 from .operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
-from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_images_operations import VirtualMachineImagesOperations
 from .operations.usage_operations import UsageOperations
 from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations
+from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from . import models
@@ -71,14 +71,14 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_extension_images: azure.mgmt.compute.v2016_03_30.operations.VirtualMachineExtensionImagesOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensions operations
     :vartype virtual_machine_extensions: azure.mgmt.compute.v2016_03_30.operations.VirtualMachineExtensionsOperations
-    :ivar virtual_machines: VirtualMachines operations
-    :vartype virtual_machines: azure.mgmt.compute.v2016_03_30.operations.VirtualMachinesOperations
     :ivar virtual_machine_images: VirtualMachineImages operations
     :vartype virtual_machine_images: azure.mgmt.compute.v2016_03_30.operations.VirtualMachineImagesOperations
     :ivar usage: Usage operations
     :vartype usage: azure.mgmt.compute.v2016_03_30.operations.UsageOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
     :vartype virtual_machine_sizes: azure.mgmt.compute.v2016_03_30.operations.VirtualMachineSizesOperations
+    :ivar virtual_machines: VirtualMachines operations
+    :vartype virtual_machines: azure.mgmt.compute.v2016_03_30.operations.VirtualMachinesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
     :vartype virtual_machine_scale_sets: azure.mgmt.compute.v2016_03_30.operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
@@ -111,13 +111,13 @@ class ComputeManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_images = VirtualMachineImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usage = UsageOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
