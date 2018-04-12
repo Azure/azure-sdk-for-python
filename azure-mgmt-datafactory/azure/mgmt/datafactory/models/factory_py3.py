@@ -39,6 +39,9 @@ class Factory(Resource):
     :vartype create_time: datetime
     :ivar version: Version of the factory.
     :vartype version: str
+    :param vsts_configuration: VSTS repo information of the factory.
+    :type vsts_configuration:
+     ~azure.mgmt.datafactory.models.FactoryVSTSConfiguration
     """
 
     _validation = {
@@ -61,12 +64,14 @@ class Factory(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
         'version': {'key': 'properties.version', 'type': 'str'},
+        'vsts_configuration': {'key': 'properties.vstsConfiguration', 'type': 'FactoryVSTSConfiguration'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, additional_properties=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, additional_properties=None, identity=None, vsts_configuration=None, **kwargs) -> None:
         super(Factory, self).__init__(location=location, tags=tags, **kwargs)
         self.additional_properties = additional_properties
         self.identity = identity
         self.provisioning_state = None
         self.create_time = None
         self.version = None
+        self.vsts_configuration = vsts_configuration
