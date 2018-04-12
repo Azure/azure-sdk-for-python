@@ -37,20 +37,16 @@ class DataFactoryManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param location_id: The location identifier.
-    :type location_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, location_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if location_id is None:
-            raise ValueError("Parameter 'location_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -61,7 +57,6 @@ class DataFactoryManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.location_id = location_id
 
 
 class DataFactoryManagementClient(object):
@@ -98,15 +93,13 @@ class DataFactoryManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param location_id: The location identifier.
-    :type location_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, location_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = DataFactoryManagementClientConfiguration(credentials, subscription_id, location_id, base_url)
+        self.config = DataFactoryManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

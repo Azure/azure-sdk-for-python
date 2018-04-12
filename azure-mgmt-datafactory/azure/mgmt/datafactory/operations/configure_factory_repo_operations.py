@@ -37,9 +37,11 @@ class ConfigureFactoryRepoOperations(object):
         self.config = config
 
     def update(
-            self, factory_repo_update, custom_headers=None, raw=False, **operation_config):
+            self, location_id, factory_repo_update, custom_headers=None, raw=False, **operation_config):
         """Updates a factory's repo information.
 
+        :param location_id: The location identifier.
+        :type location_id: str
         :param factory_repo_update: Update factory repo request definition.
         :type factory_repo_update:
          ~azure.mgmt.datafactory.models.FactoryRepoUpdate
@@ -58,7 +60,7 @@ class ConfigureFactoryRepoOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'locationId': self._serialize.url("self.config.location_id", self.config.location_id, 'str')
+            'locationId': self._serialize.url("location_id", location_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
