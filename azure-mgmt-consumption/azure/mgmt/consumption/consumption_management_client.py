@@ -13,8 +13,16 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from msrest.pipeline import ClientRawResponse
+import uuid
 from .operations.usage_details_operations import UsageDetailsOperations
+from .operations.usage_details_by_billing_account_operations import UsageDetailsByBillingAccountOperations
+from .operations.usage_details_by_department_operations import UsageDetailsByDepartmentOperations
+from .operations.usage_details_by_enrollment_account_operations import UsageDetailsByEnrollmentAccountOperations
 from .operations.marketplaces_operations import MarketplacesOperations
+from .operations.marketplaces_by_billing_account_operations import MarketplacesByBillingAccountOperations
+from .operations.marketplaces_by_department_operations import MarketplacesByDepartmentOperations
+from .operations.marketplaces_by_enrollment_accounts_operations import MarketplacesByEnrollmentAccountsOperations
 from .operations.reservations_summaries_operations import ReservationsSummariesOperations
 from .operations.reservations_details_operations import ReservationsDetailsOperations
 from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
@@ -33,16 +41,28 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param billing_account_id: BillingAccount ID
+    :type billing_account_id: str
+    :param department_id: Department ID
+    :type department_id: str
+    :param enrollment_account_id: EnrollmentAccount ID
+    :type enrollment_account_id: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, billing_account_id, department_id, enrollment_account_id, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
+        if billing_account_id is None:
+            raise ValueError("Parameter 'billing_account_id' must not be None.")
+        if department_id is None:
+            raise ValueError("Parameter 'department_id' must not be None.")
+        if enrollment_account_id is None:
+            raise ValueError("Parameter 'enrollment_account_id' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
@@ -54,6 +74,9 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.billing_account_id = billing_account_id
+        self.department_id = department_id
+        self.enrollment_account_id = enrollment_account_id
         self.subscription_id = subscription_id
 
 
@@ -65,8 +88,20 @@ class ConsumptionManagementClient(object):
 
     :ivar usage_details: UsageDetails operations
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :ivar usage_details_by_billing_account: UsageDetailsByBillingAccount operations
+    :vartype usage_details_by_billing_account: azure.mgmt.consumption.operations.UsageDetailsByBillingAccountOperations
+    :ivar usage_details_by_department: UsageDetailsByDepartment operations
+    :vartype usage_details_by_department: azure.mgmt.consumption.operations.UsageDetailsByDepartmentOperations
+    :ivar usage_details_by_enrollment_account: UsageDetailsByEnrollmentAccount operations
+    :vartype usage_details_by_enrollment_account: azure.mgmt.consumption.operations.UsageDetailsByEnrollmentAccountOperations
     :ivar marketplaces: Marketplaces operations
     :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
+    :ivar marketplaces_by_billing_account: MarketplacesByBillingAccount operations
+    :vartype marketplaces_by_billing_account: azure.mgmt.consumption.operations.MarketplacesByBillingAccountOperations
+    :ivar marketplaces_by_department: MarketplacesByDepartment operations
+    :vartype marketplaces_by_department: azure.mgmt.consumption.operations.MarketplacesByDepartmentOperations
+    :ivar marketplaces_by_enrollment_accounts: MarketplacesByEnrollmentAccounts operations
+    :vartype marketplaces_by_enrollment_accounts: azure.mgmt.consumption.operations.MarketplacesByEnrollmentAccountsOperations
     :ivar reservations_summaries: ReservationsSummaries operations
     :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
     :ivar reservations_details: ReservationsDetails operations
@@ -85,15 +120,21 @@ class ConsumptionManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param billing_account_id: BillingAccount ID
+    :type billing_account_id: str
+    :param department_id: Department ID
+    :type department_id: str
+    :param enrollment_account_id: EnrollmentAccount ID
+    :type enrollment_account_id: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, billing_account_id, department_id, enrollment_account_id, subscription_id, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, billing_account_id, department_id, enrollment_account_id, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -103,7 +144,19 @@ class ConsumptionManagementClient(object):
 
         self.usage_details = UsageDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details_by_billing_account = UsageDetailsByBillingAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details_by_department = UsageDetailsByDepartmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usage_details_by_enrollment_account = UsageDetailsByEnrollmentAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.marketplaces = MarketplacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.marketplaces_by_billing_account = MarketplacesByBillingAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.marketplaces_by_department = MarketplacesByDepartmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.marketplaces_by_enrollment_accounts = MarketplacesByEnrollmentAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservations_summaries = ReservationsSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -119,3 +172,59 @@ class ConsumptionManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.cost_allocation_tags = CostAllocationTagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+
+    def balances_by_billing_account(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Gets the balances for a scope by billingAccountId. Balances are
+        available via this API only for May 1, 2014 or later.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Balance or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.Balance or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.balances_by_billing_account.metadata['url']
+        path_format_arguments = {
+            'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Balance', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    balances_by_billing_account.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/balances'}

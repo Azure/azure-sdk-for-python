@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class UsageDetailsOperations(object):
-    """UsageDetailsOperations operations.
+class MarketplacesByEnrollmentAccountsOperations(object):
+    """MarketplacesByEnrollmentAccountsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,71 +37,55 @@ class UsageDetailsOperations(object):
         self.config = config
 
     def list(
-            self, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the usage details for a scope by current billing period. Usage
-        details are available via this API only for May 1, 2014 or later.
+            self, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the marketplaces for a scope by enrollmentAccountId and current
+        billing period. Marketplaces are available via this API only for May 1,
+        2014 or later.
 
-        :param expand: May be used to expand the
-         properties/additionalProperties or properties/meterDetails within a
-         list of usage details. By default, these fields are not included when
-         listing usage details.
-        :type expand: str
-        :param filter: May be used to filter usageDetails by
+        :param filter: May be used to filter marketplaces by
          properties/usageEnd (Utc time), properties/usageStart (Utc time),
-         properties/resourceGroup, properties/instanceName,
-         properties/instanceId or tags. The filter supports 'eq', 'lt', 'gt',
-         'le', 'ge', and 'and'. It does not currently support 'ne', 'or', or
-         'not'. Tag filter is a key value pair string where key and value is
-         separated by a colon (:).
+         properties/resourceGroup, properties/instanceName or
+         properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
+         'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
         :type filter: str
+        :param top: May be used to limit the number of results to the most
+         recent N marketplaces.
+        :type top: int
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
          element, the value of the nextLink element will include a skiptoken
          parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
-        :param top: May be used to limit the number of results to the most
-         recent N usageDetails.
-        :type top: int
-        :param query_options: Additional parameters for the operation
-        :type query_options: ~azure.mgmt.consumption.models.QueryOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of UsageDetail
+        :return: An iterator like instance of Marketplace
         :rtype:
-         ~azure.mgmt.consumption.models.UsageDetailPaged[~azure.mgmt.consumption.models.UsageDetail]
+         ~azure.mgmt.consumption.models.MarketplacePaged[~azure.mgmt.consumption.models.Marketplace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        apply = None
-        if query_options is not None:
-            apply = query_options.apply
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'enrollmentAccountId': self._serialize.url("self.config.enrollment_account_id", self.config.enrollment_account_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if apply is not None:
-                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
             else:
                 url = next_link
@@ -128,85 +112,69 @@ class UsageDetailsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.UsageDetailPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MarketplacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.UsageDetailPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MarketplacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/usageDetails'}
+    list.metadata = {'url': '/providers/Microsoft.CostManagement/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Consumption/marketplaces'}
 
     def list_by_billing_period(
-            self, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the usage details for a scope by billing period. Usage details
-        are available via this API only for May 1, 2014 or later.
+            self, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the marketplaces for a scope by billing period and
+        enrollmentAccountId. Marketplaces are available via this API only for
+        May 1, 2014 or later.
 
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
-        :param expand: May be used to expand the
-         properties/additionalProperties or properties/meterDetails within a
-         list of usage details. By default, these fields are not included when
-         listing usage details.
-        :type expand: str
-        :param filter: May be used to filter usageDetails by
+        :param filter: May be used to filter marketplaces by
          properties/usageEnd (Utc time), properties/usageStart (Utc time),
          properties/resourceGroup, properties/instanceName or
          properties/instanceId. The filter supports 'eq', 'lt', 'gt', 'le',
          'ge', and 'and'. It does not currently support 'ne', 'or', or 'not'.
-         Tag filter is a key value pair string where key and value is separated
-         by a colon (:).
         :type filter: str
+        :param top: May be used to limit the number of results to the most
+         recent N marketplaces.
+        :type top: int
         :param skiptoken: Skiptoken is only used if a previous operation
          returned a partial result. If a previous response contains a nextLink
          element, the value of the nextLink element will include a skiptoken
          parameter that specifies a starting point to use for subsequent calls.
         :type skiptoken: str
-        :param top: May be used to limit the number of results to the most
-         recent N usageDetails.
-        :type top: int
-        :param query_options: Additional parameters for the operation
-        :type query_options: ~azure.mgmt.consumption.models.QueryOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of UsageDetail
+        :return: An iterator like instance of Marketplace
         :rtype:
-         ~azure.mgmt.consumption.models.UsageDetailPaged[~azure.mgmt.consumption.models.UsageDetail]
+         ~azure.mgmt.consumption.models.MarketplacePaged[~azure.mgmt.consumption.models.Marketplace]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        apply = None
-        if query_options is not None:
-            apply = query_options.apply
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
                 url = self.list_by_billing_period.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'enrollmentAccountId': self._serialize.url("self.config.enrollment_account_id", self.config.enrollment_account_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if skiptoken is not None:
-                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if apply is not None:
-                    query_parameters['$apply'] = self._serialize.query("apply", apply, 'str')
 
             else:
                 url = next_link
@@ -233,12 +201,12 @@ class UsageDetailsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.UsageDetailPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MarketplacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.UsageDetailPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MarketplacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_billing_period.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/usageDetails'}
+    list_by_billing_period.metadata = {'url': '/providers/Microsoft.CostManagement/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/marketplaces'}

@@ -38,8 +38,9 @@ class MarketplacesOperations(object):
 
     def list(
             self, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the marketplaces for a scope by subscriptionId. Marketplaces are
-        available via this API only for May 1, 2014 or later.
+        """Lists the marketplaces for a scope by subscriptionId and current
+        billing period. Marketplaces are available via this API only for May 1,
+        2014 or later.
 
         :param filter: May be used to filter marketplaces by
          properties/usageEnd (Utc time), properties/usageStart (Utc time),

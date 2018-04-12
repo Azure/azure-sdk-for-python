@@ -12,6 +12,13 @@
 from enum import Enum
 
 
+class BillingFrequency(Enum):
+
+    month = "Month"
+    quarter = "Quarter"
+    year = "Year"
+
+
 class CategoryType(Enum):
 
     cost = "Cost"
