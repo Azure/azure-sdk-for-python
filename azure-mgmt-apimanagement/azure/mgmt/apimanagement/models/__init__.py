@@ -40,6 +40,9 @@ try:
     from .operation_entity_base_contract_py3 import OperationEntityBaseContract
     from .operation_update_contract_py3 import OperationUpdateContract
     from .schema_contract_py3 import SchemaContract
+    from .issue_contract_py3 import IssueContract
+    from .issue_comment_contract_py3 import IssueCommentContract
+    from .issue_attachment_contract_py3 import IssueAttachmentContract
     from .logger_contract_py3 import LoggerContract
     from .diagnostic_contract_py3 import DiagnosticContract
     from .product_entity_base_parameters_py3 import ProductEntityBaseParameters
@@ -181,6 +184,9 @@ except (SyntaxError, ImportError):
     from .operation_entity_base_contract import OperationEntityBaseContract
     from .operation_update_contract import OperationUpdateContract
     from .schema_contract import SchemaContract
+    from .issue_contract import IssueContract
+    from .issue_comment_contract import IssueCommentContract
+    from .issue_attachment_contract import IssueAttachmentContract
     from .logger_contract import LoggerContract
     from .diagnostic_contract import DiagnosticContract
     from .product_entity_base_parameters import ProductEntityBaseParameters
@@ -301,6 +307,9 @@ from .product_contract_paged import ProductContractPaged
 from .schema_contract_paged import SchemaContractPaged
 from .diagnostic_contract_paged import DiagnosticContractPaged
 from .logger_contract_paged import LoggerContractPaged
+from .issue_contract_paged import IssueContractPaged
+from .issue_comment_contract_paged import IssueCommentContractPaged
+from .issue_attachment_contract_paged import IssueAttachmentContractPaged
 from .authorization_server_contract_paged import AuthorizationServerContractPaged
 from .backend_contract_paged import BackendContractPaged
 from .certificate_contract_paged import CertificateContractPaged
@@ -326,6 +335,7 @@ from .api_management_client_enums import (
     ContentFormat,
     SoapApiType,
     ApiType,
+    State,
     LoggerType,
     ProductState,
     GrantType,
@@ -383,6 +393,9 @@ __all__ = [
     'OperationEntityBaseContract',
     'OperationUpdateContract',
     'SchemaContract',
+    'IssueContract',
+    'IssueCommentContract',
+    'IssueAttachmentContract',
     'LoggerContract',
     'DiagnosticContract',
     'ProductEntityBaseParameters',
@@ -503,6 +516,9 @@ __all__ = [
     'SchemaContractPaged',
     'DiagnosticContractPaged',
     'LoggerContractPaged',
+    'IssueContractPaged',
+    'IssueCommentContractPaged',
+    'IssueAttachmentContractPaged',
     'AuthorizationServerContractPaged',
     'BackendContractPaged',
     'CertificateContractPaged',
@@ -527,6 +543,7 @@ __all__ = [
     'ContentFormat',
     'SoapApiType',
     'ApiType',
+    'State',
     'LoggerType',
     'ProductState',
     'GrantType',

@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class PolicyContract(Resource):
-    """Policy Contract details.
+class IssueAttachmentContract(Resource):
+    """Issue Attachment Contract details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,32 +26,36 @@ class PolicyContract(Resource):
     :vartype name: str
     :ivar type: Resource type for API Management resource.
     :vartype type: str
-    :param policy_content: Required. Json escaped Xml Encoded contents of the
-     Policy.
-    :type policy_content: str
-    :param content_format: Format of the policyContent. Possible values
-     include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'. Default value: "xml"
-     .
-    :type content_format: str or
-     ~azure.mgmt.apimanagement.models.PolicyContentFormat
+    :param title: Required. Filename by which the binary data will be saved.
+    :type title: str
+    :param content_format: Required. Either 'link' if content is provided via
+     an HTTP link or the MIME type of the Base64-encoded binary data provided
+     in the 'content' property.
+    :type content_format: str
+    :param content: Required. An HTTP link or Base64-encoded binary data.
+    :type content: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'policy_content': {'required': True},
+        'title': {'required': True},
+        'content_format': {'required': True},
+        'content': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'policy_content': {'key': 'properties.policyContent', 'type': 'str'},
+        'title': {'key': 'properties.title', 'type': 'str'},
         'content_format': {'key': 'properties.contentFormat', 'type': 'str'},
+        'content': {'key': 'properties.content', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(PolicyContract, self).__init__(**kwargs)
-        self.policy_content = kwargs.get('policy_content', None)
-        self.content_format = kwargs.get('content_format', "xml")
+    def __init__(self, *, title: str, content_format: str, content: str, **kwargs) -> None:
+        super(IssueAttachmentContract, self).__init__(, **kwargs)
+        self.title = title
+        self.content_format = content_format
+        self.content = content

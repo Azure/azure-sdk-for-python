@@ -26,6 +26,14 @@ from .operations.api_policy_operations import ApiPolicyOperations
 from .operations.api_schema_operations import ApiSchemaOperations
 from .operations.api_diagnostic_operations import ApiDiagnosticOperations
 from .operations.api_diagnostic_logger_operations import ApiDiagnosticLoggerOperations
+from .operations.api_issues_operations import ApiIssuesOperations
+from .operations.api_issue_operations import ApiIssueOperations
+from .operations.api_issue_comments_operations import ApiIssueCommentsOperations
+from .operations.api_issu_comment_operations import ApiIssuCommentOperations
+from .operations.api_issue_comment_operations import ApiIssueCommentOperations
+from .operations.api_issue_attachments_operations import ApiIssueAttachmentsOperations
+from .operations.api_issu_attachment_operations import ApiIssuAttachmentOperations
+from .operations.api_issue_attachment_operations import ApiIssueAttachmentOperations
 from .operations.authorization_server_operations import AuthorizationServerOperations
 from .operations.backend_operations import BackendOperations
 from .operations.certificate_operations import CertificateOperations
@@ -138,6 +146,22 @@ class ApiManagementClient(object):
     :vartype api_diagnostic: azure.mgmt.apimanagement.operations.ApiDiagnosticOperations
     :ivar api_diagnostic_logger: ApiDiagnosticLogger operations
     :vartype api_diagnostic_logger: azure.mgmt.apimanagement.operations.ApiDiagnosticLoggerOperations
+    :ivar api_issues: ApiIssues operations
+    :vartype api_issues: azure.mgmt.apimanagement.operations.ApiIssuesOperations
+    :ivar api_issue: ApiIssue operations
+    :vartype api_issue: azure.mgmt.apimanagement.operations.ApiIssueOperations
+    :ivar api_issue_comments: ApiIssueComments operations
+    :vartype api_issue_comments: azure.mgmt.apimanagement.operations.ApiIssueCommentsOperations
+    :ivar api_issu_comment: ApiIssuComment operations
+    :vartype api_issu_comment: azure.mgmt.apimanagement.operations.ApiIssuCommentOperations
+    :ivar api_issue_comment: ApiIssueComment operations
+    :vartype api_issue_comment: azure.mgmt.apimanagement.operations.ApiIssueCommentOperations
+    :ivar api_issue_attachments: ApiIssueAttachments operations
+    :vartype api_issue_attachments: azure.mgmt.apimanagement.operations.ApiIssueAttachmentsOperations
+    :ivar api_issu_attachment: ApiIssuAttachment operations
+    :vartype api_issu_attachment: azure.mgmt.apimanagement.operations.ApiIssuAttachmentOperations
+    :ivar api_issue_attachment: ApiIssueAttachment operations
+    :vartype api_issue_attachment: azure.mgmt.apimanagement.operations.ApiIssueAttachmentOperations
     :ivar authorization_server: AuthorizationServer operations
     :vartype authorization_server: azure.mgmt.apimanagement.operations.AuthorizationServerOperations
     :ivar backend: Backend operations
@@ -271,6 +295,22 @@ class ApiManagementClient(object):
         self.api_diagnostic = ApiDiagnosticOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.api_diagnostic_logger = ApiDiagnosticLoggerOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issues = ApiIssuesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue = ApiIssueOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue_comments = ApiIssueCommentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issu_comment = ApiIssuCommentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue_comment = ApiIssueCommentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue_attachments = ApiIssueAttachmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issu_attachment = ApiIssuAttachmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue_attachment = ApiIssueAttachmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.authorization_server = AuthorizationServerOperations(
             self._client, self.config, self._serialize, self._deserialize)
