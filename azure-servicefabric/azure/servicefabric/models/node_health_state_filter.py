@@ -62,7 +62,7 @@ class NodeHealthStateFilter(Model):
         'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
     }
 
-    def __init__(self, node_name_filter=None, health_state_filter=0):
-        super(NodeHealthStateFilter, self).__init__()
-        self.node_name_filter = node_name_filter
-        self.health_state_filter = health_state_filter
+    def __init__(self, **kwargs):
+        super(NodeHealthStateFilter, self).__init__(**kwargs)
+        self.node_name_filter = kwargs.get('node_name_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)

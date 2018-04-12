@@ -85,8 +85,8 @@ class DeployedApplicationHealthStateFilter(Model):
         'deployed_service_package_filters': {'key': 'DeployedServicePackageFilters', 'type': '[DeployedServicePackageHealthStateFilter]'},
     }
 
-    def __init__(self, node_name_filter=None, health_state_filter=0, deployed_service_package_filters=None):
-        super(DeployedApplicationHealthStateFilter, self).__init__()
-        self.node_name_filter = node_name_filter
-        self.health_state_filter = health_state_filter
-        self.deployed_service_package_filters = deployed_service_package_filters
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealthStateFilter, self).__init__(**kwargs)
+        self.node_name_filter = kwargs.get('node_name_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)
+        self.deployed_service_package_filters = kwargs.get('deployed_service_package_filters', None)

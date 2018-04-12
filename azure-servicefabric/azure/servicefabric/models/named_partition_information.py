@@ -16,13 +16,15 @@ class NamedPartitionInformation(PartitionInformation):
     """Describes the partition information for the name as a string that is based
     on partition schemes.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: An internal ID used by Service Fabric to uniquely identify a
      partition. This is a randomly generated GUID when the service was created.
-     The partition id is unique and does not change for the lifetime of the
-     service. If the same service was deleted and recreated the ids of its
+     The partition ID is unique and does not change for the lifetime of the
+     service. If the same service was deleted and recreated the IDs of its
      partitions would be different.
     :type id: str
-    :param service_partition_kind: Constant filled by server.
+    :param service_partition_kind: Required. Constant filled by server.
     :type service_partition_kind: str
     :param name: Name of the partition.
     :type name: str
@@ -38,7 +40,7 @@ class NamedPartitionInformation(PartitionInformation):
         'name': {'key': 'Name', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None):
-        super(NamedPartitionInformation, self).__init__(id=id)
-        self.name = name
+    def __init__(self, **kwargs):
+        super(NamedPartitionInformation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.service_partition_kind = 'Named'

@@ -35,8 +35,8 @@ class OperationStatus(Model):
         'type': {'key': 'Type', 'type': 'str'},
     }
 
-    def __init__(self, operation_id=None, state=None, type=None):
-        super(OperationStatus, self).__init__()
-        self.operation_id = operation_id
-        self.state = state
-        self.type = type
+    def __init__(self, **kwargs):
+        super(OperationStatus, self).__init__(**kwargs)
+        self.operation_id = kwargs.get('operation_id', None)
+        self.state = kwargs.get('state', None)
+        self.type = kwargs.get('type', None)

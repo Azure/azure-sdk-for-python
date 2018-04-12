@@ -19,20 +19,23 @@ class ServiceDescription(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: StatefulServiceDescription, StatelessServiceDescription
 
+    All required parameters must be populated in order to send to Azure.
+
     :param application_name: The name of the application, including the
      'fabric:' URI scheme.
     :type application_name: str
-    :param service_name: The full name of the service with 'fabric:' URI
-     scheme.
+    :param service_name: Required. The full name of the service with 'fabric:'
+     URI scheme.
     :type service_name: str
-    :param service_type_name: Name of the service type as specified in the
-     service manifest.
+    :param service_type_name: Required. Name of the service type as specified
+     in the service manifest.
     :type service_type_name: str
     :param initialization_data: The initialization data as an array of bytes.
      Initialization data is passed to service instances or replicas when they
      are created.
     :type initialization_data: list[int]
-    :param partition_description: The partition description as an object.
+    :param partition_description: Required. The partition description as an
+     object.
     :type partition_description:
      ~azure.servicefabric.models.PartitionSchemeDescription
     :param placement_constraints: The placement constraints as a string.
@@ -64,7 +67,10 @@ class ServiceDescription(Model):
     :param service_dns_name: The DNS name of the service. It requires the DNS
      system service to be enabled in Service Fabric cluster.
     :type service_dns_name: str
-    :param service_kind: Constant filled by server.
+    :param scaling_policies: Scaling policies for this service.
+    :type scaling_policies:
+     list[~azure.servicefabric.models.ScalingPolicyDescription]
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -89,6 +95,7 @@ class ServiceDescription(Model):
         'is_default_move_cost_specified': {'key': 'IsDefaultMoveCostSpecified', 'type': 'bool'},
         'service_package_activation_mode': {'key': 'ServicePackageActivationMode', 'type': 'str'},
         'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
+        'scaling_policies': {'key': 'ScalingPolicies', 'type': '[ScalingPolicyDescription]'},
         'service_kind': {'key': 'ServiceKind', 'type': 'str'},
     }
 
@@ -96,19 +103,20 @@ class ServiceDescription(Model):
         'service_kind': {'Stateful': 'StatefulServiceDescription', 'Stateless': 'StatelessServiceDescription'}
     }
 
-    def __init__(self, service_name, service_type_name, partition_description, application_name=None, initialization_data=None, placement_constraints=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified=None, service_package_activation_mode=None, service_dns_name=None):
-        super(ServiceDescription, self).__init__()
-        self.application_name = application_name
-        self.service_name = service_name
-        self.service_type_name = service_type_name
-        self.initialization_data = initialization_data
-        self.partition_description = partition_description
-        self.placement_constraints = placement_constraints
-        self.correlation_scheme = correlation_scheme
-        self.service_load_metrics = service_load_metrics
-        self.service_placement_policies = service_placement_policies
-        self.default_move_cost = default_move_cost
-        self.is_default_move_cost_specified = is_default_move_cost_specified
-        self.service_package_activation_mode = service_package_activation_mode
-        self.service_dns_name = service_dns_name
+    def __init__(self, **kwargs):
+        super(ServiceDescription, self).__init__(**kwargs)
+        self.application_name = kwargs.get('application_name', None)
+        self.service_name = kwargs.get('service_name', None)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.initialization_data = kwargs.get('initialization_data', None)
+        self.partition_description = kwargs.get('partition_description', None)
+        self.placement_constraints = kwargs.get('placement_constraints', None)
+        self.correlation_scheme = kwargs.get('correlation_scheme', None)
+        self.service_load_metrics = kwargs.get('service_load_metrics', None)
+        self.service_placement_policies = kwargs.get('service_placement_policies', None)
+        self.default_move_cost = kwargs.get('default_move_cost', None)
+        self.is_default_move_cost_specified = kwargs.get('is_default_move_cost_specified', None)
+        self.service_package_activation_mode = kwargs.get('service_package_activation_mode', None)
+        self.service_dns_name = kwargs.get('service_dns_name', None)
+        self.scaling_policies = kwargs.get('scaling_policies', None)
         self.service_kind = None

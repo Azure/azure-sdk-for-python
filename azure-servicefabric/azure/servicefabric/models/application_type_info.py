@@ -49,11 +49,11 @@ class ApplicationTypeInfo(Model):
         'application_type_definition_kind': {'key': 'ApplicationTypeDefinitionKind', 'type': 'str'},
     }
 
-    def __init__(self, name=None, version=None, default_parameter_list=None, status=None, status_details=None, application_type_definition_kind=None):
-        super(ApplicationTypeInfo, self).__init__()
-        self.name = name
-        self.version = version
-        self.default_parameter_list = default_parameter_list
-        self.status = status
-        self.status_details = status_details
-        self.application_type_definition_kind = application_type_definition_kind
+    def __init__(self, **kwargs):
+        super(ApplicationTypeInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)
+        self.default_parameter_list = kwargs.get('default_parameter_list', None)
+        self.status = kwargs.get('status', None)
+        self.status_details = kwargs.get('status_details', None)
+        self.application_type_definition_kind = kwargs.get('application_type_definition_kind', None)

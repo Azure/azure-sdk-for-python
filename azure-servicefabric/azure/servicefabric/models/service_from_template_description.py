@@ -17,14 +17,16 @@ class ServiceFromTemplateDescription(Model):
     defined in the application manifest.
     .
 
-    :param application_name: The name of the application, including the
-     'fabric:' URI scheme.
+    All required parameters must be populated in order to send to Azure.
+
+    :param application_name: Required. The name of the application, including
+     the 'fabric:' URI scheme.
     :type application_name: str
-    :param service_name: The full name of the service with 'fabric:' URI
-     scheme.
+    :param service_name: Required. The full name of the service with 'fabric:'
+     URI scheme.
     :type service_name: str
-    :param service_type_name: Name of the service type as specified in the
-     service manifest.
+    :param service_type_name: Required. Name of the service type as specified
+     in the service manifest.
     :type service_type_name: str
     :param initialization_data: The initialization data for the newly created
      service instance.
@@ -54,11 +56,11 @@ class ServiceFromTemplateDescription(Model):
         'service_dns_name': {'key': 'ServiceDnsName', 'type': 'str'},
     }
 
-    def __init__(self, application_name, service_name, service_type_name, initialization_data=None, service_package_activation_mode=None, service_dns_name=None):
-        super(ServiceFromTemplateDescription, self).__init__()
-        self.application_name = application_name
-        self.service_name = service_name
-        self.service_type_name = service_type_name
-        self.initialization_data = initialization_data
-        self.service_package_activation_mode = service_package_activation_mode
-        self.service_dns_name = service_dns_name
+    def __init__(self, **kwargs):
+        super(ServiceFromTemplateDescription, self).__init__(**kwargs)
+        self.application_name = kwargs.get('application_name', None)
+        self.service_name = kwargs.get('service_name', None)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.initialization_data = kwargs.get('initialization_data', None)
+        self.service_package_activation_mode = kwargs.get('service_package_activation_mode', None)
+        self.service_dns_name = kwargs.get('service_dns_name', None)

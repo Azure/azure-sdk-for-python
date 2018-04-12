@@ -55,8 +55,8 @@ class DeployedApplicationHealth(EntityHealth):
         'deployed_service_package_health_states': {'key': 'DeployedServicePackageHealthStates', 'type': '[DeployedServicePackageHealthState]'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, name=None, node_name=None, deployed_service_package_health_states=None):
-        super(DeployedApplicationHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics)
-        self.name = name
-        self.node_name = node_name
-        self.deployed_service_package_health_states = deployed_service_package_health_states
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealth, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.node_name = kwargs.get('node_name', None)
+        self.deployed_service_package_health_states = kwargs.get('deployed_service_package_health_states', None)

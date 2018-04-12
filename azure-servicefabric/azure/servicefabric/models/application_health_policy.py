@@ -38,7 +38,7 @@ class ApplicationHealthPolicy(Model):
     :type default_service_type_health_policy:
      ~azure.servicefabric.models.ServiceTypeHealthPolicy
     :param service_type_health_policy_map: The map with service type health
-     policy per service type name. The map is empty be default.
+     policy per service type name. The map is empty by default.
     :type service_type_health_policy_map:
      list[~azure.servicefabric.models.ServiceTypeHealthPolicyMapItem]
     """
@@ -50,9 +50,9 @@ class ApplicationHealthPolicy(Model):
         'service_type_health_policy_map': {'key': 'ServiceTypeHealthPolicyMap', 'type': '[ServiceTypeHealthPolicyMapItem]'},
     }
 
-    def __init__(self, consider_warning_as_error=False, max_percent_unhealthy_deployed_applications=0, default_service_type_health_policy=None, service_type_health_policy_map=None):
-        super(ApplicationHealthPolicy, self).__init__()
-        self.consider_warning_as_error = consider_warning_as_error
-        self.max_percent_unhealthy_deployed_applications = max_percent_unhealthy_deployed_applications
-        self.default_service_type_health_policy = default_service_type_health_policy
-        self.service_type_health_policy_map = service_type_health_policy_map
+    def __init__(self, **kwargs):
+        super(ApplicationHealthPolicy, self).__init__(**kwargs)
+        self.consider_warning_as_error = kwargs.get('consider_warning_as_error', False)
+        self.max_percent_unhealthy_deployed_applications = kwargs.get('max_percent_unhealthy_deployed_applications', 0)
+        self.default_service_type_health_policy = kwargs.get('default_service_type_health_policy', None)
+        self.service_type_health_policy_map = kwargs.get('service_type_health_policy_map', None)

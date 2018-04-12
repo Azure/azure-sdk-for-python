@@ -44,8 +44,8 @@ class ClusterHealthChunk(Model):
         'application_health_state_chunks': {'key': 'ApplicationHealthStateChunks', 'type': 'ApplicationHealthStateChunkList'},
     }
 
-    def __init__(self, health_state=None, node_health_state_chunks=None, application_health_state_chunks=None):
-        super(ClusterHealthChunk, self).__init__()
-        self.health_state = health_state
-        self.node_health_state_chunks = node_health_state_chunks
-        self.application_health_state_chunks = application_health_state_chunks
+    def __init__(self, **kwargs):
+        super(ClusterHealthChunk, self).__init__(**kwargs)
+        self.health_state = kwargs.get('health_state', None)
+        self.node_health_state_chunks = kwargs.get('node_health_state_chunks', None)
+        self.application_health_state_chunks = kwargs.get('application_health_state_chunks', None)

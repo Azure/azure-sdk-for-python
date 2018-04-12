@@ -34,7 +34,7 @@ class NodeTransitionProgress(Model):
         'node_transition_result': {'key': 'NodeTransitionResult', 'type': 'NodeTransitionResult'},
     }
 
-    def __init__(self, state=None, node_transition_result=None):
-        super(NodeTransitionProgress, self).__init__()
-        self.state = state
-        self.node_transition_result = node_transition_result
+    def __init__(self, **kwargs):
+        super(NodeTransitionProgress, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.node_transition_result = kwargs.get('node_transition_result', None)

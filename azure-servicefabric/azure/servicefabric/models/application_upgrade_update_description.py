@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class ApplicationUpgradeUpdateDescription(Model):
     """Describes the parameters for updating an ongoing application upgrade.
 
-    :param name: The name of the application, including the 'fabric:' URI
-     scheme.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the application, including the
+     'fabric:' URI scheme.
     :type name: str
-    :param upgrade_kind: The kind of upgrade out of the following possible
-     values. Possible values include: 'Invalid', 'Rolling'. Default value:
-     "Rolling" .
+    :param upgrade_kind: Required. The kind of upgrade out of the following
+     possible values. Possible values include: 'Invalid', 'Rolling'. Default
+     value: "Rolling" .
     :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
     :param application_health_policy: Defines a health policy used to evaluate
      the health of an application or one of its children entities.
@@ -44,9 +46,9 @@ class ApplicationUpgradeUpdateDescription(Model):
         'update_description': {'key': 'UpdateDescription', 'type': 'RollingUpgradeUpdateDescription'},
     }
 
-    def __init__(self, name, upgrade_kind="Rolling", application_health_policy=None, update_description=None):
-        super(ApplicationUpgradeUpdateDescription, self).__init__()
-        self.name = name
-        self.upgrade_kind = upgrade_kind
-        self.application_health_policy = application_health_policy
-        self.update_description = update_description
+    def __init__(self, **kwargs):
+        super(ApplicationUpgradeUpdateDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.upgrade_kind = kwargs.get('upgrade_kind', "Rolling")
+        self.application_health_policy = kwargs.get('application_health_policy', None)
+        self.update_description = kwargs.get('update_description', None)

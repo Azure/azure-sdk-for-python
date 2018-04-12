@@ -23,6 +23,6 @@ class ChaosEventWrapper(Model):
         'chaos_event': {'key': 'ChaosEvent', 'type': 'ChaosEvent'},
     }
 
-    def __init__(self, chaos_event=None):
-        super(ChaosEventWrapper, self).__init__()
-        self.chaos_event = chaos_event
+    def __init__(self, **kwargs):
+        super(ChaosEventWrapper, self).__init__(**kwargs)
+        self.chaos_event = kwargs.get('chaos_event', None)

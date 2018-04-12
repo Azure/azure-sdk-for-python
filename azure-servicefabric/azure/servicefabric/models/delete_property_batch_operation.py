@@ -19,9 +19,11 @@ class DeletePropertyBatchOperation(PropertyBatchOperation):
     the entire batch fails and cannot be committed in a transactional manner.
     .
 
-    :param property_name: The name of the Service Fabric property.
+    All required parameters must be populated in order to send to Azure.
+
+    :param property_name: Required. The name of the Service Fabric property.
     :type property_name: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
@@ -30,6 +32,11 @@ class DeletePropertyBatchOperation(PropertyBatchOperation):
         'kind': {'required': True},
     }
 
-    def __init__(self, property_name):
-        super(DeletePropertyBatchOperation, self).__init__(property_name=property_name)
+    _attribute_map = {
+        'property_name': {'key': 'PropertyName', 'type': 'str'},
+        'kind': {'key': 'Kind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DeletePropertyBatchOperation, self).__init__(**kwargs)
         self.kind = 'Delete'

@@ -40,8 +40,8 @@ class HealthStateCount(Model):
         'error_count': {'key': 'ErrorCount', 'type': 'long'},
     }
 
-    def __init__(self, ok_count=None, warning_count=None, error_count=None):
-        super(HealthStateCount, self).__init__()
-        self.ok_count = ok_count
-        self.warning_count = warning_count
-        self.error_count = error_count
+    def __init__(self, **kwargs):
+        super(HealthStateCount, self).__init__(**kwargs)
+        self.ok_count = kwargs.get('ok_count', None)
+        self.warning_count = kwargs.get('warning_count', None)
+        self.error_count = kwargs.get('error_count', None)

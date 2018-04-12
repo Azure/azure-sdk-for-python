@@ -16,8 +16,12 @@ class MonitoringPolicyDescription(Model):
     """Describes the parameters for monitoring an upgrade in Monitored mode.
 
     :param failure_action: The compensating action to perform when a Monitored
-     upgrade encounters monitoring policy or health policy violations. Possible
-     values include: 'Invalid', 'Rollback', 'Manual'
+     upgrade encounters monitoring policy or health policy violations.
+     Invalid indicates the failure action is invalid. Rollback specifies that
+     the upgrade will start rolling back automatically.
+     Manual indicates that the upgrade will switch to UnmonitoredManual upgrade
+     mode.
+     . Possible values include: 'Invalid', 'Rollback', 'Manual'
     :type failure_action: str or ~azure.servicefabric.models.FailureAction
     :param health_check_wait_duration_in_milliseconds: The amount of time to
      wait after completing an upgrade domain before applying health policies.
@@ -60,11 +64,11 @@ class MonitoringPolicyDescription(Model):
         'upgrade_domain_timeout_in_milliseconds': {'key': 'UpgradeDomainTimeoutInMilliseconds', 'type': 'str'},
     }
 
-    def __init__(self, failure_action=None, health_check_wait_duration_in_milliseconds=None, health_check_stable_duration_in_milliseconds=None, health_check_retry_timeout_in_milliseconds=None, upgrade_timeout_in_milliseconds=None, upgrade_domain_timeout_in_milliseconds=None):
-        super(MonitoringPolicyDescription, self).__init__()
-        self.failure_action = failure_action
-        self.health_check_wait_duration_in_milliseconds = health_check_wait_duration_in_milliseconds
-        self.health_check_stable_duration_in_milliseconds = health_check_stable_duration_in_milliseconds
-        self.health_check_retry_timeout_in_milliseconds = health_check_retry_timeout_in_milliseconds
-        self.upgrade_timeout_in_milliseconds = upgrade_timeout_in_milliseconds
-        self.upgrade_domain_timeout_in_milliseconds = upgrade_domain_timeout_in_milliseconds
+    def __init__(self, **kwargs):
+        super(MonitoringPolicyDescription, self).__init__(**kwargs)
+        self.failure_action = kwargs.get('failure_action', None)
+        self.health_check_wait_duration_in_milliseconds = kwargs.get('health_check_wait_duration_in_milliseconds', None)
+        self.health_check_stable_duration_in_milliseconds = kwargs.get('health_check_stable_duration_in_milliseconds', None)
+        self.health_check_retry_timeout_in_milliseconds = kwargs.get('health_check_retry_timeout_in_milliseconds', None)
+        self.upgrade_timeout_in_milliseconds = kwargs.get('upgrade_timeout_in_milliseconds', None)
+        self.upgrade_domain_timeout_in_milliseconds = kwargs.get('upgrade_domain_timeout_in_milliseconds', None)

@@ -55,7 +55,7 @@ class ClusterHealth(EntityHealth):
         'application_health_states': {'key': 'ApplicationHealthStates', 'type': '[ApplicationHealthState]'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, node_health_states=None, application_health_states=None):
-        super(ClusterHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics)
-        self.node_health_states = node_health_states
-        self.application_health_states = application_health_states
+    def __init__(self, **kwargs):
+        super(ClusterHealth, self).__init__(**kwargs)
+        self.node_health_states = kwargs.get('node_health_states', None)
+        self.application_health_states = kwargs.get('application_health_states', None)

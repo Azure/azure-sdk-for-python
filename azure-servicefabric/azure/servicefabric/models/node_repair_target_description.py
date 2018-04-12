@@ -18,7 +18,9 @@ class NodeRepairTargetDescription(RepairTargetDescriptionBase):
     directly from your code.
     .
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param node_names: The list of nodes targeted by a repair action.
     :type node_names: list[str]
@@ -33,7 +35,7 @@ class NodeRepairTargetDescription(RepairTargetDescriptionBase):
         'node_names': {'key': 'NodeNames', 'type': '[str]'},
     }
 
-    def __init__(self, node_names=None):
-        super(NodeRepairTargetDescription, self).__init__()
-        self.node_names = node_names
+    def __init__(self, **kwargs):
+        super(NodeRepairTargetDescription, self).__init__(**kwargs)
+        self.node_names = kwargs.get('node_names', None)
         self.kind = 'Node'

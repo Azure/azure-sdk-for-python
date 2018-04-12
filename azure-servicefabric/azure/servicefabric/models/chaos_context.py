@@ -23,13 +23,13 @@ class ChaosContext(Model):
 
     :param map: Describes a map that contains a collection of
      ChaosContextMapItem's.
-    :type map: object
+    :type map: dict[str, str]
     """
 
     _attribute_map = {
-        'map': {'key': 'Map', 'type': 'object'},
+        'map': {'key': 'Map', 'type': '{str}'},
     }
 
-    def __init__(self, map=None):
-        super(ChaosContext, self).__init__()
-        self.map = map
+    def __init__(self, **kwargs):
+        super(ChaosContext, self).__init__(**kwargs)
+        self.map = kwargs.get('map', None)

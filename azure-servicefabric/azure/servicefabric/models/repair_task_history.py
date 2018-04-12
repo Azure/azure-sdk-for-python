@@ -67,16 +67,16 @@ class RepairTaskHistory(Model):
         'restoring_health_check_end_utc_timestamp': {'key': 'RestoringHealthCheckEndUtcTimestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, created_utc_timestamp=None, claimed_utc_timestamp=None, preparing_utc_timestamp=None, approved_utc_timestamp=None, executing_utc_timestamp=None, restoring_utc_timestamp=None, completed_utc_timestamp=None, preparing_health_check_start_utc_timestamp=None, preparing_health_check_end_utc_timestamp=None, restoring_health_check_start_utc_timestamp=None, restoring_health_check_end_utc_timestamp=None):
-        super(RepairTaskHistory, self).__init__()
-        self.created_utc_timestamp = created_utc_timestamp
-        self.claimed_utc_timestamp = claimed_utc_timestamp
-        self.preparing_utc_timestamp = preparing_utc_timestamp
-        self.approved_utc_timestamp = approved_utc_timestamp
-        self.executing_utc_timestamp = executing_utc_timestamp
-        self.restoring_utc_timestamp = restoring_utc_timestamp
-        self.completed_utc_timestamp = completed_utc_timestamp
-        self.preparing_health_check_start_utc_timestamp = preparing_health_check_start_utc_timestamp
-        self.preparing_health_check_end_utc_timestamp = preparing_health_check_end_utc_timestamp
-        self.restoring_health_check_start_utc_timestamp = restoring_health_check_start_utc_timestamp
-        self.restoring_health_check_end_utc_timestamp = restoring_health_check_end_utc_timestamp
+    def __init__(self, **kwargs):
+        super(RepairTaskHistory, self).__init__(**kwargs)
+        self.created_utc_timestamp = kwargs.get('created_utc_timestamp', None)
+        self.claimed_utc_timestamp = kwargs.get('claimed_utc_timestamp', None)
+        self.preparing_utc_timestamp = kwargs.get('preparing_utc_timestamp', None)
+        self.approved_utc_timestamp = kwargs.get('approved_utc_timestamp', None)
+        self.executing_utc_timestamp = kwargs.get('executing_utc_timestamp', None)
+        self.restoring_utc_timestamp = kwargs.get('restoring_utc_timestamp', None)
+        self.completed_utc_timestamp = kwargs.get('completed_utc_timestamp', None)
+        self.preparing_health_check_start_utc_timestamp = kwargs.get('preparing_health_check_start_utc_timestamp', None)
+        self.preparing_health_check_end_utc_timestamp = kwargs.get('preparing_health_check_end_utc_timestamp', None)
+        self.restoring_health_check_start_utc_timestamp = kwargs.get('restoring_health_check_start_utc_timestamp', None)
+        self.restoring_health_check_end_utc_timestamp = kwargs.get('restoring_health_check_end_utc_timestamp', None)

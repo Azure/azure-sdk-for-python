@@ -19,7 +19,9 @@ class RepairTask(Model):
     directly from your code.
     .
 
-    :param task_id: The ID of the repair task.
+    All required parameters must be populated in order to send to Azure.
+
+    :param task_id: Required. The ID of the repair task.
     :type task_id: str
     :param version: The version of the repair task.
      When creating a new repair task, the version must be set to zero.  When
@@ -34,10 +36,10 @@ class RepairTask(Model):
      other informational details.
      May be set when the repair task is created, and is immutable once set.
     :type description: str
-    :param state: The workflow state of the repair task. Valid initial states
-     are Created, Claimed, and Preparing. Possible values include: 'Invalid',
-     'Created', 'Claimed', 'Preparing', 'Approved', 'Executing', 'Restoring',
-     'Completed'
+    :param state: Required. The workflow state of the repair task. Valid
+     initial states are Created, Claimed, and Preparing. Possible values
+     include: 'Invalid', 'Created', 'Claimed', 'Preparing', 'Approved',
+     'Executing', 'Restoring', 'Completed'
     :type state: str or ~azure.servicefabric.models.State
     :param flags: A bitwise-OR of the following values, which gives additional
      details about the status of the repair task.
@@ -45,8 +47,8 @@ class RepairTask(Model):
      - 2 - Abort of the repair has been requested
      - 4 - Approval of the repair was forced via client request
     :type flags: int
-    :param action: The requested repair action. Must be specified when the
-     repair task is created, and is immutable once set.
+    :param action: Required. The requested repair action. Must be specified
+     when the repair task is created, and is immutable once set.
     :type action: str
     :param target: The target object determines what actions the system will
      take to prepare for the impact of the repair, prior to approving execution
@@ -130,23 +132,23 @@ class RepairTask(Model):
         'perform_restoring_health_check': {'key': 'PerformRestoringHealthCheck', 'type': 'bool'},
     }
 
-    def __init__(self, task_id, state, action, version=None, description=None, flags=None, target=None, executor=None, executor_data=None, impact=None, result_status=None, result_code=None, result_details=None, history=None, preparing_health_check_state=None, restoring_health_check_state=None, perform_preparing_health_check=None, perform_restoring_health_check=None):
-        super(RepairTask, self).__init__()
-        self.task_id = task_id
-        self.version = version
-        self.description = description
-        self.state = state
-        self.flags = flags
-        self.action = action
-        self.target = target
-        self.executor = executor
-        self.executor_data = executor_data
-        self.impact = impact
-        self.result_status = result_status
-        self.result_code = result_code
-        self.result_details = result_details
-        self.history = history
-        self.preparing_health_check_state = preparing_health_check_state
-        self.restoring_health_check_state = restoring_health_check_state
-        self.perform_preparing_health_check = perform_preparing_health_check
-        self.perform_restoring_health_check = perform_restoring_health_check
+    def __init__(self, **kwargs):
+        super(RepairTask, self).__init__(**kwargs)
+        self.task_id = kwargs.get('task_id', None)
+        self.version = kwargs.get('version', None)
+        self.description = kwargs.get('description', None)
+        self.state = kwargs.get('state', None)
+        self.flags = kwargs.get('flags', None)
+        self.action = kwargs.get('action', None)
+        self.target = kwargs.get('target', None)
+        self.executor = kwargs.get('executor', None)
+        self.executor_data = kwargs.get('executor_data', None)
+        self.impact = kwargs.get('impact', None)
+        self.result_status = kwargs.get('result_status', None)
+        self.result_code = kwargs.get('result_code', None)
+        self.result_details = kwargs.get('result_details', None)
+        self.history = kwargs.get('history', None)
+        self.preparing_health_check_state = kwargs.get('preparing_health_check_state', None)
+        self.restoring_health_check_state = kwargs.get('restoring_health_check_state', None)
+        self.perform_preparing_health_check = kwargs.get('perform_preparing_health_check', None)
+        self.perform_restoring_health_check = kwargs.get('perform_restoring_health_check', None)

@@ -25,7 +25,9 @@ class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolic
     domain due to failures, capacity limits, or other constraints.
     .
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     :param domain_name: The name of the domain that should used for placement
      as per this policy.
@@ -41,7 +43,7 @@ class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolic
         'domain_name': {'key': 'DomainName', 'type': 'str'},
     }
 
-    def __init__(self, domain_name=None):
-        super(ServicePlacementPreferPrimaryDomainPolicyDescription, self).__init__()
-        self.domain_name = domain_name
-        self.type = 'PreferPrimaryDomain'
+    def __init__(self, **kwargs):
+        super(ServicePlacementPreferPrimaryDomainPolicyDescription, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.type = 'PreferredPrimaryDomain'

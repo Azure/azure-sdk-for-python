@@ -28,7 +28,7 @@ class ImageStoreContent(Model):
         'store_folders': {'key': 'StoreFolders', 'type': '[FolderInfo]'},
     }
 
-    def __init__(self, store_files=None, store_folders=None):
-        super(ImageStoreContent, self).__init__()
-        self.store_files = store_files
-        self.store_folders = store_folders
+    def __init__(self, **kwargs):
+        super(ImageStoreContent, self).__init__(**kwargs)
+        self.store_files = kwargs.get('store_files', None)
+        self.store_folders = kwargs.get('store_folders', None)

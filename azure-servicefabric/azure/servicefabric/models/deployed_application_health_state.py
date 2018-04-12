@@ -36,7 +36,7 @@ class DeployedApplicationHealthState(EntityHealthState):
         'application_name': {'key': 'ApplicationName', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, node_name=None, application_name=None):
-        super(DeployedApplicationHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.node_name = node_name
-        self.application_name = application_name
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealthState, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.application_name = kwargs.get('application_name', None)

@@ -38,7 +38,7 @@ class DeployedApplicationHealthStateChunk(EntityHealthStateChunk):
         'deployed_service_package_health_state_chunks': {'key': 'DeployedServicePackageHealthStateChunks', 'type': 'DeployedServicePackageHealthStateChunkList'},
     }
 
-    def __init__(self, health_state=None, node_name=None, deployed_service_package_health_state_chunks=None):
-        super(DeployedApplicationHealthStateChunk, self).__init__(health_state=health_state)
-        self.node_name = node_name
-        self.deployed_service_package_health_state_chunks = deployed_service_package_health_state_chunks
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealthStateChunk, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.deployed_service_package_health_state_chunks = kwargs.get('deployed_service_package_health_state_chunks', None)

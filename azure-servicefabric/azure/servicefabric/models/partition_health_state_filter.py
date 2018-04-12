@@ -38,8 +38,8 @@ class PartitionHealthStateFilter(Model):
      The possible values are integer value of one of the following health
      states. Only partitions that match the filter are returned. All partitions
      are used to evaluate the cluster aggregated health state.
-     If not specified, default value is None, unless the partition id is
-     specified. If the filter has default value and partition id is specified,
+     If not specified, default value is None, unless the partition ID is
+     specified. If the filter has default value and partition ID is specified,
      the matching partition is returned.
      The state values are flag based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
@@ -79,8 +79,8 @@ class PartitionHealthStateFilter(Model):
         'replica_filters': {'key': 'ReplicaFilters', 'type': '[ReplicaHealthStateFilter]'},
     }
 
-    def __init__(self, partition_id_filter=None, health_state_filter=0, replica_filters=None):
-        super(PartitionHealthStateFilter, self).__init__()
-        self.partition_id_filter = partition_id_filter
-        self.health_state_filter = health_state_filter
-        self.replica_filters = replica_filters
+    def __init__(self, **kwargs):
+        super(PartitionHealthStateFilter, self).__init__(**kwargs)
+        self.partition_id_filter = kwargs.get('partition_id_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)
+        self.replica_filters = kwargs.get('replica_filters', None)

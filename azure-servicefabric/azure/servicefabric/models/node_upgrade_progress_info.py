@@ -32,8 +32,8 @@ class NodeUpgradeProgressInfo(Model):
         'pending_safety_checks': {'key': 'PendingSafetyChecks', 'type': '[SafetyCheckWrapper]'},
     }
 
-    def __init__(self, node_name=None, upgrade_phase=None, pending_safety_checks=None):
-        super(NodeUpgradeProgressInfo, self).__init__()
-        self.node_name = node_name
-        self.upgrade_phase = upgrade_phase
-        self.pending_safety_checks = pending_safety_checks
+    def __init__(self, **kwargs):
+        super(NodeUpgradeProgressInfo, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.upgrade_phase = kwargs.get('upgrade_phase', None)
+        self.pending_safety_checks = kwargs.get('pending_safety_checks', None)

@@ -30,7 +30,7 @@ class EntityKindHealthStateCount(Model):
         'health_state_count': {'key': 'HealthStateCount', 'type': 'HealthStateCount'},
     }
 
-    def __init__(self, entity_kind=None, health_state_count=None):
-        super(EntityKindHealthStateCount, self).__init__()
-        self.entity_kind = entity_kind
-        self.health_state_count = health_state_count
+    def __init__(self, **kwargs):
+        super(EntityKindHealthStateCount, self).__init__(**kwargs)
+        self.entity_kind = kwargs.get('entity_kind', None)
+        self.health_state_count = kwargs.get('health_state_count', None)

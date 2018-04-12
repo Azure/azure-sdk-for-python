@@ -65,8 +65,8 @@ class ServiceTypeHealthPolicy(Model):
         'max_percent_unhealthy_services': {'key': 'MaxPercentUnhealthyServices', 'type': 'int'},
     }
 
-    def __init__(self, max_percent_unhealthy_partitions_per_service=0, max_percent_unhealthy_replicas_per_partition=0, max_percent_unhealthy_services=0):
-        super(ServiceTypeHealthPolicy, self).__init__()
-        self.max_percent_unhealthy_partitions_per_service = max_percent_unhealthy_partitions_per_service
-        self.max_percent_unhealthy_replicas_per_partition = max_percent_unhealthy_replicas_per_partition
-        self.max_percent_unhealthy_services = max_percent_unhealthy_services
+    def __init__(self, **kwargs):
+        super(ServiceTypeHealthPolicy, self).__init__(**kwargs)
+        self.max_percent_unhealthy_partitions_per_service = kwargs.get('max_percent_unhealthy_partitions_per_service', 0)
+        self.max_percent_unhealthy_replicas_per_partition = kwargs.get('max_percent_unhealthy_replicas_per_partition', 0)
+        self.max_percent_unhealthy_services = kwargs.get('max_percent_unhealthy_services', 0)

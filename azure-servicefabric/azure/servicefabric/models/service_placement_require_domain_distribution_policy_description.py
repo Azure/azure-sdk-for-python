@@ -26,7 +26,9 @@ class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacemen
     be set.
     .
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     :param domain_name: The name of the domain that should used for placement
      as per this policy.
@@ -42,7 +44,7 @@ class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacemen
         'domain_name': {'key': 'DomainName', 'type': 'str'},
     }
 
-    def __init__(self, domain_name=None):
-        super(ServicePlacementRequireDomainDistributionPolicyDescription, self).__init__()
-        self.domain_name = domain_name
-        self.type = 'RequireDomainDistribution'
+    def __init__(self, **kwargs):
+        super(ServicePlacementRequireDomainDistributionPolicyDescription, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.type = 'RequiredDomainDistribution'

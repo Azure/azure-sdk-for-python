@@ -22,7 +22,9 @@ class PartitionSafetyCheck(SafetyCheck):
     WaitForPrimaryPlacementSafetyCheck, WaitForPrimarySwapSafetyCheck,
     WaitForReconfigurationSafetyCheck
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param partition_id: Id of the partition which is undergoing the safety
      check.
@@ -42,7 +44,7 @@ class PartitionSafetyCheck(SafetyCheck):
         'kind': {'EnsureAvailability': 'EnsureAvailabilitySafetyCheck', 'EnsurePartitionQuorum': 'EnsurePartitionQurumSafetyCheck', 'WaitForInbuildReplica': 'WaitForInbuildReplicaSafetyCheck', 'WaitForPrimaryPlacement': 'WaitForPrimaryPlacementSafetyCheck', 'WaitForPrimarySwap': 'WaitForPrimarySwapSafetyCheck', 'WaitForReconfiguration': 'WaitForReconfigurationSafetyCheck'}
     }
 
-    def __init__(self, partition_id=None):
-        super(PartitionSafetyCheck, self).__init__()
-        self.partition_id = partition_id
+    def __init__(self, **kwargs):
+        super(PartitionSafetyCheck, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
         self.kind = 'PartitionSafetyCheck'

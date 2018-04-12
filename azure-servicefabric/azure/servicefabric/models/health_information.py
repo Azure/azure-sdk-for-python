@@ -18,11 +18,13 @@ class HealthInformation(Model):
     queries.
     .
 
-    :param source_id: The source name which identifies the
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_id: Required. The source name which identifies the
      client/watchdog/system component which generated the health information.
     :type source_id: str
-    :param property: The property of the health information. An entity can
-     have health reports for different properties.
+    :param property: Required. The property of the health information. An
+     entity can have health reports for different properties.
      The property is a string and not a fixed enumeration to allow the reporter
      flexibility to categorize the state condition that triggers the report.
      For example, a reporter with SourceId "LocalWatchdog" can monitor the
@@ -35,12 +37,12 @@ class HealthInformation(Model):
      Together with the SourceId, the property uniquely identifies the health
      information.
     :type property: str
-    :param health_state: The health state of a Service Fabric entity such as
-     Cluster, Node, Application, Service, Partition, Replica etc. Possible
-     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+    :param health_state: Required. The health state of a Service Fabric entity
+     such as Cluster, Node, Application, Service, Partition, Replica etc.
+     Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
     :type health_state: str or ~azure.servicefabric.models.HealthState
     :param time_to_live_in_milli_seconds: The duration for which this health
-     report is valid. This field is using ISO8601 format for specifying the
+     report is valid. This field uses ISO8601 format for specifying the
      duration.
      When clients report periodically, they should send reports with higher
      frequency than time to live.
@@ -100,12 +102,12 @@ class HealthInformation(Model):
         'remove_when_expired': {'key': 'RemoveWhenExpired', 'type': 'bool'},
     }
 
-    def __init__(self, source_id, property, health_state, time_to_live_in_milli_seconds=None, description=None, sequence_number=None, remove_when_expired=None):
-        super(HealthInformation, self).__init__()
-        self.source_id = source_id
-        self.property = property
-        self.health_state = health_state
-        self.time_to_live_in_milli_seconds = time_to_live_in_milli_seconds
-        self.description = description
-        self.sequence_number = sequence_number
-        self.remove_when_expired = remove_when_expired
+    def __init__(self, **kwargs):
+        super(HealthInformation, self).__init__(**kwargs)
+        self.source_id = kwargs.get('source_id', None)
+        self.property = kwargs.get('property', None)
+        self.health_state = kwargs.get('health_state', None)
+        self.time_to_live_in_milli_seconds = kwargs.get('time_to_live_in_milli_seconds', None)
+        self.description = kwargs.get('description', None)
+        self.sequence_number = kwargs.get('sequence_number', None)
+        self.remove_when_expired = kwargs.get('remove_when_expired', None)

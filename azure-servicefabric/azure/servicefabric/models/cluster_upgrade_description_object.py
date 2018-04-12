@@ -25,7 +25,8 @@ class ClusterUpgradeDescriptionObject(Model):
      "Rolling" .
     :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
     :param rolling_upgrade_mode: The mode used to monitor health during a
-     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     rolling upgrade. The values are UnmonitoredAuto, UnmonitoredManual, and
+     Monitored. Possible values include: 'Invalid', 'UnmonitoredAuto',
      'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
     :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
     :param upgrade_replica_set_check_timeout_in_seconds: The maximum amount of
@@ -83,16 +84,16 @@ class ClusterUpgradeDescriptionObject(Model):
         'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
     }
 
-    def __init__(self, config_version=None, code_version=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds=None, force_restart=None, enable_delta_health_evaluation=None, monitoring_policy=None, cluster_health_policy=None, cluster_upgrade_health_policy=None, application_health_policy_map=None):
-        super(ClusterUpgradeDescriptionObject, self).__init__()
-        self.config_version = config_version
-        self.code_version = code_version
-        self.upgrade_kind = upgrade_kind
-        self.rolling_upgrade_mode = rolling_upgrade_mode
-        self.upgrade_replica_set_check_timeout_in_seconds = upgrade_replica_set_check_timeout_in_seconds
-        self.force_restart = force_restart
-        self.enable_delta_health_evaluation = enable_delta_health_evaluation
-        self.monitoring_policy = monitoring_policy
-        self.cluster_health_policy = cluster_health_policy
-        self.cluster_upgrade_health_policy = cluster_upgrade_health_policy
-        self.application_health_policy_map = application_health_policy_map
+    def __init__(self, **kwargs):
+        super(ClusterUpgradeDescriptionObject, self).__init__(**kwargs)
+        self.config_version = kwargs.get('config_version', None)
+        self.code_version = kwargs.get('code_version', None)
+        self.upgrade_kind = kwargs.get('upgrade_kind', "Rolling")
+        self.rolling_upgrade_mode = kwargs.get('rolling_upgrade_mode', "UnmonitoredAuto")
+        self.upgrade_replica_set_check_timeout_in_seconds = kwargs.get('upgrade_replica_set_check_timeout_in_seconds', None)
+        self.force_restart = kwargs.get('force_restart', None)
+        self.enable_delta_health_evaluation = kwargs.get('enable_delta_health_evaluation', None)
+        self.monitoring_policy = kwargs.get('monitoring_policy', None)
+        self.cluster_health_policy = kwargs.get('cluster_health_policy', None)
+        self.cluster_upgrade_health_policy = kwargs.get('cluster_upgrade_health_policy', None)
+        self.application_health_policy_map = kwargs.get('application_health_policy_map', None)

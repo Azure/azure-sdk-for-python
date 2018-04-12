@@ -16,9 +16,13 @@ class RollingUpgradeUpdateDescription(Model):
     """Describes the parameters for updating a rolling upgrade of application or
     cluster.
 
-    :param rolling_upgrade_mode: The mode used to monitor health during a
-     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
-     'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
+    All required parameters must be populated in order to send to Azure.
+
+    :param rolling_upgrade_mode: Required. The mode used to monitor health
+     during a rolling upgrade. The values are UnmonitoredAuto,
+     UnmonitoredManual, and Monitored. Possible values include: 'Invalid',
+     'UnmonitoredAuto', 'UnmonitoredManual', 'Monitored'. Default value:
+     "UnmonitoredAuto" .
     :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
     :param force_restart: If true, then processes are forcefully restarted
      during upgrade even when the code version has not changed (the upgrade
@@ -33,8 +37,12 @@ class RollingUpgradeUpdateDescription(Model):
      integer).
     :type replica_set_check_timeout_in_milliseconds: long
     :param failure_action: The compensating action to perform when a Monitored
-     upgrade encounters monitoring policy or health policy violations. Possible
-     values include: 'Invalid', 'Rollback', 'Manual'
+     upgrade encounters monitoring policy or health policy violations.
+     Invalid indicates the failure action is invalid. Rollback specifies that
+     the upgrade will start rolling back automatically.
+     Manual indicates that the upgrade will switch to UnmonitoredManual upgrade
+     mode.
+     . Possible values include: 'Invalid', 'Rollback', 'Manual'
     :type failure_action: str or ~azure.servicefabric.models.FailureAction
     :param health_check_wait_duration_in_milliseconds: The amount of time to
      wait after completing an upgrade domain before applying health policies.
@@ -84,14 +92,14 @@ class RollingUpgradeUpdateDescription(Model):
         'upgrade_domain_timeout_in_milliseconds': {'key': 'UpgradeDomainTimeoutInMilliseconds', 'type': 'str'},
     }
 
-    def __init__(self, rolling_upgrade_mode="UnmonitoredAuto", force_restart=None, replica_set_check_timeout_in_milliseconds=None, failure_action=None, health_check_wait_duration_in_milliseconds=None, health_check_stable_duration_in_milliseconds=None, health_check_retry_timeout_in_milliseconds=None, upgrade_timeout_in_milliseconds=None, upgrade_domain_timeout_in_milliseconds=None):
-        super(RollingUpgradeUpdateDescription, self).__init__()
-        self.rolling_upgrade_mode = rolling_upgrade_mode
-        self.force_restart = force_restart
-        self.replica_set_check_timeout_in_milliseconds = replica_set_check_timeout_in_milliseconds
-        self.failure_action = failure_action
-        self.health_check_wait_duration_in_milliseconds = health_check_wait_duration_in_milliseconds
-        self.health_check_stable_duration_in_milliseconds = health_check_stable_duration_in_milliseconds
-        self.health_check_retry_timeout_in_milliseconds = health_check_retry_timeout_in_milliseconds
-        self.upgrade_timeout_in_milliseconds = upgrade_timeout_in_milliseconds
-        self.upgrade_domain_timeout_in_milliseconds = upgrade_domain_timeout_in_milliseconds
+    def __init__(self, **kwargs):
+        super(RollingUpgradeUpdateDescription, self).__init__(**kwargs)
+        self.rolling_upgrade_mode = kwargs.get('rolling_upgrade_mode', "UnmonitoredAuto")
+        self.force_restart = kwargs.get('force_restart', None)
+        self.replica_set_check_timeout_in_milliseconds = kwargs.get('replica_set_check_timeout_in_milliseconds', None)
+        self.failure_action = kwargs.get('failure_action', None)
+        self.health_check_wait_duration_in_milliseconds = kwargs.get('health_check_wait_duration_in_milliseconds', None)
+        self.health_check_stable_duration_in_milliseconds = kwargs.get('health_check_stable_duration_in_milliseconds', None)
+        self.health_check_retry_timeout_in_milliseconds = kwargs.get('health_check_retry_timeout_in_milliseconds', None)
+        self.upgrade_timeout_in_milliseconds = kwargs.get('upgrade_timeout_in_milliseconds', None)
+        self.upgrade_domain_timeout_in_milliseconds = kwargs.get('upgrade_domain_timeout_in_milliseconds', None)

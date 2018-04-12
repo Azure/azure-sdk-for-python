@@ -83,9 +83,9 @@ class ClusterHealthPolicy(Model):
         'application_type_health_policy_map': {'key': 'ApplicationTypeHealthPolicyMap', 'type': '[ApplicationTypeHealthPolicyMapItem]'},
     }
 
-    def __init__(self, consider_warning_as_error=False, max_percent_unhealthy_nodes=0, max_percent_unhealthy_applications=0, application_type_health_policy_map=None):
-        super(ClusterHealthPolicy, self).__init__()
-        self.consider_warning_as_error = consider_warning_as_error
-        self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
-        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
-        self.application_type_health_policy_map = application_type_health_policy_map
+    def __init__(self, **kwargs):
+        super(ClusterHealthPolicy, self).__init__(**kwargs)
+        self.consider_warning_as_error = kwargs.get('consider_warning_as_error', False)
+        self.max_percent_unhealthy_nodes = kwargs.get('max_percent_unhealthy_nodes', 0)
+        self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', 0)
+        self.application_type_health_policy_map = kwargs.get('application_type_health_policy_map', None)

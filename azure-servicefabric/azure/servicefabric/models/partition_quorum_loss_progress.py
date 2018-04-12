@@ -30,7 +30,7 @@ class PartitionQuorumLossProgress(Model):
         'invoke_quorum_loss_result': {'key': 'InvokeQuorumLossResult', 'type': 'InvokeQuorumLossResult'},
     }
 
-    def __init__(self, state=None, invoke_quorum_loss_result=None):
-        super(PartitionQuorumLossProgress, self).__init__()
-        self.state = state
-        self.invoke_quorum_loss_result = invoke_quorum_loss_result
+    def __init__(self, **kwargs):
+        super(PartitionQuorumLossProgress, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.invoke_quorum_loss_result = kwargs.get('invoke_quorum_loss_result', None)

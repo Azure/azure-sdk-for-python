@@ -58,10 +58,10 @@ class ChaosTargetFilter(Model):
      If an application does not appear in this list, it can still be faulted in
      some Chaos iteration if the application ends up on a node of a node type
      that is included in NodeTypeInclusionList.
-     However if applicationX is tied to nodeTypeY through placement constraints
-     and applicationX is absent from ApplicationInclusionList and nodeTypeY is
-     absent from NodeTypeInclusionList, then applicationX will never be
-     faulted.
+     However, if applicationX is tied to nodeTypeY through placement
+     constraints and applicationX is absent from ApplicationInclusionList and
+     nodeTypeY is absent from NodeTypeInclusionList, then applicationX will
+     never be faulted.
      At most 1000 application names can be included in this list, to increase
      this number, a config upgrade is required for
      MaxNumberOfApplicationsInChaosEntityFilter configuration.
@@ -73,7 +73,7 @@ class ChaosTargetFilter(Model):
         'application_inclusion_list': {'key': 'ApplicationInclusionList', 'type': '[str]'},
     }
 
-    def __init__(self, node_type_inclusion_list=None, application_inclusion_list=None):
-        super(ChaosTargetFilter, self).__init__()
-        self.node_type_inclusion_list = node_type_inclusion_list
-        self.application_inclusion_list = application_inclusion_list
+    def __init__(self, **kwargs):
+        super(ChaosTargetFilter, self).__init__(**kwargs)
+        self.node_type_inclusion_list = kwargs.get('node_type_inclusion_list', None)
+        self.application_inclusion_list = kwargs.get('application_inclusion_list', None)

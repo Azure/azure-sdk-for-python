@@ -61,11 +61,11 @@ class ReplicatorQueueStatus(Model):
         'last_sequence_number': {'key': 'LastSequenceNumber', 'type': 'str'},
     }
 
-    def __init__(self, queue_utilization_percentage=None, queue_memory_size=None, first_sequence_number=None, completed_sequence_number=None, committed_sequence_number=None, last_sequence_number=None):
-        super(ReplicatorQueueStatus, self).__init__()
-        self.queue_utilization_percentage = queue_utilization_percentage
-        self.queue_memory_size = queue_memory_size
-        self.first_sequence_number = first_sequence_number
-        self.completed_sequence_number = completed_sequence_number
-        self.committed_sequence_number = committed_sequence_number
-        self.last_sequence_number = last_sequence_number
+    def __init__(self, **kwargs):
+        super(ReplicatorQueueStatus, self).__init__(**kwargs)
+        self.queue_utilization_percentage = kwargs.get('queue_utilization_percentage', None)
+        self.queue_memory_size = kwargs.get('queue_memory_size', None)
+        self.first_sequence_number = kwargs.get('first_sequence_number', None)
+        self.completed_sequence_number = kwargs.get('completed_sequence_number', None)
+        self.committed_sequence_number = kwargs.get('committed_sequence_number', None)
+        self.last_sequence_number = kwargs.get('last_sequence_number', None)

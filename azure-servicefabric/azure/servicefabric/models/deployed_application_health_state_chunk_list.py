@@ -28,6 +28,6 @@ class DeployedApplicationHealthStateChunkList(Model):
         'items': {'key': 'Items', 'type': '[DeployedApplicationHealthStateChunk]'},
     }
 
-    def __init__(self, items=None):
-        super(DeployedApplicationHealthStateChunkList, self).__init__()
-        self.items = items
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

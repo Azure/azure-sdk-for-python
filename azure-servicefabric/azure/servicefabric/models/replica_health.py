@@ -23,6 +23,8 @@ class ReplicaHealth(EntityHealth):
     sub-classes are: StatefulServiceReplicaHealth,
     StatelessServiceInstanceHealth
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The HealthState representing the
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
@@ -42,7 +44,7 @@ class ReplicaHealth(EntityHealth):
     :type health_statistics: ~azure.servicefabric.models.HealthStatistics
     :param partition_id: Id of the partition to which this replica belongs.
     :type partition_id: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -63,8 +65,8 @@ class ReplicaHealth(EntityHealth):
         'service_kind': {'Stateful': 'StatefulServiceReplicaHealth', 'Stateless': 'StatelessServiceInstanceHealth'}
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None, partition_id=None):
-        super(ReplicaHealth, self).__init__(aggregated_health_state=aggregated_health_state, health_events=health_events, unhealthy_evaluations=unhealthy_evaluations, health_statistics=health_statistics)
-        self.partition_id = partition_id
+    def __init__(self, **kwargs):
+        super(ReplicaHealth, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
         self.service_kind = None
         self.service_kind = 'ReplicaHealth'

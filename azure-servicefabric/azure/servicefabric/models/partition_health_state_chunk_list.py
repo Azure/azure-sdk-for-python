@@ -28,6 +28,6 @@ class PartitionHealthStateChunkList(Model):
         'items': {'key': 'Items', 'type': '[PartitionHealthStateChunk]'},
     }
 
-    def __init__(self, items=None):
-        super(PartitionHealthStateChunkList, self).__init__()
-        self.items = items
+    def __init__(self, **kwargs):
+        super(PartitionHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

@@ -35,9 +35,9 @@ class ClusterConfigurationUpgradeStatusInfo(Model):
         'details': {'key': 'Details', 'type': 'str'},
     }
 
-    def __init__(self, upgrade_state=None, progress_status=None, config_version=None, details=None):
-        super(ClusterConfigurationUpgradeStatusInfo, self).__init__()
-        self.upgrade_state = upgrade_state
-        self.progress_status = progress_status
-        self.config_version = config_version
-        self.details = details
+    def __init__(self, **kwargs):
+        super(ClusterConfigurationUpgradeStatusInfo, self).__init__(**kwargs)
+        self.upgrade_state = kwargs.get('upgrade_state', None)
+        self.progress_status = kwargs.get('progress_status', None)
+        self.config_version = kwargs.get('config_version', None)
+        self.details = kwargs.get('details', None)

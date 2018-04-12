@@ -63,9 +63,9 @@ class ApplicationMetricDescription(Model):
         'total_application_capacity': {'key': 'TotalApplicationCapacity', 'type': 'long'},
     }
 
-    def __init__(self, name=None, maximum_capacity=None, reservation_capacity=None, total_application_capacity=None):
-        super(ApplicationMetricDescription, self).__init__()
-        self.name = name
-        self.maximum_capacity = maximum_capacity
-        self.reservation_capacity = reservation_capacity
-        self.total_application_capacity = total_application_capacity
+    def __init__(self, **kwargs):
+        super(ApplicationMetricDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.maximum_capacity = kwargs.get('maximum_capacity', None)
+        self.reservation_capacity = kwargs.get('reservation_capacity', None)
+        self.total_application_capacity = kwargs.get('total_application_capacity', None)

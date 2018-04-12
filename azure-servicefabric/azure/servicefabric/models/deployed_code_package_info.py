@@ -70,15 +70,15 @@ class DeployedCodePackageInfo(Model):
         'main_entry_point': {'key': 'MainEntryPoint', 'type': 'CodePackageEntryPoint'},
     }
 
-    def __init__(self, name=None, version=None, service_manifest_name=None, service_package_activation_id=None, host_type=None, host_isolation_mode=None, status=None, run_frequency_interval=None, setup_entry_point=None, main_entry_point=None):
-        super(DeployedCodePackageInfo, self).__init__()
-        self.name = name
-        self.version = version
-        self.service_manifest_name = service_manifest_name
-        self.service_package_activation_id = service_package_activation_id
-        self.host_type = host_type
-        self.host_isolation_mode = host_isolation_mode
-        self.status = status
-        self.run_frequency_interval = run_frequency_interval
-        self.setup_entry_point = setup_entry_point
-        self.main_entry_point = main_entry_point
+    def __init__(self, **kwargs):
+        super(DeployedCodePackageInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)
+        self.host_type = kwargs.get('host_type', None)
+        self.host_isolation_mode = kwargs.get('host_isolation_mode', None)
+        self.status = kwargs.get('status', None)
+        self.run_frequency_interval = kwargs.get('run_frequency_interval', None)
+        self.setup_entry_point = kwargs.get('setup_entry_point', None)
+        self.main_entry_point = kwargs.get('main_entry_point', None)

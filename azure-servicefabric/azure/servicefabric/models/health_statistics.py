@@ -34,6 +34,6 @@ class HealthStatistics(Model):
         'health_state_count_list': {'key': 'HealthStateCountList', 'type': '[EntityKindHealthStateCount]'},
     }
 
-    def __init__(self, health_state_count_list=None):
-        super(HealthStatistics, self).__init__()
-        self.health_state_count_list = health_state_count_list
+    def __init__(self, **kwargs):
+        super(HealthStatistics, self).__init__(**kwargs)
+        self.health_state_count_list = kwargs.get('health_state_count_list', None)
