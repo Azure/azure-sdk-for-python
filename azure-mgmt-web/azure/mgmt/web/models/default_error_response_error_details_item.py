@@ -27,8 +27,8 @@ class DefaultErrorResponseErrorDetailsItem(Model):
     """
 
     _validation = {
-        'code': {'required': True, 'readonly': True},
-        'message': {'required': True, 'readonly': True},
+        'code': {'readonly': True},
+        'message': {'readonly': True},
         'target': {'readonly': True},
     }
 
