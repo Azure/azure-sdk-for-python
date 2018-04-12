@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Tag(Model):
-    """The tag.
+    """The tag resource.
 
     :param key: Tag key.
     :type key: str

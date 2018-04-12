@@ -28,7 +28,7 @@ class Tags(ProxyResource):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
-    :param tags: Tags.
+    :param tags: A list of Tag.
     :type tags: list[~azure.mgmt.consumption.models.Tag]
     """
 
