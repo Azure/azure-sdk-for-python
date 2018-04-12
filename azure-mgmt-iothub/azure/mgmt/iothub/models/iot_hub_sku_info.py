@@ -21,10 +21,10 @@ class IotHubSkuInfo(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the SKU. Possible values include: 'F1',
-     'S1', 'S2', 'S3'
+     'S1', 'S2', 'S3', 'B1', 'B2', 'B3'
     :type name: str or ~azure.mgmt.iothub.models.IotHubSku
     :ivar tier: The billing tier for the IoT hub. Possible values include:
-     'Free', 'Standard'
+     'Free', 'Standard', 'Basic'
     :vartype tier: str or ~azure.mgmt.iothub.models.IotHubSkuTier
     :param capacity: The number of provisioned IoT Hub units. See:
      https://docs.microsoft.com/azure/azure-subscription-service-limits#iot-hub-limits.
