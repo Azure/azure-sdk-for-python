@@ -8,20 +8,12 @@ import logging
 import argparse
 import time
 import threading
-import utils
+import os
+
+import tests
 from azure.eventhub import EventHubClient, Sender, EventData
 
-logger = utils.get_logger("send_test.log", logging.INFO)
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
-parser.add_argument("--payload", help="payload size", type=int, default=512)
-parser.add_argument("--batch", help="Number of events to send and wait", type=int, default=1)
-parser.add_argument("--conn-str", help="EventHub connection string")
-parser.add_argument("--eventhub", help="Name of EventHub")
-parser.add_argument("--address", help="Address URI to the EventHub entity")
-parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
-parser.add_argument("--sas-key", help="Shared access key")
+logger = tests.get_logger("send_test.log", logging.INFO)
 
 
 def check_send_successful(outcome, condition):
@@ -29,7 +21,7 @@ def check_send_successful(outcome, condition):
         print("Send failed {}".format(condition))
 
 
-def main(client):
+def main(client, args):
     sender = client.add_sender()
     client.run()
     deadline = time.time() + args.duration
@@ -62,8 +54,18 @@ def main(client):
     print("Sent total {}".format(total))
 
 
-if __name__ == '__main__':
-    args = parser.parse_args()
+def test_long_running_send():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
+    parser.add_argument("--payload", help="payload size", type=int, default=512)
+    parser.add_argument("--batch", help="Number of events to send and wait", type=int, default=1)
+    parser.add_argument("--conn-str", help="EventHub connection string", default=os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    parser.add_argument("--eventhub", help="Name of EventHub")
+    parser.add_argument("--address", help="Address URI to the EventHub entity")
+    parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
+    parser.add_argument("--sas-key", help="Shared access key")
+
+    args, _ = parser.parse_known_args()
     if args.conn_str:
         client = EventHubClient.from_connection_string(
             args.conn_str,
@@ -77,7 +79,9 @@ if __name__ == '__main__':
         raise ValueError("Must specify either '--conn-str' or '--address'")
 
     try:
-        main(client)
+        main(client, args)
     except KeyboardInterrupt:
         pass
 
+if __name__ == '__main__':
+    test_long_running_send()

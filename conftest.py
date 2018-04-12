@@ -9,7 +9,7 @@ import pytest
 import logging
 import sys
 
-from tests import MockEventProcessor
+from tests import get_logger
 from azure import eventhub
 from azure.eventhub import EventHubClient, Receiver, Offset
 from azure.eventprocessorhost import EventProcessorHost
@@ -20,19 +20,10 @@ from azure.eventprocessorhost import EventHubConfig
 from azure.eventprocessorhost.lease import Lease
 from azure.eventprocessorhost.partition_pump import PartitionPump
 from azure.eventprocessorhost.partition_manager import PartitionManager
+from azure.eventprocessorhost.abstract_event_processor import AbstractEventProcessor
 
 
-def get_logger(level):
-    uamqp_logger = logging.getLogger("uamqp")
-    if not uamqp_logger.handlers:
-        handler = logging.StreamHandler(stream=sys.stdout)
-        handler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
-        uamqp_logger.addHandler(handler)
-    uamqp_logger.setLevel(level)
-    return uamqp_logger
-
-
-log = get_logger(logging.INFO)
+log = get_logger(None, logging.INFO)
 
 @pytest.fixture()
 def live_eventhub_config():
@@ -147,3 +138,47 @@ def partition_pump(eph):
 def partition_manager(eph):
     partition_manager = PartitionManager(eph)
     return partition_manager
+
+
+class MockEventProcessor(AbstractEventProcessor):
+    """
+    Mock Implmentation of AbstractEventProcessor for testing
+    """
+    def __init__(self, params=None):
+        """
+        Init Event processor
+        """
+        self.params = params
+        self._msg_counter = 0
+
+    async def open_async(self, context):
+        """
+        Called by processor host to initialize the event processor.
+        """
+        logging.info("Connection established {}".format(context.partition_id))
+
+    async def close_async(self, context, reason):
+        """
+        Called by processor host to indicate that the event processor is being stopped.
+        (Params) Context:Information about the partition
+        """
+        logging.info("Connection closed (reason {}, id {}, offset {}, sq_number {})".format(
+            reason, context.partition_id, context.offset, context.sequence_number))
+
+    async def process_events_async(self, context, messages):
+        """
+        Called by the processor host when a batch of events has arrived.
+        This is where the real work of the event processor is done.
+        (Params) Context: Information about the partition, Messages: The events to be processed.
+        """
+        logging.info("Events processed {} {}".format(context.partition_id, messages))
+        await context.checkpoint_async()
+
+    async def process_error_async(self, context, error):
+        """
+        Called when the underlying client experiences an error while receiving.
+        EventProcessorHost will take care of recovering from the error and
+        continuing to pump messages,so no action is required from
+        (Params) Context: Information about the partition, Error: The error that occured.
+        """
+        logging.error("Event Processor Error {!r}".format(error))

@@ -13,12 +13,13 @@ import logging
 import asyncio
 import argparse
 import time
-import utils
+import os
+import tests
 from urllib.parse import quote_plus
 from azure.eventhub import Offset
 from azure.eventhub.async import EventHubClientAsync
 
-logger = utils.get_logger("recv_test.log", logging.INFO)
+logger = tests.get_logger("recv_test.log", logging.INFO)
 
 async def pump(_pid, receiver, _args, _dl):
     total = 0
@@ -49,20 +50,20 @@ async def pump(_pid, receiver, _args, _dl):
         print("Partition {} receiver failed: {}".format(_pid, e))
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=3600)
-parser.add_argument("--consumer", help="Consumer group name", default="$default")
-parser.add_argument("--partitions", help="Comma seperated partition IDs", default="0")
-parser.add_argument("--offset", help="Starting offset", default="-1")
-parser.add_argument("--conn-str", help="EventHub connection string")
-parser.add_argument("--eventhub", help="Name of EventHub")
-parser.add_argument("--address", help="Address URI to the EventHub entity")
-parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
-parser.add_argument("--sas-key", help="Shared access key")
+def test_long_running_receive():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
+    parser.add_argument("--consumer", help="Consumer group name", default="$default")
+    parser.add_argument("--partitions", help="Comma seperated partition IDs", default="0")
+    parser.add_argument("--offset", help="Starting offset", default="-1")
+    parser.add_argument("--conn-str", help="EventHub connection string", default=os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    parser.add_argument("--eventhub", help="Name of EventHub")
+    parser.add_argument("--address", help="Address URI to the EventHub entity")
+    parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
+    parser.add_argument("--sas-key", help="Shared access key")
 
-try:
     loop = asyncio.get_event_loop()
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args()
     if args.conn_str:
         client = EventHubClientAsync.from_connection_string(
             args.conn_str,
@@ -75,18 +76,23 @@ try:
     else:
         raise ValueError("Must specify either '--conn-str' or '--address'")
 
-    pumps = []
-    for pid in args.partitions.split(","):
-        receiver = client.add_async_receiver(
-            consumer_group=args.consumer,
-            partition=pid,
-            offset=Offset(args.offset),
-            prefetch=5000)
-        pumps.append(pump(pid, receiver, args, args.duration))
-    loop.run_until_complete(client.run_async())
-    loop.run_until_complete(asyncio.gather(*pumps))
-except:
-    raise
-finally:
-    loop.run_until_complete(client.stop_async())
-    loop.close()
+    try:
+        pumps = []
+        for pid in args.partitions.split(","):
+            receiver = client.add_async_receiver(
+                consumer_group=args.consumer,
+                partition=pid,
+                offset=Offset(args.offset),
+                prefetch=5000)
+            pumps.append(pump(pid, receiver, args, args.duration))
+        loop.run_until_complete(client.run_async())
+        loop.run_until_complete(asyncio.gather(*pumps))
+    except:
+        raise
+    finally:
+        loop.run_until_complete(client.stop_async())
+        loop.close()
+
+
+if __name__ == '__main__':
+    test_long_running_receive()
