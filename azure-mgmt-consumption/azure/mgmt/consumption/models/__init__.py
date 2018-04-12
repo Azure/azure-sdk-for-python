@@ -12,6 +12,9 @@
 from .meter_details import MeterDetails
 from .usage_detail import UsageDetail
 from .marketplace import Marketplace
+from .balance_properties_new_purchases_details_item import BalancePropertiesNewPurchasesDetailsItem
+from .balance_properties_adjustment_details_item import BalancePropertiesAdjustmentDetailsItem
+from .balance import Balance
 from .reservation_summaries import ReservationSummaries
 from .reservation_details import ReservationDetails
 from .reservation_recommendations import ReservationRecommendations
@@ -40,6 +43,8 @@ from .reservation_recommendations_paged import ReservationRecommendationsPaged
 from .budget_paged import BudgetPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
+    BillingFrequency,
+    PriceHidden,
     CategoryType,
     TimeGrainType,
     OperatorType,
@@ -50,6 +55,9 @@ __all__ = [
     'MeterDetails',
     'UsageDetail',
     'Marketplace',
+    'BalancePropertiesNewPurchasesDetailsItem',
+    'BalancePropertiesAdjustmentDetailsItem',
+    'Balance',
     'ReservationSummaries',
     'ReservationDetails',
     'ReservationRecommendations',
@@ -77,6 +85,8 @@ __all__ = [
     'ReservationRecommendationsPaged',
     'BudgetPaged',
     'OperationPaged',
+    'BillingFrequency',
+    'PriceHidden',
     'CategoryType',
     'TimeGrainType',
     'OperatorType',

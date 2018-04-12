@@ -37,11 +37,9 @@ class CostAllocationTagsOperations(object):
         self.config = config
 
     def get(
-            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Get cost allocation tags for a billing account.
 
-        :param billing_account_id: Azure Billing Account ID.
-        :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -56,7 +54,7 @@ class CostAllocationTagsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -94,14 +92,12 @@ class CostAllocationTagsOperations(object):
     get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costAllocationTags'}
 
     def create_or_update(
-            self, billing_account_id, e_tag=None, cost_allocation_tags=None, custom_headers=None, raw=False, **operation_config):
+            self, e_tag=None, cost_allocation_tags=None, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update cost allocation tags assiciated with
         a billing account. Update operation requires latest eTag to be set in
         the request mandatorily. You may obtain the latest eTag by performing a
         get operation. Create operation does not require eTag.
 
-        :param billing_account_id: Azure Billing Account ID.
-        :type billing_account_id: str
         :param e_tag: eTag of the resource. To handle concurrent update
          scenarion, this field will be used to determine whether the user is
          updating the latest version or not.
@@ -125,7 +121,7 @@ class CostAllocationTagsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
+            'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
