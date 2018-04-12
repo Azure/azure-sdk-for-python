@@ -21,7 +21,8 @@ from .operations.reservation_recommendations_operations import ReservationRecomm
 from .operations.budgets_operations import BudgetsOperations
 from .operations.operations import Operations
 from .operations.price_sheet_operations import PriceSheetOperations
-from .operations.cost_allocation_tags_operations import CostAllocationTagsOperations
+from .operations.cost_tags_operations import CostTagsOperations
+from .operations.tags_operations import TagsOperations
 from . import models
 
 
@@ -79,8 +80,10 @@ class ConsumptionManagementClient(object):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
-    :ivar cost_allocation_tags: CostAllocationTags operations
-    :vartype cost_allocation_tags: azure.mgmt.consumption.operations.CostAllocationTagsOperations
+    :ivar cost_tags: CostTags operations
+    :vartype cost_tags: azure.mgmt.consumption.operations.CostTagsOperations
+    :ivar tags: Tags operations
+    :vartype tags: azure.mgmt.consumption.operations.TagsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -117,5 +120,7 @@ class ConsumptionManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.cost_allocation_tags = CostAllocationTagsOperations(
+        self.cost_tags = CostTagsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)

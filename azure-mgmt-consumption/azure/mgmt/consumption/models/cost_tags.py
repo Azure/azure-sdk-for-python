@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class CostAllocationTags(ProxyResource):
-    """A cost allocation tag resource.
+class CostTags(ProxyResource):
+    """A cost tag resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,9 +28,8 @@ class CostAllocationTags(ProxyResource):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
-    :param cost_allocation_tags: Cost allocation tags.
-    :type cost_allocation_tags:
-     list[~azure.mgmt.consumption.models.CostAllocationTag]
+    :param cost_tags: Cost tags.
+    :type cost_tags: list[~azure.mgmt.consumption.models.CostTag]
     """
 
     _validation = {
@@ -44,9 +43,9 @@ class CostAllocationTags(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'cost_allocation_tags': {'key': 'properties.costAllocationTags', 'type': '[CostAllocationTag]'},
+        'cost_tags': {'key': 'properties.costTags', 'type': '[CostTag]'},
     }
 
-    def __init__(self, e_tag=None, cost_allocation_tags=None):
-        super(CostAllocationTags, self).__init__(e_tag=e_tag)
-        self.cost_allocation_tags = cost_allocation_tags
+    def __init__(self, e_tag=None, cost_tags=None):
+        super(CostTags, self).__init__(e_tag=e_tag)
+        self.cost_tags = cost_tags
