@@ -9,12 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .response import Response
-from msrest.exceptions import HttpOperationError
+from .response_base import ResponseBase
 
 
-class ErrorResponse(Response):
-    """The top-level response that represents a failed request.
+class Identifiable(ResponseBase):
+    """Defines the identity of a resource.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: Response
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,37 +27,23 @@ class ErrorResponse(Response):
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
-    :param errors: Required. A list of errors that describe the reasons why
-     the request failed.
-    :type errors:
-     list[~azure.cognitiveservices.language.spellcheck.models.Error]
     """
 
     _validation = {
         '_type': {'required': True},
         'id': {'readonly': True},
-        'errors': {'required': True},
     }
 
     _attribute_map = {
         '_type': {'key': '_type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[Error]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.errors = kwargs.get('errors', None)
-        self._type = 'ErrorResponse'
+    _subtype_map = {
+        '_type': {'Response': 'Response'}
+    }
 
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+    def __init__(self, **kwargs) -> None:
+        super(Identifiable, self).__init__(, **kwargs)
+        self.id = None
+        self._type = 'Identifiable'

@@ -51,10 +51,10 @@ class SpellingFlaggedToken(Model):
         'ping_url_suffix': {'key': 'pingUrlSuffix', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, offset: int, token: str, type="UnknownToken", **kwargs) -> None:
         super(SpellingFlaggedToken, self).__init__(**kwargs)
-        self.offset = kwargs.get('offset', None)
-        self.token = kwargs.get('token', None)
-        self.type = kwargs.get('type', "UnknownToken")
+        self.offset = offset
+        self.token = token
+        self.type = type
         self.suggestions = None
         self.ping_url_suffix = None
