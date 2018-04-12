@@ -79,7 +79,7 @@ def test_non_existing_entity_receiver(connection_str):
     try:
         client.run()
         with pytest.raises(EventHubError):
-            receiver.receive(timeout=2)
+            receiver.receive(timeout=5)
     except:
         raise
     finally:
@@ -93,7 +93,7 @@ async def test_non_existing_entity_receiver_async(connection_str):
     try:
         await client.run_async()
         with pytest.raises(EventHubError):
-            await receiver.receive(timeout=2)
+            await receiver.receive(timeout=5)
     except:
         raise
     finally:
@@ -108,7 +108,7 @@ def test_receive_from_invalid_partitions(connection_str):
         try:
             client.run()
             with pytest.raises(EventHubError):
-                receiver.receive(timeout=2)
+                receiver.receive(timeout=5)
         except:
             raise
         finally:
@@ -124,7 +124,7 @@ async def test_receive_from_invalid_partitions_async(connection_str):
         try:
             await client.run_async()
             with pytest.raises(EventHubError):
-                await receiver.receive(timeout=2)
+                await receiver.receive(timeout=5)
         except:
             raise
         finally:

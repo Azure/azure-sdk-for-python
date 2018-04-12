@@ -9,9 +9,17 @@ import pytest
 import logging
 import sys
 
-
+from tests import MockEventProcessor
 from azure import eventhub
 from azure.eventhub import EventHubClient, Receiver, Offset
+from azure.eventprocessorhost import EventProcessorHost
+from azure.eventprocessorhost import EventHubPartitionPump
+from azure.eventprocessorhost import AzureStorageCheckpointLeaseManager
+from azure.eventprocessorhost import AzureBlobLease
+from azure.eventprocessorhost import EventHubConfig
+from azure.eventprocessorhost.lease import Lease
+from azure.eventprocessorhost.partition_pump import PartitionPump
+from azure.eventprocessorhost.partition_manager import PartitionManager
 
 
 def get_logger(level):
@@ -52,7 +60,7 @@ def connection_str():
 
 @pytest.fixture()
 def receivers(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, debug=True)
     eh_hub_info = client.get_eventhub_info()
     partitions = eh_hub_info["partition_ids"]
 
@@ -83,3 +91,59 @@ def senders(connection_str):
     client.run()
     yield senders
     client.stop()
+
+
+@pytest.fixture()
+def storage_clm():
+    try:
+        storage_clm = AzureStorageCheckpointLeaseManager(
+            os.environ['AZURE_STORAGE_ACCOUNT'],
+            os.environ['AZURE_STORAGE_ACCESS_KEY'],
+            "lease")
+        return storage_clm
+    except KeyError:
+        pytest.skip("Live Storage configuration not found.")
+
+
+@pytest.fixture()
+def eph():
+    try:
+        storage_clm = AzureStorageCheckpointLeaseManager(
+            os.environ['AZURE_STORAGE_ACCOUNT'],
+            os.environ['AZURE_STORAGE_ACCESS_KEY'],
+            "lease")
+        NAMESPACE = os.environ.get('EVENT_HUB_NAMESPACE')
+        EVENTHUB = os.environ.get('EVENT_HUB_NAME')
+        USER = os.environ.get('EVENT_HUB_SAS_POLICY')
+        KEY = os.environ.get('EVENT_HUB_SAS_KEY')
+
+        eh_config = EventHubConfig(NAMESPACE, EVENTHUB, USER, KEY, consumer_group="$default")
+        host = EventProcessorHost(
+            MockEventProcessor,
+            eh_config,
+            storage_clm)
+    except KeyError:
+        pytest.skip("Live EventHub configuration not found.")
+    return host
+
+
+@pytest.fixture()
+def eh_partition_pump(eph):
+    lease = AzureBlobLease()
+    lease.with_partition_id("1")
+    partition_pump = EventHubPartitionPump(eph, lease)
+    return partition_pump
+
+
+@pytest.fixture()
+def partition_pump(eph):
+    lease = Lease()
+    lease.with_partition_id("1")
+    partition_pump = PartitionPump(eph, lease)
+    return partition_pump
+
+
+@pytest.fixture()
+def partition_manager(eph):
+    partition_manager = PartitionManager(eph)
+    return partition_manager

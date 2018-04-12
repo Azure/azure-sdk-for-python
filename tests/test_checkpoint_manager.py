@@ -80,15 +80,10 @@ def test_checkpointing(eph, storage_clm):
     local_checkpoint = loop.run_until_complete(storage_clm.create_checkpoint_if_not_exists_async("1"))
     assert local_checkpoint.partition_id == "1"
     assert local_checkpoint.offset == "-1"
-    print("getting lease")
     lease = loop.run_until_complete(storage_clm.get_lease_async("1"))
-    print("acquire lease")
     loop.run_until_complete(storage_clm.acquire_lease_async(lease))
-    print(3)
     loop.run_until_complete(storage_clm.update_checkpoint_async(lease, local_checkpoint))
-    print(4)
     cloud_checkpoint = loop.run_until_complete(storage_clm.get_checkpoint_async("1"))
-    print(5)
     lease.offset = cloud_checkpoint.offset
     lease.sequence_number = cloud_checkpoint.sequence_number
     assert cloud_checkpoint.partition_id == "1"
@@ -96,14 +91,9 @@ def test_checkpointing(eph, storage_clm):
     modify_checkpoint = cloud_checkpoint
     modify_checkpoint.offset = "512"
     modify_checkpoint.sequence_number = "32"
-    print("start sleep")
     time.sleep(35)
-    print(6)
     loop.run_until_complete(storage_clm.update_checkpoint_async(lease, modify_checkpoint))
-    print(7)
     cloud_checkpoint = loop.run_until_complete(storage_clm.get_checkpoint_async("1"))
     assert cloud_checkpoint.partition_id == "1"
     assert cloud_checkpoint.offset == "512"
-    print(8)
     loop.run_until_complete(storage_clm.release_lease_async(lease))
-    print(9)

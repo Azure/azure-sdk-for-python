@@ -318,6 +318,7 @@ class Sender:
         :type event_data: ~azure.eventhub.EventData
         :raises: ~azure.eventhub.EventHubError if the message fails to
          send.
+        :returns: The outcome of the message send ~uamqp.constants.MessageSendResult
         """
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
@@ -328,6 +329,8 @@ class Sender:
                 raise Sender._error(self._outcome, self._condition)
         except Exception as e:
             raise EventHubError("Send failed: {}".format(e))
+        else:
+            return self._outcome
 
     def transfer(self, event_data, callback=None):
         """
@@ -550,7 +553,10 @@ class EventData(object):
         The partition key of the event data object.
         :returns: bytes
         """
-        return self._annotations.get(self._partition_key, None)
+        try:
+            return self._annotations[self._partition_key]
+        except KeyError:
+            return self._annotations.get(EventData.PROP_PARTITION_KEY)
 
     @partition_key.setter
     def partition_key(self, value):
