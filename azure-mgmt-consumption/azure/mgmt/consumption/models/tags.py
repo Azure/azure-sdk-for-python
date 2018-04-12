@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class Tags(ProxyResource):
-    """A tag resource.
+    """A resource listing tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,8 +28,8 @@ class Tags(ProxyResource):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
-    :param cost_tags: Tags.
-    :type cost_tags: list[~azure.mgmt.consumption.models.Tag]
+    :param tags: Tags.
+    :type tags: list[~azure.mgmt.consumption.models.Tag]
     """
 
     _validation = {
@@ -43,9 +43,9 @@ class Tags(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'cost_tags': {'key': 'properties.costTags', 'type': '[Tag]'},
+        'tags': {'key': 'properties.tags', 'type': '[Tag]'},
     }
 
-    def __init__(self, e_tag=None, cost_tags=None):
+    def __init__(self, e_tag=None, tags=None):
         super(Tags, self).__init__(e_tag=e_tag)
-        self.cost_tags = cost_tags
+        self.tags = tags
