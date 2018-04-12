@@ -97,6 +97,12 @@ try:
     from .metric_dimension_py3 import MetricDimension
     from .metric_criteria_py3 import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
+    from .source_py3 import Source
+    from .schedule_py3 import Schedule
+    from .log_search_rule_resource_py3 import LogSearchRuleResource
+    from .trigger_condition_py3 import TriggerCondition
+    from .az_ns_action_group_py3 import AzNsActionGroup
+    from .alerting_action_py3 import AlertingAction
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .scale_capacity import ScaleCapacity
@@ -185,6 +191,12 @@ except (SyntaxError, ImportError):
     from .metric_dimension import MetricDimension
     from .metric_criteria import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
+    from .source import Source
+    from .schedule import Schedule
+    from .log_search_rule_resource import LogSearchRuleResource
+    from .trigger_condition import TriggerCondition
+    from .az_ns_action_group import AzNsActionGroup
+    from .alerting_action import AlertingAction
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -195,10 +207,13 @@ from .event_data_paged import EventDataPaged
 from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .metric_alert_resource_paged import MetricAlertResourcePaged
+from .log_search_rule_resource_paged import LogSearchRuleResourcePaged
 from .monitor_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
     ComparisonOperationType,
+    ConditionalOperator,
+    MetricTriggerType,
     ScaleDirection,
     ScaleType,
     RecurrenceFrequency,
@@ -210,6 +225,11 @@ from .monitor_management_client_enums import (
     Unit,
     AggregationType,
     Sensitivity,
+    Enabled,
+    SkuType,
+    QueryType,
+    AlertSeverity,
+    AlertStatus,
     ResultType,
 )
 
@@ -301,6 +321,12 @@ __all__ = [
     'MetricDimension',
     'MetricCriteria',
     'MetricAlertSingleResourceMultipleMetricCriteria',
+    'Source',
+    'Schedule',
+    'LogSearchRuleResource',
+    'TriggerCondition',
+    'AzNsActionGroup',
+    'AlertingAction',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
@@ -311,9 +337,12 @@ __all__ = [
     'LocalizableStringPaged',
     'MetricDefinitionPaged',
     'MetricAlertResourcePaged',
+    'LogSearchRuleResourcePaged',
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',
+    'ConditionalOperator',
+    'MetricTriggerType',
     'ScaleDirection',
     'ScaleType',
     'RecurrenceFrequency',
@@ -325,5 +354,10 @@ __all__ = [
     'Unit',
     'AggregationType',
     'Sensitivity',
+    'Enabled',
+    'SkuType',
+    'QueryType',
+    'AlertSeverity',
+    'AlertStatus',
     'ResultType',
 ]
