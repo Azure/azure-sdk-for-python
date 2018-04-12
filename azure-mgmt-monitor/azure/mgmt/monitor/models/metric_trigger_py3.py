@@ -49,6 +49,17 @@ class MetricTrigger(Model):
     :param threshold: Required. the threshold of the metric that triggers the
      scale action.
     :type threshold: float
+    :param threshold_operator: Evaluation operation for Metric -'GreaterThan'
+     or 'LessThan' or 'Equal'. Possible values include: 'GreaterThan',
+     'LessThan', 'Equal'
+    :type threshold_operator: str or
+     ~azure.mgmt.monitor.models.ConditionalOperator
+    :param metric_trigger_type: Metric Trigger Type - 'Consecutive' or
+     'Total'. Possible values include: 'Consecutive', 'Total'
+    :type metric_trigger_type: str or
+     ~azure.mgmt.monitor.models.MetricTriggerType
+    :param metric_column: Evaluation of metric on a particular column
+    :type metric_column: str
     """
 
     _validation = {
@@ -71,9 +82,12 @@ class MetricTrigger(Model):
         'time_aggregation': {'key': 'timeAggregation', 'type': 'TimeAggregationType'},
         'operator': {'key': 'operator', 'type': 'ComparisonOperationType'},
         'threshold': {'key': 'threshold', 'type': 'float'},
+        'threshold_operator': {'key': 'thresholdOperator', 'type': 'str'},
+        'metric_trigger_type': {'key': 'metricTriggerType', 'type': 'str'},
+        'metric_column': {'key': 'metricColumn', 'type': 'str'},
     }
 
-    def __init__(self, *, metric_name: str, metric_resource_uri: str, time_grain, statistic, time_window, time_aggregation, operator, threshold: float, **kwargs) -> None:
+    def __init__(self, *, metric_name: str, metric_resource_uri: str, time_grain, statistic, time_window, time_aggregation, operator, threshold: float, threshold_operator=None, metric_trigger_type=None, metric_column: str=None, **kwargs) -> None:
         super(MetricTrigger, self).__init__(**kwargs)
         self.metric_name = metric_name
         self.metric_resource_uri = metric_resource_uri
@@ -83,3 +97,6 @@ class MetricTrigger(Model):
         self.time_aggregation = time_aggregation
         self.operator = operator
         self.threshold = threshold
+        self.threshold_operator = threshold_operator
+        self.metric_trigger_type = metric_trigger_type
+        self.metric_column = metric_column
