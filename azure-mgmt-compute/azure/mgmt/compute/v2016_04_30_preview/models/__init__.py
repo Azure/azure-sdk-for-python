@@ -19,6 +19,8 @@ try:
     from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
     from .virtual_machine_extension_instance_view_py3 import VirtualMachineExtensionInstanceView
     from .virtual_machine_extension_py3 import VirtualMachineExtension
+    from .virtual_machine_extension_update_py3 import VirtualMachineExtensionUpdate
+    from .virtual_machine_extensions_list_result_py3 import VirtualMachineExtensionsListResult
     from .purchase_plan_py3 import PurchasePlan
     from .os_disk_image_py3 import OSDiskImage
     from .data_disk_image_py3 import DataDiskImage
@@ -93,6 +95,7 @@ try:
     from .api_error_py3 import ApiError
     from .compute_long_running_operation_properties_py3 import ComputeLongRunningOperationProperties
     from .resource_py3 import Resource
+    from .update_resource_py3 import UpdateResource
     from .sub_resource_read_only_py3 import SubResourceReadOnly
     from .operation_status_response_py3 import OperationStatusResponse
     from .resource_update_py3 import ResourceUpdate
@@ -118,6 +121,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_image_resource import VirtualMachineImageResource
     from .virtual_machine_extension_instance_view import VirtualMachineExtensionInstanceView
     from .virtual_machine_extension import VirtualMachineExtension
+    from .virtual_machine_extension_update import VirtualMachineExtensionUpdate
+    from .virtual_machine_extensions_list_result import VirtualMachineExtensionsListResult
     from .purchase_plan import PurchasePlan
     from .os_disk_image import OSDiskImage
     from .data_disk_image import DataDiskImage
@@ -192,6 +197,7 @@ except (SyntaxError, ImportError):
     from .api_error import ApiError
     from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
     from .resource import Resource
+    from .update_resource import UpdateResource
     from .sub_resource_read_only import SubResourceReadOnly
     from .operation_status_response import OperationStatusResponse
     from .resource_update import ResourceUpdate
@@ -209,9 +215,9 @@ except (SyntaxError, ImportError):
     from .snapshot_update import SnapshotUpdate
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
+from .virtual_machine_paged import VirtualMachinePaged
 from .usage_paged import UsagePaged
 from .image_paged import ImagePaged
-from .virtual_machine_paged import VirtualMachinePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
@@ -247,6 +253,8 @@ __all__ = [
     'VirtualMachineImageResource',
     'VirtualMachineExtensionInstanceView',
     'VirtualMachineExtension',
+    'VirtualMachineExtensionUpdate',
+    'VirtualMachineExtensionsListResult',
     'PurchasePlan',
     'OSDiskImage',
     'DataDiskImage',
@@ -321,6 +329,7 @@ __all__ = [
     'ApiError',
     'ComputeLongRunningOperationProperties',
     'Resource',
+    'UpdateResource',
     'SubResourceReadOnly',
     'OperationStatusResponse',
     'ResourceUpdate',
@@ -338,9 +347,9 @@ __all__ = [
     'SnapshotUpdate',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
+    'VirtualMachinePaged',
     'UsagePaged',
     'ImagePaged',
-    'VirtualMachinePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
     'VirtualMachineScaleSetVMPaged',
