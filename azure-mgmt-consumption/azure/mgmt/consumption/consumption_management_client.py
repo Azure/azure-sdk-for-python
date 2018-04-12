@@ -173,7 +173,7 @@ class ConsumptionManagementClient(object):
         self.cost_allocation_tags = CostAllocationTagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
-    def balances_by_billing_account(
+    def get_balances_by_billing_account(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets the balances for a scope by billingAccountId. Balances are
         available via this API only for May 1, 2014 or later.
@@ -190,7 +190,7 @@ class ConsumptionManagementClient(object):
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.balances_by_billing_account.metadata['url']
+        url = self.get_balances_by_billing_account.metadata['url']
         path_format_arguments = {
             'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
         }
@@ -227,4 +227,4 @@ class ConsumptionManagementClient(object):
             return client_raw_response
 
         return deserialized
-    balances_by_billing_account.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/balances'}
+    get_balances_by_billing_account.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/balances'}

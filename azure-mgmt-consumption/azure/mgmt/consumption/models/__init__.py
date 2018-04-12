@@ -44,6 +44,7 @@ from .budget_paged import BudgetPaged
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
     BillingFrequency,
+    PriceHidden,
     CategoryType,
     TimeGrainType,
     OperatorType,
@@ -85,6 +86,7 @@ __all__ = [
     'BudgetPaged',
     'OperationPaged',
     'BillingFrequency',
+    'PriceHidden',
     'CategoryType',
     'TimeGrainType',
     'OperatorType',

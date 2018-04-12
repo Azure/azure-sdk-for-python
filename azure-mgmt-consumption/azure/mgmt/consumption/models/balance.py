@@ -55,8 +55,9 @@ class Balance(Resource):
      'Month', 'Quarter', 'Year'
     :type billing_frequency: str or
      ~azure.mgmt.consumption.models.BillingFrequency
-    :ivar price_hidden: Price is hidden or not.
-    :vartype price_hidden: bool
+    :param price_hidden: Price is hidden or not. Possible values include:
+     'True', 'False'
+    :type price_hidden: str or ~azure.mgmt.consumption.models.PriceHidden
     :ivar new_purchases_details: List of new purchases.
     :vartype new_purchases_details:
      list[~azure.mgmt.consumption.models.BalancePropertiesNewPurchasesDetailsItem]
@@ -82,7 +83,6 @@ class Balance(Resource):
         'total_overage': {'readonly': True},
         'total_usage': {'readonly': True},
         'azure_marketplace_service_charges': {'readonly': True},
-        'price_hidden': {'readonly': True},
         'new_purchases_details': {'readonly': True},
         'adjustment_details': {'readonly': True},
     }
@@ -104,12 +104,12 @@ class Balance(Resource):
         'total_usage': {'key': 'properties.totalUsage', 'type': 'decimal'},
         'azure_marketplace_service_charges': {'key': 'properties.azureMarketplaceServiceCharges', 'type': 'decimal'},
         'billing_frequency': {'key': 'properties.billingFrequency', 'type': 'str'},
-        'price_hidden': {'key': 'properties.priceHidden', 'type': 'bool'},
+        'price_hidden': {'key': 'properties.priceHidden', 'type': 'str'},
         'new_purchases_details': {'key': 'properties.newPurchasesDetails', 'type': '[BalancePropertiesNewPurchasesDetailsItem]'},
         'adjustment_details': {'key': 'properties.adjustmentDetails', 'type': '[BalancePropertiesAdjustmentDetailsItem]'},
     }
 
-    def __init__(self, billing_frequency=None):
+    def __init__(self, billing_frequency=None, price_hidden=None):
         super(Balance, self).__init__()
         self.currency = None
         self.beginning_balance = None
@@ -123,6 +123,6 @@ class Balance(Resource):
         self.total_usage = None
         self.azure_marketplace_service_charges = None
         self.billing_frequency = billing_frequency
-        self.price_hidden = None
+        self.price_hidden = price_hidden
         self.new_purchases_details = None
         self.adjustment_details = None
