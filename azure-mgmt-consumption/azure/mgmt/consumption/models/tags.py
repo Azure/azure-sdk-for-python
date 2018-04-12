@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class Tags(ProxyResource):
-    """A resource listing tags.
+    """A resource listing all tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
