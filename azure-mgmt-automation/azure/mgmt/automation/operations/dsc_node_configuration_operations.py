@@ -186,7 +186,7 @@ class DscNodeConfigurationOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'DscNodeConfigurationCreateOrUpdateParametersProperties')
+        body_content = self._serialize.body(parameters, 'DscNodeConfigurationCreateOrUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -219,7 +219,7 @@ class DscNodeConfigurationOperations(object):
         :type node_configuration_name: str
         :param parameters: The create or update parameters for configuration.
         :type parameters:
-         ~azure.mgmt.automation.models.DscNodeConfigurationCreateOrUpdateParametersProperties
+         ~azure.mgmt.automation.models.DscNodeConfigurationCreateOrUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
