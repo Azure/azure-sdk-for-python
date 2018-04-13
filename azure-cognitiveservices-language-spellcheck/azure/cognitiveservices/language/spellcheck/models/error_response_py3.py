@@ -43,9 +43,9 @@ class ErrorResponse(Response):
         'errors': {'key': 'errors', 'type': '[Error]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.errors = kwargs.get('errors', None)
+    def __init__(self, *, errors, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(, **kwargs)
+        self.errors = errors
         self._type = 'ErrorResponse'
 
 

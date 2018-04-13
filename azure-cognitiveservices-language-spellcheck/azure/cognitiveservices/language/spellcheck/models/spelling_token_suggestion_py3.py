@@ -40,8 +40,8 @@ class SpellingTokenSuggestion(Model):
         'ping_url_suffix': {'key': 'pingUrlSuffix', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, suggestion: str, **kwargs) -> None:
         super(SpellingTokenSuggestion, self).__init__(**kwargs)
-        self.suggestion = kwargs.get('suggestion', None)
+        self.suggestion = suggestion
         self.score = None
         self.ping_url_suffix = None
