@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class CostAllocationTagsOperations(object):
-    """CostAllocationTagsOperations operations.
+class CostTagsOperations(object):
+    """CostTagsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -38,7 +38,7 @@ class CostAllocationTagsOperations(object):
 
     def get(
             self, billing_account_id, custom_headers=None, raw=False, **operation_config):
-        """Get cost allocation tags for a billing account.
+        """Get cost tags for a billing account.
 
         :param billing_account_id: Azure Billing Account ID.
         :type billing_account_id: str
@@ -47,8 +47,8 @@ class CostAllocationTagsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CostAllocationTags or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.CostAllocationTags or
+        :return: CostTags or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.CostTags or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
@@ -84,21 +84,21 @@ class CostAllocationTagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CostAllocationTags', response)
+            deserialized = self._deserialize('CostTags', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costAllocationTags'}
+    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
 
     def create_or_update(
-            self, billing_account_id, e_tag=None, cost_allocation_tags=None, custom_headers=None, raw=False, **operation_config):
-        """The operation to create or update cost allocation tags assiciated with
-        a billing account. Update operation requires latest eTag to be set in
-        the request mandatorily. You may obtain the latest eTag by performing a
-        get operation. Create operation does not require eTag.
+            self, billing_account_id, e_tag=None, cost_tags=None, custom_headers=None, raw=False, **operation_config):
+        """The operation to create or update cost tags assiciated with a billing
+        account. Update operation requires latest eTag to be set in the request
+        mandatorily. You may obtain the latest eTag by performing a get
+        operation. Create operation does not require eTag.
 
         :param billing_account_id: Azure Billing Account ID.
         :type billing_account_id: str
@@ -106,21 +106,20 @@ class CostAllocationTagsOperations(object):
          scenarion, this field will be used to determine whether the user is
          updating the latest version or not.
         :type e_tag: str
-        :param cost_allocation_tags: Cost allocation tags.
-        :type cost_allocation_tags:
-         list[~azure.mgmt.consumption.models.CostAllocationTag]
+        :param cost_tags: Cost tags.
+        :type cost_tags: list[~azure.mgmt.consumption.models.CostTag]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CostAllocationTags or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.consumption.models.CostAllocationTags or
+        :return: CostTags or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.consumption.models.CostTags or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
-        parameters = models.CostAllocationTags(e_tag=e_tag, cost_allocation_tags=cost_allocation_tags)
+        parameters = models.CostTags(e_tag=e_tag, cost_tags=cost_tags)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -144,7 +143,7 @@ class CostAllocationTagsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CostAllocationTags')
+        body_content = self._serialize.body(parameters, 'CostTags')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -157,13 +156,13 @@ class CostAllocationTagsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CostAllocationTags', response)
+            deserialized = self._deserialize('CostTags', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('CostAllocationTags', response)
+            deserialized = self._deserialize('CostTags', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costAllocationTags'}
+    create_or_update.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}

@@ -12,10 +12,10 @@
 from msrest.serialization import Model
 
 
-class CostAllocationTag(Model):
-    """The cost allocation tag.
+class CostTag(Model):
+    """The cost tag.
 
-    :param key: Cost allocation tag key.
+    :param key: Cost tag key.
     :type key: str
     """
 
@@ -24,5 +24,5 @@ class CostAllocationTag(Model):
     }
 
     def __init__(self, key=None):
-        super(CostAllocationTag, self).__init__()
+        super(CostTag, self).__init__()
         self.key = key
