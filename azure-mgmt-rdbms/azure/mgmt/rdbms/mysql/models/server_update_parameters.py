@@ -17,8 +17,8 @@ class ServerUpdateParameters(Model):
 
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.mysql.models.Sku
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
+    :param storage_mb: The max storage allowed for a server.
+    :type storage_mb: long
     :param administrator_login_password: The password of the administrator
      login.
     :type administrator_login_password: str
@@ -33,9 +33,13 @@ class ServerUpdateParameters(Model):
     :type tags: dict[str, str]
     """
 
+    _validation = {
+        'storage_mb': {'minimum': 1024},
+    }
+
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'storage_mb': {'key': 'properties.storageMB', 'type': 'long'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'SslEnforcementEnum'},
@@ -45,7 +49,7 @@ class ServerUpdateParameters(Model):
     def __init__(self, **kwargs):
         super(ServerUpdateParameters, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
+        self.storage_mb = kwargs.get('storage_mb', None)
         self.administrator_login_password = kwargs.get('administrator_login_password', None)
         self.version = kwargs.get('version', None)
         self.ssl_enforcement = kwargs.get('ssl_enforcement', None)

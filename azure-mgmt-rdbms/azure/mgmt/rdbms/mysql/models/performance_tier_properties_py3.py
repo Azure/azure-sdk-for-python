@@ -17,6 +17,9 @@ class PerformanceTierProperties(Model):
 
     :param id: ID of the performance tier.
     :type id: str
+    :param backup_retention_days: Backup retention in days for the performance
+     tier edition
+    :type backup_retention_days: int
     :param service_level_objectives: Service level objectives associated with
      the performance tier
     :type service_level_objectives:
@@ -25,10 +28,12 @@ class PerformanceTierProperties(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'backup_retention_days': {'key': 'backupRetentionDays', 'type': 'int'},
         'service_level_objectives': {'key': 'serviceLevelObjectives', 'type': '[PerformanceTierServiceLevelObjectives]'},
     }
 
-    def __init__(self, *, id: str=None, service_level_objectives=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, backup_retention_days: int=None, service_level_objectives=None, **kwargs) -> None:
         super(PerformanceTierProperties, self).__init__(**kwargs)
         self.id = id
+        self.backup_retention_days = backup_retention_days
         self.service_level_objectives = service_level_objectives
