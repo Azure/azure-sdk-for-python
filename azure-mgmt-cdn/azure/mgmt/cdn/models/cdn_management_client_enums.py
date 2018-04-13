@@ -56,12 +56,6 @@ class QueryStringCachingBehavior(Enum):
     not_set = "NotSet"
 
 
-class GeoFilterActions(Enum):
-
-    block = "Block"
-    allow = "Allow"
-
-
 class OriginResourceState(Enum):
 
     creating = "Creating"

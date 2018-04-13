@@ -86,8 +86,8 @@ class Endpoint(TrackedResource):
     :ivar host_name: The host name of the endpoint structured as
      {endpointName}.{DNSZone}, e.g. consoto.azureedge.net
     :vartype host_name: str
-    :param origins: The source of the content being delivered via CDN.
-    :type origins: list[~azure.mgmt.cdn.models.DeepCreatedOrigin]
+    :ivar origins: The source of the content being delivered via CDN.
+    :vartype origins: list[~azure.mgmt.cdn.models.DeepCreatedOrigin]
     :ivar resource_state: Resource status of the endpoint. Possible values
      include: 'Creating', 'Deleting', 'Running', 'Starting', 'Stopped',
      'Stopping'
@@ -103,7 +103,7 @@ class Endpoint(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'host_name': {'readonly': True},
-        'origins': {'required': True},
+        'origins': {'required': True, 'readonly': True},
         'resource_state': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -131,7 +131,7 @@ class Endpoint(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, origins, tags=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, optimization_type=None, probe_path=None, geo_filters=None, delivery_policy=None):
+    def __init__(self, location, tags=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, optimization_type=None, probe_path=None, geo_filters=None, delivery_policy=None):
         super(Endpoint, self).__init__(location=location, tags=tags)
         self.origin_host_header = origin_host_header
         self.origin_path = origin_path
@@ -145,6 +145,6 @@ class Endpoint(TrackedResource):
         self.geo_filters = geo_filters
         self.delivery_policy = delivery_policy
         self.host_name = None
-        self.origins = origins
+        self.origins = None
         self.resource_state = None
         self.provisioning_state = None

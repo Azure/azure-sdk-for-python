@@ -20,7 +20,7 @@ class GeoFilter(Model):
     :type relative_path: str
     :param action: Action of the geo filter, i.e. allow or block access.
      Possible values include: 'Block', 'Allow'
-    :type action: str or ~azure.mgmt.cdn.models.GeoFilterActions
+    :type action: str or ~azure.mgmt.cdn.models.enum
     :param country_codes: Two letter country codes defining user country
      access in a geo filter, e.g. AU, MX, US.
     :type country_codes: list[str]
@@ -34,7 +34,7 @@ class GeoFilter(Model):
 
     _attribute_map = {
         'relative_path': {'key': 'relativePath', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'GeoFilterActions'},
+        'action': {'key': 'action', 'type': 'str'},
         'country_codes': {'key': 'countryCodes', 'type': '[str]'},
     }
 
