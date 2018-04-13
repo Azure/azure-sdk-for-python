@@ -17,14 +17,14 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param storage_mb: The maximum storage allowed for a server.
+    :type storage_mb: long
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     :param administrator_login: Required. The administrator's login name of a
@@ -37,15 +37,16 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     """
 
     _validation = {
+        'storage_mb': {'minimum': 1024},
         'create_mode': {'required': True},
         'administrator_login': {'required': True},
         'administrator_login_password': {'required': True},
     }
 
     _attribute_map = {
+        'storage_mb': {'key': 'storageMB', 'type': 'long'},
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},

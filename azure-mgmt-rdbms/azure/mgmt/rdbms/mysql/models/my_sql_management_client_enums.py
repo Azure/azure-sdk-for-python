@@ -31,17 +31,19 @@ class ServerState(str, Enum):
     disabled = "Disabled"
 
 
-class GeoRedundantBackup(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class SkuTier(str, Enum):
 
     basic = "Basic"
-    general_purpose = "GeneralPurpose"
-    memory_optimized = "MemoryOptimized"
+    standard = "Standard"
+
+
+class VirtualNetworkRuleState(str, Enum):
+
+    initializing = "Initializing"
+    in_progress = "InProgress"
+    ready = "Ready"
+    deleting = "Deleting"
+    unknown = "Unknown"
 
 
 class OperationOrigin(str, Enum):

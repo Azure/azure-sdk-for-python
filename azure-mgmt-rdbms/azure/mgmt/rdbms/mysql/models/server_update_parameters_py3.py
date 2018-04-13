@@ -17,8 +17,8 @@ class ServerUpdateParameters(Model):
 
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.mysql.models.Sku
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
+    :param storage_mb: The max storage allowed for a server.
+    :type storage_mb: long
     :param administrator_login_password: The password of the administrator
      login.
     :type administrator_login_password: str
@@ -33,19 +33,23 @@ class ServerUpdateParameters(Model):
     :type tags: dict[str, str]
     """
 
+    _validation = {
+        'storage_mb': {'minimum': 1024},
+    }
+
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'storage_mb': {'key': 'properties.storageMB', 'type': 'long'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'SslEnforcementEnum'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, storage_profile=None, administrator_login_password: str=None, version=None, ssl_enforcement=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, storage_mb: int=None, administrator_login_password: str=None, version=None, ssl_enforcement=None, tags=None, **kwargs) -> None:
         super(ServerUpdateParameters, self).__init__(**kwargs)
         self.sku = sku
-        self.storage_profile = storage_profile
+        self.storage_mb = storage_mb
         self.administrator_login_password = administrator_login_password
         self.version = version
         self.ssl_enforcement = ssl_enforcement

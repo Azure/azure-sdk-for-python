@@ -36,6 +36,8 @@ class Server(TrackedResource):
      Can only be specified when the server is being created (and is required
      for creation).
     :type administrator_login: str
+    :param storage_mb: The maximum storage allowed for a server.
+    :type storage_mb: long
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
@@ -49,11 +51,6 @@ class Server(TrackedResource):
     :param fully_qualified_domain_name: The fully qualified domain name of a
      server.
     :type fully_qualified_domain_name: str
-    :param earliest_restore_date: Earliest restore point creation time
-     (ISO8601 format)
-    :type earliest_restore_date: datetime
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
     """
 
     _validation = {
@@ -61,6 +58,7 @@ class Server(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'storage_mb': {'minimum': 1024},
     }
 
     _attribute_map = {
@@ -71,21 +69,19 @@ class Server(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
+        'storage_mb': {'key': 'properties.storageMB', 'type': 'long'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'SslEnforcementEnum'},
         'user_visible_state': {'key': 'properties.userVisibleState', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
-        'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, administrator_login: str=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, earliest_restore_date=None, storage_profile=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, administrator_login: str=None, storage_mb: int=None, version=None, ssl_enforcement=None, user_visible_state=None, fully_qualified_domain_name: str=None, **kwargs) -> None:
         super(Server, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.administrator_login = administrator_login
+        self.storage_mb = storage_mb
         self.version = version
         self.ssl_enforcement = ssl_enforcement
         self.user_visible_state = user_visible_state
         self.fully_qualified_domain_name = fully_qualified_domain_name
-        self.earliest_restore_date = earliest_restore_date
-        self.storage_profile = storage_profile
