@@ -18,50 +18,53 @@ class JobInformationBasic(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar job_id: the job's unique identifier (a GUID).
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar job_id: The job's unique identifier (a GUID).
     :vartype job_id: str
-    :param name: the friendly name of the job.
+    :param name: Required. The friendly name of the job.
     :type name: str
-    :param type: the job type of the current job (Hive, USql, or Scope (for
-     internal use only)). Possible values include: 'USql', 'Hive', 'Scope'
+    :param type: Required. The job type of the current job (Hive, USql, or
+     Scope (for internal use only)). Possible values include: 'USql', 'Hive',
+     'Scope'
     :type type: str or ~azure.mgmt.datalake.analytics.job.models.JobType
-    :ivar submitter: the user or account that submitted the job.
+    :ivar submitter: The user or account that submitted the job.
     :vartype submitter: str
-    :param degree_of_parallelism: the degree of parallelism used for this job.
+    :param degree_of_parallelism: The degree of parallelism used for this job.
      This must be greater than 0, if set to less than 0 it will default to 1.
      Default value: 1 .
     :type degree_of_parallelism: int
-    :param priority: the priority value for the current job. Lower numbers
+    :param priority: The priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
      must be greater than 0.
     :type priority: int
-    :ivar submit_time: the time the job was submitted to the service.
+    :ivar submit_time: The time the job was submitted to the service.
     :vartype submit_time: datetime
-    :ivar start_time: the start time of the job.
+    :ivar start_time: The start time of the job.
     :vartype start_time: datetime
-    :ivar end_time: the completion time of the job.
+    :ivar end_time: The completion time of the job.
     :vartype end_time: datetime
-    :ivar state: the job state. When the job is in the Ended state, refer to
+    :ivar state: The job state. When the job is in the Ended state, refer to
      Result and ErrorMessage for details. Possible values include: 'Accepted',
      'Compiling', 'Ended', 'New', 'Queued', 'Running', 'Scheduling',
      'Starting', 'Paused', 'WaitingForCapacity'
     :vartype state: str or ~azure.mgmt.datalake.analytics.job.models.JobState
-    :ivar result: the result of job execution or the current result of the
+    :ivar result: The result of job execution or the current result of the
      running job. Possible values include: 'None', 'Succeeded', 'Cancelled',
      'Failed'
     :vartype result: str or
      ~azure.mgmt.datalake.analytics.job.models.JobResult
-    :ivar log_folder: the log folder path to use in the following format:
+    :ivar log_folder: The log folder path to use in the following format:
      adl://<accountName>.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/03/13/17/18/5fe51957-93bc-4de0-8ddc-c5a4753b068b/logs/.
     :vartype log_folder: str
-    :param log_file_patterns: the list of log file name patterns to find in
+    :param log_file_patterns: The list of log file name patterns to find in
      the logFolder. '*' is the only matching character allowed. Example format:
      jobExecution*.log or *mylog*.txt
     :type log_file_patterns: list[str]
-    :param related: the recurring job relationship information properties.
+    :param related: The recurring job relationship information properties.
     :type related:
      ~azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties
-    :param tags: the key-value pairs used to add additional metadata to the
+    :param tags: The key-value pairs used to add additional metadata to the
      job information. (Only for use internally with Scope job type.)
     :type tags: dict[str, str]
     """
@@ -97,20 +100,20 @@ class JobInformationBasic(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name, type, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None, tags=None):
-        super(JobInformationBasic, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobInformationBasic, self).__init__(**kwargs)
         self.job_id = None
-        self.name = name
-        self.type = type
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
         self.submitter = None
-        self.degree_of_parallelism = degree_of_parallelism
-        self.priority = priority
+        self.degree_of_parallelism = kwargs.get('degree_of_parallelism', 1)
+        self.priority = kwargs.get('priority', None)
         self.submit_time = None
         self.start_time = None
         self.end_time = None
         self.state = None
         self.result = None
         self.log_folder = None
-        self.log_file_patterns = log_file_patterns
-        self.related = related
-        self.tags = tags
+        self.log_file_patterns = kwargs.get('log_file_patterns', None)
+        self.related = kwargs.get('related', None)
+        self.tags = kwargs.get('tags', None)

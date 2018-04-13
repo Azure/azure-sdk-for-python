@@ -13,20 +13,20 @@ from msrest.serialization import Model
 
 
 class JobStatisticsVertex(Model):
-    """the detailed information for a vertex.
+    """The detailed information for a vertex.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: the name of the vertex.
+    :ivar name: The name of the vertex.
     :vartype name: str
-    :ivar vertex_id: the id of the vertex.
+    :ivar vertex_id: The id of the vertex.
     :vartype vertex_id: str
-    :ivar execution_time: the amount of execution time of the vertex.
+    :ivar execution_time: The amount of execution time of the vertex.
     :vartype execution_time: timedelta
-    :ivar data_read: the amount of data read of the vertex, in bytes.
+    :ivar data_read: The amount of data read of the vertex, in bytes.
     :vartype data_read: long
-    :ivar peak_mem_usage: the amount of peak memory usage of the vertex, in
+    :ivar peak_mem_usage: The amount of peak memory usage of the vertex, in
      bytes.
     :vartype peak_mem_usage: long
     """
@@ -47,8 +47,8 @@ class JobStatisticsVertex(Model):
         'peak_mem_usage': {'key': 'peakMemUsage', 'type': 'long'},
     }
 
-    def __init__(self):
-        super(JobStatisticsVertex, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobStatisticsVertex, self).__init__(**kwargs)
         self.name = None
         self.vertex_id = None
         self.execution_time = None
