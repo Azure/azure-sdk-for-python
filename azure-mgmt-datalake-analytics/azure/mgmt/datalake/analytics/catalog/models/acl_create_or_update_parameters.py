@@ -15,17 +15,19 @@ from msrest.serialization import Model
 class AclCreateOrUpdateParameters(Model):
     """The parameters used to create or update an access control list (ACL) entry.
 
-    :param ace_type: the access control list (ACL) entry type. UserObj and
-     GroupObj denote the owning user and group, respectively. Possible values
-     include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
+    All required parameters must be populated in order to send to Azure.
+
+    :param ace_type: Required. the access control list (ACL) entry type.
+     UserObj and GroupObj denote the owning user and group, respectively.
+     Possible values include: 'UserObj', 'GroupObj', 'Other', 'User', 'Group'
     :type ace_type: str or
      ~azure.mgmt.datalake.analytics.catalog.models.AclType
-    :param principal_id: the Azure AD object ID of the user or group being
-     specified in the access control list (ACL) entry.
+    :param principal_id: Required. the Azure AD object ID of the user or group
+     being specified in the access control list (ACL) entry.
     :type principal_id: str
-    :param permission: the permission type of the access control list (ACL)
-     entry. Possible values include: 'None', 'Use', 'Create', 'Drop', 'Alter',
-     'Write', 'All'
+    :param permission: Required. the permission type of the access control
+     list (ACL) entry. Possible values include: 'None', 'Use', 'Create',
+     'Drop', 'Alter', 'Write', 'All'
     :type permission: str or
      ~azure.mgmt.datalake.analytics.catalog.models.PermissionType
     """
@@ -42,8 +44,8 @@ class AclCreateOrUpdateParameters(Model):
         'permission': {'key': 'permission', 'type': 'str'},
     }
 
-    def __init__(self, ace_type, principal_id, permission):
-        super(AclCreateOrUpdateParameters, self).__init__()
-        self.ace_type = ace_type
-        self.principal_id = principal_id
-        self.permission = permission
+    def __init__(self, **kwargs):
+        super(AclCreateOrUpdateParameters, self).__init__(**kwargs)
+        self.ace_type = kwargs.get('ace_type', None)
+        self.principal_id = kwargs.get('principal_id', None)
+        self.permission = kwargs.get('permission', None)

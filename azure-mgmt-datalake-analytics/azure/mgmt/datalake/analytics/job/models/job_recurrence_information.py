@@ -18,32 +18,32 @@ class JobRecurrenceInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar recurrence_id: the recurrence identifier (a GUID), unique per
+    :ivar recurrence_id: The recurrence identifier (a GUID), unique per
      activity/script, regardless of iterations. This is something to link
      different occurrences of the same job together.
     :vartype recurrence_id: str
-    :ivar recurrence_name: the recurrence name, user friendly name for the
+    :ivar recurrence_name: The recurrence name, user friendly name for the
      correlation between jobs.
     :vartype recurrence_name: str
-    :ivar num_jobs_failed: the number of jobs in this recurrence that have
+    :ivar num_jobs_failed: The number of jobs in this recurrence that have
      failed.
     :vartype num_jobs_failed: int
-    :ivar num_jobs_canceled: the number of jobs in this recurrence that have
+    :ivar num_jobs_canceled: The number of jobs in this recurrence that have
      been canceled.
     :vartype num_jobs_canceled: int
-    :ivar num_jobs_succeeded: the number of jobs in this recurrence that have
+    :ivar num_jobs_succeeded: The number of jobs in this recurrence that have
      succeeded.
     :vartype num_jobs_succeeded: int
-    :ivar au_hours_failed: the number of job execution hours that resulted in
+    :ivar au_hours_failed: The number of job execution hours that resulted in
      failed jobs.
     :vartype au_hours_failed: float
-    :ivar au_hours_canceled: the number of job execution hours that resulted
+    :ivar au_hours_canceled: The number of job execution hours that resulted
      in canceled jobs.
     :vartype au_hours_canceled: float
-    :ivar au_hours_succeeded: the number of job execution hours that resulted
+    :ivar au_hours_succeeded: The number of job execution hours that resulted
      in successful jobs.
     :vartype au_hours_succeeded: float
-    :ivar last_submit_time: the last time a job in this recurrence was
+    :ivar last_submit_time: The last time a job in this recurrence was
      submitted.
     :vartype last_submit_time: datetime
     """
@@ -72,8 +72,8 @@ class JobRecurrenceInformation(Model):
         'last_submit_time': {'key': 'lastSubmitTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(JobRecurrenceInformation, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobRecurrenceInformation, self).__init__(**kwargs)
         self.recurrence_id = None
         self.recurrence_name = None
         self.num_jobs_failed = None

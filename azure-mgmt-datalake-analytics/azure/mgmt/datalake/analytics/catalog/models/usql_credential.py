@@ -29,6 +29,6 @@ class USqlCredential(CatalogItem):
         'name': {'key': 'credentialName', 'type': 'str'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, name=None):
-        super(USqlCredential, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.name = name
+    def __init__(self, **kwargs):
+        super(USqlCredential, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

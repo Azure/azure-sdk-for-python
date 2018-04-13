@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ScopeJobResource(Model):
     """The Scope job resources. (Only for use internally with Scope job type.).
 
-    :param name: the name of the resource.
+    :param name: The name of the resource.
     :type name: str
-    :param path: the path to the resource.
+    :param path: The path to the resource.
     :type path: str
     """
 
@@ -26,7 +26,7 @@ class ScopeJobResource(Model):
         'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, name=None, path=None):
-        super(ScopeJobResource, self).__init__()
-        self.name = name
-        self.path = path
+    def __init__(self, **kwargs):
+        super(ScopeJobResource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.path = kwargs.get('path', None)

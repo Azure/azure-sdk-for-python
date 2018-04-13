@@ -18,11 +18,11 @@ class JobStatistics(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar last_update_time_utc: the last update time for the statistics.
+    :ivar last_update_time_utc: The last update time for the statistics.
     :vartype last_update_time_utc: datetime
-    :ivar finalizing_time_utc: the job finalizing start time.
+    :ivar finalizing_time_utc: The job finalizing start time.
     :vartype finalizing_time_utc: datetime
-    :ivar stages: the list of stages for the job.
+    :ivar stages: The list of stages for the job.
     :vartype stages:
      list[~azure.mgmt.datalake.analytics.job.models.JobStatisticsVertexStage]
     """
@@ -39,8 +39,8 @@ class JobStatistics(Model):
         'stages': {'key': 'stages', 'type': '[JobStatisticsVertexStage]'},
     }
 
-    def __init__(self):
-        super(JobStatistics, self).__init__()
+    def __init__(self, **kwargs):
+        super(JobStatistics, self).__init__(**kwargs)
         self.last_update_time_utc = None
         self.finalizing_time_utc = None
         self.stages = None

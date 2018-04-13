@@ -23,7 +23,7 @@ class CatalogOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-11-01".
     """
 
@@ -73,7 +73,7 @@ class CatalogOperations(object):
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        url = self.create_secret.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -112,6 +112,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
 
     def get_secret(
             self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -141,7 +142,7 @@ class CatalogOperations(object):
         """
         warnings.warn("Method get_secret is deprecated", DeprecationWarning)
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        url = self.get_secret.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -183,6 +184,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
 
     def update_secret(
             self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
@@ -218,7 +220,7 @@ class CatalogOperations(object):
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        url = self.update_secret.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -257,6 +259,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
 
     def delete_secret(
             self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
@@ -285,7 +288,7 @@ class CatalogOperations(object):
         """
         warnings.warn("Method delete_secret is deprecated", DeprecationWarning)
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
+        url = self.delete_secret.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -320,6 +323,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_secret.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets/{secretName}'}
 
     def delete_all_secrets(
             self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -346,7 +350,7 @@ class CatalogOperations(object):
         """
         warnings.warn("Method delete_all_secrets is deprecated", DeprecationWarning)
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/secrets'
+        url = self.delete_all_secrets.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -380,6 +384,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_all_secrets.metadata = {'url': '/catalog/usql/databases/{databaseName}/secrets'}
 
     def create_credential(
             self, account_name, database_name, credential_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -410,7 +415,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        url = self.create_credential.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -449,6 +454,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
 
     def get_credential(
             self, account_name, database_name, credential_name, custom_headers=None, raw=False, **operation_config):
@@ -473,7 +479,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        url = self.get_credential.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -515,6 +521,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
 
     def update_credential(
             self, account_name, database_name, credential_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -543,7 +550,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        url = self.update_credential.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -582,6 +589,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
 
     def delete_credential(
             self, account_name, database_name, credential_name, cascade=False, password=None, custom_headers=None, raw=False, **operation_config):
@@ -618,7 +626,7 @@ class CatalogOperations(object):
             parameters = models.DataLakeAnalyticsCatalogCredentialDeleteParameters(password=password)
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        url = self.delete_credential.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -662,6 +670,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_credential.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'}
 
     def list_credentials(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -706,7 +715,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/credentials'
+                url = self.list_credentials.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -765,6 +774,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_credentials.metadata = {'url': '/catalog/usql/databases/{databaseName}/credentials'}
 
     def get_external_data_source(
             self, account_name, database_name, external_data_source_name, custom_headers=None, raw=False, **operation_config):
@@ -792,7 +802,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/externaldatasources/{externalDataSourceName}'
+        url = self.get_external_data_source.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -834,6 +844,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_external_data_source.metadata = {'url': '/catalog/usql/databases/{databaseName}/externaldatasources/{externalDataSourceName}'}
 
     def list_external_data_sources(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -880,7 +891,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/externaldatasources'
+                url = self.list_external_data_sources.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -939,6 +950,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_external_data_sources.metadata = {'url': '/catalog/usql/databases/{databaseName}/externaldatasources'}
 
     def get_procedure(
             self, account_name, database_name, schema_name, procedure_name, custom_headers=None, raw=False, **operation_config):
@@ -965,7 +977,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures/{procedureName}'
+        url = self.get_procedure.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1008,6 +1020,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_procedure.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures/{procedureName}'}
 
     def list_procedures(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1055,7 +1068,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures'
+                url = self.list_procedures.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1115,6 +1128,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_procedures.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures'}
 
     def get_table(
             self, account_name, database_name, schema_name, table_name, custom_headers=None, raw=False, **operation_config):
@@ -1140,7 +1154,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}'
+        url = self.get_table.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1183,6 +1197,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}'}
 
     def list_tables(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, basic=False, custom_headers=None, raw=False, **operation_config):
@@ -1235,7 +1250,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables'
+                url = self.list_tables.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1297,6 +1312,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_tables.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables'}
 
     def list_table_statistics_by_database_and_schema(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1345,7 +1361,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/statistics'
+                url = self.list_table_statistics_by_database_and_schema.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1405,6 +1421,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_statistics_by_database_and_schema.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/statistics'}
 
     def get_table_type(
             self, account_name, database_name, schema_name, table_type_name, custom_headers=None, raw=False, **operation_config):
@@ -1432,7 +1449,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes/{tableTypeName}'
+        url = self.get_table_type.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1475,6 +1492,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_type.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes/{tableTypeName}'}
 
     def list_table_types(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1522,7 +1540,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes'
+                url = self.list_table_types.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1582,6 +1600,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_types.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes'}
 
     def get_package(
             self, account_name, database_name, schema_name, package_name, custom_headers=None, raw=False, **operation_config):
@@ -1607,7 +1626,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages/{packageName}'
+        url = self.get_package.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1650,6 +1669,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_package.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages/{packageName}'}
 
     def list_packages(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1697,7 +1717,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages'
+                url = self.list_packages.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1757,6 +1777,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_packages.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages'}
 
     def get_view(
             self, account_name, database_name, schema_name, view_name, custom_headers=None, raw=False, **operation_config):
@@ -1782,7 +1803,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views/{viewName}'
+        url = self.get_view.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1825,6 +1846,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_view.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views/{viewName}'}
 
     def list_views(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -1871,7 +1893,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views'
+                url = self.list_views.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -1931,6 +1953,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_views.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views'}
 
     def get_table_statistic(
             self, account_name, database_name, schema_name, table_name, statistics_name, custom_headers=None, raw=False, **operation_config):
@@ -1961,7 +1984,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics/{statisticsName}'
+        url = self.get_table_statistic.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2005,6 +2028,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_statistic.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics/{statisticsName}'}
 
     def list_table_statistics(
             self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2055,7 +2079,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics'
+                url = self.list_table_statistics.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2116,6 +2140,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_statistics.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics'}
 
     def get_table_partition(
             self, account_name, database_name, schema_name, table_name, partition_name, custom_headers=None, raw=False, **operation_config):
@@ -2146,7 +2171,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}'
+        url = self.get_table_partition.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2190,6 +2215,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_partition.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}'}
 
     def list_table_partitions(
             self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2240,7 +2266,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions'
+                url = self.list_table_partitions.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2301,6 +2327,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_partitions.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions'}
 
     def list_types(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2348,7 +2375,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/types'
+                url = self.list_types.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2408,6 +2435,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_types.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/types'}
 
     def get_table_valued_function(
             self, account_name, database_name, schema_name, table_valued_function_name, custom_headers=None, raw=False, **operation_config):
@@ -2438,7 +2466,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions/{tableValuedFunctionName}'
+        url = self.get_table_valued_function.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2481,6 +2509,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_table_valued_function.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions/{tableValuedFunctionName}'}
 
     def list_table_valued_functions(
             self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2530,7 +2559,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions'
+                url = self.list_table_valued_functions.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2590,6 +2619,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_valued_functions.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions'}
 
     def get_assembly(
             self, account_name, database_name, assembly_name, custom_headers=None, raw=False, **operation_config):
@@ -2614,7 +2644,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/assemblies/{assemblyName}'
+        url = self.get_assembly.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2656,6 +2686,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_assembly.metadata = {'url': '/catalog/usql/databases/{databaseName}/assemblies/{assemblyName}'}
 
     def list_assemblies(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2701,7 +2732,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/assemblies'
+                url = self.list_assemblies.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2760,6 +2791,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_assemblies.metadata = {'url': '/catalog/usql/databases/{databaseName}/assemblies'}
 
     def get_schema(
             self, account_name, database_name, schema_name, custom_headers=None, raw=False, **operation_config):
@@ -2783,7 +2815,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}'
+        url = self.get_schema.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2825,6 +2857,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_schema.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas/{schemaName}'}
 
     def list_schemas(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2869,7 +2902,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/schemas'
+                url = self.list_schemas.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -2928,6 +2961,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_schemas.metadata = {'url': '/catalog/usql/databases/{databaseName}/schemas'}
 
     def list_table_statistics_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -2974,7 +3008,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/statistics'
+                url = self.list_table_statistics_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3033,6 +3067,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_statistics_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/statistics'}
 
     def list_tables_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, basic=False, custom_headers=None, raw=False, **operation_config):
@@ -3083,7 +3118,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/tables'
+                url = self.list_tables_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3144,6 +3179,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_tables_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/tables'}
 
     def list_table_valued_functions_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3190,7 +3226,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/tablevaluedfunctions'
+                url = self.list_table_valued_functions_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3249,6 +3285,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_table_valued_functions_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/tablevaluedfunctions'}
 
     def list_views_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3294,7 +3331,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/views'
+                url = self.list_views_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3353,6 +3390,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_views_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/views'}
 
     def list_acls_by_database(
             self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3398,7 +3436,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/acl'
+                url = self.list_acls_by_database.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3457,6 +3495,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_acls_by_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/acl'}
 
     def list_acls(
             self, account_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3500,7 +3539,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/acl'
+                url = self.list_acls.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
@@ -3558,6 +3597,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_acls.metadata = {'url': '/catalog/usql/acl'}
 
     def get_database(
             self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
@@ -3579,7 +3619,7 @@ class CatalogOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}'
+        url = self.get_database.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3620,6 +3660,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    get_database.metadata = {'url': '/catalog/usql/databases/{databaseName}'}
 
     def list_databases(
             self, account_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
@@ -3662,7 +3703,7 @@ class CatalogOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/catalog/usql/databases'
+                url = self.list_databases.metadata['url']
                 path_format_arguments = {
                     'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
                     'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
@@ -3720,6 +3761,7 @@ class CatalogOperations(object):
             return client_raw_response
 
         return deserialized
+    list_databases.metadata = {'url': '/catalog/usql/databases'}
 
     def grant_acl(
             self, account_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -3745,7 +3787,7 @@ class CatalogOperations(object):
         op = "GRANTACE"
 
         # Construct URL
-        url = '/catalog/usql/acl'
+        url = self.grant_acl.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
@@ -3783,6 +3825,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    grant_acl.metadata = {'url': '/catalog/usql/acl'}
 
     def grant_acl_to_database(
             self, account_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -3810,7 +3853,7 @@ class CatalogOperations(object):
         op = "GRANTACE"
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/acl'
+        url = self.grant_acl_to_database.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3849,6 +3892,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    grant_acl_to_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/acl'}
 
     def revoke_acl(
             self, account_name, ace_type, principal_id, custom_headers=None, raw=False, **operation_config):
@@ -3880,7 +3924,7 @@ class CatalogOperations(object):
         op = "REVOKEACE"
 
         # Construct URL
-        url = '/catalog/usql/acl'
+        url = self.revoke_acl.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True)
@@ -3918,6 +3962,7 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    revoke_acl.metadata = {'url': '/catalog/usql/acl'}
 
     def revoke_acl_from_database(
             self, account_name, database_name, ace_type, principal_id, custom_headers=None, raw=False, **operation_config):
@@ -3951,7 +3996,7 @@ class CatalogOperations(object):
         op = "REVOKEACE"
 
         # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/acl'
+        url = self.revoke_acl_from_database.metadata['url']
         path_format_arguments = {
             'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
             'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
@@ -3990,3 +4035,4 @@ class CatalogOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    revoke_acl_from_database.metadata = {'url': '/catalog/usql/databases/{databaseName}/acl'}

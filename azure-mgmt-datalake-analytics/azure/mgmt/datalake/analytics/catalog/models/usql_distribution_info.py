@@ -34,9 +34,9 @@ class USqlDistributionInfo(Model):
         'dynamic_count': {'key': 'dynamicCount', 'type': 'int'},
     }
 
-    def __init__(self, type=None, keys=None, count=None, dynamic_count=None):
-        super(USqlDistributionInfo, self).__init__()
-        self.type = type
-        self.keys = keys
-        self.count = count
-        self.dynamic_count = dynamic_count
+    def __init__(self, **kwargs):
+        super(USqlDistributionInfo, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.keys = kwargs.get('keys', None)
+        self.count = kwargs.get('count', None)
+        self.dynamic_count = kwargs.get('dynamic_count', None)

@@ -30,8 +30,8 @@ class USqlAssemblyFileInfo(Model):
         'content_path': {'key': 'contentPath', 'type': 'str'},
     }
 
-    def __init__(self, type=None, original_path=None, content_path=None):
-        super(USqlAssemblyFileInfo, self).__init__()
-        self.type = type
-        self.original_path = original_path
-        self.content_path = content_path
+    def __init__(self, **kwargs):
+        super(USqlAssemblyFileInfo, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.original_path = kwargs.get('original_path', None)
+        self.content_path = kwargs.get('content_path', None)
