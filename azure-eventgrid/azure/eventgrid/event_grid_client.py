@@ -84,7 +84,7 @@ class EventGridClient(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/api/events'
+        url = self.publish_events.metadata['url']
         path_format_arguments = {
             'topicHostname': self._serialize.url("topic_hostname", topic_hostname, 'str', skip_quote=True)
         }
@@ -114,3 +114,4 @@ class EventGridClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    publish_events.metadata = {'url': '/api/events'}
