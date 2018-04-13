@@ -103,12 +103,9 @@ class ProfilesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/profiles'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists all of the CDN profiles within a resource group.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -126,7 +123,7 @@ class ProfilesOperations(object):
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -171,13 +168,10 @@ class ProfilesOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles'}
 
     def get(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, custom_headers=None, raw=False, **operation_config):
         """Gets a CDN profile with the specified profile name under the specified
         subscription and resource group.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -195,7 +189,7 @@ class ProfilesOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -236,11 +230,11 @@ class ProfilesOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, profile_name, profile, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, profile, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -287,13 +281,10 @@ class ProfilesOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, profile_name, profile, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, profile, custom_headers=None, raw=False, **operation_config):
         """Creates a new CDN profile with a profile name under the specified
         subscription and resource group.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -311,7 +302,6 @@ class ProfilesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._create_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             profile=profile,
             custom_headers=custom_headers,
@@ -358,13 +348,13 @@ class ProfilesOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, profile_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, tags=None, custom_headers=None, raw=False, **operation_config):
         profile_update_parameters = models.ProfileUpdateParameters(tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -409,13 +399,10 @@ class ProfilesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, profile_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, tags=None, custom_headers=None, raw=False, **operation_config):
         """Updates an existing CDN profile with the specified profile name under
         the specified subscription and resource group.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -433,7 +420,6 @@ class ProfilesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             tags=tags,
             custom_headers=custom_headers,
@@ -480,11 +466,11 @@ class ProfilesOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -516,14 +502,11 @@ class ProfilesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing CDN profile with the specified parameters. Deleting
         a profile will result in the deletion of all of the sub-resources
         including endpoints, origins and custom domains.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -538,7 +521,6 @@ class ProfilesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             profile_name=profile_name,
             custom_headers=custom_headers,
             raw=True,
@@ -579,7 +561,7 @@ class ProfilesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}
 
     def generate_sso_uri(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, custom_headers=None, raw=False, **operation_config):
         """Generates a dynamic SSO URI used to sign in to the CDN supplemental
         portal. Supplemnetal portal is used to configure advanced feature
         capabilities that are not yet available in the Azure portal, such as
@@ -587,9 +569,6 @@ class ProfilesOperations(object):
         reports, and real-time stats and alerts in a premium profile. The SSO
         URI changes approximately every 10 minutes.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -607,7 +586,7 @@ class ProfilesOperations(object):
         # Construct URL
         url = self.generate_sso_uri.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -647,14 +626,11 @@ class ProfilesOperations(object):
     generate_sso_uri.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/generateSsoUri'}
 
     def list_supported_optimization_types(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, custom_headers=None, raw=False, **operation_config):
         """Gets the supported optimization types for the current profile. A user
         can create an endpoint with an optimization type from the listed
         values.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -673,7 +649,7 @@ class ProfilesOperations(object):
         # Construct URL
         url = self.list_supported_optimization_types.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -713,13 +689,10 @@ class ProfilesOperations(object):
     list_supported_optimization_types.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getSupportedOptimizationTypes'}
 
     def list_resource_usage(
-            self, resource_group_name, profile_name, custom_headers=None, raw=False, **operation_config):
+            self, profile_name, custom_headers=None, raw=False, **operation_config):
         """Checks the quota and actual usage of endpoints under the given CDN
         profile.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within
          the resource group.
         :type profile_name: str
@@ -740,7 +713,7 @@ class ProfilesOperations(object):
                 # Construct URL
                 url = self.list_resource_usage.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'profileName': self._serialize.url("profile_name", profile_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
