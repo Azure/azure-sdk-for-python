@@ -130,8 +130,6 @@ class SitePatchResource(ProxyOnlyResource):
      requests. Issues redirect for
      http requests
     :type https_only: bool
-    :param http20_enabled: Is HTTP2 enabled?
-    :type http20_enabled: bool
     """
 
     _validation = {
@@ -194,10 +192,9 @@ class SitePatchResource(ProxyOnlyResource):
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
-        'http20_enabled': {'key': 'properties.http20Enabled', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None, http20_enabled=None):
+    def __init__(self, kind=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None):
         super(SitePatchResource, self).__init__(kind=kind)
         self.state = None
         self.host_names = None
@@ -231,4 +228,3 @@ class SitePatchResource(ProxyOnlyResource):
         self.default_host_name = None
         self.slot_swap_status = None
         self.https_only = https_only
-        self.http20_enabled = http20_enabled

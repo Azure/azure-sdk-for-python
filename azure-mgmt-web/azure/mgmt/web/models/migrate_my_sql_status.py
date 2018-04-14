@@ -34,6 +34,8 @@ class MigrateMySqlStatus(ProxyOnlyResource):
     :vartype operation_id: str
     :ivar local_my_sql_enabled: True if the web app has in app MySql enabled
     :vartype local_my_sql_enabled: bool
+    :param http20_enabled: Is HTTP2 enabled?
+    :type http20_enabled: bool
     """
 
     _validation = {
@@ -53,10 +55,12 @@ class MigrateMySqlStatus(ProxyOnlyResource):
         'migration_operation_status': {'key': 'properties.migrationOperationStatus', 'type': 'OperationStatus'},
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
+        'http20_enabled': {'key': 'properties.http20Enabled', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None):
+    def __init__(self, kind=None, http20_enabled=None):
         super(MigrateMySqlStatus, self).__init__(kind=kind)
         self.migration_operation_status = None
         self.operation_id = None
         self.local_my_sql_enabled = None
+        self.http20_enabled = http20_enabled
