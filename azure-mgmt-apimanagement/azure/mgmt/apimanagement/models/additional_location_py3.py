@@ -26,9 +26,15 @@ class AdditionalLocation(Model):
     :param sku: Required. SKU properties of the API Management service.
     :type sku:
      ~azure.mgmt.apimanagement.models.ApiManagementServiceSkuProperties
-    :ivar public_ip_addresses: Static IP addresses of the location's virtual
-     machines.
+    :ivar public_ip_addresses: Public Static Load Balanced IP addresses of the
+     API Management service in the additional location. Available only for
+     Basic, Standard and Premium SKU.
     :vartype public_ip_addresses: list[str]
+    :ivar private_ip_addresses: Private Static Load Balanced IP addresses of
+     the API Management service which is deployed in an Internal Virtual
+     Network in a particular additional location. Available only for Basic,
+     Standard and Premium SKU.
+    :vartype private_ip_addresses: list[str]
     :param virtual_network_configuration: Virtual network configuration for
      the location.
     :type virtual_network_configuration:
@@ -42,6 +48,7 @@ class AdditionalLocation(Model):
         'location': {'required': True},
         'sku': {'required': True},
         'public_ip_addresses': {'readonly': True},
+        'private_ip_addresses': {'readonly': True},
         'gateway_regional_url': {'readonly': True},
     }
 
@@ -49,6 +56,7 @@ class AdditionalLocation(Model):
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'ApiManagementServiceSkuProperties'},
         'public_ip_addresses': {'key': 'publicIPAddresses', 'type': '[str]'},
+        'private_ip_addresses': {'key': 'privateIPAddresses', 'type': '[str]'},
         'virtual_network_configuration': {'key': 'virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
         'gateway_regional_url': {'key': 'gatewayRegionalUrl', 'type': 'str'},
     }
@@ -58,5 +66,6 @@ class AdditionalLocation(Model):
         self.location = location
         self.sku = sku
         self.public_ip_addresses = None
+        self.private_ip_addresses = None
         self.virtual_network_configuration = virtual_network_configuration
         self.gateway_regional_url = None

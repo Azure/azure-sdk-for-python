@@ -62,12 +62,13 @@ class ApiManagementServiceResource(ApimResource):
     :type hostname_configurations:
      list[~azure.mgmt.apimanagement.models.HostnameConfiguration]
     :ivar public_ip_addresses: Public Static Load Balanced IP addresses of the
-     API Management service. Available only for Basic, Standard and Premium
-     SKU.
+     API Management service in Primary region. Available only for Basic,
+     Standard and Premium SKU.
     :vartype public_ip_addresses: list[str]
     :ivar private_ip_addresses: Private Static Load Balanced IP addresses of
-     the API Management service which is deployed in an Internal Virtual
-     Network. Available only for Basic, Standard and Premium SKU.
+     the API Management service in Primary region which is deployed in an
+     Internal Virtual Network. Available only for Basic, Standard and Premium
+     SKU.
     :vartype private_ip_addresses: list[str]
     :param virtual_network_configuration: Virtual network configuration of the
      API Management service.
