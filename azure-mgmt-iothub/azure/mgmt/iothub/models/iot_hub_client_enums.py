@@ -65,12 +65,16 @@ class IotHubSku(str, Enum):
     s1 = "S1"
     s2 = "S2"
     s3 = "S3"
+    b1 = "B1"
+    b2 = "B2"
+    b3 = "B3"
 
 
 class IotHubSkuTier(str, Enum):
 
     free = "Free"
     standard = "Standard"
+    basic = "Basic"
 
 
 class JobType(str, Enum):
