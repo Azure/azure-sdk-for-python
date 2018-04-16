@@ -51,7 +51,7 @@ class VirtualMachineScaleSetVMProfile(Model):
     :type priority: str or
      ~azure.mgmt.compute.v2017_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for virtual machines
-     in the low priority scale set. <br><br>Minimum api-version:
+     in a low priority scale set. <br><br>Minimum api-version:
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineEvictionPolicyTypes
