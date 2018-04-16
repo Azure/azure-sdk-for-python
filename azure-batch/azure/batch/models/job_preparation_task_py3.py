@@ -47,11 +47,12 @@ class JobPreparationTask(Model):
      the HTTP status code is 409 (Conflict).
     :type id: str
     :param command_line: Required. The command line of the Job Preparation
-     task. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion.
-     If you want to take advantage of such features, you should invoke the
-     shell in the command line, for example using "cmd /c MyCommand" in Windows
-     or "/bin/sh -c MyCommand" in Linux.
+     task. Tasks should be idempotent. For more information, please see
+     TaskContainerSettings.maxTaskRetryCount. The command line does not run
+     under a shell, and therefore cannot take advantage of shell features such
+     as environment variable expansion. If you want to take advantage of such
+     features, you should invoke the shell in the command line, for example
+     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Preparation task runs. When this is specified, all directories

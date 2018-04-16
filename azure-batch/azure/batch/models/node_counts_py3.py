@@ -36,6 +36,9 @@ class NodeCounts(Model):
     :param start_task_failed: Required. The number of nodes in the
      startTaskFailed state.
     :type start_task_failed: int
+    :param leaving_pool: Required. The number of nodes in the leavingPool
+     state.
+    :type leaving_pool: int
     :param unknown: Required. The number of nodes in the unknown state.
     :type unknown: int
     :param unusable: Required. The number of nodes in the unusable state.
@@ -57,6 +60,7 @@ class NodeCounts(Model):
         'running': {'required': True},
         'starting': {'required': True},
         'start_task_failed': {'required': True},
+        'leaving_pool': {'required': True},
         'unknown': {'required': True},
         'unusable': {'required': True},
         'waiting_for_start_task': {'required': True},
@@ -73,13 +77,14 @@ class NodeCounts(Model):
         'running': {'key': 'running', 'type': 'int'},
         'starting': {'key': 'starting', 'type': 'int'},
         'start_task_failed': {'key': 'startTaskFailed', 'type': 'int'},
+        'leaving_pool': {'key': 'leavingPool', 'type': 'int'},
         'unknown': {'key': 'unknown', 'type': 'int'},
         'unusable': {'key': 'unusable', 'type': 'int'},
         'waiting_for_start_task': {'key': 'waitingForStartTask', 'type': 'int'},
         'total': {'key': 'total', 'type': 'int'},
     }
 
-    def __init__(self, *, creating: int, idle: int, offline: int, preempted: int, rebooting: int, reimaging: int, running: int, starting: int, start_task_failed: int, unknown: int, unusable: int, waiting_for_start_task: int, total: int, **kwargs) -> None:
+    def __init__(self, *, creating: int, idle: int, offline: int, preempted: int, rebooting: int, reimaging: int, running: int, starting: int, start_task_failed: int, leaving_pool: int, unknown: int, unusable: int, waiting_for_start_task: int, total: int, **kwargs) -> None:
         super(NodeCounts, self).__init__(**kwargs)
         self.creating = creating
         self.idle = idle
@@ -90,6 +95,7 @@ class NodeCounts(Model):
         self.running = running
         self.starting = starting
         self.start_task_failed = start_task_failed
+        self.leaving_pool = leaving_pool
         self.unknown = unknown
         self.unusable = unusable
         self.waiting_for_start_task = waiting_for_start_task

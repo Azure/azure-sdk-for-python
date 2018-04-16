@@ -33,7 +33,17 @@ class TaskConstraints(Model):
      For example, if the maximum retry count is 3, Batch tries the task up to 4
      times (one initial try and 3 retries). If the maximum retry count is 0,
      the Batch service does not retry the task. If the maximum retry count is
-     -1, the Batch service retries the task without limit.
+     -1, the Batch service retries the task without limit. ResourceFiles and
+     AppplicationPackages are only downloaded again if the task is retried on a
+     new compute node. Batch will also retry tasks when a recovery operation is
+     triggered on a compute node. Examples of recovery operations triggers
+     include (but are not limited to) when an unhealthy compute node is
+     rebooted or a compute node disappeared due to host failure. Retries due to
+     recovery operation are independent of and are not counted against
+     maxTaskRetryCount. All tasks should be idempotent, it means they need to
+     tolerate being interrupted and restarted, without causing any corruption
+     or duplicate data. Best practices recommended for long running tasks is to
+     use checkpointing.
     :type max_task_retry_count: int
     """
 

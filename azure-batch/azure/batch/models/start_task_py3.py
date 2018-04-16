@@ -18,12 +18,13 @@ class StartTask(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command_line: Required. The command line of the start task. The
-     command line does not run under a shell, and therefore cannot take
-     advantage of shell features such as environment variable expansion. If you
-     want to take advantage of such features, you should invoke the shell in
-     the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux.
+    :param command_line: Required. The command line of the start task. Tasks
+     should be idempotent. For more information, please see
+     TaskContainerSettings.maxTaskRetryCount. The command line does not run
+     under a shell, and therefore cannot take advantage of shell features such
+     as environment variable expansion. If you want to take advantage of such
+     features, you should invoke the shell in the command line, for example
+     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param container_settings: The settings for the container under which the
      start task runs. When this is specified, all directories recursively below

@@ -165,7 +165,9 @@ class CloudPool(Model):
      metadata.
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param stats: Utilization and resource usage statistics for the entire
-     lifetime of the pool.
+     lifetime of the pool. The statistics may not be immediately available. The
+     Batch service performs periodic roll-up of statistics. The typical delay
+     is about 30 minutes.
     :type stats: ~azure.batch.models.PoolStatistics
     """
 

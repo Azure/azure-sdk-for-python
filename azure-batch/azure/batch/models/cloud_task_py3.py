@@ -52,14 +52,16 @@ class CloudTask(Model):
      its previous state. This property is not set if the task is in its initial
      Active state.
     :type previous_state_transition_time: datetime
-    :param command_line: The command line of the task. For multi-instance
-     tasks, the command line is executed as the primary task, after the primary
-     task and all subtasks have finished executing the coordination command
-     line. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion.
-     If you want to take advantage of such features, you should invoke the
-     shell in the command line, for example using "cmd /c MyCommand" in Windows
-     or "/bin/sh -c MyCommand" in Linux.
+    :param command_line: The command line of the task. Tasks should be
+     idempotent. For more information, please see
+     TaskContainerSettings.maxTaskRetryCount. For multi-instance tasks, the
+     command line is executed as the primary task, after the primary task and
+     all subtasks have finished executing the coordination command line. The
+     command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you
+     want to take advantage of such features, you should invoke the shell in
+     the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param container_settings: The settings for the container under which the
      task runs. If the pool that will run this task has containerConfiguration
