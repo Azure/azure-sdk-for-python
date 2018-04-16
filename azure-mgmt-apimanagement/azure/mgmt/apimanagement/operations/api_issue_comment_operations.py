@@ -36,6 +36,171 @@ class ApiIssueCommentOperations(object):
 
         self.config = config
 
+    def list_by_service(
+            self, resource_group_name, service_name, api_id, issue_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+        """Lists all comments for the Issue assosiated with the specified API.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
+        :type api_id: str
+        :param issue_id: Issue identifier. Must be unique in the current API
+         Management service instance.
+        :type issue_id: str
+        :param filter: | Field       | Supported operators    | Supported
+         functions               |
+         |-------------|------------------------|-----------------------------------|
+         | id          | ge, le, eq, ne, gt, lt | substringof, startswith,
+         endswith |
+         | userId          | ge, le, eq, ne, gt, lt | substringof, startswith,
+         endswith |
+        :type filter: str
+        :param top: Number of records to return.
+        :type top: int
+        :param skip: Number of records to skip.
+        :type skip: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of IssueCommentContract
+        :rtype:
+         ~azure.mgmt.apimanagement.models.IssueCommentContractPaged[~azure.mgmt.apimanagement.models.IssueCommentContract]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_service.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+                    'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.IssueCommentContractPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.IssueCommentContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments'}
+
+    def head(
+            self, resource_group_name, service_name, api_id, issue_id, comment_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the entity state (Etag) version of the issue Comment for an API
+        specified by its identifier.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
+        :type api_id: str
+        :param issue_id: Issue identifier. Must be unique in the current API
+         Management service instance.
+        :type issue_id: str
+        :param comment_id: Comment identifier within an Issue. Must be unique
+         in the current Issue.
+        :type comment_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.head.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'commentId': self._serialize.url("comment_id", comment_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.head(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'ETag': 'str',
+            })
+            return client_raw_response
+    head.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments/{commentId}'}
+
     def get(
             self, resource_group_name, service_name, api_id, issue_id, comment_id, custom_headers=None, raw=False, **operation_config):
         """Gets the details of the issue Comment for an API specified by its

@@ -22,13 +22,8 @@ from .api_policy_operations import ApiPolicyOperations
 from .api_schema_operations import ApiSchemaOperations
 from .api_diagnostic_operations import ApiDiagnosticOperations
 from .api_diagnostic_logger_operations import ApiDiagnosticLoggerOperations
-from .api_issues_operations import ApiIssuesOperations
 from .api_issue_operations import ApiIssueOperations
-from .api_issue_comments_operations import ApiIssueCommentsOperations
-from .api_issu_comment_operations import ApiIssuCommentOperations
 from .api_issue_comment_operations import ApiIssueCommentOperations
-from .api_issue_attachments_operations import ApiIssueAttachmentsOperations
-from .api_issu_attachment_operations import ApiIssuAttachmentOperations
 from .api_issue_attachment_operations import ApiIssueAttachmentOperations
 from .authorization_server_operations import AuthorizationServerOperations
 from .backend_operations import BackendOperations
@@ -88,13 +83,8 @@ __all__ = [
     'ApiSchemaOperations',
     'ApiDiagnosticOperations',
     'ApiDiagnosticLoggerOperations',
-    'ApiIssuesOperations',
     'ApiIssueOperations',
-    'ApiIssueCommentsOperations',
-    'ApiIssuCommentOperations',
     'ApiIssueCommentOperations',
-    'ApiIssueAttachmentsOperations',
-    'ApiIssuAttachmentOperations',
     'ApiIssueAttachmentOperations',
     'AuthorizationServerOperations',
     'BackendOperations',
