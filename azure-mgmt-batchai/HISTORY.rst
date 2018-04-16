@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.0.1 (2018-04-16)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix some invalid models in Python 3
+
 1.0.0 (2018-03-19)
 ++++++++++++++++++
 
