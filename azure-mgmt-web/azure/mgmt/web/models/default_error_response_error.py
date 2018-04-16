@@ -32,8 +32,8 @@ class DefaultErrorResponseError(Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'code': {'required': True, 'readonly': True},
+        'message': {'required': True, 'readonly': True},
         'target': {'readonly': True},
         'innererror': {'readonly': True},
     }
