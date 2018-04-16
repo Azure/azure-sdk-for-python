@@ -12,22 +12,17 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvaialabilityRequestBody(Model):
-    """The request body for a check bot name availability request to Bot Service
-    Management.
+class DirectLineChannelProperties(Model):
+    """The parameters to provide for the Direct Line channel.
 
-    :param name: name of the bot, that needs to be checked for availability.
-    :type name: str
-    :param type: resource type for the bot.
-    :type type: str
+    :param sites: The list of Direct Line sites
+    :type sites: list[~azure.mgmt.botservice.models.DirectLineSite]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'sites': {'key': 'sites', 'type': '[DirectLineSite]'},
     }
 
     def __init__(self, **kwargs):
-        super(CheckNameAvaialabilityRequestBody, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+        super(DirectLineChannelProperties, self).__init__(**kwargs)
+        self.sites = kwargs.get('sites', None)

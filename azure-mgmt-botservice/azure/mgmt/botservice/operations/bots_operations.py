@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BotServicesOperations(object):
-    """BotServicesOperations operations.
+class BotsOperations(object):
+    """BotsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -47,14 +47,14 @@ class BotServicesOperations(object):
         :param resource_name: The name of the Bot resource.
         :type resource_name: str
         :param parameters: The parameters to provide for the created bot.
-        :type parameters: ~azure.mgmt.botservice.models.BotResource
+        :type parameters: ~azure.mgmt.botservice.models.Bot
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BotResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotResource or
+        :return: Bot or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.botservice.models.Bot or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
@@ -83,7 +83,7 @@ class BotServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'BotResource')
+        body_content = self._serialize.body(parameters, 'Bot')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -96,9 +96,9 @@ class BotServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BotResource', response)
+            deserialized = self._deserialize('Bot', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('BotResource', response)
+            deserialized = self._deserialize('Bot', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -128,19 +128,19 @@ class BotServicesOperations(object):
         :param etag: Entity Tag
         :type etag: str
         :param properties: The set of properties specific to bot resource
-        :type properties: ~azure.mgmt.botservice.models.BotResourceProperties
+        :type properties: ~azure.mgmt.botservice.models.BotProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BotResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotResource or
+        :return: Bot or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.botservice.models.Bot or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
-        parameters = models.BotResource(location=location, tags=tags, sku=sku, kind=kind, etag=etag, properties=properties)
+        parameters = models.Bot(location=location, tags=tags, sku=sku, kind=kind, etag=etag, properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -166,7 +166,7 @@ class BotServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'BotResource')
+        body_content = self._serialize.body(parameters, 'Bot')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
@@ -179,9 +179,9 @@ class BotServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BotResource', response)
+            deserialized = self._deserialize('Bot', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('BotResource', response)
+            deserialized = self._deserialize('Bot', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -258,8 +258,8 @@ class BotServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: BotResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.botservice.models.BotResource or
+        :return: Bot or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.botservice.models.Bot or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
@@ -297,7 +297,7 @@ class BotServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BotResource', response)
+            deserialized = self._deserialize('Bot', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -319,9 +319,9 @@ class BotServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of BotResource
+        :return: An iterator like instance of Bot
         :rtype:
-         ~azure.mgmt.botservice.models.BotResourcePaged[~azure.mgmt.botservice.models.BotResource]
+         ~azure.mgmt.botservice.models.BotPaged[~azure.mgmt.botservice.models.Bot]
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
@@ -365,11 +365,11 @@ class BotServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.BotResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.BotPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.BotResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.BotPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -385,9 +385,9 @@ class BotServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of BotResource
+        :return: An iterator like instance of Bot
         :rtype:
-         ~azure.mgmt.botservice.models.BotResourcePaged[~azure.mgmt.botservice.models.BotResource]
+         ~azure.mgmt.botservice.models.BotPaged[~azure.mgmt.botservice.models.Bot]
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
@@ -430,11 +430,11 @@ class BotServicesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.BotResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.BotPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.BotResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.BotPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -444,10 +444,11 @@ class BotServicesOperations(object):
             self, name=None, type=None, custom_headers=None, raw=False, **operation_config):
         """Check whether a bot name is available.
 
-        :param name: name of the bot, that needs to be checked for
-         availability.
+        :param name: the name of the bot for which availability needs to be
+         checked.
         :type name: str
-        :param type: resource type for the bot.
+        :param type: the type of the bot for which availability needs to be
+         checked
         :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -462,14 +463,10 @@ class BotServicesOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.botservice.models.ErrorException>`
         """
-        parameters = models.CheckNameAvaialabilityRequestBody(name=name, type=type)
+        parameters = models.CheckNameAvailabilityRequestBody(name=name, type=type)
 
         # Construct URL
         url = self.get_check_name_availability.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -486,7 +483,7 @@ class BotServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CheckNameAvaialabilityRequestBody')
+        body_content = self._serialize.body(parameters, 'CheckNameAvailabilityRequestBody')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
@@ -506,4 +503,4 @@ class BotServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    get_check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BotService/checkNameAvailability'}
+    get_check_name_availability.metadata = {'url': '/providers/Microsoft.BotService/botServices/checkNameAvailability'}

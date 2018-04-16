@@ -13,7 +13,9 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.bot_services_operations import BotServicesOperations
+from .operations.bots_operations import BotsOperations
+from .operations.channels_operations import ChannelsOperations
+from .operations.channel_operations import ChannelOperations
 from .operations.operations import Operations
 from . import models
 
@@ -56,8 +58,12 @@ class AzureBotService(object):
     :ivar config: Configuration for client.
     :vartype config: AzureBotServiceConfiguration
 
-    :ivar bot_services: BotServices operations
-    :vartype bot_services: azure.mgmt.botservice.operations.BotServicesOperations
+    :ivar bots: Bots operations
+    :vartype bots: azure.mgmt.botservice.operations.BotsOperations
+    :ivar channels: Channels operations
+    :vartype channels: azure.mgmt.botservice.operations.ChannelsOperations
+    :ivar channel: Channel operations
+    :vartype channel: azure.mgmt.botservice.operations.ChannelOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.botservice.operations.Operations
 
@@ -80,7 +86,11 @@ class AzureBotService(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.bot_services = BotServicesOperations(
+        self.bots = BotsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.channels = ChannelsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.channel = ChannelOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

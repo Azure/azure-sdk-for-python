@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class BotResourceProperties(Model):
+class BotProperties(Model):
     """The parameters to provide for the Bot.
 
     Variables are only populated by the server, and will be ignored when
@@ -76,18 +76,18 @@ class BotResourceProperties(Model):
         'luis_key': {'key': 'luisKey', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(BotResourceProperties, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.description = kwargs.get('description', None)
-        self.icon_url = kwargs.get('icon_url', None)
-        self.endpoint = kwargs.get('endpoint', None)
+    def __init__(self, *, display_name: str, endpoint: str, msa_app_id: str, description: str=None, icon_url: str=None, developer_app_insight_key: str=None, developer_app_insights_api_key: str=None, developer_app_insights_application_id: str=None, luis_app_ids=None, luis_key: str=None, **kwargs) -> None:
+        super(BotProperties, self).__init__(**kwargs)
+        self.display_name = display_name
+        self.description = description
+        self.icon_url = icon_url
+        self.endpoint = endpoint
         self.endpoint_version = None
-        self.msa_app_id = kwargs.get('msa_app_id', None)
+        self.msa_app_id = msa_app_id
         self.configured_channels = None
         self.enabled_channels = None
-        self.developer_app_insight_key = kwargs.get('developer_app_insight_key', None)
-        self.developer_app_insights_api_key = kwargs.get('developer_app_insights_api_key', None)
-        self.developer_app_insights_application_id = kwargs.get('developer_app_insights_application_id', None)
-        self.luis_app_ids = kwargs.get('luis_app_ids', None)
-        self.luis_key = kwargs.get('luis_key', None)
+        self.developer_app_insight_key = developer_app_insight_key
+        self.developer_app_insights_api_key = developer_app_insights_api_key
+        self.developer_app_insights_application_id = developer_app_insights_application_id
+        self.luis_app_ids = luis_app_ids
+        self.luis_key = luis_key

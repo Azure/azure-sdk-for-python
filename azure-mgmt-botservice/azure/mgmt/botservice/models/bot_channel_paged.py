@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .bots_operations import BotsOperations
-from .channels_operations import ChannelsOperations
-from .channel_operations import ChannelOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'BotsOperations',
-    'ChannelsOperations',
-    'ChannelOperations',
-    'Operations',
-]
+
+class BotChannelPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BotChannel <azure.mgmt.botservice.models.BotChannel>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BotChannel]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BotChannelPaged, self).__init__(*args, **kwargs)
