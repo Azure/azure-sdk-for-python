@@ -28,6 +28,16 @@ class JobManagerTask(Model):
     have priority over tasks in other jobs. Across jobs, only job level
     priorities are observed. For example, if a Job Manager in a priority 0 job
     needs to be restarted, it will not displace tasks of a priority 1 job.
+    Batch will retry tasks when a recovery operation is triggered on a compute
+    node. Examples of recovery operations include (but are not limited to) when
+    an unhealthy compute node is rebooted or a compute node disappeared due to
+    host failure. Retries due to recovery operations are independent of and are
+    not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is
+    0, an internal retry due to a recovery operation may occur. Because of
+    this, all tasks should be idempotent. This means tasks need to tolerate
+    being interrupted and restarted without causing any corruption or duplicate
+    data. Best practices recommended for long running tasks is to use
+    checkpointing.
 
     All required parameters must be populated in order to send to Azure.
 

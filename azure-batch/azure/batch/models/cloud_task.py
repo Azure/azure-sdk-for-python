@@ -15,6 +15,17 @@ from msrest.serialization import Model
 class CloudTask(Model):
     """An Azure Batch task.
 
+    Batch will retry tasks when a recovery operation is triggered on a compute
+    node. Examples of recovery operations include (but are not limited to) when
+    an unhealthy compute node is rebooted or a compute node disappeared due to
+    host failure. Retries due to recovery operations are independent of and are
+    not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is
+    0, an internal retry due to a recovery operation may occur. Because of
+    this, all tasks should be idempotent. This means tasks need to tolerate
+    being interrupted and restarted without causing any corruption or duplicate
+    data. Best practices recommended for long running tasks is to use
+    checkpointing.
+
     :param id: A string that uniquely identifies the task within the job. The
      ID can contain any combination of alphanumeric characters including
      hyphens and underscores, and cannot contain more than 64 characters.
@@ -52,16 +63,15 @@ class CloudTask(Model):
      its previous state. This property is not set if the task is in its initial
      Active state.
     :type previous_state_transition_time: datetime
-    :param command_line: The command line of the task. Tasks should be
-     idempotent. For more information, please see
-     TaskContainerSettings.maxTaskRetryCount. For multi-instance tasks, the
-     command line is executed as the primary task, after the primary task and
-     all subtasks have finished executing the coordination command line. The
-     command line does not run under a shell, and therefore cannot take
-     advantage of shell features such as environment variable expansion. If you
-     want to take advantage of such features, you should invoke the shell in
-     the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux.
+    :param command_line: The command line of the task. For multi-instance
+     tasks, the command line is executed as the primary task, after the primary
+     task and all subtasks have finished executing the coordination command
+     line. The command line does not run under a shell, and therefore cannot
+     take advantage of shell features such as environment variable expansion.
+     If you want to take advantage of such features, you should invoke the
+     shell in the command line, for example using "cmd /c MyCommand" in Windows
+     or "/bin/sh -c MyCommand" in Linux. Tasks should be idempotent. For more
+     information, please see TaskContainerSettings.maxTaskRetryCount.
     :type command_line: str
     :param container_settings: The settings for the container under which the
      task runs. If the pool that will run this task has containerConfiguration
