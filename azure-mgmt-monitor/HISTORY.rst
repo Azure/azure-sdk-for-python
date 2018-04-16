@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.5.1 (2018-04-16)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix some invalid models in Python 3
+- Compatibility of the sdist with wheel 0.31.0
+
 0.5.0 (2017-03-19)
 ++++++++++++++++++
 

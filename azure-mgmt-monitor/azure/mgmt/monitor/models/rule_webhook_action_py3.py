@@ -39,7 +39,7 @@ class RuleWebhookAction(RuleAction):
     }
 
     def __init__(self, *, service_uri: str=None, properties=None, **kwargs) -> None:
-        super(RuleWebhookAction, self).__init__(, **kwargs)
+        super(RuleWebhookAction, self).__init__(**kwargs)
         self.service_uri = service_uri
         self.properties = properties
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'
