@@ -9,6 +9,7 @@ Release History
 **Bugfixes**
 
 - Fix some invalid models in Python 3
+- Compatibility of the sdist with wheel 0.31.0
 
 1.0.0 (2018-03-19)
 ++++++++++++++++++
