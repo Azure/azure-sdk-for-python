@@ -18,22 +18,21 @@ class MigrationConfigProperties(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar provisioning_state: Provisioning state of Migration Config -
-     possible values 'Accepted' or 'Succeeded' or 'Failed'. Possible values
-     include: 'Accepted', 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.servicebus.models.ProvisioningStateMC
-    :param primary_namespace_name: Existing premium Namespace name which has
-     no entities, will be used for migration
+    :ivar provisioning_state: Provisioning state of Migration Configuration
+    :vartype provisioning_state: str
+    :param primary_namespace_name: Required. Existing premium Namespace name
+     which has no entities, will be used for migration
     :type primary_namespace_name: str
-    :param post_migration_name: Name to access connection strings of the
-     Primary Namespace after migration
+    :param post_migration_name: Required. Name to access connection strings of
+     the Primary Namespace after migration
     :type post_migration_name: str
     """
 
@@ -42,18 +41,20 @@ class MigrationConfigProperties(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'primary_namespace_name': {'required': True},
+        'post_migration_name': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningStateMC'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'primary_namespace_name': {'key': 'properties.primaryNamespaceName', 'type': 'str'},
         'post_migration_name': {'key': 'properties.postMigrationName', 'type': 'str'},
     }
 
-    def __init__(self, *, primary_namespace_name: str=None, post_migration_name: str=None, **kwargs) -> None:
+    def __init__(self, *, primary_namespace_name: str, post_migration_name: str, **kwargs) -> None:
         super(MigrationConfigProperties, self).__init__(, **kwargs)
         self.provisioning_state = None
         self.primary_namespace_name = primary_namespace_name

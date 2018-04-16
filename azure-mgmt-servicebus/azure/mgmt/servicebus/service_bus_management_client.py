@@ -17,7 +17,6 @@ from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
 from .operations.disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
 from .operations.migration_configurations_operations import MigrationConfigurationsOperations
-from .operations.migration_config_operations import MigrationConfigOperations
 from .operations.queues_operations import QueuesOperations
 from .operations.topics_operations import TopicsOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
@@ -40,6 +39,8 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
+    :ivar config_name: The configuration name. Should always be "$default".
+    :type config_name: str
     :param str base_url: Service URL
     """
 
@@ -60,6 +61,7 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.config_name = "$default"
 
 
 class ServiceBusManagementClient(object):
@@ -76,8 +78,6 @@ class ServiceBusManagementClient(object):
     :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
     :ivar migration_configurations: MigrationConfigurations operations
     :vartype migration_configurations: azure.mgmt.servicebus.operations.MigrationConfigurationsOperations
-    :ivar migration_config: MigrationConfig operations
-    :vartype migration_config: azure.mgmt.servicebus.operations.MigrationConfigOperations
     :ivar queues: Queues operations
     :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
@@ -121,8 +121,6 @@ class ServiceBusManagementClient(object):
         self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.migration_configurations = MigrationConfigurationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.migration_config = MigrationConfigOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self.config, self._serialize, self._deserialize)
