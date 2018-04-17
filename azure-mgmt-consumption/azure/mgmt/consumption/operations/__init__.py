@@ -17,13 +17,15 @@ from .marketplaces_operations import MarketplacesOperations
 from .marketplaces_by_billing_account_operations import MarketplacesByBillingAccountOperations
 from .marketplaces_by_department_operations import MarketplacesByDepartmentOperations
 from .marketplaces_by_enrollment_accounts_operations import MarketplacesByEnrollmentAccountsOperations
+from .get_balances_by_billing_account_operations import GetBalancesByBillingAccountOperations
 from .reservations_summaries_operations import ReservationsSummariesOperations
 from .reservations_details_operations import ReservationsDetailsOperations
 from .reservation_recommendations_operations import ReservationRecommendationsOperations
 from .budgets_operations import BudgetsOperations
 from .operations import Operations
 from .price_sheet_operations import PriceSheetOperations
-from .cost_allocation_tags_operations import CostAllocationTagsOperations
+from .cost_tags_operations import CostTagsOperations
+from .tags_operations import TagsOperations
 
 __all__ = [
     'UsageDetailsOperations',
@@ -34,11 +36,13 @@ __all__ = [
     'MarketplacesByBillingAccountOperations',
     'MarketplacesByDepartmentOperations',
     'MarketplacesByEnrollmentAccountsOperations',
+    'GetBalancesByBillingAccountOperations',
     'ReservationsSummariesOperations',
     'ReservationsDetailsOperations',
     'ReservationRecommendationsOperations',
     'BudgetsOperations',
     'Operations',
     'PriceSheetOperations',
-    'CostAllocationTagsOperations',
+    'CostTagsOperations',
+    'TagsOperations',
 ]

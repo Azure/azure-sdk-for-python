@@ -18,13 +18,15 @@ from .balance import Balance
 from .reservation_summaries import ReservationSummaries
 from .reservation_details import ReservationDetails
 from .reservation_recommendations import ReservationRecommendations
+from .tag import Tag
+from .tags import Tags
 from .budget_time_period import BudgetTimePeriod
 from .filters import Filters
 from .current_spend import CurrentSpend
 from .notification import Notification
 from .budget import Budget
-from .cost_allocation_tag import CostAllocationTag
-from .cost_allocation_tags import CostAllocationTags
+from .cost_tag import CostTag
+from .cost_tags import CostTags
 from .error_details import ErrorDetails
 from .error_response import ErrorResponse, ErrorResponseException
 from .operation_display import OperationDisplay
@@ -61,13 +63,15 @@ __all__ = [
     'ReservationSummaries',
     'ReservationDetails',
     'ReservationRecommendations',
+    'Tag',
+    'Tags',
     'BudgetTimePeriod',
     'Filters',
     'CurrentSpend',
     'Notification',
     'Budget',
-    'CostAllocationTag',
-    'CostAllocationTags',
+    'CostTag',
+    'CostTags',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'OperationDisplay',

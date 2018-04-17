@@ -23,13 +23,15 @@ from .operations.marketplaces_operations import MarketplacesOperations
 from .operations.marketplaces_by_billing_account_operations import MarketplacesByBillingAccountOperations
 from .operations.marketplaces_by_department_operations import MarketplacesByDepartmentOperations
 from .operations.marketplaces_by_enrollment_accounts_operations import MarketplacesByEnrollmentAccountsOperations
+from .operations.get_balances_by_billing_account_operations import GetBalancesByBillingAccountOperations
 from .operations.reservations_summaries_operations import ReservationsSummariesOperations
 from .operations.reservations_details_operations import ReservationsDetailsOperations
 from .operations.reservation_recommendations_operations import ReservationRecommendationsOperations
 from .operations.budgets_operations import BudgetsOperations
 from .operations.operations import Operations
 from .operations.price_sheet_operations import PriceSheetOperations
-from .operations.cost_allocation_tags_operations import CostAllocationTagsOperations
+from .operations.cost_tags_operations import CostTagsOperations
+from .operations.tags_operations import TagsOperations
 from . import models
 
 
@@ -102,6 +104,8 @@ class ConsumptionManagementClient(object):
     :vartype marketplaces_by_department: azure.mgmt.consumption.operations.MarketplacesByDepartmentOperations
     :ivar marketplaces_by_enrollment_accounts: MarketplacesByEnrollmentAccounts operations
     :vartype marketplaces_by_enrollment_accounts: azure.mgmt.consumption.operations.MarketplacesByEnrollmentAccountsOperations
+    :ivar get_balances_by_billing_account: GetBalancesByBillingAccount operations
+    :vartype get_balances_by_billing_account: azure.mgmt.consumption.operations.GetBalancesByBillingAccountOperations
     :ivar reservations_summaries: ReservationsSummaries operations
     :vartype reservations_summaries: azure.mgmt.consumption.operations.ReservationsSummariesOperations
     :ivar reservations_details: ReservationsDetails operations
@@ -114,8 +118,10 @@ class ConsumptionManagementClient(object):
     :vartype operations: azure.mgmt.consumption.operations.Operations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
-    :ivar cost_allocation_tags: CostAllocationTags operations
-    :vartype cost_allocation_tags: azure.mgmt.consumption.operations.CostAllocationTagsOperations
+    :ivar cost_tags: CostTags operations
+    :vartype cost_tags: azure.mgmt.consumption.operations.CostTagsOperations
+    :ivar tags: Tags operations
+    :vartype tags: azure.mgmt.consumption.operations.TagsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -158,6 +164,8 @@ class ConsumptionManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.marketplaces_by_enrollment_accounts = MarketplacesByEnrollmentAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.get_balances_by_billing_account = GetBalancesByBillingAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.reservations_summaries = ReservationsSummariesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservations_details = ReservationsDetailsOperations(
@@ -170,7 +178,9 @@ class ConsumptionManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.cost_allocation_tags = CostAllocationTagsOperations(
+        self.cost_tags = CostTagsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def get_balances_by_billing_account(
