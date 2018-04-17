@@ -19,7 +19,6 @@ from azure.eventprocessorhost.cancellation_token import CancellationToken
 _logger = logging.getLogger(__name__)
 
 
-
 class PartitionManager:
     """
     Manages the partition event pump execution
