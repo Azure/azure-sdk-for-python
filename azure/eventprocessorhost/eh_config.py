@@ -29,8 +29,11 @@ class EventHubConfig:
         Returns an auth token dictionary for making calls to eventhub
         REST API.
         """
-        return ("amqps://{}:{}@{}.servicebus.windows.net:5671/{}"\
-                .format(self.policy, urllib.parse.quote_plus(self.sas_key), self.sb_name, self.eh_name))
+        return "amqps://{}:{}@{}.servicebus.windows.net:5671/{}".format(
+            urllib.parse.quote_plus(self.policy),
+            urllib.parse.quote_plus(self.sas_key),
+            self.sb_name,
+            self.eh_name))
 
     def get_rest_token(self):
         """

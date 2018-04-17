@@ -16,6 +16,7 @@ class PartitionPump():
     """
     Manages individual connection to a given partition
     """
+
     def __init__(self, host, lease):
         self.host = host
         self.lease = lease
@@ -41,6 +42,8 @@ class PartitionPump():
     def set_lease(self, new_lease):
         """
         Sets a new partition lease to be processed by the pump
+        :param lease: The lease to set.
+        :type lease: ~azure.eventprocessorhost.Lease
         """
         if self.partition_context:
             self.partition_context.lease = new_lease
@@ -127,6 +130,8 @@ class PartitionPump():
     async def process_events_async(self, events):
         """
         Process pump events.
+        :param events: List of events to be processed.
+        :type events: list of ~azure.eventhub.EventData
         """
         if events:
             # Synchronize to serialize calls to the processor. The handler is not installed until
@@ -144,5 +149,7 @@ class PartitionPump():
     async def process_error_async(self, error):
         """
         Passes error to the event processor for processing.
+        :param error: An error the occurred.
+        :type error: Exception
         """
         await self.processor.process_error_async(self.partition_context, error)

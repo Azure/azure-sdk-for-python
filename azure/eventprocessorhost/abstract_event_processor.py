@@ -16,6 +16,8 @@ class AbstractEventProcessor(ABC):
     async def open_async(self, context):
         """
         Called by processor host to initialize the event processor.
+        :param context: Information about the partition
+        :type context: ~azure.eventprocessorhost.PartitionContext
         """
         pass
 
@@ -23,7 +25,10 @@ class AbstractEventProcessor(ABC):
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
-        (Params) Context:Information about the partition
+        :param context: Information about the partition
+        :type context: ~azure.eventprocessorhost.PartitionContext
+        :param reason: The reason for closing.
+        :type reason: str
         """
         pass
 
@@ -32,7 +37,10 @@ class AbstractEventProcessor(ABC):
         """
         Called by the processor host when a batch of events has arrived.
         This is where the real work of the event processor is done.
-        (Params) Context: Information about the partition, Messages: The events to be processed.
+        :param context: Information about the partition
+        :type context: ~azure.eventprocessorhost.PartitionContext
+        :param messages: The events to be processed.
+        :type messages: list of ~azure.eventhub.EventData
         """
         pass
 
@@ -42,6 +50,8 @@ class AbstractEventProcessor(ABC):
         Called when the underlying client experiences an error while receiving.
         EventProcessorHost will take care of recovering from the error and
         continuing to pump messages,so no action is required from
-        (Params) Context: Information about the partition, Error: The error that occured.
+        :param context: Information about the partition
+        :type context: ~azure.eventprocessorhost.PartitionContext
+        :param error: The error that occured.
         """
         pass

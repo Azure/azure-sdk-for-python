@@ -42,7 +42,8 @@ class EventProcessor(AbstractEventProcessor):
     async def close_async(self, context, reason):
         """
         Called by processor host to indicate that the event processor is being stopped.
-        (Params) Context:Information about the partition
+        :param context: Information about the partition
+        :type context: ~azure.eventprocessorhost.PartitionContext
         """
         logger.info("Connection closed (reason {}, id {}, offset {}, sq_number {})".format(
             reason,
@@ -67,7 +68,9 @@ class EventProcessor(AbstractEventProcessor):
         Called when the underlying client experiences an error while receiving.
         EventProcessorHost will take care of recovering from the error and
         continuing to pump messages,so no action is required from
-        (Params) Context: Information about the partition, Error: The error that occured.
+        :param context: Information about the partition
+        :type context: ~azure.eventprocessorhost.PartitionContext
+        :param error: The error that occured.
         """
         logger.error("Event Processor Error {!r}".format(error))
 

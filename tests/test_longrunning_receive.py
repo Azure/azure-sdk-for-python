@@ -14,12 +14,14 @@ import asyncio
 import argparse
 import time
 import os
-import tests
 from urllib.parse import quote_plus
+
+import tests
 from azure.eventhub import Offset
 from azure.eventhub.async import EventHubClientAsync
 
 logger = tests.get_logger("recv_test.log", logging.INFO)
+
 
 async def pump(_pid, receiver, _args, _dl):
     total = 0

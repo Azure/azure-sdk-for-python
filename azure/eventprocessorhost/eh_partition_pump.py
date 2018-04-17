@@ -90,6 +90,8 @@ class EventHubPartitionPump(PartitionPump):
     async def on_closing_async(self, reason):
         """
         Overides partition pump on cleasing
+        :param reason: The reason for the shutdown.
+        :type reason: str
         """
         self.partition_receiver.eh_partition_pump.set_pump_status("Errored")
         await self.running
@@ -138,6 +140,8 @@ class PartitionReceiver:
         is slow, the pump will get control back each time OnEvents returns, and be able to receive
         a new batch of messages with which to make the next OnEvents call.The pump gains nothing
         by running faster than OnEvents.
+        :param events: List of events to be processed.
+        :type events: list of ~azure.eventhub.EventData
         """
         await self.eh_partition_pump.process_events_async(events)
 
@@ -145,6 +149,8 @@ class PartitionReceiver:
         """
         Handles processing errors this is never called since python recieve client doesn't
         have error handling implemented (TBD add fault pump handling)
+        :param error: An error the occurred.
+        :type error: Exception
         """
         try:
             await self.eh_partition_pump.process_error_async(error)

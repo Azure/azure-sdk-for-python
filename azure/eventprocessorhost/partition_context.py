@@ -14,6 +14,7 @@ class PartitionContext:
     """
     Encapsulates information related to an Event Hubs partition used by AbstractEventProcessor
     """
+
     def __init__(self, host, partition_id, eh_path, consumer_group_name, pump_loop=None):
         self.host = host
         self.partition_id = partition_id
@@ -26,7 +27,9 @@ class PartitionContext:
 
     def set_offset_and_sequence_number(self, event_data):
         """
-        Updates offset based on event
+        Updates offset based on event.
+        :param event_data: A received EventData with valid offset and sequenceNumber.
+        :type event_data: ~azure.eventhub.EventData
         """
         if not event_data:
             raise Exception(event_data)
@@ -35,7 +38,8 @@ class PartitionContext:
 
     async def get_initial_offset_async(self): # throws InterruptedException, ExecutionException
         """
-        Returns the initial offset for processing the partition.
+        Gets the initial offset for processing the partition.
+        :returns: str
         """
         _logger.info("Calling user-provided initial offset provider {} {}".format(
             self.host.guid, self.partition_id))
@@ -65,10 +69,10 @@ class PartitionContext:
         """
         Stores the offset and sequenceNumber from the provided received EventData instance,
         then writes those values to the checkpoint store via the checkpoint manager.
-        (Params) eventData :A received EventData with valid offset and sequenceNumber
-        Throws ArgumentNullException If suplied eventData is null
-        Throws ArgumentOutOfRangeException If the sequenceNumber is less than the
-        last checkpointed value
+        :param event_data: A received EventData with valid offset and sequenceNumber.
+        :type event_data: ~azure.eventhub.EventData
+        :raises: ValueError if suplied event_data is None
+        :raises: ValueError if the sequenceNumber is less than the last checkpointed value.
         """
         if not event_data:
             raise ValueError("event_data")
@@ -84,6 +88,7 @@ class PartitionContext:
         """
         Returns the parition context in the following format:
         "PartitionContext({EventHubPath}{ConsumerGroupName}{PartitionId}{SequenceNumber})"
+        :returns: str
         """
         return "PartitionContext({}{}{}{})".format(self.eh_path,
                                                    self.consumer_group_name,
@@ -93,6 +98,8 @@ class PartitionContext:
     async def persist_checkpoint_async(self, checkpoint):
         """
         Persists the checkpoint
+        :param checkpoint: The checkpoint to persist.
+        :type checkpoint: ~azure.eventprocessorhost.Checkpoint
         """
         _logger.debug("PartitionPumpCheckpointStart {} {} {} {}".format(
             self.host.guid, checkpoint.partition_id, checkpoint.offset, checkpoint.sequence_number))

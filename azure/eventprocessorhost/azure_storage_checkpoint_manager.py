@@ -78,8 +78,8 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
     async def create_checkpoint_store_if_not_exists_async(self):
         """
         Create the checkpoint store if it doesn't exist. Do nothing if it does exist.
-        (Returns) true if the checkpoint store already exists or was created OK, false
-        if there was a failure
+        :returns: `True` if the checkpoint store already exists or was created OK, `False`
+         if there was a failure
         """
         await self.create_lease_store_if_not_exists_async()
 
@@ -87,7 +87,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         Get the checkpoint data associated with the given partition.
         Could return null if no checkpoint has been created for that partition.
-        (Returns) Given partition checkpoint info, or null if none has been previously stored.
+        :returns: Given partition checkpoint info, or `None` if none has been previously stored.
         """
         lease = await self.get_lease_async(partition_id)
         checkpoint = None
@@ -101,7 +101,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         Create the given partition checkpoint if it doesn't exist.Do nothing if it does exist.
         The offset/sequenceNumber for a freshly-created checkpoint should be set to StartOfStream/0.
-        (Returns) The checkpoint for the given partition, whether newly created or already existing.
+        :returns: The checkpoint for the given partition, whether newly created or already existing.
         """
         checkpoint = await self.get_checkpoint_async(partition_id)
         if not checkpoint:
@@ -132,7 +132,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
     async def create_lease_store_if_not_exists_async(self):
         """
         Create the lease store if it does not exist, do nothing if it does exist.
-        (Returns) true if the lease store already exists or was created successfully, false if not
+        :returns: `True` if the lease store already exists or was created successfully, `False` if not.
         """
         try:
             await self.host.loop.run_in_executor(
@@ -150,7 +150,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
     async def delete_lease_store_async(self):
         """
         Not used by EventProcessorHost, but a convenient function to have for testing.
-        (Returns) true if the lease store was deleted successfully, false if not
+        :returns: `True` if the lease store was deleted successfully, `False` if not.
         """
         return "Not Supported in Python"
 
@@ -158,7 +158,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         Return the lease info for the specified partition.
         Can return null if no lease has been created in the store for the specified partition.
-        (Returns) lease info for the partition, or null
+        :returns: lease info for the partition, or `None`.
         """
         try:
             blob = await self.host.loop.run_in_executor(
@@ -193,7 +193,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         Return the lease info for all partitions.
         A typical implementation could just call get_lease_async() on all partitions.
-        (Returns) list of lease info.
+        :returns: list of lease info.
         """
         lease_futures = []
         partition_ids = await self.host.partition_manager.get_partition_ids_async()
@@ -205,7 +205,9 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         Create in the store the lease info for the given partition, if it does not exist.
         Do nothing if it does exist in the store already.
-        (Returns) the existing or newly-created lease info for the partition
+        :param partition_id: The ID of a given parition.
+        :type partition_id: str
+        :returns: the existing or newly-created lease info for the partition.
         """
         return_lease = None
         try:
@@ -249,7 +251,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         Acquire the lease on the desired partition for this EventProcessorHost.
         Note that it is legal to acquire a lease that is already owned by another host.
         Lease-stealing is how partitions are redistributed when additional hosts are started.
-        (Returns) true if the lease was acquired successfully, false if not
+        :returns: `True` if the lease was acquired successfully, `False` if not.
         """
         retval = True
         new_lease_id = str(uuid.uuid4())
@@ -307,7 +309,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         Renew a lease currently held by this host.
         If the lease has been stolen, or expired, or released, it is not possible to renew it.
         You will have to call getLease() and then acquireLease() again.
-        (Returns) true if the lease was renewed successfully, false if not
+        :returns: `True` if the lease was renewed successfully, `False` if not.
         """
         try:
             await self.host.loop.run_in_executor(
@@ -331,7 +333,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         """
         Give up a lease currently held by this host. If the lease has been stolen, or expired,
         releasing it is unnecessary, and will fail if attempted.
-        (Returns) true if the lease was released successfully, false if not
+        :returns: `True` if the lease was released successfully, `False` if not.
         """
         lease_id = None
         try:
@@ -369,7 +371,7 @@ class AzureStorageCheckpointLeaseManager(AbstractCheckpointManager, AbstractLeas
         hold a lease in order to update it. If the lease has been stolen, or expired, or released,
         it cannot be updated. Updating should renew the lease before performing the update to
         avoid lease expiration during the process.
-        (Returns) true if the updated was performed successfully, false if not.
+        :returns: `True` if the updated was performed successfully, `False` if not.
         """
         if lease is None:
             return False
