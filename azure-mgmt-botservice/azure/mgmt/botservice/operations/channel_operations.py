@@ -45,11 +45,11 @@ class ChannelOperations(object):
         :type resource_group_name: str
         :param resource_name: The name of the Bot resource.
         :type resource_name: str
-        :param channel_name: The name of the Bot resource. Possible values
+        :param channel_name: The name of the Channel resource. Possible values
          include: 'FacebookChannel', 'EmailChannel', 'KikChannel',
          'TelegramChannel', 'SlackChannel', 'MsTeamsChannel', 'SkypeChannel',
          'WebChatChannel', 'DirectLineChannel', 'SmsChannel'
-        :type channel_name: str
+        :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,7 +66,7 @@ class ChannelOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
-            'channelName': self._serialize.url("channel_name", channel_name, 'str'),
+            'channelName': self._serialize.url("channel_name", channel_name, 'ChannelName'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
