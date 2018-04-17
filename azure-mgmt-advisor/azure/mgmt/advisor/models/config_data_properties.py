@@ -33,8 +33,8 @@ class ConfigDataProperties(Model):
         'low_cpu_threshold': {'key': 'low_cpu_threshold', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, exclude=None, low_cpu_threshold=None):
-        super(ConfigDataProperties, self).__init__()
-        self.additional_properties = additional_properties
-        self.exclude = exclude
-        self.low_cpu_threshold = low_cpu_threshold
+    def __init__(self, **kwargs):
+        super(ConfigDataProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.exclude = kwargs.get('exclude', None)
+        self.low_cpu_threshold = kwargs.get('low_cpu_threshold', None)

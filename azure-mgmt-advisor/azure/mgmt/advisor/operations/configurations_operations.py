@@ -22,7 +22,7 @@ class ConfigurationsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The version of the API to be used with the client request. Constant value: "2017-04-19".
     """
 
@@ -58,7 +58,7 @@ class ConfigurationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -103,6 +103,7 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'}
 
     def create_in_subscription(
             self, config_contract, custom_headers=None, raw=False, **operation_config):
@@ -125,7 +126,7 @@ class ConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'
+        url = self.create_in_subscription.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -168,6 +169,7 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_in_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Advisor/configurations'}
 
     def list_by_resource_group(
             self, resource_group, custom_headers=None, raw=False, **operation_config):
@@ -189,7 +191,7 @@ class ConfigurationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'
+                url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroup': self._serialize.url("resource_group", resource_group, 'str')
@@ -235,6 +237,7 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'}
 
     def create_in_resource_group(
             self, config_contract, resource_group, custom_headers=None, raw=False, **operation_config):
@@ -256,7 +259,7 @@ class ConfigurationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'
+        url = self.create_in_resource_group.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str')
@@ -300,3 +303,4 @@ class ConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_in_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Advisor/configurations'}
