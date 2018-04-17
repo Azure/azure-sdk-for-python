@@ -88,7 +88,7 @@ class FileServer(Resource):
     }
 
     def __init__(self, *, vm_size: str=None, ssh_configuration=None, data_disks=None, subnet=None, **kwargs) -> None:
-        super(FileServer, self).__init__(, **kwargs)
+        super(FileServer, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.ssh_configuration = ssh_configuration
         self.data_disks = data_disks
