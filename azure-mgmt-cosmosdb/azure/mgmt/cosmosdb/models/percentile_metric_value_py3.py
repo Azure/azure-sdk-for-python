@@ -79,7 +79,7 @@ class PercentileMetricValue(MetricValue):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(PercentileMetricValue, self).__init__(, **kwargs)
+        super(PercentileMetricValue, self).__init__(**kwargs)
         self.p10 = None
         self.p25 = None
         self.p50 = None
