@@ -50,6 +50,11 @@ class VirtualMachineScaleSetVMProfile(Model):
      values include: 'Regular', 'Low'
     :type priority: str or
      ~azure.mgmt.compute.v2017_12_01.models.VirtualMachinePriorityTypes
+    :param eviction_policy: Specifies the eviction policy for virtual machines
+     in a low priority scale set. <br><br>Minimum api-version:
+     2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
+    :type eviction_policy: str or
+     ~azure.mgmt.compute.v2017_12_01.models.VirtualMachineEvictionPolicyTypes
     """
 
     _attribute_map = {
@@ -60,9 +65,10 @@ class VirtualMachineScaleSetVMProfile(Model):
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'str'},
+        'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
     }
 
-    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, **kwargs) -> None:
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
@@ -71,3 +77,4 @@ class VirtualMachineScaleSetVMProfile(Model):
         self.extension_profile = extension_profile
         self.license_type = license_type
         self.priority = priority
+        self.eviction_policy = eviction_policy

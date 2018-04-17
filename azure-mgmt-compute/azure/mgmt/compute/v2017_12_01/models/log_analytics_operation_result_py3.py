@@ -52,5 +52,5 @@ class LogAnalyticsOperationResult(OperationStatusResponse):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(LogAnalyticsOperationResult, self).__init__(, **kwargs)
+        super(LogAnalyticsOperationResult, self).__init__(**kwargs)
         self.properties = None
