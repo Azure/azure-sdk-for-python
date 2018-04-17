@@ -12,17 +12,18 @@
 from msrest.serialization import Model
 
 
-class IotDpsSkuDefinition(Model):
-    """Available Sku's of tier and units.
+class TagsResource(Model):
+    """A container holding only the Tags for a resource, allowing the user to
+    update the tags on a Provisioning Service instance.
 
-    :param name: Sku name. Possible values include: 'S1'
-    :type name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
+    :param tags: Resource tags
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(IotDpsSkuDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(TagsResource, self).__init__(**kwargs)
+        self.tags = tags

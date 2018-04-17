@@ -37,8 +37,8 @@ Usage
 =====
 
 For code examples, see `IoTHub Provisioning Services
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-iothubprovisioningservices.html>`__
-on readthedocs.org.
+<https://docs.microsoft.com/python/api/overview/azure/iot>`__
+on docs.microsoft.com.
 
 
 Provide Feedback

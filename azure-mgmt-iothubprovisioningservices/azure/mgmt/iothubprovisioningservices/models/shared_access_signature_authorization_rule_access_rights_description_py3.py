@@ -42,9 +42,9 @@ class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(Model):
         'rights': {'key': 'rights', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key_name: str, rights, primary_key: str=None, secondary_key: str=None, **kwargs) -> None:
         super(SharedAccessSignatureAuthorizationRuleAccessRightsDescription, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
-        self.primary_key = kwargs.get('primary_key', None)
-        self.secondary_key = kwargs.get('secondary_key', None)
-        self.rights = kwargs.get('rights', None)
+        self.key_name = key_name
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
+        self.rights = rights

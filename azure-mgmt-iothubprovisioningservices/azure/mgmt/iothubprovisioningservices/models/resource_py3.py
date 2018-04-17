@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ProvisioningServiceDescription(Resource):
-    """The description of the provisioning service.
+class Resource(Model):
+    """The common properties of an Azure resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,16 +30,6 @@ class ProvisioningServiceDescription(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
-    :param etag: The Etag field is *not* required. If it is provided in the
-     response body, it must also be provided as a header per the normal ETag
-     convention.
-    :type etag: str
-    :param properties: Required. Service specific properties for a
-     provisioning service
-    :type properties:
-     ~azure.mgmt.iothubprovisioningservices.models.IotDpsPropertiesDescription
-    :param sku: Required. Sku info for a provisioning Service.
-    :type sku: ~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuInfo
     """
 
     _validation = {
@@ -47,8 +37,6 @@ class ProvisioningServiceDescription(Resource):
         'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'type': {'readonly': True},
         'location': {'required': True},
-        'properties': {'required': True},
-        'sku': {'required': True},
     }
 
     _attribute_map = {
@@ -57,13 +45,12 @@ class ProvisioningServiceDescription(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'IotDpsPropertiesDescription'},
-        'sku': {'key': 'sku', 'type': 'IotDpsSkuInfo'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProvisioningServiceDescription, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.properties = kwargs.get('properties', None)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags

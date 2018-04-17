@@ -62,8 +62,8 @@ class ProvisioningServiceDescription(Resource):
         'sku': {'key': 'sku', 'type': 'IotDpsSkuInfo'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProvisioningServiceDescription, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.properties = kwargs.get('properties', None)
-        self.sku = kwargs.get('sku', None)
+    def __init__(self, *, location: str, properties, sku, tags=None, etag: str=None, **kwargs) -> None:
+        super(ProvisioningServiceDescription, self).__init__(location=location, tags=tags, **kwargs)
+        self.etag = etag
+        self.properties = properties
+        self.sku = sku

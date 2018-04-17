@@ -12,44 +12,44 @@
 from msrest.serialization import Model
 
 
-class VerificationCodeResponse(Model):
-    """Description of the response of the verification code.
+class CertificateResponse(Model):
+    """The X509 Certificate.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Name of certificate.
-    :vartype name: str
-    :ivar etag: Request etag.
-    :vartype etag: str
+    :param properties: properties of a certificate
+    :type properties:
+     ~azure.mgmt.iothubprovisioningservices.models.CertificateProperties
     :ivar id: The resource identifier.
     :vartype id: str
+    :ivar name: The name of the certificate.
+    :vartype name: str
+    :ivar etag: The entity tag.
+    :vartype etag: str
     :ivar type: The resource type.
     :vartype type: str
-    :param properties:
-    :type properties:
-     ~azure.mgmt.iothubprovisioningservices.models.VerificationCodeResponseProperties
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'etag': {'readonly': True},
-        'id': {'readonly': True},
         'type': {'readonly': True},
     }
 
     _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'CertificateProperties'},
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'VerificationCodeResponseProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(VerificationCodeResponse, self).__init__(**kwargs)
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(CertificateResponse, self).__init__(**kwargs)
+        self.properties = properties
+        self.id = None
         self.name = None
         self.etag = None
-        self.id = None
         self.type = None
-        self.properties = kwargs.get('properties', None)
