@@ -74,13 +74,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -161,13 +161,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -248,13 +248,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -331,13 +331,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -416,13 +416,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -501,13 +501,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -586,13 +586,13 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
@@ -671,13 +671,98 @@
             "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
           },
           "personalLock": {
-            "name": "_root_.autorest.7790.916749354673.personal-lock",
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
             "options": {
-              "port": 31496,
-              "host": "2130728282",
+              "port": 53391,
+              "host": "2130745404",
               "exclusive": true
             },
-            "pipe": "/tmp/pipe__root_.autorest.7790.916749354673.personal-lock:31496"
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
+          },
+          "file": "/tmp/_root_.autorest.lock"
+        },
+        "dotnetPath": "/root/.dotnet"
+      },
+      "installationPath": "/root/.autorest"
+    },
+    {
+      "resolvedInfo": null,
+      "packageMetadata": {
+        "name": "@microsoft.azure/autorest.python",
+        "version": "3.0.48",
+        "dependencies": {
+          "dotnet-2.0.0": "^1.4.4"
+        },
+        "optionalDependencies": {},
+        "devDependencies": {
+          "@microsoft.azure/autorest.testserver": "^2.5.6",
+          "autorest": "^2.0.4203",
+          "coffee-script": "^1.11.1",
+          "dotnet-sdk-2.0.0": "^1.4.4",
+          "gulp": "^3.9.1",
+          "gulp-filter": "^5.0.0",
+          "gulp-line-ending-corrector": "^1.0.1",
+          "iced-coffee-script": "^108.0.11",
+          "marked": "^0.3.6",
+          "marked-terminal": "^2.0.0",
+          "moment": "^2.17.1",
+          "run-sequence": "*",
+          "shx": "^0.2.2",
+          "through2-parallel": "^0.1.3",
+          "yargs": "^8.0.2",
+          "yarn": "^1.0.2"
+        },
+        "bundleDependencies": false,
+        "peerDependencies": {},
+        "deprecated": false,
+        "_resolved": "/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python",
+        "_integrity": null,
+        "_shasum": "27855a7f8f0c68c0d129d102aa13ee0663a45fd1",
+        "_shrinkwrap": null,
+        "bin": null,
+        "_id": "@microsoft.azure/autorest.python@3.0.48",
+        "_from": "file:/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python",
+        "_requested": {
+          "type": "directory",
+          "where": "/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python",
+          "raw": "/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python",
+          "rawSpec": "/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python",
+          "saveSpec": "file:/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python",
+          "fetchSpec": "/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python"
+        },
+        "_spec": "/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python",
+        "_where": "/root/.autorest/@microsoft.azure_autorest.python@3.0.48/node_modules/@microsoft.azure/autorest.python"
+      },
+      "extensionManager": {
+        "installationPath": "/root/.autorest",
+        "sharedLock": {
+          "name": "/root/.autorest",
+          "exclusiveLock": {
+            "name": "_root_.autorest.exclusive-lock",
+            "options": {
+              "port": 45234,
+              "host": "2130706813",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.exclusive-lock:45234"
+          },
+          "busyLock": {
+            "name": "_root_.autorest.busy-lock",
+            "options": {
+              "port": 37199,
+              "host": "2130756895",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.busy-lock:37199"
+          },
+          "personalLock": {
+            "name": "_root_.autorest.7142.2763707562.personal-lock",
+            "options": {
+              "port": 53391,
+              "host": "2130745404",
+              "exclusive": true
+            },
+            "pipe": "/tmp/pipe__root_.autorest.7142.2763707562.personal-lock:53391"
           },
           "file": "/tmp/_root_.autorest.lock"
         },
