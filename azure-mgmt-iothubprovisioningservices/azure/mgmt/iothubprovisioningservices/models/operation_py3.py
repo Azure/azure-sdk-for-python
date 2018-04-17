@@ -35,7 +35,7 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, display=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.display = kwargs.get('display', None)
+        self.display = display

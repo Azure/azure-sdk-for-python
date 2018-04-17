@@ -23,6 +23,6 @@ class IotDpsSkuDefinition(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name=None, **kwargs) -> None:
         super(IotDpsSkuDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name

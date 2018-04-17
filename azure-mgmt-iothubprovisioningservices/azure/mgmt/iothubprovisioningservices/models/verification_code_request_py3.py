@@ -12,17 +12,18 @@
 from msrest.serialization import Model
 
 
-class IotDpsSkuDefinition(Model):
-    """Available Sku's of tier and units.
+class VerificationCodeRequest(Model):
+    """The JSON-serialized leaf certificate.
 
-    :param name: Sku name. Possible values include: 'S1'
-    :type name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
+    :param certificate: base-64 representation of X509 certificate .cer file
+     or just .pem file content.
+    :type certificate: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'certificate': {'key': 'certificate', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(IotDpsSkuDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, certificate: str=None, **kwargs) -> None:
+        super(VerificationCodeRequest, self).__init__(**kwargs)
+        self.certificate = certificate

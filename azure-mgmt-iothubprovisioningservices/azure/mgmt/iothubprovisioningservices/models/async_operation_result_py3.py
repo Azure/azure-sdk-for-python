@@ -26,7 +26,7 @@ class AsyncOperationResult(Model):
         'error': {'key': 'error', 'type': 'ErrorMesssage'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, status: str=None, error=None, **kwargs) -> None:
         super(AsyncOperationResult, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.error = kwargs.get('error', None)
+        self.status = status
+        self.error = error
