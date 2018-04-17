@@ -34,19 +34,19 @@ class TextModerationOperations(object):
         self.config = config
 
     def screen_text(
-            self, language, text_content_type, text_content, autocorrect=False, pii=False, list_id=None, classify=False, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, text_content_type, text_content, language=None, autocorrect=False, pii=False, list_id=None, classify=False, custom_headers=None, raw=False, callback=None, **operation_config):
         """Detect profanity and match against custom and shared blacklists.
 
         Detects profanity in more than 100 languages and match against custom
         and shared blacklists.
 
-        :param language: Language of the terms.
-        :type language: str
         :param text_content_type: The content type. Possible values include:
          'text/plain', 'text/html', 'text/xml', 'text/markdown'
         :type text_content_type: str
         :param text_content: Content to screen.
         :type text_content: Generator
+        :param language: Language of the text.
+        :type language: str
         :param autocorrect: Autocorrect text.
         :type autocorrect: bool
         :param pii: Detect personal identifiable information.
@@ -80,7 +80,8 @@ class TextModerationOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
         if autocorrect is not None:
             query_parameters['autocorrect'] = self._serialize.query("autocorrect", autocorrect, 'bool')
         if pii is not None:
