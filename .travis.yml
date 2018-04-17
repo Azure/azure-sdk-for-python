@@ -35,7 +35,6 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -m venv venv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
 install:
-  - pip install -U pip setuptools
   - python scripts/dev_setup.py
 script: 
   - pytest
