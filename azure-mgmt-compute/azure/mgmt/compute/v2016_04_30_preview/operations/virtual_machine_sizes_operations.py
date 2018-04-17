@@ -55,8 +55,7 @@ class VirtualMachineSizesOperations(object):
          ~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSizePaged[~azure.mgmt.compute.v2016_04_30_preview.models.VirtualMachineSize]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -86,6 +85,11 @@ class VirtualMachineSizesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters)
+            return request, header_parameters
+
+        def internal_paging(next_link=None):
+            request, header_parameters = prepare_request(next_link)
+
             response = self._client.send(
                 request, header_parameters, stream=False, **operation_config)
 
@@ -97,12 +101,10 @@ class VirtualMachineSizesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.VirtualMachineSizePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/vmSizes'}

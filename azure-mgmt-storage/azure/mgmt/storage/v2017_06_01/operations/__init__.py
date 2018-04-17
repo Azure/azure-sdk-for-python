@@ -9,10 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .skus_operations import SkusOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .usage_operations import UsageOperations
+try:
+    from .operations_async import Operations
+    from .skus_operations_async import SkusOperations
+    from .storage_accounts_operations_async import StorageAccountsOperations
+    from .usage_operations_async import UsageOperations
+except (SyntaxError, ImportError):
+    from .operations import Operations
+    from .skus_operations import SkusOperations
+    from .storage_accounts_operations import StorageAccountsOperations
+    from .usage_operations import UsageOperations
 
 __all__ = [
     'Operations',

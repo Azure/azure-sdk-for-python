@@ -22,7 +22,7 @@ class Operations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-06-01".
     """
 
@@ -51,11 +51,10 @@ class Operations(object):
          ~azure.mgmt.storage.v2017_06_01.models.OperationPaged[~azure.mgmt.storage.v2017_06_01.models.Operation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Storage/operations'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -77,6 +76,11 @@ class Operations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters)
+            return request, header_parameters
+
+        def internal_paging(next_link=None):
+            request, header_parameters = prepare_request(next_link)
+
             response = self._client.send(
                 request, header_parameters, stream=False, **operation_config)
 
@@ -88,11 +92,10 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
+    list.metadata = {'url': '/providers/Microsoft.Storage/operations'}

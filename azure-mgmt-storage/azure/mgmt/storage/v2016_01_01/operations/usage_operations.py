@@ -22,7 +22,7 @@ class UsageOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-01-01".
     """
 
@@ -52,11 +52,10 @@ class UsageOperations(object):
          ~azure.mgmt.storage.v2016_01_01.models.UsagePaged[~azure.mgmt.storage.v2016_01_01.models.Usage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/usages'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -82,6 +81,11 @@ class UsageOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters)
+            return request, header_parameters
+
+        def internal_paging(next_link=None):
+            request, header_parameters = prepare_request(next_link)
+
             response = self._client.send(
                 request, header_parameters, stream=False, **operation_config)
 
@@ -93,11 +97,10 @@ class UsageOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.UsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Storage/usages'}

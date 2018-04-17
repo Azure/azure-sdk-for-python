@@ -13,8 +13,8 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.disks_operations import DisksOperations
-from .operations.snapshots_operations import SnapshotsOperations
+from .operations import DisksOperations
+from .operations import SnapshotsOperations
 from . import models
 
 

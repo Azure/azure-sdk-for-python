@@ -29,8 +29,8 @@ class OperationDisplay(Model):
         'operation': {'key': 'operation', 'type': 'str'},
     }
 
-    def __init__(self, provider=None, resource=None, operation=None):
-        super(OperationDisplay, self).__init__()
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
+    def __init__(self, **kwargs):
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.resource = kwargs.get('resource', None)
+        self.operation = kwargs.get('operation', None)

@@ -60,13 +60,13 @@ class StorageAccountUpdateParameters(Model):
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, enable_https_traffic_only=False, network_rule_set=None):
-        super(StorageAccountUpdateParameters, self).__init__()
-        self.sku = sku
-        self.tags = tags
-        self.identity = identity
-        self.custom_domain = custom_domain
-        self.encryption = encryption
-        self.access_tier = access_tier
-        self.enable_https_traffic_only = enable_https_traffic_only
-        self.network_rule_set = network_rule_set
+    def __init__(self, **kwargs):
+        super(StorageAccountUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)
+        self.custom_domain = kwargs.get('custom_domain', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.access_tier = kwargs.get('access_tier', None)
+        self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', False)
+        self.network_rule_set = kwargs.get('network_rule_set', None)
