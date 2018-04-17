@@ -57,6 +57,17 @@ class ActionGroupResource(Resource):
      receivers that are part of this action group.
     :type automation_runbook_receivers:
      list[~azure.mgmt.monitor.models.AutomationRunbookReceiver]
+    :param voice_receivers: The list of voice receivers that are part of this
+     action group.
+    :type voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiver]
+    :param logic_app_receivers: The list of logic app receivers that are part
+     of this action group.
+    :type logic_app_receivers:
+     list[~azure.mgmt.monitor.models.LogicAppReceiver]
+    :param azure_function_receivers: The list of azure function receivers that
+     are part of this action group.
+    :type azure_function_receivers:
+     list[~azure.mgmt.monitor.models.AzureFunctionReceiver]
     """
 
     _validation = {
@@ -64,7 +75,7 @@ class ActionGroupResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'group_short_name': {'required': True, 'max_length': 15},
+        'group_short_name': {'required': True, 'max_length': 12},
         'enabled': {'required': True},
     }
 
@@ -82,6 +93,9 @@ class ActionGroupResource(Resource):
         'itsm_receivers': {'key': 'properties.itsmReceivers', 'type': '[ItsmReceiver]'},
         'azure_app_push_receivers': {'key': 'properties.azureAppPushReceivers', 'type': '[AzureAppPushReceiver]'},
         'automation_runbook_receivers': {'key': 'properties.automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
+        'voice_receivers': {'key': 'properties.voiceReceivers', 'type': '[VoiceReceiver]'},
+        'logic_app_receivers': {'key': 'properties.logicAppReceivers', 'type': '[LogicAppReceiver]'},
+        'azure_function_receivers': {'key': 'properties.azureFunctionReceivers', 'type': '[AzureFunctionReceiver]'},
     }
 
     def __init__(self, **kwargs):
@@ -94,3 +108,6 @@ class ActionGroupResource(Resource):
         self.itsm_receivers = kwargs.get('itsm_receivers', None)
         self.azure_app_push_receivers = kwargs.get('azure_app_push_receivers', None)
         self.automation_runbook_receivers = kwargs.get('automation_runbook_receivers', None)
+        self.voice_receivers = kwargs.get('voice_receivers', None)
+        self.logic_app_receivers = kwargs.get('logic_app_receivers', None)
+        self.azure_function_receivers = kwargs.get('azure_function_receivers', None)

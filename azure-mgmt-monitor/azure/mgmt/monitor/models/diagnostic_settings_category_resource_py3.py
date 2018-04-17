@@ -43,5 +43,5 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
     }
 
     def __init__(self, *, category_type=None, **kwargs) -> None:
-        super(DiagnosticSettingsCategoryResource, self).__init__(**kwargs)
+        super(DiagnosticSettingsCategoryResource, self).__init__(, **kwargs)
         self.category_type = category_type
