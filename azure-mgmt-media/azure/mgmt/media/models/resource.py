@@ -13,23 +13,17 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """The Azure Resource Manager resource.
+    """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The id of the resource.
+    :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The geographic location of the resource. This must be one
-     of the supported and registered Azure Geo Regions (for example, West US,
-     East US, Southeast Asia, and so forth).
-    :type location: str
-    :param tags: Tags to help categorize the resource in the Azure portal.
-    :type tags: dict
     """
 
     _validation = {
@@ -42,13 +36,10 @@ class Resource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None):
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
