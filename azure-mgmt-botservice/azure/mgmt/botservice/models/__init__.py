@@ -16,6 +16,7 @@ try:
     from .bot_py3 import Bot
     from .channel_py3 import Channel
     from .bot_channel_py3 import BotChannel
+    from .facebook_page_py3 import FacebookPage
     from .facebook_channel_properties_py3 import FacebookChannelProperties
     from .facebook_channel_py3 import FacebookChannel
     from .email_channel_properties_py3 import EmailChannelProperties
@@ -51,6 +52,7 @@ except (SyntaxError, ImportError):
     from .bot import Bot
     from .channel import Channel
     from .bot_channel import BotChannel
+    from .facebook_page import FacebookPage
     from .facebook_channel_properties import FacebookChannelProperties
     from .facebook_channel import FacebookChannel
     from .email_channel_properties import EmailChannelProperties
@@ -96,6 +98,7 @@ __all__ = [
     'Bot',
     'Channel',
     'BotChannel',
+    'FacebookPage',
     'FacebookChannelProperties',
     'FacebookChannel',
     'EmailChannelProperties',
