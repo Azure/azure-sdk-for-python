@@ -13,6 +13,7 @@ try:
     from .provider_py3 import Provider
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
+    from .location_py3 import Location
     from .entity_name_availability_check_output_py3 import EntityNameAvailabilityCheckOutput
     from .storage_account_py3 import StorageAccount
     from .sync_storage_keys_input_py3 import SyncStorageKeysInput
@@ -141,6 +142,7 @@ except (SyntaxError, ImportError):
     from .provider import Provider
     from .operation_display import OperationDisplay
     from .operation import Operation
+    from .location import Location
     from .entity_name_availability_check_output import EntityNameAvailabilityCheckOutput
     from .storage_account import StorageAccount
     from .sync_storage_keys_input import SyncStorageKeysInput
@@ -318,6 +320,7 @@ __all__ = [
     'Provider',
     'OperationDisplay',
     'Operation',
+    'Location',
     'EntityNameAvailabilityCheckOutput',
     'StorageAccount',
     'SyncStorageKeysInput',

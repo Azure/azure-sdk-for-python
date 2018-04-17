@@ -15,7 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.mediaservices_operations import MediaservicesOperations
-from .operations.providers_operations import ProvidersOperations
+from .operations.locations_operations import LocationsOperations
 from .operations.assets_operations import AssetsOperations
 from .operations.content_key_policies_operations import ContentKeyPoliciesOperations
 from .operations.transforms_operations import TransformsOperations
@@ -71,8 +71,8 @@ class AzureMediaServices(object):
     :vartype operations: azure.mgmt.media.operations.Operations
     :ivar mediaservices: Mediaservices operations
     :vartype mediaservices: azure.mgmt.media.operations.MediaservicesOperations
-    :ivar providers: Providers operations
-    :vartype providers: azure.mgmt.media.operations.ProvidersOperations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.media.operations.LocationsOperations
     :ivar assets: Assets operations
     :vartype assets: azure.mgmt.media.operations.AssetsOperations
     :ivar content_key_policies: ContentKeyPolicies operations
@@ -116,7 +116,7 @@ class AzureMediaServices(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.mediaservices = MediaservicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.providers = ProvidersOperations(
+        self.locations = LocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.assets = AssetsOperations(
             self._client, self.config, self._serialize, self._deserialize)

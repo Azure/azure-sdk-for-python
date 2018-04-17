@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ProvidersOperations(object):
-    """ProvidersOperations operations.
+class LocationsOperations(object):
+    """LocationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,11 +37,13 @@ class ProvidersOperations(object):
         self.config = config
 
     def check_name_availability(
-            self, name=None, type=None, custom_headers=None, raw=False, **operation_config):
+            self, location_name, name=None, type=None, custom_headers=None, raw=False, **operation_config):
         """Check Name Availability.
 
         Checks whether the Media Service resource name is available.
 
+        :param location_name:
+        :type location_name: str
         :param name: The account name.
         :type name: str
         :param type: The account type. For a Media Services account, this
@@ -64,7 +66,8 @@ class ProvidersOperations(object):
         # Construct URL
         url = self.check_name_availability.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'locationName': self._serialize.url("location_name", location_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -103,4 +106,4 @@ class ProvidersOperations(object):
             return client_raw_response
 
         return deserialized
-    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/checkNameAvailability'}
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/locations/{locationName}/checkNameAvailability'}

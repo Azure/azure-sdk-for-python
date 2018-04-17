@@ -11,7 +11,7 @@
 
 from .operations import Operations
 from .mediaservices_operations import MediaservicesOperations
-from .providers_operations import ProvidersOperations
+from .locations_operations import LocationsOperations
 from .assets_operations import AssetsOperations
 from .content_key_policies_operations import ContentKeyPoliciesOperations
 from .transforms_operations import TransformsOperations
@@ -25,7 +25,7 @@ from .streaming_endpoints_operations import StreamingEndpointsOperations
 __all__ = [
     'Operations',
     'MediaservicesOperations',
-    'ProvidersOperations',
+    'LocationsOperations',
     'AssetsOperations',
     'ContentKeyPoliciesOperations',
     'TransformsOperations',
