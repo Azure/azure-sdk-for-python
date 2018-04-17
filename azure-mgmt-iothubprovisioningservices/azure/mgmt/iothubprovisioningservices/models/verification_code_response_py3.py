@@ -46,10 +46,10 @@ class VerificationCodeResponse(Model):
         'properties': {'key': 'properties', 'type': 'VerificationCodeResponseProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(VerificationCodeResponse, self).__init__(**kwargs)
         self.name = None
         self.etag = None
         self.id = None
         self.type = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties

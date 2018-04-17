@@ -12,17 +12,18 @@
 from msrest.serialization import Model
 
 
-class IotDpsSkuDefinition(Model):
-    """Available Sku's of tier and units.
+class CertificateListDescription(Model):
+    """The JSON-serialized array of Certificate objects.
 
-    :param name: Sku name. Possible values include: 'S1'
-    :type name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
+    :param value: The array of Certificate objects.
+    :type value:
+     list[~azure.mgmt.iothubprovisioningservices.models.CertificateResponse]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[CertificateResponse]'},
     }
 
-    def __init__(self, **kwargs):
-        super(IotDpsSkuDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(CertificateListDescription, self).__init__(**kwargs)
+        self.value = value

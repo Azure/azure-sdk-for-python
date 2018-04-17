@@ -68,13 +68,13 @@ class IotDpsPropertiesDescription(Model):
         'authorization_policies': {'key': 'authorizationPolicies', 'type': '[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, state=None, provisioning_state: str=None, iot_hubs=None, allocation_policy=None, authorization_policies=None, **kwargs) -> None:
         super(IotDpsPropertiesDescription, self).__init__(**kwargs)
-        self.state = kwargs.get('state', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
-        self.iot_hubs = kwargs.get('iot_hubs', None)
-        self.allocation_policy = kwargs.get('allocation_policy', None)
+        self.state = state
+        self.provisioning_state = provisioning_state
+        self.iot_hubs = iot_hubs
+        self.allocation_policy = allocation_policy
         self.service_operations_host_name = None
         self.device_provisioning_host_name = None
         self.id_scope = None
-        self.authorization_policies = kwargs.get('authorization_policies', None)
+        self.authorization_policies = authorization_policies

@@ -47,10 +47,10 @@ class IotHubDefinitionDescription(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, connection_string: str, location: str, apply_allocation_policy: bool=None, allocation_weight: int=None, **kwargs) -> None:
         super(IotHubDefinitionDescription, self).__init__(**kwargs)
-        self.apply_allocation_policy = kwargs.get('apply_allocation_policy', None)
-        self.allocation_weight = kwargs.get('allocation_weight', None)
+        self.apply_allocation_policy = apply_allocation_policy
+        self.allocation_weight = allocation_weight
         self.name = None
-        self.connection_string = kwargs.get('connection_string', None)
-        self.location = kwargs.get('location', None)
+        self.connection_string = connection_string
+        self.location = location

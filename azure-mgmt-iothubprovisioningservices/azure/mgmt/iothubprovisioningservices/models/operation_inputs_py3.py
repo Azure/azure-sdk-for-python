@@ -12,17 +12,23 @@
 from msrest.serialization import Model
 
 
-class IotDpsSkuDefinition(Model):
-    """Available Sku's of tier and units.
+class OperationInputs(Model):
+    """Input values for operation results call.
 
-    :param name: Sku name. Possible values include: 'S1'
-    :type name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the Provisioning Service to check.
+    :type name: str
     """
+
+    _validation = {
+        'name': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(IotDpsSkuDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, name: str, **kwargs) -> None:
+        super(OperationInputs, self).__init__(**kwargs)
+        self.name = name
