@@ -130,7 +130,7 @@ class ApiIssueOperations(object):
         return deserialized
     list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues'}
 
-    def head(
+    def get_entity_tag(
             self, resource_group_name, service_name, api_id, issue_id, custom_headers=None, raw=False, **operation_config):
         """Gets the entity state (Etag) version of the Issue for an API specified
         by its identifier.
@@ -156,7 +156,7 @@ class ApiIssueOperations(object):
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.head.metadata['url']
+        url = self.get_entity_tag.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
@@ -193,7 +193,7 @@ class ApiIssueOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    head.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
+    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
 
     def get(
             self, resource_group_name, service_name, api_id, issue_id, custom_headers=None, raw=False, **operation_config):
