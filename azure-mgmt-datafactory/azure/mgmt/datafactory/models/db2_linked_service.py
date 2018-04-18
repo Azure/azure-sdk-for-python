@@ -39,9 +39,6 @@ class Db2LinkedService(LinkedService):
     :param database: Required. Database name for connection. Type: string (or
      Expression with resultType string).
     :type database: object
-    :param schema: Schema name for connection. Type: string (or Expression
-     with resultType string).
-    :type schema: object
     :param authentication_type: AuthenticationType to be used for connection.
      Possible values include: 'Basic'
     :type authentication_type: str or
@@ -72,7 +69,6 @@ class Db2LinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'database': {'key': 'typeProperties.database', 'type': 'object'},
-        'schema': {'key': 'typeProperties.schema', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
@@ -83,7 +79,6 @@ class Db2LinkedService(LinkedService):
         super(Db2LinkedService, self).__init__(**kwargs)
         self.server = kwargs.get('server', None)
         self.database = kwargs.get('database', None)
-        self.schema = kwargs.get('schema', None)
         self.authentication_type = kwargs.get('authentication_type', None)
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)

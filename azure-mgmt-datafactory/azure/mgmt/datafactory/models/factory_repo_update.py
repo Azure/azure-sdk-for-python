@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class FactoryRepoUpdate(Model):
     """Factory's VSTS repo information.
 
-    :param factory_id: The factory id.
-    :type factory_id: str
+    :param factory_resource_id: The factory resource id.
+    :type factory_resource_id: str
     :param vsts_configuration: VSTS repo information of the factory.
     :type vsts_configuration:
      ~azure.mgmt.datafactory.models.FactoryVSTSConfiguration
     """
 
     _attribute_map = {
-        'factory_id': {'key': 'factoryId', 'type': 'str'},
+        'factory_resource_id': {'key': 'factoryResourceId', 'type': 'str'},
         'vsts_configuration': {'key': 'vstsConfiguration', 'type': 'FactoryVSTSConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(FactoryRepoUpdate, self).__init__(**kwargs)
-        self.factory_id = kwargs.get('factory_id', None)
+        self.factory_resource_id = kwargs.get('factory_resource_id', None)
         self.vsts_configuration = kwargs.get('vsts_configuration', None)

@@ -168,15 +168,15 @@ class FactoriesOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories'}
 
     def configure_repo(
-            self, resource_group_name, factory_name, factory_id=None, vsts_configuration=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, factory_resource_id=None, vsts_configuration=None, custom_headers=None, raw=False, **operation_config):
         """Updates a factory's repo information.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param factory_id: The factory id.
-        :type factory_id: str
+        :param factory_resource_id: The factory resource id.
+        :type factory_resource_id: str
         :param vsts_configuration: VSTS repo information of the factory.
         :type vsts_configuration:
          ~azure.mgmt.datafactory.models.FactoryVSTSConfiguration
@@ -191,7 +191,7 @@ class FactoriesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
-        factory_repo_update = models.FactoryRepoUpdate(factory_id=factory_id, vsts_configuration=vsts_configuration)
+        factory_repo_update = models.FactoryRepoUpdate(factory_resource_id=factory_resource_id, vsts_configuration=vsts_configuration)
 
         # Construct URL
         url = self.configure_repo.metadata['url']
