@@ -17,8 +17,6 @@ class FactoryRepoUpdate(Model):
 
     :param factory_id: The factory id.
     :type factory_id: str
-    :param resource_group_name: The resource group name.
-    :type resource_group_name: str
     :param vsts_configuration: VSTS repo information of the factory.
     :type vsts_configuration:
      ~azure.mgmt.datafactory.models.FactoryVSTSConfiguration
@@ -26,12 +24,10 @@ class FactoryRepoUpdate(Model):
 
     _attribute_map = {
         'factory_id': {'key': 'factoryId', 'type': 'str'},
-        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
         'vsts_configuration': {'key': 'vstsConfiguration', 'type': 'FactoryVSTSConfiguration'},
     }
 
-    def __init__(self, *, factory_id: str=None, resource_group_name: str=None, vsts_configuration=None, **kwargs) -> None:
+    def __init__(self, *, factory_id: str=None, vsts_configuration=None, **kwargs) -> None:
         super(FactoryRepoUpdate, self).__init__(**kwargs)
         self.factory_id = factory_id
-        self.resource_group_name = resource_group_name
         self.vsts_configuration = vsts_configuration

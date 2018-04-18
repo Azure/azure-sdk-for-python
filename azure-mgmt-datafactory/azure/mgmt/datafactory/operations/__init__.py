@@ -11,7 +11,7 @@
 
 from .operations import Operations
 from .factories_operations import FactoriesOperations
-from .configure_factory_repo_operations import ConfigureFactoryRepoOperations
+from .configure_repo_operations import ConfigureRepoOperations
 from .integration_runtimes_operations import IntegrationRuntimesOperations
 from .integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
 from .linked_services_operations import LinkedServicesOperations
@@ -24,7 +24,7 @@ from .triggers_operations import TriggersOperations
 __all__ = [
     'Operations',
     'FactoriesOperations',
-    'ConfigureFactoryRepoOperations',
+    'ConfigureRepoOperations',
     'IntegrationRuntimesOperations',
     'IntegrationRuntimeNodesOperations',
     'LinkedServicesOperations',

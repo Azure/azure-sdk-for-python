@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ConfigureFactoryRepoOperations(object):
-    """ConfigureFactoryRepoOperations operations.
+class ConfigureRepoOperations(object):
+    """ConfigureRepoOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,14 +37,18 @@ class ConfigureFactoryRepoOperations(object):
         self.config = config
 
     def update(
-            self, location_id, factory_repo_update, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, factory_name, factory_id=None, vsts_configuration=None, custom_headers=None, raw=False, **operation_config):
         """Updates a factory's repo information.
 
-        :param location_id: The location identifier.
-        :type location_id: str
-        :param factory_repo_update: Update factory repo request definition.
-        :type factory_repo_update:
-         ~azure.mgmt.datafactory.models.FactoryRepoUpdate
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param factory_name: The factory name.
+        :type factory_name: str
+        :param factory_id: The factory id.
+        :type factory_id: str
+        :param vsts_configuration: VSTS repo information of the factory.
+        :type vsts_configuration:
+         ~azure.mgmt.datafactory.models.FactoryVSTSConfiguration
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -56,11 +60,14 @@ class ConfigureFactoryRepoOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.datafactory.models.ErrorResponseException>`
         """
+        factory_repo_update = models.FactoryRepoUpdate(factory_id=factory_id, vsts_configuration=vsts_configuration)
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'locationId': self._serialize.url("location_id", location_id, 'str')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -99,4 +106,4 @@ class ConfigureFactoryRepoOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataFactory/locations/{locationId}/configureFactoryRepo'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/configureRepo'}
