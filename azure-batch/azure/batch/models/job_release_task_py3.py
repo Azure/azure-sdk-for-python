@@ -50,7 +50,10 @@ class JobReleaseTask(Model):
      advantage of shell features such as environment variable expansion. If you
      want to take advantage of such features, you should invoke the shell in
      the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux.
+     "/bin/sh -c MyCommand" in Linux. The command line had better use
+     relativate path of task execution directory, or use the Batch provided
+     environment
+     variables(https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Release task runs. When this is specified, all directories recursively

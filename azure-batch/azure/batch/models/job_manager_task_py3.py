@@ -51,12 +51,14 @@ class JobManagerTask(Model):
      1024.
     :type display_name: str
     :param command_line: Required. The command line of the Job Manager task.
-     Tasks should be idempotent. For more information, please see
-     TaskContainerSettings.maxTaskRetryCount. The command line does not run
-     under a shell, and therefore cannot take advantage of shell features such
-     as environment variable expansion. If you want to take advantage of such
-     features, you should invoke the shell in the command line, for example
-     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux.
+     The command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you
+     want to take advantage of such features, you should invoke the shell in
+     the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux. The command line had better use
+     relativate path of task execution directory, or use the Batch provided
+     environment
+     variables(https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Manager task runs. If the pool that will run this task has
@@ -131,7 +133,7 @@ class JobManagerTask(Model):
     :type authentication_token_settings:
      ~azure.batch.models.AuthenticationTokenSettings
     :param allow_low_priority_node: Whether the Job Manager task may run on a
-     low-priority compute node. The default value is false.
+     low-priority compute node. The default value is true.
     :type allow_low_priority_node: bool
     """
 
