@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .signalr_operations import SignalrOperations
+from .signal_roperations import SignalROperations
 
 __all__ = [
-    'SignalrOperations',
+    'SignalROperations',
 ]

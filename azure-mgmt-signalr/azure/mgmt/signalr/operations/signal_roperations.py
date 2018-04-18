@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class SignalrOperations(object):
-    """SignalrOperations operations.
+class SignalROperations(object):
+    """SignalROperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

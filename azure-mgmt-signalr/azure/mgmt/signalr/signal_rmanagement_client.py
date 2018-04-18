@@ -13,7 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.signalr_operations import SignalrOperations
+from .operations.signal_roperations import SignalROperations
 from . import models
 
 
@@ -57,8 +57,8 @@ class SignalRManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SignalRManagementClientConfiguration
 
-    :ivar signalr: Signalr operations
-    :vartype signalr: azure.mgmt.signalr.operations.SignalrOperations
+    :ivar signal_r: SignalR operations
+    :vartype signal_r: azure.mgmt.signalr.operations.SignalROperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -81,5 +81,5 @@ class SignalRManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.signalr = SignalrOperations(
+        self.signal_r = SignalROperations(
             self._client, self.config, self._serialize, self._deserialize)
