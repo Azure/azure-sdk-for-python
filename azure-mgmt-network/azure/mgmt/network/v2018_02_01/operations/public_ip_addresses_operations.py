@@ -25,8 +25,6 @@ class PublicIPAddressesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2018-02-01".
-    :ivar api_version: Client API version. Constant value: "2018-02-01".
     """
 
     models = models
@@ -36,14 +34,14 @@ class PublicIPAddressesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01"
-        self.api_version = "2018-02-01"
 
         self.config = config
 
 
     def _delete_initial(
             self, resource_group_name, public_ip_address_name, custom_headers=None, raw=False, **operation_config):
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -55,7 +53,7 @@ class PublicIPAddressesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -141,6 +139,8 @@ class PublicIPAddressesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -152,7 +152,7 @@ class PublicIPAddressesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -190,6 +190,8 @@ class PublicIPAddressesOperations(object):
 
     def _create_or_update_initial(
             self, resource_group_name, public_ip_address_name, parameters, custom_headers=None, raw=False, **operation_config):
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -201,7 +203,7 @@ class PublicIPAddressesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -296,6 +298,8 @@ class PublicIPAddressesOperations(object):
             self, resource_group_name, public_ip_address_name, tags=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.TagsObject(tags=tags)
 
+        api_version = "2018-02-01"
+
         # Construct URL
         url = self.update_tags.metadata['url']
         path_format_arguments = {
@@ -307,7 +311,7 @@ class PublicIPAddressesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -407,6 +411,8 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2018_02_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2018-02-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -419,7 +425,7 @@ class PublicIPAddressesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -474,6 +480,8 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2018_02_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2018-02-01"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -487,7 +495,7 @@ class PublicIPAddressesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -546,6 +554,8 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2018_02_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2017-03-30"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -560,7 +570,7 @@ class PublicIPAddressesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -625,6 +635,8 @@ class PublicIPAddressesOperations(object):
          ~azure.mgmt.network.v2018_02_01.models.PublicIPAddressPaged[~azure.mgmt.network.v2018_02_01.models.PublicIPAddress]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2017-03-30"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -642,7 +654,7 @@ class PublicIPAddressesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
                 url = next_link
@@ -710,6 +722,8 @@ class PublicIPAddressesOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2017-03-30"
+
         # Construct URL
         url = self.get_virtual_machine_scale_set_public_ip_address.metadata['url']
         path_format_arguments = {
@@ -725,7 +739,7 @@ class PublicIPAddressesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
