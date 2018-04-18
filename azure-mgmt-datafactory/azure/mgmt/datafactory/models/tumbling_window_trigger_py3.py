@@ -63,6 +63,9 @@ class TumblingWindowTrigger(Trigger):
     :param retry_policy: Retry policy that will be applied for failed pipeline
      runs.
     :type retry_policy: ~azure.mgmt.datafactory.models.RetryPolicy
+    :param depends_on: Tumbling Window depends on condition.
+    :type depends_on:
+     list[~azure.mgmt.datafactory.models.TumblingWindowDependency]
     """
 
     _validation = {
@@ -88,9 +91,10 @@ class TumblingWindowTrigger(Trigger):
         'delay': {'key': 'typeProperties.delay', 'type': 'object'},
         'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
         'retry_policy': {'key': 'typeProperties.retryPolicy', 'type': 'RetryPolicy'},
+        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[TumblingWindowDependency]'},
     }
 
-    def __init__(self, *, pipeline, frequency, interval: int, start_time, max_concurrency: int, additional_properties=None, description: str=None, end_time=None, delay=None, retry_policy=None, **kwargs) -> None:
+    def __init__(self, *, pipeline, frequency, interval: int, start_time, max_concurrency: int, additional_properties=None, description: str=None, end_time=None, delay=None, retry_policy=None, depends_on=None, **kwargs) -> None:
         super(TumblingWindowTrigger, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
         self.pipeline = pipeline
         self.frequency = frequency
@@ -100,4 +104,5 @@ class TumblingWindowTrigger(Trigger):
         self.delay = delay
         self.max_concurrency = max_concurrency
         self.retry_policy = retry_policy
+        self.depends_on = depends_on
         self.type = 'TumblingWindowTrigger'

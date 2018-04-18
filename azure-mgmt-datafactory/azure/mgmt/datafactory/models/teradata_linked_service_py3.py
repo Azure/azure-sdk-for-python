@@ -36,9 +36,6 @@ class TeradataLinkedService(LinkedService):
     :param server: Required. Server name for connection. Type: string (or
      Expression with resultType string).
     :type server: object
-    :param schema: Schema name for connection. Type: string (or Expression
-     with resultType string).
-    :type schema: object
     :param authentication_type: AuthenticationType to be used for connection.
      Possible values include: 'Basic', 'Windows'
     :type authentication_type: str or
@@ -67,17 +64,15 @@ class TeradataLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
-        'schema': {'key': 'typeProperties.schema', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, schema=None, authentication_type=None, username=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, server, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, authentication_type=None, username=None, password=None, encrypted_credential=None, **kwargs) -> None:
         super(TeradataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.server = server
-        self.schema = schema
         self.authentication_type = authentication_type
         self.username = username
         self.password = password
