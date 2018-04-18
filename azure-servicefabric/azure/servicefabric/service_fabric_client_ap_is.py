@@ -61,7 +61,7 @@ class ServiceFabricClientAPIs(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '6.2.0'
+        self.api_version = '6.2.0.9'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -2890,7 +2890,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
@@ -2966,14 +2966,12 @@ class ServiceFabricClientAPIs(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204, 404]:
+        if response.status_code not in [200, 204]:
             raise models.FabricErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ServiceTypeInfo', response)
-        if response.status_code == 204:
             deserialized = self._deserialize('ServiceTypeInfo', response)
 
         if raw:
@@ -13160,7 +13158,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -13224,7 +13222,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -13571,7 +13569,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:
@@ -13628,7 +13626,7 @@ class ServiceFabricClientAPIs(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             raise models.FabricErrorException(self._deserialize, response)
 
         if raw:

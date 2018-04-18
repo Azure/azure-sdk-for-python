@@ -32,6 +32,10 @@ class ServiceTypeDescription(Model):
     :param placement_constraints: The placement constraint to be used when
      instantiating this service in a Service Fabric cluster.
     :type placement_constraints: str
+    :param load_metrics: The service load metrics is given as an array of
+     ServiceLoadMetricDescription objects.
+    :type load_metrics:
+     list[~azure.servicefabric.models.ServiceLoadMetricDescription]
     :param service_placement_policies: List of service placement policy
      descriptions.
     :type service_placement_policies:
@@ -51,6 +55,7 @@ class ServiceTypeDescription(Model):
         'is_stateful': {'key': 'IsStateful', 'type': 'bool'},
         'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
         'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
+        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -65,6 +70,7 @@ class ServiceTypeDescription(Model):
         self.is_stateful = kwargs.get('is_stateful', None)
         self.service_type_name = kwargs.get('service_type_name', None)
         self.placement_constraints = kwargs.get('placement_constraints', None)
+        self.load_metrics = kwargs.get('load_metrics', None)
         self.service_placement_policies = kwargs.get('service_placement_policies', None)
         self.extensions = kwargs.get('extensions', None)
         self.kind = None

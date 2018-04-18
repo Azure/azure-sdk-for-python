@@ -488,6 +488,14 @@ class ServicePlacementPolicyType(str, Enum):
     non_partially_place_service = "NonPartiallyPlaceService"  #: Indicates that the ServicePlacementPolicyDescription is of type ServicePlacementNonPartiallyPlaceServicePolicyDescription, which indicates that if possible all replicas of a particular partition of the service should be placed atomically. The value is 5.
 
 
+class ServiceLoadMetricWeight(str, Enum):
+
+    zero = "Zero"  #: Disables resource balancing for this metric. This value is zero.
+    low = "Low"  #: Specifies the metric weight of the service load as Low. The value is 1.
+    medium = "Medium"  #: Specifies the metric weight of the service load as Medium. The value is 2.
+    high = "High"  #: Specifies the metric weight of the service load as High. The value is 3.
+
+
 class HostType(str, Enum):
 
     invalid = "Invalid"  #: Indicates the type of host is not known or invalid. The value is 0.
@@ -597,14 +605,6 @@ class PartitionScheme(str, Enum):
     singleton = "Singleton"  #: Indicates that the partition is based on string names, and is a SingletonPartitionSchemeDescription object, The value is 1.
     uniform_int64_range = "UniformInt64Range"  #: Indicates that the partition is based on Int64 key ranges, and is a UniformInt64RangePartitionSchemeDescription object. The value is 2.
     named = "Named"  #: Indicates that the partition is based on string names, and is a NamedPartitionSchemeDescription object. The value is 3
-
-
-class ServiceLoadMetricWeight(str, Enum):
-
-    zero = "Zero"  #: Disables resource balancing for this metric. This value is zero.
-    low = "Low"  #: Specifies the metric weight of the service load as Low. The value is 1.
-    medium = "Medium"  #: Specifies the metric weight of the service load as Medium. The value is 2.
-    high = "High"  #: Specifies the metric weight of the service load as High. The value is 3.
 
 
 class ServiceOperationName(str, Enum):

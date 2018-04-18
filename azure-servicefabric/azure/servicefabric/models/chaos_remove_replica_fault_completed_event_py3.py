@@ -40,7 +40,7 @@ class ChaosRemoveReplicaFaultCompletedEvent(ReplicaEvent):
      the same node for the same partition, it will get a different value for
      the id. Sometimes the id of a stateless service instance is also referred
      as a replica id.
-    :type replica_id: str
+    :type replica_id: long
     :param fault_group_id: Required. Id of fault group.
     :type fault_group_id: str
     :param fault_id: Required. Id of fault.
@@ -66,13 +66,13 @@ class ChaosRemoveReplicaFaultCompletedEvent(ReplicaEvent):
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
         'fault_group_id': {'key': 'FaultGroupId', 'type': 'str'},
         'fault_id': {'key': 'FaultId', 'type': 'str'},
         'service_uri': {'key': 'ServiceUri', 'type': 'str'},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: str, fault_group_id: str, fault_id: str, service_uri: str, has_correlated_events: bool=None, **kwargs) -> None:
+    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, fault_group_id: str, fault_id: str, service_uri: str, has_correlated_events: bool=None, **kwargs) -> None:
         super(ChaosRemoveReplicaFaultCompletedEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
         self.fault_group_id = fault_group_id
         self.fault_id = fault_id

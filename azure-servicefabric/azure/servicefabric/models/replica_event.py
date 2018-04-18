@@ -49,7 +49,7 @@ class ReplicaEvent(FabricEvent):
      the same node for the same partition, it will get a different value for
      the id. Sometimes the id of a stateless service instance is also referred
      as a replica id.
-    :type replica_id: str
+    :type replica_id: long
     """
 
     _validation = {
@@ -66,7 +66,7 @@ class ReplicaEvent(FabricEvent):
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
     }
 
     _subtype_map = {

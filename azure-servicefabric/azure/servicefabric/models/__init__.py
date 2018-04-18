@@ -104,6 +104,7 @@ try:
     from .entity_health_state_chunk_py3 import EntityHealthStateChunk
     from .entity_health_state_chunk_list_py3 import EntityHealthStateChunkList
     from .epoch_py3 import Epoch
+    from .backup_epoch_py3 import BackupEpoch
     from .event_health_evaluation_py3 import EventHealthEvaluation
     from .fabric_event_py3 import FabricEvent
     from .fabric_code_version_info_py3 import FabricCodeVersionInfo
@@ -172,6 +173,7 @@ try:
     from .service_placement_required_domain_policy_description_py3 import ServicePlacementRequiredDomainPolicyDescription
     from .service_placement_require_domain_distribution_policy_description_py3 import ServicePlacementRequireDomainDistributionPolicyDescription
     from .services_health_evaluation_py3 import ServicesHealthEvaluation
+    from .service_load_metric_description_py3 import ServiceLoadMetricDescription
     from .service_type_extension_description_py3 import ServiceTypeExtensionDescription
     from .service_type_description_py3 import ServiceTypeDescription
     from .service_type_info_py3 import ServiceTypeInfo
@@ -239,7 +241,6 @@ try:
     from .create_compose_deployment_description_py3 import CreateComposeDeploymentDescription
     from .deployed_service_package_info_py3 import DeployedServicePackageInfo
     from .service_correlation_description_py3 import ServiceCorrelationDescription
-    from .service_load_metric_description_py3 import ServiceLoadMetricDescription
     from .partition_scheme_description_py3 import PartitionSchemeDescription
     from .named_partition_scheme_description_py3 import NamedPartitionSchemeDescription
     from .singleton_partition_scheme_description_py3 import SingletonPartitionSchemeDescription
@@ -517,6 +518,7 @@ except (SyntaxError, ImportError):
     from .entity_health_state_chunk import EntityHealthStateChunk
     from .entity_health_state_chunk_list import EntityHealthStateChunkList
     from .epoch import Epoch
+    from .backup_epoch import BackupEpoch
     from .event_health_evaluation import EventHealthEvaluation
     from .fabric_event import FabricEvent
     from .fabric_code_version_info import FabricCodeVersionInfo
@@ -585,6 +587,7 @@ except (SyntaxError, ImportError):
     from .service_placement_required_domain_policy_description import ServicePlacementRequiredDomainPolicyDescription
     from .service_placement_require_domain_distribution_policy_description import ServicePlacementRequireDomainDistributionPolicyDescription
     from .services_health_evaluation import ServicesHealthEvaluation
+    from .service_load_metric_description import ServiceLoadMetricDescription
     from .service_type_extension_description import ServiceTypeExtensionDescription
     from .service_type_description import ServiceTypeDescription
     from .service_type_info import ServiceTypeInfo
@@ -652,7 +655,6 @@ except (SyntaxError, ImportError):
     from .create_compose_deployment_description import CreateComposeDeploymentDescription
     from .deployed_service_package_info import DeployedServicePackageInfo
     from .service_correlation_description import ServiceCorrelationDescription
-    from .service_load_metric_description import ServiceLoadMetricDescription
     from .partition_scheme_description import PartitionSchemeDescription
     from .named_partition_scheme_description import NamedPartitionSchemeDescription
     from .singleton_partition_scheme_description import SingletonPartitionSchemeDescription
@@ -873,6 +875,7 @@ from .service_fabric_client_ap_is_enums import (
     ServiceKind,
     ServicePartitionKind,
     ServicePlacementPolicyType,
+    ServiceLoadMetricWeight,
     HostType,
     HostIsolationMode,
     DeploymentStatus,
@@ -885,7 +888,6 @@ from .service_fabric_client_ap_is_enums import (
     ServiceCorrelationScheme,
     MoveCost,
     PartitionScheme,
-    ServiceLoadMetricWeight,
     ServiceOperationName,
     ReplicatorOperationName,
     PartitionAccessStatus,
@@ -1020,6 +1022,7 @@ __all__ = [
     'EntityHealthStateChunk',
     'EntityHealthStateChunkList',
     'Epoch',
+    'BackupEpoch',
     'EventHealthEvaluation',
     'FabricEvent',
     'FabricCodeVersionInfo',
@@ -1088,6 +1091,7 @@ __all__ = [
     'ServicePlacementRequiredDomainPolicyDescription',
     'ServicePlacementRequireDomainDistributionPolicyDescription',
     'ServicesHealthEvaluation',
+    'ServiceLoadMetricDescription',
     'ServiceTypeExtensionDescription',
     'ServiceTypeDescription',
     'ServiceTypeInfo',
@@ -1155,7 +1159,6 @@ __all__ = [
     'CreateComposeDeploymentDescription',
     'DeployedServicePackageInfo',
     'ServiceCorrelationDescription',
-    'ServiceLoadMetricDescription',
     'PartitionSchemeDescription',
     'NamedPartitionSchemeDescription',
     'SingletonPartitionSchemeDescription',
@@ -1375,6 +1378,7 @@ __all__ = [
     'ServiceKind',
     'ServicePartitionKind',
     'ServicePlacementPolicyType',
+    'ServiceLoadMetricWeight',
     'HostType',
     'HostIsolationMode',
     'DeploymentStatus',
@@ -1387,7 +1391,6 @@ __all__ = [
     'ServiceCorrelationScheme',
     'MoveCost',
     'PartitionScheme',
-    'ServiceLoadMetricWeight',
     'ServiceOperationName',
     'ReplicatorOperationName',
     'PartitionAccessStatus',

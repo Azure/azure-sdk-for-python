@@ -40,7 +40,7 @@ class StatelessReplicaHealthReportCreatedEvent(ReplicaEvent):
      the same node for the same partition, it will get a different value for
      the id. Sometimes the id of a stateless service instance is also referred
      as a replica id.
-    :type replica_id: str
+    :type replica_id: long
     :param source_id: Required. Id of report source.
     :type source_id: str
     :param property: Required. Describes the property.
@@ -82,7 +82,7 @@ class StatelessReplicaHealthReportCreatedEvent(ReplicaEvent):
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
         'source_id': {'key': 'SourceId', 'type': 'str'},
         'property': {'key': 'Property', 'type': 'str'},
         'health_state': {'key': 'HealthState', 'type': 'str'},
@@ -93,7 +93,7 @@ class StatelessReplicaHealthReportCreatedEvent(ReplicaEvent):
         'source_utc_timestamp': {'key': 'SourceUtcTimestamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: str, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, has_correlated_events: bool=None, **kwargs) -> None:
+    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, source_id: str, property: str, health_state: str, time_to_live_ms: int, sequence_number: int, description: str, remove_when_expired: bool, source_utc_timestamp, has_correlated_events: bool=None, **kwargs) -> None:
         super(StatelessReplicaHealthReportCreatedEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, partition_id=partition_id, replica_id=replica_id, **kwargs)
         self.source_id = source_id
         self.property = property

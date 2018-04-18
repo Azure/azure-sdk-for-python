@@ -40,7 +40,7 @@ class BackupInfo(Model):
     :type backup_type: str or ~azure.servicefabric.models.BackupType
     :param epoch_of_last_backup_record: Epoch of the last record in this
      backup.
-    :type epoch_of_last_backup_record: ~azure.servicefabric.models.Epoch
+    :type epoch_of_last_backup_record: ~azure.servicefabric.models.BackupEpoch
     :param lsn_of_last_backup_record: LSN of the last record in this backup.
     :type lsn_of_last_backup_record: str
     :param creation_time_utc: The date time when this backup was taken.
@@ -58,7 +58,7 @@ class BackupInfo(Model):
         'partition_information': {'key': 'PartitionInformation', 'type': 'PartitionInformation'},
         'backup_location': {'key': 'BackupLocation', 'type': 'str'},
         'backup_type': {'key': 'BackupType', 'type': 'str'},
-        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'Epoch'},
+        'epoch_of_last_backup_record': {'key': 'EpochOfLastBackupRecord', 'type': 'BackupEpoch'},
         'lsn_of_last_backup_record': {'key': 'LsnOfLastBackupRecord', 'type': 'str'},
         'creation_time_utc': {'key': 'CreationTimeUtc', 'type': 'iso-8601'},
         'failure_error': {'key': 'FailureError', 'type': 'FabricErrorError'},

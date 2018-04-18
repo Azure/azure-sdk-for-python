@@ -40,7 +40,7 @@ class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
      the same node for the same partition, it will get a different value for
      the id. Sometimes the id of a stateless service instance is also referred
      as a replica id.
-    :type replica_id: str
+    :type replica_id: long
     :param source_id: Required. Id of report source.
     :type source_id: str
     :param property: Required. Describes the property.
@@ -82,7 +82,7 @@ class StatelessReplicaHealthReportExpiredEvent(ReplicaEvent):
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
         'source_id': {'key': 'SourceId', 'type': 'str'},
         'property': {'key': 'Property', 'type': 'str'},
         'health_state': {'key': 'HealthState', 'type': 'str'},

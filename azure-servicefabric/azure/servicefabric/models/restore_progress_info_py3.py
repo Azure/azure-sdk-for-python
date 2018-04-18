@@ -24,7 +24,7 @@ class RestoreProgressInfo(Model):
     :type time_stamp_utc: datetime
     :param restored_epoch: Describes the epoch at which the partition is
      restored.
-    :type restored_epoch: ~azure.servicefabric.models.Epoch
+    :type restored_epoch: ~azure.servicefabric.models.BackupEpoch
     :param restored_lsn: Restored LSN.
     :type restored_lsn: str
     :param failure_error: Denotes the failure encountered in performing
@@ -35,7 +35,7 @@ class RestoreProgressInfo(Model):
     _attribute_map = {
         'restore_state': {'key': 'RestoreState', 'type': 'str'},
         'time_stamp_utc': {'key': 'TimeStampUtc', 'type': 'iso-8601'},
-        'restored_epoch': {'key': 'RestoredEpoch', 'type': 'Epoch'},
+        'restored_epoch': {'key': 'RestoredEpoch', 'type': 'BackupEpoch'},
         'restored_lsn': {'key': 'RestoredLsn', 'type': 'str'},
         'failure_error': {'key': 'FailureError', 'type': 'FabricErrorError'},
     }

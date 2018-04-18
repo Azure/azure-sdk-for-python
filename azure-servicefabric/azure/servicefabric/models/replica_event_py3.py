@@ -49,7 +49,7 @@ class ReplicaEvent(FabricEvent):
      the same node for the same partition, it will get a different value for
      the id. Sometimes the id of a stateless service instance is also referred
      as a replica id.
-    :type replica_id: str
+    :type replica_id: long
     """
 
     _validation = {
@@ -66,14 +66,14 @@ class ReplicaEvent(FabricEvent):
         'has_correlated_events': {'key': 'HasCorrelatedEvents', 'type': 'bool'},
         'kind': {'key': 'Kind', 'type': 'str'},
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
-        'replica_id': {'key': 'ReplicaId', 'type': 'str'},
+        'replica_id': {'key': 'ReplicaId', 'type': 'long'},
     }
 
     _subtype_map = {
         'kind': {'StatefulReplicaHealthReportCreated': 'StatefulReplicaHealthReportCreatedEvent', 'StatefulReplicaHealthReportExpired': 'StatefulReplicaHealthReportExpiredEvent', 'StatelessReplicaHealthReportCreated': 'StatelessReplicaHealthReportCreatedEvent', 'StatelessReplicaHealthReportExpired': 'StatelessReplicaHealthReportExpiredEvent', 'ChaosRemoveReplicaFaultScheduled': 'ChaosRemoveReplicaFaultScheduledEvent', 'ChaosRemoveReplicaFaultCompleted': 'ChaosRemoveReplicaFaultCompletedEvent', 'ChaosRestartReplicaFaultScheduled': 'ChaosRestartReplicaFaultScheduledEvent'}
     }
 
-    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: str, has_correlated_events: bool=None, **kwargs) -> None:
+    def __init__(self, *, event_instance_id: str, time_stamp, partition_id: str, replica_id: int, has_correlated_events: bool=None, **kwargs) -> None:
         super(ReplicaEvent, self).__init__(event_instance_id=event_instance_id, time_stamp=time_stamp, has_correlated_events=has_correlated_events, **kwargs)
         self.partition_id = partition_id
         self.replica_id = replica_id
