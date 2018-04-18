@@ -11,12 +11,10 @@
 
 from .bots_operations import BotsOperations
 from .channels_operations import ChannelsOperations
-from .channel_operations import ChannelOperations
 from .operations import Operations
 
 __all__ = [
     'BotsOperations',
     'ChannelsOperations',
-    'ChannelOperations',
     'Operations',
 ]
