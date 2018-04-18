@@ -30,8 +30,7 @@ class TimeBasedBackupScheduleDescription(BackupScheduleDescription):
     :type run_days: list[str or ~azure.servicefabric.models.DayOfWeek]
     :param run_times: Required. Represents the list of exact time during the
      day in ISO8601 format. Like '19:00:00' will represent '7PM' during the
-     day. Date specified along with time will be ignored.In the examples, date
-     is also specified with time but the date will always be ignored.
+     day. Date specified along with time will be ignored.
     :type run_times: list[datetime]
     """
 
