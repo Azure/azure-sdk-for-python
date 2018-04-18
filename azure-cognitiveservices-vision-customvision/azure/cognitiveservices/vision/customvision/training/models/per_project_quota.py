@@ -45,8 +45,8 @@ class PerProjectQuota(Model):
         'tags': {'key': 'Tags', 'type': 'Quota'},
     }
 
-    def __init__(self):
-        super(PerProjectQuota, self).__init__()
+    def __init__(self, **kwargs):
+        super(PerProjectQuota, self).__init__(**kwargs)
         self.project_id = None
         self.iterations = None
         self.images = None

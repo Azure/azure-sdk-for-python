@@ -12,6 +12,9 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from .version import VERSION
 
 
@@ -49,7 +52,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class StorageManagementClient(object):
+class StorageManagementClient(MultiApiClientMixin):
     """The Azure Storage Management API.
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
@@ -73,20 +76,30 @@ class StorageManagementClient(object):
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
-    :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION='2017-10-01'
-    DEFAULT_PROFILE = None
+    _PROFILE_TAG = "azure.mgmt.storage.StorageManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
-    def __init__(self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        super(StorageManagementClient, self).__init__(
+            credentials=credentials,
+            subscription_id=subscription_id,
+            api_version=api_version,
+            base_url=base_url,
+            profile=profile
+        )
 
         self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
-
-        self.api_version = api_version
-        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
 
@@ -128,7 +141,7 @@ class StorageManagementClient(object):
            * 2017-06-01: :class:`Operations<azure.mgmt.storage.v2017_06_01.operations.Operations>`
            * 2017-10-01: :class:`Operations<azure.mgmt.storage.v2017_10_01.operations.Operations>`
         """
-        api_version = self.profile.get('operations', self.api_version)
+        api_version = self._get_api_version('operations')
         if api_version == '2017-06-01':
             from .v2017_06_01.operations import Operations as OperationClass
         elif api_version == '2017-10-01':
@@ -144,7 +157,7 @@ class StorageManagementClient(object):
            * 2017-06-01: :class:`SkusOperations<azure.mgmt.storage.v2017_06_01.operations.SkusOperations>`
            * 2017-10-01: :class:`SkusOperations<azure.mgmt.storage.v2017_10_01.operations.SkusOperations>`
         """
-        api_version = self.profile.get('skus', self.api_version)
+        api_version = self._get_api_version('skus')
         if api_version == '2017-06-01':
             from .v2017_06_01.operations import SkusOperations as OperationClass
         elif api_version == '2017-10-01':
@@ -163,7 +176,7 @@ class StorageManagementClient(object):
            * 2017-06-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2017_06_01.operations.StorageAccountsOperations>`
            * 2017-10-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2017_10_01.operations.StorageAccountsOperations>`
         """
-        api_version = self.profile.get('storage_accounts', self.api_version)
+        api_version = self._get_api_version('storage_accounts')
         if api_version == '2015-06-15':
             from .v2015_06_15.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2016-01-01':
@@ -188,7 +201,7 @@ class StorageManagementClient(object):
            * 2017-06-01: :class:`UsageOperations<azure.mgmt.storage.v2017_06_01.operations.UsageOperations>`
            * 2017-10-01: :class:`UsageOperations<azure.mgmt.storage.v2017_10_01.operations.UsageOperations>`
         """
-        api_version = self.profile.get('usage', self.api_version)
+        api_version = self._get_api_version('usage')
         if api_version == '2015-06-15':
             from .v2015_06_15.operations import UsageOperations as OperationClass
         elif api_version == '2016-01-01':

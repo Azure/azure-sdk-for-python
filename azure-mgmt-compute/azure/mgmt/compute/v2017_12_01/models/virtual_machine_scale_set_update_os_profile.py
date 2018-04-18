@@ -35,9 +35,9 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
     }
 
-    def __init__(self, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
-        super(VirtualMachineScaleSetUpdateOSProfile, self).__init__()
-        self.custom_data = custom_data
-        self.windows_configuration = windows_configuration
-        self.linux_configuration = linux_configuration
-        self.secrets = secrets
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetUpdateOSProfile, self).__init__(**kwargs)
+        self.custom_data = kwargs.get('custom_data', None)
+        self.windows_configuration = kwargs.get('windows_configuration', None)
+        self.linux_configuration = kwargs.get('linux_configuration', None)
+        self.secrets = kwargs.get('secrets', None)

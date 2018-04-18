@@ -12,6 +12,9 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
+
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ..version import VERSION
 
 
@@ -47,7 +50,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLockClient(object):
+class ManagementLockClient(MultiApiClientMixin):
     """Azure resources can be locked to prevent other users in your organization from deleting or modifying resources.
 
     :ivar config: Configuration for client.
@@ -66,16 +69,25 @@ class ManagementLockClient(object):
     """
 
     DEFAULT_API_VERSION = '2016-09-01'
-    DEFAULT_PROFILE = None
+    _PROFILE_TAG = "azure.mgmt.resource.locks.ManagementLockClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
-    def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None, profile=DEFAULT_PROFILE):
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        super(ManagementLockClient, self).__init__(
+            credentials=credentials,
+            subscription_id=subscription_id,
+            api_version=api_version,
+            base_url=base_url,
+            profile=profile
+        )
 
         self.config = ManagementLockClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
-
-        self.api_version = api_version
-        self.profile = dict(profile) if profile is not None else {}
 
 ############ Generated from here ############
 
@@ -105,7 +117,7 @@ class ManagementLockClient(object):
            * 2015-01-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2015_01_01.operations.ManagementLocksOperations>`
            * 2016-09-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2016_09_01.operations.ManagementLocksOperations>`
         """
-        api_version = self.profile.get('management_locks', self.api_version)
+        api_version = self._get_api_version('management_locks')
         if api_version == '2015-01-01':
             from .v2015_01_01.operations import ManagementLocksOperations as OperationClass
         elif api_version == '2016-09-01':

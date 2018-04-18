@@ -34,7 +34,7 @@ class ImageTag(Model):
         'created': {'key': 'Created', 'type': 'iso-8601'},
     }
 
-    def __init__(self):
-        super(ImageTag, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImageTag, self).__init__(**kwargs)
         self.tag_id = None
         self.created = None

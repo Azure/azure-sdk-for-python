@@ -34,7 +34,7 @@ class ResourceSkuRestrictionInfo(Model):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self):
-        super(ResourceSkuRestrictionInfo, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSkuRestrictionInfo, self).__init__(**kwargs)
         self.locations = None
         self.zones = None

@@ -51,8 +51,8 @@ class TagPerformance(Model):
         'recall_std_deviation': {'key': 'RecallStdDeviation', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(TagPerformance, self).__init__()
+    def __init__(self, **kwargs):
+        super(TagPerformance, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.precision = None

@@ -26,7 +26,14 @@ class FileServersListByResourceGroupOptions(Model):
     :type max_results: int
     """
 
-    def __init__(self, filter=None, select=None, max_results=1000):
-        self.filter = filter
-        self.select = select
-        self.max_results = max_results
+    _attribute_map = {
+        'filter': {'key': '', 'type': 'str'},
+        'select': {'key': '', 'type': 'str'},
+        'max_results': {'key': '', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FileServersListByResourceGroupOptions, self).__init__(**kwargs)
+        self.filter = kwargs.get('filter', None)
+        self.select = kwargs.get('select', None)
+        self.max_results = kwargs.get('max_results', 1000)

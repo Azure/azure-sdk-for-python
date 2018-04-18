@@ -12,6 +12,7 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.exceptions import DeserializationError
 from msrestazure.azure_operation import AzureOperationPoller
 
 from .. import models
@@ -23,7 +24,7 @@ class SyncMembersOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
@@ -67,7 +68,7 @@ class SyncMembersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -94,7 +95,7 @@ class SyncMembersOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -104,6 +105,62 @@ class SyncMembersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('SyncMember', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'}
+
+
+    def _create_or_update_initial(
+            self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, parameters, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
+            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'SyncMember')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SyncMember', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('SyncMember', response)
 
         if raw:
@@ -142,8 +199,62 @@ class SyncMembersOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            sync_group_name=sync_group_name,
+            sync_member_name=sync_member_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 201, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = self._deserialize('SyncMember', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -168,54 +279,18 @@ class SyncMembersOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(parameters, 'SyncMember')
-
         # Construct and send request
-        def long_running_send():
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 201, 202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('SyncMember', response)
-            if response.status_code == 201:
-                deserialized = self._deserialize('SyncMember', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
+        if response.status_code not in [200, 202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
     def delete(
             self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, custom_headers=None, raw=False, **operation_config):
@@ -244,8 +319,57 @@ class SyncMembersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            sync_group_name=sync_group_name,
+            sync_member_name=sync_member_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
+
+        # Construct and send request
+        def long_running_send():
+            return raw_result.response
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
+            return self._client.send(
+                request, header_parameters, stream=False, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202, 204]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'}
+
+
+    def _update_initial(
+            self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -270,41 +394,29 @@ class SyncMembersOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(parameters, 'SyncMember')
+
         # Construct and send request
-        def long_running_send():
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
 
-            request = self._client.delete(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def get_long_running_status(status_link, headers=None):
+        deserialized = None
 
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [200, 202, 204]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
+        if response.status_code == 200:
+            deserialized = self._deserialize('SyncMember', response)
 
         if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
+        return deserialized
 
     def update(
             self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -336,49 +448,33 @@ class SyncMembersOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
-            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'SyncMember')
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            sync_group_name=sync_group_name,
+            sync_member_name=sync_member_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
 
         # Construct and send request
         def long_running_send():
-
-            request = self._client.patch(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -387,10 +483,7 @@ class SyncMembersOperations(object):
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
-            deserialized = None
-
-            if response.status_code == 200:
-                deserialized = self._deserialize('SyncMember', response)
+            deserialized = self._deserialize('SyncMember', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -398,16 +491,13 @@ class SyncMembersOperations(object):
 
             return deserialized
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}'}
 
     def list_by_sync_group(
             self, resource_group_name, server_name, database_name, sync_group_name, custom_headers=None, raw=False, **operation_config):
@@ -438,7 +528,7 @@ class SyncMembersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers'
+                url = self.list_by_sync_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -469,7 +559,7 @@ class SyncMembersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -487,6 +577,7 @@ class SyncMembersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_sync_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers'}
 
     def list_member_schemas(
             self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, custom_headers=None, raw=False, **operation_config):
@@ -520,7 +611,7 @@ class SyncMembersOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}/schemas'
+                url = self.list_member_schemas.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serverName': self._serialize.url("server_name", server_name, 'str'),
@@ -552,7 +643,7 @@ class SyncMembersOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -570,6 +661,49 @@ class SyncMembersOperations(object):
             return client_raw_response
 
         return deserialized
+    list_member_schemas.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}/schemas'}
+
+
+    def _refresh_member_schema_initial(
+            self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.refresh_member_schema.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
+            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
     def refresh_member_schema(
             self, resource_group_name, server_name, database_name, sync_group_name, sync_member_name, custom_headers=None, raw=False, **operation_config):
@@ -598,45 +732,32 @@ class SyncMembersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}/refreshSchema'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
-            'syncMemberName': self._serialize.url("sync_member_name", sync_member_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        raw_result = self._refresh_member_schema_initial(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            sync_group_name=sync_group_name,
+            sync_member_name=sync_member_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+        if raw:
+            return raw_result
 
         # Construct and send request
         def long_running_send():
-
-            request = self._client.post(url, query_parameters)
-            return self._client.send(request, header_parameters, **operation_config)
+            return raw_result.response
 
         def get_long_running_status(status_link, headers=None):
 
             request = self._client.get(status_link)
             if headers:
                 request.headers.update(headers)
+            header_parameters = {}
+            header_parameters['x-ms-client-request-id'] = raw_result.response.request.headers['x-ms-client-request-id']
             return self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
         def get_long_running_output(response):
 
@@ -649,13 +770,10 @@ class SyncMembersOperations(object):
                 client_raw_response = ClientRawResponse(None, response)
                 return client_raw_response
 
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
         long_running_operation_timeout = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
+    refresh_member_schema.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/syncGroups/{syncGroupName}/syncMembers/{syncMemberName}/refreshSchema'}

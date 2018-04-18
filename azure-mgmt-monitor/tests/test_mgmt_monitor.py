@@ -82,7 +82,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             )
 
         # Need to freeze the date for the recorded tests
-        today = datetime.date(2017, 10, 23)
+        today = datetime.date(2018, 3, 18)
         yesterday = today - datetime.timedelta(days=1)
 
         metrics = self.client.metrics.list(

@@ -38,8 +38,8 @@ class PredictionQueryTag(Model):
         'max_threshold': {'key': 'MaxThreshold', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(PredictionQueryTag, self).__init__()
+    def __init__(self, **kwargs):
+        super(PredictionQueryTag, self).__init__(**kwargs)
         self.id = None
         self.min_threshold = None
         self.max_threshold = None

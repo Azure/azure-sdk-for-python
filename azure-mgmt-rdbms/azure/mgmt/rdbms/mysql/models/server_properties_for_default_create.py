@@ -15,6 +15,8 @@ from .server_properties_for_create import ServerPropertiesForCreate
 class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
     """The properties used to create a new server.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
@@ -23,14 +25,14 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
      ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
-    :param create_mode: Constant filled by server.
+    :param create_mode: Required. Constant filled by server.
     :type create_mode: str
-    :param administrator_login: The administrator's login name of a server.
-     Can only be specified when the server is being created (and is required
-     for creation).
+    :param administrator_login: Required. The administrator's login name of a
+     server. Can only be specified when the server is being created (and is
+     required for creation).
     :type administrator_login: str
-    :param administrator_login_password: The password of the administrator
-     login.
+    :param administrator_login_password: Required. The password of the
+     administrator login.
     :type administrator_login_password: str
     """
 
@@ -49,8 +51,8 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
         'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
     }
 
-    def __init__(self, administrator_login, administrator_login_password, version=None, ssl_enforcement=None, storage_profile=None):
-        super(ServerPropertiesForDefaultCreate, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile)
-        self.administrator_login = administrator_login
-        self.administrator_login_password = administrator_login_password
+    def __init__(self, **kwargs):
+        super(ServerPropertiesForDefaultCreate, self).__init__(**kwargs)
+        self.administrator_login = kwargs.get('administrator_login', None)
+        self.administrator_login_password = kwargs.get('administrator_login_password', None)
         self.create_mode = 'Default'

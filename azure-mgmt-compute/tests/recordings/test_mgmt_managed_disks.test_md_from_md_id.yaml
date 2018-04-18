@@ -8,29 +8,30 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['99']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.19
-          msrest_azure/0.4.16 computemanagementclient/3.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk?api-version=2018-04-01
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"\
         createOption\": \"Empty\"\r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"provisioningState\"\
         : \"Updating\",\r\n    \"isArmResource\": true\r\n  },\r\n  \"location\":\
         \ \"westus\",\r\n  \"name\": \"myImageDisk\"\r\n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/5ba9936a-fe4e-4486-babe-5006e6d89620?api-version=2017-03-30']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/90a1fad3-dead-4667-b592-ae439b1477c8?api-version=2018-04-01']
       cache-control: [no-cache]
       content-length: ['229']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 22 Nov 2017 01:01:41 GMT']
+      date: ['Wed, 21 Mar 2018 21:30:52 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/5ba9936a-fe4e-4486-babe-5006e6d89620?monitor=true&api-version=2017-03-30']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/90a1fad3-dead-4667-b592-ae439b1477c8?monitor=true&api-version=2018-04-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
       x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/CreateUpdateDisks3Min;997,Microsoft.Compute/CreateUpdateDisks30Min;3993']
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -38,34 +39,33 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.19
-          msrest_azure/0.4.16 computemanagementclient/3.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/5ba9936a-fe4e-4486-babe-5006e6d89620?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/90a1fad3-dead-4667-b592-ae439b1477c8?api-version=2018-04-01
   response:
-    body: {string: "{\r\n  \"startTime\": \"2017-11-22T01:01:42.7827449+00:00\",\r\
-        \n  \"endTime\": \"2017-11-22T01:01:42.9702653+00:00\",\r\n  \"status\": \"\
+    body: {string: "{\r\n  \"startTime\": \"2018-03-21T21:30:52.136535+00:00\",\r\n\
+        \  \"endTime\": \"2018-03-21T21:30:52.292763+00:00\",\r\n  \"status\": \"\
         Succeeded\",\r\n  \"properties\": {\r\n    \"output\": {\"sku\":{\"name\"\
         :\"Standard_LRS\",\"tier\":\"Standard\"},\"properties\":{\"creationData\"\
-        :{\"createOption\":\"Empty\"},\"diskSizeGB\":20,\"timeCreated\":\"2017-11-22T01:01:42.7827449+00:00\"\
+        :{\"createOption\":\"Empty\"},\"diskSizeGB\":20,\"timeCreated\":\"2018-03-21T21:30:52.1521389+00:00\"\
         ,\"provisioningState\":\"Succeeded\",\"diskState\":\"Unattached\"},\"type\"\
         :\"Microsoft.Compute/disks\",\"location\":\"westus\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk\"\
-        ,\"name\":\"myImageDisk\"}\r\n  },\r\n  \"name\": \"5ba9936a-fe4e-4486-babe-5006e6d89620\"\
+        ,\"name\":\"myImageDisk\"}\r\n  },\r\n  \"name\": \"90a1fad3-dead-4667-b592-ae439b1477c8\"\
         \r\n}"}
     headers:
       cache-control: [no-cache]
-      content-length: ['697']
+      content-length: ['695']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 22 Nov 2017 01:02:12 GMT']
+      date: ['Wed, 21 Mar 2018 21:31:21 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/GetOperation3Min;49993,Microsoft.Compute/GetOperation30Min;249980']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/GetOperation3Min;49994,Microsoft.Compute/GetOperation30Min;249974']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -73,17 +73,15 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.19
-          msrest_azure/0.4.16 computemanagementclient/3.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk?api-version=2018-04-01
   response:
     body: {string: "{\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"\
         tier\": \"Standard\"\r\n  },\r\n  \"properties\": {\r\n    \"creationData\"\
         : {\r\n      \"createOption\": \"Empty\"\r\n    },\r\n    \"diskSizeGB\":\
-        \ 20,\r\n    \"timeCreated\": \"2017-11-22T01:01:42.7827449+00:00\",\r\n \
+        \ 20,\r\n    \"timeCreated\": \"2018-03-21T21:30:52.1521389+00:00\",\r\n \
         \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\"\
         \r\n  },\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"\
         westus\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk\"\
@@ -92,48 +90,50 @@ interactions:
       cache-control: [no-cache]
       content-length: ['576']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 22 Nov 2017 01:02:13 GMT']
+      date: ['Wed, 21 Mar 2018 21:31:23 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/LowCostGet3Min;4992,Microsoft.Compute/LowCostGet30Min;19982']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.19
-          msrest_azure/0.4.16 computemanagementclient/3.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk?api-version=2017-03-30
-  response:
-    body: {string: "{\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"\
-        tier\": \"Standard\"\r\n  },\r\n  \"properties\": {\r\n    \"creationData\"\
-        : {\r\n      \"createOption\": \"Empty\"\r\n    },\r\n    \"diskSizeGB\":\
-        \ 20,\r\n    \"timeCreated\": \"2017-11-22T01:01:42.7827449+00:00\",\r\n \
-        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\"\
-        \r\n  },\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"\
-        westus\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk\"\
-        ,\r\n  \"name\": \"myImageDisk\"\r\n}"}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['576']
-      content-type: [application/json; charset=utf-8]
-      date: ['Wed, 22 Nov 2017 01:02:13 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
       x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/LowCostGet3Min;4991,Microsoft.Compute/LowCostGet30Min;19981']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk?api-version=2018-04-01
+  response:
+    body: {string: "{\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"\
+        tier\": \"Standard\"\r\n  },\r\n  \"properties\": {\r\n    \"creationData\"\
+        : {\r\n      \"createOption\": \"Empty\"\r\n    },\r\n    \"diskSizeGB\":\
+        \ 20,\r\n    \"timeCreated\": \"2018-03-21T21:30:52.1521389+00:00\",\r\n \
+        \   \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\"\
+        \r\n  },\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"\
+        westus\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk\"\
+        ,\r\n  \"name\": \"myImageDisk\"\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['576']
+      content-type: [application/json; charset=utf-8]
+      date: ['Wed, 21 Mar 2018 21:31:23 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/LowCostGet3Min;4990,Microsoft.Compute/LowCostGet30Min;19980']
     status: {code: 200, message: OK}
 - request:
     body: 'b''b\''b\\\''{"location": "westus", "properties": {"creationData": {"createOption":
@@ -144,11 +144,11 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['267']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.19
-          msrest_azure/0.4.16 computemanagementclient/3.0.1 Azure-SDK-For-Python]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/my_disk_name?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/my_disk_name?api-version=2018-04-01
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"creationData\": {\r\n      \"\
         createOption\": \"Copy\",\r\n      \"sourceResourceId\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk\"\
@@ -156,18 +156,19 @@ interactions:
         : true\r\n  },\r\n  \"location\": \"westus\",\r\n  \"name\": \"my_disk_name\"\
         \r\n}"}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/be812eb0-3e15-4e1e-b87e-e6961827d4e6?api-version=2017-03-30']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/fb849fb2-8666-453a-be4d-1117e1e7646d?api-version=2018-04-01']
       cache-control: [no-cache]
       content-length: ['400']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 22 Nov 2017 01:02:16 GMT']
+      date: ['Wed, 21 Mar 2018 21:31:25 GMT']
       expires: ['-1']
-      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/be812eb0-3e15-4e1e-b87e-e6961827d4e6?monitor=true&api-version=2017-03-30']
+      location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/fb849fb2-8666-453a-be4d-1117e1e7646d?monitor=true&api-version=2018-04-01']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
       x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/CreateUpdateDisks3Min;996,Microsoft.Compute/CreateUpdateDisks30Min;3992']
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -175,35 +176,34 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.19
-          msrest_azure/0.4.16 computemanagementclient/3.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/be812eb0-3e15-4e1e-b87e-e6961827d4e6?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/DiskOperations/fb849fb2-8666-453a-be4d-1117e1e7646d?api-version=2018-04-01
   response:
-    body: {string: "{\r\n  \"startTime\": \"2017-11-22T01:02:17.3496419+00:00\",\r\
-        \n  \"endTime\": \"2017-11-22T01:02:18.08402+00:00\",\r\n  \"status\": \"\
+    body: {string: "{\r\n  \"startTime\": \"2018-03-21T21:31:25.4940287+00:00\",\r\
+        \n  \"endTime\": \"2018-03-21T21:31:26.1754808+00:00\",\r\n  \"status\": \"\
         Succeeded\",\r\n  \"properties\": {\r\n    \"output\": {\"sku\":{\"name\"\
         :\"Standard_LRS\",\"tier\":\"Standard\"},\"properties\":{\"creationData\"\
         :{\"createOption\":\"Copy\",\"sourceResourceId\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk\"\
-        },\"diskSizeGB\":20,\"timeCreated\":\"2017-11-22T01:02:17.3652583+00:00\"\
+        },\"diskSizeGB\":20,\"timeCreated\":\"2018-03-21T21:31:25.4940287+00:00\"\
         ,\"provisioningState\":\"Succeeded\",\"diskState\":\"Unattached\"},\"type\"\
         :\"Microsoft.Compute/disks\",\"location\":\"westus\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/my_disk_name\"\
-        ,\"name\":\"my_disk_name\"}\r\n  },\r\n  \"name\": \"be812eb0-3e15-4e1e-b87e-e6961827d4e6\"\
+        ,\"name\":\"my_disk_name\"}\r\n  },\r\n  \"name\": \"fb849fb2-8666-453a-be4d-1117e1e7646d\"\
         \r\n}"}
     headers:
       cache-control: [no-cache]
-      content-length: ['881']
+      content-length: ['883']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 22 Nov 2017 01:02:46 GMT']
+      date: ['Wed, 21 Mar 2018 21:31:55 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/GetOperation3Min;49990,Microsoft.Compute/GetOperation30Min;249977']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/GetOperation3Min;49991,Microsoft.Compute/GetOperation30Min;249971']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -211,18 +211,16 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.19
-          msrest_azure/0.4.16 computemanagementclient/3.0.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/my_disk_name?api-version=2017-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/my_disk_name?api-version=2018-04-01
   response:
     body: {string: "{\r\n  \"sku\": {\r\n    \"name\": \"Standard_LRS\",\r\n    \"\
         tier\": \"Standard\"\r\n  },\r\n  \"properties\": {\r\n    \"creationData\"\
         : {\r\n      \"createOption\": \"Copy\",\r\n      \"sourceResourceId\": \"\
         /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/myImageDisk\"\
-        \r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"timeCreated\": \"2017-11-22T01:02:17.3652583+00:00\"\
+        \r\n    },\r\n    \"diskSizeGB\": 20,\r\n    \"timeCreated\": \"2018-03-21T21:31:25.4940287+00:00\"\
         ,\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"diskState\": \"Unattached\"\
         \r\n  },\r\n  \"type\": \"Microsoft.Compute/disks\",\r\n  \"location\": \"\
         westus\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_md_from_md_id7177110b/providers/Microsoft.Compute/disks/my_disk_name\"\
@@ -231,13 +229,14 @@ interactions:
       cache-control: [no-cache]
       content-length: ['771']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 22 Nov 2017 01:02:47 GMT']
+      date: ['Wed, 21 Mar 2018 21:31:56 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
-      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/LowCostGet3Min;4988,Microsoft.Compute/LowCostGet30Min;19978']
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-resource: ['Microsoft.Compute/LowCostGet3Min;4987,Microsoft.Compute/LowCostGet30Min;19977']
     status: {code: 200, message: OK}
 version: 1

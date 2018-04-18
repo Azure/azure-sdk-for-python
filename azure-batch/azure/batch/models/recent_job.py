@@ -27,5 +27,6 @@ class RecentJob(Model):
     }
 
     def __init__(self, id=None, url=None):
+        super(RecentJob, self).__init__()
         self.id = id
         self.url = url

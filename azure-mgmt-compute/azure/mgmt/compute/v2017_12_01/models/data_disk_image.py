@@ -32,6 +32,6 @@ class DataDiskImage(Model):
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self):
-        super(DataDiskImage, self).__init__()
+    def __init__(self, **kwargs):
+        super(DataDiskImage, self).__init__(**kwargs)
         self.lun = None

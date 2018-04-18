@@ -40,8 +40,8 @@ class Export(Model):
         'download_uri': {'key': 'DownloadUri', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(Export, self).__init__()
+    def __init__(self, **kwargs):
+        super(Export, self).__init__(**kwargs)
         self.platform = None
         self.status = None
         self.download_uri = None

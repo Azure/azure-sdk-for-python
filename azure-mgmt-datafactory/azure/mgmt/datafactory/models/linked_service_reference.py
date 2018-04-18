@@ -23,6 +23,8 @@ class LinkedServiceReference(Model):
     :vartype type: str
     :param reference_name: Reference LinkedService name.
     :type reference_name: str
+    :param parameters: Arguments for LinkedService.
+    :type parameters: dict[str, object]
     """
 
     _validation = {
@@ -33,10 +35,12 @@ class LinkedServiceReference(Model):
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'reference_name': {'key': 'referenceName', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
     type = "LinkedServiceReference"
 
-    def __init__(self, reference_name):
+    def __init__(self, reference_name, parameters=None):
         super(LinkedServiceReference, self).__init__()
         self.reference_name = reference_name
+        self.parameters = parameters
