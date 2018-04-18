@@ -37,11 +37,13 @@ class UsageDetailsByDepartmentOperations(object):
         self.config = config
 
     def list(
-            self, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, department_id, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details by departmentId for a scope by current billing
         period. Usage details are available via this API only for May 1, 2014
         or later.
 
+        :param department_id: Department ID
+        :type department_id: str
         :param expand: May be used to expand the
          properties/additionalProperties or properties/meterDetails within a
          list of usage details. By default, these fields are not included when
@@ -86,7 +88,7 @@ class UsageDetailsByDepartmentOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'departmentId': self._serialize.url("self.config.department_id", self.config.department_id, 'str')
+                    'departmentId': self._serialize.url("department_id", department_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -140,11 +142,13 @@ class UsageDetailsByDepartmentOperations(object):
     list.metadata = {'url': '/providers/Microsoft.CostManagement/departments/{departmentId}/providers/Microsoft.Consumption/usageDetails'}
 
     def list_by_billing_period(
-            self, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, department_id, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details  based on departmentId for a scope by billing
         period. Usage details are available via this API only for May 1, 2014
         or later.
 
+        :param department_id: Department ID
+        :type department_id: str
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
         :param expand: May be used to expand the
@@ -191,7 +195,7 @@ class UsageDetailsByDepartmentOperations(object):
                 # Construct URL
                 url = self.list_by_billing_period.metadata['url']
                 path_format_arguments = {
-                    'departmentId': self._serialize.url("self.config.department_id", self.config.department_id, 'str'),
+                    'departmentId': self._serialize.url("department_id", department_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

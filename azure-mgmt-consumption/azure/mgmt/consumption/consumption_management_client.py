@@ -43,28 +43,16 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param billing_account_id: BillingAccount ID
-    :type billing_account_id: str
-    :param department_id: Department ID
-    :type department_id: str
-    :param enrollment_account_id: EnrollmentAccount ID
-    :type enrollment_account_id: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, billing_account_id, department_id, enrollment_account_id, subscription_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if billing_account_id is None:
-            raise ValueError("Parameter 'billing_account_id' must not be None.")
-        if department_id is None:
-            raise ValueError("Parameter 'department_id' must not be None.")
-        if enrollment_account_id is None:
-            raise ValueError("Parameter 'enrollment_account_id' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
@@ -76,9 +64,6 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.billing_account_id = billing_account_id
-        self.department_id = department_id
-        self.enrollment_account_id = enrollment_account_id
         self.subscription_id = subscription_id
 
 
@@ -126,21 +111,15 @@ class ConsumptionManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param billing_account_id: BillingAccount ID
-    :type billing_account_id: str
-    :param department_id: Department ID
-    :type department_id: str
-    :param enrollment_account_id: EnrollmentAccount ID
-    :type enrollment_account_id: str
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, billing_account_id, department_id, enrollment_account_id, subscription_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = ConsumptionManagementClientConfiguration(credentials, billing_account_id, department_id, enrollment_account_id, subscription_id, base_url)
+        self.config = ConsumptionManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -184,10 +163,12 @@ class ConsumptionManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
 
     def get_balances_by_billing_account(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
         """Gets the balances for a scope by billingAccountId. Balances are
         available via this API only for May 1, 2014 or later.
 
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -202,7 +183,7 @@ class ConsumptionManagementClient(object):
         # Construct URL
         url = self.get_balances_by_billing_account.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

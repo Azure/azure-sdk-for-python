@@ -37,9 +37,11 @@ class TagsOperations(object):
         self.config = config
 
     def get(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, custom_headers=None, raw=False, **operation_config):
         """Get all available tag keys for a billing account.
 
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,7 +56,7 @@ class TagsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
+            'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

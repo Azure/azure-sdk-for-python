@@ -37,11 +37,13 @@ class UsageDetailsByBillingAccountOperations(object):
         self.config = config
 
     def list(
-            self, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details by billingAccountId for a scope by current
         billing period. Usage details are available via this API only for May
         1, 2014 or later.
 
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param expand: May be used to expand the
          properties/additionalProperties or properties/meterDetails within a
          list of usage details. By default, these fields are not included when
@@ -86,7 +88,7 @@ class UsageDetailsByBillingAccountOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -140,11 +142,13 @@ class UsageDetailsByBillingAccountOperations(object):
     list.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/usageDetails'}
 
     def list_by_billing_period(
-            self, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details based on billingAccountId for a scope by
         billing period. Usage details are available via this API only for May
         1, 2014 or later.
 
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
         :param expand: May be used to expand the
@@ -191,7 +195,7 @@ class UsageDetailsByBillingAccountOperations(object):
                 # Construct URL
                 url = self.list_by_billing_period.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str'),
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

@@ -37,11 +37,13 @@ class UsageDetailsByEnrollmentAccountOperations(object):
         self.config = config
 
     def list(
-            self, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, enrollment_account_id, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details by enrollmentAccountId for a scope by current
         billing period. Usage details are available via this API only for May
         1, 2014 or later.
 
+        :param enrollment_account_id: EnrollmentAccount ID
+        :type enrollment_account_id: str
         :param expand: May be used to expand the
          properties/additionalProperties or properties/meterDetails within a
          list of usage details. By default, these fields are not included when
@@ -86,7 +88,7 @@ class UsageDetailsByEnrollmentAccountOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'enrollmentAccountId': self._serialize.url("self.config.enrollment_account_id", self.config.enrollment_account_id, 'str')
+                    'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -140,11 +142,13 @@ class UsageDetailsByEnrollmentAccountOperations(object):
     list.metadata = {'url': '/providers/Microsoft.CostManagement/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Consumption/usageDetails'}
 
     def list_by_billing_period(
-            self, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
+            self, enrollment_account_id, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage details based on enrollmentAccountId for a scope by
         billing period. Usage details are available via this API only for May
         1, 2014 or later.
 
+        :param enrollment_account_id: EnrollmentAccount ID
+        :type enrollment_account_id: str
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
         :param expand: May be used to expand the
@@ -191,7 +195,7 @@ class UsageDetailsByEnrollmentAccountOperations(object):
                 # Construct URL
                 url = self.list_by_billing_period.metadata['url']
                 path_format_arguments = {
-                    'enrollmentAccountId': self._serialize.url("self.config.enrollment_account_id", self.config.enrollment_account_id, 'str'),
+                    'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

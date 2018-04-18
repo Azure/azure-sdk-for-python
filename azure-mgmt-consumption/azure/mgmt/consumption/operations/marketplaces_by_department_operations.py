@@ -37,11 +37,13 @@ class MarketplacesByDepartmentOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, department_id, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by departmentId and current billing
         period. Marketplaces are available via this API only for May 1, 2014 or
         later.
 
+        :param department_id: Department ID
+        :type department_id: str
         :param filter: May be used to filter marketplaces by
          properties/usageEnd (Utc time), properties/usageStart (Utc time),
          properties/resourceGroup, properties/instanceName or
@@ -73,7 +75,7 @@ class MarketplacesByDepartmentOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'departmentId': self._serialize.url("self.config.department_id", self.config.department_id, 'str')
+                    'departmentId': self._serialize.url("department_id", department_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -123,10 +125,12 @@ class MarketplacesByDepartmentOperations(object):
     list.metadata = {'url': '/providers/Microsoft.CostManagement/departments/{departmentId}/providers/Microsoft.Consumption/marketplaces'}
 
     def list_by_billing_period(
-            self, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, department_id, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by billing period and departmentId.
         Marketplaces are available via this API only for May 1, 2014 or later.
 
+        :param department_id: Department ID
+        :type department_id: str
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
         :param filter: May be used to filter marketplaces by
@@ -160,7 +164,7 @@ class MarketplacesByDepartmentOperations(object):
                 # Construct URL
                 url = self.list_by_billing_period.metadata['url']
                 path_format_arguments = {
-                    'departmentId': self._serialize.url("self.config.department_id", self.config.department_id, 'str'),
+                    'departmentId': self._serialize.url("department_id", department_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

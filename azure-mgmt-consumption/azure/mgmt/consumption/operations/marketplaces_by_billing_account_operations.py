@@ -37,11 +37,13 @@ class MarketplacesByBillingAccountOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by billingAccountId and current
         billing period. Marketplaces are available via this API only for May 1,
         2014 or later.
 
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param filter: May be used to filter marketplaces by
          properties/usageEnd (Utc time), properties/usageStart (Utc time),
          properties/resourceGroup, properties/instanceName or
@@ -73,7 +75,7 @@ class MarketplacesByBillingAccountOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str')
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -123,11 +125,13 @@ class MarketplacesByBillingAccountOperations(object):
     list.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/marketplaces'}
 
     def list_by_billing_period(
-            self, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_id, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by billing period and
         billingAccountId. Marketplaces are available via this API only for May
         1, 2014 or later.
 
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
         :param filter: May be used to filter marketplaces by
@@ -161,7 +165,7 @@ class MarketplacesByBillingAccountOperations(object):
                 # Construct URL
                 url = self.list_by_billing_period.metadata['url']
                 path_format_arguments = {
-                    'billingAccountId': self._serialize.url("self.config.billing_account_id", self.config.billing_account_id, 'str'),
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

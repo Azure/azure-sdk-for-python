@@ -37,11 +37,13 @@ class MarketplacesByEnrollmentAccountsOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, enrollment_account_id, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by enrollmentAccountId and current
         billing period. Marketplaces are available via this API only for May 1,
         2014 or later.
 
+        :param enrollment_account_id: EnrollmentAccount ID
+        :type enrollment_account_id: str
         :param filter: May be used to filter marketplaces by
          properties/usageEnd (Utc time), properties/usageStart (Utc time),
          properties/resourceGroup, properties/instanceName or
@@ -73,7 +75,7 @@ class MarketplacesByEnrollmentAccountsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'enrollmentAccountId': self._serialize.url("self.config.enrollment_account_id", self.config.enrollment_account_id, 'str')
+                    'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -123,11 +125,13 @@ class MarketplacesByEnrollmentAccountsOperations(object):
     list.metadata = {'url': '/providers/Microsoft.CostManagement/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Consumption/marketplaces'}
 
     def list_by_billing_period(
-            self, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
+            self, enrollment_account_id, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
         """Lists the marketplaces for a scope by billing period and
         enrollmentAccountId. Marketplaces are available via this API only for
         May 1, 2014 or later.
 
+        :param enrollment_account_id: EnrollmentAccount ID
+        :type enrollment_account_id: str
         :param billing_period_name: Billing Period Name.
         :type billing_period_name: str
         :param filter: May be used to filter marketplaces by
@@ -161,7 +165,7 @@ class MarketplacesByEnrollmentAccountsOperations(object):
                 # Construct URL
                 url = self.list_by_billing_period.metadata['url']
                 path_format_arguments = {
-                    'enrollmentAccountId': self._serialize.url("self.config.enrollment_account_id", self.config.enrollment_account_id, 'str'),
+                    'enrollmentAccountId': self._serialize.url("enrollment_account_id", enrollment_account_id, 'str'),
                     'billingPeriodName': self._serialize.url("billing_period_name", billing_period_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
