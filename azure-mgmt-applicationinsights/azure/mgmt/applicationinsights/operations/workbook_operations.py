@@ -36,6 +36,71 @@ class WorkbookOperations(object):
 
         self.config = config
 
+    def get(
+            self, resource_group_name, resource_name, location, custom_headers=None, raw=False, **operation_config):
+        """Get a single workbook by its resourceName.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param resource_name: The name of the Application Insights component
+         resource.
+        :type resource_name: str
+        :param location: The name of location where workbook is stored.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Workbook or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.applicationinsights.models.Workbook or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`WorkbookErrorException<azure.mgmt.applicationinsights.models.WorkbookErrorException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['location'] = self._serialize.query("location", location, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.WorkbookErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Workbook', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooks/{resourceName}'}
+
     def delete(
             self, resource_group_name, resource_name, location, custom_headers=None, raw=False, **operation_config):
         """Delete a workbook.
@@ -234,139 +299,3 @@ class WorkbookOperations(object):
 
         return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooks/{resourceName}'}
-
-    def get(
-            self, resource_name, location, custom_headers=None, raw=False, **operation_config):
-        """Get a single workbook by its resourceName.
-
-        :param resource_name: The name of the Application Insights component
-         resource.
-        :type resource_name: str
-        :param location: The name of location where workbook is stored.
-        :type location: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Workbook or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.applicationinsights.models.Workbook or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`WorkbookErrorException<azure.mgmt.applicationinsights.models.WorkbookErrorException>`
-        """
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['location'] = self._serialize.query("location", location, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.WorkbookErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Workbook', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks/{resourceName}'}
-
-    def list(
-            self, source_id, category, tags=None, can_fetch_content=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of workbooks by sourceId.
-
-        :param source_id: Azure Resource Id that will fetch all linked
-         workbooks.
-        :type source_id: str
-        :param category: Category of workbook to return. Possible values
-         include: 'workbook', 'TSG', 'performance', 'retention'
-        :type category: str or
-         ~azure.mgmt.applicationinsights.models.CategoryType
-        :param tags: Tags presents on each workbook returned.
-        :type tags: list[str]
-        :param can_fetch_content: Flag indicating whether or not to return the
-         full content for each applicable workbook. If false, only return
-         summary content for workbooks.
-        :type can_fetch_content: bool
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype: list[~azure.mgmt.applicationinsights.models.Workbook] or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`WorkbookErrorException<azure.mgmt.applicationinsights.models.WorkbookErrorException>`
-        """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['sourceId'] = self._serialize.query("source_id", source_id, 'str')
-        query_parameters['category'] = self._serialize.query("category", category, 'str')
-        if tags is not None:
-            query_parameters['tags'] = self._serialize.query("tags", tags, '[str]', div=',')
-        if can_fetch_content is not None:
-            query_parameters['canFetchContent'] = self._serialize.query("can_fetch_content", can_fetch_content, 'bool')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.WorkbookErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('[Workbook]', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/workbooks'}
