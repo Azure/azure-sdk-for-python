@@ -17,17 +17,10 @@ class JobCreateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The region in which to create the job.
-    :type location: str
-    :param tags: The user specified tags associated with the job.
-    :type tags: dict[str, str]
-    :param experiment_name: Describe the experiment information of the job
-    :type experiment_name: str
     :param priority: Priority associated with the job. Priority associated
-     with the job. Priority values can range from -1000 to 1000, with -1000
-     being the lowest priority and 1000 being the highest priority. The default
-     value is 0. Default value: 0 .
-    :type priority: int
+     with the job. Possible values include: 'low', 'normal', 'high'. Default
+     value: "normal" .
+    :type priority: str or ~azure.mgmt.batchai.models.JobPriority
     :param cluster: Required. Specifies the Id of the cluster on which this
      job will run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
@@ -61,6 +54,10 @@ class JobCreateParameters(Model):
      job.
     :type custom_toolkit_settings:
      ~azure.mgmt.batchai.models.CustomToolkitSettings
+    :param custom_mpi_settings: Specifies the settings for custom MPI job.
+    :type custom_mpi_settings: ~azure.mgmt.batchai.models.CustomMpiSettings
+    :param horovod_settings: Specifies the settings for Horovod job.
+    :type horovod_settings: ~azure.mgmt.batchai.models.HorovodSettings
     :param job_preparation: Specifies the command line to be executed before
      tool kit is launched. The specified actions will run on all the nodes that
      are part of the job
@@ -88,17 +85,13 @@ class JobCreateParameters(Model):
     """
 
     _validation = {
-        'location': {'required': True},
         'cluster': {'required': True},
         'node_count': {'required': True},
         'std_out_err_path_prefix': {'required': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'experiment_name': {'key': 'properties.experimentName', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
         'cluster': {'key': 'properties.cluster', 'type': 'ResourceId'},
         'mount_volumes': {'key': 'properties.mountVolumes', 'type': 'MountVolumes'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
@@ -110,6 +103,8 @@ class JobCreateParameters(Model):
         'caffe2_settings': {'key': 'properties.caffe2Settings', 'type': 'Caffe2Settings'},
         'chainer_settings': {'key': 'properties.chainerSettings', 'type': 'ChainerSettings'},
         'custom_toolkit_settings': {'key': 'properties.customToolkitSettings', 'type': 'CustomToolkitSettings'},
+        'custom_mpi_settings': {'key': 'properties.customMpiSettings', 'type': 'CustomMpiSettings'},
+        'horovod_settings': {'key': 'properties.horovodSettings', 'type': 'HorovodSettings'},
         'job_preparation': {'key': 'properties.jobPreparation', 'type': 'JobPreparation'},
         'std_out_err_path_prefix': {'key': 'properties.stdOutErrPathPrefix', 'type': 'str'},
         'input_directories': {'key': 'properties.inputDirectories', 'type': '[InputDirectory]'},
@@ -121,10 +116,7 @@ class JobCreateParameters(Model):
 
     def __init__(self, **kwargs):
         super(JobCreateParameters, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.experiment_name = kwargs.get('experiment_name', None)
-        self.priority = kwargs.get('priority', 0)
+        self.priority = kwargs.get('priority', "normal")
         self.cluster = kwargs.get('cluster', None)
         self.mount_volumes = kwargs.get('mount_volumes', None)
         self.node_count = kwargs.get('node_count', None)
@@ -136,6 +128,8 @@ class JobCreateParameters(Model):
         self.caffe2_settings = kwargs.get('caffe2_settings', None)
         self.chainer_settings = kwargs.get('chainer_settings', None)
         self.custom_toolkit_settings = kwargs.get('custom_toolkit_settings', None)
+        self.custom_mpi_settings = kwargs.get('custom_mpi_settings', None)
+        self.horovod_settings = kwargs.get('horovod_settings', None)
         self.job_preparation = kwargs.get('job_preparation', None)
         self.std_out_err_path_prefix = kwargs.get('std_out_err_path_prefix', None)
         self.input_directories = kwargs.get('input_directories', None)

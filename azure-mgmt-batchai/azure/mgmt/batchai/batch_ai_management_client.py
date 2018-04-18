@@ -16,8 +16,10 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.usage_operations import UsageOperations
 from .operations.clusters_operations import ClustersOperations
-from .operations.jobs_operations import JobsOperations
 from .operations.file_servers_operations import FileServersOperations
+from .operations.workspaces_operations import WorkspacesOperations
+from .operations.experiments_operations import ExperimentsOperations
+from .operations.jobs_operations import JobsOperations
 from . import models
 
 
@@ -65,10 +67,14 @@ class BatchAIManagementClient(object):
     :vartype usage: azure.mgmt.batchai.operations.UsageOperations
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.batchai.operations.ClustersOperations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.batchai.operations.JobsOperations
     :ivar file_servers: FileServers operations
     :vartype file_servers: azure.mgmt.batchai.operations.FileServersOperations
+    :ivar workspaces: Workspaces operations
+    :vartype workspaces: azure.mgmt.batchai.operations.WorkspacesOperations
+    :ivar experiments: Experiments operations
+    :vartype experiments: azure.mgmt.batchai.operations.ExperimentsOperations
+    :ivar jobs: Jobs operations
+    :vartype jobs: azure.mgmt.batchai.operations.JobsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -85,7 +91,7 @@ class BatchAIManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-03-01'
+        self.api_version = '2018-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -95,7 +101,11 @@ class BatchAIManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.file_servers = FileServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workspaces = WorkspacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.experiments = ExperimentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -17,17 +17,10 @@ class JobCreateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The region in which to create the job.
-    :type location: str
-    :param tags: The user specified tags associated with the job.
-    :type tags: dict[str, str]
-    :param experiment_name: Describe the experiment information of the job
-    :type experiment_name: str
     :param priority: Priority associated with the job. Priority associated
-     with the job. Priority values can range from -1000 to 1000, with -1000
-     being the lowest priority and 1000 being the highest priority. The default
-     value is 0. Default value: 0 .
-    :type priority: int
+     with the job. Possible values include: 'low', 'normal', 'high'. Default
+     value: "normal" .
+    :type priority: str or ~azure.mgmt.batchai.models.JobPriority
     :param cluster: Required. Specifies the Id of the cluster on which this
      job will run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
@@ -61,6 +54,10 @@ class JobCreateParameters(Model):
      job.
     :type custom_toolkit_settings:
      ~azure.mgmt.batchai.models.CustomToolkitSettings
+    :param custom_mpi_settings: Specifies the settings for custom MPI job.
+    :type custom_mpi_settings: ~azure.mgmt.batchai.models.CustomMpiSettings
+    :param horovod_settings: Specifies the settings for Horovod job.
+    :type horovod_settings: ~azure.mgmt.batchai.models.HorovodSettings
     :param job_preparation: Specifies the command line to be executed before
      tool kit is launched. The specified actions will run on all the nodes that
      are part of the job
@@ -88,17 +85,13 @@ class JobCreateParameters(Model):
     """
 
     _validation = {
-        'location': {'required': True},
         'cluster': {'required': True},
         'node_count': {'required': True},
         'std_out_err_path_prefix': {'required': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'experiment_name': {'key': 'properties.experimentName', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
         'cluster': {'key': 'properties.cluster', 'type': 'ResourceId'},
         'mount_volumes': {'key': 'properties.mountVolumes', 'type': 'MountVolumes'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
@@ -110,6 +103,8 @@ class JobCreateParameters(Model):
         'caffe2_settings': {'key': 'properties.caffe2Settings', 'type': 'Caffe2Settings'},
         'chainer_settings': {'key': 'properties.chainerSettings', 'type': 'ChainerSettings'},
         'custom_toolkit_settings': {'key': 'properties.customToolkitSettings', 'type': 'CustomToolkitSettings'},
+        'custom_mpi_settings': {'key': 'properties.customMpiSettings', 'type': 'CustomMpiSettings'},
+        'horovod_settings': {'key': 'properties.horovodSettings', 'type': 'HorovodSettings'},
         'job_preparation': {'key': 'properties.jobPreparation', 'type': 'JobPreparation'},
         'std_out_err_path_prefix': {'key': 'properties.stdOutErrPathPrefix', 'type': 'str'},
         'input_directories': {'key': 'properties.inputDirectories', 'type': '[InputDirectory]'},
@@ -119,11 +114,8 @@ class JobCreateParameters(Model):
         'constraints': {'key': 'properties.constraints', 'type': 'JobBasePropertiesConstraints'},
     }
 
-    def __init__(self, *, location: str, cluster, node_count: int, std_out_err_path_prefix: str, tags=None, experiment_name: str=None, priority: int=0, mount_volumes=None, container_settings=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, **kwargs) -> None:
+    def __init__(self, *, cluster, node_count: int, std_out_err_path_prefix: str, priority="normal", mount_volumes=None, container_settings=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, custom_mpi_settings=None, horovod_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, **kwargs) -> None:
         super(JobCreateParameters, self).__init__(**kwargs)
-        self.location = location
-        self.tags = tags
-        self.experiment_name = experiment_name
         self.priority = priority
         self.cluster = cluster
         self.mount_volumes = mount_volumes
@@ -136,6 +128,8 @@ class JobCreateParameters(Model):
         self.caffe2_settings = caffe2_settings
         self.chainer_settings = chainer_settings
         self.custom_toolkit_settings = custom_toolkit_settings
+        self.custom_mpi_settings = custom_mpi_settings
+        self.horovod_settings = horovod_settings
         self.job_preparation = job_preparation
         self.std_out_err_path_prefix = std_out_err_path_prefix
         self.input_directories = input_directories

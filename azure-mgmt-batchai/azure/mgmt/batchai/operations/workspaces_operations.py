@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class FileServersOperations(object):
-    """FileServersOperations operations.
+class WorkspacesOperations(object):
+    """WorkspacesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -40,26 +40,26 @@ class FileServersOperations(object):
         self.config = config
 
     def list(
-            self, file_servers_list_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of File Servers associated with the given subscription.
+            self, workspaces_list_options=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Workspaces associated with the given subscription.
 
-        :param file_servers_list_options: Additional parameters for the
+        :param workspaces_list_options: Additional parameters for the
          operation
-        :type file_servers_list_options:
-         ~azure.mgmt.batchai.models.FileServersListOptions
+        :type workspaces_list_options:
+         ~azure.mgmt.batchai.models.WorkspacesListOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of FileServer
+        :return: An iterator like instance of Workspace
         :rtype:
-         ~azure.mgmt.batchai.models.FileServerPaged[~azure.mgmt.batchai.models.FileServer]
+         ~azure.mgmt.batchai.models.WorkspacePaged[~azure.mgmt.batchai.models.Workspace]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         max_results = None
-        if file_servers_list_options is not None:
-            max_results = file_servers_list_options.max_results
+        if workspaces_list_options is not None:
+            max_results = workspaces_list_options.max_results
 
         def internal_paging(next_link=None, raw=False):
 
@@ -104,40 +104,40 @@ class FileServersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.FileServerPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.WorkspacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.FileServerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.WorkspacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/fileServers'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/workspaces'}
 
     def list_by_resource_group(
-            self, resource_group_name, file_servers_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of File Servers within the specified resource group.
+            self, resource_group_name, workspaces_list_by_resource_group_options=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of Workspaces within the specified resource group.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param file_servers_list_by_resource_group_options: Additional
+        :param workspaces_list_by_resource_group_options: Additional
          parameters for the operation
-        :type file_servers_list_by_resource_group_options:
-         ~azure.mgmt.batchai.models.FileServersListByResourceGroupOptions
+        :type workspaces_list_by_resource_group_options:
+         ~azure.mgmt.batchai.models.WorkspacesListByResourceGroupOptions
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of FileServer
+        :return: An iterator like instance of Workspace
         :rtype:
-         ~azure.mgmt.batchai.models.FileServerPaged[~azure.mgmt.batchai.models.FileServer]
+         ~azure.mgmt.batchai.models.WorkspacePaged[~azure.mgmt.batchai.models.Workspace]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         max_results = None
-        if file_servers_list_by_resource_group_options is not None:
-            max_results = file_servers_list_by_resource_group_options.max_results
+        if workspaces_list_by_resource_group_options is not None:
+            max_results = workspaces_list_by_resource_group_options.max_results
 
         def internal_paging(next_link=None, raw=False):
 
@@ -183,25 +183,26 @@ class FileServersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.FileServerPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.WorkspacePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.FileServerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.WorkspacePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/fileServers'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces'}
 
 
     def _create_initial(
-            self, resource_group_name, workspace_name, file_server_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.WorkspaceCreateParameters(location=location, tags=tags)
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
-            'fileServerName': self._serialize.url("file_server_name", file_server_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -221,7 +222,7 @@ class FileServersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'FileServerCreateParameters')
+        body_content = self._serialize.body(parameters, 'WorkspaceCreateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -236,7 +237,7 @@ class FileServersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('FileServer', response)
+            deserialized = self._deserialize('Workspace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -245,8 +246,8 @@ class FileServersOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, workspace_name, file_server_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a File Server in the given workspace.
+            self, resource_group_name, workspace_name, location, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a Workspace.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -256,39 +257,35 @@ class FileServersOperations(object):
          (-) and underscore (_). The name must be from 1 through 64 characters
          long.
         :type workspace_name: str
-        :param file_server_name: The name of the file server within the
-         specified resource group. File server names can only contain a
-         combination of alphanumeric characters along with dash (-) and
-         underscore (_). The name must be from 1 through 64 characters long.
-        :type file_server_name: str
-        :param parameters: The parameters to provide for File Server creation.
-        :type parameters:
-         ~azure.mgmt.batchai.models.FileServerCreateParameters
+        :param location: The region in which to create the Workspace.
+        :type location: str
+        :param tags: The user specified tags associated with the Workspace.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns FileServer or
-         ClientRawResponse<FileServer> if raw==True
+        :return: An instance of LROPoller that returns Workspace or
+         ClientRawResponse<Workspace> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batchai.models.FileServer]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.batchai.models.Workspace]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.batchai.models.FileServer]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.batchai.models.Workspace]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            file_server_name=file_server_name,
-            parameters=parameters,
+            location=location,
+            tags=tags,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('FileServer', response)
+            deserialized = self._deserialize('Workspace', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -303,17 +300,16 @@ class FileServersOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/fileServers/{fileServerName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, workspace_name, file_server_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
-            'fileServerName': self._serialize.url("file_server_name", file_server_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -346,8 +342,8 @@ class FileServersOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, workspace_name, file_server_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes a File Server.
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a Workspace.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -357,11 +353,6 @@ class FileServersOperations(object):
          (-) and underscore (_). The name must be from 1 through 64 characters
          long.
         :type workspace_name: str
-        :param file_server_name: The name of the file server within the
-         specified resource group. File server names can only contain a
-         combination of alphanumeric characters along with dash (-) and
-         underscore (_). The name must be from 1 through 64 characters long.
-        :type file_server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -376,7 +367,6 @@ class FileServersOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            file_server_name=file_server_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -394,11 +384,11 @@ class FileServersOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/fileServers/{fileServerName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}'}
 
     def get(
-            self, resource_group_name, workspace_name, file_server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a File Server.
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Gets information about a Workspace.
 
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
@@ -408,18 +398,13 @@ class FileServersOperations(object):
          (-) and underscore (_). The name must be from 1 through 64 characters
          long.
         :type workspace_name: str
-        :param file_server_name: The name of the file server within the
-         specified resource group. File server names can only contain a
-         combination of alphanumeric characters along with dash (-) and
-         underscore (_). The name must be from 1 through 64 characters long.
-        :type file_server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: FileServer or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.batchai.models.FileServer or
+        :return: Workspace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.batchai.models.Workspace or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -428,7 +413,6 @@ class FileServersOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
-            'fileServerName': self._serialize.url("file_server_name", file_server_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -459,96 +443,11 @@ class FileServersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('FileServer', response)
+            deserialized = self._deserialize('Workspace', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/fileServers/{fileServerName}'}
-
-    def list_by_workspace(
-            self, resource_group_name, workspace_name, file_servers_list_by_workspace_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of File Servers associated with the specified workspace.
-
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace. Workspace names can
-         only contain a combination of alphanumeric characters along with dash
-         (-) and underscore (_). The name must be from 1 through 64 characters
-         long.
-        :type workspace_name: str
-        :param file_servers_list_by_workspace_options: Additional parameters
-         for the operation
-        :type file_servers_list_by_workspace_options:
-         ~azure.mgmt.batchai.models.FileServersListByWorkspaceOptions
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of FileServer
-        :rtype:
-         ~azure.mgmt.batchai.models.FileServerPaged[~azure.mgmt.batchai.models.FileServer]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        max_results = None
-        if file_servers_list_by_workspace_options is not None:
-            max_results = file_servers_list_by_workspace_options.max_results
-
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = self.list_by_workspace.metadata['url']
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', pattern=r'^[-\w\._]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w_]+$'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.FileServerPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.FileServerPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}/fileServers'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.BatchAI/workspaces/{workspaceName}'}

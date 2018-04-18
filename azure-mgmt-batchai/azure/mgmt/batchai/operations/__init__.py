@@ -12,13 +12,17 @@
 from .operations import Operations
 from .usage_operations import UsageOperations
 from .clusters_operations import ClustersOperations
-from .jobs_operations import JobsOperations
 from .file_servers_operations import FileServersOperations
+from .workspaces_operations import WorkspacesOperations
+from .experiments_operations import ExperimentsOperations
+from .jobs_operations import JobsOperations
 
 __all__ = [
     'Operations',
     'UsageOperations',
     'ClustersOperations',
-    'JobsOperations',
     'FileServersOperations',
+    'WorkspacesOperations',
+    'ExperimentsOperations',
+    'JobsOperations',
 ]

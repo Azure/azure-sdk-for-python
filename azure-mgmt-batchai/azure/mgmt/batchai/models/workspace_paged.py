@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ClustersListOptions(Model):
-    """Additional parameters for list operation.
-
-    :param max_results: The maximum number of items to return in the response.
-     A maximum of 1000 files can be returned. Default value: 1000 .
-    :type max_results: int
+class WorkspacePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Workspace <azure.mgmt.batchai.models.Workspace>` object
     """
 
     _attribute_map = {
-        'max_results': {'key': '', 'type': 'int'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Workspace]'}
     }
 
-    def __init__(self, **kwargs):
-        super(ClustersListOptions, self).__init__(**kwargs)
-        self.max_results = kwargs.get('max_results', 1000)
+    def __init__(self, *args, **kwargs):
+
+        super(WorkspacePaged, self).__init__(*args, **kwargs)

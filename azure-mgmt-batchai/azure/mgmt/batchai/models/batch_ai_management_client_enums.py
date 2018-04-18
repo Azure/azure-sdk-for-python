@@ -25,12 +25,6 @@ class StorageAccountType(str, Enum):
     premium_lrs = "Premium_LRS"
 
 
-class FileServerType(str, Enum):
-
-    nfs = "nfs"
-    glusterfs = "glusterfs"
-
-
 class FileServerProvisioningState(str, Enum):
 
     creating = "creating"
@@ -68,12 +62,11 @@ class AllocationState(str, Enum):
     resizing = "resizing"
 
 
-class OutputType(str, Enum):
+class JobPriority(str, Enum):
 
-    model = "model"
-    logs = "logs"
-    summary = "summary"
-    custom = "custom"
+    low = "low"
+    normal = "normal"
+    high = "high"
 
 
 class ToolType(str, Enum):
@@ -83,6 +76,8 @@ class ToolType(str, Enum):
     caffe = "caffe"
     caffe2 = "caffe2"
     chainer = "chainer"
+    horovod = "horovod"
+    mpi = "mpi"
     custom = "custom"
 
 

@@ -131,7 +131,7 @@ class Cluster(Resource):
     }
 
     def __init__(self, *, vm_size: str=None, vm_priority="dedicated", scale_settings=None, virtual_machine_configuration=None, node_setup=None, user_account_settings=None, subnet=None, errors=None, **kwargs) -> None:
-        super(Cluster, self).__init__(**kwargs)
+        super(Cluster, self).__init__(, **kwargs)
         self.vm_size = vm_size
         self.vm_priority = vm_priority
         self.scale_settings = scale_settings

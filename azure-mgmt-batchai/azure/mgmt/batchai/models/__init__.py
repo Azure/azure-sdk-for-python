@@ -19,7 +19,6 @@ try:
     from .mount_settings_py3 import MountSettings
     from .file_server_py3 import FileServer
     from .key_vault_secret_reference_py3 import KeyVaultSecretReference
-    from .key_vault_key_reference_py3 import KeyVaultKeyReference
     from .file_server_create_parameters_py3 import FileServerCreateParameters
     from .manual_scale_settings_py3 import ManualScaleSettings
     from .auto_scale_settings_py3 import AutoScaleSettings
@@ -54,6 +53,8 @@ try:
     from .caffe2_settings_py3 import Caffe2Settings
     from .chainer_settings_py3 import ChainerSettings
     from .custom_toolkit_settings_py3 import CustomToolkitSettings
+    from .custom_mpi_settings_py3 import CustomMpiSettings
+    from .horovod_settings_py3 import HorovodSettings
     from .job_preparation_py3 import JobPreparation
     from .input_directory_py3 import InputDirectory
     from .output_directory_py3 import OutputDirectory
@@ -65,16 +66,23 @@ try:
     from .remote_login_information_py3 import RemoteLoginInformation
     from .file_py3 import File
     from .resource_py3 import Resource
-    from .local_data_volume_py3 import LocalDataVolume
+    from .proxy_resource_py3 import ProxyResource
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
+    from .workspace_py3 import Workspace
+    from .workspace_create_parameters_py3 import WorkspaceCreateParameters
+    from .experiment_py3 import Experiment
     from .clusters_list_options_py3 import ClustersListOptions
     from .clusters_list_by_resource_group_options_py3 import ClustersListByResourceGroupOptions
-    from .jobs_list_options_py3 import JobsListOptions
-    from .jobs_list_by_resource_group_options_py3 import JobsListByResourceGroupOptions
-    from .jobs_list_output_files_options_py3 import JobsListOutputFilesOptions
+    from .clusters_list_by_workspace_options_py3 import ClustersListByWorkspaceOptions
     from .file_servers_list_options_py3 import FileServersListOptions
     from .file_servers_list_by_resource_group_options_py3 import FileServersListByResourceGroupOptions
+    from .file_servers_list_by_workspace_options_py3 import FileServersListByWorkspaceOptions
+    from .workspaces_list_options_py3 import WorkspacesListOptions
+    from .workspaces_list_by_resource_group_options_py3 import WorkspacesListByResourceGroupOptions
+    from .experiments_list_by_workspace_options_py3 import ExperimentsListByWorkspaceOptions
+    from .jobs_list_by_experiment_options_py3 import JobsListByExperimentOptions
+    from .jobs_list_output_files_options_py3 import JobsListOutputFilesOptions
 except (SyntaxError, ImportError):
     from .usage_name import UsageName
     from .usage import Usage
@@ -85,7 +93,6 @@ except (SyntaxError, ImportError):
     from .mount_settings import MountSettings
     from .file_server import FileServer
     from .key_vault_secret_reference import KeyVaultSecretReference
-    from .key_vault_key_reference import KeyVaultKeyReference
     from .file_server_create_parameters import FileServerCreateParameters
     from .manual_scale_settings import ManualScaleSettings
     from .auto_scale_settings import AutoScaleSettings
@@ -120,6 +127,8 @@ except (SyntaxError, ImportError):
     from .caffe2_settings import Caffe2Settings
     from .chainer_settings import ChainerSettings
     from .custom_toolkit_settings import CustomToolkitSettings
+    from .custom_mpi_settings import CustomMpiSettings
+    from .horovod_settings import HorovodSettings
     from .job_preparation import JobPreparation
     from .input_directory import InputDirectory
     from .output_directory import OutputDirectory
@@ -131,33 +140,41 @@ except (SyntaxError, ImportError):
     from .remote_login_information import RemoteLoginInformation
     from .file import File
     from .resource import Resource
-    from .local_data_volume import LocalDataVolume
+    from .proxy_resource import ProxyResource
     from .operation_display import OperationDisplay
     from .operation import Operation
+    from .workspace import Workspace
+    from .workspace_create_parameters import WorkspaceCreateParameters
+    from .experiment import Experiment
     from .clusters_list_options import ClustersListOptions
     from .clusters_list_by_resource_group_options import ClustersListByResourceGroupOptions
-    from .jobs_list_options import JobsListOptions
-    from .jobs_list_by_resource_group_options import JobsListByResourceGroupOptions
-    from .jobs_list_output_files_options import JobsListOutputFilesOptions
+    from .clusters_list_by_workspace_options import ClustersListByWorkspaceOptions
     from .file_servers_list_options import FileServersListOptions
     from .file_servers_list_by_resource_group_options import FileServersListByResourceGroupOptions
+    from .file_servers_list_by_workspace_options import FileServersListByWorkspaceOptions
+    from .workspaces_list_options import WorkspacesListOptions
+    from .workspaces_list_by_resource_group_options import WorkspacesListByResourceGroupOptions
+    from .experiments_list_by_workspace_options import ExperimentsListByWorkspaceOptions
+    from .jobs_list_by_experiment_options import JobsListByExperimentOptions
+    from .jobs_list_output_files_options import JobsListOutputFilesOptions
 from .operation_paged import OperationPaged
 from .usage_paged import UsagePaged
-from .remote_login_information_paged import RemoteLoginInformationPaged
 from .cluster_paged import ClusterPaged
+from .remote_login_information_paged import RemoteLoginInformationPaged
+from .file_server_paged import FileServerPaged
+from .workspace_paged import WorkspacePaged
+from .experiment_paged import ExperimentPaged
 from .job_paged import JobPaged
 from .file_paged import FilePaged
-from .file_server_paged import FileServerPaged
 from .batch_ai_management_client_enums import (
     CachingType,
     StorageAccountType,
-    FileServerType,
     FileServerProvisioningState,
     VmPriority,
     DeallocationOption,
     ProvisioningState,
     AllocationState,
-    OutputType,
+    JobPriority,
     ToolType,
     ExecutionState,
 )
@@ -172,7 +189,6 @@ __all__ = [
     'MountSettings',
     'FileServer',
     'KeyVaultSecretReference',
-    'KeyVaultKeyReference',
     'FileServerCreateParameters',
     'ManualScaleSettings',
     'AutoScaleSettings',
@@ -207,6 +223,8 @@ __all__ = [
     'Caffe2Settings',
     'ChainerSettings',
     'CustomToolkitSettings',
+    'CustomMpiSettings',
+    'HorovodSettings',
     'JobPreparation',
     'InputDirectory',
     'OutputDirectory',
@@ -218,32 +236,40 @@ __all__ = [
     'RemoteLoginInformation',
     'File',
     'Resource',
-    'LocalDataVolume',
+    'ProxyResource',
     'OperationDisplay',
     'Operation',
+    'Workspace',
+    'WorkspaceCreateParameters',
+    'Experiment',
     'ClustersListOptions',
     'ClustersListByResourceGroupOptions',
-    'JobsListOptions',
-    'JobsListByResourceGroupOptions',
-    'JobsListOutputFilesOptions',
+    'ClustersListByWorkspaceOptions',
     'FileServersListOptions',
     'FileServersListByResourceGroupOptions',
+    'FileServersListByWorkspaceOptions',
+    'WorkspacesListOptions',
+    'WorkspacesListByResourceGroupOptions',
+    'ExperimentsListByWorkspaceOptions',
+    'JobsListByExperimentOptions',
+    'JobsListOutputFilesOptions',
     'OperationPaged',
     'UsagePaged',
-    'RemoteLoginInformationPaged',
     'ClusterPaged',
+    'RemoteLoginInformationPaged',
+    'FileServerPaged',
+    'WorkspacePaged',
+    'ExperimentPaged',
     'JobPaged',
     'FilePaged',
-    'FileServerPaged',
     'CachingType',
     'StorageAccountType',
-    'FileServerType',
     'FileServerProvisioningState',
     'VmPriority',
     'DeallocationOption',
     'ProvisioningState',
     'AllocationState',
-    'OutputType',
+    'JobPriority',
     'ToolType',
     'ExecutionState',
 ]

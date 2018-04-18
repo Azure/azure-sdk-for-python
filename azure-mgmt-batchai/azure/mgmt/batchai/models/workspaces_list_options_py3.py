@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ClustersListOptions(Model):
+class WorkspacesListOptions(Model):
     """Additional parameters for list operation.
 
     :param max_results: The maximum number of items to return in the response.
@@ -24,6 +24,6 @@ class ClustersListOptions(Model):
         'max_results': {'key': '', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(ClustersListOptions, self).__init__(**kwargs)
-        self.max_results = kwargs.get('max_results', 1000)
+    def __init__(self, *, max_results: int=1000, **kwargs) -> None:
+        super(WorkspacesListOptions, self).__init__(**kwargs)
+        self.max_results = max_results

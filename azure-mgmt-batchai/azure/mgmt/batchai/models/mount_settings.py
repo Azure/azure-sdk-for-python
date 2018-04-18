@@ -22,16 +22,12 @@ class MountSettings(Model):
     :param file_server_internal_ip: Internal subnet IP which can be used to
      access the file Server from within the subnet.
     :type file_server_internal_ip: str
-    :param file_server_type: Type of the fileserver e.g. nfs, glusterfs etc.
-     Possible values include: 'nfs', 'glusterfs'
-    :type file_server_type: str or ~azure.mgmt.batchai.models.FileServerType
     """
 
     _attribute_map = {
         'mount_point': {'key': 'mountPoint', 'type': 'str'},
         'file_server_public_ip': {'key': 'fileServerPublicIP', 'type': 'str'},
         'file_server_internal_ip': {'key': 'fileServerInternalIP', 'type': 'str'},
-        'file_server_type': {'key': 'fileServerType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -39,4 +35,3 @@ class MountSettings(Model):
         self.mount_point = kwargs.get('mount_point', None)
         self.file_server_public_ip = kwargs.get('file_server_public_ip', None)
         self.file_server_internal_ip = kwargs.get('file_server_internal_ip', None)
-        self.file_server_type = kwargs.get('file_server_type', None)

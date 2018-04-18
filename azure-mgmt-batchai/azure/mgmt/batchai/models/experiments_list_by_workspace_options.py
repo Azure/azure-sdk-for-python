@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ClustersListOptions(Model):
-    """Additional parameters for list operation.
+class ExperimentsListByWorkspaceOptions(Model):
+    """Additional parameters for list_by_workspace operation.
 
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 files can be returned. Default value: 1000 .
@@ -25,5 +25,5 @@ class ClustersListOptions(Model):
     }
 
     def __init__(self, **kwargs):
-        super(ClustersListOptions, self).__init__(**kwargs)
+        super(ExperimentsListByWorkspaceOptions, self).__init__(**kwargs)
         self.max_results = kwargs.get('max_results', 1000)
