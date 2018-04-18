@@ -73,7 +73,7 @@ class DeletedSasDefinitionBundle(SasDefinitionBundle):
     }
 
     def __init__(self, *, recovery_id: str=None, **kwargs) -> None:
-        super(DeletedSasDefinitionBundle, self).__init__(, **kwargs)
+        super(DeletedSasDefinitionBundle, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None

@@ -57,7 +57,7 @@ class DeletedSasDefinitionItem(SasDefinitionItem):
     }
 
     def __init__(self, *, recovery_id: str=None, **kwargs) -> None:
-        super(DeletedSasDefinitionItem, self).__init__(, **kwargs)
+        super(DeletedSasDefinitionItem, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None
