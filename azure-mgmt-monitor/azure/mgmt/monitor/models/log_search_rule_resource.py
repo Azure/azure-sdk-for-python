@@ -36,9 +36,6 @@ class LogSearchRuleResource(Resource):
      enabled. Value should be true or false. Possible values include: 'true',
      'false'
     :type enabled: str or ~azure.mgmt.monitor.models.Enabled
-    :param sku_type: SKU Type {L1, L2, L3}. Possible values include: 'L1',
-     'L2', 'L3'
-    :type sku_type: str or ~azure.mgmt.monitor.models.SkuType
     :ivar last_updated_time: Last time the rule was updated in IS08601 format.
     :vartype last_updated_time: datetime
     :ivar provisioning_state: Provisioning state of the scheduledquery rule.
@@ -51,6 +48,8 @@ class LogSearchRuleResource(Resource):
     :type schedule: ~azure.mgmt.monitor.models.Schedule
     :param action: Required. Action needs to be taken on rule execution.
     :type action: ~azure.mgmt.monitor.models.Action
+    :param sku: Sku of the Log Search Rule
+    :type sku: ~azure.mgmt.monitor.models.Sku1
     """
 
     _validation = {
@@ -73,21 +72,21 @@ class LogSearchRuleResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'enabled': {'key': 'properties.Enabled', 'type': 'str'},
-        'sku_type': {'key': 'properties.skuType', 'type': 'str'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'source': {'key': 'properties.source', 'type': 'Source'},
         'schedule': {'key': 'properties.schedule', 'type': 'Schedule'},
         'action': {'key': 'properties.action', 'type': 'Action'},
+        'sku': {'key': 'sku', 'type': 'Sku1'},
     }
 
     def __init__(self, **kwargs):
         super(LogSearchRuleResource, self).__init__(**kwargs)
         self.description = kwargs.get('description', None)
         self.enabled = kwargs.get('enabled', None)
-        self.sku_type = kwargs.get('sku_type', None)
         self.last_updated_time = None
         self.provisioning_state = None
         self.source = kwargs.get('source', None)
         self.schedule = kwargs.get('schedule', None)
         self.action = kwargs.get('action', None)
+        self.sku = kwargs.get('sku', None)

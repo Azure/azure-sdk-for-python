@@ -99,6 +99,7 @@ try:
     from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
     from .source_py3 import Source
     from .schedule_py3 import Schedule
+    from .sku1_py3 import Sku1
     from .log_search_rule_resource_py3 import LogSearchRuleResource
     from .trigger_condition_py3 import TriggerCondition
     from .az_ns_action_group_py3 import AzNsActionGroup
@@ -193,6 +194,7 @@ except (SyntaxError, ImportError):
     from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
     from .source import Source
     from .schedule import Schedule
+    from .sku1 import Sku1
     from .log_search_rule_resource import LogSearchRuleResource
     from .trigger_condition import TriggerCondition
     from .az_ns_action_group import AzNsActionGroup
@@ -226,9 +228,9 @@ from .monitor_management_client_enums import (
     AggregationType,
     Sensitivity,
     Enabled,
-    SkuType,
     ProvisioningState,
     QueryType,
+    Sku,
     AlertSeverity,
     ResultType,
 )
@@ -323,6 +325,7 @@ __all__ = [
     'MetricAlertSingleResourceMultipleMetricCriteria',
     'Source',
     'Schedule',
+    'Sku1',
     'LogSearchRuleResource',
     'TriggerCondition',
     'AzNsActionGroup',
@@ -355,9 +358,9 @@ __all__ = [
     'AggregationType',
     'Sensitivity',
     'Enabled',
-    'SkuType',
     'ProvisioningState',
     'QueryType',
+    'Sku',
     'AlertSeverity',
     'ResultType',
 ]

@@ -55,7 +55,8 @@ class ScheduledQueryRulesOperations(object):
         :return: LogSearchRuleResource or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -89,9 +90,7 @@ class ScheduledQueryRulesOperations(object):
             request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -123,7 +122,8 @@ class ScheduledQueryRulesOperations(object):
         :return: LogSearchRuleResource or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -152,10 +152,8 @@ class ScheduledQueryRulesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
