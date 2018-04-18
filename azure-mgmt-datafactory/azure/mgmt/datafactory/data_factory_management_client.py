@@ -15,7 +15,6 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.factories_operations import FactoriesOperations
-from .operations.configure_repo_operations import ConfigureRepoOperations
 from .operations.integration_runtimes_operations import IntegrationRuntimesOperations
 from .operations.integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
 from .operations.linked_services_operations import LinkedServicesOperations
@@ -69,8 +68,6 @@ class DataFactoryManagementClient(object):
     :vartype operations: azure.mgmt.datafactory.operations.Operations
     :ivar factories: Factories operations
     :vartype factories: azure.mgmt.datafactory.operations.FactoriesOperations
-    :ivar configure_repo: ConfigureRepo operations
-    :vartype configure_repo: azure.mgmt.datafactory.operations.ConfigureRepoOperations
     :ivar integration_runtimes: IntegrationRuntimes operations
     :vartype integration_runtimes: azure.mgmt.datafactory.operations.IntegrationRuntimesOperations
     :ivar integration_runtime_nodes: IntegrationRuntimeNodes operations
@@ -110,8 +107,6 @@ class DataFactoryManagementClient(object):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.factories = FactoriesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.configure_repo = ConfigureRepoOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
             self._client, self.config, self._serialize, self._deserialize)
