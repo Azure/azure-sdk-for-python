@@ -23,7 +23,7 @@ class TaskAddParameter(Model):
     0, an internal retry due to a recovery operation may occur. Because of
     this, all tasks should be idempotent. This means tasks need to tolerate
     being interrupted and restarted without causing any corruption or duplicate
-    data. Best practices recommended for long running tasks is to use
+    data. The best practice for long running tasks is to use some form of
     checkpointing.
 
     All required parameters must be populated in order to send to Azure.
@@ -45,10 +45,10 @@ class TaskAddParameter(Model):
      and therefore cannot take advantage of shell features such as environment
      variable expansion. If you want to take advantage of such features, you
      should invoke the shell in the command line, for example using "cmd /c
-     MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. The command line
-     had better use relativate path of task execution directory, or use the
-     Batch provided environment
-     variables(https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command
+     line refers to file paths, it should use a relative path (relative to the
+     task working directory), or use the Batch provided environment variable
+     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      task runs. If the pool that will run this task has containerConfiguration

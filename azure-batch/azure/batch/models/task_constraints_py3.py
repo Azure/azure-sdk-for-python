@@ -29,7 +29,7 @@ class TaskConstraints(Model):
     :param max_task_retry_count: The maximum number of times the task may be
      retried. The Batch service retries a task if its exit code is nonzero.
      Note that this value specifically controls the number of retries for the
-     task executable due to nonzero exit code. The Batch service will try the
+     task executable due to a nonzero exit code. The Batch service will try the
      task once, and may then retry up to this limit. For example, if the
      maximum retry count is 3, Batch tries the task up to 4 times (one initial
      try and 3 retries). If the maximum retry count is 0, the Batch service

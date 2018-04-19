@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -52,7 +52,7 @@ class BatchServiceClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class BatchServiceClient(object):
+class BatchServiceClient(SDKClient):
     """A client for issuing REST requests to the Azure Batch service.
 
     :ivar config: Configuration for client.
@@ -87,7 +87,7 @@ class BatchServiceClient(object):
             self, credentials, base_url=None):
 
         self.config = BatchServiceClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(BatchServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-03-01.6.1'
