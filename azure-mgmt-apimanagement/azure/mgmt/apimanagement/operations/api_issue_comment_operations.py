@@ -132,7 +132,7 @@ class ApiIssueCommentOperations(object):
         return deserialized
     list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments'}
 
-    def head(
+    def get_entity_tag(
             self, resource_group_name, service_name, api_id, issue_id, comment_id, custom_headers=None, raw=False, **operation_config):
         """Gets the entity state (Etag) version of the issue Comment for an API
         specified by its identifier.
@@ -161,7 +161,7 @@ class ApiIssueCommentOperations(object):
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.head.metadata['url']
+        url = self.get_entity_tag.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
@@ -199,7 +199,7 @@ class ApiIssueCommentOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    head.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments/{commentId}'}
+    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}/comments/{commentId}'}
 
     def get(
             self, resource_group_name, service_name, api_id, issue_id, comment_id, custom_headers=None, raw=False, **operation_config):
@@ -431,7 +431,7 @@ class ApiIssueCommentOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
