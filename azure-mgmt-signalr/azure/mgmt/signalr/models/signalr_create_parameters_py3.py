@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .signal_rupdate_parameters import SignalRUpdateParameters
+from .signalr_update_parameters import SignalrUpdateParameters
 
 
-class SignalRCreateParameters(SignalRUpdateParameters):
+class SignalrCreateParameters(SignalrUpdateParameters):
     """Parameters for SignalR service create/update operation.
     Keep the same schema as AzSignalR.Models.SignalRResource.
 
@@ -25,7 +25,7 @@ class SignalRCreateParameters(SignalRUpdateParameters):
     :type sku: ~azure.mgmt.signalr.models.ResourceSku
     :param properties: Settings used to provision or configure the resource
     :type properties:
-     ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
+     ~azure.mgmt.signalr.models.SignalrCreateOrUpdateProperties
     :param location: Required. Azure GEO region: e.g. West US | East US |
      North Central US | South Central US | West Europe | North Europe | East
      Asia | Southeast Asia | etc.
@@ -40,10 +40,10 @@ class SignalRCreateParameters(SignalRUpdateParameters):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'properties': {'key': 'properties', 'type': 'SignalRCreateOrUpdateProperties'},
+        'properties': {'key': 'properties', 'type': 'SignalrCreateOrUpdateProperties'},
         'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(self, *, location: str, tags=None, sku=None, properties=None, **kwargs) -> None:
-        super(SignalRCreateParameters, self).__init__(tags=tags, sku=sku, properties=properties, **kwargs)
+        super(SignalrCreateParameters, self).__init__(tags=tags, sku=sku, properties=properties, **kwargs)
         self.location = location

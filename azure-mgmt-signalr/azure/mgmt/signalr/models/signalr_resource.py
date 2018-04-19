@@ -12,7 +12,7 @@
 from .tracked_resource import TrackedResource
 
 
-class SignalRResource(TrackedResource):
+class SignalrResource(TrackedResource):
     """A class represent a SignalR service resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -39,8 +39,8 @@ class SignalRResource(TrackedResource):
      &lt;hostNamePrefix&gt;.service.signalr.net.
     :type host_name_prefix: str
     :ivar provisioning_state: Provisioning state of the resource. Possible
-     values include: 'Succeeded', 'Failed', 'Canceled', 'Creating', 'Updating',
-     'Deleting', 'Moving'
+     values include: 'Unknown', 'Succeeded', 'Failed', 'Canceled', 'Running',
+     'Creating', 'Updating', 'Deleting', 'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.signalr.models.ProvisioningState
     :ivar external_ip: The publicly accessible IP of the SignalR service.
@@ -83,7 +83,7 @@ class SignalRResource(TrackedResource):
     }
 
     def __init__(self, **kwargs):
-        super(SignalRResource, self).__init__(**kwargs)
+        super(SignalrResource, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
         self.host_name_prefix = kwargs.get('host_name_prefix', None)
         self.provisioning_state = None

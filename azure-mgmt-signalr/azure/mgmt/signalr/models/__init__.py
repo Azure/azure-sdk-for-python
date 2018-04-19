@@ -18,14 +18,14 @@ try:
     from .name_availability_parameters_py3 import NameAvailabilityParameters
     from .name_availability_py3 import NameAvailability
     from .resource_sku_py3 import ResourceSku
-    from .signal_rresource_py3 import SignalRResource
+    from .signalr_resource_py3 import SignalrResource
     from .tracked_resource_py3 import TrackedResource
     from .resource_py3 import Resource
-    from .signal_rcreate_or_update_properties_py3 import SignalRCreateOrUpdateProperties
-    from .signal_rkeys_py3 import SignalRKeys
+    from .signalr_create_or_update_properties_py3 import SignalrCreateOrUpdateProperties
+    from .signalr_keys_py3 import SignalrKeys
     from .regenerate_key_parameters_py3 import RegenerateKeyParameters
-    from .signal_rcreate_parameters_py3 import SignalRCreateParameters
-    from .signal_rupdate_parameters_py3 import SignalRUpdateParameters
+    from .signalr_create_parameters_py3 import SignalrCreateParameters
+    from .signalr_update_parameters_py3 import SignalrUpdateParameters
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .metric_specification import MetricSpecification
@@ -35,18 +35,18 @@ except (SyntaxError, ImportError):
     from .name_availability_parameters import NameAvailabilityParameters
     from .name_availability import NameAvailability
     from .resource_sku import ResourceSku
-    from .signal_rresource import SignalRResource
+    from .signalr_resource import SignalrResource
     from .tracked_resource import TrackedResource
     from .resource import Resource
-    from .signal_rcreate_or_update_properties import SignalRCreateOrUpdateProperties
-    from .signal_rkeys import SignalRKeys
+    from .signalr_create_or_update_properties import SignalrCreateOrUpdateProperties
+    from .signalr_keys import SignalrKeys
     from .regenerate_key_parameters import RegenerateKeyParameters
-    from .signal_rcreate_parameters import SignalRCreateParameters
-    from .signal_rupdate_parameters import SignalRUpdateParameters
+    from .signalr_create_parameters import SignalrCreateParameters
+    from .signalr_update_parameters import SignalrUpdateParameters
 from .operation_paged import OperationPaged
-from .signal_rresource_paged import SignalRResourcePaged
-from .signal_rmanagement_client_enums import (
-    SignalRSkuTier,
+from .signalr_resource_paged import SignalrResourcePaged
+from .signalr_management_client_enums import (
+    SignalrSkuTier,
     ProvisioningState,
     KeyType,
 )
@@ -60,17 +60,17 @@ __all__ = [
     'NameAvailabilityParameters',
     'NameAvailability',
     'ResourceSku',
-    'SignalRResource',
+    'SignalrResource',
     'TrackedResource',
     'Resource',
-    'SignalRCreateOrUpdateProperties',
-    'SignalRKeys',
+    'SignalrCreateOrUpdateProperties',
+    'SignalrKeys',
     'RegenerateKeyParameters',
-    'SignalRCreateParameters',
-    'SignalRUpdateParameters',
+    'SignalrCreateParameters',
+    'SignalrUpdateParameters',
     'OperationPaged',
-    'SignalRResourcePaged',
-    'SignalRSkuTier',
+    'SignalrResourcePaged',
+    'SignalrSkuTier',
     'ProvisioningState',
     'KeyType',
 ]

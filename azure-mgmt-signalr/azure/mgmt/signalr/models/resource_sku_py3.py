@@ -22,7 +22,7 @@ class ResourceSku(Model):
     :type name: str
     :param tier: The tier of this particular SKU. Optional. Possible values
      include: 'Free', 'Basic', 'Premium'
-    :type tier: str or ~azure.mgmt.signalr.models.SignalRSkuTier
+    :type tier: str or ~azure.mgmt.signalr.models.SignalrSkuTier
     :param size: Optional, string. When the name field is the combination of
      tier and some other value, this would be the standalone code.
     :type size: str
