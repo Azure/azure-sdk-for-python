@@ -36,6 +36,9 @@ class NodeCounts(Model):
     :param start_task_failed: Required. The number of nodes in the
      startTaskFailed state.
     :type start_task_failed: int
+    :param leaving_pool: Required. The number of nodes in the leavingPool
+     state.
+    :type leaving_pool: int
     :param unknown: Required. The number of nodes in the unknown state.
     :type unknown: int
     :param unusable: Required. The number of nodes in the unusable state.
@@ -57,6 +60,7 @@ class NodeCounts(Model):
         'running': {'required': True},
         'starting': {'required': True},
         'start_task_failed': {'required': True},
+        'leaving_pool': {'required': True},
         'unknown': {'required': True},
         'unusable': {'required': True},
         'waiting_for_start_task': {'required': True},
@@ -73,6 +77,7 @@ class NodeCounts(Model):
         'running': {'key': 'running', 'type': 'int'},
         'starting': {'key': 'starting', 'type': 'int'},
         'start_task_failed': {'key': 'startTaskFailed', 'type': 'int'},
+        'leaving_pool': {'key': 'leavingPool', 'type': 'int'},
         'unknown': {'key': 'unknown', 'type': 'int'},
         'unusable': {'key': 'unusable', 'type': 'int'},
         'waiting_for_start_task': {'key': 'waitingForStartTask', 'type': 'int'},
@@ -90,6 +95,7 @@ class NodeCounts(Model):
         self.running = kwargs.get('running', None)
         self.starting = kwargs.get('starting', None)
         self.start_task_failed = kwargs.get('start_task_failed', None)
+        self.leaving_pool = kwargs.get('leaving_pool', None)
         self.unknown = kwargs.get('unknown', None)
         self.unusable = kwargs.get('unusable', None)
         self.waiting_for_start_task = kwargs.get('waiting_for_start_task', None)
