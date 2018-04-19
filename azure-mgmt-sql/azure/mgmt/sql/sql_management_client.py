@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -54,6 +54,15 @@ from .operations.managed_databases_operations import ManagedDatabasesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
+from .operations.job_agents_operations import JobAgentsOperations
+from .operations.job_credentials_operations import JobCredentialsOperations
+from .operations.job_executions_operations import JobExecutionsOperations
+from .operations.jobs_operations import JobsOperations
+from .operations.job_step_executions_operations import JobStepExecutionsOperations
+from .operations.job_steps_operations import JobStepsOperations
+from .operations.job_target_executions_operations import JobTargetExecutionsOperations
+from .operations.job_target_groups_operations import JobTargetGroupsOperations
+from .operations.job_versions_operations import JobVersionsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -94,7 +103,7 @@ class SqlManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class SqlManagementClient(object):
+class SqlManagementClient(SDKClient):
     """The Azure SQL Database management API provides a RESTful set of web services that interact with Azure SQL Database services to manage your databases. The API enables you to create, retrieve, update, and delete databases.
 
     :ivar config: Configuration for client.
@@ -182,6 +191,24 @@ class SqlManagementClient(object):
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
     :ivar restore_points: RestorePoints operations
     :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
+    :ivar job_agents: JobAgents operations
+    :vartype job_agents: azure.mgmt.sql.operations.JobAgentsOperations
+    :ivar job_credentials: JobCredentials operations
+    :vartype job_credentials: azure.mgmt.sql.operations.JobCredentialsOperations
+    :ivar job_executions: JobExecutions operations
+    :vartype job_executions: azure.mgmt.sql.operations.JobExecutionsOperations
+    :ivar jobs: Jobs operations
+    :vartype jobs: azure.mgmt.sql.operations.JobsOperations
+    :ivar job_step_executions: JobStepExecutions operations
+    :vartype job_step_executions: azure.mgmt.sql.operations.JobStepExecutionsOperations
+    :ivar job_steps: JobSteps operations
+    :vartype job_steps: azure.mgmt.sql.operations.JobStepsOperations
+    :ivar job_target_executions: JobTargetExecutions operations
+    :vartype job_target_executions: azure.mgmt.sql.operations.JobTargetExecutionsOperations
+    :ivar job_target_groups: JobTargetGroups operations
+    :vartype job_target_groups: azure.mgmt.sql.operations.JobTargetGroupsOperations
+    :ivar job_versions: JobVersions operations
+    :vartype job_versions: azure.mgmt.sql.operations.JobVersionsOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
@@ -204,7 +231,7 @@ class SqlManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = SqlManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SqlManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -291,6 +318,24 @@ class SqlManagementClient(object):
         self.server_dns_aliases = ServerDnsAliasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.restore_points = RestorePointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_agents = JobAgentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_credentials = JobCredentialsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_executions = JobExecutionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_step_executions = JobStepExecutionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_steps = JobStepsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_target_executions = JobTargetExecutionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_target_groups = JobTargetGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.job_versions = JobVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)

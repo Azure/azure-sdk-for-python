@@ -73,7 +73,7 @@ class InstanceFailoverGroup(ProxyResource):
     }
 
     def __init__(self, *, read_write_endpoint, partner_regions, managed_instance_pairs, read_only_endpoint=None, **kwargs) -> None:
-        super(InstanceFailoverGroup, self).__init__(, **kwargs)
+        super(InstanceFailoverGroup, self).__init__(**kwargs)
         self.read_write_endpoint = read_write_endpoint
         self.read_only_endpoint = read_only_endpoint
         self.replication_role = None

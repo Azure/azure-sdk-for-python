@@ -90,7 +90,7 @@ class ReplicationLink(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ReplicationLink, self).__init__(, **kwargs)
+        super(ReplicationLink, self).__init__(**kwargs)
         self.location = None
         self.is_termination_allowed = None
         self.replication_mode = None

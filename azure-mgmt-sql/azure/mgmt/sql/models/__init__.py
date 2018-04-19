@@ -92,6 +92,20 @@ try:
     from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
     from .restore_point_py3 import RestorePoint
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
+    from .job_agent_py3 import JobAgent
+    from .job_agent_update_py3 import JobAgentUpdate
+    from .job_credential_py3 import JobCredential
+    from .job_execution_target_py3 import JobExecutionTarget
+    from .job_execution_py3 import JobExecution
+    from .job_schedule_py3 import JobSchedule
+    from .job_py3 import Job
+    from .job_step_action_py3 import JobStepAction
+    from .job_step_output_py3 import JobStepOutput
+    from .job_step_execution_options_py3 import JobStepExecutionOptions
+    from .job_step_py3 import JobStep
+    from .job_target_py3 import JobTarget
+    from .job_target_group_py3 import JobTargetGroup
+    from .job_version_py3 import JobVersion
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -205,6 +219,20 @@ except (SyntaxError, ImportError):
     from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
     from .restore_point import RestorePoint
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
+    from .job_agent import JobAgent
+    from .job_agent_update import JobAgentUpdate
+    from .job_credential import JobCredential
+    from .job_execution_target import JobExecutionTarget
+    from .job_execution import JobExecution
+    from .job_schedule import JobSchedule
+    from .job import Job
+    from .job_step_action import JobStepAction
+    from .job_step_output import JobStepOutput
+    from .job_step_execution_options import JobStepExecutionOptions
+    from .job_step import JobStep
+    from .job_target import JobTarget
+    from .job_target_group import JobTargetGroup
+    from .job_version import JobVersion
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -275,6 +303,13 @@ from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
+from .job_agent_paged import JobAgentPaged
+from .job_credential_paged import JobCredentialPaged
+from .job_execution_paged import JobExecutionPaged
+from .job_paged import JobPaged
+from .job_step_paged import JobStepPaged
+from .job_target_group_paged import JobTargetGroupPaged
+from .job_version_paged import JobVersionPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .instance_failover_group_paged import InstanceFailoverGroupPaged
@@ -328,6 +363,15 @@ from .sql_management_client_enums import (
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
+    JobAgentState,
+    JobExecutionLifecycle,
+    ProvisioningState,
+    JobTargetType,
+    JobScheduleType,
+    JobStepActionType,
+    JobStepActionSource,
+    JobStepOutputType,
+    JobTargetGroupMembershipType,
     ManagementOperationState,
     MaxSizeUnit,
     LogSizeUnit,
@@ -428,6 +472,20 @@ __all__ = [
     'ServerDnsAliasAcquisition',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
+    'JobAgent',
+    'JobAgentUpdate',
+    'JobCredential',
+    'JobExecutionTarget',
+    'JobExecution',
+    'JobSchedule',
+    'Job',
+    'JobStepAction',
+    'JobStepOutput',
+    'JobStepExecutionOptions',
+    'JobStep',
+    'JobTarget',
+    'JobTargetGroup',
+    'JobVersion',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
@@ -498,6 +556,13 @@ __all__ = [
     'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
     'RestorePointPaged',
+    'JobAgentPaged',
+    'JobCredentialPaged',
+    'JobExecutionPaged',
+    'JobPaged',
+    'JobStepPaged',
+    'JobTargetGroupPaged',
+    'JobVersionPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'InstanceFailoverGroupPaged',
@@ -550,6 +615,15 @@ __all__ = [
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
+    'JobAgentState',
+    'JobExecutionLifecycle',
+    'ProvisioningState',
+    'JobTargetType',
+    'JobScheduleType',
+    'JobStepActionType',
+    'JobStepActionSource',
+    'JobStepOutputType',
+    'JobTargetGroupMembershipType',
     'ManagementOperationState',
     'MaxSizeUnit',
     'LogSizeUnit',

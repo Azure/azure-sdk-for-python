@@ -55,7 +55,7 @@ class BackupLongTermRetentionPolicy(ProxyResource):
     }
 
     def __init__(self, *, weekly_retention: str=None, monthly_retention: str=None, yearly_retention: str=None, week_of_year: int=None, **kwargs) -> None:
-        super(BackupLongTermRetentionPolicy, self).__init__(, **kwargs)
+        super(BackupLongTermRetentionPolicy, self).__init__(**kwargs)
         self.weekly_retention = weekly_retention
         self.monthly_retention = monthly_retention
         self.yearly_retention = yearly_retention

@@ -71,7 +71,7 @@ class DataMaskingPolicy(ProxyResource):
     }
 
     def __init__(self, *, data_masking_state, exempt_principals: str=None, **kwargs) -> None:
-        super(DataMaskingPolicy, self).__init__(, **kwargs)
+        super(DataMaskingPolicy, self).__init__(**kwargs)
         self.data_masking_state = data_masking_state
         self.exempt_principals = exempt_principals
         self.application_principals = None

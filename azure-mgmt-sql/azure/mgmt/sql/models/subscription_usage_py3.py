@@ -55,7 +55,7 @@ class SubscriptionUsage(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(SubscriptionUsage, self).__init__(, **kwargs)
+        super(SubscriptionUsage, self).__init__(**kwargs)
         self.display_name = None
         self.current_value = None
         self.limit = None

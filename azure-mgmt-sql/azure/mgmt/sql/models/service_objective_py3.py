@@ -61,7 +61,7 @@ class ServiceObjective(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ServiceObjective, self).__init__(, **kwargs)
+        super(ServiceObjective, self).__init__(**kwargs)
         self.service_objective_name = None
         self.is_default = None
         self.is_system = None

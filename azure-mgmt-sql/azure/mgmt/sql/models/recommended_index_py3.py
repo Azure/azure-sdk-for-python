@@ -97,7 +97,7 @@ class RecommendedIndex(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(RecommendedIndex, self).__init__(, **kwargs)
+        super(RecommendedIndex, self).__init__(**kwargs)
         self.action = None
         self.state = None
         self.created = None

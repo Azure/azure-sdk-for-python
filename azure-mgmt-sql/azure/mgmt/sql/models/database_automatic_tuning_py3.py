@@ -51,7 +51,7 @@ class DatabaseAutomaticTuning(ProxyResource):
     }
 
     def __init__(self, *, desired_state=None, options=None, **kwargs) -> None:
-        super(DatabaseAutomaticTuning, self).__init__(, **kwargs)
+        super(DatabaseAutomaticTuning, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
         self.options = options

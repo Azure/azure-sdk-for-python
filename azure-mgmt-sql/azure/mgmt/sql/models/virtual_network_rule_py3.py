@@ -55,7 +55,7 @@ class VirtualNetworkRule(ProxyResource):
     }
 
     def __init__(self, *, virtual_network_subnet_id: str, ignore_missing_vnet_service_endpoint: bool=None, **kwargs) -> None:
-        super(VirtualNetworkRule, self).__init__(, **kwargs)
+        super(VirtualNetworkRule, self).__init__(**kwargs)
         self.virtual_network_subnet_id = virtual_network_subnet_id
         self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
         self.state = None

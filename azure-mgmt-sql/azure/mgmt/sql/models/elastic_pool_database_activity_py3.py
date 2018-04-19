@@ -106,7 +106,7 @@ class ElasticPoolDatabaseActivity(ProxyResource):
     }
 
     def __init__(self, *, location: str=None, **kwargs) -> None:
-        super(ElasticPoolDatabaseActivity, self).__init__(, **kwargs)
+        super(ElasticPoolDatabaseActivity, self).__init__(**kwargs)
         self.location = location
         self.database_name = None
         self.end_time = None

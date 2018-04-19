@@ -48,6 +48,6 @@ class TransparentDataEncryption(ProxyResource):
     }
 
     def __init__(self, *, status=None, **kwargs) -> None:
-        super(TransparentDataEncryption, self).__init__(, **kwargs)
+        super(TransparentDataEncryption, self).__init__(**kwargs)
         self.location = None
         self.status = status
