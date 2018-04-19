@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class SignalRUpdateParameters(Model):
+class SignalrUpdateParameters(Model):
     """Parameters for SignalR service update operation.
 
     :param tags: A list of key value pairs that describe the resource.
@@ -22,17 +22,17 @@ class SignalRUpdateParameters(Model):
     :type sku: ~azure.mgmt.signalr.models.ResourceSku
     :param properties: Settings used to provision or configure the resource
     :type properties:
-     ~azure.mgmt.signalr.models.SignalRCreateOrUpdateProperties
+     ~azure.mgmt.signalr.models.SignalrCreateOrUpdateProperties
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'properties': {'key': 'properties', 'type': 'SignalRCreateOrUpdateProperties'},
+        'properties': {'key': 'properties', 'type': 'SignalrCreateOrUpdateProperties'},
     }
 
-    def __init__(self, *, tags=None, sku=None, properties=None, **kwargs) -> None:
-        super(SignalRUpdateParameters, self).__init__(**kwargs)
-        self.tags = tags
-        self.sku = sku
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(SignalrUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.sku = kwargs.get('sku', None)
+        self.properties = kwargs.get('properties', None)

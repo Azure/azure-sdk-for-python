@@ -13,12 +13,13 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.signalr_operations import SignalrOperations
 from . import models
 
 
-class SignalRManagementClientConfiguration(AzureConfiguration):
-    """Configuration for SignalRManagementClient
+class SignalrManagementClientConfiguration(AzureConfiguration):
+    """Configuration for SignalrManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -42,7 +43,7 @@ class SignalRManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(SignalRManagementClientConfiguration, self).__init__(base_url)
+        super(SignalrManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-signalr/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -51,12 +52,14 @@ class SignalRManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class SignalRManagementClient(object):
+class SignalrManagementClient(object):
     """REST API for Azure SignalR Service
 
     :ivar config: Configuration for client.
-    :vartype config: SignalRManagementClientConfiguration
+    :vartype config: SignalrManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.signalr.operations.Operations
     :ivar signalr: Signalr operations
     :vartype signalr: azure.mgmt.signalr.operations.SignalrOperations
 
@@ -73,7 +76,7 @@ class SignalRManagementClient(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = SignalRManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = SignalrManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -81,5 +84,7 @@ class SignalRManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.signalr = SignalrOperations(
             self._client, self.config, self._serialize, self._deserialize)

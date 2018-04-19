@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class SignalRSkuTier(str, Enum):
+class SignalrSkuTier(str, Enum):
 
     free = "Free"
     basic = "Basic"
@@ -21,9 +21,11 @@ class SignalRSkuTier(str, Enum):
 
 class ProvisioningState(str, Enum):
 
+    unknown = "Unknown"
     succeeded = "Succeeded"
     failed = "Failed"
     canceled = "Canceled"
+    running = "Running"
     creating = "Creating"
     updating = "Updating"
     deleting = "Deleting"

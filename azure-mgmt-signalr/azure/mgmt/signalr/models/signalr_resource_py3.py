@@ -12,7 +12,7 @@
 from .tracked_resource import TrackedResource
 
 
-class SignalRResource(TrackedResource):
+class SignalrResource(TrackedResource):
     """A class represent a SignalR service resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -31,16 +31,16 @@ class SignalRResource(TrackedResource):
     :param tags: Tags of the service which is a list of key value pairs that
      describe the resource.
     :type tags: dict[str, str]
-    :param signalrsku: SKU of the service.
-    :type signalrsku: ~azure.mgmt.signalr.models.ResourceSku
+    :param sku: SKU of the service.
+    :type sku: ~azure.mgmt.signalr.models.ResourceSku
     :param host_name_prefix: Prefix for the hostName of the SignalR service.
      Retained for future use.
      The hostname will be of format:
      &lt;hostNamePrefix&gt;.service.signalr.net.
     :type host_name_prefix: str
     :ivar provisioning_state: Provisioning state of the resource. Possible
-     values include: 'Succeeded', 'Failed', 'Canceled', 'Creating', 'Updating',
-     'Deleting', 'Moving'
+     values include: 'Unknown', 'Succeeded', 'Failed', 'Canceled', 'Running',
+     'Creating', 'Updating', 'Deleting', 'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.signalr.models.ProvisioningState
     :ivar external_ip: The publicly accessible IP of the SignalR service.
@@ -73,7 +73,7 @@ class SignalRResource(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'signalrsku': {'key': 'sku', 'type': 'ResourceSku'},
+        'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
@@ -82,10 +82,10 @@ class SignalRResource(TrackedResource):
         'server_port': {'key': 'properties.serverPort', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(SignalRResource, self).__init__(**kwargs)
-        self.signalrsku = kwargs.get('signalrsku', None)
-        self.host_name_prefix = kwargs.get('host_name_prefix', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, host_name_prefix: str=None, **kwargs) -> None:
+        super(SignalrResource, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.host_name_prefix = host_name_prefix
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None
