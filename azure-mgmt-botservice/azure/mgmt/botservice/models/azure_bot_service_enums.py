@@ -22,7 +22,6 @@ class SkuTier(str, Enum):
 
     free = "Free"
     standard = "Standard"
-    premium = "Premium"
 
 
 class Kind(str, Enum):
@@ -31,3 +30,17 @@ class Kind(str, Enum):
     designer = "designer"
     bot = "bot"
     function = "function"
+
+
+class ChannelName(str, Enum):
+
+    facebook_channel = "FacebookChannel"
+    email_channel = "EmailChannel"
+    kik_channel = "KikChannel"
+    telegram_channel = "TelegramChannel"
+    slack_channel = "SlackChannel"
+    ms_teams_channel = "MsTeamsChannel"
+    skype_channel = "SkypeChannel"
+    web_chat_channel = "WebChatChannel"
+    direct_line_channel = "DirectLineChannel"
+    sms_channel = "SmsChannel"

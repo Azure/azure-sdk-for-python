@@ -23,7 +23,7 @@ class Sku(Model):
     :param name: Required. The sku name. Possible values include: 'F0', 'S1'
     :type name: str or ~azure.mgmt.botservice.models.SkuName
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
-     values include: 'Free', 'Standard', 'Premium'
+     values include: 'Free', 'Standard'
     :vartype tier: str or ~azure.mgmt.botservice.models.SkuTier
     """
 
@@ -34,7 +34,7 @@ class Sku(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'SkuTier'},
+        'tier': {'key': 'tier', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

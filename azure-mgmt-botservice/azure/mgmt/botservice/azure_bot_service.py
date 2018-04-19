@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.bot_services_operations import BotServicesOperations
+from .operations.bots_operations import BotsOperations
+from .operations.channels_operations import ChannelsOperations
 from .operations.operations import Operations
 from . import models
 
@@ -50,14 +51,16 @@ class AzureBotServiceConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class AzureBotService(object):
+class AzureBotService(SDKClient):
     """Azure Bot Service is a platform for creating smart conversational agents.
 
     :ivar config: Configuration for client.
     :vartype config: AzureBotServiceConfiguration
 
-    :ivar bot_services: BotServices operations
-    :vartype bot_services: azure.mgmt.botservice.operations.BotServicesOperations
+    :ivar bots: Bots operations
+    :vartype bots: azure.mgmt.botservice.operations.BotsOperations
+    :ivar channels: Channels operations
+    :vartype channels: azure.mgmt.botservice.operations.ChannelsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.botservice.operations.Operations
 
@@ -73,14 +76,16 @@ class AzureBotService(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = AzureBotServiceConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(AzureBotService, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.bot_services = BotServicesOperations(
+        self.bots = BotsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.channels = ChannelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

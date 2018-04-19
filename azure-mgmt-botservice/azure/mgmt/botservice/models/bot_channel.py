@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class BotResource(Resource):
-    """Bot resource definition.
+class BotChannel(Resource):
+    """Bot channel resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,8 +35,8 @@ class BotResource(Resource):
     :type kind: str or ~azure.mgmt.botservice.models.Kind
     :param etag: Entity Tag
     :type etag: str
-    :param properties: The set of properties specific to bot resource
-    :type properties: ~azure.mgmt.botservice.models.BotResourceProperties
+    :param properties: The set of properties specific to bot channel resource
+    :type properties: ~azure.mgmt.botservice.models.Channel
     """
 
     _validation = {
@@ -54,9 +54,9 @@ class BotResource(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BotResourceProperties'},
+        'properties': {'key': 'properties', 'type': 'Channel'},
     }
 
     def __init__(self, **kwargs):
-        super(BotResource, self).__init__(**kwargs)
+        super(BotChannel, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
