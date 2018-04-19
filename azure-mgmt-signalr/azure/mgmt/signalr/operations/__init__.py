@@ -9,8 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operations import Operations
 from .signalr_operations import SignalrOperations
 
 __all__ = [
+    'Operations',
     'SignalrOperations',
 ]
