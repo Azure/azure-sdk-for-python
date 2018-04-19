@@ -25,6 +25,11 @@ class TabularTranslator(CopyTranslator):
     :param column_mappings: Column mappings. Type: string (or Expression with
      resultType string).
     :type column_mappings: object
+    :param schema_mapping: The schema mapping to map between tabular data and
+     hierarchical data.  Example: {"Column1": "$.Column1", "Column2":
+     "$.Column2.Property1", "Column3": "$.Column2.Property2"}. Type: object (or
+     Expression with resultType object).
+    :type schema_mapping: object
     """
 
     _validation = {
@@ -35,9 +40,11 @@ class TabularTranslator(CopyTranslator):
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'column_mappings': {'key': 'columnMappings', 'type': 'object'},
+        'schema_mapping': {'key': 'schemaMapping', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, column_mappings=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, column_mappings=None, schema_mapping=None, **kwargs) -> None:
         super(TabularTranslator, self).__init__(additional_properties=additional_properties, **kwargs)
         self.column_mappings = column_mappings
+        self.schema_mapping = schema_mapping
         self.type = 'TabularTranslator'

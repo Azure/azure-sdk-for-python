@@ -9,27 +9,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .copy_translator import CopyTranslator
+from .copy_source import CopySource
 
 
-class TabularTranslator(CopyTranslator):
-    """A copy activity tabular translator.
+class ResponsysSource(CopySource):
+    """A copy activity Responsys source.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
     :param type: Required. Constant filled by server.
     :type type: str
-    :param column_mappings: Column mappings. Type: string (or Expression with
-     resultType string).
-    :type column_mappings: object
-    :param schema_mapping: The schema mapping to map between tabular data and
-     hierarchical data.  Example: {"Column1": "$.Column1", "Column2":
-     "$.Column2.Property1", "Column3": "$.Column2.Property2"}. Type: object (or
-     Expression with resultType object).
-    :type schema_mapping: object
+    :param query: A query to retrieve data from source. Type: string (or
+     Expression with resultType string).
+    :type query: object
     """
 
     _validation = {
@@ -38,13 +40,13 @@ class TabularTranslator(CopyTranslator):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'column_mappings': {'key': 'columnMappings', 'type': 'object'},
-        'schema_mapping': {'key': 'schemaMapping', 'type': 'object'},
+        'query': {'key': 'query', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(TabularTranslator, self).__init__(**kwargs)
-        self.column_mappings = kwargs.get('column_mappings', None)
-        self.schema_mapping = kwargs.get('schema_mapping', None)
-        self.type = 'TabularTranslator'
+        super(ResponsysSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.type = 'ResponsysSource'
