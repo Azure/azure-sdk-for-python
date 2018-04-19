@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -39,8 +39,6 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :ivar config_name: The configuration name. Should always be "$default".
-    :type config_name: str
     :param str base_url: Service URL
     """
 
@@ -61,10 +59,9 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.config_name = "$default"
 
 
-class ServiceBusManagementClient(object):
+class ServiceBusManagementClient(SDKClient):
     """Azure Service Bus client
 
     :ivar config: Configuration for client.
@@ -107,7 +104,7 @@ class ServiceBusManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ServiceBusManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ServiceBusManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-04-01'

@@ -23,6 +23,7 @@ class MigrationConfigurationsOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-04-01".
+    :ivar config_name: The configuration name. Should always be "$default". Constant value: "$default".
     """
 
     models = models
@@ -33,6 +34,7 @@ class MigrationConfigurationsOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2017-04-01"
+        self.config_name = "$default"
 
         self.config = config
 
@@ -107,18 +109,18 @@ class MigrationConfigurationsOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations'}
 
-    def create_or_update(
-            self, resource_group_name, namespace_name, primary_namespace_name, post_migration_name, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a new Migration Config.
+    def start_migration(
+            self, resource_group_name, namespace_name, target_namespace, post_migration_name, custom_headers=None, raw=False, **operation_config):
+        """Initiate Migration from Standard to Premium.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param primary_namespace_name: Existing premium Namespace name which
-         has no entities, will be used for migration
-        :type primary_namespace_name: str
+        :param target_namespace: Existing premium Namespace name which has no
+         entities, will be used for migration
+        :type target_namespace: str
         :param post_migration_name: Name to access connection strings of the
          Primary Namespace after migration
         :type post_migration_name: str
@@ -133,14 +135,14 @@ class MigrationConfigurationsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
-        parameters = models.MigrationConfigProperties(primary_namespace_name=primary_namespace_name, post_migration_name=post_migration_name)
+        parameters = models.MigrationConfigProperties(target_namespace=target_namespace, post_migration_name=post_migration_name)
 
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.start_migration.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'configName': self._serialize.url("self.config.config_name", self.config.config_name, 'str'),
+            'configName': self._serialize.url("self.config_name", self.config_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -180,7 +182,7 @@ class MigrationConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
+    start_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
 
     def delete(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -206,7 +208,7 @@ class MigrationConfigurationsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'configName': self._serialize.url("self.config.config_name", self.config.config_name, 'str'),
+            'configName': self._serialize.url("self.config_name", self.config_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -262,7 +264,7 @@ class MigrationConfigurationsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'configName': self._serialize.url("self.config.config_name", self.config.config_name, 'str'),
+            'configName': self._serialize.url("self.config_name", self.config_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -300,9 +302,9 @@ class MigrationConfigurationsOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
 
-    def disable_migration(
+    def complete_migration(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """This operation disables the Migration.
+        """This operation Completes Migration.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -320,11 +322,11 @@ class MigrationConfigurationsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.disable_migration.metadata['url']
+        url = self.complete_migration.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'configName': self._serialize.url("self.config.config_name", self.config.config_name, 'str'),
+            'configName': self._serialize.url("self.config_name", self.config_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -353,11 +355,11 @@ class MigrationConfigurationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    disable_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/upgrade'}
+    complete_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/upgrade'}
 
     def revert(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Invokes MigrationConfig Revert.
+        """This operation reverts Migration.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -379,7 +381,7 @@ class MigrationConfigurationsOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'configName': self._serialize.url("self.config.config_name", self.config.config_name, 'str'),
+            'configName': self._serialize.url("self.config_name", self.config_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

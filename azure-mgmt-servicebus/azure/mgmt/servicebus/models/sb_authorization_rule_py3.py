@@ -45,5 +45,5 @@ class SBAuthorizationRule(Resource):
     }
 
     def __init__(self, *, rights, **kwargs) -> None:
-        super(SBAuthorizationRule, self).__init__(, **kwargs)
+        super(SBAuthorizationRule, self).__init__(**kwargs)
         self.rights = rights

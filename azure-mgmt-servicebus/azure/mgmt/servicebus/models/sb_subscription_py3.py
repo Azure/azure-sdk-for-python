@@ -112,7 +112,7 @@ class SBSubscription(Resource):
     }
 
     def __init__(self, *, lock_duration=None, requires_session: bool=None, default_message_time_to_live=None, dead_lettering_on_filter_evaluation_exceptions: bool=None, dead_lettering_on_message_expiration: bool=None, duplicate_detection_history_time_window=None, max_delivery_count: int=None, status=None, enable_batched_operations: bool=None, auto_delete_on_idle=None, forward_to: str=None, forward_dead_lettered_messages_to: str=None, **kwargs) -> None:
-        super(SBSubscription, self).__init__(, **kwargs)
+        super(SBSubscription, self).__init__(**kwargs)
         self.message_count = None
         self.created_at = None
         self.accessed_at = None

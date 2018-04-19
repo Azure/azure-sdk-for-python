@@ -28,9 +28,9 @@ class MigrationConfigProperties(Resource):
     :vartype type: str
     :ivar provisioning_state: Provisioning state of Migration Configuration
     :vartype provisioning_state: str
-    :param primary_namespace_name: Required. Existing premium Namespace name
-     which has no entities, will be used for migration
-    :type primary_namespace_name: str
+    :param target_namespace: Required. Existing premium Namespace name which
+     has no entities, will be used for migration
+    :type target_namespace: str
     :param post_migration_name: Required. Name to access connection strings of
      the Primary Namespace after migration
     :type post_migration_name: str
@@ -41,7 +41,7 @@ class MigrationConfigProperties(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'primary_namespace_name': {'required': True},
+        'target_namespace': {'required': True},
         'post_migration_name': {'required': True},
     }
 
@@ -50,12 +50,12 @@ class MigrationConfigProperties(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'primary_namespace_name': {'key': 'properties.primaryNamespaceName', 'type': 'str'},
+        'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
         'post_migration_name': {'key': 'properties.postMigrationName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(MigrationConfigProperties, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.primary_namespace_name = kwargs.get('primary_namespace_name', None)
+        self.target_namespace = kwargs.get('target_namespace', None)
         self.post_migration_name = kwargs.get('post_migration_name', None)

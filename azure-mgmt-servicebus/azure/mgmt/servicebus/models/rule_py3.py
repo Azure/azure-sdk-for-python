@@ -53,7 +53,7 @@ class Rule(Resource):
     }
 
     def __init__(self, *, action=None, filter_type=None, sql_filter=None, correlation_filter=None, **kwargs) -> None:
-        super(Rule, self).__init__(, **kwargs)
+        super(Rule, self).__init__(**kwargs)
         self.action = action
         self.filter_type = filter_type
         self.sql_filter = sql_filter
