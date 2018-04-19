@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -96,7 +96,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class NetworkManagementClient(object):
+class NetworkManagementClient(SDKClient):
     """Network Client
 
     :ivar config: Configuration for client.
@@ -199,9 +199,10 @@ class NetworkManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(NetworkManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2018-02-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -310,8 +311,6 @@ class NetworkManagementClient(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2018-02-01"
-
         # Construct URL
         url = self.check_dns_name_availability.metadata['url']
         path_format_arguments = {
@@ -323,7 +322,7 @@ class NetworkManagementClient(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['domainNameLabel'] = self._serialize.query("domain_name_label", domain_name_label, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

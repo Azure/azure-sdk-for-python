@@ -34,12 +34,12 @@ class ExpressRouteCrossConnection(Resource):
     :vartype secondary_azure_port: str
     :ivar s_tag: The identifier of the circuit traffic.
     :vartype s_tag: int
-    :param peering_location: The peering location of the ExpressRoute circuit.
-    :type peering_location: str
-    :param bandwidth_in_mbps: The circuit bandwidth In Mbps.
-    :type bandwidth_in_mbps: int
-    :param express_route_circuit: The ExpressRouteCircuit
-    :type express_route_circuit:
+    :ivar peering_location: The peering location of the ExpressRoute circuit.
+    :vartype peering_location: str
+    :ivar bandwidth_in_mbps: The circuit bandwidth In Mbps.
+    :vartype bandwidth_in_mbps: int
+    :ivar express_route_circuit: The ExpressRouteCircuit
+    :vartype express_route_circuit:
      ~azure.mgmt.network.v2018_02_01.models.ExpressRouteCircuitReference
     :param service_provider_provisioning_state: The provisioning state of the
      circuit in the connectivity provider system. Possible values are
@@ -67,6 +67,9 @@ class ExpressRouteCrossConnection(Resource):
         'primary_azure_port': {'readonly': True},
         'secondary_azure_port': {'readonly': True},
         's_tag': {'readonly': True},
+        'peering_location': {'readonly': True},
+        'bandwidth_in_mbps': {'readonly': True},
+        'express_route_circuit': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
     }
@@ -95,9 +98,9 @@ class ExpressRouteCrossConnection(Resource):
         self.primary_azure_port = None
         self.secondary_azure_port = None
         self.s_tag = None
-        self.peering_location = kwargs.get('peering_location', None)
-        self.bandwidth_in_mbps = kwargs.get('bandwidth_in_mbps', None)
-        self.express_route_circuit = kwargs.get('express_route_circuit', None)
+        self.peering_location = None
+        self.bandwidth_in_mbps = None
+        self.express_route_circuit = None
         self.service_provider_provisioning_state = kwargs.get('service_provider_provisioning_state', None)
         self.service_provider_notes = kwargs.get('service_provider_notes', None)
         self.provisioning_state = None
