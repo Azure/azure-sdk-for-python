@@ -12,20 +12,23 @@
 from msrest.serialization import Model
 
 
-class TumblingWindowDependency(Model):
-    """Tumbling Window dependency information.
+class TumblingWindowTriggerReference(Model):
+    """Tumbling window trigger reference type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Reference type "TriggerReference" for Tumbling
-     Window.
-    :type type: str
-    :param reference_name: Required. Trigger reference name.
+    :ivar type: Required. Tumbling window trigger reference type. Default
+     value: "TumblingWindowTriggerReference" .
+    :vartype type: str
+    :param reference_name: Required. Reference TumblingWindowTrigger name.
     :type reference_name: str
     """
 
     _validation = {
-        'type': {'required': True},
+        'type': {'required': True, 'constant': True},
         'reference_name': {'required': True},
     }
 
@@ -34,7 +37,8 @@ class TumblingWindowDependency(Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, reference_name: str, **kwargs) -> None:
-        super(TumblingWindowDependency, self).__init__(**kwargs)
-        self.type = type
+    type = "TumblingWindowTriggerReference"
+
+    def __init__(self, *, reference_name: str, **kwargs) -> None:
+        super(TumblingWindowTriggerReference, self).__init__(**kwargs)
         self.reference_name = reference_name
