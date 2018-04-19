@@ -34,6 +34,6 @@ class WebChatChannel(Channel):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(WebChatChannel, self).__init__(, **kwargs)
+        super(WebChatChannel, self).__init__(**kwargs)
         self.properties = properties
         self.channel_name = 'WebChatChannel'

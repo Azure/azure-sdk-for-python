@@ -34,6 +34,6 @@ class MsTeamsChannel(Channel):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(MsTeamsChannel, self).__init__(, **kwargs)
+        super(MsTeamsChannel, self).__init__(**kwargs)
         self.properties = properties
         self.channel_name = 'MsTeamsChannel'

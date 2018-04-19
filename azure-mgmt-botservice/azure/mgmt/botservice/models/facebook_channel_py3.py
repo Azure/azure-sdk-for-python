@@ -33,6 +33,6 @@ class FacebookChannel(Channel):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(FacebookChannel, self).__init__(, **kwargs)
+        super(FacebookChannel, self).__init__(**kwargs)
         self.properties = properties
         self.channel_name = 'FacebookChannel'

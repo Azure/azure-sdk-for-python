@@ -35,6 +35,6 @@ class DirectLineChannel(Channel):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(DirectLineChannel, self).__init__(, **kwargs)
+        super(DirectLineChannel, self).__init__(**kwargs)
         self.properties = properties
         self.channel_name = 'DirectLineChannel'

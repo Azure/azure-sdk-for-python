@@ -34,6 +34,6 @@ class EmailChannel(Channel):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(EmailChannel, self).__init__(, **kwargs)
+        super(EmailChannel, self).__init__(**kwargs)
         self.properties = properties
         self.channel_name = 'EmailChannel'

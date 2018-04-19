@@ -34,6 +34,6 @@ class SlackChannel(Channel):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(SlackChannel, self).__init__(, **kwargs)
+        super(SlackChannel, self).__init__(**kwargs)
         self.properties = properties
         self.channel_name = 'SlackChannel'

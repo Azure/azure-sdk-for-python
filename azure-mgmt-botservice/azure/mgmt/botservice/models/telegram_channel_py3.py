@@ -34,6 +34,6 @@ class TelegramChannel(Channel):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(TelegramChannel, self).__init__(, **kwargs)
+        super(TelegramChannel, self).__init__(**kwargs)
         self.properties = properties
         self.channel_name = 'TelegramChannel'
