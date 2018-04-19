@@ -141,8 +141,12 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
     def tearDown(self):
         os.environ = self.original_env
+        # Autorest.Python 2.x
         assert not [t for t in threading.enumerate() if t.name.startswith("AzureOperationPoller")], \
             "You need to call 'result' or 'wait' on all AzureOperationPoller you have created"
+        # Autorest.Python 3.x
+        assert not [t for t in threading.enumerate() if t.name.startswith("LROPoller")], \
+            "You need to call 'result' or 'wait' on all LROPoller you have created"
 
     def _process_request_recording(self, request):
         if self.disable_recording:
@@ -190,7 +194,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
     @classmethod
     def _custom_request_query_matcher(cls, r1, r2):
         """ Ensure method, path, and query parameters match. """
-        from six.moves.urllib_parse import urlparse, parse_qs  # pylint: disable=import-error
+        from six.moves.urllib_parse import urlparse, parse_qs  # pylint: disable=import-error,relative-import
 
         url1 = urlparse(r1.uri)
         url2 = urlparse(r2.uri)
