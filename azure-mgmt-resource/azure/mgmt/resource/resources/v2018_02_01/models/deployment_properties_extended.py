@@ -81,18 +81,18 @@ class DeploymentPropertiesExtended(Model):
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeploymentExtended'},
     }
 
-    def __init__(self, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None, on_error_deployment=None):
-        super(DeploymentPropertiesExtended, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeploymentPropertiesExtended, self).__init__(**kwargs)
         self.provisioning_state = None
         self.correlation_id = None
         self.timestamp = None
-        self.outputs = outputs
-        self.providers = providers
-        self.dependencies = dependencies
-        self.template = template
-        self.template_link = template_link
-        self.parameters = parameters
-        self.parameters_link = parameters_link
-        self.mode = mode
-        self.debug_setting = debug_setting
-        self.on_error_deployment = on_error_deployment
+        self.outputs = kwargs.get('outputs', None)
+        self.providers = kwargs.get('providers', None)
+        self.dependencies = kwargs.get('dependencies', None)
+        self.template = kwargs.get('template', None)
+        self.template_link = kwargs.get('template_link', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.parameters_link = kwargs.get('parameters_link', None)
+        self.mode = kwargs.get('mode', None)
+        self.debug_setting = kwargs.get('debug_setting', None)
+        self.on_error_deployment = kwargs.get('on_error_deployment', None)

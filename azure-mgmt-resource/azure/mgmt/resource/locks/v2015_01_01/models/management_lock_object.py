@@ -45,10 +45,10 @@ class ManagementLockObject(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, level=None, notes=None, name=None):
-        super(ManagementLockObject, self).__init__()
-        self.level = level
-        self.notes = notes
+    def __init__(self, **kwargs):
+        super(ManagementLockObject, self).__init__(**kwargs)
+        self.level = kwargs.get('level', None)
+        self.notes = kwargs.get('notes', None)
         self.id = None
         self.type = None
-        self.name = name
+        self.name = kwargs.get('name', None)

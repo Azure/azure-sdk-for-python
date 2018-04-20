@@ -12,19 +12,19 @@
 from enum import Enum
 
 
-class DeploymentMode(Enum):
+class DeploymentMode(str, Enum):
 
     incremental = "Incremental"
     complete = "Complete"
 
 
-class OnErrorDeploymentType(Enum):
+class OnErrorDeploymentType(str, Enum):
 
     last_successful = "LastSuccessful"
     specific_deployment = "SpecificDeployment"
 
 
-class ResourceIdentityType(Enum):
+class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
     user_assigned = "UserAssigned"

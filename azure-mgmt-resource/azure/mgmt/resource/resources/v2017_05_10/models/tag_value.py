@@ -36,8 +36,8 @@ class TagValue(Model):
         'count': {'key': 'count', 'type': 'TagCount'},
     }
 
-    def __init__(self, tag_value=None, count=None):
-        super(TagValue, self).__init__()
+    def __init__(self, **kwargs):
+        super(TagValue, self).__init__(**kwargs)
         self.id = None
-        self.tag_value = tag_value
-        self.count = count
+        self.tag_value = kwargs.get('tag_value', None)
+        self.count = kwargs.get('count', None)
