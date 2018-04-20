@@ -109,15 +109,15 @@ class MigrationConfigsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations'}
 
 
-    def _start_migration_initial(
+    def _create_and_start_migration_initial(
             self, resource_group_name, namespace_name, target_namespace, post_migration_name, custom_headers=None, raw=False, **operation_config):
         parameters = models.MigrationConfigProperties(target_namespace=target_namespace, post_migration_name=post_migration_name)
 
         # Construct URL
-        url = self.start_migration.metadata['url']
+        url = self.create_and_start_migration.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -162,9 +162,10 @@ class MigrationConfigsOperations(object):
 
         return deserialized
 
-    def start_migration(
+    def create_and_start_migration(
             self, resource_group_name, namespace_name, target_namespace, post_migration_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Initiate Migration from Standard to Premium.
+        """Creates Migration configuration and starts migration of enties from
+        Standard to Premium namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -192,7 +193,7 @@ class MigrationConfigsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
-        raw_result = self._start_migration_initial(
+        raw_result = self._create_and_start_migration_initial(
             resource_group_name=resource_group_name,
             namespace_name=namespace_name,
             target_namespace=target_namespace,
@@ -218,7 +219,7 @@ class MigrationConfigsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    start_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}'}
+    create_and_start_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
 
     def delete(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -273,7 +274,7 @@ class MigrationConfigsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
 
     def get(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -336,11 +337,13 @@ class MigrationConfigsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
 
     def complete_migration(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """This operation Completes Migration.
+        """This operation Completes Migration of entities by pointing the
+        connection strings to Premium namespace and any enties created after
+        the operation will be under Premium Namespace.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -391,7 +394,7 @@ class MigrationConfigsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    complete_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}/upgrade'}
+    complete_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/upgrade'}
 
     def revert(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -446,4 +449,4 @@ class MigrationConfigsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    revert.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}/revert'}
+    revert.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/revert'}
