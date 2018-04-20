@@ -24,6 +24,6 @@ class PropertyBatchDescriptionList(Model):
         'operations': {'key': 'Operations', 'type': '[PropertyBatchOperation]'},
     }
 
-    def __init__(self, operations=None):
-        super(PropertyBatchDescriptionList, self).__init__()
-        self.operations = operations
+    def __init__(self, **kwargs):
+        super(PropertyBatchDescriptionList, self).__init__(**kwargs)
+        self.operations = kwargs.get('operations', None)

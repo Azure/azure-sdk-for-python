@@ -18,7 +18,6 @@ class NodeHealthStateFilter(Model):
     One filter can match zero, one or multiple nodes, depending on its
     properties.
     Can be specified in the cluster health chunk query description.
-    .
 
     :param node_name_filter: Name of the node that matches the filter. The
      filter is applied only to the specified node, if it exists.
@@ -52,8 +51,7 @@ class NodeHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535.
-     . Default value: 0 .
+     65535. Default value: 0 .
     :type health_state_filter: int
     """
 
@@ -62,7 +60,7 @@ class NodeHealthStateFilter(Model):
         'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
     }
 
-    def __init__(self, node_name_filter=None, health_state_filter=0):
-        super(NodeHealthStateFilter, self).__init__()
-        self.node_name_filter = node_name_filter
-        self.health_state_filter = health_state_filter
+    def __init__(self, **kwargs):
+        super(NodeHealthStateFilter, self).__init__(**kwargs)
+        self.node_name_filter = kwargs.get('node_name_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)

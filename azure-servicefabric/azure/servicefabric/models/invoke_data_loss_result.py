@@ -29,7 +29,7 @@ class InvokeDataLossResult(Model):
         'selected_partition': {'key': 'SelectedPartition', 'type': 'SelectedPartition'},
     }
 
-    def __init__(self, error_code=None, selected_partition=None):
-        super(InvokeDataLossResult, self).__init__()
-        self.error_code = error_code
-        self.selected_partition = selected_partition
+    def __init__(self, **kwargs):
+        super(InvokeDataLossResult, self).__init__(**kwargs)
+        self.error_code = kwargs.get('error_code', None)
+        self.selected_partition = kwargs.get('selected_partition', None)

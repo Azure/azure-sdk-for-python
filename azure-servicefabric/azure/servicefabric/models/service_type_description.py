@@ -14,12 +14,13 @@ from msrest.serialization import Model
 
 class ServiceTypeDescription(Model):
     """Describes a service type defined in the service manifest of a provisioned
-    application type. The properties the the ones defined in the service
-    manifest.
+    application type. The properties the ones defined in the service manifest.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: StatefulServiceTypeDescription,
     StatelessServiceTypeDescription
+
+    All required parameters must be populated in order to send to Azure.
 
     :param is_stateful: Indicates whether the service type is a stateful
      service type or a stateless service type. This property is true if the
@@ -31,6 +32,10 @@ class ServiceTypeDescription(Model):
     :param placement_constraints: The placement constraint to be used when
      instantiating this service in a Service Fabric cluster.
     :type placement_constraints: str
+    :param load_metrics: The service load metrics is given as an array of
+     ServiceLoadMetricDescription objects.
+    :type load_metrics:
+     list[~azure.servicefabric.models.ServiceLoadMetricDescription]
     :param service_placement_policies: List of service placement policy
      descriptions.
     :type service_placement_policies:
@@ -38,7 +43,7 @@ class ServiceTypeDescription(Model):
     :param extensions: List of service type extensions.
     :type extensions:
      list[~azure.servicefabric.models.ServiceTypeExtensionDescription]
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
@@ -50,6 +55,7 @@ class ServiceTypeDescription(Model):
         'is_stateful': {'key': 'IsStateful', 'type': 'bool'},
         'service_type_name': {'key': 'ServiceTypeName', 'type': 'str'},
         'placement_constraints': {'key': 'PlacementConstraints', 'type': 'str'},
+        'load_metrics': {'key': 'LoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
         'service_placement_policies': {'key': 'ServicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
         'extensions': {'key': 'Extensions', 'type': '[ServiceTypeExtensionDescription]'},
         'kind': {'key': 'Kind', 'type': 'str'},
@@ -59,11 +65,12 @@ class ServiceTypeDescription(Model):
         'kind': {'Stateful': 'StatefulServiceTypeDescription', 'Stateless': 'StatelessServiceTypeDescription'}
     }
 
-    def __init__(self, is_stateful=None, service_type_name=None, placement_constraints=None, service_placement_policies=None, extensions=None):
-        super(ServiceTypeDescription, self).__init__()
-        self.is_stateful = is_stateful
-        self.service_type_name = service_type_name
-        self.placement_constraints = placement_constraints
-        self.service_placement_policies = service_placement_policies
-        self.extensions = extensions
+    def __init__(self, **kwargs):
+        super(ServiceTypeDescription, self).__init__(**kwargs)
+        self.is_stateful = kwargs.get('is_stateful', None)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.placement_constraints = kwargs.get('placement_constraints', None)
+        self.load_metrics = kwargs.get('load_metrics', None)
+        self.service_placement_policies = kwargs.get('service_placement_policies', None)
+        self.extensions = kwargs.get('extensions', None)
         self.kind = None

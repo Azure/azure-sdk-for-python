@@ -32,9 +32,8 @@ class ApplicationInfo(Model):
     :param type_version: The version of the application type as defined in the
      application manifest.
     :type type_version: str
-    :param status: The status of the application.
-     . Possible values include: 'Invalid', 'Ready', 'Upgrading', 'Creating',
-     'Deleting', 'Failed'
+    :param status: The status of the application. Possible values include:
+     'Invalid', 'Ready', 'Upgrading', 'Creating', 'Deleting', 'Failed'
     :type status: str or ~azure.servicefabric.models.ApplicationStatus
     :param parameters: List of application parameters with overridden values
      from their default values specified in the application manifest.
@@ -44,8 +43,7 @@ class ApplicationInfo(Model):
      values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
     :type health_state: str or ~azure.servicefabric.models.HealthState
     :param application_definition_kind: The mechanism used to define a Service
-     Fabric application.
-     . Possible values include: 'Invalid',
+     Fabric application. Possible values include: 'Invalid',
      'ServiceFabricApplicationDescription', 'Compose'
     :type application_definition_kind: str or
      ~azure.servicefabric.models.ApplicationDefinitionKind
@@ -62,13 +60,13 @@ class ApplicationInfo(Model):
         'application_definition_kind': {'key': 'ApplicationDefinitionKind', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type_name=None, type_version=None, status=None, parameters=None, health_state=None, application_definition_kind=None):
-        super(ApplicationInfo, self).__init__()
-        self.id = id
-        self.name = name
-        self.type_name = type_name
-        self.type_version = type_version
-        self.status = status
-        self.parameters = parameters
-        self.health_state = health_state
-        self.application_definition_kind = application_definition_kind
+    def __init__(self, **kwargs):
+        super(ApplicationInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type_name = kwargs.get('type_name', None)
+        self.type_version = kwargs.get('type_version', None)
+        self.status = kwargs.get('status', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.health_state = kwargs.get('health_state', None)
+        self.application_definition_kind = kwargs.get('application_definition_kind', None)

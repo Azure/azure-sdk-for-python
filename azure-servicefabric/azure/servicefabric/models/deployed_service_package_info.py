@@ -22,9 +22,8 @@ class DeployedServicePackageInfo(Model):
      manifest.
     :type version: str
     :param status: Specifies the status of a deployed application or service
-     package on a Service Fabric node.
-     . Possible values include: 'Invalid', 'Downloading', 'Activating',
-     'Active', 'Upgrading', 'Deactivating'
+     package on a Service Fabric node. Possible values include: 'Invalid',
+     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating'
     :type status: str or ~azure.servicefabric.models.DeploymentStatus
     :param service_package_activation_id: The ActivationId of a deployed
      service package. If ServicePackageActivationMode specified at the time of
@@ -42,9 +41,9 @@ class DeployedServicePackageInfo(Model):
         'service_package_activation_id': {'key': 'ServicePackageActivationId', 'type': 'str'},
     }
 
-    def __init__(self, name=None, version=None, status=None, service_package_activation_id=None):
-        super(DeployedServicePackageInfo, self).__init__()
-        self.name = name
-        self.version = version
-        self.status = status
-        self.service_package_activation_id = service_package_activation_id
+    def __init__(self, **kwargs):
+        super(DeployedServicePackageInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)
+        self.status = kwargs.get('status', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)

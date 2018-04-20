@@ -45,9 +45,9 @@ class ReconfigurationInformation(Model):
         'reconfiguration_start_time_utc': {'key': 'ReconfigurationStartTimeUtc', 'type': 'iso-8601'},
     }
 
-    def __init__(self, previous_configuration_role=None, reconfiguration_phase=None, reconfiguration_type=None, reconfiguration_start_time_utc=None):
-        super(ReconfigurationInformation, self).__init__()
-        self.previous_configuration_role = previous_configuration_role
-        self.reconfiguration_phase = reconfiguration_phase
-        self.reconfiguration_type = reconfiguration_type
-        self.reconfiguration_start_time_utc = reconfiguration_start_time_utc
+    def __init__(self, **kwargs):
+        super(ReconfigurationInformation, self).__init__(**kwargs)
+        self.previous_configuration_role = kwargs.get('previous_configuration_role', None)
+        self.reconfiguration_phase = kwargs.get('reconfiguration_phase', None)
+        self.reconfiguration_type = kwargs.get('reconfiguration_type', None)
+        self.reconfiguration_start_time_utc = kwargs.get('reconfiguration_start_time_utc', None)

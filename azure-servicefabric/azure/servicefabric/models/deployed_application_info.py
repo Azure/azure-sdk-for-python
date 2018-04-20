@@ -30,9 +30,8 @@ class DeployedApplicationInfo(Model):
      manifest.
     :type type_name: str
     :param status: The status of the application deployed on the node.
-     Following are the possible values.
-     . Possible values include: 'Invalid', 'Downloading', 'Activating',
-     'Active', 'Upgrading', 'Deactivating'
+     Following are the possible values. Possible values include: 'Invalid',
+     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating'
     :type status: str or ~azure.servicefabric.models.DeployedApplicationStatus
     :param work_directory: The work directory of the application on the node.
      The work directory can be used to store application data.
@@ -61,13 +60,13 @@ class DeployedApplicationInfo(Model):
         'health_state': {'key': 'HealthState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type_name=None, status=None, work_directory=None, log_directory=None, temp_directory=None, health_state=None):
-        super(DeployedApplicationInfo, self).__init__()
-        self.id = id
-        self.name = name
-        self.type_name = type_name
-        self.status = status
-        self.work_directory = work_directory
-        self.log_directory = log_directory
-        self.temp_directory = temp_directory
-        self.health_state = health_state
+    def __init__(self, **kwargs):
+        super(DeployedApplicationInfo, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type_name = kwargs.get('type_name', None)
+        self.status = kwargs.get('status', None)
+        self.work_directory = kwargs.get('work_directory', None)
+        self.log_directory = kwargs.get('log_directory', None)
+        self.temp_directory = kwargs.get('temp_directory', None)
+        self.health_state = kwargs.get('health_state', None)

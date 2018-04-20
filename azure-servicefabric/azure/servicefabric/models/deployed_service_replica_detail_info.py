@@ -19,14 +19,16 @@ class DeployedServiceReplicaDetailInfo(Model):
     sub-classes are: DeployedStatefulServiceReplicaDetailInfo,
     DeployedStatelessServiceInstanceDetailInfo
 
+    All required parameters must be populated in order to send to Azure.
+
     :param service_name: Full hierarchical name of the service in URI format
      starting with `fabric:`.
     :type service_name: str
     :param partition_id: An internal ID used by Service Fabric to uniquely
      identify a partition. This is a randomly generated GUID when the service
-     was created. The partition id is unique and does not change for the
+     was created. The partition ID is unique and does not change for the
      lifetime of the service. If the same service was deleted and recreated the
-     ids of its partitions would be different.
+     IDs of its partitions would be different.
     :type partition_id: str
     :param current_service_operation: Specifies the current active life-cycle
      operation on a stateful service replica or stateless service instance.
@@ -40,7 +42,7 @@ class DeployedServiceReplicaDetailInfo(Model):
     :param reported_load: List of load reported by replica.
     :type reported_load:
      list[~azure.servicefabric.models.LoadMetricReportInfo]
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -61,11 +63,11 @@ class DeployedServiceReplicaDetailInfo(Model):
         'service_kind': {'Stateful': 'DeployedStatefulServiceReplicaDetailInfo', 'Stateless': 'DeployedStatelessServiceInstanceDetailInfo'}
     }
 
-    def __init__(self, service_name=None, partition_id=None, current_service_operation=None, current_service_operation_start_time_utc=None, reported_load=None):
-        super(DeployedServiceReplicaDetailInfo, self).__init__()
-        self.service_name = service_name
-        self.partition_id = partition_id
-        self.current_service_operation = current_service_operation
-        self.current_service_operation_start_time_utc = current_service_operation_start_time_utc
-        self.reported_load = reported_load
+    def __init__(self, **kwargs):
+        super(DeployedServiceReplicaDetailInfo, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.current_service_operation = kwargs.get('current_service_operation', None)
+        self.current_service_operation_start_time_utc = kwargs.get('current_service_operation_start_time_utc', None)
+        self.reported_load = kwargs.get('reported_load', None)
         self.service_kind = None

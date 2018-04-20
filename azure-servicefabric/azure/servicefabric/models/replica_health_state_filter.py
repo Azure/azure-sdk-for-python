@@ -21,7 +21,6 @@ class ReplicaHealthStateFilter(Model):
     chunk.
     One filter can match zero, one or multiple replicas, depending on its
     properties.
-    .
 
     :param replica_or_instance_id_filter: Id of the stateful service replica
      or stateless service instance that matches the filter. The filter is
@@ -40,8 +39,8 @@ class ReplicaHealthStateFilter(Model):
      The possible values are integer value of one of the following health
      states. Only replicas that match the filter are returned. All replicas are
      used to evaluate the parent partition aggregated health state.
-     If not specified, default value is None, unless the replica id is
-     specified. If the filter has default value and replica id is specified,
+     If not specified, default value is None, unless the replica ID is
+     specified. If the filter has default value and replica ID is specified,
      the matching replica is returned.
      The state values are flag based enumeration, so the value could be a
      combination of these values obtained using bitwise 'OR' operator.
@@ -57,8 +56,7 @@ class ReplicaHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535.
-     . Default value: 0 .
+     65535. Default value: 0 .
     :type health_state_filter: int
     """
 
@@ -67,7 +65,7 @@ class ReplicaHealthStateFilter(Model):
         'health_state_filter': {'key': 'HealthStateFilter', 'type': 'int'},
     }
 
-    def __init__(self, replica_or_instance_id_filter=None, health_state_filter=0):
-        super(ReplicaHealthStateFilter, self).__init__()
-        self.replica_or_instance_id_filter = replica_or_instance_id_filter
-        self.health_state_filter = health_state_filter
+    def __init__(self, **kwargs):
+        super(ReplicaHealthStateFilter, self).__init__(**kwargs)
+        self.replica_or_instance_id_filter = kwargs.get('replica_or_instance_id_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)

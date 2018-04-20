@@ -15,7 +15,6 @@ from .entity_health_state_chunk import EntityHealthStateChunk
 class NodeHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a node, which contains the node name
     and its aggregated health state.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
@@ -30,6 +29,6 @@ class NodeHealthStateChunk(EntityHealthStateChunk):
         'node_name': {'key': 'NodeName', 'type': 'str'},
     }
 
-    def __init__(self, health_state=None, node_name=None):
-        super(NodeHealthStateChunk, self).__init__(health_state=health_state)
-        self.node_name = node_name
+    def __init__(self, **kwargs):
+        super(NodeHealthStateChunk, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)

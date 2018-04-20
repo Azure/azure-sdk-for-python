@@ -18,6 +18,8 @@ class PartitionsHealthEvaluation(HealthEvaluation):
     aggregated health state. Can be returned when evaluating service health and
     the aggregated health state is either Error or Warning.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica
      etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
@@ -27,7 +29,7 @@ class PartitionsHealthEvaluation(HealthEvaluation):
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param max_percent_unhealthy_partitions_per_service: Maximum allowed
      percentage of unhealthy partitions per service from the
@@ -56,9 +58,9 @@ class PartitionsHealthEvaluation(HealthEvaluation):
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, max_percent_unhealthy_partitions_per_service=None, total_count=None, unhealthy_evaluations=None):
-        super(PartitionsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.max_percent_unhealthy_partitions_per_service = max_percent_unhealthy_partitions_per_service
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
+    def __init__(self, **kwargs):
+        super(PartitionsHealthEvaluation, self).__init__(**kwargs)
+        self.max_percent_unhealthy_partitions_per_service = kwargs.get('max_percent_unhealthy_partitions_per_service', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
         self.kind = 'Partitions'

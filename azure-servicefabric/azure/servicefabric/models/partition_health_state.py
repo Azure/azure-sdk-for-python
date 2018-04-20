@@ -32,6 +32,6 @@ class PartitionHealthState(EntityHealthState):
         'partition_id': {'key': 'PartitionId', 'type': 'str'},
     }
 
-    def __init__(self, aggregated_health_state=None, partition_id=None):
-        super(PartitionHealthState, self).__init__(aggregated_health_state=aggregated_health_state)
-        self.partition_id = partition_id
+    def __init__(self, **kwargs):
+        super(PartitionHealthState, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)

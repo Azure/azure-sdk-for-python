@@ -16,7 +16,9 @@ class EnsurePartitionQurumSafetyCheck(PartitionSafetyCheck):
     """Safety check that ensures that a quorum of replicas are not lost for a
     partition.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param partition_id: Id of the partition which is undergoing the safety
      check.
@@ -27,6 +29,11 @@ class EnsurePartitionQurumSafetyCheck(PartitionSafetyCheck):
         'kind': {'required': True},
     }
 
-    def __init__(self, partition_id=None):
-        super(EnsurePartitionQurumSafetyCheck, self).__init__(partition_id=partition_id)
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EnsurePartitionQurumSafetyCheck, self).__init__(**kwargs)
         self.kind = 'EnsurePartitionQuorum'

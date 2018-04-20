@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -42,7 +42,7 @@ class ServiceFabricClientAPIsConfiguration(Configuration):
         self.credentials = credentials
 
 
-class ServiceFabricClientAPIs(object):
+class ServiceFabricClientAPIs(SDKClient):
     """Service Fabric REST Client APIs allows management of Service Fabric clusters, applications and services.
 
     :ivar config: Configuration for client.
@@ -58,10 +58,10 @@ class ServiceFabricClientAPIs(object):
             self, credentials, base_url=None):
 
         self.config = ServiceFabricClientAPIsConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ServiceFabricClientAPIs, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '6.1.2'
+        self.api_version = '6.2.0.9'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -73,21 +73,20 @@ class ServiceFabricClientAPIs(object):
         Get the Service Fabric cluster manifest. The cluster manifest contains
         properties of the cluster that include different node types on the
         cluster,
-        security configurations, fault and upgrade domain topologies etc.
+        security configurations, fault and upgrade domain topologies, etc.
         These properties are specified as part of the ClusterConfig.JSON file
         while deploying a stand alone cluster. However, most of the information
         in the cluster manifest
         is generated internally by service fabric during cluster deployment in
-        other deployment scenarios (for e.g when using azure portal).
+        other deployment scenarios (e.g. when using azure portal).
         The contents of the cluster manifest are for informational purposes
         only and users are not expected to take a dependency on the format of
         the file contents or its interpretation.
-        .
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -103,7 +102,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterManifest'
+        url = self.get_cluster_manifest.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -134,6 +133,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_manifest.metadata = {'url': '/$/GetClusterManifest'}
 
     def get_cluster_health(
             self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -145,7 +145,6 @@ class ServiceFabricClientAPIs(object):
         Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
         to filter the collection of nodes and applications returned based on
         their aggregated health state.
-        .
 
         :param nodes_health_state_filter: Allows filtering of the node health
          state objects returned in the result of cluster health query
@@ -241,9 +240,9 @@ class ServiceFabricClientAPIs(object):
          parameter to be applied.
         :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -259,7 +258,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealth'
+        url = self.get_cluster_health.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -300,6 +299,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health.metadata = {'url': '/$/GetClusterHealth'}
 
     def get_cluster_health_using_policy(
             self, nodes_health_state_filter=0, applications_health_state_filter=0, events_health_state_filter=0, exclude_health_statistics=False, include_system_application_health_statistics=False, timeout=60, application_health_policy_map=None, cluster_health_policy=None, custom_headers=None, raw=False, **operation_config):
@@ -313,7 +313,6 @@ class ServiceFabricClientAPIs(object):
         their aggregated health state.
         Use ClusterHealthPolicies to override the health policies used to
         evaluate the health.
-        .
 
         :param nodes_health_state_filter: Allows filtering of the node health
          state objects returned in the result of cluster health query
@@ -409,9 +408,9 @@ class ServiceFabricClientAPIs(object):
          parameter to be applied.
         :type include_system_application_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param application_health_policy_map: Defines a map that contains
          specific application health policies for different applications.
@@ -446,7 +445,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealth'
+        url = self.get_cluster_health_using_policy.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -494,6 +493,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health_using_policy.metadata = {'url': '/$/GetClusterHealth'}
 
     def get_cluster_health_chunk(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -505,12 +505,11 @@ class ServiceFabricClientAPIs(object):
         To expand the cluster health and get the health state of all or some of
         the entities, use the POST URI and specify the cluster health chunk
         query description.
-        .
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -526,7 +525,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealthChunk'
+        url = self.get_cluster_health_chunk.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -557,6 +556,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health_chunk.metadata = {'url': '/$/GetClusterHealthChunk'}
 
     def get_cluster_health_chunk_using_policy_and_advanced_filters(
             self, cluster_health_chunk_query_description=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -575,7 +575,6 @@ class ServiceFabricClientAPIs(object):
         specified name, and for this application, return
         only services that are in Error or Warning, and all partitions and
         replicas for one of these services.
-        .
 
         :param cluster_health_chunk_query_description: Describes the cluster
          and application health policies used to evaluate the cluster health
@@ -601,9 +600,9 @@ class ServiceFabricClientAPIs(object):
         :type cluster_health_chunk_query_description:
          ~azure.servicefabric.models.ClusterHealthChunkQueryDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -619,7 +618,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterHealthChunk'
+        url = self.get_cluster_health_chunk_using_policy_and_advanced_filters.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -657,6 +656,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_health_chunk_using_policy_and_advanced_filters.metadata = {'url': '/$/GetClusterHealthChunk'}
 
     def report_cluster_health(
             self, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -674,7 +674,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetClusterHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -685,16 +684,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -702,9 +701,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -719,7 +718,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/ReportClusterHealth'
+        url = self.report_cluster_health.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -749,6 +748,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_cluster_health.metadata = {'url': '/$/ReportClusterHealth'}
 
     def get_provisioned_fabric_code_version_info_list(
             self, code_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -762,9 +762,9 @@ class ServiceFabricClientAPIs(object):
         :param code_version: The product version of Service Fabric.
         :type code_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -780,7 +780,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetProvisionedCodeVersions'
+        url = self.get_provisioned_fabric_code_version_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -813,6 +813,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_provisioned_fabric_code_version_info_list.metadata = {'url': '/$/GetProvisionedCodeVersions'}
 
     def get_provisioned_fabric_config_version_info_list(
             self, config_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -826,9 +827,9 @@ class ServiceFabricClientAPIs(object):
         :param config_version: The config version of Service Fabric.
         :type config_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -844,7 +845,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetProvisionedConfigVersions'
+        url = self.get_provisioned_fabric_config_version_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -877,6 +878,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_provisioned_fabric_config_version_info_list.metadata = {'url': '/$/GetProvisionedConfigVersions'}
 
     def get_cluster_upgrade_progress(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -887,9 +889,9 @@ class ServiceFabricClientAPIs(object):
         upgrade.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -905,7 +907,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetUpgradeProgress'
+        url = self.get_cluster_upgrade_progress.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -936,6 +938,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_upgrade_progress.metadata = {'url': '/$/GetUpgradeProgress'}
 
     def get_cluster_configuration(
             self, configuration_api_version, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -944,16 +947,15 @@ class ServiceFabricClientAPIs(object):
         Get the Service Fabric standalone cluster configuration. The cluster
         configuration contains properties of the cluster that include different
         node types on the cluster,
-        security configurations, fault and upgrade domain topologies etc.
-        .
+        security configurations, fault and upgrade domain topologies, etc.
 
         :param configuration_api_version: The API version of the Standalone
          cluster json configuration.
         :type configuration_api_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -969,7 +971,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterConfiguration'
+        url = self.get_cluster_configuration.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1001,6 +1003,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_configuration.metadata = {'url': '/$/GetClusterConfiguration'}
 
     def get_cluster_configuration_upgrade_status(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1009,12 +1012,11 @@ class ServiceFabricClientAPIs(object):
 
         Get the cluster configuration upgrade status details of a Service
         Fabric standalone cluster.
-        .
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1032,7 +1034,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetClusterConfigurationUpgradeStatus'
+        url = self.get_cluster_configuration_upgrade_status.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1063,6 +1065,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_cluster_configuration_upgrade_status.metadata = {'url': '/$/GetClusterConfigurationUpgradeStatus'}
 
     def get_upgrade_orchestration_service_state(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1072,9 +1075,9 @@ class ServiceFabricClientAPIs(object):
         This API is internally used for support purposes.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1091,7 +1094,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetUpgradeOrchestrationServiceState'
+        url = self.get_upgrade_orchestration_service_state.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1122,6 +1125,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_upgrade_orchestration_service_state.metadata = {'url': '/$/GetUpgradeOrchestrationServiceState'}
 
     def set_upgrade_orchestration_service_state(
             self, timeout=60, service_state=None, custom_headers=None, raw=False, **operation_config):
@@ -1132,9 +1136,9 @@ class ServiceFabricClientAPIs(object):
         Service. This API is internally used for support purposes.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param service_state: The state of Service Fabric Upgrade
          Orchestration Service.
@@ -1157,7 +1161,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/SetUpgradeOrchestrationServiceState'
+        url = self.set_upgrade_orchestration_service_state.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1192,6 +1196,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    set_upgrade_orchestration_service_state.metadata = {'url': '/$/SetUpgradeOrchestrationServiceState'}
 
     def provision_cluster(
             self, timeout=60, code_file_path=None, cluster_manifest_file_path=None, custom_headers=None, raw=False, **operation_config):
@@ -1202,9 +1207,9 @@ class ServiceFabricClientAPIs(object):
         Fabric cluster.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param code_file_path: The cluster code package file path.
         :type code_file_path: str
@@ -1225,7 +1230,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/Provision'
+        url = self.provision_cluster.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1253,6 +1258,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    provision_cluster.metadata = {'url': '/$/Provision'}
 
     def unprovision_cluster(
             self, timeout=60, code_version=None, config_version=None, custom_headers=None, raw=False, **operation_config):
@@ -1264,9 +1270,9 @@ class ServiceFabricClientAPIs(object):
         separately.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param code_version: The cluster code package version.
         :type code_version: str
@@ -1287,7 +1293,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/Unprovision'
+        url = self.unprovision_cluster.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1315,6 +1321,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    unprovision_cluster.metadata = {'url': '/$/Unprovision'}
 
     def rollback_cluster_upgrade(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1323,9 +1330,9 @@ class ServiceFabricClientAPIs(object):
         Rollback the code or configuration upgrade of a Service Fabric cluster.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1340,7 +1347,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/RollbackUpgrade'
+        url = self.rollback_cluster_upgrade.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1364,6 +1371,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    rollback_cluster_upgrade.metadata = {'url': '/$/RollbackUpgrade'}
 
     def resume_cluster_upgrade(
             self, upgrade_domain, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1376,9 +1384,9 @@ class ServiceFabricClientAPIs(object):
          upgrade.
         :type upgrade_domain: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1395,7 +1403,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/MoveToNextUpgradeDomain'
+        url = self.resume_cluster_upgrade.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1423,6 +1431,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    resume_cluster_upgrade.metadata = {'url': '/$/MoveToNextUpgradeDomain'}
 
     def start_cluster_upgrade(
             self, start_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1438,9 +1447,9 @@ class ServiceFabricClientAPIs(object):
         :type start_cluster_upgrade_description:
          ~azure.servicefabric.models.StartClusterUpgradeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1455,7 +1464,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/Upgrade'
+        url = self.start_cluster_upgrade.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1483,6 +1492,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_cluster_upgrade.metadata = {'url': '/$/Upgrade'}
 
     def start_cluster_configuration_upgrade(
             self, cluster_configuration_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1497,9 +1507,9 @@ class ServiceFabricClientAPIs(object):
         :type cluster_configuration_upgrade_description:
          ~azure.servicefabric.models.ClusterConfigurationUpgradeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1514,7 +1524,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/StartClusterConfigurationUpgrade'
+        url = self.start_cluster_configuration_upgrade.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1542,6 +1552,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_cluster_configuration_upgrade.metadata = {'url': '/$/StartClusterConfigurationUpgrade'}
 
     def update_cluster_upgrade(
             self, update_cluster_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1555,9 +1566,9 @@ class ServiceFabricClientAPIs(object):
         :type update_cluster_upgrade_description:
          ~azure.servicefabric.models.UpdateClusterUpgradeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1572,7 +1583,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/UpdateUpgrade'
+        url = self.update_cluster_upgrade.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1600,6 +1611,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_cluster_upgrade.metadata = {'url': '/$/UpdateUpgrade'}
 
     def get_aad_metadata(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1611,12 +1623,11 @@ class ServiceFabricClientAPIs(object):
         This API is not supposed to be called separately. It provides
         information needed to set up an Azure Active Directory secured
         connection with a Service Fabric cluster.
-        .
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1632,7 +1643,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetAadMetadata'
+        url = self.get_aad_metadata.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1663,13 +1674,14 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_aad_metadata.metadata = {'url': '/$/GetAadMetadata'}
 
     def get_node_info_list(
             self, continuation_token=None, node_status_filter="default", timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of nodes in the Service Fabric cluster.
 
         Gets the list of nodes in the Service Fabric cluster. The response
-        include the name, status, id, health, uptime and other details about
+        includes the name, status, id, health, uptime, and other details about
         the node.
 
         :param continuation_token: The continuation token parameter is used to
@@ -1686,11 +1698,11 @@ class ServiceFabricClientAPIs(object):
          Possible values include: 'default', 'all', 'up', 'down', 'enabling',
          'disabling', 'disabled', 'unknown', 'removed'
         :type node_status_filter: str or
-         ~azure.servicefabric.models.NodeStatusFilterOptionalQueryParam
+         ~azure.servicefabric.models.NodeStatusFilter
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1706,7 +1718,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes'
+        url = self.get_node_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -1741,6 +1753,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_info_list.metadata = {'url': '/Nodes'}
 
     def get_node_info(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1748,15 +1761,15 @@ class ServiceFabricClientAPIs(object):
         cluster.
 
         Gets the information about a specific node in the Service Fabric
-        Cluster.The response include the name, status, id, health, uptime and
-        other details about the node.
+        Cluster. The response includes the name, status, id, health, uptime,
+        and other details about the node.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1772,7 +1785,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}'
+        url = self.get_node_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1807,6 +1820,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_info.metadata = {'url': '/Nodes/{nodeName}'}
 
     def get_node_health(
             self, node_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1844,9 +1858,9 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1862,7 +1876,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetHealth'
+        url = self.get_node_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -1899,6 +1913,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_health.metadata = {'url': '/Nodes/{nodeName}/$/GetHealth'}
 
     def get_node_health_using_policy(
             self, node_name, events_health_state_filter=0, cluster_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -1945,9 +1960,9 @@ class ServiceFabricClientAPIs(object):
         :type cluster_health_policy:
          ~azure.servicefabric.models.ClusterHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1963,7 +1978,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetHealth'
+        url = self.get_node_health_using_policy.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -2007,6 +2022,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetHealth'}
 
     def report_node_health(
             self, node_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2024,7 +2040,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetNodeHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -2037,16 +2052,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -2054,9 +2069,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2071,7 +2086,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/ReportHealth'
+        url = self.report_node_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -2105,6 +2120,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_node_health.metadata = {'url': '/Nodes/{nodeName}/$/ReportHealth'}
 
     def get_node_load_info(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2116,9 +2132,9 @@ class ServiceFabricClientAPIs(object):
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2134,7 +2150,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetLoadInformation'
+        url = self.get_node_load_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -2169,6 +2185,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_load_info.metadata = {'url': '/Nodes/{nodeName}/$/GetLoadInformation'}
 
     def disable_node(
             self, node_name, timeout=60, deactivation_intent=None, custom_headers=None, raw=False, **operation_config):
@@ -2189,13 +2206,13 @@ class ServiceFabricClientAPIs(object):
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param deactivation_intent: Describes the intent or reason for
-         deactivating the node. The possible values are following.
-         . Possible values include: 'Pause', 'Restart', 'RemoveData'
+         deactivating the node. The possible values are following. Possible
+         values include: 'Pause', 'Restart', 'RemoveData'
         :type deactivation_intent: str or
          ~azure.servicefabric.models.DeactivationIntent
         :param dict custom_headers: headers that will be added to the request
@@ -2213,7 +2230,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/Deactivate'
+        url = self.disable_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -2245,6 +2262,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    disable_node.metadata = {'url': '/Nodes/{nodeName}/$/Deactivate'}
 
     def enable_node(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2258,9 +2276,9 @@ class ServiceFabricClientAPIs(object):
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2275,7 +2293,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/Activate'
+        url = self.enable_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -2303,6 +2321,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    enable_node.metadata = {'url': '/Nodes/{nodeName}/$/Activate'}
 
     def remove_node_state(
             self, node_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2322,9 +2341,9 @@ class ServiceFabricClientAPIs(object):
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2339,7 +2358,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/RemoveNodeState'
+        url = self.remove_node_state.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -2367,6 +2386,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    remove_node_state.metadata = {'url': '/Nodes/{nodeName}/$/RemoveNodeState'}
 
     def restart_node(
             self, node_name, node_instance_id="0", timeout=60, create_fabric_dump="False", custom_headers=None, raw=False, **operation_config):
@@ -2376,15 +2396,15 @@ class ServiceFabricClientAPIs(object):
 
         :param node_name: The name of the node.
         :type node_name: str
-        :param node_instance_id: The instance id of the target node. If
-         instance id is specified the node is restarted only if it matches with
+        :param node_instance_id: The instance ID of the target node. If
+         instance ID is specified the node is restarted only if it matches with
          the current instance of the node. A default value of "0" would match
-         any instance id. The instance id can be obtained using get node query.
+         any instance ID. The instance ID can be obtained using get node query.
         :type node_instance_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param create_fabric_dump: Specify True to create a dump of the fabric
          node process. This is case sensitive. Possible values include:
@@ -2406,7 +2426,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/Restart'
+        url = self.restart_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -2438,6 +2458,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    restart_node.metadata = {'url': '/Nodes/{nodeName}/$/Restart'}
 
     def get_application_type_info_list(
             self, application_type_definition_kind_filter=0, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2487,12 +2508,12 @@ class ServiceFabricClientAPIs(object):
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
          this parameter is zero or not specified, the paged queries includes as
-         much results as possible that fit in the return message.
+         many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2508,7 +2529,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes'
+        url = self.get_application_type_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -2547,6 +2568,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_type_info_list.metadata = {'url': '/ApplicationTypes'}
 
     def get_application_type_info_list_by_name(
             self, application_type_name, application_type_version=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2591,12 +2613,12 @@ class ServiceFabricClientAPIs(object):
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
          this parameter is zero or not specified, the paged queries includes as
-         much results as possible that fit in the return message.
+         many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2612,7 +2634,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}'
+        url = self.get_application_type_info_list_by_name.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2655,30 +2677,30 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_type_info_list_by_name.metadata = {'url': '/ApplicationTypes/{applicationTypeName}'}
 
     def provision_application_type(
             self, provision_application_type_description_base_required_body_param, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Provisions or registers a Service Fabric application type with the
-        cluster using the .sfpkg package in the external store or using the
+        cluster using the '.sfpkg' package in the external store or using the
         application package in the image store.
 
-        Provisions a Service Fabric application type with the cluster. This is
-        required before any new applications can be instantiated.
+        Provisions a Service Fabric application type with the cluster. The
+        provision is required before any new applications can be instantiated.
         The provision operation can be performed either on the application
         package specified by the relativePathInImageStore, or by using the URI
-        of the external .sfpkg.
-        .
+        of the external '.sfpkg'.
 
         :param
          provision_application_type_description_base_required_body_param: The
          base type of provision application type description which supports
-         either image store based provision or external store based provision.
+         either image store-based provision or external store-based provision.
         :type provision_application_type_description_base_required_body_param:
          ~azure.servicefabric.models.ProvisionApplicationTypeDescriptionBase
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2690,10 +2712,10 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.1"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/ApplicationTypes/$/Provision'
+        url = self.provision_application_type.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -2721,6 +2743,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    provision_application_type.metadata = {'url': '/ApplicationTypes/$/Provision'}
 
     def unprovision_application_type(
             self, application_type_name, application_type_version, timeout=60, async_parameter=None, custom_headers=None, raw=False, **operation_config):
@@ -2739,9 +2762,9 @@ class ServiceFabricClientAPIs(object):
          as defined in the application manifest.
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param async_parameter: The flag indicating whether or not unprovision
          should occur asynchronously. When set to true, the unprovision
@@ -2765,7 +2788,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/Unprovision'
+        url = self.unprovision_application_type.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2797,6 +2820,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    unprovision_application_type.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/Unprovision'}
 
     def get_service_type_info_list(
             self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2806,19 +2830,17 @@ class ServiceFabricClientAPIs(object):
 
         Gets the list containing the information about service types that are
         supported by a provisioned application type in a Service Fabric
-        cluster. The response includes the name of the service type, the name
-        and version of the service manifest the type is defined in, kind
-        (stateless or stateless) of the service type and other information
-        about it.
+        cluster. The provided application type must exist. Otherwise, a 404
+        status is returned.
 
         :param application_type_name: The name of the application type.
         :type application_type_name: str
         :param application_type_version: The version of the application type.
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2834,7 +2856,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes'
+        url = self.get_service_type_info_list.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2870,6 +2892,83 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_type_info_list.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes'}
+
+    def get_service_type_info_by_name(
+            self, application_type_name, application_type_version, service_type_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the information about a specific service type that is supported by
+        a provisioned application type in a Service Fabric cluster.
+
+        Gets the information about a specific service type that is supported by
+        a provisioned application type in a Service Fabric cluster. The
+        provided application type must exist. Otherwise, a 404 status is
+        returned. A 204 response is returned if the specificed service type is
+        not found in the cluster.
+
+        :param application_type_name: The name of the application type.
+        :type application_type_name: str
+        :param application_type_version: The version of the application type.
+        :type application_type_version: str
+        :param service_type_name: Specifies the name of a Service Fabric
+         service type.
+        :type service_type_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ServiceTypeInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ServiceTypeInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.0"
+
+        # Construct URL
+        url = self.get_service_type_info_by_name.metadata['url']
+        path_format_arguments = {
+            'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str'),
+            'serviceTypeName': self._serialize.url("service_type_name", service_type_name, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ApplicationTypeVersion'] = self._serialize.query("application_type_version", application_type_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200, 204]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ServiceTypeInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_type_info_by_name.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceTypes/{serviceTypeName}'}
 
     def get_service_manifest(
             self, application_type_name, application_type_version, service_manifest_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2886,9 +2985,9 @@ class ServiceFabricClientAPIs(object):
          registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2904,7 +3003,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/GetServiceManifest'
+        url = self.get_service_manifest.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -2941,6 +3040,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_manifest.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetServiceManifest'}
 
     def get_deployed_service_type_info_list(
             self, node_name, application_id, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -2950,7 +3050,7 @@ class ServiceFabricClientAPIs(object):
         Gets the list containing the information about service types from the
         applications deployed on a node in a Service Fabric cluster. The
         response includes the name of the service type, its registration
-        status, the code package that registered it and activation id of the
+        status, the code package that registered it and activation ID of the
         service package.
 
         :param node_name: The name of the node.
@@ -2970,9 +3070,9 @@ class ServiceFabricClientAPIs(object):
          that are defined in this service manifest.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2988,7 +3088,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes'
+        url = self.get_deployed_service_type_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -3026,6 +3126,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_type_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes'}
 
     def get_deployed_service_type_info_by_name(
             self, node_name, application_id, service_type_name, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3035,9 +3136,9 @@ class ServiceFabricClientAPIs(object):
         Gets the list containing the information about a specific service type
         from the applications deployed on a node in a Service Fabric cluster.
         The response includes the name of the service type, its registration
-        status, the code package that registered it and activation id of the
+        status, the code package that registered it and activation ID of the
         service package. Each entry represents one activation of a service
-        type, differentiated by the activation id.
+        type, differentiated by the activation ID.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -3059,9 +3160,9 @@ class ServiceFabricClientAPIs(object):
          that are defined in this service manifest.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3077,7 +3178,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}'
+        url = self.get_deployed_service_type_info_by_name.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -3116,6 +3217,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_type_info_by_name.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServiceTypes/{serviceTypeName}'}
 
     def create_application(
             self, application_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3128,9 +3230,9 @@ class ServiceFabricClientAPIs(object):
         :type application_description:
          ~azure.servicefabric.models.ApplicationDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3145,7 +3247,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/$/Create'
+        url = self.create_application.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -3173,6 +3275,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_application.metadata = {'url': '/Applications/$/Create'}
 
     def delete_application(
             self, application_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3180,9 +3283,9 @@ class ServiceFabricClientAPIs(object):
 
         Deletes an existing Service Fabric application. An application must be
         created before it can be deleted. Deleting an application will delete
-        all services that are part of that application. By default Service
+        all services that are part of that application. By default, Service
         Fabric will try to close service replicas in a graceful manner and then
-        delete the service. However if service is having issues closing the
+        delete the service. However, if a service is having issues closing the
         replica gracefully, the delete operation may take a long time or get
         stuck. Use the optional ForceRemove flag to skip the graceful close
         sequence and forcefully delete the application and all of the its
@@ -3204,9 +3307,9 @@ class ServiceFabricClientAPIs(object):
          prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3221,7 +3324,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/Delete'
+        url = self.delete_application.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3251,6 +3354,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_application.metadata = {'url': '/Applications/{applicationId}/$/Delete'}
 
     def get_application_load_info(
             self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3259,9 +3363,9 @@ class ServiceFabricClientAPIs(object):
         Returns the load information about the application that was created or
         in the process of being created in the Service Fabric cluster and whose
         name matches the one specified as the parameter. The response includes
-        the name, minimum nodes, maximum nodes, the number of nodes the app is
-        occupying currently, and application load metric information about the
-        application.
+        the name, minimum nodes, maximum nodes, the number of nodes the
+        application is occupying currently, and application load metric
+        information about the application.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -3273,9 +3377,9 @@ class ServiceFabricClientAPIs(object):
          previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3291,7 +3395,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetLoadInformation'
+        url = self.get_application_load_info.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3326,18 +3430,19 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_load_info.metadata = {'url': '/Applications/{applicationId}/$/GetLoadInformation'}
 
     def get_application_info_list(
             self, application_definition_kind_filter=0, application_type_name=None, exclude_application_parameters=False, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of applications created in the Service Fabric cluster
-        that match filters specified as the parameter.
+        that match the specified filters.
 
         Gets the information about the applications that were created or in the
-        process of being created in the Service Fabric cluster and match
-        filters specified as the parameter. The response includes the name,
-        type, status, parameters and other details about the application. If
-        the applications do not fit in a page, one page of results is returned
-        as well as a continuation token which can be used to get the next page.
+        process of being created in the Service Fabric cluster and match the
+        specified filters. The response includes the name, type, status,
+        parameters, and other details about the application. If the
+        applications do not fit in a page, one page of results is returned as
+        well as a continuation token which can be used to get the next page.
         Filters ApplicationTypeName and ApplicationDefinitionKindFilter cannot
         be specified at the same time.
 
@@ -3375,12 +3480,12 @@ class ServiceFabricClientAPIs(object):
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
          this parameter is zero or not specified, the paged queries includes as
-         much results as possible that fit in the return message.
+         many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3396,7 +3501,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.1"
 
         # Construct URL
-        url = '/Applications'
+        url = self.get_application_info_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -3437,6 +3542,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_info_list.metadata = {'url': '/Applications'}
 
     def get_application_info(
             self, application_id, exclude_application_parameters=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3461,9 +3567,9 @@ class ServiceFabricClientAPIs(object):
          application parameters will be excluded from the result.
         :type exclude_application_parameters: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3479,7 +3585,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}'
+        url = self.get_application_info.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3516,6 +3622,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_info.metadata = {'url': '/Applications/{applicationId}'}
 
     def get_application_health(
             self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3616,9 +3723,9 @@ class ServiceFabricClientAPIs(object):
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3634,7 +3741,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetHealth'
+        url = self.get_application_health.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3677,6 +3784,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_health.metadata = {'url': '/Applications/{applicationId}/$/GetHealth'}
 
     def get_application_health_using_policy(
             self, application_id, events_health_state_filter=0, deployed_applications_health_state_filter=0, services_health_state_filter=0, exclude_health_statistics=False, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3786,9 +3894,9 @@ class ServiceFabricClientAPIs(object):
         :type application_health_policy:
          ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3804,7 +3912,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetHealth'
+        url = self.get_application_health_using_policy.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3854,6 +3962,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_health_using_policy.metadata = {'url': '/Applications/{applicationId}/$/GetHealth'}
 
     def report_application_health(
             self, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3871,7 +3980,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, get
         application health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -3891,16 +3999,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -3908,9 +4016,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3925,7 +4033,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/ReportHealth'
+        url = self.report_application_health.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -3959,6 +4067,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_application_health.metadata = {'url': '/Applications/{applicationId}/$/ReportHealth'}
 
     def start_application_upgrade(
             self, application_id, application_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -3981,9 +4090,9 @@ class ServiceFabricClientAPIs(object):
         :type application_upgrade_description:
          ~azure.servicefabric.models.ApplicationUpgradeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3998,7 +4107,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/Upgrade'
+        url = self.start_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4030,6 +4139,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/Upgrade'}
 
     def get_application_upgrade(
             self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4048,9 +4158,9 @@ class ServiceFabricClientAPIs(object):
          previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4067,7 +4177,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetUpgradeProgress'
+        url = self.get_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4102,6 +4212,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/GetUpgradeProgress'}
 
     def update_application_upgrade(
             self, application_id, application_upgrade_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4126,9 +4237,9 @@ class ServiceFabricClientAPIs(object):
         :type application_upgrade_update_description:
          ~azure.servicefabric.models.ApplicationUpgradeUpdateDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4143,7 +4254,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/UpdateUpgrade'
+        url = self.update_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4175,6 +4286,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/UpdateUpgrade'}
 
     def resume_application_upgrade(
             self, application_id, upgrade_domain_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4199,9 +4311,9 @@ class ServiceFabricClientAPIs(object):
          resume the upgrade.
         :type upgrade_domain_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4218,7 +4330,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/MoveToNextUpgradeDomain'
+        url = self.resume_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4250,6 +4362,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    resume_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/MoveToNextUpgradeDomain'}
 
     def rollback_application_upgrade(
             self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4260,7 +4373,7 @@ class ServiceFabricClientAPIs(object):
         version. This API can only be used to rollback the current in-progress
         upgrade that is rolling forward to new version. If the application is
         not currently being upgraded use StartApplicationUpgrade API to upgrade
-        it to desired version including rolling back to a previous version.
+        it to desired version, including rolling back to a previous version.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -4272,9 +4385,9 @@ class ServiceFabricClientAPIs(object):
          previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4289,7 +4402,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/RollbackUpgrade'
+        url = self.rollback_application_upgrade.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -4317,6 +4430,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    rollback_application_upgrade.metadata = {'url': '/Applications/{applicationId}/$/RollbackUpgrade'}
 
     def get_deployed_application_info_list(
             self, node_name, timeout=60, include_health_state=False, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
@@ -4329,14 +4443,13 @@ class ServiceFabricClientAPIs(object):
         requires that the node name corresponds to a node on the cluster. The
         query fails if the provided node name does not point to any active
         Service Fabric nodes on the cluster.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param include_health_state: Include the health state of an entity.
          If this parameter is false or not specified, then the health state
@@ -4359,7 +4472,7 @@ class ServiceFabricClientAPIs(object):
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
          this parameter is zero or not specified, the paged queries includes as
-         much results as possible that fit in the return message.
+         many results as possible that fit in the return message.
         :type max_results: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4376,7 +4489,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.1"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications'
+        url = self.get_deployed_application_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -4417,6 +4530,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_application_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications'}
 
     def get_deployed_application_info(
             self, node_name, application_id, timeout=60, include_health_state=False, custom_headers=None, raw=False, **operation_config):
@@ -4430,7 +4544,6 @@ class ServiceFabricClientAPIs(object):
         This query requires that the node name corresponds to a node on the
         cluster. The query fails if the provided node name does not point to
         any active Service Fabric nodes on the cluster.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4444,9 +4557,9 @@ class ServiceFabricClientAPIs(object):
          previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param include_health_state: Include the health state of an entity.
          If this parameter is false or not specified, then the health state
@@ -4469,7 +4582,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.1"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}'
+        url = self.get_deployed_application_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -4507,6 +4620,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_application_info.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}'}
 
     def get_deployed_application_health(
             self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4590,9 +4704,9 @@ class ServiceFabricClientAPIs(object):
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4608,7 +4722,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'
+        url = self.get_deployed_application_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -4650,6 +4764,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_application_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'}
 
     def get_deployed_application_health_using_policy(
             self, node_name, application_id, events_health_state_filter=0, deployed_service_packages_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4667,7 +4782,6 @@ class ServiceFabricClientAPIs(object):
         'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
         of the fields are ignored while evaluating the health of the deployed
         application.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4745,9 +4859,9 @@ class ServiceFabricClientAPIs(object):
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4763,7 +4877,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'
+        url = self.get_deployed_application_health_using_policy.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -4812,6 +4926,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_application_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetHealth'}
 
     def report_deployed_application_health(
             self, node_name, application_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4830,7 +4945,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, get deployed
         application health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4852,16 +4966,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -4869,9 +4983,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4886,7 +5000,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/ReportHealth'
+        url = self.report_deployed_application_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -4921,6 +5035,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_deployed_application_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/ReportHealth'}
 
     def get_application_manifest(
             self, application_type_name, application_type_version, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -4934,9 +5049,9 @@ class ServiceFabricClientAPIs(object):
         :param application_type_version: The version of the application type.
         :type application_type_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4952,7 +5067,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ApplicationTypes/{applicationTypeName}/$/GetApplicationManifest'
+        url = self.get_application_manifest.metadata['url']
         path_format_arguments = {
             'applicationTypeName': self._serialize.url("application_type_name", application_type_name, 'str')
         }
@@ -4988,6 +5103,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_manifest.metadata = {'url': '/ApplicationTypes/{applicationTypeName}/$/GetApplicationManifest'}
 
     def get_service_info_list(
             self, application_id, service_type_name=None, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5018,9 +5134,9 @@ class ServiceFabricClientAPIs(object):
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5036,7 +5152,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices'
+        url = self.get_service_info_list.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -5075,13 +5191,14 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_info_list.metadata = {'url': '/Applications/{applicationId}/$/GetServices'}
 
     def get_service_info(
             self, application_id, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the information about the specific service belonging to a Service
-        Fabric application.
+        """Gets the information about the specific service belonging to the
+        Service Fabric application.
 
-        Returns the information about specified service belonging to the
+        Returns the information about the specified service belonging to the
         specified Service Fabric application.
 
         :param application_id: The identity of the application. This is
@@ -5102,9 +5219,9 @@ class ServiceFabricClientAPIs(object):
          "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5120,7 +5237,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices/{serviceId}'
+        url = self.get_service_info.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
@@ -5156,13 +5273,15 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_info.metadata = {'url': '/Applications/{applicationId}/$/GetServices/{serviceId}'}
 
     def get_application_name_info(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the name of the Service Fabric application for a service.
 
-        The GetApplicationName endpoint returns the name of the application for
-        the specified service.
+        Gets the name of the application for the specified service. A 404
+        FABRIC_E_SERVICE_DOES_NOT_EXIST error is returned if a service with the
+        provided service ID does not exist.
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -5173,9 +5292,9 @@ class ServiceFabricClientAPIs(object):
          "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5191,7 +5310,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetApplicationName'
+        url = self.get_application_name_info.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5226,6 +5345,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_application_name_info.metadata = {'url': '/Services/{serviceId}/$/GetApplicationName'}
 
     def create_service(
             self, application_id, service_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5251,9 +5371,9 @@ class ServiceFabricClientAPIs(object):
         :type service_description:
          ~azure.servicefabric.models.ServiceDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5268,7 +5388,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices/$/Create'
+        url = self.create_service.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -5300,6 +5420,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_service.metadata = {'url': '/Applications/{applicationId}/$/GetServices/$/Create'}
 
     def create_service_from_template(
             self, application_id, service_from_template_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5326,9 +5447,9 @@ class ServiceFabricClientAPIs(object):
         :type service_from_template_description:
          ~azure.servicefabric.models.ServiceFromTemplateDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5343,7 +5464,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Applications/{applicationId}/$/GetServices/$/CreateFromTemplate'
+        url = self.create_service_from_template.metadata['url']
         path_format_arguments = {
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
         }
@@ -5375,18 +5496,19 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_service_from_template.metadata = {'url': '/Applications/{applicationId}/$/GetServices/$/CreateFromTemplate'}
 
     def delete_service(
             self, service_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Deletes an existing Service Fabric service.
 
         Deletes an existing Service Fabric service. A service must be created
-        before it can be deleted. By default Service Fabric will try to close
+        before it can be deleted. By default, Service Fabric will try to close
         service replicas in a graceful manner and then delete the service.
-        However if service is having issues closing the replica gracefully, the
-        delete operation may take a long time or get stuck. Use the optional
-        ForceRemove flag to skip the graceful close sequence and forcefully
-        delete the service.
+        However, if the service is having issues closing the replica
+        gracefully, the delete operation may take a long time or get stuck. Use
+        the optional ForceRemove flag to skip the graceful close sequence and
+        forcefully delete the service.
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -5403,9 +5525,9 @@ class ServiceFabricClientAPIs(object):
          prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5420,7 +5542,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/Delete'
+        url = self.delete_service.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5450,6 +5572,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_service.metadata = {'url': '/Services/{serviceId}/$/Delete'}
 
     def update_service(
             self, service_id, service_update_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5480,9 +5603,9 @@ class ServiceFabricClientAPIs(object):
         :type service_update_description:
          ~azure.servicefabric.models.ServiceUpdateDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5497,7 +5620,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/Update'
+        url = self.update_service.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5529,6 +5652,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    update_service.metadata = {'url': '/Services/{serviceId}/$/Update'}
 
     def get_service_description(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5546,9 +5670,9 @@ class ServiceFabricClientAPIs(object):
          "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5564,7 +5688,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetDescription'
+        url = self.get_service_description.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5599,6 +5723,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_description.metadata = {'url': '/Services/{serviceId}/$/GetDescription'}
 
     def get_service_health(
             self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5610,8 +5735,7 @@ class ServiceFabricClientAPIs(object):
         Use PartitionsHealthStateFilter to filter the collection of partitions
         returned.
         If you specify a service that does not exist in the health store, this
-        cmdlet returns an error.
-        .
+        request returns an error.
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -5677,9 +5801,9 @@ class ServiceFabricClientAPIs(object):
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5695,7 +5819,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetHealth'
+        url = self.get_service_health.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5736,6 +5860,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_health.metadata = {'url': '/Services/{serviceId}/$/GetHealth'}
 
     def get_service_health_using_policy(
             self, service_id, events_health_state_filter=0, partitions_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5753,8 +5878,7 @@ class ServiceFabricClientAPIs(object):
         Use PartitionsHealthStateFilter to filter the collection of partitions
         returned.
         If you specify a service that does not exist in the health store, this
-        cmdlet returns an error.
-        .
+        request returns an error.
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -5826,9 +5950,9 @@ class ServiceFabricClientAPIs(object):
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5844,7 +5968,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetHealth'
+        url = self.get_service_health_using_policy.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5892,6 +6016,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_health_using_policy.metadata = {'url': '/Services/{serviceId}/$/GetHealth'}
 
     def report_service_health(
             self, service_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -5909,7 +6034,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetServiceHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -5928,16 +6052,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -5945,9 +6069,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -5962,7 +6086,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/ReportHealth'
+        url = self.report_service_health.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -5996,12 +6120,13 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_service_health.metadata = {'url': '/Services/{serviceId}/$/ReportHealth'}
 
     def resolve_service(
             self, service_id, partition_key_type=None, partition_key_value=None, previous_rsp_version=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Resolve a Service Fabric partition.
 
-        Resolve a Service Fabric service partition, to get the endpoints of the
+        Resolve a Service Fabric service partition to get the endpoints of the
         service replicas.
 
         :param service_id: The identity of the service. This is typically the
@@ -6015,15 +6140,15 @@ class ServiceFabricClientAPIs(object):
         :param partition_key_type: Key type for the partition. This parameter
          is required if the partition scheme for the service is Int64Range or
          Named. The possible values are following.
-         - None (1) - Indicates that the the PartitionKeyValue parameter is not
+         - None (1) - Indicates that the PartitionKeyValue parameter is not
          specified. This is valid for the partitions with partitioning scheme
          as Singleton. This is the default value. The value is 1.
-         - Int64Range (2) - Indicates that the the PartitionKeyValue parameter
-         is an int64 partition key. This is valid for the partitions with
+         - Int64Range (2) - Indicates that the PartitionKeyValue parameter is
+         an int64 partition key. This is valid for the partitions with
          partitioning scheme as Int64Range. The value is 2.
-         - Named (3) - Indicates that the the PartitionKeyValue parameter is a
-         name of the partition. This is valid for the partitions with
-         partitioning scheme as Named. The value is 3.
+         - Named (3) - Indicates that the PartitionKeyValue parameter is a name
+         of the partition. This is valid for the partitions with partitioning
+         scheme as Named. The value is 3.
         :type partition_key_type: int
         :param partition_key_value: Partition key. This is required if the
          partition scheme for the service is Int64Range or Named.
@@ -6033,9 +6158,9 @@ class ServiceFabricClientAPIs(object):
          knows that the result that was got previously is stale.
         :type previous_rsp_version: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6051,7 +6176,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/ResolvePartition'
+        url = self.resolve_service.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -6092,14 +6217,15 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    resolve_service.metadata = {'url': '/Services/{serviceId}/$/ResolvePartition'}
 
     def get_partition_info_list(
             self, service_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of partitions of a Service Fabric service.
 
         Gets the list of partitions of a Service Fabric service. The response
-        include the partition id, partitioning scheme information, keys
-        supported by the partition, status, health and other details about the
+        includes the partition ID, partitioning scheme information, keys
+        supported by the partition, status, health, and other details about the
         partition.
 
         :param service_id: The identity of the service. This is typically the
@@ -6119,9 +6245,9 @@ class ServiceFabricClientAPIs(object):
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6138,7 +6264,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/{serviceId}/$/GetPartitions'
+        url = self.get_partition_info_list.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -6175,22 +6301,23 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_info_list.metadata = {'url': '/Services/{serviceId}/$/GetPartitions'}
 
     def get_partition_info(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a Service Fabric partition.
 
-        The Partitions endpoint returns information about the specified
-        partition. The response include the partition id, partitioning scheme
-        information, keys supported by the partition, status, health and other
-        details about the partition.
+        Gets the information about the specified partition. The response
+        includes the partition ID, partitioning scheme information, keys
+        supported by the partition, status, health, and other details about the
+        partition.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6206,7 +6333,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}'
+        url = self.get_partition_info.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6241,20 +6368,21 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_info.metadata = {'url': '/Partitions/{partitionId}'}
 
     def get_service_name_info(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the name of the Service Fabric service for a partition.
 
-        The GetServiceName endpoint returns the name of the service for the
-        specified partition.
+        Gets name of the service for the specified partition. A 404 error is
+        returned if the partition ID does not exist in the cluster.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6270,7 +6398,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetServiceName'
+        url = self.get_service_name_info.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6305,6 +6433,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_service_name_info.metadata = {'url': '/Partitions/{partitionId}/$/GetServiceName'}
 
     def get_partition_health(
             self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6316,8 +6445,7 @@ class ServiceFabricClientAPIs(object):
         Use ReplicasHealthStateFilter to filter the collection of
         ReplicaHealthState objects on the partition.
         If you specify a partition that does not exist in the health store,
-        this cmdlet returns an error.
-        .
+        this request returns an error.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6376,9 +6504,9 @@ class ServiceFabricClientAPIs(object):
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6394,7 +6522,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetHealth'
+        url = self.get_partition_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6435,6 +6563,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_health.metadata = {'url': '/Partitions/{partitionId}/$/GetHealth'}
 
     def get_partition_health_using_policy(
             self, partition_id, events_health_state_filter=0, replicas_health_state_filter=0, application_health_policy=None, exclude_health_statistics=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6454,8 +6583,7 @@ class ServiceFabricClientAPIs(object):
         ApplicationHealthPolicy in the POST body to override the health
         policies used to evaluate the health.
         If you specify a partition that does not exist in the health store,
-        this cmdlet returns an error.
-        .
+        this request returns an error.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6520,9 +6648,9 @@ class ServiceFabricClientAPIs(object):
          Ok, Warning, and Error.
         :type exclude_health_statistics: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6538,7 +6666,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetHealth'
+        url = self.get_partition_health_using_policy.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6586,6 +6714,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_health_using_policy.metadata = {'url': '/Partitions/{partitionId}/$/GetHealth'}
 
     def report_partition_health(
             self, partition_id, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6603,7 +6732,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetPartitionHealth and check that the report appears in the
         HealthEvents section.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6616,16 +6744,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -6633,9 +6761,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6650,7 +6778,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/ReportHealth'
+        url = self.report_partition_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6684,23 +6812,24 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_partition_health.metadata = {'url': '/Partitions/{partitionId}/$/ReportHealth'}
 
     def get_partition_load_information(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the load of the specified Service Fabric partition.
+        """Gets the load information of the specified Service Fabric partition.
 
-        Returns information about the specified partition.
-        The response includes a list of load information.
-        Each information includes load metric name, value and last reported
+        Returns information about the load of a specified partition.
+        The response includes a list of load reports for a Service Fabric
+        partition.
+        Each report includes the load metric name, value, and last reported
         time in UTC.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6716,7 +6845,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetLoadInformation'
+        url = self.get_partition_load_information.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6751,6 +6880,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_load_information.metadata = {'url': '/Partitions/{partitionId}/$/GetLoadInformation'}
 
     def reset_partition_load(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6762,9 +6892,9 @@ class ServiceFabricClientAPIs(object):
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6779,7 +6909,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/ResetLoad'
+        url = self.reset_partition_load.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6807,6 +6937,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    reset_partition_load.metadata = {'url': '/Partitions/{partitionId}/$/ResetLoad'}
 
     def recover_partition(
             self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6822,9 +6953,9 @@ class ServiceFabricClientAPIs(object):
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6839,7 +6970,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/Recover'
+        url = self.recover_partition.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -6867,6 +6998,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_partition.metadata = {'url': '/Partitions/{partitionId}/$/Recover'}
 
     def recover_service_partitions(
             self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6888,9 +7020,9 @@ class ServiceFabricClientAPIs(object):
          "myapp/app1/svc1" in previous versions.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6905,7 +7037,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Services/$/{serviceId}/$/GetPartitions/$/Recover'
+        url = self.recover_service_partitions.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
         }
@@ -6933,6 +7065,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_service_partitions.metadata = {'url': '/Services/$/{serviceId}/$/GetPartitions/$/Recover'}
 
     def recover_system_partitions(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -6946,9 +7079,9 @@ class ServiceFabricClientAPIs(object):
         can cause potential data loss.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -6963,7 +7096,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/RecoverSystemPartitions'
+        url = self.recover_system_partitions.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -6987,6 +7120,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_system_partitions.metadata = {'url': '/$/RecoverSystemPartitions'}
 
     def recover_all_partitions(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -7001,9 +7135,9 @@ class ServiceFabricClientAPIs(object):
         use of this API can cause potential data loss.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -7018,7 +7152,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/RecoverAllPartitions'
+        url = self.recover_all_partitions.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7042,6 +7176,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    recover_all_partitions.metadata = {'url': '/$/RecoverAllPartitions'}
 
     def create_repair_task(
             self, repair_task, custom_headers=None, raw=False, **operation_config):
@@ -7061,7 +7196,6 @@ class ServiceFabricClientAPIs(object):
         you can safely perform repair actions on those nodes.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task: Describes the repair task to be created or
          updated.
@@ -7080,7 +7214,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/CreateRepairTask'
+        url = self.create_repair_task.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7113,6 +7247,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    create_repair_task.metadata = {'url': '/$/CreateRepairTask'}
 
     def cancel_repair_task(
             self, repair_task_cancel_description, custom_headers=None, raw=False, **operation_config):
@@ -7120,7 +7255,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task_cancel_description: Describes the repair task to be
          cancelled.
@@ -7140,7 +7274,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/CancelRepairTask'
+        url = self.cancel_repair_task.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7173,6 +7307,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    cancel_repair_task.metadata = {'url': '/$/CancelRepairTask'}
 
     def delete_repair_task(
             self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
@@ -7180,7 +7315,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param task_id: The ID of the completed repair task to be deleted.
         :type task_id: str
@@ -7204,7 +7338,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/DeleteRepairTask'
+        url = self.delete_repair_task.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7230,6 +7364,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_repair_task.metadata = {'url': '/$/DeleteRepairTask'}
 
     def get_repair_task_list(
             self, task_id_filter=None, state_filter=None, executor_filter=None, custom_headers=None, raw=False, **operation_config):
@@ -7237,7 +7372,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param task_id_filter: The repair task ID prefix to be matched.
         :type task_id_filter: str
@@ -7268,7 +7402,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/GetRepairTaskList'
+        url = self.get_repair_task_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7303,6 +7437,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_repair_task_list.metadata = {'url': '/$/GetRepairTaskList'}
 
     def force_approve_repair_task(
             self, task_id, version=None, custom_headers=None, raw=False, **operation_config):
@@ -7310,7 +7445,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param task_id: The ID of the repair task.
         :type task_id: str
@@ -7335,7 +7469,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/ForceApproveRepairTask'
+        url = self.force_approve_repair_task.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7368,6 +7502,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    force_approve_repair_task.metadata = {'url': '/$/ForceApproveRepairTask'}
 
     def update_repair_task_health_policy(
             self, repair_task_update_health_policy_description, custom_headers=None, raw=False, **operation_config):
@@ -7375,7 +7510,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task_update_health_policy_description: Describes the
          repair task healthy policy to be updated.
@@ -7395,7 +7529,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/UpdateRepairTaskHealthPolicy'
+        url = self.update_repair_task_health_policy.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7428,6 +7562,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    update_repair_task_health_policy.metadata = {'url': '/$/UpdateRepairTaskHealthPolicy'}
 
     def update_repair_execution_state(
             self, repair_task, custom_headers=None, raw=False, **operation_config):
@@ -7435,7 +7570,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task: Describes the repair task to be created or
          updated.
@@ -7454,7 +7588,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/UpdateRepairExecutionState'
+        url = self.update_repair_execution_state.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -7487,6 +7621,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    update_repair_execution_state.metadata = {'url': '/$/UpdateRepairExecutionState'}
 
     def get_replica_info_list(
             self, partition_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -7494,8 +7629,8 @@ class ServiceFabricClientAPIs(object):
         partition.
 
         The GetReplicas endpoint returns information about the replicas of the
-        specified partition. The respons include the id, role, status, health,
-        node name, uptime, and other details about the replica.
+        specified partition. The response includes the id, role, status,
+        health, node name, uptime, and other details about the replica.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -7508,9 +7643,9 @@ class ServiceFabricClientAPIs(object):
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -7526,7 +7661,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas'
+        url = self.get_replica_info_list.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
         }
@@ -7563,30 +7698,23 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_info_list.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas'}
 
     def get_replica_info(
-            self, partition_id, replica_id, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the information about a replica of a Service Fabric partition.
 
-        The response include the id, role, status, health, node name, uptime,
+        The response includes the id, role, status, health, node name, uptime,
         and other details about the replica.
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param replica_id: The identifier of the replica.
         :type replica_id: str
-        :param continuation_token: The continuation token parameter is used to
-         obtain next set of results. A continuation token with a non empty
-         value is included in the response of the API when the results from the
-         system do not fit in a single response. When this value is passed to
-         the next API call, the API returns next set of results. If there are
-         no further results then the continuation token does not contain a
-         value. The value of this parameter should not be URL encoded.
-        :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -7602,7 +7730,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}'
+        url = self.get_replica_info.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -7612,8 +7740,6 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if continuation_token is not None:
-            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -7640,6 +7766,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_info.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}'}
 
     def get_replica_health(
             self, partition_id, replica_id, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -7649,7 +7776,6 @@ class ServiceFabricClientAPIs(object):
         Gets the health of a Service Fabric replica.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the replica based on the health state.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -7680,9 +7806,9 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -7698,7 +7824,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'
+        url = self.get_replica_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -7736,6 +7862,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_health.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'}
 
     def get_replica_health_using_policy(
             self, partition_id, replica_id, events_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -7750,7 +7877,6 @@ class ServiceFabricClientAPIs(object):
         used to evaluate the health. This API only uses
         'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
         of the fields are ignored while evaluating the health of the replica.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -7787,9 +7913,9 @@ class ServiceFabricClientAPIs(object):
         :type application_health_policy:
          ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -7805,7 +7931,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'
+        url = self.get_replica_health_using_policy.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -7850,9 +7976,10 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_replica_health_using_policy.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetHealth'}
 
     def report_replica_health(
-            self, partition_id, replica_id, health_information, service_kind="Stateful", immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, partition_id, replica_id, health_information, replica_health_report_service_kind="Stateful", immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Sends a health report on the Service Fabric replica.
 
         Reports health state of the specified Service Fabric replica. The
@@ -7867,17 +7994,17 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetReplicaHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param replica_id: The identifier of the replica.
         :type replica_id: str
-        :param service_kind: The kind of service replica (Stateless or
-         Stateful) for which the health is being reported. Following are the
-         possible values. Possible values include: 'Stateless', 'Stateful'
-        :type service_kind: str or
-         ~azure.servicefabric.models.ReplicaHealthReportServiceKindRequiredQueryParam
+        :param replica_health_report_service_kind: The kind of service replica
+         (Stateless or Stateful) for which the health is being reported.
+         Following are the possible values. Possible values include:
+         'Stateless', 'Stateful'
+        :type replica_health_report_service_kind: str or
+         ~azure.servicefabric.models.ReplicaHealthReportServiceKind
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
          health reports sent to the health manager.
@@ -7887,16 +8014,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -7904,9 +8031,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -7921,7 +8048,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/ReportHealth'
+        url = self.report_replica_health.metadata['url']
         path_format_arguments = {
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
             'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
@@ -7931,7 +8058,7 @@ class ServiceFabricClientAPIs(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        query_parameters['ServiceKind'] = self._serialize.query("service_kind", service_kind, 'str')
+        query_parameters['ReplicaHealthReportServiceKind'] = self._serialize.query("replica_health_report_service_kind", replica_health_report_service_kind, 'str')
         if immediate is not None:
             query_parameters['Immediate'] = self._serialize.query("immediate", immediate, 'bool')
         if timeout is not None:
@@ -7957,14 +8084,15 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_replica_health.metadata = {'url': '/Partitions/{partitionId}/$/GetReplicas/{replicaId}/$/ReportHealth'}
 
     def get_deployed_service_replica_info_list(
             self, node_name, application_id, partition_id=None, service_manifest_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the list of replicas deployed on a Service Fabric node.
 
         Gets the list containing the information about replicas deployed on a
-        Service Fabric node. The information include partition id, replica id,
-        status of the replica, name of the service, name of the service type
+        Service Fabric node. The information include partition ID, replica ID,
+        status of the replica, name of the service, name of the service type,
         and other information. Use PartitionId or ServiceManifestName query
         parameters to return information about the deployed replicas matching
         the specified values for those parameters.
@@ -7986,9 +8114,9 @@ class ServiceFabricClientAPIs(object):
          registered as part of an application type in a Service Fabric cluster.
         :type service_manifest_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8004,7 +8132,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetReplicas'
+        url = self.get_deployed_service_replica_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -8044,6 +8172,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_replica_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetReplicas'}
 
     def get_deployed_service_replica_detail_info(
             self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8051,8 +8180,8 @@ class ServiceFabricClientAPIs(object):
 
         Gets the details of the replica deployed on a Service Fabric node. The
         information include service kind, service name, current service
-        operation, current service operation start date time, partition id,
-        replica/instance id, reported load and other information.
+        operation, current service operation start date time, partition ID,
+        replica/instance ID, reported load, and other information.
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -8061,9 +8190,9 @@ class ServiceFabricClientAPIs(object):
         :param replica_id: The identifier of the replica.
         :type replica_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8080,7 +8209,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetDetail'
+        url = self.get_deployed_service_replica_detail_info.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
@@ -8117,6 +8246,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_replica_detail_info.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/GetDetail'}
 
     def get_deployed_service_replica_detail_info_by_partition_id(
             self, node_name, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8124,17 +8254,17 @@ class ServiceFabricClientAPIs(object):
 
         Gets the details of the replica deployed on a Service Fabric node. The
         information include service kind, service name, current service
-        operation, current service operation start date time, partition id,
-        replica/instance id, reported load and other information.
+        operation, current service operation start date time, partition ID,
+        replica/instance ID, reported load, and other information.
 
         :param node_name: The name of the node.
         :type node_name: str
         :param partition_id: The identity of the partition.
         :type partition_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8151,7 +8281,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas'
+        url = self.get_deployed_service_replica_detail_info_by_partition_id.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -8187,6 +8317,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_replica_detail_info_by_partition_id.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas'}
 
     def restart_replica(
             self, node_name, partition_id, replica_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8204,9 +8335,9 @@ class ServiceFabricClientAPIs(object):
         :param replica_id: The identifier of the replica.
         :type replica_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8221,7 +8352,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Restart'
+        url = self.restart_replica.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
@@ -8251,6 +8382,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    restart_replica.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Restart'}
 
     def remove_replica(
             self, node_name, partition_id, replica_id, force_remove=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8279,9 +8411,9 @@ class ServiceFabricClientAPIs(object):
          prevents graceful close of replicas.
         :type force_remove: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8296,7 +8428,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Delete'
+        url = self.remove_replica.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
@@ -8328,6 +8460,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    remove_replica.metadata = {'url': '/Nodes/{nodeName}/$/GetPartitions/{partitionId}/$/GetReplicas/{replicaId}/$/Delete'}
 
     def get_deployed_service_package_info_list(
             self, node_name, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8348,9 +8481,9 @@ class ServiceFabricClientAPIs(object):
          previous versions.
         :type application_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8366,7 +8499,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages'
+        url = self.get_deployed_service_package_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -8402,6 +8535,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages'}
 
     def get_deployed_service_package_info_list_by_name(
             self, node_name, application_id, service_package_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8427,9 +8561,9 @@ class ServiceFabricClientAPIs(object):
         :param service_package_name: The name of the service package.
         :type service_package_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8445,7 +8579,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}'
+        url = self.get_deployed_service_package_info_list_by_name.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -8482,6 +8616,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_info_list_by_name.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}'}
 
     def get_deployed_service_package_health(
             self, node_name, application_id, service_package_name, events_health_state_filter=0, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8532,9 +8667,9 @@ class ServiceFabricClientAPIs(object):
          value is 65535.
         :type events_health_state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8550,7 +8685,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'
+        url = self.get_deployed_service_package_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -8589,6 +8724,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'}
 
     def get_deployed_service_package_health_using_policy(
             self, node_name, application_id, service_package_name, events_health_state_filter=0, application_health_policy=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8605,7 +8741,6 @@ class ServiceFabricClientAPIs(object):
         This API only uses 'ConsiderWarningAsError' field of the
         ApplicationHealthPolicy. The rest of the fields are ignored while
         evaluating the health of the deployed service package.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -8651,9 +8786,9 @@ class ServiceFabricClientAPIs(object):
         :type application_health_policy:
          ~azure.servicefabric.models.ApplicationHealthPolicy
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8669,7 +8804,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'
+        url = self.get_deployed_service_package_health_using_policy.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -8715,6 +8850,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_service_package_health_using_policy.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/GetHealth'}
 
     def report_deployed_service_package_health(
             self, node_name, application_id, service_package_name, health_information, immediate=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8732,7 +8868,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, get deployed
         service package health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -8756,16 +8891,16 @@ class ServiceFabricClientAPIs(object):
          sent immediately.
          A health report is sent to a Service Fabric gateway Application, which
          forwards to the health store.
-         If Immediate is set to true, the report is sent immediately from Http
+         If Immediate is set to true, the report is sent immediately from HTTP
          Gateway to the health store, regardless of the fabric client settings
-         that the Http Gateway Application is using.
+         that the HTTP Gateway Application is using.
          This is useful for critical reports that should be sent as soon as
          possible.
          Depending on timing and other conditions, sending the report may still
-         fail, for example if the Http Gateway is closed or the message doesn't
+         fail, for example if the HTTP Gateway is closed or the message doesn't
          reach the Gateway.
          If Immediate is set to false, the report is sent based on the health
-         client settings from the Http Gateway. Therefore, it will be batched
+         client settings from the HTTP Gateway. Therefore, it will be batched
          according to the HealthReportSendInterval configuration.
          This is the recommended setting because it allows the health client to
          optimize health reporting messages to health store as well as health
@@ -8773,9 +8908,9 @@ class ServiceFabricClientAPIs(object):
          By default, reports are not sent immediately.
         :type immediate: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8790,7 +8925,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/ReportHealth'
+        url = self.report_deployed_service_package_health.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
@@ -8826,19 +8961,19 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    report_deployed_service_package_health.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetServicePackages/{servicePackageName}/$/ReportHealth'}
 
-    def deployed_service_package_to_node(
+    def deploy_service_package_to_node(
             self, node_name, deploy_service_package_to_node_description, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Downloads all of the code packagesassociated with specified service
+        """Downloads all of the code packages associated with specified service
         manifest on the specified node.
 
         This API provides a way to download code packages including the
         container images on a specific node outside of the normal application
         deployment and upgrade path. This is useful for the large code packages
-        and container iamges to be present on the node before the actual
+        and container images to be present on the node before the actual
         application deployment and upgrade, thus significantly reducing the
         total time required for the deployment or upgrade.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -8847,9 +8982,9 @@ class ServiceFabricClientAPIs(object):
         :type deploy_service_package_to_node_description:
          ~azure.servicefabric.models.DeployServicePackageToNodeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8864,7 +8999,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/DeployServicePackage'
+        url = self.deploy_service_package_to_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -8896,6 +9031,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    deploy_service_package_to_node.metadata = {'url': '/Nodes/{nodeName}/$/DeployServicePackage'}
 
     def get_deployed_code_package_info_list(
             self, node_name, application_id, service_manifest_name=None, code_package_name=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -8923,9 +9059,9 @@ class ServiceFabricClientAPIs(object):
          Service Fabric cluster.
         :type code_package_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -8941,7 +9077,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages'
+        url = self.get_deployed_code_package_info_list.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -8981,6 +9117,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_deployed_code_package_info_list.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages'}
 
     def restart_deployed_code_package(
             self, node_name, application_id, restart_deployed_code_package_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9006,9 +9143,9 @@ class ServiceFabricClientAPIs(object):
         :type restart_deployed_code_package_description:
          ~azure.servicefabric.models.RestartDeployedCodePackageDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9023,7 +9160,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/Restart'
+        url = self.restart_deployed_code_package.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -9056,9 +9193,10 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    restart_deployed_code_package.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/Restart'}
 
     def get_container_logs_deployed_on_node(
-            self, node_name, application_id, service_manifest_name, code_package_name, tail=None, timeout=60, custom_headers=None, raw=False, **operation_config):
+            self, node_name, application_id, service_manifest_name, code_package_name, tail=None, previous=False, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets the container logs for container deployed on a Service Fabric
         node.
 
@@ -9083,12 +9221,16 @@ class ServiceFabricClientAPIs(object):
          service manifest registered as part of an application type in a
          Service Fabric cluster.
         :type code_package_name: str
-        :param tail: Number of lines to fetch from tail end.
+        :param tail: Number of lines to show from the end of the logs. Default
+         is 100. 'all' to show the complete logs.
         :type tail: str
+        :param previous: Specifies whether to get container logs from
+         exited/dead containers of the code package instance.
+        :type previous: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9101,10 +9243,10 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.1"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerLogs'
+        url = self.get_container_logs_deployed_on_node.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str'),
             'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
@@ -9118,6 +9260,8 @@ class ServiceFabricClientAPIs(object):
         query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
         if tail is not None:
             query_parameters['Tail'] = self._serialize.query("tail", tail, 'str')
+        if previous is not None:
+            query_parameters['Previous'] = self._serialize.query("previous", previous, 'bool')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -9144,6 +9288,103 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_container_logs_deployed_on_node.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerLogs'}
+
+    def invoke_container_api(
+            self, node_name, application_id, service_manifest_name, code_package_name, code_package_instance_id, container_api_request_body, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Invoke container API on a container deployed on a Service Fabric node.
+
+        Invoke container API on a container deployed on a Service Fabric node
+        for the given code package.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param service_manifest_name: The name of a service manifest
+         registered as part of an application type in a Service Fabric cluster.
+        :type service_manifest_name: str
+        :param code_package_name: The name of code package specified in
+         service manifest registered as part of an application type in a
+         Service Fabric cluster.
+        :type code_package_name: str
+        :param code_package_instance_id: ID that uniquely identifies a code
+         package instance deployed on a service fabric node.
+        :type code_package_instance_id: str
+        :param container_api_request_body: Parameters for making container API
+         call
+        :type container_api_request_body:
+         ~azure.servicefabric.models.ContainerApiRequestBody
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ContainerApiResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ContainerApiResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.invoke_container_api.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['ServiceManifestName'] = self._serialize.query("service_manifest_name", service_manifest_name, 'str')
+        query_parameters['CodePackageName'] = self._serialize.query("code_package_name", code_package_name, 'str')
+        query_parameters['CodePackageInstanceId'] = self._serialize.query("code_package_instance_id", code_package_instance_id, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(container_api_request_body, 'ContainerApiRequestBody')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ContainerApiResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    invoke_container_api.metadata = {'url': '/Nodes/{nodeName}/$/GetApplications/{applicationId}/$/GetCodePackages/$/ContainerApi'}
 
     def create_compose_deployment(
             self, create_compose_deployment_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9160,9 +9401,9 @@ class ServiceFabricClientAPIs(object):
         :type create_compose_deployment_description:
          ~azure.servicefabric.models.CreateComposeDeploymentDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9177,7 +9418,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/$/Create'
+        url = self.create_compose_deployment.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9205,6 +9446,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_compose_deployment.metadata = {'url': '/ComposeDeployments/$/Create'}
 
     def get_compose_deployment_status(
             self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9218,9 +9460,9 @@ class ServiceFabricClientAPIs(object):
         :param deployment_name: The identity of the deployment.
         :type deployment_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9236,7 +9478,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{deploymentName}'
+        url = self.get_compose_deployment_status.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
@@ -9271,6 +9513,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_compose_deployment_status.metadata = {'url': '/ComposeDeployments/{deploymentName}'}
 
     def get_compose_deployment_status_list(
             self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9298,12 +9541,12 @@ class ServiceFabricClientAPIs(object):
          the specified maximum results if they do not fit in the message as per
          the max message size restrictions defined in the configuration. If
          this parameter is zero or not specified, the paged queries includes as
-         much results as possible that fit in the return message.
+         many results as possible that fit in the return message.
         :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9321,7 +9564,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments'
+        url = self.get_compose_deployment_status_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9356,6 +9599,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_compose_deployment_status_list.metadata = {'url': '/ComposeDeployments'}
 
     def get_compose_deployment_upgrade_progress(
             self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9368,9 +9612,9 @@ class ServiceFabricClientAPIs(object):
         :param deployment_name: The identity of the deployment.
         :type deployment_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9388,7 +9632,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{deploymentName}/$/GetUpgradeProgress'
+        url = self.get_compose_deployment_upgrade_progress.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
@@ -9423,6 +9667,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_compose_deployment_upgrade_progress.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/GetUpgradeProgress'}
 
     def remove_compose_deployment(
             self, deployment_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9433,9 +9678,9 @@ class ServiceFabricClientAPIs(object):
         :param deployment_name: The identity of the deployment.
         :type deployment_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9450,7 +9695,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{deploymentName}/$/Delete'
+        url = self.remove_compose_deployment.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
@@ -9478,6 +9723,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    remove_compose_deployment.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/Delete'}
 
     def start_compose_deployment_upgrade(
             self, deployment_name, compose_deployment_upgrade_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9493,9 +9739,9 @@ class ServiceFabricClientAPIs(object):
         :type compose_deployment_upgrade_description:
          ~azure.servicefabric.models.ComposeDeploymentUpgradeDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9510,7 +9756,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0-preview"
 
         # Construct URL
-        url = '/ComposeDeployments/{deploymentName}/$/Upgrade'
+        url = self.start_compose_deployment_upgrade.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', skip_quote=True)
         }
@@ -9542,6 +9788,67 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_compose_deployment_upgrade.metadata = {'url': '/ComposeDeployments/{deploymentName}/$/Upgrade'}
+
+    def get_chaos(
+            self, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Get the status of Chaos.
+
+        Get the status of Chaos indicating whether or not Chaos is running, the
+        Chaos parameters used for running Chaos and the status of the Chaos
+        Schedule.
+
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Chaos or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.Chaos or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.get_chaos.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Chaos', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_chaos.metadata = {'url': '/Tools/Chaos'}
 
     def start_chaos(
             self, chaos_parameters, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9554,15 +9861,14 @@ class ServiceFabricClientAPIs(object):
         Please refer to the article [Induce controlled Chaos in Service Fabric
         clusters](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-controlled-chaos)
         for more details.
-        .
 
         :param chaos_parameters: Describes all the parameters to configure a
          Chaos run.
         :type chaos_parameters: ~azure.servicefabric.models.ChaosParameters
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9577,7 +9883,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Tools/Chaos/$/Start'
+        url = self.start_chaos.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9605,19 +9911,24 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_chaos.metadata = {'url': '/Tools/Chaos/$/Start'}
 
     def stop_chaos(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Stops Chaos in the cluster if it is already running, otherwise it does
-        nothing.
+        """Stops Chaos if it is running in the cluster and put the Chaos Schedule
+        in a stopped state.
 
-        Stops Chaos from scheduling further faults; but, the in-flight faults
-        are not affected.
+        Stops Chaos from executing new faults. In-flight faults will continue
+        to execute until they are complete. The current Chaos Schedule is put
+        into a stopped state.
+        Once a schedule is stopped it will stay in the stopped state and not be
+        used to Chaos Schedule new runs of Chaos. A new Chaos Schedule must be
+        set in order to resume scheduling.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9632,7 +9943,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Tools/Chaos/$/Stop'
+        url = self.stop_chaos.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9656,19 +9967,22 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    stop_chaos.metadata = {'url': '/Tools/Chaos/$/Stop'}
 
-    def get_chaos_report(
-            self, continuation_token=None, start_time_utc=None, end_time_utc=None, timeout=60, custom_headers=None, raw=False, **operation_config):
-        """Gets the next segment of the Chaos report based on the passed-in
-        continuation token or the passed-in time-range.
+    def get_chaos_events(
+            self, continuation_token=None, start_time_utc=None, end_time_utc=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the next segment of the Chaos events based on the continuation
+        token or the time range.
 
-        You can either specify the ContinuationToken to get the next segment of
-        the Chaos report or you can specify the time-range
-        through StartTimeUtc and EndTimeUtc, but you cannot specify both the
-        ContinuationToken and the time-range in the same call.
-        When there are more than 100 Chaos events, the Chaos report is returned
-        in segments where a segment contains no more than 100 Chaos events.
-        .
+        To get the next segment of the Chaos events, you can specify the
+        ContinuationToken. To get the start of a new segment of Chaos events,
+        you can specify the time range
+        through StartTimeUtc and EndTimeUtc. You cannot specify both the
+        ContinuationToken and the time range in the same call.
+        When there are more than 100 Chaos events, the Chaos events are
+        returned in multiple segments where a segment contains no more than 100
+        Chaos events and to get the next segment you make a call to this API
+        with the continuation token.
 
         :param continuation_token: The continuation token parameter is used to
          obtain next set of results. A continuation token with a non empty
@@ -9690,26 +10004,34 @@ class ServiceFabricClientAPIs(object):
          Method](https://msdn.microsoft.com/en-us/library/system.datetime.tofiletimeutc(v=vs.110).aspx)
          for details.
         :type end_time_utc: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChaosReport or ClientRawResponse if raw=true
-        :rtype: ~azure.servicefabric.models.ChaosReport or
+        :return: ChaosEventsSegment or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ChaosEventsSegment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.0"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/Tools/Chaos/$/Report'
+        url = self.get_chaos_events.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9720,6 +10042,8 @@ class ServiceFabricClientAPIs(object):
             query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
         if end_time_utc is not None:
             query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
 
@@ -9739,13 +10063,129 @@ class ServiceFabricClientAPIs(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ChaosReport', response)
+            deserialized = self._deserialize('ChaosEventsSegment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
+    get_chaos_events.metadata = {'url': '/Tools/Chaos/Events'}
+
+    def get_chaos_schedule(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get the Chaos Schedule defining when and how to run Chaos.
+
+        Gets the version of the Chaos Schedule in use and the Chaos Schedule
+        that defines when and how to run Chaos.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ChaosScheduleDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.ChaosScheduleDescription or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.get_chaos_schedule.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ChaosScheduleDescription', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_chaos_schedule.metadata = {'url': '/Tools/Chaos/Schedule'}
+
+    def post_chaos_schedule(
+            self, version=None, schedule=None, custom_headers=None, raw=False, **operation_config):
+        """Set the schedule used by Chaos.
+
+        Set the Chaos Schedule currently in use by Chaos. Chaos will
+        automatically schedule runs based on the Chaos Schedule.
+        The version in the provided input schedule must match the version of
+        the Chaos Schedule on the server.
+        If the version provided does not match the version on the server, the
+        Chaos Schedule is not updated.
+        If the version provided matches the version on the server, then the
+        Chaos Schedule is updated and the version of the Chaos Schedule on the
+        server is incremented up by one and wraps back to 0 after
+        2,147,483,647.
+        If Chaos is running when this call is made, the call will fail.
+
+        :param version: The version number of the Schedule.
+        :type version: int
+        :param schedule: Defines the schedule used by Chaos.
+        :type schedule: ~azure.servicefabric.models.ChaosSchedule
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        chaos_schedule = models.ChaosScheduleDescription(version=version, schedule=schedule)
+
+        api_version = "6.2"
+
+        # Construct URL
+        url = self.post_chaos_schedule.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(chaos_schedule, 'ChaosScheduleDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    post_chaos_schedule.metadata = {'url': '/Tools/Chaos/Schedule'}
 
     def upload_file(
             self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9762,15 +10202,14 @@ class ServiceFabricClientAPIs(object):
         isn't aware of the file hierarchy of the application package; you need
         to create a mark file per folder and upload it last, to let the image
         store service know that the folder is complete.
-        .
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9785,7 +10224,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}'
+        url = self.upload_file.metadata['url']
         path_format_arguments = {
             'contentPath': self._serialize.url("content_path", content_path, 'str')
         }
@@ -9813,6 +10252,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    upload_file.metadata = {'url': '/ImageStore/{contentPath}'}
 
     def get_image_store_content(
             self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9825,9 +10265,9 @@ class ServiceFabricClientAPIs(object):
          store from its root.
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9840,10 +10280,10 @@ class ServiceFabricClientAPIs(object):
         :raises:
          :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
         """
-        api_version = "6.0"
+        api_version = "6.2"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}'
+        url = self.get_image_store_content.metadata['url']
         path_format_arguments = {
             'contentPath': self._serialize.url("content_path", content_path, 'str')
         }
@@ -9878,6 +10318,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_image_store_content.metadata = {'url': '/ImageStore/{contentPath}'}
 
     def delete_image_store_content(
             self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9891,9 +10332,9 @@ class ServiceFabricClientAPIs(object):
          store from its root.
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9908,7 +10349,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}'
+        url = self.delete_image_store_content.metadata['url']
         path_format_arguments = {
             'contentPath': self._serialize.url("content_path", content_path, 'str')
         }
@@ -9936,6 +10377,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_image_store_content.metadata = {'url': '/ImageStore/{contentPath}'}
 
     def get_image_store_root_content(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -9945,9 +10387,9 @@ class ServiceFabricClientAPIs(object):
         the image store.
 
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -9963,7 +10405,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore'
+        url = self.get_image_store_root_content.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -9994,6 +10436,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_image_store_root_content.metadata = {'url': '/ImageStore'}
 
     def copy_image_store_content(
             self, image_store_copy_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10007,9 +10450,9 @@ class ServiceFabricClientAPIs(object):
         :type image_store_copy_description:
          ~azure.servicefabric.models.ImageStoreCopyDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10024,7 +10467,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/$/Copy'
+        url = self.copy_image_store_content.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -10052,6 +10495,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    copy_image_store_content.metadata = {'url': '/ImageStore/$/Copy'}
 
     def delete_image_store_upload_session(
             self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10059,16 +10503,15 @@ class ServiceFabricClientAPIs(object):
 
         The DELETE request will cause the existing upload session to expire and
         remove any previously uploaded file chunks.
-        .
 
         :param session_id: A GUID generated by the user for a file uploading.
          It identifies an image store upload session which keeps track of all
          file chunks until it is committed.
         :type session_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10083,7 +10526,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/$/DeleteUploadSession'
+        url = self.delete_image_store_upload_session.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -10108,6 +10551,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_image_store_upload_session.metadata = {'url': '/ImageStore/$/DeleteUploadSession'}
 
     def commit_image_store_upload_session(
             self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10116,17 +10560,16 @@ class ServiceFabricClientAPIs(object):
         When all file chunks have been uploaded, the upload session needs to be
         committed explicitly to complete the upload. Image store preserves the
         upload session until the expiration time, which is 30 minutes after the
-        last chunk received.
-        .
+        last chunk received. .
 
         :param session_id: A GUID generated by the user for a file uploading.
          It identifies an image store upload session which keeps track of all
          file chunks until it is committed.
         :type session_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10141,7 +10584,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/$/CommitUploadSession'
+        url = self.commit_image_store_upload_session.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -10166,23 +10609,23 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    commit_image_store_upload_session.metadata = {'url': '/ImageStore/$/CommitUploadSession'}
 
     def get_image_store_upload_session_by_id(
             self, session_id, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Get the image store upload session by ID.
 
         Gets the image store upload session identified by the given ID. User
-        can query the upload session at any time during uploading.
-        .
+        can query the upload session at any time during uploading. .
 
         :param session_id: A GUID generated by the user for a file uploading.
          It identifies an image store upload session which keeps track of all
          file chunks until it is committed.
         :type session_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10198,7 +10641,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/$/GetUploadSession'
+        url = self.get_image_store_upload_session_by_id.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -10230,6 +10673,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_image_store_upload_session_by_id.metadata = {'url': '/ImageStore/$/GetUploadSession'}
 
     def get_image_store_upload_session_by_path(
             self, content_path, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10237,16 +10681,15 @@ class ServiceFabricClientAPIs(object):
 
         Gets the image store upload session associated with the given image
         store relative path. User can query the upload session at any time
-        during uploading.
-        .
+        during uploading. .
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
         :type content_path: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10262,7 +10705,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}/$/GetUploadSession'
+        url = self.get_image_store_upload_session_by_path.metadata['url']
         path_format_arguments = {
             'contentPath': self._serialize.url("content_path", content_path, 'str')
         }
@@ -10297,6 +10740,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_image_store_upload_session_by_path.metadata = {'url': '/ImageStore/{contentPath}/$/GetUploadSession'}
 
     def upload_file_chunk(
             self, content_path, session_id, content_range, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10312,7 +10756,6 @@ class ServiceFabricClientAPIs(object):
         Chunks don't have to be uploaded in order. If the file represented by
         the image store relative path already exists, it will be overwritten
         when the upload session commits.
-        .
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
@@ -10330,9 +10773,9 @@ class ServiceFabricClientAPIs(object):
          bytes.
         :type content_range: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10347,7 +10790,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/ImageStore/{contentPath}/$/UploadChunk'
+        url = self.upload_file_chunk.metadata['url']
         path_format_arguments = {
             'contentPath': self._serialize.url("content_path", content_path, 'str')
         }
@@ -10377,6 +10820,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    upload_file_chunk.metadata = {'url': '/ImageStore/{contentPath}/$/UploadChunk'}
 
     def invoke_infrastructure_command(
             self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10393,7 +10837,6 @@ class ServiceFabricClientAPIs(object):
         the infrastructure on which the cluster is running.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
@@ -10404,9 +10847,9 @@ class ServiceFabricClientAPIs(object):
          than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10421,7 +10864,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/InvokeInfrastructureCommand'
+        url = self.invoke_infrastructure_command.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -10455,6 +10898,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    invoke_infrastructure_command.metadata = {'url': '/$/InvokeInfrastructureCommand'}
 
     def invoke_infrastructure_query(
             self, command, service_id=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10470,7 +10914,6 @@ class ServiceFabricClientAPIs(object):
         the infrastructure on which the cluster is running.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
@@ -10481,9 +10924,9 @@ class ServiceFabricClientAPIs(object):
          than one instance of infrastructure service running.
         :type service_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10498,7 +10941,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/$/InvokeInfrastructureQuery'
+        url = self.invoke_infrastructure_query.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -10532,6 +10975,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    invoke_infrastructure_query.metadata = {'url': '/$/InvokeInfrastructureQuery'}
 
     def start_data_loss(
             self, service_id, partition_id, operation_id, data_loss_mode, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10555,7 +10999,6 @@ class ServiceFabricClientAPIs(object):
         cause data loss.
         Call the GetDataLossProgress API with the same OperationId to return
         information on the operation started with this API.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -10573,12 +11016,11 @@ class ServiceFabricClientAPIs(object):
         :param data_loss_mode: This enum is passed to the StartDataLoss API to
          indicate what type of data loss to induce. Possible values include:
          'Invalid', 'PartialDataLoss', 'FullDataLoss'
-        :type data_loss_mode: str or
-         ~azure.servicefabric.models.DataLossModeRequiredQueryParam
+        :type data_loss_mode: str or ~azure.servicefabric.models.DataLossMode
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10593,7 +11035,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartDataLoss'
+        url = self.start_data_loss.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -10624,6 +11066,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_data_loss.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartDataLoss'}
 
     def get_data_loss_progress(
             self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10632,7 +11075,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a data loss operation started with StartDataLoss,
         using the OperationId.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -10648,9 +11090,9 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10666,7 +11108,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetDataLossProgress'
+        url = self.get_data_loss_progress.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -10703,6 +11145,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_data_loss_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetDataLossProgress'}
 
     def start_quorum_loss(
             self, service_id, partition_id, operation_id, quorum_loss_mode, quorum_loss_duration, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10715,7 +11158,6 @@ class ServiceFabricClientAPIs(object):
         This can only be called on stateful persisted (HasPersistedState==true)
         services.  Do not use this API on stateless services or stateful
         in-memory only services.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -10734,15 +11176,15 @@ class ServiceFabricClientAPIs(object):
          API to indicate what type of quorum loss to induce. Possible values
          include: 'Invalid', 'QuorumReplicas', 'AllReplicas'
         :type quorum_loss_mode: str or
-         ~azure.servicefabric.models.QuorumLossModeRequiredQueryParam
+         ~azure.servicefabric.models.QuorumLossMode
         :param quorum_loss_duration: The amount of time for which the
          partition will be kept in quorum loss.  This must be specified in
          seconds.
         :type quorum_loss_duration: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10757,7 +11199,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartQuorumLoss'
+        url = self.start_quorum_loss.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -10789,6 +11231,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_quorum_loss.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartQuorumLoss'}
 
     def get_quorum_loss_progress(
             self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10797,7 +11240,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a quorum loss operation started with
         StartQuorumLoss, using the provided OperationId.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -10813,9 +11255,9 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10831,7 +11273,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetQuorumLossProgress'
+        url = self.get_quorum_loss_progress.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -10868,6 +11310,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_quorum_loss_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetQuorumLossProgress'}
 
     def start_partition_restart(
             self, service_id, partition_id, operation_id, restart_partition_mode, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10879,7 +11322,6 @@ class ServiceFabricClientAPIs(object):
         must be AllReplicasOrInstances.
         Call the GetPartitionRestartProgress API using the same OperationId to
         get the progress.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -10898,11 +11340,11 @@ class ServiceFabricClientAPIs(object):
          Possible values include: 'Invalid', 'AllReplicasOrInstances',
          'OnlyActiveSecondaries'
         :type restart_partition_mode: str or
-         ~azure.servicefabric.models.RestartPartitionModeRequiredQueryParam
+         ~azure.servicefabric.models.RestartPartitionMode
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10917,7 +11359,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartRestart'
+        url = self.start_partition_restart.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -10948,6 +11390,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_partition_restart.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/StartRestart'}
 
     def get_partition_restart_progress(
             self, service_id, partition_id, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -10956,7 +11399,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a PartitionRestart started with
         StartPartitionRestart using the provided OperationId.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -10972,9 +11414,9 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10990,7 +11432,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetRestartProgress'
+        url = self.get_partition_restart_progress.metadata['url']
         path_format_arguments = {
             'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True),
             'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
@@ -11027,6 +11469,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_partition_restart_progress.metadata = {'url': '/Faults/Services/{serviceId}/$/GetPartitions/{partitionId}/$/GetRestartProgress'}
 
     def start_node_transition(
             self, node_name, operation_id, node_transition_type, node_instance_id, stop_duration_in_seconds, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11040,7 +11483,6 @@ class ServiceFabricClientAPIs(object):
         have finished transitioning yet.
         Call GetNodeTransitionProgress with the same OperationId to get the
         progress of the operation.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -11052,7 +11494,7 @@ class ServiceFabricClientAPIs(object):
          NodeTransitionType.Stop will stop a node that is up. Possible values
          include: 'Invalid', 'Start', 'Stop'
         :type node_transition_type: str or
-         ~azure.servicefabric.models.NodeTransitionTypeRequiredQueryParam
+         ~azure.servicefabric.models.NodeTransitionType
         :param node_instance_id: The node instance ID of the target node.
          This can be determined through GetNodeInfo API.
         :type node_instance_id: str
@@ -11061,9 +11503,9 @@ class ServiceFabricClientAPIs(object):
          this time expires, the node will automatically come back up.
         :type stop_duration_in_seconds: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11078,7 +11520,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Nodes/{nodeName}/$/StartTransition/'
+        url = self.start_node_transition.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -11110,6 +11552,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    start_node_transition.metadata = {'url': '/Faults/Nodes/{nodeName}/$/StartTransition/'}
 
     def get_node_transition_progress(
             self, node_name, operation_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11117,7 +11560,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of an operation started with StartNodeTransition
         using the provided OperationId.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -11125,9 +11567,9 @@ class ServiceFabricClientAPIs(object):
          is passed into the corresponding GetProgress API
         :type operation_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11143,7 +11585,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/Nodes/{nodeName}/$/GetTransitionProgress'
+        url = self.get_node_transition_progress.metadata['url']
         path_format_arguments = {
             'nodeName': self._serialize.url("node_name", node_name, 'str')
         }
@@ -11179,6 +11621,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_node_transition_progress.metadata = {'url': '/Faults/Nodes/{nodeName}/$/GetTransitionProgress'}
 
     def get_fault_operation_list(
             self, type_filter=65535, state_filter=65535, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11207,9 +11650,9 @@ class ServiceFabricClientAPIs(object):
          64    - select ForceCancelled
         :type state_filter: int
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11225,7 +11668,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/'
+        url = self.get_fault_operation_list.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -11258,6 +11701,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_fault_operation_list.metadata = {'url': '/Faults/'}
 
     def cancel_operation(
             self, operation_id, force=False, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11288,7 +11732,6 @@ class ServiceFabricClientAPIs(object):
         progressed far enough to cause data loss.
         Important note:  if this API is invoked with force==true, internal
         state may be left behind.
-        .
 
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
@@ -11298,9 +11741,9 @@ class ServiceFabricClientAPIs(object):
          operation.
         :type force: bool
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11315,7 +11758,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Faults/$/Cancel'
+        url = self.cancel_operation.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -11341,6 +11784,2169 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    cancel_operation.metadata = {'url': '/Faults/$/Cancel'}
+
+    def create_backup_policy(
+            self, backup_policy_description, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Creates a backup policy.
+
+        Creates a backup policy which can be associated later with a Service
+        Fabric application, service or a partition for periodic backup.
+
+        :param backup_policy_description: Describes the backup policy.
+        :type backup_policy_description:
+         ~azure.servicefabric.models.BackupPolicyDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.create_backup_policy.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    create_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/$/Create'}
+
+    def delete_backup_policy(
+            self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Deletes the backup policy.
+
+        Deletes an existing backup policy. A backup policy must be created
+        before it can be deleted. A currently active backup policy, associated
+        with any Service Fabric application, service or partition, cannot be
+        deleted without first deleting the mapping.
+
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.delete_backup_policy.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/Delete'}
+
+    def get_backup_policy_list(
+            self, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets all the backup policies configured.
+
+        Get a list of all the backup policies configured.
+
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupPolicyDescriptionList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupPolicyDescriptionList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_backup_policy_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupPolicyDescriptionList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_backup_policy_list.metadata = {'url': '/BackupRestore/BackupPolicies'}
+
+    def get_backup_policy_by_name(
+            self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets a particular backup policy by name.
+
+        Gets a particular backup policy identified by {backupPolicyName}.
+
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BackupPolicyDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.BackupPolicyDescription or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_backup_policy_by_name.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupPolicyDescription', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_backup_policy_by_name.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}'}
+
+    def get_all_entities_backed_up_by_policy(
+            self, backup_policy_name, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backup entities that are associated with this policy.
+
+        Returns a list of Service Fabric application, service or partition
+        which are associated with this backup policy.
+
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupEntityList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupEntityList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_all_entities_backed_up_by_policy.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupEntityList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_all_entities_backed_up_by_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/GetBackupEnabledEntities'}
+
+    def update_backup_policy(
+            self, backup_policy_description, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Updates the backup policy.
+
+        Updates the backup policy identified by {backupPolicyName}.
+
+        :param backup_policy_description: Describes the backup policy.
+        :type backup_policy_description:
+         ~azure.servicefabric.models.BackupPolicyDescription
+        :param backup_policy_name: The name of the backup policy.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.update_backup_policy.metadata['url']
+        path_format_arguments = {
+            'backupPolicyName': self._serialize.url("backup_policy_name", backup_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(backup_policy_description, 'BackupPolicyDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    update_backup_policy.metadata = {'url': '/BackupRestore/BackupPolicies/{backupPolicyName}/$/Update'}
+
+    def enable_application_backup(
+            self, application_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enables periodic backup of stateful partitions under this Service
+        Fabric application.
+
+        Enables periodic backup of stateful partitions which are part of this
+        Service Fabric application. Each partition is backed up individually as
+        per the specified backup policy description.
+        Note only C# based Reliable Actor and Reliable Stateful services are
+        currently supported for periodic backup.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param backup_policy_name: Name of the backup policy to be used for
+         enabling periodic backups.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
+
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.enable_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    enable_application_backup.metadata = {'url': '/Applications/{applicationId}/$/EnableBackup'}
+
+    def disable_application_backup(
+            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Disables periodic backup of Service Fabric application.
+
+        Disables periodic backup of Service Fabric application which was
+        previously enabled.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.disable_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_application_backup.metadata = {'url': '/Applications/{applicationId}/$/DisableBackup'}
+
+    def get_application_backup_configuration_info(
+            self, application_id, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the Service Fabric application backup configuration information.
+
+        Gets the Service Fabric backup configuration information for the
+        application and the services and partitions under this application.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupConfigurationInfoList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupConfigurationInfoList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_application_backup_configuration_info.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupConfigurationInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_application_backup_configuration_info.metadata = {'url': '/Applications/{applicationId}/$/GetBackupConfigurationInfo'}
+
+    def get_application_backup_list(
+            self, application_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for every partition in this
+        application.
+
+        Returns a list of backups available for every partition in this Service
+        Fabric application. The server enumerates all the backups available at
+        the backup location configured in the backup policy. It also allows
+        filtering of the result based on start and end datetime or just
+        fetching the latest available backup for every partition.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param latest: Specifies whether to get only the most recent backup
+         available for a partition for the specified time range.
+        :type latest: bool
+        :param start_date_time_filter: Specify the start date time from which
+         to enumerate backups, in datetime format. The date time must be
+         specified in ISO8601 format. This is an optional parameter. If not
+         specified, all backups from the beginning are enumerated.
+        :type start_date_time_filter: datetime
+        :param end_date_time_filter: Specify the end date time till which to
+         enumerate backups, in datetime format. The date time must be specified
+         in ISO8601 format. This is an optional parameter. If not specified,
+         enumeration is done till the most recent backup.
+        :type end_date_time_filter: datetime
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_application_backup_list.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if latest is not None:
+            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+        if start_date_time_filter is not None:
+            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+        if end_date_time_filter is not None:
+            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_application_backup_list.metadata = {'url': '/Applications/{applicationId}/$/GetBackups'}
+
+    def suspend_application_backup(
+            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Suspends periodic backup for the specified Service Fabric application.
+
+        The application which is configured to take periodic backups, is
+        suspended for taking further backups till it is resumed again. This
+        operation applies to the entire application's hierarchy. It means all
+        the services and partitions under this application are now suspended
+        for backup.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.suspend_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    suspend_application_backup.metadata = {'url': '/Applications/{applicationId}/$/SuspendBackup'}
+
+    def resume_application_backup(
+            self, application_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Resumes periodic backup of a Service Fabric application which was
+        previously suspended.
+
+        The previously suspended Service Fabric application resumes taking
+        periodic backup as per the backup policy currently configured for the
+        same.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.resume_application_backup.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    resume_application_backup.metadata = {'url': '/Applications/{applicationId}/$/ResumeBackup'}
+
+    def enable_service_backup(
+            self, service_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enables periodic backup of stateful partitions under this Service
+        Fabric service.
+
+        Enables periodic backup of stateful partitions which are part of this
+        Service Fabric service. Each partition is backed up individually as per
+        the specified backup policy description. In case the application, which
+        the service is part of, is already enabled for backup then this
+        operation would override the policy being used to take the periodic
+        backup for this service and its partitions (unless explicitly
+        overridden at the partition level).
+        Note only C# based Reliable Actor and Reliable Stateful services are
+        currently supported for periodic backup.
+
+        :param service_id: The identity of the service. This is typically the
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param backup_policy_name: Name of the backup policy to be used for
+         enabling periodic backups.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
+
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.enable_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    enable_service_backup.metadata = {'url': '/Services/{serviceId}/$/EnableBackup'}
+
+    def disable_service_backup(
+            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Disables periodic backup of Service Fabric service which was previously
+        enabled.
+
+        Disables periodic backup of Service Fabric service which was previously
+        enabled. Backup must be explicitly enabled before it can be disabled.
+        In case the backup is enabled for the Service Fabric application, which
+        this service is part of, this service would continue to be periodically
+        backed up as per the policy mapped at the application level.
+
+        :param service_id: The identity of the service. This is typically the
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.disable_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_service_backup.metadata = {'url': '/Services/{serviceId}/$/DisableBackup'}
+
+    def get_service_backup_configuration_info(
+            self, service_id, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the Service Fabric service backup configuration information.
+
+        Gets the Service Fabric backup configuration information for the
+        service and the partitions under this service.
+
+        :param service_id: The identity of the service. This is typically the
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupConfigurationInfoList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupConfigurationInfoList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_service_backup_configuration_info.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupConfigurationInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_backup_configuration_info.metadata = {'url': '/Services/{serviceId}/$/GetBackupConfigurationInfo'}
+
+    def get_service_backup_list(
+            self, service_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for every partition in this service.
+
+        Returns a list of backups available for every partition in this Service
+        Fabric service. The server enumerates all the backups available in the
+        backup store configured in the backup policy. It also allows filtering
+        of the result based on start and end datetime or just fetching the
+        latest available backup for every partition.
+
+        :param service_id: The identity of the service. This is typically the
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param latest: Specifies whether to get only the most recent backup
+         available for a partition for the specified time range.
+        :type latest: bool
+        :param start_date_time_filter: Specify the start date time from which
+         to enumerate backups, in datetime format. The date time must be
+         specified in ISO8601 format. This is an optional parameter. If not
+         specified, all backups from the beginning are enumerated.
+        :type start_date_time_filter: datetime
+        :param end_date_time_filter: Specify the end date time till which to
+         enumerate backups, in datetime format. The date time must be specified
+         in ISO8601 format. This is an optional parameter. If not specified,
+         enumeration is done till the most recent backup.
+        :type end_date_time_filter: datetime
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_service_backup_list.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if latest is not None:
+            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+        if start_date_time_filter is not None:
+            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+        if end_date_time_filter is not None:
+            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_backup_list.metadata = {'url': '/Services/{serviceId}/$/GetBackups'}
+
+    def suspend_service_backup(
+            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Suspends periodic backup for the specified Service Fabric service.
+
+        The service which is configured to take periodic backups, is suspended
+        for taking further backups till it is resumed again. This operation
+        applies to the entire service's hierarchy. It means all the partitions
+        under this service are now suspended for backup.
+
+        :param service_id: The identity of the service. This is typically the
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.suspend_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    suspend_service_backup.metadata = {'url': '/Services/{serviceId}/$/SuspendBackup'}
+
+    def resume_service_backup(
+            self, service_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Resumes periodic backup of a Service Fabric service which was
+        previously suspended.
+
+        The previously suspended Service Fabric service resumes taking periodic
+        backup as per the backup policy currently configured for the same.
+
+        :param service_id: The identity of the service. This is typically the
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.resume_service_backup.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    resume_service_backup.metadata = {'url': '/Services/{serviceId}/$/ResumeBackup'}
+
+    def enable_partition_backup(
+            self, partition_id, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Enables periodic backup of the stateful persisted partition.
+
+        Enables periodic backup of stateful persisted partition. Each partition
+        is backed up as per the specified backup policy description. In case
+        the application or service, which is partition is part of, is already
+        enabled for backup then this operation would override the policy being
+        used to take the periodic backup of this partition.
+        Note only C# based Reliable Actor and Reliable Stateful services are
+        currently supported for periodic backup.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param backup_policy_name: Name of the backup policy to be used for
+         enabling periodic backups.
+        :type backup_policy_name: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        enable_backup_description = models.EnableBackupDescription(backup_policy_name=backup_policy_name)
+
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.enable_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(enable_backup_description, 'EnableBackupDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    enable_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/EnableBackup'}
+
+    def disable_partition_backup(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Disables periodic backup of Service Fabric partition which was
+        previously enabled.
+
+        Disables periodic backup of partition which was previously enabled.
+        Backup must be explicitly enabled before it can be disabled.
+        In case the backup is enabled for the Service Fabric application or
+        service, which this partition is part of, this partition would continue
+        to be periodically backed up as per the policy mapped at the higher
+        level entity.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.disable_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    disable_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/DisableBackup'}
+
+    def get_partition_backup_configuration_info(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets the partition backup configuration information.
+
+        Gets the Service Fabric Backup configuration information for the
+        specified partition.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PartitionBackupConfigurationInfo or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PartitionBackupConfigurationInfo
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partition_backup_configuration_info.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PartitionBackupConfigurationInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_backup_configuration_info.metadata = {'url': '/Partitions/{partitionId}/$/GetBackupConfigurationInfo'}
+
+    def get_partition_backup_list(
+            self, partition_id, timeout=60, latest=False, start_date_time_filter=None, end_date_time_filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for the specified partition.
+
+        Returns a list of backups available for the specified partition. The
+        server enumerates all the backups available in the backup store
+        configured in the backup policy. It also allows filtering of the result
+        based on start and end datetime or just fetching the latest available
+        backup for the partition.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param latest: Specifies whether to get only the most recent backup
+         available for a partition for the specified time range.
+        :type latest: bool
+        :param start_date_time_filter: Specify the start date time from which
+         to enumerate backups, in datetime format. The date time must be
+         specified in ISO8601 format. This is an optional parameter. If not
+         specified, all backups from the beginning are enumerated.
+        :type start_date_time_filter: datetime
+        :param end_date_time_filter: Specify the end date time till which to
+         enumerate backups, in datetime format. The date time must be specified
+         in ISO8601 format. This is an optional parameter. If not specified,
+         enumeration is done till the most recent backup.
+        :type end_date_time_filter: datetime
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partition_backup_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if latest is not None:
+            query_parameters['Latest'] = self._serialize.query("latest", latest, 'bool')
+        if start_date_time_filter is not None:
+            query_parameters['StartDateTimeFilter'] = self._serialize.query("start_date_time_filter", start_date_time_filter, 'iso-8601')
+        if end_date_time_filter is not None:
+            query_parameters['EndDateTimeFilter'] = self._serialize.query("end_date_time_filter", end_date_time_filter, 'iso-8601')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_backup_list.metadata = {'url': '/Partitions/{partitionId}/$/GetBackups'}
+
+    def suspend_partition_backup(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Suspends periodic backup for the specified partition.
+
+        The partition which is configured to take periodic backups, is
+        suspended for taking further backups till it is resumed again.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.suspend_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    suspend_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/SuspendBackup'}
+
+    def resume_partition_backup(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Resumes periodic backup of partition which was previously suspended.
+
+        The previously suspended partition resumes taking periodic backup as
+        per the backup policy currently configured for the same.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.resume_partition_backup.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    resume_partition_backup.metadata = {'url': '/Partitions/{partitionId}/$/ResumeBackup'}
+
+    def backup_partition(
+            self, partition_id, backup_timeout=10, timeout=60, backup_storage=None, custom_headers=None, raw=False, **operation_config):
+        """Triggers backup of the partition's state.
+
+        Creates a backup of the stateful persisted partition's state. In case
+        the partition is already being periodically backed up, then by default
+        the new backup is created at the same backup storage. One can also
+        override the same by specifying the backup storage details as part of
+        the request body. Once the backup is initiated, its progress can be
+        tracked using the GetBackupProgress operation.
+        In case, the operation times out, specify a greater backup timeout
+        value in the query parameter.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param backup_timeout: Specifies the maximum amount of time, in
+         minutes, to wait for the backup operation to complete. Post that, the
+         operation completes with timeout error. However, in certain corner
+         cases it could be that though the operation returns back timeout, the
+         backup actually goes through. In case of timeout error, its
+         recommended to invoke this operation again with a greater timeout
+         value. The default value for the same is 10 minutes.
+        :type backup_timeout: int
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param backup_storage: Specifies the details of the backup storage
+         where to save the backup.
+        :type backup_storage:
+         ~azure.servicefabric.models.BackupStorageDescription
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        backup_partition_description = None
+        if backup_storage is not None:
+            backup_partition_description = models.BackupPartitionDescription(backup_storage=backup_storage)
+
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.backup_partition.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if backup_timeout is not None:
+            query_parameters['BackupTimeout'] = self._serialize.query("backup_timeout", backup_timeout, 'int')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        if backup_partition_description is not None:
+            body_content = self._serialize.body(backup_partition_description, 'BackupPartitionDescription')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    backup_partition.metadata = {'url': '/Partitions/{partitionId}/$/Backup'}
+
+    def get_partition_backup_progress(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets details for the latest backup triggered for this partition.
+
+        Returns information about the state of the latest backup along with
+        details or failure reason in case of completion.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: BackupProgressInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.BackupProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partition_backup_progress.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('BackupProgressInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_backup_progress.metadata = {'url': '/Partitions/{partitionId}/$/GetBackupProgress'}
+
+    def restore_partition(
+            self, partition_id, restore_partition_description, restore_timeout=10, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Triggers restore of the state of the partition using the specified
+        restore partition description.
+
+        Restores the state of a of the stateful persisted partition using the
+        specified backup point. In case the partition is already being
+        periodically backed up, then by default the backup point is looked for
+        in the storage specified in backup policy. One can also override the
+        same by specifying the backup storage details as part of the restore
+        partition description in body. Once the restore is initiated, its
+        progress can be tracked using the GetRestoreProgress operation.
+        In case, the operation times out, specify a greater restore timeout
+        value in the query parameter.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param restore_partition_description: Describes the parameters to
+         restore the partition.
+        :type restore_partition_description:
+         ~azure.servicefabric.models.RestorePartitionDescription
+        :param restore_timeout: Specifies the maximum amount of time to wait,
+         in minutes, for the restore operation to complete. Post that, the
+         operation returns back with timeout error. However, in certain corner
+         cases it could be that the restore operation goes through even though
+         it completes with timeout. In case of timeout error, its recommended
+         to invoke this operation again with a greater timeout value. the
+         default value for the same is 10 minutes.
+        :type restore_timeout: int
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.restore_partition.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if restore_timeout is not None:
+            query_parameters['RestoreTimeout'] = self._serialize.query("restore_timeout", restore_timeout, 'int')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(restore_partition_description, 'RestorePartitionDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    restore_partition.metadata = {'url': '/Partitions/{partitionId}/$/Restore'}
+
+    def get_partition_restore_progress(
+            self, partition_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets details for the latest restore operation triggered for this
+        partition.
+
+        Returns information about the state of the latest restore operation
+        along with details or failure reason in case of completion.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: RestoreProgressInfo or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.RestoreProgressInfo or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partition_restore_progress.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('RestoreProgressInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_restore_progress.metadata = {'url': '/Partitions/{partitionId}/$/GetRestoreProgress'}
+
+    def get_backups_from_backup_location(
+            self, get_backup_by_storage_query_description, timeout=60, continuation_token=None, max_results=0, custom_headers=None, raw=False, **operation_config):
+        """Gets the list of backups available for the specified backed up entity
+        at the specified backup location.
+
+        Gets the list of backups available for the specified backed up entity
+        (Application, Service or Partition) at the specified backup location
+        (FileShare or Azure Blob Storage).
+
+        :param get_backup_by_storage_query_description: Describes the filters
+         and backup storage details to be used for enumerating backups.
+        :type get_backup_by_storage_query_description:
+         ~azure.servicefabric.models.GetBackupByStorageQueryDescription
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged queries includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedBackupInfoList or ClientRawResponse if raw=true
+        :rtype: ~azure.servicefabric.models.PagedBackupInfoList or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_backups_from_backup_location.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(get_backup_by_storage_query_description, 'GetBackupByStorageQueryDescription')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedBackupInfoList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_backups_from_backup_location.metadata = {'url': '/BackupRestore/$/GetBackups'}
 
     def create_name(
             self, name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11352,9 +13958,9 @@ class ServiceFabricClientAPIs(object):
          scheme.
         :type name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11371,7 +13977,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/$/Create'
+        url = self.create_name.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -11399,6 +14005,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    create_name.metadata = {'url': '/Names/$/Create'}
 
     def get_name_exists_info(
             self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11410,9 +14017,9 @@ class ServiceFabricClientAPIs(object):
          scheme.
         :type name_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11427,7 +14034,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}'
+        url = self.get_name_exists_info.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11455,6 +14062,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    get_name_exists_info.metadata = {'url': '/Names/{nameId}'}
 
     def delete_name(
             self, name_id, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11468,9 +14076,9 @@ class ServiceFabricClientAPIs(object):
          scheme.
         :type name_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11485,7 +14093,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}'
+        url = self.delete_name.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11513,6 +14121,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_name.metadata = {'url': '/Names/{nameId}'}
 
     def get_sub_name_info_list(
             self, name_id, recursive=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11538,9 +14147,9 @@ class ServiceFabricClientAPIs(object):
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11556,7 +14165,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}/$/GetSubNames'
+        url = self.get_sub_name_info_list.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11595,6 +14204,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_sub_name_info_list.metadata = {'url': '/Names/{nameId}/$/GetSubNames'}
 
     def get_property_info_list(
             self, name_id, include_values=False, continuation_token=None, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11621,9 +14231,9 @@ class ServiceFabricClientAPIs(object):
          value. The value of this parameter should not be URL encoded.
         :type continuation_token: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11639,7 +14249,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}/$/GetProperties'
+        url = self.get_property_info_list.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11678,6 +14288,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_property_info_list.metadata = {'url': '/Names/{nameId}/$/GetProperties'}
 
     def put_property(
             self, name_id, property_description, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11694,9 +14305,9 @@ class ServiceFabricClientAPIs(object):
         :type property_description:
          ~azure.servicefabric.models.PropertyDescription
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11711,7 +14322,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}/$/GetProperty'
+        url = self.put_property.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11743,6 +14354,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    put_property.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
 
     def get_property_info(
             self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11757,9 +14369,9 @@ class ServiceFabricClientAPIs(object):
         :param property_name: Specifies the name of the property to get.
         :type property_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11775,7 +14387,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}/$/GetProperty'
+        url = self.get_property_info.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11811,6 +14423,7 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    get_property_info.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
 
     def delete_property(
             self, name_id, property_name, timeout=60, custom_headers=None, raw=False, **operation_config):
@@ -11825,9 +14438,9 @@ class ServiceFabricClientAPIs(object):
         :param property_name: Specifies the name of the property to get.
         :type property_name: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -11842,7 +14455,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}/$/GetProperty'
+        url = self.delete_property.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11871,6 +14484,7 @@ class ServiceFabricClientAPIs(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_property.metadata = {'url': '/Names/{nameId}/$/GetProperty'}
 
     def submit_property_batch(
             self, name_id, timeout=60, operations=None, custom_headers=None, raw=False, **operation_config):
@@ -11883,9 +14497,9 @@ class ServiceFabricClientAPIs(object):
          scheme.
         :type name_id: str
         :param timeout: The server timeout for performing the operation in
-         seconds. This specifies the time duration that the client is willing
-         to wait for the requested operation to complete. The default value for
-         this parameter is 60 seconds.
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
         :type timeout: long
         :param operations: A list of the property batch operations to be
          executed.
@@ -11907,7 +14521,7 @@ class ServiceFabricClientAPIs(object):
         api_version = "6.0"
 
         # Construct URL
-        url = '/Names/{nameId}/$/GetProperties/$/SubmitBatch'
+        url = self.submit_property_batch.metadata['url']
         path_format_arguments = {
             'nameId': self._serialize.url("name_id", name_id, 'str', skip_quote=True)
         }
@@ -11948,3 +14562,1128 @@ class ServiceFabricClientAPIs(object):
             return client_raw_response
 
         return deserialized
+    submit_property_batch.metadata = {'url': '/Names/{nameId}/$/GetProperties/$/SubmitBatch'}
+
+    def get_cluster_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Cluster-related events.
+
+        The response is list of ClusterEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ClusterEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_cluster_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ClusterEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cluster_event_list.metadata = {'url': '/EventsStore/Cluster/Events'}
+
+    def get_containers_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Containers-related events.
+
+        The response is list of ContainerInstanceEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ContainerInstanceEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_containers_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ContainerInstanceEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_containers_event_list.metadata = {'url': '/EventsStore/Containers/Events'}
+
+    def get_node_event_list(
+            self, node_name, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Node-related events.
+
+        The response is list of NodeEvent objects.
+
+        :param node_name: The name of the node.
+        :type node_name: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.NodeEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_node_event_list.metadata['url']
+        path_format_arguments = {
+            'nodeName': self._serialize.url("node_name", node_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[NodeEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_node_event_list.metadata = {'url': '/EventsStore/Nodes/{nodeName}/$/Events'}
+
+    def get_nodes_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Nodes-related Events.
+
+        The response is list of NodeEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.NodeEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_nodes_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[NodeEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_nodes_event_list.metadata = {'url': '/EventsStore/Nodes/Events'}
+
+    def get_application_event_list(
+            self, application_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets an Application-related events.
+
+        The response is list of ApplicationEvent objects.
+
+        :param application_id: The identity of the application. This is
+         typically the full name of the application without the 'fabric:' URI
+         scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the application name is "fabric:/myapp/app1", the
+         application identity would be "myapp~app1" in 6.0+ and "myapp/app1" in
+         previous versions.
+        :type application_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ApplicationEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_application_event_list.metadata['url']
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ApplicationEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_application_event_list.metadata = {'url': '/EventsStore/Applications/{applicationId}/$/Events'}
+
+    def get_applications_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Applications-related events.
+
+        The response is list of ApplicationEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ApplicationEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_applications_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ApplicationEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_applications_event_list.metadata = {'url': '/EventsStore/Applications/Events'}
+
+    def get_service_event_list(
+            self, service_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Service-related events.
+
+        The response is list of ServiceEvent objects.
+
+        :param service_id: The identity of the service. This is typically the
+         full name of the service without the 'fabric:' URI scheme.
+         Starting from version 6.0, hierarchical names are delimited with the
+         "~" character.
+         For example, if the service name is "fabric:/myapp/app1/svc1", the
+         service identity would be "myapp~app1~svc1" in 6.0+ and
+         "myapp/app1/svc1" in previous versions.
+        :type service_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ServiceEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_service_event_list.metadata['url']
+        path_format_arguments = {
+            'serviceId': self._serialize.url("service_id", service_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ServiceEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_service_event_list.metadata = {'url': '/EventsStore/Services/{serviceId}/$/Events'}
+
+    def get_services_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Services-related events.
+
+        The response is list of ServiceEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ServiceEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_services_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ServiceEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_services_event_list.metadata = {'url': '/EventsStore/Services/Events'}
+
+    def get_partition_event_list(
+            self, partition_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Partition-related events.
+
+        The response is list of PartitionEvent objects.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.PartitionEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partition_event_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[PartitionEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Events'}
+
+    def get_partitions_event_list(
+            self, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Partitions-related events.
+
+        The response is list of PartitionEvent objects.
+
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.PartitionEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partitions_event_list.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[PartitionEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partitions_event_list.metadata = {'url': '/EventsStore/Partitions/Events'}
+
+    def get_partition_replica_event_list(
+            self, partition_id, replica_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a Partition Replica-related events.
+
+        The response is list of ReplicaEvent objects.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param replica_id: The identifier of the replica.
+        :type replica_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ReplicaEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partition_replica_event_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True),
+            'replicaId': self._serialize.url("replica_id", replica_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ReplicaEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_replica_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Replicas/{replicaId}/$/Events'}
+
+    def get_partition_replicas_event_list(
+            self, partition_id, start_time_utc, end_time_utc, timeout=60, events_types_filter=None, exclude_analysis_events=None, skip_correlation_lookup=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all Replicas-related events for a Partition.
+
+        The response is list of ReplicaEvent objects.
+
+        :param partition_id: The identity of the partition.
+        :type partition_id: str
+        :param start_time_utc: The start time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type start_time_utc: str
+        :param end_time_utc: The end time of a lookup query in ISO UTC
+         yyyy-MM-ddTHH:mm:ssZ.
+        :type end_time_utc: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param events_types_filter: This is a comma separated string
+         specifying the types of FabricEvents that should only be included in
+         the response.
+        :type events_types_filter: str
+        :param exclude_analysis_events: This param disables the retrieval of
+         AnalysisEvents if true is passed.
+        :type exclude_analysis_events: bool
+        :param skip_correlation_lookup: This param disables the search of
+         CorrelatedEvents information if true is passed. otherwise the
+         CorrelationEvents get processed and HasCorrelatedEvents field in every
+         FabricEvent gets populated.
+        :type skip_correlation_lookup: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.ReplicaEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_partition_replicas_event_list.metadata['url']
+        path_format_arguments = {
+            'partitionId': self._serialize.url("partition_id", partition_id, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+        query_parameters['StartTimeUtc'] = self._serialize.query("start_time_utc", start_time_utc, 'str')
+        query_parameters['EndTimeUtc'] = self._serialize.query("end_time_utc", end_time_utc, 'str')
+        if events_types_filter is not None:
+            query_parameters['EventsTypesFilter'] = self._serialize.query("events_types_filter", events_types_filter, 'str')
+        if exclude_analysis_events is not None:
+            query_parameters['ExcludeAnalysisEvents'] = self._serialize.query("exclude_analysis_events", exclude_analysis_events, 'bool')
+        if skip_correlation_lookup is not None:
+            query_parameters['SkipCorrelationLookup'] = self._serialize.query("skip_correlation_lookup", skip_correlation_lookup, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[ReplicaEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_partition_replicas_event_list.metadata = {'url': '/EventsStore/Partitions/{partitionId}/$/Replicas/Events'}
+
+    def get_correlated_event_list(
+            self, event_instance_id, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Gets all correlated events for a given event.
+
+        The response is list of FabricEvents.
+
+        :param event_instance_id: The EventInstanceId.
+        :type event_instance_id: str
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: list or ClientRawResponse if raw=true
+        :rtype: list[~azure.servicefabric.models.FabricEvent] or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "6.2-preview"
+
+        # Construct URL
+        url = self.get_correlated_event_list.metadata['url']
+        path_format_arguments = {
+            'eventInstanceId': self._serialize.url("event_instance_id", event_instance_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('[FabricEvent]', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_correlated_event_list.metadata = {'url': '/EventsStore/CorrelatedEvents/{eventInstanceId}/$/Events'}

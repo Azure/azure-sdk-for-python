@@ -45,7 +45,7 @@ class ClusterUpgradeHealthPolicyObject(Model):
         'max_percent_upgrade_domain_delta_unhealthy_nodes': {'key': 'MaxPercentUpgradeDomainDeltaUnhealthyNodes', 'type': 'int'},
     }
 
-    def __init__(self, max_percent_delta_unhealthy_nodes=None, max_percent_upgrade_domain_delta_unhealthy_nodes=None):
-        super(ClusterUpgradeHealthPolicyObject, self).__init__()
-        self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
-        self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes
+    def __init__(self, **kwargs):
+        super(ClusterUpgradeHealthPolicyObject, self).__init__(**kwargs)
+        self.max_percent_delta_unhealthy_nodes = kwargs.get('max_percent_delta_unhealthy_nodes', None)
+        self.max_percent_upgrade_domain_delta_unhealthy_nodes = kwargs.get('max_percent_upgrade_domain_delta_unhealthy_nodes', None)

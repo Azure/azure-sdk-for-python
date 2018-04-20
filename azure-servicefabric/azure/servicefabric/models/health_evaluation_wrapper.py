@@ -25,6 +25,6 @@ class HealthEvaluationWrapper(Model):
         'health_evaluation': {'key': 'HealthEvaluation', 'type': 'HealthEvaluation'},
     }
 
-    def __init__(self, health_evaluation=None):
-        super(HealthEvaluationWrapper, self).__init__()
-        self.health_evaluation = health_evaluation
+    def __init__(self, **kwargs):
+        super(HealthEvaluationWrapper, self).__init__(**kwargs)
+        self.health_evaluation = kwargs.get('health_evaluation', None)

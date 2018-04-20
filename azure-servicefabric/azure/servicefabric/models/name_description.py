@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class NameDescription(Model):
     """Describes a Service Fabric name.
 
-    :param name: The Service Fabric name, including the 'fabric:' URI scheme.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The Service Fabric name, including the 'fabric:'
+     URI scheme.
     :type name: str
     """
 
@@ -27,6 +30,6 @@ class NameDescription(Model):
         'name': {'key': 'Name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        super(NameDescription, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(NameDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

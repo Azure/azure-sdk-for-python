@@ -18,7 +18,9 @@ class PropertyBatchInfo(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SuccessfulPropertyBatchInfo, FailedPropertyBatchInfo
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
@@ -34,6 +36,6 @@ class PropertyBatchInfo(Model):
         'kind': {'Successful': 'SuccessfulPropertyBatchInfo', 'Failed': 'FailedPropertyBatchInfo'}
     }
 
-    def __init__(self):
-        super(PropertyBatchInfo, self).__init__()
+    def __init__(self, **kwargs):
+        super(PropertyBatchInfo, self).__init__(**kwargs)
         self.kind = None

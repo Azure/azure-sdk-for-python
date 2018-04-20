@@ -16,9 +16,10 @@ class NodeRepairImpactDescription(RepairImpactDescriptionBase):
     """Describes the expected impact of a repair on a set of nodes.
     This type supports the Service Fabric platform; it is not meant to be used
     directly from your code.
-    .
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param node_impact_list: The list of nodes impacted by a repair action and
      their respective expected impact.
@@ -34,7 +35,7 @@ class NodeRepairImpactDescription(RepairImpactDescriptionBase):
         'node_impact_list': {'key': 'NodeImpactList', 'type': '[NodeImpact]'},
     }
 
-    def __init__(self, node_impact_list=None):
-        super(NodeRepairImpactDescription, self).__init__()
-        self.node_impact_list = node_impact_list
+    def __init__(self, **kwargs):
+        super(NodeRepairImpactDescription, self).__init__(**kwargs)
+        self.node_impact_list = kwargs.get('node_impact_list', None)
         self.kind = 'Node'

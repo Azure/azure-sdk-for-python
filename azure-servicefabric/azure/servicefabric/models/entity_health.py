@@ -15,14 +15,13 @@ from msrest.serialization import Model
 class EntityHealth(Model):
     """Health information common to all entities in the cluster. It contains the
     aggregated health state, health events and unhealthy evaluation.
-    .
 
     :param aggregated_health_state: The HealthState representing the
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
      entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+     The aggregation is done by applying the desired health policy. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str or
      ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.
@@ -43,9 +42,9 @@ class EntityHealth(Model):
         'health_statistics': {'key': 'HealthStatistics', 'type': 'HealthStatistics'},
     }
 
-    def __init__(self, aggregated_health_state=None, health_events=None, unhealthy_evaluations=None, health_statistics=None):
-        super(EntityHealth, self).__init__()
-        self.aggregated_health_state = aggregated_health_state
-        self.health_events = health_events
-        self.unhealthy_evaluations = unhealthy_evaluations
-        self.health_statistics = health_statistics
+    def __init__(self, **kwargs):
+        super(EntityHealth, self).__init__(**kwargs)
+        self.aggregated_health_state = kwargs.get('aggregated_health_state', None)
+        self.health_events = kwargs.get('health_events', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
+        self.health_statistics = kwargs.get('health_statistics', None)

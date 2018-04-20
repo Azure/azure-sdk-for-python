@@ -29,7 +29,7 @@ class NodeDeactivationTaskId(Model):
         'node_deactivation_task_type': {'key': 'NodeDeactivationTaskType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, node_deactivation_task_type=None):
-        super(NodeDeactivationTaskId, self).__init__()
-        self.id = id
-        self.node_deactivation_task_type = node_deactivation_task_type
+    def __init__(self, **kwargs):
+        super(NodeDeactivationTaskId, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.node_deactivation_task_type = kwargs.get('node_deactivation_task_type', None)

@@ -34,9 +34,9 @@ class FileInfo(Model):
         'store_relative_path': {'key': 'StoreRelativePath', 'type': 'str'},
     }
 
-    def __init__(self, file_size=None, file_version=None, modified_date=None, store_relative_path=None):
-        super(FileInfo, self).__init__()
-        self.file_size = file_size
-        self.file_version = file_version
-        self.modified_date = modified_date
-        self.store_relative_path = store_relative_path
+    def __init__(self, **kwargs):
+        super(FileInfo, self).__init__(**kwargs)
+        self.file_size = kwargs.get('file_size', None)
+        self.file_version = kwargs.get('file_version', None)
+        self.modified_date = kwargs.get('modified_date', None)
+        self.store_relative_path = kwargs.get('store_relative_path', None)

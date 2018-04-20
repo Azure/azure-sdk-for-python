@@ -21,7 +21,7 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
      'fabric:' URI scheme.
     :type application_name: str
     :param upgrade_state: The state of the compose deployment upgrade.
-     . Possible values include: 'Invalid', 'ProvisioningTarget',
+     Possible values include: 'Invalid', 'ProvisioningTarget',
      'RollingForwardInProgress', 'RollingForwardPending',
      'UnprovisioningCurrent', 'RollingForwardCompleted',
      'RollingBackInProgress', 'UnprovisioningTarget', 'RollingBackCompleted',
@@ -36,7 +36,8 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
      "Rolling" .
     :type upgrade_kind: str or ~azure.servicefabric.models.UpgradeKind
     :param rolling_upgrade_mode: The mode used to monitor health during a
-     rolling upgrade. Possible values include: 'Invalid', 'UnmonitoredAuto',
+     rolling upgrade. The values are UnmonitoredAuto, UnmonitoredManual, and
+     Monitored. Possible values include: 'Invalid', 'UnmonitoredAuto',
      'UnmonitoredManual', 'Monitored'. Default value: "UnmonitoredAuto" .
     :type rolling_upgrade_mode: str or ~azure.servicefabric.models.UpgradeMode
     :param force_restart: If true, then processes are forcefully restarted
@@ -123,25 +124,25 @@ class ComposeDeploymentUpgradeProgressInfo(Model):
         'application_upgrade_status_details': {'key': 'ApplicationUpgradeStatusDetails', 'type': 'str'},
     }
 
-    def __init__(self, deployment_name=None, application_name=None, upgrade_state=None, upgrade_status_details=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", force_restart=None, upgrade_replica_set_check_timeout_in_seconds=None, monitoring_policy=None, application_health_policy=None, target_application_type_version=None, upgrade_duration=None, current_upgrade_domain_duration=None, application_unhealthy_evaluations=None, current_upgrade_domain_progress=None, start_timestamp_utc=None, failure_timestamp_utc=None, failure_reason=None, upgrade_domain_progress_at_failure=None, application_upgrade_status_details=None):
-        super(ComposeDeploymentUpgradeProgressInfo, self).__init__()
-        self.deployment_name = deployment_name
-        self.application_name = application_name
-        self.upgrade_state = upgrade_state
-        self.upgrade_status_details = upgrade_status_details
-        self.upgrade_kind = upgrade_kind
-        self.rolling_upgrade_mode = rolling_upgrade_mode
-        self.force_restart = force_restart
-        self.upgrade_replica_set_check_timeout_in_seconds = upgrade_replica_set_check_timeout_in_seconds
-        self.monitoring_policy = monitoring_policy
-        self.application_health_policy = application_health_policy
-        self.target_application_type_version = target_application_type_version
-        self.upgrade_duration = upgrade_duration
-        self.current_upgrade_domain_duration = current_upgrade_domain_duration
-        self.application_unhealthy_evaluations = application_unhealthy_evaluations
-        self.current_upgrade_domain_progress = current_upgrade_domain_progress
-        self.start_timestamp_utc = start_timestamp_utc
-        self.failure_timestamp_utc = failure_timestamp_utc
-        self.failure_reason = failure_reason
-        self.upgrade_domain_progress_at_failure = upgrade_domain_progress_at_failure
-        self.application_upgrade_status_details = application_upgrade_status_details
+    def __init__(self, **kwargs):
+        super(ComposeDeploymentUpgradeProgressInfo, self).__init__(**kwargs)
+        self.deployment_name = kwargs.get('deployment_name', None)
+        self.application_name = kwargs.get('application_name', None)
+        self.upgrade_state = kwargs.get('upgrade_state', None)
+        self.upgrade_status_details = kwargs.get('upgrade_status_details', None)
+        self.upgrade_kind = kwargs.get('upgrade_kind', "Rolling")
+        self.rolling_upgrade_mode = kwargs.get('rolling_upgrade_mode', "UnmonitoredAuto")
+        self.force_restart = kwargs.get('force_restart', None)
+        self.upgrade_replica_set_check_timeout_in_seconds = kwargs.get('upgrade_replica_set_check_timeout_in_seconds', None)
+        self.monitoring_policy = kwargs.get('monitoring_policy', None)
+        self.application_health_policy = kwargs.get('application_health_policy', None)
+        self.target_application_type_version = kwargs.get('target_application_type_version', None)
+        self.upgrade_duration = kwargs.get('upgrade_duration', None)
+        self.current_upgrade_domain_duration = kwargs.get('current_upgrade_domain_duration', None)
+        self.application_unhealthy_evaluations = kwargs.get('application_unhealthy_evaluations', None)
+        self.current_upgrade_domain_progress = kwargs.get('current_upgrade_domain_progress', None)
+        self.start_timestamp_utc = kwargs.get('start_timestamp_utc', None)
+        self.failure_timestamp_utc = kwargs.get('failure_timestamp_utc', None)
+        self.failure_reason = kwargs.get('failure_reason', None)
+        self.upgrade_domain_progress_at_failure = kwargs.get('upgrade_domain_progress_at_failure', None)
+        self.application_upgrade_status_details = kwargs.get('application_upgrade_status_details', None)

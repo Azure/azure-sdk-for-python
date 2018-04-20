@@ -21,13 +21,15 @@ class ProvisionApplicationTypeDescriptionBase(Model):
     sub-classes are: ProvisionApplicationTypeDescription,
     ExternalStoreProvisionApplicationTypeDescription
 
-    :param async_property: Indicates whether or not provisioning should occur
-     asynchronously. When set to true, the provision operation returns when the
-     request is accepted by the system, and the provision operation continues
-     without any timeout limit. The default value is false. For large
-     application packages, we recommend setting the value to true.
+    All required parameters must be populated in order to send to Azure.
+
+    :param async_property: Required. Indicates whether or not provisioning
+     should occur asynchronously. When set to true, the provision operation
+     returns when the request is accepted by the system, and the provision
+     operation continues without any timeout limit. The default value is false.
+     For large application packages, we recommend setting the value to true.
     :type async_property: bool
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
@@ -45,7 +47,7 @@ class ProvisionApplicationTypeDescriptionBase(Model):
         'kind': {'ImageStorePath': 'ProvisionApplicationTypeDescription', 'ExternalStore': 'ExternalStoreProvisionApplicationTypeDescription'}
     }
 
-    def __init__(self, async_property):
-        super(ProvisionApplicationTypeDescriptionBase, self).__init__()
-        self.async_property = async_property
+    def __init__(self, **kwargs):
+        super(ProvisionApplicationTypeDescriptionBase, self).__init__(**kwargs)
+        self.async_property = kwargs.get('async_property', None)
         self.kind = None

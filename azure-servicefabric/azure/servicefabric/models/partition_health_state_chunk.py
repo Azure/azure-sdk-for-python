@@ -14,9 +14,8 @@ from .entity_health_state_chunk import EntityHealthStateChunk
 
 class PartitionHealthStateChunk(EntityHealthStateChunk):
     """Represents the health state chunk of a partition, which contains the
-    partition id, its aggregated health state and any replicas that respect the
+    partition ID, its aggregated health state and any replicas that respect the
     filters in the cluster health chunk query description.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
@@ -37,7 +36,7 @@ class PartitionHealthStateChunk(EntityHealthStateChunk):
         'replica_health_state_chunks': {'key': 'ReplicaHealthStateChunks', 'type': 'ReplicaHealthStateChunkList'},
     }
 
-    def __init__(self, health_state=None, partition_id=None, replica_health_state_chunks=None):
-        super(PartitionHealthStateChunk, self).__init__(health_state=health_state)
-        self.partition_id = partition_id
-        self.replica_health_state_chunks = replica_health_state_chunks
+    def __init__(self, **kwargs):
+        super(PartitionHealthStateChunk, self).__init__(**kwargs)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.replica_health_state_chunks = kwargs.get('replica_health_state_chunks', None)

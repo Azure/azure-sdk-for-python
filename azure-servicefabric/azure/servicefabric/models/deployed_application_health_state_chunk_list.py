@@ -16,7 +16,6 @@ class DeployedApplicationHealthStateChunkList(Model):
     """The list of deployed application health state chunks that respect the input
     filters in the chunk query. Returned by get cluster health state chunks
     query.
-    .
 
     :param items: The list of deployed application health state chunks that
      respect the input filters in the chunk query.
@@ -28,6 +27,6 @@ class DeployedApplicationHealthStateChunkList(Model):
         'items': {'key': 'Items', 'type': '[DeployedApplicationHealthStateChunk]'},
     }
 
-    def __init__(self, items=None):
-        super(DeployedApplicationHealthStateChunkList, self).__init__()
-        self.items = items
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

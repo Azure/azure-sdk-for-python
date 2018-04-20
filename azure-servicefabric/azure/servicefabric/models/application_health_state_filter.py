@@ -17,7 +17,6 @@ class ApplicationHealthStateFilter(Model):
     included in the cluster health chunk.
     One filter can match zero, one or multiple applications, depending on its
     properties.
-    .
 
     :param application_name_filter: The name of the application that matches
      the filter, as a fabric uri. The filter is applied only to the specified
@@ -63,8 +62,7 @@ class ApplicationHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535.
-     . Default value: 0 .
+     65535. Default value: 0 .
     :type health_state_filter: int
     :param service_filters: Defines a list of filters that specify which
      services to be included in the returned cluster health chunk as children
@@ -102,10 +100,10 @@ class ApplicationHealthStateFilter(Model):
         'deployed_application_filters': {'key': 'DeployedApplicationFilters', 'type': '[DeployedApplicationHealthStateFilter]'},
     }
 
-    def __init__(self, application_name_filter=None, application_type_name_filter=None, health_state_filter=0, service_filters=None, deployed_application_filters=None):
-        super(ApplicationHealthStateFilter, self).__init__()
-        self.application_name_filter = application_name_filter
-        self.application_type_name_filter = application_type_name_filter
-        self.health_state_filter = health_state_filter
-        self.service_filters = service_filters
-        self.deployed_application_filters = deployed_application_filters
+    def __init__(self, **kwargs):
+        super(ApplicationHealthStateFilter, self).__init__(**kwargs)
+        self.application_name_filter = kwargs.get('application_name_filter', None)
+        self.application_type_name_filter = kwargs.get('application_type_name_filter', None)
+        self.health_state_filter = kwargs.get('health_state_filter', 0)
+        self.service_filters = kwargs.get('service_filters', None)
+        self.deployed_application_filters = kwargs.get('deployed_application_filters', None)
