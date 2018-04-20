@@ -88,7 +88,7 @@ class DatabaseSecurityAlertPolicy(ProxyResource):
     }
 
     def __init__(self, *, state, location: str=None, disabled_alerts: str=None, email_addresses: str=None, email_account_admins=None, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, use_server_default=None, **kwargs) -> None:
-        super(DatabaseSecurityAlertPolicy, self).__init__(, **kwargs)
+        super(DatabaseSecurityAlertPolicy, self).__init__(**kwargs)
         self.location = location
         self.kind = None
         self.state = state

@@ -43,5 +43,5 @@ class ServerDnsAlias(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ServerDnsAlias, self).__init__(, **kwargs)
+        super(ServerDnsAlias, self).__init__(**kwargs)
         self.azure_dns_record = None

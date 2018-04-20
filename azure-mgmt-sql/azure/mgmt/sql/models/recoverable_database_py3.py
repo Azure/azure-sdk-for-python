@@ -57,7 +57,7 @@ class RecoverableDatabase(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(RecoverableDatabase, self).__init__(, **kwargs)
+        super(RecoverableDatabase, self).__init__(**kwargs)
         self.edition = None
         self.service_level_objective = None
         self.elastic_pool_name = None

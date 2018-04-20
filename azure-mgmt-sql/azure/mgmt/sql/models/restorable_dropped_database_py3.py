@@ -77,7 +77,7 @@ class RestorableDroppedDatabase(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(RestorableDroppedDatabase, self).__init__(, **kwargs)
+        super(RestorableDroppedDatabase, self).__init__(**kwargs)
         self.location = None
         self.database_name = None
         self.edition = None

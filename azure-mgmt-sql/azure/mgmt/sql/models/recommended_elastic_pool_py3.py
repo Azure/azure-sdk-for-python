@@ -86,7 +86,7 @@ class RecommendedElasticPool(ProxyResource):
     }
 
     def __init__(self, *, dtu: float=None, database_dtu_min: float=None, database_dtu_max: float=None, storage_mb: float=None, **kwargs) -> None:
-        super(RecommendedElasticPool, self).__init__(, **kwargs)
+        super(RecommendedElasticPool, self).__init__(**kwargs)
         self.database_edition = None
         self.dtu = dtu
         self.database_dtu_min = database_dtu_min

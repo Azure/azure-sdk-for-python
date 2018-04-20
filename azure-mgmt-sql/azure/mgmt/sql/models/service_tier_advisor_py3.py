@@ -135,7 +135,7 @@ class ServiceTierAdvisor(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ServiceTierAdvisor, self).__init__(, **kwargs)
+        super(ServiceTierAdvisor, self).__init__(**kwargs)
         self.observation_period_start = None
         self.observation_period_end = None
         self.active_time_ratio = None

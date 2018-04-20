@@ -98,7 +98,7 @@ class DatabaseOperation(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(DatabaseOperation, self).__init__(, **kwargs)
+        super(DatabaseOperation, self).__init__(**kwargs)
         self.database_name = None
         self.operation = None
         self.operation_friendly_name = None
