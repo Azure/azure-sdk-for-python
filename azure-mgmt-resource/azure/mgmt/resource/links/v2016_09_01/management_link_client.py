@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -49,7 +49,7 @@ class ManagementLinkClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ManagementLinkClient(object):
+class ManagementLinkClient(SDKClient):
     """Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link.
 
     :ivar config: Configuration for client.
@@ -70,7 +70,7 @@ class ManagementLinkClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ManagementLinkClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ManagementLinkClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-09-01'

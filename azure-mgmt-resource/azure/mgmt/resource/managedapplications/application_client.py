@@ -9,12 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.applications_operations import ApplicationsOperations
 from .operations.application_definitions_operations import ApplicationDefinitionsOperations
+from .operations.solutions_operations import SolutionsOperations
 from . import models
 
 
@@ -50,7 +51,7 @@ class ApplicationClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ApplicationClient(object):
+class ApplicationClient(SDKClient):
     """ARM applications
 
     :ivar config: Configuration for client.
@@ -60,6 +61,8 @@ class ApplicationClient(object):
     :vartype applications: azure.mgmt.resource.managedapplications.operations.ApplicationsOperations
     :ivar application_definitions: ApplicationDefinitions operations
     :vartype application_definitions: azure.mgmt.resource.managedapplications.operations.ApplicationDefinitionsOperations
+    :ivar solutions: Solutions operations
+    :vartype solutions: azure.mgmt.resource.managedapplications.operations.SolutionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -73,7 +76,7 @@ class ApplicationClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ApplicationClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ApplicationClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-09-01'
@@ -83,4 +86,6 @@ class ApplicationClient(object):
         self.applications = ApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.application_definitions = ApplicationDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.solutions = SolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
