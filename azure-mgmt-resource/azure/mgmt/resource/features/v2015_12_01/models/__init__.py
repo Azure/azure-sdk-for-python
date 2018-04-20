@@ -12,13 +12,22 @@
 try:
     from .feature_properties_py3 import FeatureProperties
     from .feature_result_py3 import FeatureResult
+    from .operation_display_py3 import OperationDisplay
+    from .operation_definition_py3 import OperationDefinition
+    from .operations_list_py3 import OperationsList
 except (SyntaxError, ImportError):
     from .feature_properties import FeatureProperties
     from .feature_result import FeatureResult
+    from .operation_display import OperationDisplay
+    from .operation_definition import OperationDefinition
+    from .operations_list import OperationsList
 from .feature_result_paged import FeatureResultPaged
 
 __all__ = [
     'FeatureProperties',
     'FeatureResult',
+    'OperationDisplay',
+    'OperationDefinition',
+    'OperationsList',
     'FeatureResultPaged',
 ]
