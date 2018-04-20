@@ -65,7 +65,7 @@ class PipelineResource(SubResource):
     }
 
     def __init__(self, *, additional_properties=None, description: str=None, activities=None, parameters=None, concurrency: int=None, annotations=None, **kwargs) -> None:
-        super(PipelineResource, self).__init__(, **kwargs)
+        super(PipelineResource, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.description = description
         self.activities = activities
