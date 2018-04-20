@@ -18,6 +18,8 @@ class LiveOutput(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
@@ -26,11 +28,11 @@ class LiveOutput(ProxyResource):
     :vartype type: str
     :param description: The description of the Live Output.
     :type description: str
-    :param asset_name: The asset name.
+    :param asset_name: Required. The asset name.
     :type asset_name: str
-    :param archive_window_length: ISO 8601 timespan duration of the archive
-     window length. This is duration that customer want to retain the recorded
-     content.
+    :param archive_window_length: Required. ISO 8601 timespan duration of the
+     archive window length. This is duration that customer want to retain the
+     recorded content.
     :type archive_window_length: timedelta
     :param manifest_name: The manifest file name.
     :type manifest_name: str
@@ -54,6 +56,8 @@ class LiveOutput(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'asset_name': {'required': True},
+        'archive_window_length': {'required': True},
         'created': {'readonly': True},
         'last_modified': {'readonly': True},
         'provisioning_state': {'readonly': True},

@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class LiveEventInput(Model):
     """The Live Event input.
 
-    :param streaming_protocol: The streaming protocol for the Live Event.
-     Possible values include: 'FragmentedMP4', 'RTMP'
+    All required parameters must be populated in order to send to Azure.
+
+    :param streaming_protocol: Required. The streaming protocol for the Live
+     Event. Possible values include: 'FragmentedMP4', 'RTMP'
     :type streaming_protocol: str or
      ~azure.mgmt.media.models.LiveEventInputProtocol
     :param key_frame_interval_duration: ISO 8601 timespan duration of the key
@@ -27,6 +29,10 @@ class LiveEventInput(Model):
     :param endpoints: The input endpoints for the Live Event.
     :type endpoints: list[~azure.mgmt.media.models.LiveEventEndpoint]
     """
+
+    _validation = {
+        'streaming_protocol': {'required': True},
+    }
 
     _attribute_map = {
         'streaming_protocol': {'key': 'streamingProtocol', 'type': 'LiveEventInputProtocol'},

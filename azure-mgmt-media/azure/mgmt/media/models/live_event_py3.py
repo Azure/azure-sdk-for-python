@@ -18,6 +18,8 @@ class LiveEvent(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
@@ -30,7 +32,7 @@ class LiveEvent(TrackedResource):
     :type location: str
     :param description: The Live Event description.
     :type description: str
-    :param input: The Live Event input.
+    :param input: Required. The Live Event input.
     :type input: ~azure.mgmt.media.models.LiveEventInput
     :param preview: The Live Event preview.
     :type preview: ~azure.mgmt.media.models.LiveEventPreview
@@ -60,6 +62,7 @@ class LiveEvent(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'input': {'required': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
         'created': {'readonly': True},
@@ -85,7 +88,7 @@ class LiveEvent(TrackedResource):
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, description: str=None, input=None, preview=None, encoding=None, cross_site_access_policies=None, vanity_url: bool=None, stream_options=None, **kwargs) -> None:
+    def __init__(self, *, input, tags=None, location: str=None, description: str=None, preview=None, encoding=None, cross_site_access_policies=None, vanity_url: bool=None, stream_options=None, **kwargs) -> None:
         super(LiveEvent, self).__init__(tags=tags, location=location, **kwargs)
         self.description = description
         self.input = input

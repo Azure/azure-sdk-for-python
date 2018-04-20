@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class LiveEventInput(Model):
     """The Live Event input.
 
-    :param streaming_protocol: The streaming protocol for the Live Event.
-     Possible values include: 'FragmentedMP4', 'RTMP'
+    All required parameters must be populated in order to send to Azure.
+
+    :param streaming_protocol: Required. The streaming protocol for the Live
+     Event. Possible values include: 'FragmentedMP4', 'RTMP'
     :type streaming_protocol: str or
      ~azure.mgmt.media.models.LiveEventInputProtocol
     :param key_frame_interval_duration: ISO 8601 timespan duration of the key
@@ -28,6 +30,10 @@ class LiveEventInput(Model):
     :type endpoints: list[~azure.mgmt.media.models.LiveEventEndpoint]
     """
 
+    _validation = {
+        'streaming_protocol': {'required': True},
+    }
+
     _attribute_map = {
         'streaming_protocol': {'key': 'streamingProtocol', 'type': 'LiveEventInputProtocol'},
         'key_frame_interval_duration': {'key': 'keyFrameIntervalDuration', 'type': 'str'},
@@ -35,7 +41,7 @@ class LiveEventInput(Model):
         'endpoints': {'key': 'endpoints', 'type': '[LiveEventEndpoint]'},
     }
 
-    def __init__(self, *, streaming_protocol=None, key_frame_interval_duration: str=None, access_token: str=None, endpoints=None, **kwargs) -> None:
+    def __init__(self, *, streaming_protocol, key_frame_interval_duration: str=None, access_token: str=None, endpoints=None, **kwargs) -> None:
         super(LiveEventInput, self).__init__(**kwargs)
         self.streaming_protocol = streaming_protocol
         self.key_frame_interval_duration = key_frame_interval_duration

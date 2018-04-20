@@ -18,6 +18,8 @@ class LiveEvent(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
@@ -30,7 +32,7 @@ class LiveEvent(TrackedResource):
     :type location: str
     :param description: The Live Event description.
     :type description: str
-    :param input: The Live Event input.
+    :param input: Required. The Live Event input.
     :type input: ~azure.mgmt.media.models.LiveEventInput
     :param preview: The Live Event preview.
     :type preview: ~azure.mgmt.media.models.LiveEventPreview
@@ -60,6 +62,7 @@ class LiveEvent(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'input': {'required': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
         'created': {'readonly': True},
