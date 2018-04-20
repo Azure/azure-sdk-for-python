@@ -15,16 +15,26 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """The object that describes the operation.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param operation: The operation type. For example: read, write, delete, or
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provider: Friendly name of the resource provider.
+    :vartype provider: str
+    :ivar operation: The operation type. For example: read, write, delete, or
      listKeys/action
-    :type operation: str
-    :param resource: The resource type on which the operation is performed.
-    :type resource: str
-    :param description: The friendly name of the operation.
-    :type description: str
+    :vartype operation: str
+    :ivar resource: The resource type on which the operation is performed.
+    :vartype resource: str
+    :ivar description: The friendly name of the operation.
+    :vartype description: str
     """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'operation': {'readonly': True},
+        'resource': {'readonly': True},
+        'description': {'readonly': True},
+    }
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},
@@ -33,9 +43,9 @@ class OperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, provider: str=None, operation: str=None, resource: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
-        self.provider = provider
-        self.operation = operation
-        self.resource = resource
-        self.description = description
+        self.provider = None
+        self.operation = None
+        self.resource = None
+        self.description = None

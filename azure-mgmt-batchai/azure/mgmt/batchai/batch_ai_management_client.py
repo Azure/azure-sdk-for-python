@@ -14,7 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
-from .operations.usage_operations import UsageOperations
+from .operations.usages_operations import UsagesOperations
 from .operations.clusters_operations import ClustersOperations
 from .operations.file_servers_operations import FileServersOperations
 from .operations.workspaces_operations import WorkspacesOperations
@@ -63,8 +63,8 @@ class BatchAIManagementClient(SDKClient):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.batchai.operations.Operations
-    :ivar usage: Usage operations
-    :vartype usage: azure.mgmt.batchai.operations.UsageOperations
+    :ivar usages: Usages operations
+    :vartype usages: azure.mgmt.batchai.operations.UsagesOperations
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.batchai.operations.ClustersOperations
     :ivar file_servers: FileServers operations
@@ -97,7 +97,7 @@ class BatchAIManagementClient(SDKClient):
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.usage = UsageOperations(
+        self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)

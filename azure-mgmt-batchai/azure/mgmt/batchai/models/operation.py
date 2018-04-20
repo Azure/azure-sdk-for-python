@@ -17,16 +17,24 @@ class Operation(Model):
 
     Details of a REST API operation.
 
-    :param name: The operation name. This is of the format
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The operation name. This is of the format
      {provider}/{resource}/{operation}
-    :type name: str
+    :vartype name: str
     :param display: The object that describes the operation.
     :type display: ~azure.mgmt.batchai.models.OperationDisplay
-    :param origin: The intended executor of the operation.
-    :type origin: str
+    :ivar origin: The intended executor of the operation.
+    :vartype origin: str
     :param properties: Properties of the operation.
     :type properties: object
     """
+
+    _validation = {
+        'name': {'readonly': True},
+        'origin': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -37,7 +45,7 @@ class Operation(Model):
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = None
         self.display = kwargs.get('display', None)
-        self.origin = kwargs.get('origin', None)
+        self.origin = None
         self.properties = kwargs.get('properties', None)

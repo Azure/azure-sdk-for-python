@@ -12,6 +12,11 @@
 from enum import Enum
 
 
+class UsageUnit(str, Enum):
+
+    count = "Count"
+
+
 class CachingType(str, Enum):
 
     none = "none"
@@ -87,3 +92,9 @@ class ExecutionState(str, Enum):
     terminating = "terminating"
     succeeded = "succeeded"
     failed = "failed"
+
+
+class FileType(str, Enum):
+
+    file = "file"
+    directory = "directory"

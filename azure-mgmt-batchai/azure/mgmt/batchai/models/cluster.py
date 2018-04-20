@@ -81,10 +81,10 @@ class Cluster(Resource):
     :ivar allocation_state_transition_time: The time at which the cluster
      entered its current allocation state.
     :vartype allocation_state_transition_time: datetime
-    :param errors: Contains details of various errors on the cluster including
+    :ivar errors: Contains details of various errors on the cluster including
      resize and node setup task. This element contains all the errors
      encountered by various compute nodes during node setup.
-    :type errors: list[~azure.mgmt.batchai.models.BatchAIError]
+    :vartype errors: list[~azure.mgmt.batchai.models.BatchAIError]
     :ivar current_node_count: The number of compute nodes currently assigned
      to the cluster.
     :vartype current_node_count: int
@@ -103,6 +103,7 @@ class Cluster(Resource):
         'provisioning_state_transition_time': {'readonly': True},
         'allocation_state': {'readonly': True},
         'allocation_state_transition_time': {'readonly': True},
+        'errors': {'readonly': True},
         'current_node_count': {'readonly': True},
         'node_state_counts': {'readonly': True},
     }
@@ -144,6 +145,6 @@ class Cluster(Resource):
         self.provisioning_state_transition_time = None
         self.allocation_state = None
         self.allocation_state_transition_time = None
-        self.errors = kwargs.get('errors', None)
+        self.errors = None
         self.current_node_count = None
         self.node_state_counts = None

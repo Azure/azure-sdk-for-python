@@ -167,6 +167,7 @@ from .experiment_paged import ExperimentPaged
 from .job_paged import JobPaged
 from .file_paged import FilePaged
 from .batch_ai_management_client_enums import (
+    UsageUnit,
     CachingType,
     StorageAccountType,
     FileServerProvisioningState,
@@ -177,6 +178,7 @@ from .batch_ai_management_client_enums import (
     JobPriority,
     ToolType,
     ExecutionState,
+    FileType,
 )
 
 __all__ = [
@@ -262,6 +264,7 @@ __all__ = [
     'ExperimentPaged',
     'JobPaged',
     'FilePaged',
+    'UsageUnit',
     'CachingType',
     'StorageAccountType',
     'FileServerProvisioningState',
@@ -272,4 +275,5 @@ __all__ = [
     'JobPriority',
     'ToolType',
     'ExecutionState',
+    'FileType',
 ]
