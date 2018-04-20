@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.serialization import Model
 
+
+class BuildGetLogResult(Model):
+    """The result of get log link operation.
+
+    :param log_link: The link to logs for a azure container registry build.
+    :type log_link: str
+    """
+
+    _attribute_map = {
+        'log_link': {'key': 'logLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BuildGetLogResult, self).__init__(**kwargs)
+        self.log_link = kwargs.get('log_link', None)

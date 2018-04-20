@@ -98,6 +98,45 @@ class ContainerRegistryManagementClient(object):
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
     
     @property
+    def build_steps(self):
+        """Instance depends on the API version:
+
+           * 2017-10-01: :class:`BuildStepsOperations<azure.mgmt.containerregistry.v2017_10_01.operations.BuildStepsOperations>`
+        """
+        api_version = self.profile.get('build_steps', self.api_version)
+        if api_version == '2017-10-01':
+            from .v2017_10_01.operations import BuildStepsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def build_tasks(self):
+        """Instance depends on the API version:
+
+           * 2017-10-01: :class:`BuildTasksOperations<azure.mgmt.containerregistry.v2017_10_01.operations.BuildTasksOperations>`
+        """
+        api_version = self.profile.get('build_tasks', self.api_version)
+        if api_version == '2017-10-01':
+            from .v2017_10_01.operations import BuildTasksOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def builds(self):
+        """Instance depends on the API version:
+
+           * 2017-10-01: :class:`BuildsOperations<azure.mgmt.containerregistry.v2017_10_01.operations.BuildsOperations>`
+        """
+        api_version = self.profile.get('builds', self.api_version)
+        if api_version == '2017-10-01':
+            from .v2017_10_01.operations import BuildsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def operations(self):
         """Instance depends on the API version:
 

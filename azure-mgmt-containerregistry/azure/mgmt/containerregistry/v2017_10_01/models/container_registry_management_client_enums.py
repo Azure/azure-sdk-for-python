@@ -60,3 +60,58 @@ class WebhookAction(str, Enum):
 
     push = "push"
     delete = "delete"
+
+
+class BuildStatus(str, Enum):
+
+    queued = "Queued"
+    started = "Started"
+    running = "Running"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+    abandoned_as_system_error = "AbandonedAsSystemError"
+    timeout = "Timeout"
+
+
+class BuildType(str, Enum):
+
+    auto_build = "AutoBuild"
+    quick_build = "QuickBuild"
+
+
+class OsType(str, Enum):
+
+    windows = "Windows"
+    linux = "Linux"
+
+
+class BuildTaskStatus(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class SourceControlType(str, Enum):
+
+    github = "Github"
+    visual_studio_team_service = "VisualStudioTeamService"
+
+
+class TokenType(str, Enum):
+
+    pat = "PAT"
+    oauth = "OAuth"
+
+
+class BaseImageDependencyType(str, Enum):
+
+    build_time = "BuildTime"
+    run_time = "RunTime"
+
+
+class BaseImageTriggerType(str, Enum):
+
+    all = "All"
+    runtime = "Runtime"
+    none = "None"

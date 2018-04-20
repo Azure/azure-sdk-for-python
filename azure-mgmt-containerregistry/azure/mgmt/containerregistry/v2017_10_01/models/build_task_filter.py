@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.serialization import Model
 
+
+class BuildTaskFilter(Model):
+    """The filter that can be used for listing build tasks.
+
+    :param alias: The alternative name for build task.
+    :type alias: str
+    """
+
+    _attribute_map = {
+        'alias': {'key': 'alias', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BuildTaskFilter, self).__init__(**kwargs)
+        self.alias = kwargs.get('alias', None)

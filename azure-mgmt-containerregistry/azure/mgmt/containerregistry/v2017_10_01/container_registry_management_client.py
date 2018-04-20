@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -17,6 +17,9 @@ from .operations.registries_operations import RegistriesOperations
 from .operations.operations import Operations
 from .operations.replications_operations import ReplicationsOperations
 from .operations.webhooks_operations import WebhooksOperations
+from .operations.builds_operations import BuildsOperations
+from .operations.build_steps_operations import BuildStepsOperations
+from .operations.build_tasks_operations import BuildTasksOperations
 from . import models
 
 
@@ -52,7 +55,7 @@ class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ContainerRegistryManagementClient(object):
+class ContainerRegistryManagementClient(SDKClient):
     """ContainerRegistryManagementClient
 
     :ivar config: Configuration for client.
@@ -66,6 +69,12 @@ class ContainerRegistryManagementClient(object):
     :vartype replications: azure.mgmt.containerregistry.v2017_10_01.operations.ReplicationsOperations
     :ivar webhooks: Webhooks operations
     :vartype webhooks: azure.mgmt.containerregistry.v2017_10_01.operations.WebhooksOperations
+    :ivar builds: Builds operations
+    :vartype builds: azure.mgmt.containerregistry.v2017_10_01.operations.BuildsOperations
+    :ivar build_steps: BuildSteps operations
+    :vartype build_steps: azure.mgmt.containerregistry.v2017_10_01.operations.BuildStepsOperations
+    :ivar build_tasks: BuildTasks operations
+    :vartype build_tasks: azure.mgmt.containerregistry.v2017_10_01.operations.BuildTasksOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -79,10 +88,9 @@ class ContainerRegistryManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ContainerRegistryManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -93,4 +101,10 @@ class ContainerRegistryManagementClient(object):
         self.replications = ReplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.webhooks = WebhooksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.builds = BuildsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.build_steps = BuildStepsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.build_tasks = BuildTasksOperations(
             self._client, self.config, self._serialize, self._deserialize)

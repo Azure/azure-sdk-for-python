@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.paging import Paged
 
+
+class BuildPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Build <azure.mgmt.containerregistry.v2017_10_01.models.Build>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Build]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BuildPaged, self).__init__(*args, **kwargs)
