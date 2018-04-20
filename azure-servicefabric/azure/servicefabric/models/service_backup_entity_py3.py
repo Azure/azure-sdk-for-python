@@ -34,6 +34,6 @@ class ServiceBackupEntity(BackupEntity):
     }
 
     def __init__(self, *, service_name: str=None, **kwargs) -> None:
-        super(ServiceBackupEntity, self).__init__(, **kwargs)
+        super(ServiceBackupEntity, self).__init__(**kwargs)
         self.service_name = service_name
         self.entity_kind = 'Service'

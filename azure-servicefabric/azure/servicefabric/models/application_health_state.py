@@ -15,7 +15,6 @@ from .entity_health_state import EntityHealthState
 class ApplicationHealthState(EntityHealthState):
     """Represents the health state of an application, which contains the
     application identifier and the aggregated health state.
-    .
 
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica

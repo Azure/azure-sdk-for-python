@@ -24,7 +24,6 @@ class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacemen
     the replica that was placed in that datacenter will be packed into one of
     the remaining datacenters. If this is not desirable then this policy should
     be set.
-    .
 
     All required parameters must be populated in order to send to Azure.
 
@@ -45,6 +44,6 @@ class ServicePlacementRequireDomainDistributionPolicyDescription(ServicePlacemen
     }
 
     def __init__(self, *, domain_name: str=None, **kwargs) -> None:
-        super(ServicePlacementRequireDomainDistributionPolicyDescription, self).__init__(, **kwargs)
+        super(ServicePlacementRequireDomainDistributionPolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.type = 'RequiredDomainDistribution'

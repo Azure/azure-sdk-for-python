@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -42,7 +42,7 @@ class ServiceFabricClientAPIsConfiguration(Configuration):
         self.credentials = credentials
 
 
-class ServiceFabricClientAPIs(object):
+class ServiceFabricClientAPIs(SDKClient):
     """Service Fabric REST Client APIs allows management of Service Fabric clusters, applications and services.
 
     :ivar config: Configuration for client.
@@ -58,7 +58,7 @@ class ServiceFabricClientAPIs(object):
             self, credentials, base_url=None):
 
         self.config = ServiceFabricClientAPIsConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ServiceFabricClientAPIs, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '6.2.0.9'
@@ -82,7 +82,6 @@ class ServiceFabricClientAPIs(object):
         The contents of the cluster manifest are for informational purposes
         only and users are not expected to take a dependency on the format of
         the file contents or its interpretation.
-        .
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -146,7 +145,6 @@ class ServiceFabricClientAPIs(object):
         Similarly, use NodesHealthStateFilter and ApplicationsHealthStateFilter
         to filter the collection of nodes and applications returned based on
         their aggregated health state.
-        .
 
         :param nodes_health_state_filter: Allows filtering of the node health
          state objects returned in the result of cluster health query
@@ -315,7 +313,6 @@ class ServiceFabricClientAPIs(object):
         their aggregated health state.
         Use ClusterHealthPolicies to override the health policies used to
         evaluate the health.
-        .
 
         :param nodes_health_state_filter: Allows filtering of the node health
          state objects returned in the result of cluster health query
@@ -508,7 +505,6 @@ class ServiceFabricClientAPIs(object):
         To expand the cluster health and get the health state of all or some of
         the entities, use the POST URI and specify the cluster health chunk
         query description.
-        .
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -579,7 +575,6 @@ class ServiceFabricClientAPIs(object):
         specified name, and for this application, return
         only services that are in Error or Warning, and all partitions and
         replicas for one of these services.
-        .
 
         :param cluster_health_chunk_query_description: Describes the cluster
          and application health policies used to evaluate the cluster health
@@ -679,7 +674,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetClusterHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param health_information: Describes the health information for the
          health report. This information needs to be present in all of the
@@ -954,7 +948,6 @@ class ServiceFabricClientAPIs(object):
         configuration contains properties of the cluster that include different
         node types on the cluster,
         security configurations, fault and upgrade domain topologies, etc.
-        .
 
         :param configuration_api_version: The API version of the Standalone
          cluster json configuration.
@@ -1019,7 +1012,6 @@ class ServiceFabricClientAPIs(object):
 
         Get the cluster configuration upgrade status details of a Service
         Fabric standalone cluster.
-        .
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -1631,7 +1623,6 @@ class ServiceFabricClientAPIs(object):
         This API is not supposed to be called separately. It provides
         information needed to set up an Azure Active Directory secured
         connection with a Service Fabric cluster.
-        .
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -2049,7 +2040,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetNodeHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -2221,8 +2211,8 @@ class ServiceFabricClientAPIs(object):
          value for this parameter is 60 seconds.
         :type timeout: long
         :param deactivation_intent: Describes the intent or reason for
-         deactivating the node. The possible values are following.
-         . Possible values include: 'Pause', 'Restart', 'RemoveData'
+         deactivating the node. The possible values are following. Possible
+         values include: 'Pause', 'Restart', 'RemoveData'
         :type deactivation_intent: str or
          ~azure.servicefabric.models.DeactivationIntent
         :param dict custom_headers: headers that will be added to the request
@@ -2700,7 +2690,6 @@ class ServiceFabricClientAPIs(object):
         The provision operation can be performed either on the application
         package specified by the relativePathInImageStore, or by using the URI
         of the external '.sfpkg'.
-        .
 
         :param
          provision_application_type_description_base_required_body_param: The
@@ -3991,7 +3980,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, get
         application health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -4455,7 +4443,6 @@ class ServiceFabricClientAPIs(object):
         requires that the node name corresponds to a node on the cluster. The
         query fails if the provided node name does not point to any active
         Service Fabric nodes on the cluster.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4557,7 +4544,6 @@ class ServiceFabricClientAPIs(object):
         This query requires that the node name corresponds to a node on the
         cluster. The query fails if the provided node name does not point to
         any active Service Fabric nodes on the cluster.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4796,7 +4782,6 @@ class ServiceFabricClientAPIs(object):
         'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
         of the fields are ignored while evaluating the health of the deployed
         application.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -4960,7 +4945,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, get deployed
         application health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -5752,7 +5736,6 @@ class ServiceFabricClientAPIs(object):
         returned.
         If you specify a service that does not exist in the health store, this
         request returns an error.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -5896,7 +5879,6 @@ class ServiceFabricClientAPIs(object):
         returned.
         If you specify a service that does not exist in the health store, this
         request returns an error.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -6052,7 +6034,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetServiceHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -6465,7 +6446,6 @@ class ServiceFabricClientAPIs(object):
         ReplicaHealthState objects on the partition.
         If you specify a partition that does not exist in the health store,
         this request returns an error.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6604,7 +6584,6 @@ class ServiceFabricClientAPIs(object):
         policies used to evaluate the health.
         If you specify a partition that does not exist in the health store,
         this request returns an error.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6753,7 +6732,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetPartitionHealth and check that the report appears in the
         HealthEvents section.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -6845,7 +6823,6 @@ class ServiceFabricClientAPIs(object):
         partition.
         Each report includes the load metric name, value, and last reported
         time in UTC.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -7219,7 +7196,6 @@ class ServiceFabricClientAPIs(object):
         you can safely perform repair actions on those nodes.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task: Describes the repair task to be created or
          updated.
@@ -7279,7 +7255,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task_cancel_description: Describes the repair task to be
          cancelled.
@@ -7340,7 +7315,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param task_id: The ID of the completed repair task to be deleted.
         :type task_id: str
@@ -7398,7 +7372,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param task_id_filter: The repair task ID prefix to be matched.
         :type task_id_filter: str
@@ -7472,7 +7445,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param task_id: The ID of the repair task.
         :type task_id: str
@@ -7538,7 +7510,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task_update_health_policy_description: Describes the
          repair task healthy policy to be updated.
@@ -7599,7 +7570,6 @@ class ServiceFabricClientAPIs(object):
 
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param repair_task: Describes the repair task to be created or
          updated.
@@ -7806,7 +7776,6 @@ class ServiceFabricClientAPIs(object):
         Gets the health of a Service Fabric replica.
         Use EventsHealthStateFilter to filter the collection of health events
         reported on the replica based on the health state.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -7908,7 +7877,6 @@ class ServiceFabricClientAPIs(object):
         used to evaluate the health. This API only uses
         'ConsiderWarningAsError' field of the ApplicationHealthPolicy. The rest
         of the fields are ignored while evaluating the health of the replica.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -8026,7 +7994,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, run
         GetReplicaHealth and check that the report appears in the HealthEvents
         section.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -8774,7 +8741,6 @@ class ServiceFabricClientAPIs(object):
         This API only uses 'ConsiderWarningAsError' field of the
         ApplicationHealthPolicy. The rest of the fields are ignored while
         evaluating the health of the deployed service package.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -8902,7 +8868,6 @@ class ServiceFabricClientAPIs(object):
         To see whether the report was applied in the health store, get deployed
         service package health and check that the report appears in the
         HealthEvents section.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -9009,7 +8974,6 @@ class ServiceFabricClientAPIs(object):
         and container images to be present on the node before the actual
         application deployment and upgrade, thus significantly reducing the
         total time required for the deployment or upgrade.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -9833,7 +9797,6 @@ class ServiceFabricClientAPIs(object):
         Get the status of Chaos indicating whether or not Chaos is running, the
         Chaos parameters used for running Chaos and the status of the Chaos
         Schedule.
-        .
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -9898,7 +9861,6 @@ class ServiceFabricClientAPIs(object):
         Please refer to the article [Induce controlled Chaos in Service Fabric
         clusters](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-controlled-chaos)
         for more details.
-        .
 
         :param chaos_parameters: Describes all the parameters to configure a
          Chaos run.
@@ -9962,7 +9924,6 @@ class ServiceFabricClientAPIs(object):
         Once a schedule is stopped it will stay in the stopped state and not be
         used to Chaos Schedule new runs of Chaos. A new Chaos Schedule must be
         set in order to resume scheduling.
-        .
 
         :param timeout: The server timeout for performing the operation in
          seconds. This timeout specifies the time duration that the client is
@@ -10022,7 +9983,6 @@ class ServiceFabricClientAPIs(object):
         returned in multiple segments where a segment contains no more than 100
         Chaos events and to get the next segment you make a call to this API
         with the continuation token.
-        .
 
         :param continuation_token: The continuation token parameter is used to
          obtain next set of results. A continuation token with a non empty
@@ -10118,7 +10078,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the version of the Chaos Schedule in use and the Chaos Schedule
         that defines when and how to run Chaos.
-        .
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -10180,7 +10139,6 @@ class ServiceFabricClientAPIs(object):
         server is incremented up by one and wraps back to 0 after
         2,147,483,647.
         If Chaos is running when this call is made, the call will fail.
-        .
 
         :param version: The version number of the Schedule.
         :type version: int
@@ -10244,7 +10202,6 @@ class ServiceFabricClientAPIs(object):
         isn't aware of the file hierarchy of the application package; you need
         to create a mark file per folder and upload it last, to let the image
         store service know that the folder is complete.
-        .
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
@@ -10546,7 +10503,6 @@ class ServiceFabricClientAPIs(object):
 
         The DELETE request will cause the existing upload session to expire and
         remove any previously uploaded file chunks.
-        .
 
         :param session_id: A GUID generated by the user for a file uploading.
          It identifies an image store upload session which keeps track of all
@@ -10604,8 +10560,7 @@ class ServiceFabricClientAPIs(object):
         When all file chunks have been uploaded, the upload session needs to be
         committed explicitly to complete the upload. Image store preserves the
         upload session until the expiration time, which is 30 minutes after the
-        last chunk received.
-        .
+        last chunk received. .
 
         :param session_id: A GUID generated by the user for a file uploading.
          It identifies an image store upload session which keeps track of all
@@ -10661,8 +10616,7 @@ class ServiceFabricClientAPIs(object):
         """Get the image store upload session by ID.
 
         Gets the image store upload session identified by the given ID. User
-        can query the upload session at any time during uploading.
-        .
+        can query the upload session at any time during uploading. .
 
         :param session_id: A GUID generated by the user for a file uploading.
          It identifies an image store upload session which keeps track of all
@@ -10727,8 +10681,7 @@ class ServiceFabricClientAPIs(object):
 
         Gets the image store upload session associated with the given image
         store relative path. User can query the upload session at any time
-        during uploading.
-        .
+        during uploading. .
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
@@ -10803,7 +10756,6 @@ class ServiceFabricClientAPIs(object):
         Chunks don't have to be uploaded in order. If the file represented by
         the image store relative path already exists, it will be overwritten
         when the upload session commits.
-        .
 
         :param content_path: Relative path to file or folder in the image
          store from its root.
@@ -10885,7 +10837,6 @@ class ServiceFabricClientAPIs(object):
         the infrastructure on which the cluster is running.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
@@ -10963,7 +10914,6 @@ class ServiceFabricClientAPIs(object):
         the infrastructure on which the cluster is running.
         This API supports the Service Fabric platform; it is not meant to be
         used directly from your code.
-        .
 
         :param command: The text of the command to be invoked. The content of
          the command is infrastructure-specific.
@@ -11049,7 +10999,6 @@ class ServiceFabricClientAPIs(object):
         cause data loss.
         Call the GetDataLossProgress API with the same OperationId to return
         information on the operation started with this API.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -11126,7 +11075,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a data loss operation started with StartDataLoss,
         using the OperationId.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -11210,7 +11158,6 @@ class ServiceFabricClientAPIs(object):
         This can only be called on stateful persisted (HasPersistedState==true)
         services.  Do not use this API on stateless services or stateful
         in-memory only services.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -11293,7 +11240,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a quorum loss operation started with
         StartQuorumLoss, using the provided OperationId.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -11376,7 +11322,6 @@ class ServiceFabricClientAPIs(object):
         must be AllReplicasOrInstances.
         Call the GetPartitionRestartProgress API using the same OperationId to
         get the progress.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -11454,7 +11399,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of a PartitionRestart started with
         StartPartitionRestart using the provided OperationId.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -11539,7 +11483,6 @@ class ServiceFabricClientAPIs(object):
         have finished transitioning yet.
         Call GetNodeTransitionProgress with the same OperationId to get the
         progress of the operation.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -11617,7 +11560,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the progress of an operation started with StartNodeTransition
         using the provided OperationId.
-        .
 
         :param node_name: The name of the node.
         :type node_name: str
@@ -11790,7 +11732,6 @@ class ServiceFabricClientAPIs(object):
         progressed far enough to cause data loss.
         Important note:  if this API is invoked with force==true, internal
         state may be left behind.
-        .
 
         :param operation_id: A GUID that identifies a call of this API.  This
          is passed into the corresponding GetProgress API
@@ -11851,7 +11792,6 @@ class ServiceFabricClientAPIs(object):
 
         Creates a backup policy which can be associated later with a Service
         Fabric application, service or a partition for periodic backup.
-        .
 
         :param backup_policy_description: Describes the backup policy.
         :type backup_policy_description:
@@ -11912,7 +11852,6 @@ class ServiceFabricClientAPIs(object):
         before it can be deleted. A currently active backup policy, associated
         with any Service Fabric application, service or partition, cannot be
         deleted without first deleting the mapping.
-        .
 
         :param backup_policy_name: The name of the backup policy.
         :type backup_policy_name: str
@@ -11969,7 +11908,6 @@ class ServiceFabricClientAPIs(object):
         """Gets all the backup policies configured.
 
         Get a list of all the backup policies configured.
-        .
 
         :param continuation_token: The continuation token parameter is used to
          obtain next set of results. A continuation token with a non empty
@@ -12048,8 +11986,7 @@ class ServiceFabricClientAPIs(object):
             self, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Gets a particular backup policy by name.
 
-        Gets a particular backup policy identified by {backupPolicyName}
-        .
+        Gets a particular backup policy identified by {backupPolicyName}.
 
         :param backup_policy_name: The name of the backup policy.
         :type backup_policy_name: str
@@ -12115,7 +12052,6 @@ class ServiceFabricClientAPIs(object):
 
         Returns a list of Service Fabric application, service or partition
         which are associated with this backup policy.
-        .
 
         :param backup_policy_name: The name of the backup policy.
         :type backup_policy_name: str
@@ -12199,8 +12135,7 @@ class ServiceFabricClientAPIs(object):
             self, backup_policy_description, backup_policy_name, timeout=60, custom_headers=None, raw=False, **operation_config):
         """Updates the backup policy.
 
-        Updates the backup policy identified by {backupPolicyName}
-        .
+        Updates the backup policy identified by {backupPolicyName}.
 
         :param backup_policy_description: Describes the backup policy.
         :type backup_policy_description:
@@ -12269,7 +12204,6 @@ class ServiceFabricClientAPIs(object):
         per the specified backup policy description.
         Note only C# based Reliable Actor and Reliable Stateful services are
         currently supported for periodic backup.
-        .
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -12343,7 +12277,6 @@ class ServiceFabricClientAPIs(object):
 
         Disables periodic backup of Service Fabric application which was
         previously enabled.
-        .
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -12408,7 +12341,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the Service Fabric backup configuration information for the
         application and the services and partitions under this application.
-        .
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -12506,7 +12438,6 @@ class ServiceFabricClientAPIs(object):
         the backup location configured in the backup policy. It also allows
         filtering of the result based on start and end datetime or just
         fetching the latest available backup for every partition.
-        .
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -12759,7 +12690,6 @@ class ServiceFabricClientAPIs(object):
         overridden at the partition level).
         Note only C# based Reliable Actor and Reliable Stateful services are
         currently supported for periodic backup.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -12836,7 +12766,6 @@ class ServiceFabricClientAPIs(object):
         In case the backup is enabled for the Service Fabric application, which
         this service is part of, this service would continue to be periodically
         backed up as per the policy mapped at the application level.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -12900,7 +12829,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the Service Fabric backup configuration information for the
         service and the partitions under this service.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -12996,7 +12924,6 @@ class ServiceFabricClientAPIs(object):
         backup store configured in the backup policy. It also allows filtering
         of the result based on start and end datetime or just fetching the
         latest available backup for every partition.
-        .
 
         :param service_id: The identity of the service. This is typically the
          full name of the service without the 'fabric:' URI scheme.
@@ -13241,7 +13168,6 @@ class ServiceFabricClientAPIs(object):
         used to take the periodic backup of this partition.
         Note only C# based Reliable Actor and Reliable Stateful services are
         currently supported for periodic backup.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13313,7 +13239,6 @@ class ServiceFabricClientAPIs(object):
         service, which this partition is part of, this partition would continue
         to be periodically backed up as per the policy mapped at the higher
         level entity.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13371,7 +13296,6 @@ class ServiceFabricClientAPIs(object):
 
         Gets the Service Fabric Backup configuration information for the
         specified partition.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13441,7 +13365,6 @@ class ServiceFabricClientAPIs(object):
         configured in the backup policy. It also allows filtering of the result
         based on start and end datetime or just fetching the latest available
         backup for the partition.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13646,7 +13569,6 @@ class ServiceFabricClientAPIs(object):
         tracked using the GetBackupProgress operation.
         In case, the operation times out, specify a greater backup timeout
         value in the query parameter.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13729,7 +13651,6 @@ class ServiceFabricClientAPIs(object):
 
         Returns information about the state of the latest backup along with
         details or failure reason in case of completion.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13803,7 +13724,6 @@ class ServiceFabricClientAPIs(object):
         progress can be tracked using the GetRestoreProgress operation.
         In case, the operation times out, specify a greater restore timeout
         value in the query parameter.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13880,7 +13800,6 @@ class ServiceFabricClientAPIs(object):
 
         Returns information about the state of the latest restore operation
         along with details or failure reason in case of completion.
-        .
 
         :param partition_id: The identity of the partition.
         :type partition_id: str
@@ -13948,7 +13867,6 @@ class ServiceFabricClientAPIs(object):
         Gets the list of backups available for the specified backed up entity
         (Application, Service or Partition) at the specified backup location
         (FileShare or Azure Blob Storage).
-        .
 
         :param get_backup_by_storage_query_description: Describes the filters
          and backup storage details to be used for enumerating backups.

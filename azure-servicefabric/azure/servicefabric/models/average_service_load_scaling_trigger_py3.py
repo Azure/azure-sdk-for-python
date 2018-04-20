@@ -51,7 +51,7 @@ class AverageServiceLoadScalingTrigger(ScalingTriggerDescription):
     }
 
     def __init__(self, *, metric_name: str, lower_load_threshold: str, upper_load_threshold: str, scale_interval_in_seconds: int, **kwargs) -> None:
-        super(AverageServiceLoadScalingTrigger, self).__init__(, **kwargs)
+        super(AverageServiceLoadScalingTrigger, self).__init__(**kwargs)
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold

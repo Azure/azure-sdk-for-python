@@ -41,7 +41,7 @@ class PrimaryReplicatorStatus(ReplicatorStatus):
     }
 
     def __init__(self, *, replication_queue_status=None, remote_replicators=None, **kwargs) -> None:
-        super(PrimaryReplicatorStatus, self).__init__(, **kwargs)
+        super(PrimaryReplicatorStatus, self).__init__(**kwargs)
         self.replication_queue_status = replication_queue_status
         self.remote_replicators = remote_replicators
         self.kind = 'Primary'

@@ -36,6 +36,6 @@ class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescr
     }
 
     def __init__(self, *, domain_name: str=None, **kwargs) -> None:
-        super(ServicePlacementInvalidDomainPolicyDescription, self).__init__(, **kwargs)
+        super(ServicePlacementInvalidDomainPolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.type = 'InvalidDomain'

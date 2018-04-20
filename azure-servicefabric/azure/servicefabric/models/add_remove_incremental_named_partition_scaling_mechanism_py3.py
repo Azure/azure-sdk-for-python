@@ -46,7 +46,7 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanismDescrip
     }
 
     def __init__(self, *, min_partition_count: int, max_partition_count: int, scale_increment: int, **kwargs) -> None:
-        super(AddRemoveIncrementalNamedPartitionScalingMechanism, self).__init__(, **kwargs)
+        super(AddRemoveIncrementalNamedPartitionScalingMechanism, self).__init__(**kwargs)
         self.min_partition_count = min_partition_count
         self.max_partition_count = max_partition_count
         self.scale_increment = scale_increment

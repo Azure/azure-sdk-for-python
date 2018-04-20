@@ -35,6 +35,6 @@ class BinaryPropertyValue(PropertyValue):
     }
 
     def __init__(self, *, data, **kwargs) -> None:
-        super(BinaryPropertyValue, self).__init__(, **kwargs)
+        super(BinaryPropertyValue, self).__init__(**kwargs)
         self.data = data
         self.kind = 'Binary'

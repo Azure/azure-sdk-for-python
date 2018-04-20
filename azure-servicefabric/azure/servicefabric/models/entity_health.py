@@ -15,14 +15,13 @@ from msrest.serialization import Model
 class EntityHealth(Model):
     """Health information common to all entities in the cluster. It contains the
     aggregated health state, health events and unhealthy evaluation.
-    .
 
     :param aggregated_health_state: The HealthState representing the
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
      entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+     The aggregation is done by applying the desired health policy. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str or
      ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.

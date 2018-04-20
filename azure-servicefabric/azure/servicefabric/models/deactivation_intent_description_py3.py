@@ -16,8 +16,8 @@ class DeactivationIntentDescription(Model):
     """Describes the intent or reason for deactivating the node.
 
     :param deactivation_intent: Describes the intent or reason for
-     deactivating the node. The possible values are following.
-     . Possible values include: 'Pause', 'Restart', 'RemoveData'
+     deactivating the node. The possible values are following. Possible values
+     include: 'Pause', 'Restart', 'RemoveData'
     :type deactivation_intent: str or
      ~azure.servicefabric.models.DeactivationIntent
     """

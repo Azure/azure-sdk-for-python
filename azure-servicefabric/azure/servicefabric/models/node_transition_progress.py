@@ -17,7 +17,6 @@ class NodeTransitionProgress(Model):
     OperationState and a NodeTransitionResult.  The NodeTransitionResult is not
     valid until OperationState
     is Completed or Faulted.
-    .
 
     :param state: The state of the operation. Possible values include:
      'Invalid', 'Running', 'RollingBack', 'Completed', 'Faulted', 'Cancelled',

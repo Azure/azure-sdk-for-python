@@ -70,7 +70,7 @@ class SecondaryReplicatorStatus(ReplicatorStatus):
     }
 
     def __init__(self, *, replication_queue_status=None, last_replication_operation_received_time_utc=None, is_in_build: bool=None, copy_queue_status=None, last_copy_operation_received_time_utc=None, last_acknowledgement_sent_time_utc=None, **kwargs) -> None:
-        super(SecondaryReplicatorStatus, self).__init__(, **kwargs)
+        super(SecondaryReplicatorStatus, self).__init__(**kwargs)
         self.replication_queue_status = replication_queue_status
         self.last_replication_operation_received_time_utc = last_replication_operation_received_time_utc
         self.is_in_build = is_in_build

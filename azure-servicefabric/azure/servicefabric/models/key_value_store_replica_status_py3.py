@@ -52,7 +52,7 @@ class KeyValueStoreReplicaStatus(ReplicaStatusBase):
     }
 
     def __init__(self, *, database_row_count_estimate: str=None, database_logical_size_estimate: str=None, copy_notification_current_key_filter: str=None, copy_notification_current_progress: str=None, status_details: str=None, **kwargs) -> None:
-        super(KeyValueStoreReplicaStatus, self).__init__(, **kwargs)
+        super(KeyValueStoreReplicaStatus, self).__init__(**kwargs)
         self.database_row_count_estimate = database_row_count_estimate
         self.database_logical_size_estimate = database_logical_size_estimate
         self.copy_notification_current_key_filter = copy_notification_current_key_filter

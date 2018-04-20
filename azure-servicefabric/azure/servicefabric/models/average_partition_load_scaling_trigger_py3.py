@@ -51,7 +51,7 @@ class AveragePartitionLoadScalingTrigger(ScalingTriggerDescription):
     }
 
     def __init__(self, *, metric_name: str, lower_load_threshold: str, upper_load_threshold: str, scale_interval_in_seconds: int, **kwargs) -> None:
-        super(AveragePartitionLoadScalingTrigger, self).__init__(, **kwargs)
+        super(AveragePartitionLoadScalingTrigger, self).__init__(**kwargs)
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold

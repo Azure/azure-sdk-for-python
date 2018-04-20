@@ -16,7 +16,6 @@ class HealthInformation(Model):
     """Represents common health report information. It is included in all health
     reports sent to health store and in all health events returned by health
     queries.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

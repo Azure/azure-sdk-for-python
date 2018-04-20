@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class DeployServicePackageToNodeDescription(Model):
     """Defines description for downloading packages associated with a service
     manifest to image cache on a Service Fabric node.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

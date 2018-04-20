@@ -22,9 +22,8 @@ class DeployedServicePackageInfo(Model):
      manifest.
     :type version: str
     :param status: Specifies the status of a deployed application or service
-     package on a Service Fabric node.
-     . Possible values include: 'Invalid', 'Downloading', 'Activating',
-     'Active', 'Upgrading', 'Deactivating'
+     package on a Service Fabric node. Possible values include: 'Invalid',
+     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating'
     :type status: str or ~azure.servicefabric.models.DeploymentStatus
     :param service_package_activation_id: The ActivationId of a deployed
      service package. If ServicePackageActivationMode specified at the time of

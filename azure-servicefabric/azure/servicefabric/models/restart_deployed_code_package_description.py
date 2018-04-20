@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class RestartDeployedCodePackageDescription(Model):
     """Defines description for restarting a deployed code package on Service
     Fabric node.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

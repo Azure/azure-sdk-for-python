@@ -16,9 +16,8 @@ class BackupProgressInfo(Model):
     """Describes the progress of a partition's backup.
 
     :param backup_state: Represents the current state of the partition backup
-     operation.
-     . Possible values include: 'Invalid', 'Accepted', 'BackupInProgress',
-     'Success', 'Failure', 'Timeout'
+     operation. Possible values include: 'Invalid', 'Accepted',
+     'BackupInProgress', 'Success', 'Failure', 'Timeout'
     :type backup_state: str or ~azure.servicefabric.models.BackupState
     :param time_stamp_utc: TimeStamp in UTC when operation succeeded or
      failed.

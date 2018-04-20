@@ -31,5 +31,5 @@ class SeedNodeSafetyCheck(SafetyCheck):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(SeedNodeSafetyCheck, self).__init__(, **kwargs)
+        super(SeedNodeSafetyCheck, self).__init__(**kwargs)
         self.kind = 'EnsureSeedNodeQuorum'

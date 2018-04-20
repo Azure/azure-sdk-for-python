@@ -14,7 +14,6 @@ from msrest.serialization import Model
 
 class ChaosParametersDictionaryItem(Model):
     """Defines an item in ChaosParametersDictionary of the Chaos Schedule.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

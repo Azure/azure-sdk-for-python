@@ -45,6 +45,6 @@ class PartitionSafetyCheck(SafetyCheck):
     }
 
     def __init__(self, *, partition_id: str=None, **kwargs) -> None:
-        super(PartitionSafetyCheck, self).__init__(, **kwargs)
+        super(PartitionSafetyCheck, self).__init__(**kwargs)
         self.partition_id = partition_id
         self.kind = 'PartitionSafetyCheck'

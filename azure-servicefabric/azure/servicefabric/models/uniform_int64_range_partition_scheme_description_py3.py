@@ -47,7 +47,7 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     }
 
     def __init__(self, *, count: int, low_key: str, high_key: str, **kwargs) -> None:
-        super(UniformInt64RangePartitionSchemeDescription, self).__init__(, **kwargs)
+        super(UniformInt64RangePartitionSchemeDescription, self).__init__(**kwargs)
         self.count = count
         self.low_key = low_key
         self.high_key = high_key

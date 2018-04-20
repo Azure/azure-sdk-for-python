@@ -40,7 +40,7 @@ class FailedPropertyBatchInfo(PropertyBatchInfo):
     }
 
     def __init__(self, *, error_message: str=None, operation_index: int=None, **kwargs) -> None:
-        super(FailedPropertyBatchInfo, self).__init__(, **kwargs)
+        super(FailedPropertyBatchInfo, self).__init__(**kwargs)
         self.error_message = error_message
         self.operation_index = operation_index
         self.kind = 'Failed'

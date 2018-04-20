@@ -20,8 +20,8 @@ class TimeBasedBackupScheduleDescription(BackupScheduleDescription):
     :param schedule_kind: Required. Constant filled by server.
     :type schedule_kind: str
     :param schedule_frequency_type: Required. Describes the frequency with
-     which to run the time based backup schedule.
-     . Possible values include: 'Invalid', 'Daily', 'Weekly'
+     which to run the time based backup schedule. Possible values include:
+     'Invalid', 'Daily', 'Weekly'
     :type schedule_frequency_type: str or
      ~azure.servicefabric.models.BackupScheduleFrequencyType
     :param run_days: List of days of a week when to trigger the periodic

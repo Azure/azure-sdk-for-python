@@ -34,6 +34,6 @@ class ApplicationBackupEntity(BackupEntity):
     }
 
     def __init__(self, *, application_name: str=None, **kwargs) -> None:
-        super(ApplicationBackupEntity, self).__init__(, **kwargs)
+        super(ApplicationBackupEntity, self).__init__(**kwargs)
         self.application_name = application_name
         self.entity_kind = 'Application'

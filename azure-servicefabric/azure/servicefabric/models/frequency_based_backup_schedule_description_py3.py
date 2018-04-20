@@ -36,6 +36,6 @@ class FrequencyBasedBackupScheduleDescription(BackupScheduleDescription):
     }
 
     def __init__(self, *, interval, **kwargs) -> None:
-        super(FrequencyBasedBackupScheduleDescription, self).__init__(, **kwargs)
+        super(FrequencyBasedBackupScheduleDescription, self).__init__(**kwargs)
         self.interval = interval
         self.schedule_kind = 'FrequencyBased'

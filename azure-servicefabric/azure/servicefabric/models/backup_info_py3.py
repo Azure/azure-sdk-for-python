@@ -35,8 +35,7 @@ class BackupInfo(Model):
      store.
     :type backup_location: str
     :param backup_type: Describes the type of backup, whether its full or
-     incremental.
-     . Possible values include: 'Invalid', 'Full', 'Incremental'
+     incremental. Possible values include: 'Invalid', 'Full', 'Incremental'
     :type backup_type: str or ~azure.servicefabric.models.BackupType
     :param epoch_of_last_backup_record: Epoch of the last record in this
      backup.

@@ -17,7 +17,6 @@ class ReplicaHealth(EntityHealth):
     instance health.
     Contains the replica aggregated health state, the health events and the
     unhealthy evaluations.
-    .
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: StatefulServiceReplicaHealth,
@@ -29,8 +28,8 @@ class ReplicaHealth(EntityHealth):
      aggregated health state of the entity computed by Health Manager.
      The health evaluation of the entity reflects all events reported on the
      entity and its children (if any).
-     The aggregation is done by applying the desired health policy.
-     . Possible values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
+     The aggregation is done by applying the desired health policy. Possible
+     values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
     :type aggregated_health_state: str or
      ~azure.servicefabric.models.HealthState
     :param health_events: The list of health events reported on the entity.

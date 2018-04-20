@@ -16,7 +16,6 @@ class RepairTargetDescriptionBase(Model):
     """Describes the entities targeted by a repair action.
     This type supports the Service Fabric platform; it is not meant to be used
     directly from your code.
-    .
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: NodeRepairTargetDescription

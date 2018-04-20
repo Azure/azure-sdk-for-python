@@ -31,5 +31,5 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(SingletonPartitionSchemeDescription, self).__init__(, **kwargs)
+        super(SingletonPartitionSchemeDescription, self).__init__(**kwargs)
         self.partition_scheme = 'Singleton'

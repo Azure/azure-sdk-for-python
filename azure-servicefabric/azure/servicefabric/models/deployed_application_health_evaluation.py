@@ -16,7 +16,6 @@ class DeployedApplicationHealthEvaluation(HealthEvaluation):
     """Represents health evaluation for a deployed application, containing
     information about the data and the algorithm used by the health store to
     evaluate health.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

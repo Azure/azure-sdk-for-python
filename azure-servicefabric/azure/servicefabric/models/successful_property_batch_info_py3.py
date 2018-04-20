@@ -37,6 +37,6 @@ class SuccessfulPropertyBatchInfo(PropertyBatchInfo):
     }
 
     def __init__(self, *, properties=None, **kwargs) -> None:
-        super(SuccessfulPropertyBatchInfo, self).__init__(, **kwargs)
+        super(SuccessfulPropertyBatchInfo, self).__init__(**kwargs)
         self.properties = properties
         self.kind = 'Successful'

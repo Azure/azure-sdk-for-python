@@ -16,7 +16,6 @@ class NodeRepairTargetDescription(RepairTargetDescriptionBase):
     """Describes the list of nodes targeted by a repair action.
     This type supports the Service Fabric platform; it is not meant to be used
     directly from your code.
-    .
 
     All required parameters must be populated in order to send to Azure.
 
@@ -36,6 +35,6 @@ class NodeRepairTargetDescription(RepairTargetDescriptionBase):
     }
 
     def __init__(self, *, node_names=None, **kwargs) -> None:
-        super(NodeRepairTargetDescription, self).__init__(, **kwargs)
+        super(NodeRepairTargetDescription, self).__init__(**kwargs)
         self.node_names = node_names
         self.kind = 'Node'

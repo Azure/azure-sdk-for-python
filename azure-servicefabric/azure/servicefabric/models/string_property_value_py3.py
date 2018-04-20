@@ -34,6 +34,6 @@ class StringPropertyValue(PropertyValue):
     }
 
     def __init__(self, *, data: str, **kwargs) -> None:
-        super(StringPropertyValue, self).__init__(, **kwargs)
+        super(StringPropertyValue, self).__init__(**kwargs)
         self.data = data
         self.kind = 'String'

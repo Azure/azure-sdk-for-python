@@ -14,7 +14,6 @@ from msrest.serialization import Model
 
 class ServiceTypeHealthPolicyMapItem(Model):
     """Defines an item in ServiceTypeHealthPolicyMap.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class ApplicationHealthPolicies(Model):
     """Defines the application health policy map used to evaluate the health of an
     application or one of its children entities.
-    .
 
     :param application_health_policy_map: The wrapper that contains the map
      with application health policies used to evaluate specific applications in

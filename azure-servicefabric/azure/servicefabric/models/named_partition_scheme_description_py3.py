@@ -39,7 +39,7 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
     }
 
     def __init__(self, *, count: int, names, **kwargs) -> None:
-        super(NamedPartitionSchemeDescription, self).__init__(, **kwargs)
+        super(NamedPartitionSchemeDescription, self).__init__(**kwargs)
         self.count = count
         self.names = names
         self.partition_scheme = 'Named'

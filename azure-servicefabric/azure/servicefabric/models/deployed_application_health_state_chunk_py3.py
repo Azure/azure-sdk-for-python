@@ -17,7 +17,6 @@ class DeployedApplicationHealthStateChunk(EntityHealthStateChunk):
     the node where the application is deployed, the aggregated health state and
     any deployed service packages that respect the chunk query description
     filters.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible

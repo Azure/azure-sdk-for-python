@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class ChaosEventsSegment(Model):
     """Contains the list of Chaos events and the continuation token to get the
     next segment.
-    .
 
     :param continuation_token: The continuation token parameter is used to
      obtain next set of results. The continuation token is included in the

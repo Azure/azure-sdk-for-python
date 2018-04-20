@@ -34,6 +34,6 @@ class Int64PropertyValue(PropertyValue):
     }
 
     def __init__(self, *, data: str, **kwargs) -> None:
-        super(Int64PropertyValue, self).__init__(, **kwargs)
+        super(Int64PropertyValue, self).__init__(**kwargs)
         self.data = data
         self.kind = 'Int64'

@@ -20,8 +20,7 @@ class MonitoringPolicyDescription(Model):
      Invalid indicates the failure action is invalid. Rollback specifies that
      the upgrade will start rolling back automatically.
      Manual indicates that the upgrade will switch to UnmonitoredManual upgrade
-     mode.
-     . Possible values include: 'Invalid', 'Rollback', 'Manual'
+     mode. Possible values include: 'Invalid', 'Rollback', 'Manual'
     :type failure_action: str or ~azure.servicefabric.models.FailureAction
     :param health_check_wait_duration_in_milliseconds: The amount of time to
      wait after completing an upgrade domain before applying health policies.

@@ -34,6 +34,6 @@ class DoublePropertyValue(PropertyValue):
     }
 
     def __init__(self, *, data: float, **kwargs) -> None:
-        super(DoublePropertyValue, self).__init__(, **kwargs)
+        super(DoublePropertyValue, self).__init__(**kwargs)
         self.data = data
         self.kind = 'Double'

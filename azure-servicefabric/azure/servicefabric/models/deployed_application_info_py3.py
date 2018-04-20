@@ -30,9 +30,8 @@ class DeployedApplicationInfo(Model):
      manifest.
     :type type_name: str
     :param status: The status of the application deployed on the node.
-     Following are the possible values.
-     . Possible values include: 'Invalid', 'Downloading', 'Activating',
-     'Active', 'Upgrading', 'Deactivating'
+     Following are the possible values. Possible values include: 'Invalid',
+     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating'
     :type status: str or ~azure.servicefabric.models.DeployedApplicationStatus
     :param work_directory: The work directory of the application on the node.
      The work directory can be used to store application data.

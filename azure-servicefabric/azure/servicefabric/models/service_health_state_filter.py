@@ -19,7 +19,6 @@ class ServiceHealthStateFilter(Model):
     specified in the cluster health chunk query description.
     One filter can match zero, one or multiple services, depending on its
     properties.
-    .
 
     :param service_name_filter: The name of the service that matches the
      filter. The filter is applied only to the specified service, if it exists.
@@ -54,8 +53,7 @@ class ServiceHealthStateFilter(Model):
      - Error - Filter that matches input with HealthState value Error. The
      value is 8.
      - All - Filter that matches input with any HealthState value. The value is
-     65535.
-     . Default value: 0 .
+     65535. Default value: 0 .
     :type health_state_filter: int
     :param partition_filters: Defines a list of filters that specify which
      partitions to be included in the returned cluster health chunk as children

@@ -42,9 +42,8 @@ class DeployedCodePackageInfo(Model):
     :type host_isolation_mode: str or
      ~azure.servicefabric.models.HostIsolationMode
     :param status: Specifies the status of a deployed application or service
-     package on a Service Fabric node.
-     . Possible values include: 'Invalid', 'Downloading', 'Activating',
-     'Active', 'Upgrading', 'Deactivating'
+     package on a Service Fabric node. Possible values include: 'Invalid',
+     'Downloading', 'Activating', 'Active', 'Upgrading', 'Deactivating'
     :type status: str or ~azure.servicefabric.models.DeploymentStatus
     :param run_frequency_interval: The interval at which code package is run.
      This is used for periodic code package.

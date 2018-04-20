@@ -34,6 +34,6 @@ class GuidPropertyValue(PropertyValue):
     }
 
     def __init__(self, *, data: str, **kwargs) -> None:
-        super(GuidPropertyValue, self).__init__(, **kwargs)
+        super(GuidPropertyValue, self).__init__(**kwargs)
         self.data = data
         self.kind = 'Guid'

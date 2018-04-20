@@ -17,7 +17,6 @@ class FabricError(Model):
     """The REST API operations for Service Fabric return standard HTTP status
     codes. This type defines the additional information returned from the
     Service Fabric API operations that are not successful.
-    .
 
     All required parameters must be populated in order to send to Azure.
 

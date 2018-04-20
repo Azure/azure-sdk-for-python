@@ -23,7 +23,6 @@ class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolic
     regional or datacenter boundaries. Note that since this is an optimization
     it is possible that the Primary replica may not end up located in this
     domain due to failures, capacity limits, or other constraints.
-    .
 
     All required parameters must be populated in order to send to Azure.
 
@@ -44,6 +43,6 @@ class ServicePlacementPreferPrimaryDomainPolicyDescription(ServicePlacementPolic
     }
 
     def __init__(self, *, domain_name: str=None, **kwargs) -> None:
-        super(ServicePlacementPreferPrimaryDomainPolicyDescription, self).__init__(, **kwargs)
+        super(ServicePlacementPreferPrimaryDomainPolicyDescription, self).__init__(**kwargs)
         self.domain_name = domain_name
         self.type = 'PreferredPrimaryDomain'

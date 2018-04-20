@@ -16,11 +16,10 @@ class ChaosSchedule(Model):
     """Defines the schedule used by Chaos.
 
     :param start_date: The date and time Chaos will start using this schedule.
-     . Default value: "1601-01-01T00:00:00Z" .
+     Default value: "1601-01-01T00:00:00Z" .
     :type start_date: datetime
     :param expiry_date: The date and time Chaos will continue to use this
-     schedule until.
-     . Default value: "9999-12-31T23:59:59.999Z" .
+     schedule until. Default value: "9999-12-31T23:59:59.999Z" .
     :type expiry_date: datetime
     :param chaos_parameters_dictionary: A mapping of string names to Chaos
      Parameters to be referenced by Chaos Schedule Jobs.

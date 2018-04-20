@@ -41,7 +41,7 @@ class PartitionBackupEntity(BackupEntity):
     }
 
     def __init__(self, *, service_name: str=None, partition_id: str=None, **kwargs) -> None:
-        super(PartitionBackupEntity, self).__init__(, **kwargs)
+        super(PartitionBackupEntity, self).__init__(**kwargs)
         self.service_name = service_name
         self.partition_id = partition_id
         self.entity_kind = 'Partition'

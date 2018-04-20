@@ -17,7 +17,6 @@ class ReplicaHealthStateChunk(EntityHealthStateChunk):
     stateless service instance.
     The replica health state contains the replica ID and its aggregated health
     state.
-    .
 
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible

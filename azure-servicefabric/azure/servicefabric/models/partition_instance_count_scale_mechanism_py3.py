@@ -46,7 +46,7 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanismDescription):
     }
 
     def __init__(self, *, min_instance_count: int, max_instance_count: int, scale_increment: int, **kwargs) -> None:
-        super(PartitionInstanceCountScaleMechanism, self).__init__(, **kwargs)
+        super(PartitionInstanceCountScaleMechanism, self).__init__(**kwargs)
         self.min_instance_count = min_instance_count
         self.max_instance_count = max_instance_count
         self.scale_increment = scale_increment

@@ -14,12 +14,10 @@ from msrest.serialization import Model
 
 class ChaosParameters(Model):
     """Defines all the parameters to configure a Chaos run.
-    .
 
     :param time_to_run_in_seconds: Total time (in seconds) for which Chaos
      will run before automatically stopping. The maximum allowed value is
-     4,294,967,295 (System.UInt32.MaxValue).
-     . Default value: "4294967295" .
+     4,294,967,295 (System.UInt32.MaxValue). Default value: "4294967295" .
     :type time_to_run_in_seconds: str
     :param max_cluster_stabilization_timeout_in_seconds: The maximum amount of
      time to wait for all cluster entities to become stable and healthy. Chaos
@@ -27,8 +25,7 @@ class ChaosParameters(Model):
      health of cluster entities.
      During validation if a cluster entity is not stable and healthy within
      MaxClusterStabilizationTimeoutInSeconds, Chaos generates a validation
-     failed event.
-     . Default value: 60 .
+     failed event. Default value: 60 .
     :type max_cluster_stabilization_timeout_in_seconds: long
     :param max_concurrent_faults: MaxConcurrentFaults is the maximum number of
      concurrent faults induced per iteration.
@@ -37,25 +34,22 @@ class ChaosParameters(Model):
      The higher the concurrency, the more aggressive the injection of faults --
      inducing more complex series of states to uncover bugs.
      The recommendation is to start with a value of 2 or 3 and to exercise
-     caution while moving up.
-     . Default value: 1 .
+     caution while moving up. Default value: 1 .
     :type max_concurrent_faults: long
     :param enable_move_replica_faults: Enables or disables the move primary
-     and move secondary faults.
-     . Default value: True .
+     and move secondary faults. Default value: True .
     :type enable_move_replica_faults: bool
     :param wait_time_between_faults_in_seconds: Wait time (in seconds) between
      consecutive faults within a single iteration.
      The larger the value, the lower the overlapping between faults and the
      simpler the sequence of state transitions that the cluster goes through.
      The recommendation is to start with a value between 1 and 5 and exercise
-     caution while moving up.
-     . Default value: 20 .
+     caution while moving up. Default value: 20 .
     :type wait_time_between_faults_in_seconds: long
     :param wait_time_between_iterations_in_seconds: Time-separation (in
      seconds) between two consecutive iterations of Chaos.
-     The larger the value, the lower the fault injection rate.
-     . Default value: 30 .
+     The larger the value, the lower the fault injection rate. Default value:
+     30 .
     :type wait_time_between_iterations_in_seconds: long
     :param cluster_health_policy: Passed-in cluster health policy is used to
      validate health of the cluster in between Chaos iterations. If the cluster
