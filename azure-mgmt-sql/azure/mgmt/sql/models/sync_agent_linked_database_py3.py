@@ -64,7 +64,7 @@ class SyncAgentLinkedDatabase(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(SyncAgentLinkedDatabase, self).__init__(, **kwargs)
+        super(SyncAgentLinkedDatabase, self).__init__(**kwargs)
         self.database_type = None
         self.database_id = None
         self.description = None

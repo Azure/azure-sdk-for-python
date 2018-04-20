@@ -97,7 +97,7 @@ class ElasticPoolOperation(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ElasticPoolOperation, self).__init__(, **kwargs)
+        super(ElasticPoolOperation, self).__init__(**kwargs)
         self.elastic_pool_name = None
         self.operation = None
         self.operation_friendly_name = None

@@ -59,7 +59,7 @@ class GeoBackupPolicy(ProxyResource):
     }
 
     def __init__(self, *, state, **kwargs) -> None:
-        super(GeoBackupPolicy, self).__init__(, **kwargs)
+        super(GeoBackupPolicy, self).__init__(**kwargs)
         self.state = state
         self.storage_type = None
         self.kind = None

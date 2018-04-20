@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -58,6 +58,7 @@ from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
 from .operations.instance_failover_groups_operations import InstanceFailoverGroupsOperations
+from .operations.short_term_retention_policies_operations import ShortTermRetentionPoliciesOperations
 from . import models
 
 
@@ -94,7 +95,7 @@ class SqlManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class SqlManagementClient(object):
+class SqlManagementClient(SDKClient):
     """The Azure SQL Database management API provides a RESTful set of web services that interact with Azure SQL Database services to manage your databases. The API enables you to create, retrieve, update, and delete databases.
 
     :ivar config: Configuration for client.
@@ -190,6 +191,8 @@ class SqlManagementClient(object):
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
     :ivar instance_failover_groups: InstanceFailoverGroups operations
     :vartype instance_failover_groups: azure.mgmt.sql.operations.InstanceFailoverGroupsOperations
+    :ivar short_term_retention_policies: ShortTermRetentionPolicies operations
+    :vartype short_term_retention_policies: azure.mgmt.sql.operations.ShortTermRetentionPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -204,7 +207,7 @@ class SqlManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = SqlManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SqlManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -299,4 +302,6 @@ class SqlManagementClient(object):
         self.capabilities = CapabilitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.instance_failover_groups = InstanceFailoverGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.short_term_retention_policies = ShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)

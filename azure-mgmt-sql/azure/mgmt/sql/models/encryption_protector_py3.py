@@ -70,7 +70,7 @@ class EncryptionProtector(ProxyResource):
     }
 
     def __init__(self, *, server_key_type, kind: str=None, server_key_name: str=None, **kwargs) -> None:
-        super(EncryptionProtector, self).__init__(, **kwargs)
+        super(EncryptionProtector, self).__init__(**kwargs)
         self.kind = kind
         self.location = None
         self.subregion = None

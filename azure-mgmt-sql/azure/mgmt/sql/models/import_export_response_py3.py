@@ -75,7 +75,7 @@ class ImportExportResponse(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ImportExportResponse, self).__init__(, **kwargs)
+        super(ImportExportResponse, self).__init__(**kwargs)
         self.request_type = None
         self.request_id = None
         self.server_name = None

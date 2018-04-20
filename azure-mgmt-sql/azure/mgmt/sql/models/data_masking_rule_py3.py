@@ -112,7 +112,7 @@ class DataMaskingRule(ProxyResource):
     }
 
     def __init__(self, *, schema_name: str, table_name: str, column_name: str, masking_function, alias_name: str=None, rule_state=None, number_from: str=None, number_to: str=None, prefix_size: str=None, suffix_size: str=None, replacement_string: str=None, **kwargs) -> None:
-        super(DataMaskingRule, self).__init__(, **kwargs)
+        super(DataMaskingRule, self).__init__(**kwargs)
         self.data_masking_rule_id = None
         self.alias_name = alias_name
         self.rule_state = rule_state

@@ -68,7 +68,7 @@ class ServerKey(ProxyResource):
     }
 
     def __init__(self, *, server_key_type, kind: str=None, uri: str=None, thumbprint: str=None, creation_date=None, **kwargs) -> None:
-        super(ServerKey, self).__init__(, **kwargs)
+        super(ServerKey, self).__init__(**kwargs)
         self.kind = kind
         self.location = None
         self.subregion = None
