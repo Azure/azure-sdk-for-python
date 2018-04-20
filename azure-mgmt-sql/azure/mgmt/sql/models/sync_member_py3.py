@@ -77,7 +77,7 @@ class SyncMember(ProxyResource):
     }
 
     def __init__(self, *, database_type=None, sync_agent_id: str=None, sql_server_database_id: str=None, server_name: str=None, database_name: str=None, user_name: str=None, password: str=None, sync_direction=None, **kwargs) -> None:
-        super(SyncMember, self).__init__(, **kwargs)
+        super(SyncMember, self).__init__(**kwargs)
         self.database_type = database_type
         self.sync_agent_id = sync_agent_id
         self.sql_server_database_id = sql_server_database_id

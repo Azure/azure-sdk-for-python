@@ -54,7 +54,7 @@ class ServerConnectionPolicy(ProxyResource):
     }
 
     def __init__(self, *, connection_type, **kwargs) -> None:
-        super(ServerConnectionPolicy, self).__init__(, **kwargs)
+        super(ServerConnectionPolicy, self).__init__(**kwargs)
         self.kind = None
         self.location = None
         self.connection_type = connection_type

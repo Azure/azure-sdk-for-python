@@ -54,7 +54,7 @@ class ServerAutomaticTuning(ProxyResource):
     }
 
     def __init__(self, *, desired_state=None, options=None, **kwargs) -> None:
-        super(ServerAutomaticTuning, self).__init__(, **kwargs)
+        super(ServerAutomaticTuning, self).__init__(**kwargs)
         self.desired_state = desired_state
         self.actual_state = None
         self.options = options

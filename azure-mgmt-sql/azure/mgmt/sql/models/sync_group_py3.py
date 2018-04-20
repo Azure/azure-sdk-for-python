@@ -71,7 +71,7 @@ class SyncGroup(ProxyResource):
     }
 
     def __init__(self, *, interval: int=None, conflict_resolution_policy=None, sync_database_id: str=None, hub_database_user_name: str=None, hub_database_password: str=None, schema=None, **kwargs) -> None:
-        super(SyncGroup, self).__init__(, **kwargs)
+        super(SyncGroup, self).__init__(**kwargs)
         self.interval = interval
         self.last_sync_time = None
         self.conflict_resolution_policy = conflict_resolution_policy

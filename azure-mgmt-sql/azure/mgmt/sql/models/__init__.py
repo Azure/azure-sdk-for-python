@@ -122,6 +122,7 @@ try:
     from .partner_region_info_py3 import PartnerRegionInfo
     from .managed_instance_pair_info_py3 import ManagedInstancePairInfo
     from .instance_failover_group_py3 import InstanceFailoverGroup
+    from .short_term_retention_policy_py3 import ShortTermRetentionPolicy
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .tracked_resource import TrackedResource
@@ -235,6 +236,7 @@ except (SyntaxError, ImportError):
     from .partner_region_info import PartnerRegionInfo
     from .managed_instance_pair_info import ManagedInstancePairInfo
     from .instance_failover_group import InstanceFailoverGroup
+    from .short_term_retention_policy import ShortTermRetentionPolicy
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -458,6 +460,7 @@ __all__ = [
     'PartnerRegionInfo',
     'ManagedInstancePairInfo',
     'InstanceFailoverGroup',
+    'ShortTermRetentionPolicy',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',

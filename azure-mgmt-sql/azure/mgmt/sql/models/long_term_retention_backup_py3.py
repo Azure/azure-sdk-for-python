@@ -64,7 +64,7 @@ class LongTermRetentionBackup(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(LongTermRetentionBackup, self).__init__(, **kwargs)
+        super(LongTermRetentionBackup, self).__init__(**kwargs)
         self.server_name = None
         self.server_create_time = None
         self.database_name = None

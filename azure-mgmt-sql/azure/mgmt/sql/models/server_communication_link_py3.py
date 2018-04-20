@@ -58,7 +58,7 @@ class ServerCommunicationLink(ProxyResource):
     }
 
     def __init__(self, *, partner_server: str, **kwargs) -> None:
-        super(ServerCommunicationLink, self).__init__(, **kwargs)
+        super(ServerCommunicationLink, self).__init__(**kwargs)
         self.state = None
         self.partner_server = partner_server
         self.location = None

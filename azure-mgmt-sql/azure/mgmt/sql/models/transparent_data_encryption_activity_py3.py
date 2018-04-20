@@ -54,7 +54,7 @@ class TransparentDataEncryptionActivity(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(TransparentDataEncryptionActivity, self).__init__(, **kwargs)
+        super(TransparentDataEncryptionActivity, self).__init__(**kwargs)
         self.location = None
         self.status = None
         self.percent_complete = None

@@ -61,7 +61,7 @@ class ServerAzureADAdministrator(ProxyResource):
     administrator_type = "ActiveDirectory"
 
     def __init__(self, *, login: str, sid: str, tenant_id: str, **kwargs) -> None:
-        super(ServerAzureADAdministrator, self).__init__(, **kwargs)
+        super(ServerAzureADAdministrator, self).__init__(**kwargs)
         self.login = login
         self.sid = sid
         self.tenant_id = tenant_id

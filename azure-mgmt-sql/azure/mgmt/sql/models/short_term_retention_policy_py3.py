@@ -12,8 +12,8 @@
 from .proxy_resource import ProxyResource
 
 
-class ServerDnsAlias(ProxyResource):
-    """A server DNS alias.
+class ShortTermRetentionPolicy(ProxyResource):
+    """A short term retention policy resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,24 +24,24 @@ class ServerDnsAlias(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar azure_dns_record: The fully qualified DNS record for alias
-    :vartype azure_dns_record: str
+    :param retention_days: The backup retention period in days. This is how
+     many days Point-in-Time Restore will be supported.
+    :type retention_days: int
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'azure_dns_record': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'azure_dns_record': {'key': 'properties.azureDnsRecord', 'type': 'str'},
+        'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(ServerDnsAlias, self).__init__(**kwargs)
-        self.azure_dns_record = None
+    def __init__(self, *, retention_days: int=None, **kwargs) -> None:
+        super(ShortTermRetentionPolicy, self).__init__(**kwargs)
+        self.retention_days = retention_days

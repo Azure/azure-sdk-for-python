@@ -127,7 +127,7 @@ class ElasticPoolActivity(ProxyResource):
     }
 
     def __init__(self, *, location: str=None, **kwargs) -> None:
-        super(ElasticPoolActivity, self).__init__(, **kwargs)
+        super(ElasticPoolActivity, self).__init__(**kwargs)
         self.location = location
         self.end_time = None
         self.error_code = None

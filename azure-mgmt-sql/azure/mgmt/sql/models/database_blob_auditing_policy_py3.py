@@ -77,7 +77,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     }
 
     def __init__(self, *, state, storage_endpoint: str=None, storage_account_access_key: str=None, retention_days: int=None, audit_actions_and_groups=None, storage_account_subscription_id: str=None, is_storage_secondary_key_in_use: bool=None, **kwargs) -> None:
-        super(DatabaseBlobAuditingPolicy, self).__init__(, **kwargs)
+        super(DatabaseBlobAuditingPolicy, self).__init__(**kwargs)
         self.kind = None
         self.state = state
         self.storage_endpoint = storage_endpoint
