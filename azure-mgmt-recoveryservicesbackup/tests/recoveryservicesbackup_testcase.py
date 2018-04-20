@@ -71,7 +71,7 @@ class MgmtRecoveryServicesBackupTestHelper(object):
 
     def __init__(self, test_context):
         self.context = test_context
-        self.vault_client = self.context.vault_client  # type: azure.mgmt.recoveryservicesbackup.RecoveryServicesClient
+        self.vault_client = self.context.vault_client  # type: azure.mgmt.recoveryservices.RecoveryServicesClient
         self.backup_client = self.context.backup_client  # type: azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient
         self.test_definition = self.context.test_definition
         self.vault_name = self.test_definition.vault_name

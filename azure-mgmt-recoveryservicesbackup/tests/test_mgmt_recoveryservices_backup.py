@@ -9,8 +9,8 @@ from contextlib import contextmanager
 
 import azure.mgmt.recoveryservicesbackup
 from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import AzureMgmtTestCase
-from tests.recoveryservicesbackup_testcase import MgmtRecoveryServicesBackupTestDefinition, MgmtRecoveryServicesBackupTestHelper
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from recoveryservicesbackup_testcase import MgmtRecoveryServicesBackupTestDefinition, MgmtRecoveryServicesBackupTestHelper
 
 
 class MgmtRecoveryServicesBackupTests(AzureMgmtTestCase):
@@ -33,21 +33,19 @@ class MgmtRecoveryServicesBackupTests(AzureMgmtTestCase):
         self.test_helper = MgmtRecoveryServicesBackupTestHelper(self)
         self.region = "southeastasia"
 
+    def sleep(self, duration):
+        if self.is_live:
+            time.sleep(duration)
+
     @contextmanager
     def vault(self):
         self.test_helper.create_vault()
         yield
         self.test_helper.delete_vault()
 
-    @contextmanager
-    def resource_group(self):
-        self.create_resource_group()
-        yield
-        self.delete_resource_group(wait_timeout=None)
-
-    @record
-    def test_iaasvm_e2e(self):
-        with self.resource_group(), self.vault():
+    @ResourceGroupPreparer()
+    def test_iaasvm_e2e(self, resource_group, location):
+        with self.vault():
             self.test_helper.enable_protection(self.test_definition.container_name, self.test_definition.vm_name, "DefaultPolicy")
 
             protected_items = self.test_helper.list_protected_items()
@@ -96,8 +94,6 @@ class MgmtRecoveryServicesBackupTests(AzureMgmtTestCase):
             # Disable Protection
             self.test_helper.delete_protection(self.test_definition.container_name, self.test_definition.vm_name)
 
-
-    @record
     def test_operations_api(self):
         operations = self.test_helper.list_operations()
         self.assertIsNotNone(operations)
