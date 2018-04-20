@@ -43,6 +43,8 @@ from .application_insights_component_web_test_location import ApplicationInsight
 from .web_test_geolocation import WebTestGeolocation
 from .web_test_properties_configuration import WebTestPropertiesConfiguration
 from .web_test import WebTest
+from .application_insights_component_analytics_item_properties import ApplicationInsightsComponentAnalyticsItemProperties
+from .application_insights_component_analytics_item import ApplicationInsightsComponentAnalyticsItem
 from .workbook import Workbook
 from .workbooks import Workbooks
 from .link_properties import LinkProperties
@@ -60,8 +62,12 @@ from .application_insights_management_client_enums import (
     PurgeState,
     FavoriteType,
     WebTestKind,
+    ItemScope,
+    ItemType,
     SharedTypeKind,
     FavoriteSourceType,
+    ItemScopePath,
+    ItemTypeParameter,
     CategoryType,
 )
 
@@ -100,6 +106,8 @@ __all__ = [
     'WebTestGeolocation',
     'WebTestPropertiesConfiguration',
     'WebTest',
+    'ApplicationInsightsComponentAnalyticsItemProperties',
+    'ApplicationInsightsComponentAnalyticsItem',
     'Workbook',
     'Workbooks',
     'LinkProperties',
@@ -116,7 +124,11 @@ __all__ = [
     'PurgeState',
     'FavoriteType',
     'WebTestKind',
+    'ItemScope',
+    'ItemType',
     'SharedTypeKind',
     'FavoriteSourceType',
+    'ItemScopePath',
+    'ItemTypeParameter',
     'CategoryType',
 ]
