@@ -61,8 +61,8 @@ class DeploymentOperationProperties(Model):
         'response': {'key': 'response', 'type': 'HttpMessage'},
     }
 
-    def __init__(self):
-        super(DeploymentOperationProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(DeploymentOperationProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.timestamp = None
         self.service_request_id = None

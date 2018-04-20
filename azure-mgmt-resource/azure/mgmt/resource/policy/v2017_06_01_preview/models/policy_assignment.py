@@ -64,16 +64,16 @@ class PolicyAssignment(Model):
         'sku': {'key': 'sku', 'type': 'PolicySku'},
     }
 
-    def __init__(self, display_name=None, policy_definition_id=None, scope=None, not_scopes=None, parameters=None, description=None, metadata=None, sku=None):
-        super(PolicyAssignment, self).__init__()
-        self.display_name = display_name
-        self.policy_definition_id = policy_definition_id
-        self.scope = scope
-        self.not_scopes = not_scopes
-        self.parameters = parameters
-        self.description = description
-        self.metadata = metadata
+    def __init__(self, **kwargs):
+        super(PolicyAssignment, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.scope = kwargs.get('scope', None)
+        self.not_scopes = kwargs.get('not_scopes', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.description = kwargs.get('description', None)
+        self.metadata = kwargs.get('metadata', None)
         self.id = None
         self.type = None
         self.name = None
-        self.sku = sku
+        self.sku = kwargs.get('sku', None)

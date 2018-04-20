@@ -18,6 +18,8 @@ class ApplicationDefinition(GenericResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID
     :vartype id: str
     :ivar name: Resource name
@@ -34,8 +36,8 @@ class ApplicationDefinition(GenericResource):
     :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
-    :param lock_level: The managed application lock level. Possible values
-     include: 'CanNotDelete', 'ReadOnly', 'None'
+    :param lock_level: Required. The managed application lock level. Possible
+     values include: 'CanNotDelete', 'ReadOnly', 'None'
     :type lock_level: str or
      ~azure.mgmt.resource.managedapplications.models.ApplicationLockLevel
     :param display_name: The managed application definition display name.
@@ -43,7 +45,8 @@ class ApplicationDefinition(GenericResource):
     :param is_enabled: A value indicating whether the package is enabled or
      not.
     :type is_enabled: str
-    :param authorizations: The managed application provider authorizations.
+    :param authorizations: Required. The managed application provider
+     authorizations.
     :type authorizations:
      list[~azure.mgmt.resource.managedapplications.models.ApplicationProviderAuthorization]
     :param artifacts: The collection of managed application artifacts. The
@@ -94,14 +97,14 @@ class ApplicationDefinition(GenericResource):
         'create_ui_definition': {'key': 'properties.createUiDefinition', 'type': 'object'},
     }
 
-    def __init__(self, lock_level, authorizations, location=None, tags=None, managed_by=None, sku=None, identity=None, display_name=None, is_enabled=None, artifacts=None, description=None, package_file_uri=None, main_template=None, create_ui_definition=None):
-        super(ApplicationDefinition, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
-        self.lock_level = lock_level
-        self.display_name = display_name
-        self.is_enabled = is_enabled
-        self.authorizations = authorizations
-        self.artifacts = artifacts
-        self.description = description
-        self.package_file_uri = package_file_uri
-        self.main_template = main_template
-        self.create_ui_definition = create_ui_definition
+    def __init__(self, **kwargs):
+        super(ApplicationDefinition, self).__init__(**kwargs)
+        self.lock_level = kwargs.get('lock_level', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.is_enabled = kwargs.get('is_enabled', None)
+        self.authorizations = kwargs.get('authorizations', None)
+        self.artifacts = kwargs.get('artifacts', None)
+        self.description = kwargs.get('description', None)
+        self.package_file_uri = kwargs.get('package_file_uri', None)
+        self.main_template = kwargs.get('main_template', None)
+        self.create_ui_definition = kwargs.get('create_ui_definition', None)
