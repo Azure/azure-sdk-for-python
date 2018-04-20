@@ -18,13 +18,15 @@ class VirtualMachineExtension(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -82,14 +84,14 @@ class VirtualMachineExtension(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
     }
 
-    def __init__(self, location, tags=None, force_update_tag=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, instance_view=None):
-        super(VirtualMachineExtension, self).__init__(location=location, tags=tags)
-        self.force_update_tag = force_update_tag
-        self.publisher = publisher
-        self.virtual_machine_extension_type = virtual_machine_extension_type
-        self.type_handler_version = type_handler_version
-        self.auto_upgrade_minor_version = auto_upgrade_minor_version
-        self.settings = settings
-        self.protected_settings = protected_settings
+    def __init__(self, **kwargs):
+        super(VirtualMachineExtension, self).__init__(**kwargs)
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.virtual_machine_extension_type = kwargs.get('virtual_machine_extension_type', None)
+        self.type_handler_version = kwargs.get('type_handler_version', None)
+        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.settings = kwargs.get('settings', None)
+        self.protected_settings = kwargs.get('protected_settings', None)
         self.provisioning_state = None
-        self.instance_view = instance_view
+        self.instance_view = kwargs.get('instance_view', None)

@@ -19,23 +19,41 @@ class PerformanceTierServiceLevelObjectives(Model):
     :type id: str
     :param edition: Edition of the performance tier.
     :type edition: str
-    :param dtu: Database throughput unit associated with the service level
-     objective
-    :type dtu: int
-    :param storage_mb: Maximum storage in MB associated with the service level
-     objective
-    :type storage_mb: int
+    :param v_core: vCore associated with the service level objective
+    :type v_core: int
+    :param hardware_generation: Hardware generation associated with the
+     service level objective
+    :type hardware_generation: str
+    :param max_backup_retention_days: Maximum Backup retention in days for the
+     performance tier edition
+    :type max_backup_retention_days: int
+    :param min_backup_retention_days: Minimum Backup retention in days for the
+     performance tier edition
+    :type min_backup_retention_days: int
+    :param max_storage_mb: Max storage allowed for a server.
+    :type max_storage_mb: int
+    :param min_storage_mb: Max storage allowed for a server.
+    :type min_storage_mb: int
     """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'edition': {'key': 'edition', 'type': 'str'},
-        'dtu': {'key': 'dtu', 'type': 'int'},
-        'storage_mb': {'key': 'storageMB', 'type': 'int'},
+        'v_core': {'key': 'vCore', 'type': 'int'},
+        'hardware_generation': {'key': 'hardwareGeneration', 'type': 'str'},
+        'max_backup_retention_days': {'key': 'maxBackupRetentionDays', 'type': 'int'},
+        'min_backup_retention_days': {'key': 'minBackupRetentionDays', 'type': 'int'},
+        'max_storage_mb': {'key': 'maxStorageMB', 'type': 'int'},
+        'min_storage_mb': {'key': 'minStorageMB', 'type': 'int'},
     }
 
-    def __init__(self, id=None, edition=None, dtu=None, storage_mb=None):
-        self.id = id
-        self.edition = edition
-        self.dtu = dtu
-        self.storage_mb = storage_mb
+    def __init__(self, **kwargs):
+        super(PerformanceTierServiceLevelObjectives, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.edition = kwargs.get('edition', None)
+        self.v_core = kwargs.get('v_core', None)
+        self.hardware_generation = kwargs.get('hardware_generation', None)
+        self.max_backup_retention_days = kwargs.get('max_backup_retention_days', None)
+        self.min_backup_retention_days = kwargs.get('min_backup_retention_days', None)
+        self.max_storage_mb = kwargs.get('max_storage_mb', None)
+        self.min_storage_mb = kwargs.get('min_storage_mb', None)

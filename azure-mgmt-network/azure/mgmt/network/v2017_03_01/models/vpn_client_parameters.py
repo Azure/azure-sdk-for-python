@@ -15,8 +15,11 @@ from msrest.serialization import Model
 class VpnClientParameters(Model):
     """Vpn Client Parameters for package generation.
 
-    :param processor_architecture: VPN client Processor Architecture. Possible
-     values are: 'AMD64' and 'X86'. Possible values include: 'Amd64', 'X86'
+    All required parameters must be populated in order to send to Azure.
+
+    :param processor_architecture: Required. VPN client Processor
+     Architecture. Possible values are: 'AMD64' and 'X86'. Possible values
+     include: 'Amd64', 'X86'
     :type processor_architecture: str or
      ~azure.mgmt.network.v2017_03_01.models.ProcessorArchitecture
     """
@@ -29,6 +32,6 @@ class VpnClientParameters(Model):
         'processor_architecture': {'key': 'processorArchitecture', 'type': 'str'},
     }
 
-    def __init__(self, processor_architecture):
-        super(VpnClientParameters, self).__init__()
-        self.processor_architecture = processor_architecture
+    def __init__(self, **kwargs):
+        super(VpnClientParameters, self).__init__(**kwargs)
+        self.processor_architecture = kwargs.get('processor_architecture', None)

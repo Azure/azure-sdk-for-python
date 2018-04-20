@@ -39,6 +39,7 @@ class ParameterType(Enum):
     float_enum = "Float"
     bool_enum = "Bool"
     array = "Array"
+    secure_string = "SecureString"
 
 
 class DependencyCondition(Enum):
@@ -285,6 +286,7 @@ class WebActivityMethod(Enum):
     get = "GET"
     post = "POST"
     put = "PUT"
+    delete = "DELETE"
 
 
 class CassandraSourceReadConsistencyLevels(Enum):

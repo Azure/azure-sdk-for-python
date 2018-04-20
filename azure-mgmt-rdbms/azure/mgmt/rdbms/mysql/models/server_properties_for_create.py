@@ -17,38 +17,40 @@ class ServerPropertiesForCreate(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ServerPropertiesForDefaultCreate,
-    ServerPropertiesForRestore
+    ServerPropertiesForRestore, ServerPropertiesForGeoRestore
 
-    :param storage_mb: The maximum storage allowed for a server.
-    :type storage_mb: long
+    All required parameters must be populated in order to send to Azure.
+
     :param version: Server version. Possible values include: '5.6', '5.7'
     :type version: str or ~azure.mgmt.rdbms.mysql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mysql.models.SslEnforcementEnum
-    :param create_mode: Constant filled by server.
+    :param storage_profile: Storage profile of a server.
+    :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
+    :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     """
 
     _validation = {
-        'storage_mb': {'minimum': 1024},
         'create_mode': {'required': True},
     }
 
     _attribute_map = {
-        'storage_mb': {'key': 'storageMB', 'type': 'long'},
         'version': {'key': 'version', 'type': 'str'},
         'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
     }
 
     _subtype_map = {
-        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore'}
+        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore'}
     }
 
-    def __init__(self, storage_mb=None, version=None, ssl_enforcement=None):
-        self.storage_mb = storage_mb
-        self.version = version
-        self.ssl_enforcement = ssl_enforcement
+    def __init__(self, **kwargs):
+        super(ServerPropertiesForCreate, self).__init__(**kwargs)
+        self.version = kwargs.get('version', None)
+        self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
         self.create_mode = None

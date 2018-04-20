@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.1.9 (2017-04-03)
+++++++++++++++++++
+
+**Features**
+
+- Add "azure.profiles" namespace #2247
+
+**Bugfixes**
+
+- get_client_from_cli_profile now supports Datalake #2318
+
 1.1.8 (2017-07-28)
 ++++++++++++++++++
 

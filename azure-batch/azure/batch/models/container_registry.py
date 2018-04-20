@@ -36,6 +36,7 @@ class ContainerRegistry(Model):
     }
 
     def __init__(self, user_name, password, registry_server=None):
+        super(ContainerRegistry, self).__init__()
         self.registry_server = registry_server
         self.user_name = user_name
         self.password = password

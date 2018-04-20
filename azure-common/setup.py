@@ -39,12 +39,12 @@ with open('HISTORY.rst', encoding='utf-8') as f:
 
 setup(
     name='azure-common',
-    version='1.1.8',
+    version='1.1.9',
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='ptvshelp@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -52,7 +52,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -62,10 +61,11 @@ setup(
     packages=[
         'azure',
         'azure.common',
+        'azure.profiles',
     ],
     extras_require={
         'autorest':[
-            'msrestazure>=0.4.0,<0.5.0',
+            'msrestazure>=0.4.0,<2.0.0',
         ]
     },
     cmdclass=cmdclass

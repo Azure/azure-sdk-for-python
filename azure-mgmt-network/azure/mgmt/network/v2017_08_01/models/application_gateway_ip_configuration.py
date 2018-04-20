@@ -44,10 +44,10 @@ class ApplicationGatewayIPConfiguration(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, subnet=None, provisioning_state=None, name=None, etag=None, type=None):
-        super(ApplicationGatewayIPConfiguration, self).__init__(id=id)
-        self.subnet = subnet
-        self.provisioning_state = provisioning_state
-        self.name = name
-        self.etag = etag
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayIPConfiguration, self).__init__(**kwargs)
+        self.subnet = kwargs.get('subnet', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.name = kwargs.get('name', None)
+        self.etag = kwargs.get('etag', None)
+        self.type = kwargs.get('type', None)

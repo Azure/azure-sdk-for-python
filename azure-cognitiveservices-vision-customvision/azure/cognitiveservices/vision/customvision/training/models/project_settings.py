@@ -24,6 +24,6 @@ class ProjectSettings(Model):
         'domain_id': {'key': 'DomainId', 'type': 'str'},
     }
 
-    def __init__(self, domain_id=None):
-        super(ProjectSettings, self).__init__()
-        self.domain_id = domain_id
+    def __init__(self, **kwargs):
+        super(ProjectSettings, self).__init__(**kwargs)
+        self.domain_id = kwargs.get('domain_id', None)

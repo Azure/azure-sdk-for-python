@@ -22,7 +22,7 @@ class TenantsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2016-06-01".
     """
 
@@ -55,7 +55,7 @@ class TenantsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/tenants'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -96,3 +96,4 @@ class TenantsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/tenants'}

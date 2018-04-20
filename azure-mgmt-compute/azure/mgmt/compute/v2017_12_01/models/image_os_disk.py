@@ -15,14 +15,16 @@ from msrest.serialization import Model
 class ImageOSDisk(Model):
     """Describes an Operating System disk.
 
-    :param os_type: This property allows you to specify the type of the OS
-     that is included in the disk if creating a VM from a custom image.
+    All required parameters must be populated in order to send to Azure.
+
+    :param os_type: Required. This property allows you to specify the type of
+     the OS that is included in the disk if creating a VM from a custom image.
      <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
      Possible values include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2017_12_01.models.OperatingSystemTypes
-    :param os_state: The OS State. Possible values include: 'Generalized',
-     'Specialized'
+    :param os_state: Required. The OS State. Possible values include:
+     'Generalized', 'Specialized'
     :type os_state: str or
      ~azure.mgmt.compute.v2017_12_01.models.OperatingSystemStateTypes
     :param snapshot: The snapshot.
@@ -60,16 +62,16 @@ class ImageOSDisk(Model):
         'blob_uri': {'key': 'blobUri', 'type': 'str'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'StorageAccountTypes'},
+        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
     }
 
-    def __init__(self, os_type, os_state, snapshot=None, managed_disk=None, blob_uri=None, caching=None, disk_size_gb=None, storage_account_type=None):
-        super(ImageOSDisk, self).__init__()
-        self.os_type = os_type
-        self.os_state = os_state
-        self.snapshot = snapshot
-        self.managed_disk = managed_disk
-        self.blob_uri = blob_uri
-        self.caching = caching
-        self.disk_size_gb = disk_size_gb
-        self.storage_account_type = storage_account_type
+    def __init__(self, **kwargs):
+        super(ImageOSDisk, self).__init__(**kwargs)
+        self.os_type = kwargs.get('os_type', None)
+        self.os_state = kwargs.get('os_state', None)
+        self.snapshot = kwargs.get('snapshot', None)
+        self.managed_disk = kwargs.get('managed_disk', None)
+        self.blob_uri = kwargs.get('blob_uri', None)
+        self.caching = kwargs.get('caching', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.storage_account_type = kwargs.get('storage_account_type', None)

@@ -38,10 +38,10 @@ class Ipv6ExpressRouteCircuitPeeringConfig(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, microsoft_peering_config=None, route_filter=None, state=None):
-        super(Ipv6ExpressRouteCircuitPeeringConfig, self).__init__()
-        self.primary_peer_address_prefix = primary_peer_address_prefix
-        self.secondary_peer_address_prefix = secondary_peer_address_prefix
-        self.microsoft_peering_config = microsoft_peering_config
-        self.route_filter = route_filter
-        self.state = state
+    def __init__(self, **kwargs):
+        super(Ipv6ExpressRouteCircuitPeeringConfig, self).__init__(**kwargs)
+        self.primary_peer_address_prefix = kwargs.get('primary_peer_address_prefix', None)
+        self.secondary_peer_address_prefix = kwargs.get('secondary_peer_address_prefix', None)
+        self.microsoft_peering_config = kwargs.get('microsoft_peering_config', None)
+        self.route_filter = kwargs.get('route_filter', None)
+        self.state = kwargs.get('state', None)

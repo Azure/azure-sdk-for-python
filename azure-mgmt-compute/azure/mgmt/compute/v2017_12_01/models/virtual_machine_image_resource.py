@@ -15,11 +15,13 @@ from .sub_resource import SubResource
 class VirtualMachineImageResource(SubResource):
     """Virtual machine image resource information.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource Id
     :type id: str
-    :param name: The name of the resource.
+    :param name: Required. The name of the resource.
     :type name: str
-    :param location: The supported Azure location of the resource.
+    :param location: Required. The supported Azure location of the resource.
     :type location: str
     :param tags: Specifies the tags that are assigned to the virtual machine.
      For more information about using tags, see [Using tags to organize your
@@ -40,8 +42,8 @@ class VirtualMachineImageResource(SubResource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name, location, id=None, tags=None):
-        super(VirtualMachineImageResource, self).__init__(id=id)
-        self.name = name
-        self.location = location
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(VirtualMachineImageResource, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

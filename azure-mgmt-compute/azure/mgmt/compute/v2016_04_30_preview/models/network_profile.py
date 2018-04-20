@@ -25,6 +25,6 @@ class NetworkProfile(Model):
         'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},
     }
 
-    def __init__(self, network_interfaces=None):
-        super(NetworkProfile, self).__init__()
-        self.network_interfaces = network_interfaces
+    def __init__(self, **kwargs):
+        super(NetworkProfile, self).__init__(**kwargs)
+        self.network_interfaces = kwargs.get('network_interfaces', None)

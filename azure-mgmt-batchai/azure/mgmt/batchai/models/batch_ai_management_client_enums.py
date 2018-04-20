@@ -12,26 +12,26 @@
 from enum import Enum
 
 
-class CachingType(Enum):
+class CachingType(str, Enum):
 
     none = "none"
     readonly = "readonly"
     readwrite = "readwrite"
 
 
-class StorageAccountType(Enum):
+class StorageAccountType(str, Enum):
 
     standard_lrs = "Standard_LRS"
     premium_lrs = "Premium_LRS"
 
 
-class FileServerType(Enum):
+class FileServerType(str, Enum):
 
     nfs = "nfs"
     glusterfs = "glusterfs"
 
 
-class FileServerProvisioningState(Enum):
+class FileServerProvisioningState(str, Enum):
 
     creating = "creating"
     updating = "updating"
@@ -40,13 +40,13 @@ class FileServerProvisioningState(Enum):
     failed = "failed"
 
 
-class VmPriority(Enum):
+class VmPriority(str, Enum):
 
     dedicated = "dedicated"
     lowpriority = "lowpriority"
 
 
-class DeallocationOption(Enum):
+class DeallocationOption(str, Enum):
 
     requeue = "requeue"
     terminate = "terminate"
@@ -54,7 +54,7 @@ class DeallocationOption(Enum):
     unknown = "unknown"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "creating"
     succeeded = "succeeded"
@@ -62,13 +62,13 @@ class ProvisioningState(Enum):
     deleting = "deleting"
 
 
-class AllocationState(Enum):
+class AllocationState(str, Enum):
 
     steady = "steady"
     resizing = "resizing"
 
 
-class OutputType(Enum):
+class OutputType(str, Enum):
 
     model = "model"
     logs = "logs"
@@ -76,7 +76,7 @@ class OutputType(Enum):
     custom = "custom"
 
 
-class ToolType(Enum):
+class ToolType(str, Enum):
 
     cntk = "cntk"
     tensorflow = "tensorflow"
@@ -86,7 +86,7 @@ class ToolType(Enum):
     custom = "custom"
 
 
-class ExecutionState(Enum):
+class ExecutionState(str, Enum):
 
     queued = "queued"
     running = "running"

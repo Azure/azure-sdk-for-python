@@ -19,13 +19,22 @@ class Permission(Model):
     :type actions: list[str]
     :param not_actions: Denied actions.
     :type not_actions: list[str]
+    :param data_actions: Allowed Data actions.
+    :type data_actions: list[str]
+    :param not_data_actions: Denied Data actions.
+    :type not_data_actions: list[str]
     """
 
     _attribute_map = {
         'actions': {'key': 'actions', 'type': '[str]'},
         'not_actions': {'key': 'notActions', 'type': '[str]'},
+        'data_actions': {'key': 'dataActions', 'type': '[str]'},
+        'not_data_actions': {'key': 'notDataActions', 'type': '[str]'},
     }
 
-    def __init__(self, actions=None, not_actions=None):
-        self.actions = actions
-        self.not_actions = not_actions
+    def __init__(self, **kwargs):
+        super(Permission, self).__init__(**kwargs)
+        self.actions = kwargs.get('actions', None)
+        self.not_actions = kwargs.get('not_actions', None)
+        self.data_actions = kwargs.get('data_actions', None)
+        self.not_data_actions = kwargs.get('not_data_actions', None)

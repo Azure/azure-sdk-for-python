@@ -18,6 +18,8 @@ class OSDisk(Model):
     VHDs for Azure virtual
     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
 
+    All required parameters must be populated in order to send to Azure.
+
     :param os_type: This property allows you to specify the type of the OS
      that is included in the disk if creating a VM from user-image or a
      specialized VHD. <br><br> Possible values are: <br><br> **Windows**
@@ -42,8 +44,11 @@ class OSDisk(Model):
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
     :type caching: str or ~azure.mgmt.compute.v2017_12_01.models.CachingTypes
-    :param create_option: Specifies how the virtual machine should be
-     created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
+    :param write_accelerator_enabled: Specifies whether writeAccelerator
+     should be enabled or disabled on the disk.
+    :type write_accelerator_enabled: bool
+    :param create_option: Required. Specifies how the virtual machine should
+     be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
      value is used when you are using a specialized disk to create the virtual
      machine.<br><br> **FromImage** \\u2013 This value is used when you are
      using an image to create the virtual machine. If you are using a platform
@@ -72,19 +77,21 @@ class OSDisk(Model):
         'vhd': {'key': 'vhd', 'type': 'VirtualHardDisk'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
-        'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
+        'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
+        'create_option': {'key': 'createOption', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
     }
 
-    def __init__(self, create_option, os_type=None, encryption_settings=None, name=None, vhd=None, image=None, caching=None, disk_size_gb=None, managed_disk=None):
-        super(OSDisk, self).__init__()
-        self.os_type = os_type
-        self.encryption_settings = encryption_settings
-        self.name = name
-        self.vhd = vhd
-        self.image = image
-        self.caching = caching
-        self.create_option = create_option
-        self.disk_size_gb = disk_size_gb
-        self.managed_disk = managed_disk
+    def __init__(self, **kwargs):
+        super(OSDisk, self).__init__(**kwargs)
+        self.os_type = kwargs.get('os_type', None)
+        self.encryption_settings = kwargs.get('encryption_settings', None)
+        self.name = kwargs.get('name', None)
+        self.vhd = kwargs.get('vhd', None)
+        self.image = kwargs.get('image', None)
+        self.caching = kwargs.get('caching', None)
+        self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
+        self.create_option = kwargs.get('create_option', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.managed_disk = kwargs.get('managed_disk', None)

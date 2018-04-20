@@ -29,8 +29,8 @@ class ImageFileCreateEntry(Model):
         'tag_ids': {'key': 'TagIds', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, contents=None, tag_ids=None):
-        super(ImageFileCreateEntry, self).__init__()
-        self.name = name
-        self.contents = contents
-        self.tag_ids = tag_ids
+    def __init__(self, **kwargs):
+        super(ImageFileCreateEntry, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.contents = kwargs.get('contents', None)
+        self.tag_ids = kwargs.get('tag_ids', None)

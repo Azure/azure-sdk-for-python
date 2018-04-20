@@ -128,6 +128,10 @@ from .node_reboot_parameter import NodeRebootParameter
 from .node_reimage_parameter import NodeReimageParameter
 from .node_disable_scheduling_parameter import NodeDisableSchedulingParameter
 from .node_remove_parameter import NodeRemoveParameter
+from .upload_batch_service_logs_configuration import UploadBatchServiceLogsConfiguration
+from .upload_batch_service_logs_result import UploadBatchServiceLogsResult
+from .node_counts import NodeCounts
+from .pool_node_counts import PoolNodeCounts
 from .application_list_options import ApplicationListOptions
 from .application_get_options import ApplicationGetOptions
 from .pool_list_usage_metrics_options import PoolListUsageMetricsOptions
@@ -147,6 +151,7 @@ from .pool_update_properties_options import PoolUpdatePropertiesOptions
 from .pool_upgrade_os_options import PoolUpgradeOsOptions
 from .pool_remove_nodes_options import PoolRemoveNodesOptions
 from .account_list_node_agent_skus_options import AccountListNodeAgentSkusOptions
+from .account_list_pool_node_counts_options import AccountListPoolNodeCountsOptions
 from .job_get_all_lifetime_statistics_options import JobGetAllLifetimeStatisticsOptions
 from .job_delete_options import JobDeleteOptions
 from .job_get_options import JobGetOptions
@@ -202,11 +207,13 @@ from .compute_node_disable_scheduling_options import ComputeNodeDisableSchedulin
 from .compute_node_enable_scheduling_options import ComputeNodeEnableSchedulingOptions
 from .compute_node_get_remote_login_settings_options import ComputeNodeGetRemoteLoginSettingsOptions
 from .compute_node_get_remote_desktop_options import ComputeNodeGetRemoteDesktopOptions
+from .compute_node_upload_batch_service_logs_options import ComputeNodeUploadBatchServiceLogsOptions
 from .compute_node_list_options import ComputeNodeListOptions
 from .application_summary_paged import ApplicationSummaryPaged
 from .pool_usage_metrics_paged import PoolUsageMetricsPaged
 from .cloud_pool_paged import CloudPoolPaged
 from .node_agent_sku_paged import NodeAgentSkuPaged
+from .pool_node_counts_paged import PoolNodeCountsPaged
 from .cloud_job_paged import CloudJobPaged
 from .job_preparation_and_release_task_execution_information_paged import JobPreparationAndReleaseTaskExecutionInformationPaged
 from .certificate_paged import CertificatePaged
@@ -376,6 +383,10 @@ __all__ = [
     'NodeReimageParameter',
     'NodeDisableSchedulingParameter',
     'NodeRemoveParameter',
+    'UploadBatchServiceLogsConfiguration',
+    'UploadBatchServiceLogsResult',
+    'NodeCounts',
+    'PoolNodeCounts',
     'ApplicationListOptions',
     'ApplicationGetOptions',
     'PoolListUsageMetricsOptions',
@@ -395,6 +406,7 @@ __all__ = [
     'PoolUpgradeOsOptions',
     'PoolRemoveNodesOptions',
     'AccountListNodeAgentSkusOptions',
+    'AccountListPoolNodeCountsOptions',
     'JobGetAllLifetimeStatisticsOptions',
     'JobDeleteOptions',
     'JobGetOptions',
@@ -450,11 +462,13 @@ __all__ = [
     'ComputeNodeEnableSchedulingOptions',
     'ComputeNodeGetRemoteLoginSettingsOptions',
     'ComputeNodeGetRemoteDesktopOptions',
+    'ComputeNodeUploadBatchServiceLogsOptions',
     'ComputeNodeListOptions',
     'ApplicationSummaryPaged',
     'PoolUsageMetricsPaged',
     'CloudPoolPaged',
     'NodeAgentSkuPaged',
+    'PoolNodeCountsPaged',
     'CloudJobPaged',
     'JobPreparationAndReleaseTaskExecutionInformationPaged',
     'CertificatePaged',

@@ -38,8 +38,8 @@ class PublicIPAddressDnsSettings(Model):
         'reverse_fqdn': {'key': 'reverseFqdn', 'type': 'str'},
     }
 
-    def __init__(self, domain_name_label=None, fqdn=None, reverse_fqdn=None):
-        super(PublicIPAddressDnsSettings, self).__init__()
-        self.domain_name_label = domain_name_label
-        self.fqdn = fqdn
-        self.reverse_fqdn = reverse_fqdn
+    def __init__(self, **kwargs):
+        super(PublicIPAddressDnsSettings, self).__init__(**kwargs)
+        self.domain_name_label = kwargs.get('domain_name_label', None)
+        self.fqdn = kwargs.get('fqdn', None)
+        self.reverse_fqdn = kwargs.get('reverse_fqdn', None)

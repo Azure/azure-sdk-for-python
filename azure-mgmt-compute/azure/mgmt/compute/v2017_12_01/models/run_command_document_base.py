@@ -15,17 +15,19 @@ from msrest.serialization import Model
 class RunCommandDocumentBase(Model):
     """Describes the properties of a Run Command metadata.
 
-    :param schema: The VM run command schema.
+    All required parameters must be populated in order to send to Azure.
+
+    :param schema: Required. The VM run command schema.
     :type schema: str
-    :param id: The VM run command id.
+    :param id: Required. The VM run command id.
     :type id: str
-    :param os_type: The Operating System type. Possible values include:
-     'Windows', 'Linux'
+    :param os_type: Required. The Operating System type. Possible values
+     include: 'Windows', 'Linux'
     :type os_type: str or
      ~azure.mgmt.compute.v2017_12_01.models.OperatingSystemTypes
-    :param label: The VM run command label.
+    :param label: Required. The VM run command label.
     :type label: str
-    :param description: The VM run command description.
+    :param description: Required. The VM run command description.
     :type description: str
     """
 
@@ -45,10 +47,10 @@ class RunCommandDocumentBase(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, schema, id, os_type, label, description):
-        super(RunCommandDocumentBase, self).__init__()
-        self.schema = schema
-        self.id = id
-        self.os_type = os_type
-        self.label = label
-        self.description = description
+    def __init__(self, **kwargs):
+        super(RunCommandDocumentBase, self).__init__(**kwargs)
+        self.schema = kwargs.get('schema', None)
+        self.id = kwargs.get('id', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.label = kwargs.get('label', None)
+        self.description = kwargs.get('description', None)

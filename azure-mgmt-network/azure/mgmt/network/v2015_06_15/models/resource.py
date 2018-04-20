@@ -43,10 +43,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, id=None, location=None, tags=None):
-        super(Resource, self).__init__()
-        self.id = id
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)

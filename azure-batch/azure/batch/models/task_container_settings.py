@@ -40,6 +40,7 @@ class TaskContainerSettings(Model):
     }
 
     def __init__(self, image_name, container_run_options=None, registry=None):
+        super(TaskContainerSettings, self).__init__()
         self.container_run_options = container_run_options
         self.image_name = image_name
         self.registry = registry

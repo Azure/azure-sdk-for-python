@@ -56,7 +56,8 @@ class CertificatePropertiesWithNonce(Model):
         'verification_code': {'key': 'verificationCode', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(CertificatePropertiesWithNonce, self).__init__(**kwargs)
         self.subject = None
         self.expiry = None
         self.thumbprint = None

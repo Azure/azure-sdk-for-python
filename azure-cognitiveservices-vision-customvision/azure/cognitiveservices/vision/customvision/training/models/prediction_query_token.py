@@ -49,14 +49,14 @@ class PredictionQueryToken(Model):
         'application': {'key': 'Application', 'type': 'str'},
     }
 
-    def __init__(self, session=None, continuation=None, max_count=None, order_by=None, tags=None, iteration_id=None, start_time=None, end_time=None, application=None):
-        super(PredictionQueryToken, self).__init__()
-        self.session = session
-        self.continuation = continuation
-        self.max_count = max_count
-        self.order_by = order_by
-        self.tags = tags
-        self.iteration_id = iteration_id
-        self.start_time = start_time
-        self.end_time = end_time
-        self.application = application
+    def __init__(self, **kwargs):
+        super(PredictionQueryToken, self).__init__(**kwargs)
+        self.session = kwargs.get('session', None)
+        self.continuation = kwargs.get('continuation', None)
+        self.max_count = kwargs.get('max_count', None)
+        self.order_by = kwargs.get('order_by', None)
+        self.tags = kwargs.get('tags', None)
+        self.iteration_id = kwargs.get('iteration_id', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.application = kwargs.get('application', None)

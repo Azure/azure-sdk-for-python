@@ -21,7 +21,7 @@ class PolicySetDefinitionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for the operation. Constant value: "2017-06-01-preview".
     """
 
@@ -59,7 +59,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -103,6 +103,7 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}
 
     def delete(
             self, policy_set_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -122,7 +123,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -153,6 +154,7 @@ class PolicySetDefinitionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}
 
     def get(
             self, policy_set_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -174,7 +176,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -212,6 +214,7 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}
 
     def get_built_in(
             self, policy_set_definition_name, custom_headers=None, raw=False, **operation_config):
@@ -233,7 +236,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        url = self.get_built_in.metadata['url']
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str')
         }
@@ -270,6 +273,7 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_built_in.metadata = {'url': '/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -290,7 +294,7 @@ class PolicySetDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -333,6 +337,7 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policySetDefinitions'}
 
     def list_built_in(
             self, custom_headers=None, raw=False, **operation_config):
@@ -353,7 +358,7 @@ class PolicySetDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Authorization/policySetDefinitions'
+                url = self.list_built_in.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -392,6 +397,7 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_built_in.metadata = {'url': '/providers/Microsoft.Authorization/policySetDefinitions'}
 
     def create_or_update_at_management_group(
             self, policy_set_definition_name, parameters, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -418,7 +424,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        url = self.create_or_update_at_management_group.metadata['url']
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
@@ -462,6 +468,7 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}
 
     def delete_at_management_group(
             self, policy_set_definition_name, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -483,7 +490,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        url = self.delete_at_management_group.metadata['url']
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
@@ -514,6 +521,7 @@ class PolicySetDefinitionsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}
 
     def get_at_management_group(
             self, policy_set_definition_name, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -537,7 +545,7 @@ class PolicySetDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.policy.v2017_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'
+        url = self.get_at_management_group.metadata['url']
         path_format_arguments = {
             'policySetDefinitionName': self._serialize.url("policy_set_definition_name", policy_set_definition_name, 'str'),
             'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
@@ -575,6 +583,7 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_at_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions/{policySetDefinitionName}'}
 
     def list_by_management_group(
             self, management_group_id, custom_headers=None, raw=False, **operation_config):
@@ -598,7 +607,7 @@ class PolicySetDefinitionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions'
+                url = self.list_by_management_group.metadata['url']
                 path_format_arguments = {
                     'managementGroupId': self._serialize.url("management_group_id", management_group_id, 'str')
                 }
@@ -641,3 +650,4 @@ class PolicySetDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_management_group.metadata = {'url': '/providers/Microsoft.Management/managementgroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions'}

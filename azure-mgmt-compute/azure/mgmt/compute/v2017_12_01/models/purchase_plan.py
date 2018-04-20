@@ -16,12 +16,15 @@ class PurchasePlan(Model):
     """Used for establishing the purchase context of any 3rd Party artifact
     through MarketPlace.
 
-    :param publisher: The publisher ID.
+    All required parameters must be populated in order to send to Azure.
+
+    :param publisher: Required. The publisher ID.
     :type publisher: str
-    :param name: The plan ID.
+    :param name: Required. The plan ID.
     :type name: str
-    :param product: Specifies the product of the image from the marketplace.
-     This is the same value as Offer under the imageReference element.
+    :param product: Required. Specifies the product of the image from the
+     marketplace. This is the same value as Offer under the imageReference
+     element.
     :type product: str
     """
 
@@ -37,8 +40,8 @@ class PurchasePlan(Model):
         'product': {'key': 'product', 'type': 'str'},
     }
 
-    def __init__(self, publisher, name, product):
-        super(PurchasePlan, self).__init__()
-        self.publisher = publisher
-        self.name = name
-        self.product = product
+    def __init__(self, **kwargs):
+        super(PurchasePlan, self).__init__(**kwargs)
+        self.publisher = kwargs.get('publisher', None)
+        self.name = kwargs.get('name', None)
+        self.product = kwargs.get('product', None)
