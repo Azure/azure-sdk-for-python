@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -43,7 +43,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class KeyVaultClient(object):
+class KeyVaultClient(SDKClient):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
 
     :ivar config: Configuration for client.
@@ -58,7 +58,7 @@ class KeyVaultClient(object):
             self, credentials):
 
         self.config = KeyVaultClientConfiguration(credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(KeyVaultClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '7.0-preview'

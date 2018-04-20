@@ -71,7 +71,7 @@ class DeletedStorageBundle(StorageBundle):
     }
 
     def __init__(self, *, recovery_id: str=None, **kwargs) -> None:
-        super(DeletedStorageBundle, self).__init__(, **kwargs)
+        super(DeletedStorageBundle, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None
