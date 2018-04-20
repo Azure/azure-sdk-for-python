@@ -3,21 +3,48 @@
 Release History
 ===============
 
-XXXXXXXXXXXX
-++++++++++++
-
-**Features**
-
-- All clients now support Azure profiles.
-
-1.3.0rc1 (2018-XX-XX)
+2.0.0rc1 (2018-04-20)
 +++++++++++++++++++++
 
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
 **Features**
 
-- Add generic resources update
+- Add new ApiVersion 2018-02-01:
+
+  - Add on_error_deployment
+  - Support MSI in generic ARM resources
+
+- All clients now support Azure profiles.
+- Add generic resources update (2017-05-10 and 2018-02-01)
 - Add version to Plan
-- Links/Locks/Policy/Resource/Subscription clients now supports the "profile" parameter.
+
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
 
 1.2.2 (2017-10-17)
 ++++++++++++++++++
