@@ -41,13 +41,13 @@ class DisksOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, disk_name, disk, custom_headers=None, raw=False, **operation_config):
+            self, disk, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'diskName': self._serialize.url("disk_name", disk_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'diskName': self._serialize.url("self.config.disk_name", self.config.disk_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,16 +92,9 @@ class DisksOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, disk_name, disk, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, disk, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a disk.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param disk_name: The name of the managed disk that is being created.
-         The name can't be changed after the disk is created. Supported
-         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
-         length is 80 characters.
-        :type disk_name: str
         :param disk: Disk object supplied in the body of the Put disk
          operation.
         :type disk: ~azure.mgmt.compute.v2018_04_01.models.Disk
@@ -119,8 +112,6 @@ class DisksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
-            disk_name=disk_name,
             disk=disk,
             custom_headers=custom_headers,
             raw=True,
@@ -147,13 +138,13 @@ class DisksOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, disk_name, disk, custom_headers=None, raw=False, **operation_config):
+            self, disk, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'diskName': self._serialize.url("disk_name", disk_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'diskName': self._serialize.url("self.config.disk_name", self.config.disk_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -198,16 +189,9 @@ class DisksOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, disk_name, disk, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, disk, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates (patches) a disk.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param disk_name: The name of the managed disk that is being created.
-         The name can't be changed after the disk is created. Supported
-         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
-         length is 80 characters.
-        :type disk_name: str
         :param disk: Disk object supplied in the body of the Patch disk
          operation.
         :type disk: ~azure.mgmt.compute.v2018_04_01.models.DiskUpdate
@@ -225,8 +209,6 @@ class DisksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
-            resource_group_name=resource_group_name,
-            disk_name=disk_name,
             disk=disk,
             custom_headers=custom_headers,
             raw=True,
@@ -252,16 +234,9 @@ class DisksOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/disks/{diskName}'}
 
     def get(
-            self, resource_group_name, disk_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets information about a disk.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param disk_name: The name of the managed disk that is being created.
-         The name can't be changed after the disk is created. Supported
-         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
-         length is 80 characters.
-        :type disk_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -276,8 +251,8 @@ class DisksOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'diskName': self._serialize.url("disk_name", disk_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'diskName': self._serialize.url("self.config.disk_name", self.config.disk_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -318,13 +293,13 @@ class DisksOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, disk_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'diskName': self._serialize.url("disk_name", disk_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'diskName': self._serialize.url("self.config.disk_name", self.config.disk_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -363,16 +338,9 @@ class DisksOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, disk_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a disk.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param disk_name: The name of the managed disk that is being created.
-         The name can't be changed after the disk is created. Supported
-         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
-         length is 80 characters.
-        :type disk_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -387,8 +355,6 @@ class DisksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
-            disk_name=disk_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -413,11 +379,9 @@ class DisksOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/disks/{diskName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists all the disks under a resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -435,7 +399,7 @@ class DisksOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -547,15 +511,15 @@ class DisksOperations(object):
 
 
     def _grant_access_initial(
-            self, resource_group_name, disk_name, access, duration_in_seconds, custom_headers=None, raw=False, **operation_config):
+            self, access, duration_in_seconds, custom_headers=None, raw=False, **operation_config):
         grant_access_data = models.GrantAccessData(access=access, duration_in_seconds=duration_in_seconds)
 
         # Construct URL
         url = self.grant_access.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'diskName': self._serialize.url("disk_name", disk_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'diskName': self._serialize.url("self.config.disk_name", self.config.disk_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -598,16 +562,9 @@ class DisksOperations(object):
         return deserialized
 
     def grant_access(
-            self, resource_group_name, disk_name, access, duration_in_seconds, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, access, duration_in_seconds, custom_headers=None, raw=False, polling=True, **operation_config):
         """Grants access to a disk.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param disk_name: The name of the managed disk that is being created.
-         The name can't be changed after the disk is created. Supported
-         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
-         length is 80 characters.
-        :type disk_name: str
         :param access: Possible values include: 'None', 'Read'
         :type access: str or
          ~azure.mgmt.compute.v2018_04_01.models.AccessLevel
@@ -628,8 +585,6 @@ class DisksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._grant_access_initial(
-            resource_group_name=resource_group_name,
-            disk_name=disk_name,
             access=access,
             duration_in_seconds=duration_in_seconds,
             custom_headers=custom_headers,
@@ -657,13 +612,13 @@ class DisksOperations(object):
 
 
     def _revoke_access_initial(
-            self, resource_group_name, disk_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.revoke_access.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'diskName': self._serialize.url("disk_name", disk_name, 'str')
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'diskName': self._serialize.url("self.config.disk_name", self.config.disk_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -702,16 +657,9 @@ class DisksOperations(object):
         return deserialized
 
     def revoke_access(
-            self, resource_group_name, disk_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, custom_headers=None, raw=False, polling=True, **operation_config):
         """Revokes access to a disk.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param disk_name: The name of the managed disk that is being created.
-         The name can't be changed after the disk is created. Supported
-         characters for the name are a-z, A-Z, 0-9 and _. The maximum name
-         length is 80 characters.
-        :type disk_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -726,8 +674,6 @@ class DisksOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._revoke_access_initial(
-            resource_group_name=resource_group_name,
-            disk_name=disk_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
