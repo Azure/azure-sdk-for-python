@@ -35,6 +35,6 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier(ContentKeyP
     }
 
     def __init__(self, *, key_id: str, **kwargs) -> None:
-        super(ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier, self).__init__(, **kwargs)
+        super(ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier, self).__init__(**kwargs)
         self.key_id = key_id
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier'

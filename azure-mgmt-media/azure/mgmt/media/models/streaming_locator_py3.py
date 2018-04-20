@@ -18,13 +18,15 @@ class StreamingLocator(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param asset_name: Asset Name
+    :param asset_name: Required. Asset Name
     :type asset_name: str
     :ivar created: Creation time of Streaming Locator
     :vartype created: datetime
@@ -34,12 +36,13 @@ class StreamingLocator(ProxyResource):
     :type end_time: datetime
     :param streaming_locator_id: StreamingLocatorId of Streaming Locator
     :type streaming_locator_id: str
-    :param streaming_policy_name: Streaming policy name used by this streaming
-     locator. Either specify the name of streaming policy you created or use
-     one of the predefined streaming polices. The predefined streaming policies
-     available are: 'Predefined_DownloadOnly', 'Predefined_ClearStreamingOnly',
-     'Predefined_DownloadAndClearStreaming', 'Predefined_ClearKey',
-     'Predefined_SecureStreaming' and 'Predefined_SecureStreamingWithFairPlay'
+    :param streaming_policy_name: Required. Streaming policy name used by this
+     streaming locator. Either specify the name of streaming policy you created
+     or use one of the predefined streaming polices. The predefined streaming
+     policies available are: 'Predefined_DownloadOnly',
+     'Predefined_ClearStreamingOnly', 'Predefined_DownloadAndClearStreaming',
+     'Predefined_ClearKey', 'Predefined_SecureStreaming' and
+     'Predefined_SecureStreamingWithFairPlay'
     :type streaming_policy_name: str
     :param default_content_key_policy_name: Default ContentKeyPolicy used by
      this Streaming Locator
@@ -53,7 +56,9 @@ class StreamingLocator(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'asset_name': {'required': True},
         'created': {'readonly': True},
+        'streaming_policy_name': {'required': True},
     }
 
     _attribute_map = {
@@ -70,8 +75,8 @@ class StreamingLocator(ProxyResource):
         'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorUserDefinedContentKey]'},
     }
 
-    def __init__(self, *, asset_name: str=None, start_time=None, end_time=None, streaming_locator_id: str=None, streaming_policy_name: str=None, default_content_key_policy_name: str=None, content_keys=None, **kwargs) -> None:
-        super(StreamingLocator, self).__init__(, **kwargs)
+    def __init__(self, *, asset_name: str, streaming_policy_name: str, start_time=None, end_time=None, streaming_locator_id: str=None, default_content_key_policy_name: str=None, content_keys=None, **kwargs) -> None:
+        super(StreamingLocator, self).__init__(**kwargs)
         self.asset_name = asset_name
         self.created = None
         self.start_time = start_time

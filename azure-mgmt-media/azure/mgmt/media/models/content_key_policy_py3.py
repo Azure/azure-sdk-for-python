@@ -60,7 +60,7 @@ class ContentKeyPolicy(ProxyResource):
     }
 
     def __init__(self, *, options, description: str=None, **kwargs) -> None:
-        super(ContentKeyPolicy, self).__init__(, **kwargs)
+        super(ContentKeyPolicy, self).__init__(**kwargs)
         self.policy_id = None
         self.created = None
         self.last_modified = None

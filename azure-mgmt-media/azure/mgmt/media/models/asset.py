@@ -36,19 +36,13 @@ class Asset(ProxyResource):
     :type description: str
     :param container: The name of the asset blob container.
     :type container: str
-    :param storage_account_id: The ARM resource ID of the Azure Storage
-     account containing the Asset.
-    :type storage_account_id: str
-    :param storage_encryption_format: The Asset encryption format. One of
-     None, MediaStorageEncryption, StaticCommonEncryption or
-     StaticEnvelopeEncryption. Possible values include: 'None',
-     'MediaStorageClientEncryption', 'StaticCommonEncryption',
-     'StaticEnvelopeEncryption'
-    :type storage_encryption_format: str or
+    :param storage_account_name: The name of the storage account.
+    :type storage_account_name: str
+    :ivar storage_encryption_format: The Asset encryption format. One of None
+     or MediaStorageEncryption. Possible values include: 'None',
+     'MediaStorageClientEncryption'
+    :vartype storage_encryption_format: str or
      ~azure.mgmt.media.models.AssetStorageEncryptionFormat
-    :param storage_encryption_key: The Base64 encoded key for the Asset
-     storage encryption.
-    :type storage_encryption_key: str
     """
 
     _validation = {
@@ -58,6 +52,7 @@ class Asset(ProxyResource):
         'asset_id': {'readonly': True},
         'created': {'readonly': True},
         'last_modified': {'readonly': True},
+        'storage_encryption_format': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,9 +65,8 @@ class Asset(ProxyResource):
         'alternate_id': {'key': 'properties.alternateId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'container': {'key': 'properties.container', 'type': 'str'},
-        'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
+        'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
         'storage_encryption_format': {'key': 'properties.storageEncryptionFormat', 'type': 'AssetStorageEncryptionFormat'},
-        'storage_encryption_key': {'key': 'properties.storageEncryptionKey', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -83,6 +77,5 @@ class Asset(ProxyResource):
         self.alternate_id = kwargs.get('alternate_id', None)
         self.description = kwargs.get('description', None)
         self.container = kwargs.get('container', None)
-        self.storage_account_id = kwargs.get('storage_account_id', None)
-        self.storage_encryption_format = kwargs.get('storage_encryption_format', None)
-        self.storage_encryption_key = kwargs.get('storage_encryption_key', None)
+        self.storage_account_name = kwargs.get('storage_account_name', None)
+        self.storage_encryption_format = None

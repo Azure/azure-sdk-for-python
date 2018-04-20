@@ -61,7 +61,7 @@ class StreamingPolicy(ProxyResource):
     }
 
     def __init__(self, *, default_content_key_policy_name: str=None, envelope_encryption=None, common_encryption_cenc=None, common_encryption_cbcs=None, no_encryption=None, **kwargs) -> None:
-        super(StreamingPolicy, self).__init__(, **kwargs)
+        super(StreamingPolicy, self).__init__(**kwargs)
         self.created = None
         self.default_content_key_policy_name = default_content_key_policy_name
         self.envelope_encryption = envelope_encryption

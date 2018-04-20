@@ -38,7 +38,7 @@ class ContentKeyPolicyRsaTokenKey(ContentKeyPolicyRestrictionTokenKey):
     }
 
     def __init__(self, *, exponent: bytearray, modulus: bytearray, **kwargs) -> None:
-        super(ContentKeyPolicyRsaTokenKey, self).__init__(, **kwargs)
+        super(ContentKeyPolicyRsaTokenKey, self).__init__(**kwargs)
         self.exponent = exponent
         self.modulus = modulus
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyRsaTokenKey'

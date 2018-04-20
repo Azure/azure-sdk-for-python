@@ -42,7 +42,7 @@ class StandardEncoderPreset(Preset):
     }
 
     def __init__(self, *, filters=None, codecs=None, formats=None, **kwargs) -> None:
-        super(StandardEncoderPreset, self).__init__(, **kwargs)
+        super(StandardEncoderPreset, self).__init__(**kwargs)
         self.filters = filters
         self.codecs = codecs
         self.formats = formats

@@ -55,6 +55,6 @@ class JobOutputAsset(JobOutput):
     }
 
     def __init__(self, *, asset_name: str, **kwargs) -> None:
-        super(JobOutputAsset, self).__init__(, **kwargs)
+        super(JobOutputAsset, self).__init__(**kwargs)
         self.asset_name = asset_name
         self.odatatype = '#Microsoft.Media.JobOutputAsset'

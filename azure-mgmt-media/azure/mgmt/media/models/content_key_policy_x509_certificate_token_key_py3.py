@@ -35,6 +35,6 @@ class ContentKeyPolicyX509CertificateTokenKey(ContentKeyPolicyRestrictionTokenKe
     }
 
     def __init__(self, *, raw_body: bytearray, **kwargs) -> None:
-        super(ContentKeyPolicyX509CertificateTokenKey, self).__init__(, **kwargs)
+        super(ContentKeyPolicyX509CertificateTokenKey, self).__init__(**kwargs)
         self.raw_body = raw_body
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey'

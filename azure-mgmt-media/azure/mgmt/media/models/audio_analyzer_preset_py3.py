@@ -45,6 +45,6 @@ class AudioAnalyzerPreset(Preset):
     }
 
     def __init__(self, *, audio_language: str=None, **kwargs) -> None:
-        super(AudioAnalyzerPreset, self).__init__(, **kwargs)
+        super(AudioAnalyzerPreset, self).__init__(**kwargs)
         self.audio_language = audio_language
         self.odatatype = '#Microsoft.Media.AudioAnalyzerPreset'

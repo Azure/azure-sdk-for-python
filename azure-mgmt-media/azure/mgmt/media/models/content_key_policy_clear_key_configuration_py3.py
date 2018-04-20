@@ -30,5 +30,5 @@ class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ContentKeyPolicyClearKeyConfiguration, self).__init__(, **kwargs)
+        super(ContentKeyPolicyClearKeyConfiguration, self).__init__(**kwargs)
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration'

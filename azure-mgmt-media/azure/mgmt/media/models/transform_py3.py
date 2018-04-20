@@ -62,7 +62,7 @@ class Transform(ProxyResource):
     }
 
     def __init__(self, *, outputs, description: str=None, **kwargs) -> None:
-        super(Transform, self).__init__(, **kwargs)
+        super(Transform, self).__init__(**kwargs)
         self.created = None
         self.description = description
         self.last_modified = None

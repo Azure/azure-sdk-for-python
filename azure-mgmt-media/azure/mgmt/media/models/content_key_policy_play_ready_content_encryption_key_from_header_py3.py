@@ -30,5 +30,5 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPl
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader, self).__init__(, **kwargs)
+        super(ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader, self).__init__(**kwargs)
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader'

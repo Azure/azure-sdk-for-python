@@ -38,6 +38,6 @@ class BuiltInStandardEncoderPreset(Preset):
     }
 
     def __init__(self, *, preset_name, **kwargs) -> None:
-        super(BuiltInStandardEncoderPreset, self).__init__(, **kwargs)
+        super(BuiltInStandardEncoderPreset, self).__init__(**kwargs)
         self.preset_name = preset_name
         self.odatatype = '#Microsoft.Media.BuiltInStandardEncoderPreset'

@@ -31,5 +31,5 @@ class ContentKeyPolicyUnknownRestriction(ContentKeyPolicyRestriction):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ContentKeyPolicyUnknownRestriction, self).__init__(, **kwargs)
+        super(ContentKeyPolicyUnknownRestriction, self).__init__(**kwargs)
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyUnknownRestriction'

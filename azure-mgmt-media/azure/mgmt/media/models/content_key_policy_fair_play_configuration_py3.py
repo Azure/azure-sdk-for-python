@@ -56,7 +56,7 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
     }
 
     def __init__(self, *, ask: bytearray, fair_play_pfx_password: str, fair_play_pfx: str, rental_and_lease_key_type, rental_duration: int, **kwargs) -> None:
-        super(ContentKeyPolicyFairPlayConfiguration, self).__init__(, **kwargs)
+        super(ContentKeyPolicyFairPlayConfiguration, self).__init__(**kwargs)
         self.ask = ask
         self.fair_play_pfx_password = fair_play_pfx_password
         self.fair_play_pfx = fair_play_pfx

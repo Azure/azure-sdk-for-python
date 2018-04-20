@@ -34,6 +34,6 @@ class ContentKeyPolicySymmetricTokenKey(ContentKeyPolicyRestrictionTokenKey):
     }
 
     def __init__(self, *, key_value: bytearray, **kwargs) -> None:
-        super(ContentKeyPolicySymmetricTokenKey, self).__init__(, **kwargs)
+        super(ContentKeyPolicySymmetricTokenKey, self).__init__(**kwargs)
         self.key_value = key_value
         self.odatatype = '#Microsoft.Media.ContentKeyPolicySymmetricTokenKey'

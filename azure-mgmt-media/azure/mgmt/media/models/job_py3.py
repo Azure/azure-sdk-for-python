@@ -74,7 +74,7 @@ class Job(ProxyResource):
     }
 
     def __init__(self, *, input, outputs, description: str=None, priority=None, **kwargs) -> None:
-        super(Job, self).__init__(, **kwargs)
+        super(Job, self).__init__(**kwargs)
         self.created = None
         self.state = None
         self.description = description

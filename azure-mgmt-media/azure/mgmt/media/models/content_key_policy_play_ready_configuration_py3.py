@@ -38,7 +38,7 @@ class ContentKeyPolicyPlayReadyConfiguration(ContentKeyPolicyConfiguration):
     }
 
     def __init__(self, *, licenses, response_custom_data: str=None, **kwargs) -> None:
-        super(ContentKeyPolicyPlayReadyConfiguration, self).__init__(, **kwargs)
+        super(ContentKeyPolicyPlayReadyConfiguration, self).__init__(**kwargs)
         self.licenses = licenses
         self.response_custom_data = response_custom_data
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration'

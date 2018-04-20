@@ -63,7 +63,7 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
     }
 
     def __init__(self, *, issuer: str, audience: str, primary_verification_key, restriction_token_type, alternate_verification_keys=None, required_claims=None, open_id_connect_discovery_document: str=None, **kwargs) -> None:
-        super(ContentKeyPolicyTokenRestriction, self).__init__(, **kwargs)
+        super(ContentKeyPolicyTokenRestriction, self).__init__(**kwargs)
         self.issuer = issuer
         self.audience = audience
         self.primary_verification_key = primary_verification_key

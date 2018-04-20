@@ -77,7 +77,7 @@ class LiveOutput(ProxyResource):
     }
 
     def __init__(self, *, description: str=None, asset_name: str=None, archive_window_length=None, manifest_name: str=None, hls=None, output_snap_time: int=None, **kwargs) -> None:
-        super(LiveOutput, self).__init__(, **kwargs)
+        super(LiveOutput, self).__init__(**kwargs)
         self.description = description
         self.asset_name = asset_name
         self.archive_window_length = archive_window_length

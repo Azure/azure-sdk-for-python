@@ -22,8 +22,6 @@ class AssetStorageEncryptionFormat(str, Enum):
 
     none = "None"  #: The Asset does not use client-side storage encryption (this is the only allowed value for new Assets).
     media_storage_client_encryption = "MediaStorageClientEncryption"  #: The Asset is encrypted with Media Services client-side encryption.
-    static_common_encryption = "StaticCommonEncryption"  #: The Asset is encrypted with static Common Encryption.
-    static_envelope_encryption = "StaticEnvelopeEncryption"  #: The Asset is encrypted with static envelope encryption.
 
 
 class AssetContainerPermission(str, Enum):

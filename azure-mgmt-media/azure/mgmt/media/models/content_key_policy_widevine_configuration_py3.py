@@ -34,6 +34,6 @@ class ContentKeyPolicyWidevineConfiguration(ContentKeyPolicyConfiguration):
     }
 
     def __init__(self, *, widevine_template: str, **kwargs) -> None:
-        super(ContentKeyPolicyWidevineConfiguration, self).__init__(, **kwargs)
+        super(ContentKeyPolicyWidevineConfiguration, self).__init__(**kwargs)
         self.widevine_template = widevine_template
         self.odatatype = '#Microsoft.Media.ContentKeyPolicyWidevineConfiguration'
