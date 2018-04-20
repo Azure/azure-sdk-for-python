@@ -38,8 +38,8 @@ class ResourceLink(Model):
         'properties': {'key': 'properties', 'type': 'ResourceLinkProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(ResourceLink, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceLink, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)
