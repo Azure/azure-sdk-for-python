@@ -41,12 +41,12 @@ class SnapshotsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, snapshot_name, snapshot, custom_headers=None, raw=False, **operation_config):
+            self, snapshot_name, snapshot, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -92,11 +92,9 @@ class SnapshotsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, snapshot_name, snapshot, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, snapshot_name, snapshot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a snapshot.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created.
          The name can't be changed after the snapshot is created. Supported
          characters for the name are a-z, A-Z, 0-9 and _. The max name length
@@ -119,7 +117,6 @@ class SnapshotsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
-            resource_group_name=resource_group_name,
             snapshot_name=snapshot_name,
             snapshot=snapshot,
             custom_headers=custom_headers,
@@ -147,12 +144,12 @@ class SnapshotsOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, snapshot_name, snapshot, custom_headers=None, raw=False, **operation_config):
+            self, snapshot_name, snapshot, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -198,11 +195,9 @@ class SnapshotsOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, snapshot_name, snapshot, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, snapshot_name, snapshot, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates (patches) a snapshot.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created.
          The name can't be changed after the snapshot is created. Supported
          characters for the name are a-z, A-Z, 0-9 and _. The max name length
@@ -225,7 +220,6 @@ class SnapshotsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
-            resource_group_name=resource_group_name,
             snapshot_name=snapshot_name,
             snapshot=snapshot,
             custom_headers=custom_headers,
@@ -252,11 +246,9 @@ class SnapshotsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/snapshots/{snapshotName}'}
 
     def get(
-            self, resource_group_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+            self, snapshot_name, custom_headers=None, raw=False, **operation_config):
         """Gets information about a snapshot.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created.
          The name can't be changed after the snapshot is created. Supported
          characters for the name are a-z, A-Z, 0-9 and _. The max name length
@@ -276,7 +268,7 @@ class SnapshotsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -318,12 +310,12 @@ class SnapshotsOperations(object):
 
 
     def _delete_initial(
-            self, resource_group_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+            self, snapshot_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -363,11 +355,9 @@ class SnapshotsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a snapshot.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created.
          The name can't be changed after the snapshot is created. Supported
          characters for the name are a-z, A-Z, 0-9 and _. The max name length
@@ -387,7 +377,6 @@ class SnapshotsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
-            resource_group_name=resource_group_name,
             snapshot_name=snapshot_name,
             custom_headers=custom_headers,
             raw=True,
@@ -413,11 +402,9 @@ class SnapshotsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/snapshots/{snapshotName}'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists snapshots under a resource group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -435,7 +422,7 @@ class SnapshotsOperations(object):
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -547,14 +534,14 @@ class SnapshotsOperations(object):
 
 
     def _grant_access_initial(
-            self, resource_group_name, snapshot_name, access, duration_in_seconds, custom_headers=None, raw=False, **operation_config):
+            self, snapshot_name, access, duration_in_seconds, custom_headers=None, raw=False, **operation_config):
         grant_access_data = models.GrantAccessData(access=access, duration_in_seconds=duration_in_seconds)
 
         # Construct URL
         url = self.grant_access.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -598,11 +585,9 @@ class SnapshotsOperations(object):
         return deserialized
 
     def grant_access(
-            self, resource_group_name, snapshot_name, access, duration_in_seconds, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, snapshot_name, access, duration_in_seconds, custom_headers=None, raw=False, polling=True, **operation_config):
         """Grants access to a snapshot.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created.
          The name can't be changed after the snapshot is created. Supported
          characters for the name are a-z, A-Z, 0-9 and _. The max name length
@@ -628,7 +613,6 @@ class SnapshotsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._grant_access_initial(
-            resource_group_name=resource_group_name,
             snapshot_name=snapshot_name,
             access=access,
             duration_in_seconds=duration_in_seconds,
@@ -657,12 +641,12 @@ class SnapshotsOperations(object):
 
 
     def _revoke_access_initial(
-            self, resource_group_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+            self, snapshot_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.revoke_access.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
             'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -702,11 +686,9 @@ class SnapshotsOperations(object):
         return deserialized
 
     def revoke_access(
-            self, resource_group_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Revokes access to a snapshot.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param snapshot_name: The name of the snapshot that is being created.
          The name can't be changed after the snapshot is created. Supported
          characters for the name are a-z, A-Z, 0-9 and _. The max name length
@@ -726,7 +708,6 @@ class SnapshotsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._revoke_access_initial(
-            resource_group_name=resource_group_name,
             snapshot_name=snapshot_name,
             custom_headers=custom_headers,
             raw=True,
