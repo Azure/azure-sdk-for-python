@@ -11,6 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -109,32 +111,9 @@ class MigrationConfigurationsOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations'}
 
-    def start_migration(
-            self, resource_group_name, namespace_name, target_namespace, post_migration_name, custom_headers=None, raw=False, **operation_config):
-        """Initiate Migration from Standard to Premium.
 
-        :param resource_group_name: Name of the Resource group within the
-         Azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name
-        :type namespace_name: str
-        :param target_namespace: Existing premium Namespace name which has no
-         entities, will be used for migration
-        :type target_namespace: str
-        :param post_migration_name: Name to access connection strings of the
-         Primary Namespace after migration
-        :type post_migration_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: MigrationConfigProperties or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicebus.models.MigrationConfigProperties or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
-        """
+    def _start_migration_initial(
+            self, resource_group_name, namespace_name, target_namespace, post_migration_name, custom_headers=None, raw=False, **operation_config):
         parameters = models.MigrationConfigProperties(target_namespace=target_namespace, post_migration_name=post_migration_name)
 
         # Construct URL
@@ -182,6 +161,63 @@ class MigrationConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def start_migration(
+            self, resource_group_name, namespace_name, target_namespace, post_migration_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Initiate Migration from Standard to Premium.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name
+        :type namespace_name: str
+        :param target_namespace: Existing premium Namespace name which has no
+         entities, will be used for migration
+        :type target_namespace: str
+        :param post_migration_name: Name to access connection strings of the
+         Primary Namespace after migration
+        :type post_migration_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         MigrationConfigProperties or
+         ClientRawResponse<MigrationConfigProperties> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicebus.models.MigrationConfigProperties]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.servicebus.models.MigrationConfigProperties]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
+        """
+        raw_result = self._start_migration_initial(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            target_namespace=target_namespace,
+            post_migration_name=post_migration_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('MigrationConfigProperties', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     start_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
 
     def delete(
