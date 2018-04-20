@@ -18,4 +18,4 @@ try:
     from azure.eventprocessorhost.partition_context import PartitionContext
     from azure.eventprocessorhost.partition_pump import PartitionPump
 except (SyntaxError, ImportError):
-    raise ImportError("EventProcessHost is only compatible with Python 3.6 and above.")
+    raise ImportError("EventProcessHost is only compatible with Python 3.5 and above.")

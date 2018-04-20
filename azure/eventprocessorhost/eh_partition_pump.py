@@ -123,9 +123,8 @@ class PartitionReceiver:
                     await self.process_error_async(e)
                 else:
                     if not msgs:
-                        _logger.info("No events received, queue size {}, delivered {}, release {}".format(
+                        _logger.info("No events received, queue size {}, release {}".format(
                             self.eh_partition_pump.partition_receive_handler.queue_size,
-                            self.eh_partition_pump.partition_receive_handler.delivered,
                             self.eh_partition_pump.host.eph_options.release_pump_on_timeout))
                         if self.eh_partition_pump.host.eph_options.release_pump_on_timeout:
                             await self.process_error_async(TimeoutError("No events received"))

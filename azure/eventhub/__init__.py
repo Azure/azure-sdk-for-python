@@ -394,7 +394,6 @@ class Receiver:
         self._callback = None
         self.prefetch = prefetch
         self.epoch = epoch
-        self.delivered = 0
         properties = None
         if epoch:
             properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
@@ -424,7 +423,6 @@ class Receiver:
         :type event: ~uamqp.Message
         :returns: ~azure.eventhub.EventData.
         """
-        self.delivered += 1
         event_data = EventData(message=event)
         if self._callback:
             self._callback(event_data)

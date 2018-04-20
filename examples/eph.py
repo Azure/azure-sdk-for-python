@@ -18,7 +18,7 @@ from azure.eventprocessorhost import (
     EPHOptions)
 
 import examples
-logger = examples.get_logger(logging.DEBUG)
+logger = examples.get_logger(logging.INFO)
 
 
 class EventProcessor(AbstractEventProcessor):
