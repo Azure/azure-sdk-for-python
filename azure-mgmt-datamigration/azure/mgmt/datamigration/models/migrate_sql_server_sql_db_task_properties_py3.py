@@ -53,7 +53,7 @@ class MigrateSqlServerSqlDbTaskProperties(ProjectTaskProperties):
     }
 
     def __init__(self, *, input=None, **kwargs) -> None:
-        super(MigrateSqlServerSqlDbTaskProperties, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlDbTaskProperties, self).__init__(**kwargs)
         self.input = input
         self.output = None
         self.task_type = 'Migrate.SqlServer.SqlDb'

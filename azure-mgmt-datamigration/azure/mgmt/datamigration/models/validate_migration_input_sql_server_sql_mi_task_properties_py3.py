@@ -53,7 +53,7 @@ class ValidateMigrationInputSqlServerSqlMITaskProperties(ProjectTaskProperties):
     }
 
     def __init__(self, *, input=None, **kwargs) -> None:
-        super(ValidateMigrationInputSqlServerSqlMITaskProperties, self).__init__(, **kwargs)
+        super(ValidateMigrationInputSqlServerSqlMITaskProperties, self).__init__(**kwargs)
         self.input = input
         self.output = None
         self.task_type = 'ValidateMigrationInput.SqlServer.AzureSqlDbMI'

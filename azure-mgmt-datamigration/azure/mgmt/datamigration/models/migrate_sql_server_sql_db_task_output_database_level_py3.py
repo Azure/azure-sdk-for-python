@@ -102,7 +102,7 @@ class MigrateSqlServerSqlDbTaskOutputDatabaseLevel(MigrateSqlServerSqlDbTaskOutp
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlDbTaskOutputDatabaseLevel, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlDbTaskOutputDatabaseLevel, self).__init__(**kwargs)
         self.database_name = None
         self.started_on = None
         self.ended_on = None

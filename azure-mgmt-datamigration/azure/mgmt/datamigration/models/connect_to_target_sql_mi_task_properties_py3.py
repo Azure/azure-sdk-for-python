@@ -53,7 +53,7 @@ class ConnectToTargetSqlMITaskProperties(ProjectTaskProperties):
     }
 
     def __init__(self, *, input=None, **kwargs) -> None:
-        super(ConnectToTargetSqlMITaskProperties, self).__init__(, **kwargs)
+        super(ConnectToTargetSqlMITaskProperties, self).__init__(**kwargs)
         self.input = input
         self.output = None
         self.task_type = 'ConnectToTarget.AzureSqlDbMI'

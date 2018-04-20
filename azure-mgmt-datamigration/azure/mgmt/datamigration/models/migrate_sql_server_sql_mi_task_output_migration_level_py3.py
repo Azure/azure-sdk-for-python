@@ -104,7 +104,7 @@ class MigrateSqlServerSqlMITaskOutputMigrationLevel(MigrateSqlServerSqlMITaskOut
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlMITaskOutputMigrationLevel, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlMITaskOutputMigrationLevel, self).__init__(**kwargs)
         self.started_on = None
         self.ended_on = None
         self.status = None

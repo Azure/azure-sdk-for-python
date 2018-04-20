@@ -65,7 +65,7 @@ class ConnectToSourceSqlServerTaskOutputAgentJobLevel(ConnectToSourceSqlServerTa
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ConnectToSourceSqlServerTaskOutputAgentJobLevel, self).__init__(, **kwargs)
+        super(ConnectToSourceSqlServerTaskOutputAgentJobLevel, self).__init__(**kwargs)
         self.name = None
         self.job_category = None
         self.is_enabled = None

@@ -70,5 +70,5 @@ class DatabaseSummaryResult(DataItemMigrationSummaryResult):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(DatabaseSummaryResult, self).__init__(, **kwargs)
+        super(DatabaseSummaryResult, self).__init__(**kwargs)
         self.size_mb = None

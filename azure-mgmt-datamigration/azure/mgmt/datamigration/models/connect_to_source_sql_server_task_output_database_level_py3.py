@@ -66,7 +66,7 @@ class ConnectToSourceSqlServerTaskOutputDatabaseLevel(ConnectToSourceSqlServerTa
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ConnectToSourceSqlServerTaskOutputDatabaseLevel, self).__init__(, **kwargs)
+        super(ConnectToSourceSqlServerTaskOutputDatabaseLevel, self).__init__(**kwargs)
         self.name = None
         self.size_mb = None
         self.database_files = None

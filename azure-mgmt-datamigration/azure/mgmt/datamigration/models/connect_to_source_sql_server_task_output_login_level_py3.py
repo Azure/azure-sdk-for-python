@@ -62,7 +62,7 @@ class ConnectToSourceSqlServerTaskOutputLoginLevel(ConnectToSourceSqlServerTaskO
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ConnectToSourceSqlServerTaskOutputLoginLevel, self).__init__(, **kwargs)
+        super(ConnectToSourceSqlServerTaskOutputLoginLevel, self).__init__(**kwargs)
         self.name = None
         self.login_type = None
         self.default_database = None

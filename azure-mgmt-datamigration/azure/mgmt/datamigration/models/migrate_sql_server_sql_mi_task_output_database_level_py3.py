@@ -73,7 +73,7 @@ class MigrateSqlServerSqlMITaskOutputDatabaseLevel(MigrateSqlServerSqlMITaskOutp
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlMITaskOutputDatabaseLevel, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlMITaskOutputDatabaseLevel, self).__init__(**kwargs)
         self.database_name = None
         self.size_mb = None
         self.state = None

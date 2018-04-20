@@ -45,6 +45,6 @@ class ProjectTask(Resource):
     }
 
     def __init__(self, *, etag: str=None, properties=None, **kwargs) -> None:
-        super(ProjectTask, self).__init__(, **kwargs)
+        super(ProjectTask, self).__init__(**kwargs)
         self.etag = etag
         self.properties = properties

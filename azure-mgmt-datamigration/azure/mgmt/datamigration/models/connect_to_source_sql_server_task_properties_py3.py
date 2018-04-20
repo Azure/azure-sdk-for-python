@@ -53,7 +53,7 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
     }
 
     def __init__(self, *, input=None, **kwargs) -> None:
-        super(ConnectToSourceSqlServerTaskProperties, self).__init__(, **kwargs)
+        super(ConnectToSourceSqlServerTaskProperties, self).__init__(**kwargs)
         self.input = input
         self.output = None
         self.task_type = 'ConnectToSource.SqlServer'

@@ -64,7 +64,7 @@ class ConnectToSourceSqlServerTaskOutputTaskLevel(ConnectToSourceSqlServerTaskOu
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ConnectToSourceSqlServerTaskOutputTaskLevel, self).__init__(, **kwargs)
+        super(ConnectToSourceSqlServerTaskOutputTaskLevel, self).__init__(**kwargs)
         self.databases = None
         self.logins = None
         self.agent_jobs = None

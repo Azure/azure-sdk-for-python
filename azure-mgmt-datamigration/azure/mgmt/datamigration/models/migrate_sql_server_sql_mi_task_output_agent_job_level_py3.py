@@ -67,7 +67,7 @@ class MigrateSqlServerSqlMITaskOutputAgentJobLevel(MigrateSqlServerSqlMITaskOutp
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlMITaskOutputAgentJobLevel, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlMITaskOutputAgentJobLevel, self).__init__(**kwargs)
         self.name = None
         self.is_enabled = None
         self.state = None

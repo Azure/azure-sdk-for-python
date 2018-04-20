@@ -41,6 +41,6 @@ class MigrateSqlServerSqlDbTaskOutputError(MigrateSqlServerSqlDbTaskOutput):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlDbTaskOutputError, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlDbTaskOutputError, self).__init__(**kwargs)
         self.error = None
         self.result_type = 'ErrorOutput'

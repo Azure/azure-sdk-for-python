@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -54,7 +54,7 @@ class DataMigrationServiceClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class DataMigrationServiceClient(object):
+class DataMigrationServiceClient(SDKClient):
     """Data Migration Client
 
     :ivar config: Configuration for client.
@@ -85,7 +85,7 @@ class DataMigrationServiceClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DataMigrationServiceClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataMigrationServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-03-31-preview'

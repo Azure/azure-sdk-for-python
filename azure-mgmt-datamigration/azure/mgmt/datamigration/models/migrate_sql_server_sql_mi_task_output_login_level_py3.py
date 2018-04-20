@@ -72,7 +72,7 @@ class MigrateSqlServerSqlMITaskOutputLoginLevel(MigrateSqlServerSqlMITaskOutput)
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlMITaskOutputLoginLevel, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlMITaskOutputLoginLevel, self).__init__(**kwargs)
         self.login_name = None
         self.state = None
         self.stage = None

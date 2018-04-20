@@ -41,6 +41,6 @@ class MigrateSqlServerSqlMITaskOutputError(MigrateSqlServerSqlMITaskOutput):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(MigrateSqlServerSqlMITaskOutputError, self).__init__(, **kwargs)
+        super(MigrateSqlServerSqlMITaskOutputError, self).__init__(**kwargs)
         self.error = None
         self.result_type = 'ErrorOutput'
