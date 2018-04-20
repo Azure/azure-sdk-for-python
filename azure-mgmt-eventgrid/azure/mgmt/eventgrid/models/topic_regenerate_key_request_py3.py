@@ -29,6 +29,6 @@ class TopicRegenerateKeyRequest(Model):
         'key_name': {'key': 'keyName', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs) -> None:
         super(TopicRegenerateKeyRequest, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+        self.key_name = key_name

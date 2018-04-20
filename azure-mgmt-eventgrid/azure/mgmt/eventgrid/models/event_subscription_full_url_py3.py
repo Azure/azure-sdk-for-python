@@ -12,23 +12,18 @@
 from msrest.serialization import Model
 
 
-class TopicRegenerateKeyRequest(Model):
-    """Topic regenerate share access key key request.
+class EventSubscriptionFullUrl(Model):
+    """Full endpoint url of an event subscription.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param key_name: Required. Key name to regenerate key1 or key2
-    :type key_name: str
+    :param endpoint_url: The URL that represents the endpoint of the
+     destination of an event subscription.
+    :type endpoint_url: str
     """
 
-    _validation = {
-        'key_name': {'required': True},
-    }
-
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        'endpoint_url': {'key': 'endpointUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TopicRegenerateKeyRequest, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+    def __init__(self, *, endpoint_url: str=None, **kwargs) -> None:
+        super(EventSubscriptionFullUrl, self).__init__(**kwargs)
+        self.endpoint_url = endpoint_url
