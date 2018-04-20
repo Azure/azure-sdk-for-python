@@ -16,7 +16,7 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.namespaces_operations import NamespacesOperations
 from .operations.disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
-from .operations.migration_configurations_operations import MigrationConfigurationsOperations
+from .operations.migration_configs_operations import MigrationConfigsOperations
 from .operations.queues_operations import QueuesOperations
 from .operations.topics_operations import TopicsOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
@@ -73,8 +73,8 @@ class ServiceBusManagementClient(SDKClient):
     :vartype namespaces: azure.mgmt.servicebus.operations.NamespacesOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
     :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
-    :ivar migration_configurations: MigrationConfigurations operations
-    :vartype migration_configurations: azure.mgmt.servicebus.operations.MigrationConfigurationsOperations
+    :ivar migration_configs: MigrationConfigs operations
+    :vartype migration_configs: azure.mgmt.servicebus.operations.MigrationConfigsOperations
     :ivar queues: Queues operations
     :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
@@ -117,7 +117,7 @@ class ServiceBusManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.migration_configurations = MigrationConfigurationsOperations(
+        self.migration_configs = MigrationConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self.config, self._serialize, self._deserialize)

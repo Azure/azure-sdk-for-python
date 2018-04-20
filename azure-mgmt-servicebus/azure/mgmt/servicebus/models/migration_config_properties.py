@@ -28,11 +28,11 @@ class MigrationConfigProperties(Resource):
     :vartype type: str
     :ivar provisioning_state: Provisioning state of Migration Configuration
     :vartype provisioning_state: str
-    :param target_namespace: Required. Existing premium Namespace name which
-     has no entities, will be used for migration
+    :param target_namespace: Required. Existing premium Namespace ARM Id name
+     which has no entities, will be used for migration
     :type target_namespace: str
-    :param post_migration_name: Required. Name to access connection strings of
-     the Primary Namespace after migration
+    :param post_migration_name: Required. Name to access Standard Namespace
+     after migration
     :type post_migration_name: str
     """
 

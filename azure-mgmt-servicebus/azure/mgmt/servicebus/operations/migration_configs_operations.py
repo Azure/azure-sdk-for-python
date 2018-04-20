@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class MigrationConfigurationsOperations(object):
-    """MigrationConfigurationsOperations operations.
+class MigrationConfigsOperations(object):
+    """MigrationConfigsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -109,7 +109,7 @@ class MigrationConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs'}
 
 
     def _start_migration_initial(
@@ -171,11 +171,11 @@ class MigrationConfigurationsOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param target_namespace: Existing premium Namespace name which has no
-         entities, will be used for migration
+        :param target_namespace: Existing premium Namespace ARM Id name which
+         has no entities, will be used for migration
         :type target_namespace: str
-        :param post_migration_name: Name to access connection strings of the
-         Primary Namespace after migration
+        :param post_migration_name: Name to access Standard Namespace after
+         migration
         :type post_migration_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -218,7 +218,7 @@ class MigrationConfigurationsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    start_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
+    start_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}'}
 
     def delete(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -273,7 +273,7 @@ class MigrationConfigurationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}'}
 
     def get(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -336,7 +336,7 @@ class MigrationConfigurationsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}'}
 
     def complete_migration(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -391,7 +391,7 @@ class MigrationConfigurationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    complete_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/upgrade'}
+    complete_migration.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}/upgrade'}
 
     def revert(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -446,4 +446,4 @@ class MigrationConfigurationsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    revert.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/revert'}
+    revert.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigs/{configName}/revert'}
