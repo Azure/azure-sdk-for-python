@@ -343,7 +343,8 @@ class MigrationConfigsOperations(object):
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """This operation Completes Migration of entities by pointing the
         connection strings to Premium namespace and any enties created after
-        the operation will be under Premium Namespace.
+        the operation will be under Premium Namespace. CompleteMigration
+        operation will fail when entity migration is in-progress.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
