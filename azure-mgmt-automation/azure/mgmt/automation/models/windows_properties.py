@@ -19,20 +19,25 @@ class WindowsProperties(Model):
      the software update configuration. A comma separated string with required
      values. Possible values include: 'Unclassified', 'Critical', 'Security',
      'UpdateRollup', 'FeaturePack', 'ServicePack', 'Definition', 'Tools',
-     'Updates'
+     'Updates', 'NotSelected'
     :type included_update_classifications: str or
      ~azure.mgmt.automation.models.WindowsUpdateClasses
     :param excluded_kb_numbers: KB numbers excluded from the software update
      configuration.
     :type excluded_kb_numbers: list[str]
+    :param included_kb_numbers: KB numbers included from the software update
+     configuration.
+    :type included_kb_numbers: list[str]
     """
 
     _attribute_map = {
         'included_update_classifications': {'key': 'includedUpdateClassifications', 'type': 'str'},
         'excluded_kb_numbers': {'key': 'excludedKbNumbers', 'type': '[str]'},
+        'included_kb_numbers': {'key': 'includedKbNumbers', 'type': '[str]'},
     }
 
-    def __init__(self, included_update_classifications=None, excluded_kb_numbers=None):
+    def __init__(self, included_update_classifications=None, excluded_kb_numbers=None, included_kb_numbers=None):
         super(WindowsProperties, self).__init__()
         self.included_update_classifications = included_update_classifications
         self.excluded_kb_numbers = excluded_kb_numbers
+        self.included_kb_numbers = included_kb_numbers
