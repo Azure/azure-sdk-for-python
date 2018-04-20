@@ -171,15 +171,15 @@ class Job(ProxyResource):
         'secrets': {'key': 'properties.secrets', 'type': '[EnvironmentVariableWithSecretValue]'},
         'constraints': {'key': 'properties.constraints', 'type': 'JobPropertiesConstraints'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
-        'execution_state': {'key': 'properties.executionState', 'type': 'ExecutionState'},
+        'execution_state': {'key': 'properties.executionState', 'type': 'str'},
         'execution_state_transition_time': {'key': 'properties.executionStateTransitionTime', 'type': 'iso-8601'},
         'execution_info': {'key': 'properties.executionInfo', 'type': 'JobPropertiesExecutionInfo'},
     }
 
     def __init__(self, *, priority="normal", cluster=None, mount_volumes=None, job_output_directory_path_segment: str=None, node_count: int=None, container_settings=None, tool_type=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, chainer_settings=None, custom_toolkit_settings=None, custom_mpi_settings=None, horovod_settings=None, job_preparation=None, std_out_err_path_prefix: str=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, execution_state=None, execution_info=None, **kwargs) -> None:
-        super(Job, self).__init__(, **kwargs)
+        super(Job, self).__init__(**kwargs)
         self.priority = priority
         self.cluster = cluster
         self.mount_volumes = mount_volumes

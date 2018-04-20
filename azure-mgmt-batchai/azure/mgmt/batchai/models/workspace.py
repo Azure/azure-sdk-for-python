@@ -28,6 +28,8 @@ class Workspace(Resource):
     :vartype location: str
     :ivar tags: The tags of the resource
     :vartype tags: dict[str, str]
+    :ivar creation_time: Time when the Workspace was created.
+    :vartype creation_time: datetime
     :ivar provisioning_state: The provisioned state of the workspace. Possible
      values include: 'creating', 'succeeded', 'failed', 'deleting'
     :vartype provisioning_state: str or
@@ -44,6 +46,7 @@ class Workspace(Resource):
         'type': {'readonly': True},
         'location': {'readonly': True},
         'tags': {'readonly': True},
+        'creation_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'provisioning_state_transition_time': {'readonly': True},
     }
@@ -54,11 +57,13 @@ class Workspace(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
         super(Workspace, self).__init__(**kwargs)
+        self.creation_time = None
         self.provisioning_state = None
         self.provisioning_state_transition_time = None

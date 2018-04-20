@@ -17,10 +17,10 @@ class JobCreateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param priority: Priority associated with the job. Priority associated
-     with the job. Possible values include: 'low', 'normal', 'high'. Default
-     value: "normal" .
-    :type priority: str or ~azure.mgmt.batchai.models.JobPriority
+    :param scheduling_priority: Scheduling priority associated with the job.
+     Scheduling priority  associated with the job. Possible values include:
+     'low', 'normal', 'high'. Default value: "normal" .
+    :type scheduling_priority: str or ~azure.mgmt.batchai.models.JobPriority
     :param cluster: Required. Specifies the Id of the cluster on which this
      job will run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
@@ -91,7 +91,7 @@ class JobCreateParameters(Model):
     }
 
     _attribute_map = {
-        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'scheduling_priority': {'key': 'properties.schedulingPriority', 'type': 'str'},
         'cluster': {'key': 'properties.cluster', 'type': 'ResourceId'},
         'mount_volumes': {'key': 'properties.mountVolumes', 'type': 'MountVolumes'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
@@ -116,7 +116,7 @@ class JobCreateParameters(Model):
 
     def __init__(self, **kwargs):
         super(JobCreateParameters, self).__init__(**kwargs)
-        self.priority = kwargs.get('priority', "normal")
+        self.scheduling_priority = kwargs.get('scheduling_priority', "normal")
         self.cluster = kwargs.get('cluster', None)
         self.mount_volumes = kwargs.get('mount_volumes', None)
         self.node_count = kwargs.get('node_count', None)

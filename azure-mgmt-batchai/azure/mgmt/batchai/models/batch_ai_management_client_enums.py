@@ -45,7 +45,6 @@ class DeallocationOption(str, Enum):
     requeue = "requeue"
     terminate = "terminate"
     waitforjobcompletion = "waitforjobcompletion"
-    unknown = "unknown"
 
 
 class ProvisioningState(str, Enum):

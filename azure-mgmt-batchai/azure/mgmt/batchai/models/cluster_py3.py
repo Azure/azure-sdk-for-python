@@ -121,9 +121,9 @@ class Cluster(Resource):
         'user_account_settings': {'key': 'properties.userAccountSettings', 'type': 'UserAccountSettings'},
         'subnet': {'key': 'properties.subnet', 'type': 'ResourceId'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
-        'allocation_state': {'key': 'properties.allocationState', 'type': 'AllocationState'},
+        'allocation_state': {'key': 'properties.allocationState', 'type': 'str'},
         'allocation_state_transition_time': {'key': 'properties.allocationStateTransitionTime', 'type': 'iso-8601'},
         'errors': {'key': 'properties.errors', 'type': '[BatchAIError]'},
         'current_node_count': {'key': 'properties.currentNodeCount', 'type': 'int'},
@@ -131,7 +131,7 @@ class Cluster(Resource):
     }
 
     def __init__(self, *, vm_size: str=None, vm_priority="dedicated", scale_settings=None, virtual_machine_configuration=None, node_setup=None, user_account_settings=None, subnet=None, errors=None, **kwargs) -> None:
-        super(Cluster, self).__init__(, **kwargs)
+        super(Cluster, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.vm_priority = vm_priority
         self.scale_settings = scale_settings

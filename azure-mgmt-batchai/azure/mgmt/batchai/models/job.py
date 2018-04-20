@@ -171,9 +171,9 @@ class Job(ProxyResource):
         'secrets': {'key': 'properties.secrets', 'type': '[EnvironmentVariableWithSecretValue]'},
         'constraints': {'key': 'properties.constraints', 'type': 'JobPropertiesConstraints'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
-        'execution_state': {'key': 'properties.executionState', 'type': 'ExecutionState'},
+        'execution_state': {'key': 'properties.executionState', 'type': 'str'},
         'execution_state_transition_time': {'key': 'properties.executionStateTransitionTime', 'type': 'iso-8601'},
         'execution_info': {'key': 'properties.executionInfo', 'type': 'JobPropertiesExecutionInfo'},
     }

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -55,7 +55,7 @@ class BatchAIManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class BatchAIManagementClient(object):
+class BatchAIManagementClient(SDKClient):
     """The Azure BatchAI Management API.
 
     :ivar config: Configuration for client.
@@ -88,7 +88,7 @@ class BatchAIManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = BatchAIManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(BatchAIManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-05-01'

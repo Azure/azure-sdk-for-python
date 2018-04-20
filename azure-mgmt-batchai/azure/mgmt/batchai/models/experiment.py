@@ -24,6 +24,8 @@ class Experiment(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar creation_time: Time when the Experiment was created.
+    :vartype creation_time: datetime
     :ivar provisioning_state: The provisioned state of the experiment.
      Possible values include: 'creating', 'succeeded', 'failed', 'deleting'
     :vartype provisioning_state: str or
@@ -38,6 +40,7 @@ class Experiment(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'creation_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'provisioning_state_transition_time': {'readonly': True},
     }
@@ -46,11 +49,13 @@ class Experiment(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
         super(Experiment, self).__init__(**kwargs)
+        self.creation_time = None
         self.provisioning_state = None
         self.provisioning_state_transition_time = None

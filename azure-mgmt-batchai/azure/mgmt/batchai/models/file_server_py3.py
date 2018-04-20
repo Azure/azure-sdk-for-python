@@ -84,11 +84,11 @@ class FileServer(Resource):
         'mount_settings': {'key': 'properties.mountSettings', 'type': 'MountSettings'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'FileServerProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, vm_size: str=None, ssh_configuration=None, data_disks=None, subnet=None, **kwargs) -> None:
-        super(FileServer, self).__init__(, **kwargs)
+        super(FileServer, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.ssh_configuration = ssh_configuration
         self.data_disks = data_disks

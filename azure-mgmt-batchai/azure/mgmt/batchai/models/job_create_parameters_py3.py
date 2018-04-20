@@ -17,10 +17,10 @@ class JobCreateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param priority: Priority associated with the job. Priority associated
-     with the job. Possible values include: 'low', 'normal', 'high'. Default
-     value: "normal" .
-    :type priority: str or ~azure.mgmt.batchai.models.JobPriority
+    :param scheduling_priority: Scheduling priority associated with the job.
+     Scheduling priority  associated with the job. Possible values include:
+     'low', 'normal', 'high'. Default value: "normal" .
+    :type scheduling_priority: str or ~azure.mgmt.batchai.models.JobPriority
     :param cluster: Required. Specifies the Id of the cluster on which this
      job will run.
     :type cluster: ~azure.mgmt.batchai.models.ResourceId
@@ -91,7 +91,7 @@ class JobCreateParameters(Model):
     }
 
     _attribute_map = {
-        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'scheduling_priority': {'key': 'properties.schedulingPriority', 'type': 'str'},
         'cluster': {'key': 'properties.cluster', 'type': 'ResourceId'},
         'mount_volumes': {'key': 'properties.mountVolumes', 'type': 'MountVolumes'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
@@ -114,9 +114,9 @@ class JobCreateParameters(Model):
         'constraints': {'key': 'properties.constraints', 'type': 'JobBasePropertiesConstraints'},
     }
 
-    def __init__(self, *, cluster, node_count: int, std_out_err_path_prefix: str, priority="normal", mount_volumes=None, container_settings=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, custom_mpi_settings=None, horovod_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, **kwargs) -> None:
+    def __init__(self, *, cluster, node_count: int, std_out_err_path_prefix: str, scheduling_priority="normal", mount_volumes=None, container_settings=None, cntk_settings=None, py_torch_settings=None, tensor_flow_settings=None, caffe_settings=None, caffe2_settings=None, chainer_settings=None, custom_toolkit_settings=None, custom_mpi_settings=None, horovod_settings=None, job_preparation=None, input_directories=None, output_directories=None, environment_variables=None, secrets=None, constraints=None, **kwargs) -> None:
         super(JobCreateParameters, self).__init__(**kwargs)
-        self.priority = priority
+        self.scheduling_priority = scheduling_priority
         self.cluster = cluster
         self.mount_volumes = mount_volumes
         self.node_count = node_count
