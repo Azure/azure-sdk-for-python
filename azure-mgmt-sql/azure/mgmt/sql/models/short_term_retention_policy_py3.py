@@ -12,13 +12,11 @@
 from .proxy_resource import ProxyResource
 
 
-class JobTargetGroup(ProxyResource):
-    """A group of job targets.
+class ShortTermRetentionPolicy(ProxyResource):
+    """A short term retention policy resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -26,24 +24,24 @@ class JobTargetGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param members: Required. Members of the target group.
-    :type members: list[~azure.mgmt.sql.models.JobTarget]
+    :param retention_days: The backup retention period in days. This is how
+     many days Point-in-Time Restore will be supported.
+    :type retention_days: int
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'members': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'members': {'key': 'properties.members', 'type': '[JobTarget]'},
+        'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
     }
 
-    def __init__(self, *, members, **kwargs) -> None:
-        super(JobTargetGroup, self).__init__(**kwargs)
-        self.members = members
+    def __init__(self, *, retention_days: int=None, **kwargs) -> None:
+        super(ShortTermRetentionPolicy, self).__init__(**kwargs)
+        self.retention_days = retention_days

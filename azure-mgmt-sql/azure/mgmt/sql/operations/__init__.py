@@ -50,19 +50,11 @@ from .managed_databases_operations import ManagedDatabasesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .restore_points_operations import RestorePointsOperations
-from .job_agents_operations import JobAgentsOperations
-from .job_credentials_operations import JobCredentialsOperations
-from .job_executions_operations import JobExecutionsOperations
-from .jobs_operations import JobsOperations
-from .job_step_executions_operations import JobStepExecutionsOperations
-from .job_steps_operations import JobStepsOperations
-from .job_target_executions_operations import JobTargetExecutionsOperations
-from .job_target_groups_operations import JobTargetGroupsOperations
-from .job_versions_operations import JobVersionsOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
 from .capabilities_operations import CapabilitiesOperations
 from .instance_failover_groups_operations import InstanceFailoverGroupsOperations
+from .short_term_retention_policies_operations import ShortTermRetentionPoliciesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -106,17 +98,9 @@ __all__ = [
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
     'RestorePointsOperations',
-    'JobAgentsOperations',
-    'JobCredentialsOperations',
-    'JobExecutionsOperations',
-    'JobsOperations',
-    'JobStepExecutionsOperations',
-    'JobStepsOperations',
-    'JobTargetExecutionsOperations',
-    'JobTargetGroupsOperations',
-    'JobVersionsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
     'CapabilitiesOperations',
     'InstanceFailoverGroupsOperations',
+    'ShortTermRetentionPoliciesOperations',
 ]
