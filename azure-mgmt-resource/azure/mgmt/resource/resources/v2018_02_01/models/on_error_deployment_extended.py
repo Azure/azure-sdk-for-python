@@ -40,8 +40,8 @@ class OnErrorDeploymentExtended(Model):
         'deployment_name': {'key': 'deploymentName', 'type': 'str'},
     }
 
-    def __init__(self, type=None, deployment_name=None):
-        super(OnErrorDeploymentExtended, self).__init__()
+    def __init__(self, **kwargs):
+        super(OnErrorDeploymentExtended, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.type = type
-        self.deployment_name = deployment_name
+        self.type = kwargs.get('type', None)
+        self.deployment_name = kwargs.get('deployment_name', None)

@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class DeploymentProperties(Model):
     """Deployment properties.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param template: The template content. You use this element when you want
      to pass the template syntax directly in the request rather than link to an
      existing template. It can be a JObject or well-formed JSON string. Use
@@ -36,13 +38,14 @@ class DeploymentProperties(Model):
      property or the parameters property, but not both.
     :type parameters_link:
      ~azure.mgmt.resource.resources.v2018_02_01.models.ParametersLink
-    :param mode: The mode that is used to deploy resources. This value can be
-     either Incremental or Complete. In Incremental mode, resources are
-     deployed without deleting existing resources that are not included in the
-     template. In Complete mode, resources are deployed and existing resources
-     in the resource group that are not included in the template are deleted.
-     Be careful when using Complete mode as you may unintentionally delete
-     resources. Possible values include: 'Incremental', 'Complete'
+    :param mode: Required. The mode that is used to deploy resources. This
+     value can be either Incremental or Complete. In Incremental mode,
+     resources are deployed without deleting existing resources that are not
+     included in the template. In Complete mode, resources are deployed and
+     existing resources in the resource group that are not included in the
+     template are deleted. Be careful when using Complete mode as you may
+     unintentionally delete resources. Possible values include: 'Incremental',
+     'Complete'
     :type mode: str or
      ~azure.mgmt.resource.resources.v2018_02_01.models.DeploymentMode
     :param debug_setting: The debug setting of the deployment.
@@ -67,12 +70,12 @@ class DeploymentProperties(Model):
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
     }
 
-    def __init__(self, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None, on_error_deployment=None):
-        super(DeploymentProperties, self).__init__()
-        self.template = template
-        self.template_link = template_link
-        self.parameters = parameters
-        self.parameters_link = parameters_link
-        self.mode = mode
-        self.debug_setting = debug_setting
-        self.on_error_deployment = on_error_deployment
+    def __init__(self, **kwargs):
+        super(DeploymentProperties, self).__init__(**kwargs)
+        self.template = kwargs.get('template', None)
+        self.template_link = kwargs.get('template_link', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.parameters_link = kwargs.get('parameters_link', None)
+        self.mode = kwargs.get('mode', None)
+        self.debug_setting = kwargs.get('debug_setting', None)
+        self.on_error_deployment = kwargs.get('on_error_deployment', None)

@@ -52,13 +52,13 @@ class PolicyAssignment(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, display_name=None, policy_definition_id=None, scope=None, parameters=None, description=None, type=None, name=None):
-        super(PolicyAssignment, self).__init__()
-        self.display_name = display_name
-        self.policy_definition_id = policy_definition_id
-        self.scope = scope
-        self.parameters = parameters
-        self.description = description
+    def __init__(self, **kwargs):
+        super(PolicyAssignment, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.scope = kwargs.get('scope', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.description = kwargs.get('description', None)
         self.id = None
-        self.type = type
-        self.name = name
+        self.type = kwargs.get('type', None)
+        self.name = kwargs.get('name', None)
