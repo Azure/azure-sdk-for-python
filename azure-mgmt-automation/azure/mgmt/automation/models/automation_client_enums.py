@@ -226,7 +226,6 @@ class WindowsUpdateClasses(Enum):
     definition = "Definition"
     tools = "Tools"
     updates = "Updates"
-    not_selected = "NotSelected"
 
 
 class LinuxUpdateClasses(Enum):
@@ -235,7 +234,6 @@ class LinuxUpdateClasses(Enum):
     critical = "Critical"
     security = "Security"
     other = "Other"
-    not_selected = "NotSelected"
 
 
 class SourceType(Enum):

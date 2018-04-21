@@ -19,7 +19,7 @@ class WindowsProperties(Model):
      the software update configuration. A comma separated string with required
      values. Possible values include: 'Unclassified', 'Critical', 'Security',
      'UpdateRollup', 'FeaturePack', 'ServicePack', 'Definition', 'Tools',
-     'Updates', 'NotSelected'
+     'Updates'
     :type included_update_classifications: str or
      ~azure.mgmt.automation.models.WindowsUpdateClasses
     :param excluded_kb_numbers: KB numbers excluded from the software update

@@ -17,7 +17,7 @@ class LinuxProperties(Model):
 
     :param included_package_classifications: Update classifications included
      in the software update configuration. Possible values include:
-     'Unclassified', 'Critical', 'Security', 'Other', 'NotSelected'
+     'Unclassified', 'Critical', 'Security', 'Other'
     :type included_package_classifications: str or
      ~azure.mgmt.automation.models.LinuxUpdateClasses
     :param excluded_package_name_masks: packages excluded from the software
