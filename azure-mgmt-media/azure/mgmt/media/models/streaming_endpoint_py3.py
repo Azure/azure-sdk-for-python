@@ -18,8 +18,6 @@ class StreamingEndpoint(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Fully qualified resource ID for the resource.
     :vartype id: str
     :ivar name: The name of the resource.
@@ -32,7 +30,7 @@ class StreamingEndpoint(TrackedResource):
     :type location: str
     :param description: The StreamingEndpoint description.
     :type description: str
-    :param scale_units: Required. The number of scale units.
+    :param scale_units: The number of scale units.
     :type scale_units: int
     :param availability_set_name: AvailabilitySet name
     :type availability_set_name: str
@@ -75,7 +73,6 @@ class StreamingEndpoint(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'scale_units': {'required': True},
         'host_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
@@ -108,7 +105,7 @@ class StreamingEndpoint(TrackedResource):
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, scale_units: int, tags=None, location: str=None, description: str=None, availability_set_name: str=None, access_control=None, max_cache_age: int=None, custom_host_names=None, cdn_enabled: bool=None, cdn_provider: str=None, cdn_profile: str=None, cross_site_access_policies=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, description: str=None, scale_units: int=None, availability_set_name: str=None, access_control=None, max_cache_age: int=None, custom_host_names=None, cdn_enabled: bool=None, cdn_provider: str=None, cdn_profile: str=None, cross_site_access_policies=None, **kwargs) -> None:
         super(StreamingEndpoint, self).__init__(tags=tags, location=location, **kwargs)
         self.description = description
         self.scale_units = scale_units
