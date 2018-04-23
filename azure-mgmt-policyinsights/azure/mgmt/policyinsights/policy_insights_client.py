@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -46,7 +46,7 @@ class PolicyInsightsClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class PolicyInsightsClient(object):
+class PolicyInsightsClient(SDKClient):
     """PolicyInsightsClient
 
     :ivar config: Configuration for client.
@@ -69,10 +69,10 @@ class PolicyInsightsClient(object):
             self, credentials, base_url=None):
 
         self.config = PolicyInsightsClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(PolicyInsightsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-12-12-preview'
+        self.api_version = '2018-04-04'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

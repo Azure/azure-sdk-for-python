@@ -17,6 +17,8 @@ class PolicyDefinitionSummary(Model):
 
     :param policy_definition_id: Policy definition ID.
     :type policy_definition_id: str
+    :param policy_definition_reference_id: Policy definition reference ID.
+    :type policy_definition_reference_id: str
     :param effect: Policy effect, i.e. policy definition action.
     :type effect: str
     :param results: Non-compliance summary for the policy definition.
@@ -25,6 +27,7 @@ class PolicyDefinitionSummary(Model):
 
     _attribute_map = {
         'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
         'effect': {'key': 'effect', 'type': 'str'},
         'results': {'key': 'results', 'type': 'SummaryResults'},
     }
@@ -32,5 +35,6 @@ class PolicyDefinitionSummary(Model):
     def __init__(self, **kwargs):
         super(PolicyDefinitionSummary, self).__init__(**kwargs)
         self.policy_definition_id = kwargs.get('policy_definition_id', None)
+        self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
         self.effect = kwargs.get('effect', None)
         self.results = kwargs.get('results', None)

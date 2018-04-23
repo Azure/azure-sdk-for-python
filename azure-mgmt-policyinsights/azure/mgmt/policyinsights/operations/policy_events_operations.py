@@ -24,7 +24,7 @@ class PolicyEventsOperations(object):
     :param deserializer: An object model deserializer.
     :ivar policy_events_resource: The name of the virtual resource under PolicyEvents resource type; only "default" is allowed. Constant value: "default".
     :ivar management_groups_namespace: The namespace for Microsoft Management RP; only "Microsoft.Management" is allowed. Constant value: "Microsoft.Management".
-    :ivar api_version: API version to use with the client requests. Constant value: "2017-12-12-preview".
+    :ivar api_version: API version to use with the client requests. Constant value: "2018-04-04".
     :ivar authorization_namespace: The namespace for Microsoft Authorization resource provider; only "Microsoft.Authorization" is allowed. Constant value: "Microsoft.Authorization".
     """
 
@@ -37,7 +37,7 @@ class PolicyEventsOperations(object):
         self._deserialize = deserializer
         self.policy_events_resource = "default"
         self.management_groups_namespace = "Microsoft.Management"
-        self.api_version = "2017-12-12-preview"
+        self.api_version = "2018-04-04"
         self.authorization_namespace = "Microsoft.Authorization"
 
         self.config = config
