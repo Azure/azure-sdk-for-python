@@ -3,7 +3,7 @@
 Release History
 ===============
 
-2.0.0rc1 (2018-04-20)
+2.0.0rc1 (2018-04-23)
 +++++++++++++++++++++
 
 **General Breaking changes**
@@ -33,7 +33,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
 **Features**
 
-- Add new ApiVersion 2018-02-01:
+- Add new ApiVersion 2018-02-01 (new default):
 
   - Add on_error_deployment
   - Support MSI in generic ARM resources
