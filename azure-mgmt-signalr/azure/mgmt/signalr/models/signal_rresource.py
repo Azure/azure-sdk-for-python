@@ -12,7 +12,7 @@
 from .tracked_resource import TrackedResource
 
 
-class SignalrResource(TrackedResource):
+class SignalRResource(TrackedResource):
     """A class represent a SignalR service resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -83,7 +83,7 @@ class SignalrResource(TrackedResource):
     }
 
     def __init__(self, **kwargs):
-        super(SignalrResource, self).__init__(**kwargs)
+        super(SignalRResource, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
         self.host_name_prefix = kwargs.get('host_name_prefix', None)
         self.provisioning_state = None

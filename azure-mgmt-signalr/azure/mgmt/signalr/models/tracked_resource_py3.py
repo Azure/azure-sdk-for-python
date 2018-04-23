@@ -48,6 +48,6 @@ class TrackedResource(Resource):
     }
 
     def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
-        super(TrackedResource, self).__init__(, **kwargs)
+        super(TrackedResource, self).__init__(**kwargs)
         self.location = location
         self.tags = tags

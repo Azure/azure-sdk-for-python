@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
-from .operations.signalr_operations import SignalrOperations
+from .operations.signal_roperations import SignalROperations
 from . import models
 
 
-class SignalrManagementClientConfiguration(AzureConfiguration):
-    """Configuration for SignalrManagementClient
+class SignalRManagementClientConfiguration(AzureConfiguration):
+    """Configuration for SignalRManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -43,7 +43,7 @@ class SignalrManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(SignalrManagementClientConfiguration, self).__init__(base_url)
+        super(SignalRManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-signalr/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -52,16 +52,16 @@ class SignalrManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class SignalrManagementClient(object):
+class SignalRManagementClient(SDKClient):
     """REST API for Azure SignalR Service
 
     :ivar config: Configuration for client.
-    :vartype config: SignalrManagementClientConfiguration
+    :vartype config: SignalRManagementClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.signalr.operations.Operations
-    :ivar signalr: Signalr operations
-    :vartype signalr: azure.mgmt.signalr.operations.SignalrOperations
+    :ivar signal_r: SignalR operations
+    :vartype signal_r: azure.mgmt.signalr.operations.SignalROperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -76,8 +76,8 @@ class SignalrManagementClient(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = SignalrManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        self.config = SignalRManagementClientConfiguration(credentials, subscription_id, base_url)
+        super(SignalRManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-03-01-preview'
@@ -86,5 +86,5 @@ class SignalrManagementClient(object):
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.signalr = SignalrOperations(
+        self.signal_r = SignalROperations(
             self._client, self.config, self._serialize, self._deserialize)

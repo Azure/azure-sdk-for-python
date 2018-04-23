@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class SignalrKeys(Model):
+class SignalRKeys(Model):
     """A class represents the access keys of SignalR service.
 
     :param primary_key: The primary access key.
@@ -27,6 +27,6 @@ class SignalrKeys(Model):
     }
 
     def __init__(self, *, primary_key: str=None, secondary_key: str=None, **kwargs) -> None:
-        super(SignalrKeys, self).__init__(**kwargs)
+        super(SignalRKeys, self).__init__(**kwargs)
         self.primary_key = primary_key
         self.secondary_key = secondary_key
