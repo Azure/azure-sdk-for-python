@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -66,7 +66,7 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class MonitorManagementClient(object):
+class MonitorManagementClient(SDKClient):
     """Monitor Management Client
 
     :ivar config: Configuration for client.
@@ -121,7 +121,7 @@ class MonitorManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(MonitorManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

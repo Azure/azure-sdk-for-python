@@ -166,13 +166,6 @@ class QueryType(str, Enum):
     result_count = "ResultCount"
 
 
-class Sku(str, Enum):
-
-    l1 = "L1"
-    l2 = "L2"
-    l3 = "L3"
-
-
 class AlertSeverity(str, Enum):
 
     zero = "0"

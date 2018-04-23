@@ -23,14 +23,14 @@ class AlertingAction(Action):
     :type webhook_properties: dict[str, str]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param severity: Severity of the alert. Possible values include: '0', '1',
-     '2', '3', '4'
+    :param severity: Required. Severity of the alert. Possible values include:
+     '0', '1', '2', '3', '4'
     :type severity: str or ~azure.mgmt.monitor.models.AlertSeverity
     :param azns_action: Required. azns notification group reference.
     :type azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
-    :param throttle_till_date: Time untill alert should not be fired in
-     ISO8601 format.
-    :type throttle_till_date: datetime
+    :param throttling_in_min: time (in minutes) for which Alerts should be
+     throttled
+    :type throttling_in_min: int
     :param trigger: Required. The trigger condition that results in the alert
      rule being.
     :type trigger: ~azure.mgmt.monitor.models.TriggerCondition
@@ -38,6 +38,7 @@ class AlertingAction(Action):
 
     _validation = {
         'odatatype': {'required': True},
+        'severity': {'required': True},
         'azns_action': {'required': True},
         'trigger': {'required': True},
     }
@@ -48,7 +49,7 @@ class AlertingAction(Action):
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'severity': {'key': 'severity', 'type': 'str'},
         'azns_action': {'key': 'aznsAction', 'type': 'AzNsActionGroup'},
-        'throttle_till_date': {'key': 'throttleTillDate', 'type': 'iso-8601'},
+        'throttling_in_min': {'key': 'throttlingInMin', 'type': 'int'},
         'trigger': {'key': 'trigger', 'type': 'TriggerCondition'},
     }
 
@@ -56,6 +57,6 @@ class AlertingAction(Action):
         super(AlertingAction, self).__init__(**kwargs)
         self.severity = kwargs.get('severity', None)
         self.azns_action = kwargs.get('azns_action', None)
-        self.throttle_till_date = kwargs.get('throttle_till_date', None)
+        self.throttling_in_min = kwargs.get('throttling_in_min', None)
         self.trigger = kwargs.get('trigger', None)
         self.odatatype = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'

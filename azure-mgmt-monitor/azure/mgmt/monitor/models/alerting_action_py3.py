@@ -23,14 +23,14 @@ class AlertingAction(Action):
     :type webhook_properties: dict[str, str]
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param severity: Severity of the alert. Possible values include: '0', '1',
-     '2', '3', '4'
+    :param severity: Required. Severity of the alert. Possible values include:
+     '0', '1', '2', '3', '4'
     :type severity: str or ~azure.mgmt.monitor.models.AlertSeverity
     :param azns_action: Required. azns notification group reference.
     :type azns_action: ~azure.mgmt.monitor.models.AzNsActionGroup
-    :param throttle_till_date: Time untill alert should not be fired in
-     ISO8601 format.
-    :type throttle_till_date: datetime
+    :param throttling_in_min: time (in minutes) for which Alerts should be
+     throttled
+    :type throttling_in_min: int
     :param trigger: Required. The trigger condition that results in the alert
      rule being.
     :type trigger: ~azure.mgmt.monitor.models.TriggerCondition
@@ -38,6 +38,7 @@ class AlertingAction(Action):
 
     _validation = {
         'odatatype': {'required': True},
+        'severity': {'required': True},
         'azns_action': {'required': True},
         'trigger': {'required': True},
     }
@@ -48,14 +49,14 @@ class AlertingAction(Action):
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'severity': {'key': 'severity', 'type': 'str'},
         'azns_action': {'key': 'aznsAction', 'type': 'AzNsActionGroup'},
-        'throttle_till_date': {'key': 'throttleTillDate', 'type': 'iso-8601'},
+        'throttling_in_min': {'key': 'throttlingInMin', 'type': 'int'},
         'trigger': {'key': 'trigger', 'type': 'TriggerCondition'},
     }
 
-    def __init__(self, *, azns_action, trigger, action_group_id: str=None, webhook_properties=None, severity=None, throttle_till_date=None, **kwargs) -> None:
+    def __init__(self, *, severity, azns_action, trigger, action_group_id: str=None, webhook_properties=None, throttling_in_min: int=None, **kwargs) -> None:
         super(AlertingAction, self).__init__(action_group_id=action_group_id, webhook_properties=webhook_properties, **kwargs)
         self.severity = severity
         self.azns_action = azns_action
-        self.throttle_till_date = throttle_till_date
+        self.throttling_in_min = throttling_in_min
         self.trigger = trigger
         self.odatatype = 'Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction'

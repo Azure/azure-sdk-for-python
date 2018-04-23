@@ -48,8 +48,6 @@ class LogSearchRuleResource(Resource):
     :type schedule: ~azure.mgmt.monitor.models.Schedule
     :param action: Required. Action needs to be taken on rule execution.
     :type action: ~azure.mgmt.monitor.models.Action
-    :param sku: Sku of the Log Search Rule
-    :type sku: ~azure.mgmt.monitor.models.Sku1
     """
 
     _validation = {
@@ -71,13 +69,12 @@ class LogSearchRuleResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'enabled': {'key': 'properties.Enabled', 'type': 'str'},
+        'enabled': {'key': 'properties.enabled', 'type': 'str'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'source': {'key': 'properties.source', 'type': 'Source'},
         'schedule': {'key': 'properties.schedule', 'type': 'Schedule'},
         'action': {'key': 'properties.action', 'type': 'Action'},
-        'sku': {'key': 'sku', 'type': 'Sku1'},
     }
 
     def __init__(self, **kwargs):
@@ -89,4 +86,3 @@ class LogSearchRuleResource(Resource):
         self.source = kwargs.get('source', None)
         self.schedule = kwargs.get('schedule', None)
         self.action = kwargs.get('action', None)
-        self.sku = kwargs.get('sku', None)
