@@ -48,6 +48,9 @@ class DscConfiguration(TrackedResource):
     :type creation_time: datetime
     :param last_modified_time: Gets or sets the last modified time.
     :type last_modified_time: datetime
+    :param node_configuration_count: Gets the number of compiled node
+     configurations.
+    :type node_configuration_count: long
     :param description: Gets or sets the description.
     :type description: str
     :param etag: Gets or sets the etag of the resource.
@@ -74,11 +77,12 @@ class DscConfiguration(TrackedResource):
         'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'node_configuration_count': {'key': 'properties.nodeConfigurationCount', 'type': 'long'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, location=None, provisioning_state=None, job_count=None, parameters=None, source=None, state=None, log_verbose=None, creation_time=None, last_modified_time=None, description=None, etag=None):
+    def __init__(self, tags=None, location=None, provisioning_state=None, job_count=None, parameters=None, source=None, state=None, log_verbose=None, creation_time=None, last_modified_time=None, node_configuration_count=None, description=None, etag=None):
         super(DscConfiguration, self).__init__(tags=tags, location=location)
         self.provisioning_state = provisioning_state
         self.job_count = job_count
@@ -88,5 +92,6 @@ class DscConfiguration(TrackedResource):
         self.log_verbose = log_verbose
         self.creation_time = creation_time
         self.last_modified_time = last_modified_time
+        self.node_configuration_count = node_configuration_count
         self.description = description
         self.etag = etag

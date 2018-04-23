@@ -40,6 +40,9 @@ class DscNode(ProxyResource):
     :type node_id: str
     :param etag: Gets or sets the etag of the resource.
     :type etag: str
+    :param total_count: Gets the total number of records matching filter
+     criteria.
+    :type total_count: int
     :param extension_handler: Gets or sets the list of extensionHandler
      properties for a Node.
     :type extension_handler:
@@ -64,10 +67,11 @@ class DscNode(ProxyResource):
         'status': {'key': 'properties.status', 'type': 'str'},
         'node_id': {'key': 'properties.nodeId', 'type': 'str'},
         'etag': {'key': 'properties.etag', 'type': 'str'},
+        'total_count': {'key': 'properties.totalCount', 'type': 'int'},
         'extension_handler': {'key': 'properties.extensionHandler', 'type': '[DscNodeExtensionHandlerAssociationProperty]'},
     }
 
-    def __init__(self, last_seen=None, registration_time=None, ip=None, account_id=None, dsc_node_name=None, status=None, node_id=None, etag=None, extension_handler=None):
+    def __init__(self, last_seen=None, registration_time=None, ip=None, account_id=None, dsc_node_name=None, status=None, node_id=None, etag=None, total_count=None, extension_handler=None):
         super(DscNode, self).__init__()
         self.last_seen = last_seen
         self.registration_time = registration_time
@@ -77,4 +81,5 @@ class DscNode(ProxyResource):
         self.status = status
         self.node_id = node_id
         self.etag = etag
+        self.total_count = total_count
         self.extension_handler = extension_handler
