@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class SignalrCreateOrUpdateProperties(Model):
+class SignalRCreateOrUpdateProperties(Model):
     """Settings used to provision or configure the resource.
 
     :param host_name_prefix: Prefix for the hostName of the SignalR service.
@@ -26,6 +26,6 @@ class SignalrCreateOrUpdateProperties(Model):
         'host_name_prefix': {'key': 'hostNamePrefix', 'type': 'str'},
     }
 
-    def __init__(self, *, host_name_prefix: str=None, **kwargs) -> None:
-        super(SignalrCreateOrUpdateProperties, self).__init__(**kwargs)
-        self.host_name_prefix = host_name_prefix
+    def __init__(self, **kwargs):
+        super(SignalRCreateOrUpdateProperties, self).__init__(**kwargs)
+        self.host_name_prefix = kwargs.get('host_name_prefix', None)

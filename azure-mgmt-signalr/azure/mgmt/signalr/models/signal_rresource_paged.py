@@ -9,30 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.paging import Paged
 
 
-class SignalrSkuTier(str, Enum):
+class SignalRResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SignalRResource <azure.mgmt.signalr.models.SignalRResource>` object
+    """
 
-    free = "Free"
-    basic = "Basic"
-    premium = "Premium"
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SignalRResource]'}
+    }
 
+    def __init__(self, *args, **kwargs):
 
-class ProvisioningState(str, Enum):
-
-    unknown = "Unknown"
-    succeeded = "Succeeded"
-    failed = "Failed"
-    canceled = "Canceled"
-    running = "Running"
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    moving = "Moving"
-
-
-class KeyType(str, Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
+        super(SignalRResourcePaged, self).__init__(*args, **kwargs)

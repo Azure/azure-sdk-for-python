@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class SignalrOperations(object):
-    """SignalrOperations operations.
+class SignalROperations(object):
+    """SignalROperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -121,9 +121,9 @@ class SignalrOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SignalrResource
+        :return: An iterator like instance of SignalRResource
         :rtype:
-         ~azure.mgmt.signalr.models.SignalrResourcePaged[~azure.mgmt.signalr.models.SignalrResource]
+         ~azure.mgmt.signalr.models.SignalRResourcePaged[~azure.mgmt.signalr.models.SignalRResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -167,11 +167,11 @@ class SignalrOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SignalrResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SignalRResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SignalrResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SignalRResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -190,9 +190,9 @@ class SignalrOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SignalrResource
+        :return: An iterator like instance of SignalRResource
         :rtype:
-         ~azure.mgmt.signalr.models.SignalrResourcePaged[~azure.mgmt.signalr.models.SignalrResource]
+         ~azure.mgmt.signalr.models.SignalRResourcePaged[~azure.mgmt.signalr.models.SignalRResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -237,11 +237,11 @@ class SignalrOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SignalrResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SignalRResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SignalrResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SignalRResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -262,8 +262,8 @@ class SignalrOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SignalrKeys or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.signalr.models.SignalrKeys or
+        :return: SignalRKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.signalr.models.SignalRKeys or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -302,7 +302,7 @@ class SignalrOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SignalrKeys', response)
+            deserialized = self._deserialize('SignalRKeys', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -360,7 +360,7 @@ class SignalrOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('SignalrKeys', response)
+            deserialized = self._deserialize('SignalRKeys', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -388,12 +388,12 @@ class SignalrOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SignalrKeys or
-         ClientRawResponse<SignalrKeys> if raw==True
+        :return: An instance of LROPoller that returns SignalRKeys or
+         ClientRawResponse<SignalRKeys> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.signalr.models.SignalrKeys]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.signalr.models.SignalRKeys]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.signalr.models.SignalrKeys]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.signalr.models.SignalRKeys]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._regenerate_key_initial(
@@ -406,7 +406,7 @@ class SignalrOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SignalrKeys', response)
+            deserialized = self._deserialize('SignalRKeys', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -438,8 +438,8 @@ class SignalrOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SignalrResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.signalr.models.SignalrResource or
+        :return: SignalRResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.signalr.models.SignalRResource or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -478,7 +478,7 @@ class SignalrOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SignalrResource', response)
+            deserialized = self._deserialize('SignalRResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -515,7 +515,7 @@ class SignalrOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'SignalrCreateParameters')
+            body_content = self._serialize.body(parameters, 'SignalRCreateParameters')
         else:
             body_content = None
 
@@ -532,7 +532,7 @@ class SignalrOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('SignalrResource', response)
+            deserialized = self._deserialize('SignalRResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -551,18 +551,18 @@ class SignalrOperations(object):
         :param resource_name: The name of the SignalR resource.
         :type resource_name: str
         :param parameters: Parameters for the create or update operation
-        :type parameters: ~azure.mgmt.signalr.models.SignalrCreateParameters
+        :type parameters: ~azure.mgmt.signalr.models.SignalRCreateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SignalrResource or
-         ClientRawResponse<SignalrResource> if raw==True
+        :return: An instance of LROPoller that returns SignalRResource or
+         ClientRawResponse<SignalRResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.signalr.models.SignalrResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.signalr.models.SignalRResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.signalr.models.SignalrResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.signalr.models.SignalRResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -575,7 +575,7 @@ class SignalrOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SignalrResource', response)
+            deserialized = self._deserialize('SignalRResource', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -702,7 +702,7 @@ class SignalrOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'SignalrUpdateParameters')
+            body_content = self._serialize.body(parameters, 'SignalRUpdateParameters')
         else:
             body_content = None
 
@@ -719,7 +719,7 @@ class SignalrOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SignalrResource', response)
+            deserialized = self._deserialize('SignalRResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -738,18 +738,18 @@ class SignalrOperations(object):
         :param resource_name: The name of the SignalR resource.
         :type resource_name: str
         :param parameters: Parameters for the update operation
-        :type parameters: ~azure.mgmt.signalr.models.SignalrUpdateParameters
+        :type parameters: ~azure.mgmt.signalr.models.SignalRUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SignalrResource or
-         ClientRawResponse<SignalrResource> if raw==True
+        :return: An instance of LROPoller that returns SignalRResource or
+         ClientRawResponse<SignalRResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.signalr.models.SignalrResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.signalr.models.SignalRResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.signalr.models.SignalrResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.signalr.models.SignalRResource]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -762,7 +762,7 @@ class SignalrOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SignalrResource', response)
+            deserialized = self._deserialize('SignalRResource', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
