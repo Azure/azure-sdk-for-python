@@ -10,9 +10,9 @@
 # --------------------------------------------------------------------------
 
 from .operations import Operations
-from .signalr_operations import SignalrOperations
+from .signal_roperations import SignalROperations
 
 __all__ = [
     'Operations',
-    'SignalrOperations',
+    'SignalROperations',
 ]

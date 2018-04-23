@@ -12,20 +12,21 @@
 from msrest.serialization import Model
 
 
-class SignalrCreateOrUpdateProperties(Model):
-    """Settings used to provision or configure the resource.
+class SignalRKeys(Model):
+    """A class represents the access keys of SignalR service.
 
-    :param host_name_prefix: Prefix for the hostName of the SignalR service.
-     Retained for future use.
-     The hostname will be of format:
-     &lt;hostNamePrefix&gt;.service.signalr.net.
-    :type host_name_prefix: str
+    :param primary_key: The primary access key.
+    :type primary_key: str
+    :param secondary_key: The secondary access key.
+    :type secondary_key: str
     """
 
     _attribute_map = {
-        'host_name_prefix': {'key': 'hostNamePrefix', 'type': 'str'},
+        'primary_key': {'key': 'primaryKey', 'type': 'str'},
+        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(SignalrCreateOrUpdateProperties, self).__init__(**kwargs)
-        self.host_name_prefix = kwargs.get('host_name_prefix', None)
+        super(SignalRKeys, self).__init__(**kwargs)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)
