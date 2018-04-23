@@ -100,7 +100,7 @@ class AzureMgmtTestCase(ReplayableTest):
         return [
             self.scrubber,
             OAuthRequestResponsesFilter(),
-            DeploymentNameReplacer(),
+            # DeploymentNameReplacer(), Not use this one, give me full control on deployment name
             RequestUrlNormalizer()
         ]
 
