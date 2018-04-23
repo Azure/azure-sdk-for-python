@@ -40,7 +40,6 @@ from .operations.database_blob_auditing_policies_operations import DatabaseBlobA
 from .operations.database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .operations.encryption_protectors_operations import EncryptionProtectorsOperations
 from .operations.failover_groups_operations import FailoverGroupsOperations
-from .operations.managed_instances_operations import ManagedInstancesOperations
 from .operations.operations import Operations
 from .operations.server_keys_operations import ServerKeysOperations
 from .operations.sync_agents_operations import SyncAgentsOperations
@@ -50,15 +49,12 @@ from .operations.subscription_usages_operations import SubscriptionUsagesOperati
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
-from .operations.managed_databases_operations import ManagedDatabasesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
-from .operations.instance_failover_groups_operations import InstanceFailoverGroupsOperations
-from .operations.short_term_retention_policies_operations import ShortTermRetentionPoliciesOperations
 from . import models
 
 
@@ -155,8 +151,6 @@ class SqlManagementClient(SDKClient):
     :vartype encryption_protectors: azure.mgmt.sql.operations.EncryptionProtectorsOperations
     :ivar failover_groups: FailoverGroups operations
     :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
-    :ivar managed_instances: ManagedInstances operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.sql.operations.Operations
     :ivar server_keys: ServerKeys operations
@@ -175,8 +169,6 @@ class SqlManagementClient(SDKClient):
     :vartype long_term_retention_backups: azure.mgmt.sql.operations.LongTermRetentionBackupsOperations
     :ivar backup_long_term_retention_policies: BackupLongTermRetentionPolicies operations
     :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
-    :ivar managed_databases: ManagedDatabases operations
-    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
@@ -189,10 +181,6 @@ class SqlManagementClient(SDKClient):
     :vartype elastic_pool_operations: azure.mgmt.sql.operations.ElasticPoolOperations
     :ivar capabilities: Capabilities operations
     :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
-    :ivar instance_failover_groups: InstanceFailoverGroups operations
-    :vartype instance_failover_groups: azure.mgmt.sql.operations.InstanceFailoverGroupsOperations
-    :ivar short_term_retention_policies: ShortTermRetentionPolicies operations
-    :vartype short_term_retention_policies: azure.mgmt.sql.operations.ShortTermRetentionPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -267,8 +255,6 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.failover_groups = FailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_keys = ServerKeysOperations(
@@ -287,8 +273,6 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_long_term_retention_policies = BackupLongTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.managed_databases = ManagedDatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
@@ -300,8 +284,4 @@ class SqlManagementClient(SDKClient):
         self.elastic_pool_operations = ElasticPoolOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.instance_failover_groups = InstanceFailoverGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.short_term_retention_policies = ShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -326,15 +326,15 @@ class FailoverGroupReplicationRole(str, Enum):
     secondary = "Secondary"
 
 
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-
-
 class OperationOrigin(str, Enum):
 
     user = "user"
     system = "system"
+
+
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
 
 
 class SyncAgentState(str, Enum):
@@ -409,28 +409,6 @@ class VirtualNetworkRuleState(str, Enum):
     ready = "Ready"
     deleting = "Deleting"
     unknown = "Unknown"
-
-
-class ManagedDatabaseStatus(str, Enum):
-
-    online = "Online"
-    offline = "Offline"
-    shutdown = "Shutdown"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-
-
-class CatalogCollationType(str, Enum):
-
-    database_default = "DATABASE_DEFAULT"
-    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
-
-
-class ManagedDatabaseCreateMode(str, Enum):
-
-    default = "Default"
-    restore_external_backup = "RestoreExternalBackup"
-    point_in_time_restore = "PointInTimeRestore"
 
 
 class AutomaticTuningServerMode(str, Enum):
@@ -537,6 +515,12 @@ class DatabaseStatus(str, Enum):
     scaling = "Scaling"
 
 
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
 class DatabaseLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
@@ -560,12 +544,6 @@ class ElasticPoolLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
     base_price = "BasePrice"
-
-
-class InstanceFailoverGroupReplicationRole(str, Enum):
-
-    primary = "Primary"
-    secondary = "Secondary"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
