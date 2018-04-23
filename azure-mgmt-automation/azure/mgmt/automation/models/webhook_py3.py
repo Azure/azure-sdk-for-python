@@ -72,7 +72,7 @@ class Webhook(ProxyResource):
     }
 
     def __init__(self, *, is_enabled: bool=False, uri: str=None, expiry_time=None, last_invoked_time=None, parameters=None, runbook=None, run_on: str=None, creation_time=None, last_modified_time=None, description: str=None, **kwargs) -> None:
-        super(Webhook, self).__init__(, **kwargs)
+        super(Webhook, self).__init__(**kwargs)
         self.is_enabled = is_enabled
         self.uri = uri
         self.expiry_time = expiry_time

@@ -51,6 +51,6 @@ class SchemaContract(Resource):
     }
 
     def __init__(self, *, content_type: str, value: str=None, **kwargs) -> None:
-        super(SchemaContract, self).__init__(, **kwargs)
+        super(SchemaContract, self).__init__(**kwargs)
         self.content_type = content_type
         self.value = value

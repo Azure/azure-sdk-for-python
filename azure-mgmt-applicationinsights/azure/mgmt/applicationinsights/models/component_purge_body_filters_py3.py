@@ -18,17 +18,23 @@ class ComponentPurgeBodyFilters(Model):
     :param column: The column of the table over which the given query should
      run
     :type column: str
-    :param filter: A query to to run over the provided table and column to
-     purge the corresponding data.
-    :type filter: str
+    :param operator: A query operator to evaluate over the provided column and
+     value(s).
+    :type operator: str
+    :param value: the value for the operator to function over. This can be a
+     number (e.g., > 100), a string (timestamp >= '2017-09-01') or array of
+     values.
+    :type value: object
     """
 
     _attribute_map = {
         'column': {'key': 'column', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'str'},
+        'operator': {'key': 'operator', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
     }
 
-    def __init__(self, *, column: str=None, filter: str=None, **kwargs) -> None:
+    def __init__(self, *, column: str=None, operator: str=None, value=None, **kwargs) -> None:
         super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
         self.column = column
-        self.filter = filter
+        self.operator = operator
+        self.value = value

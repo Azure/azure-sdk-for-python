@@ -59,7 +59,7 @@ class Connection(ProxyResource):
     }
 
     def __init__(self, *, connection_type=None, description: str=None, **kwargs) -> None:
-        super(Connection, self).__init__(, **kwargs)
+        super(Connection, self).__init__(**kwargs)
         self.connection_type = connection_type
         self.field_definition_values = None
         self.creation_time = None

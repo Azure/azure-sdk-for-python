@@ -22,6 +22,9 @@ from .api_policy_operations import ApiPolicyOperations
 from .api_schema_operations import ApiSchemaOperations
 from .api_diagnostic_operations import ApiDiagnosticOperations
 from .api_diagnostic_logger_operations import ApiDiagnosticLoggerOperations
+from .api_issue_operations import ApiIssueOperations
+from .api_issue_comment_operations import ApiIssueCommentOperations
+from .api_issue_attachment_operations import ApiIssueAttachmentOperations
 from .authorization_server_operations import AuthorizationServerOperations
 from .backend_operations import BackendOperations
 from .certificate_operations import CertificateOperations
@@ -80,6 +83,9 @@ __all__ = [
     'ApiSchemaOperations',
     'ApiDiagnosticOperations',
     'ApiDiagnosticLoggerOperations',
+    'ApiIssueOperations',
+    'ApiIssueCommentOperations',
+    'ApiIssueAttachmentOperations',
     'AuthorizationServerOperations',
     'BackendOperations',
     'CertificateOperations',

@@ -55,8 +55,8 @@ class Job(ProxyResource):
     :type last_status_modified_time: datetime
     :param parameters: Gets or sets the parameters of the job.
     :type parameters: dict[str, str]
-    :param provisioning_state: The provisioning state of a resource.
-    :type provisioning_state:
+    :ivar provisioning_state: The provisioning state of a resource.
+    :vartype provisioning_state:
      ~azure.mgmt.automation.models.JobProvisioningStateProperty
     """
 
@@ -64,6 +64,7 @@ class Job(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -101,4 +102,4 @@ class Job(ProxyResource):
         self.last_modified_time = kwargs.get('last_modified_time', None)
         self.last_status_modified_time = kwargs.get('last_status_modified_time', None)
         self.parameters = kwargs.get('parameters', None)
-        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.provisioning_state = None

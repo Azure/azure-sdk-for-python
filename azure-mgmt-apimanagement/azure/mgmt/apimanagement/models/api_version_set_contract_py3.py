@@ -65,7 +65,7 @@ class ApiVersionSetContract(Resource):
     }
 
     def __init__(self, *, display_name: str, versioning_scheme, description: str=None, version_query_name: str=None, version_header_name: str=None, **kwargs) -> None:
-        super(ApiVersionSetContract, self).__init__(, **kwargs)
+        super(ApiVersionSetContract, self).__init__(**kwargs)
         self.description = description
         self.version_query_name = version_query_name
         self.version_header_name = version_header_name

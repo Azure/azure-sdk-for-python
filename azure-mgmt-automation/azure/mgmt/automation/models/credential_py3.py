@@ -54,7 +54,7 @@ class Credential(ProxyResource):
     }
 
     def __init__(self, *, description: str=None, **kwargs) -> None:
-        super(Credential, self).__init__(, **kwargs)
+        super(Credential, self).__init__(**kwargs)
         self.user_name = None
         self.creation_time = None
         self.last_modified_time = None

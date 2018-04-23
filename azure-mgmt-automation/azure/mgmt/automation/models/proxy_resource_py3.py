@@ -40,4 +40,4 @@ class ProxyResource(Resource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ProxyResource, self).__init__(, **kwargs)
+        super(ProxyResource, self).__init__(**kwargs)

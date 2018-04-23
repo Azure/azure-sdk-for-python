@@ -46,6 +46,26 @@ class WebTestKind(str, Enum):
     multistep = "multistep"
 
 
+class ItemScope(str, Enum):
+
+    shared = "shared"
+    user = "user"
+
+
+class ItemType(str, Enum):
+
+    query = "query"
+    function = "function"
+    folder = "folder"
+    recent = "recent"
+
+
+class SharedTypeKind(str, Enum):
+
+    user = "user"
+    shared = "shared"
+
+
 class FavoriteSourceType(str, Enum):
 
     retention = "retention"
@@ -56,3 +76,26 @@ class FavoriteSourceType(str, Enum):
     funnel = "funnel"
     impact = "impact"
     segmentation = "segmentation"
+
+
+class ItemScopePath(str, Enum):
+
+    analytics_items = "analyticsItems"
+    myanalytics_items = "myanalyticsItems"
+
+
+class ItemTypeParameter(str, Enum):
+
+    none = "none"
+    query = "query"
+    function = "function"
+    folder = "folder"
+    recent = "recent"
+
+
+class CategoryType(str, Enum):
+
+    workbook = "workbook"
+    tsg = "TSG"
+    performance = "performance"
+    retention = "retention"

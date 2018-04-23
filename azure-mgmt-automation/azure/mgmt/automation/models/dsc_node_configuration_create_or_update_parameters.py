@@ -20,7 +20,7 @@ class DscNodeConfigurationCreateOrUpdateParameters(Model):
 
     :param source: Required. Gets or sets the source.
     :type source: ~azure.mgmt.automation.models.ContentSource
-    :param name: Required. Gets or sets the type of the parameter.
+    :param name: Required. Name of the node configuration.
     :type name: str
     :param configuration: Required. Gets or sets the configuration of the
      node.
@@ -29,12 +29,28 @@ class DscNodeConfigurationCreateOrUpdateParameters(Model):
     :param new_node_configuration_build_version_required: If a new build
      version of NodeConfiguration is required.
     :type new_node_configuration_build_version_required: bool
+    :param source1: Required. Gets or sets the source.
+    :type source1: ~azure.mgmt.automation.models.ContentSource
+    :param name1: Required. Gets or sets the type of the parameter.
+    :type name1: str
+    :param configuration1: Required. Gets or sets the configuration of the
+     node.
+    :type configuration1:
+     ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
+    :param increment_node_configuration_build: If a new build version of
+     NodeConfiguration is required.
+    :type increment_node_configuration_build: bool
+    :param tags: Gets or sets the tags attached to the resource.
+    :type tags: dict[str, str]
     """
 
     _validation = {
         'source': {'required': True},
         'name': {'required': True},
         'configuration': {'required': True},
+        'source1': {'required': True},
+        'name1': {'required': True},
+        'configuration1': {'required': True},
     }
 
     _attribute_map = {
@@ -42,6 +58,11 @@ class DscNodeConfigurationCreateOrUpdateParameters(Model):
         'name': {'key': 'name', 'type': 'str'},
         'configuration': {'key': 'configuration', 'type': 'DscConfigurationAssociationProperty'},
         'new_node_configuration_build_version_required': {'key': 'newNodeConfigurationBuildVersionRequired', 'type': 'bool'},
+        'source1': {'key': 'properties.source', 'type': 'ContentSource'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'configuration1': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
+        'increment_node_configuration_build': {'key': 'properties.incrementNodeConfigurationBuild', 'type': 'bool'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -50,3 +71,8 @@ class DscNodeConfigurationCreateOrUpdateParameters(Model):
         self.name = kwargs.get('name', None)
         self.configuration = kwargs.get('configuration', None)
         self.new_node_configuration_build_version_required = kwargs.get('new_node_configuration_build_version_required', None)
+        self.source1 = kwargs.get('source1', None)
+        self.name1 = kwargs.get('name1', None)
+        self.configuration1 = kwargs.get('configuration1', None)
+        self.increment_node_configuration_build = kwargs.get('increment_node_configuration_build', None)
+        self.tags = kwargs.get('tags', None)

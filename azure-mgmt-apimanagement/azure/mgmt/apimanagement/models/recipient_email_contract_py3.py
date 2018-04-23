@@ -42,5 +42,5 @@ class RecipientEmailContract(Resource):
     }
 
     def __init__(self, *, email: str=None, **kwargs) -> None:
-        super(RecipientEmailContract, self).__init__(, **kwargs)
+        super(RecipientEmailContract, self).__init__(**kwargs)
         self.email = email

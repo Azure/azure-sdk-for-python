@@ -96,7 +96,7 @@ class DscCompilationJob(ProxyResource):
     }
 
     def __init__(self, *, configuration=None, provisioning_state=None, run_on: str=None, status=None, status_details: str=None, parameters=None, **kwargs) -> None:
-        super(DscCompilationJob, self).__init__(, **kwargs)
+        super(DscCompilationJob, self).__init__(**kwargs)
         self.configuration = configuration
         self.started_by = None
         self.job_id = None

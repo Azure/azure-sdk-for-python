@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -53,7 +53,7 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class AuthorizationManagementClient(object):
+class AuthorizationManagementClient(SDKClient):
     """Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role definitions and role assignments. A role definition describes the set of actions that can be performed on resources. A role assignment grants access to Azure Active Directory users.
 
     :ivar config: Configuration for client.
@@ -82,7 +82,7 @@ class AuthorizationManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = AuthorizationManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(AuthorizationManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

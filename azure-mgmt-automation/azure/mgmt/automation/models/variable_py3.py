@@ -54,7 +54,7 @@ class Variable(ProxyResource):
     }
 
     def __init__(self, *, value: str=None, is_encrypted: bool=None, creation_time=None, last_modified_time=None, description: str=None, **kwargs) -> None:
-        super(Variable, self).__init__(, **kwargs)
+        super(Variable, self).__init__(**kwargs)
         self.value = value
         self.is_encrypted = is_encrypted
         self.creation_time = creation_time

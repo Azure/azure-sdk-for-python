@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -28,6 +28,9 @@ from .operations.favorites_operations import FavoritesOperations
 from .operations.favorite_operations import FavoriteOperations
 from .operations.web_test_locations_operations import WebTestLocationsOperations
 from .operations.web_tests_operations import WebTestsOperations
+from .operations.analytics_item_operations import AnalyticsItemOperations
+from .operations.workbooks_operations import WorkbooksOperations
+from .operations.workbook_operations import WorkbookOperations
 from . import models
 
 
@@ -63,7 +66,7 @@ class ApplicationInsightsManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ApplicationInsightsManagementClient(object):
+class ApplicationInsightsManagementClient(SDKClient):
     """Composite Swagger for Application Insights Management Client
 
     :ivar config: Configuration for client.
@@ -99,6 +102,12 @@ class ApplicationInsightsManagementClient(object):
     :vartype web_test_locations: azure.mgmt.applicationinsights.operations.WebTestLocationsOperations
     :ivar web_tests: WebTests operations
     :vartype web_tests: azure.mgmt.applicationinsights.operations.WebTestsOperations
+    :ivar analytics_item: AnalyticsItem operations
+    :vartype analytics_item: azure.mgmt.applicationinsights.operations.AnalyticsItemOperations
+    :ivar workbooks: Workbooks operations
+    :vartype workbooks: azure.mgmt.applicationinsights.operations.WorkbooksOperations
+    :ivar workbook: Workbook operations
+    :vartype workbook: azure.mgmt.applicationinsights.operations.WorkbookOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -112,7 +121,7 @@ class ApplicationInsightsManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ApplicationInsightsManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ApplicationInsightsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2015-05-01'
@@ -148,4 +157,10 @@ class ApplicationInsightsManagementClient(object):
         self.web_test_locations = WebTestLocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_tests = WebTestsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.analytics_item = AnalyticsItemOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workbooks = WorkbooksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workbook = WorkbookOperations(
             self._client, self.config, self._serialize, self._deserialize)

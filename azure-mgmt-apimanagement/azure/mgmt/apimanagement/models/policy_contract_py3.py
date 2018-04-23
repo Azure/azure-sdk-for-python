@@ -30,7 +30,8 @@ class PolicyContract(Resource):
      Policy.
     :type policy_content: str
     :param content_format: Format of the policyContent. Possible values
-     include: 'xml', 'xml-link'. Default value: "xml" .
+     include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'. Default value: "xml"
+     .
     :type content_format: str or
      ~azure.mgmt.apimanagement.models.PolicyContentFormat
     """
@@ -51,6 +52,6 @@ class PolicyContract(Resource):
     }
 
     def __init__(self, *, policy_content: str, content_format="xml", **kwargs) -> None:
-        super(PolicyContract, self).__init__(, **kwargs)
+        super(PolicyContract, self).__init__(**kwargs)
         self.policy_content = policy_content
         self.content_format = content_format

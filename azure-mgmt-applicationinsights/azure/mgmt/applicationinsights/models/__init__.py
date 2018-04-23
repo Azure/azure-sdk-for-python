@@ -44,6 +44,13 @@ try:
     from .web_test_geolocation_py3 import WebTestGeolocation
     from .web_test_properties_configuration_py3 import WebTestPropertiesConfiguration
     from .web_test_py3 import WebTest
+    from .application_insights_component_analytics_item_properties_py3 import ApplicationInsightsComponentAnalyticsItemProperties
+    from .application_insights_component_analytics_item_py3 import ApplicationInsightsComponentAnalyticsItem
+    from .workbook_py3 import Workbook
+    from .workbooks_py3 import Workbooks
+    from .link_properties_py3 import LinkProperties
+    from .error_field_contract_py3 import ErrorFieldContract
+    from .workbook_error_py3 import WorkbookError, WorkbookErrorException
 except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .operation_display import OperationDisplay
@@ -79,6 +86,13 @@ except (SyntaxError, ImportError):
     from .web_test_geolocation import WebTestGeolocation
     from .web_test_properties_configuration import WebTestPropertiesConfiguration
     from .web_test import WebTest
+    from .application_insights_component_analytics_item_properties import ApplicationInsightsComponentAnalyticsItemProperties
+    from .application_insights_component_analytics_item import ApplicationInsightsComponentAnalyticsItem
+    from .workbook import Workbook
+    from .workbooks import Workbooks
+    from .link_properties import LinkProperties
+    from .error_field_contract import ErrorFieldContract
+    from .workbook_error import WorkbookError, WorkbookErrorException
 from .operation_paged import OperationPaged
 from .application_insights_component_api_key_paged import ApplicationInsightsComponentAPIKeyPaged
 from .application_insights_component_paged import ApplicationInsightsComponentPaged
@@ -91,7 +105,13 @@ from .application_insights_management_client_enums import (
     PurgeState,
     FavoriteType,
     WebTestKind,
+    ItemScope,
+    ItemType,
+    SharedTypeKind,
     FavoriteSourceType,
+    ItemScopePath,
+    ItemTypeParameter,
+    CategoryType,
 )
 
 __all__ = [
@@ -129,6 +149,13 @@ __all__ = [
     'WebTestGeolocation',
     'WebTestPropertiesConfiguration',
     'WebTest',
+    'ApplicationInsightsComponentAnalyticsItemProperties',
+    'ApplicationInsightsComponentAnalyticsItem',
+    'Workbook',
+    'Workbooks',
+    'LinkProperties',
+    'ErrorFieldContract',
+    'WorkbookError', 'WorkbookErrorException',
     'OperationPaged',
     'ApplicationInsightsComponentAPIKeyPaged',
     'ApplicationInsightsComponentPaged',
@@ -140,5 +167,11 @@ __all__ = [
     'PurgeState',
     'FavoriteType',
     'WebTestKind',
+    'ItemScope',
+    'ItemType',
+    'SharedTypeKind',
     'FavoriteSourceType',
+    'ItemScopePath',
+    'ItemTypeParameter',
+    'CategoryType',
 ]

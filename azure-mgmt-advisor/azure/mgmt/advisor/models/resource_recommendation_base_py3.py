@@ -74,7 +74,7 @@ class ResourceRecommendationBase(Resource):
     }
 
     def __init__(self, *, category=None, impact=None, impacted_field: str=None, impacted_value: str=None, last_updated=None, metadata=None, recommendation_type_id: str=None, risk=None, short_description=None, suppression_ids=None, **kwargs) -> None:
-        super(ResourceRecommendationBase, self).__init__(, **kwargs)
+        super(ResourceRecommendationBase, self).__init__(**kwargs)
         self.category = category
         self.impact = impact
         self.impacted_field = impacted_field

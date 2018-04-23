@@ -55,7 +55,7 @@ class CertificateContract(Resource):
     }
 
     def __init__(self, *, subject: str, thumbprint: str, expiration_date, **kwargs) -> None:
-        super(CertificateContract, self).__init__(, **kwargs)
+        super(CertificateContract, self).__init__(**kwargs)
         self.subject = subject
         self.thumbprint = thumbprint
         self.expiration_date = expiration_date

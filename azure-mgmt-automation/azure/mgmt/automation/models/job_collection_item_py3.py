@@ -41,9 +41,8 @@ class JobCollectionItem(ProxyResource):
     :vartype end_time: datetime
     :ivar last_modified_time: The last modified time of the job.
     :vartype last_modified_time: datetime
-    :param provisioning_state: The current provisioning state of the job.
-    :type provisioning_state:
-     ~azure.mgmt.automation.models.JobProvisioningStateProperty
+    :ivar provisioning_state: The provisioning state of a resource.
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -57,6 +56,7 @@ class JobCollectionItem(ProxyResource):
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'last_modified_time': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,11 +70,11 @@ class JobCollectionItem(ProxyResource):
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'JobProvisioningStateProperty'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, provisioning_state=None, **kwargs) -> None:
-        super(JobCollectionItem, self).__init__(, **kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(JobCollectionItem, self).__init__(**kwargs)
         self.runbook = None
         self.job_id = None
         self.creation_time = None
@@ -82,4 +82,4 @@ class JobCollectionItem(ProxyResource):
         self.start_time = None
         self.end_time = None
         self.last_modified_time = None
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None

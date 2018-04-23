@@ -114,7 +114,7 @@ class SubscriptionContract(Resource):
     }
 
     def __init__(self, *, user_id: str, product_id: str, state, primary_key: str, secondary_key: str, display_name: str=None, start_date=None, expiration_date=None, end_date=None, notification_date=None, state_comment: str=None, **kwargs) -> None:
-        super(SubscriptionContract, self).__init__(, **kwargs)
+        super(SubscriptionContract, self).__init__(**kwargs)
         self.user_id = user_id
         self.product_id = product_id
         self.display_name = display_name

@@ -125,11 +125,11 @@ try:
     from .source_control_py3 import SourceControl
     from .source_control_update_parameters_py3 import SourceControlUpdateParameters
     from .source_control_sync_job_py3 import SourceControlSyncJob
+    from .source_control_sync_job_create_parameters_py3 import SourceControlSyncJobCreateParameters
     from .source_control_sync_job_by_id_errors_py3 import SourceControlSyncJobByIdErrors
     from .source_control_sync_job_by_id_py3 import SourceControlSyncJobById
     from .dsc_node_py3 import DscNode
     from .dsc_node_configuration_py3 import DscNodeConfiguration
-    from .dsc_node_configuration_create_or_update_parameters_properties_py3 import DscNodeConfigurationCreateOrUpdateParametersProperties
 except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .key import Key
@@ -246,11 +246,11 @@ except (SyntaxError, ImportError):
     from .source_control import SourceControl
     from .source_control_update_parameters import SourceControlUpdateParameters
     from .source_control_sync_job import SourceControlSyncJob
+    from .source_control_sync_job_create_parameters import SourceControlSyncJobCreateParameters
     from .source_control_sync_job_by_id_errors import SourceControlSyncJobByIdErrors
     from .source_control_sync_job_by_id import SourceControlSyncJobById
     from .dsc_node import DscNode
     from .dsc_node_configuration import DscNodeConfiguration
-    from .dsc_node_configuration_create_or_update_parameters_properties import DscNodeConfigurationCreateOrUpdateParametersProperties
 from .automation_account_paged import AutomationAccountPaged
 from .operation_paged import OperationPaged
 from .statistics_paged import StatisticsPaged
@@ -420,11 +420,11 @@ __all__ = [
     'SourceControl',
     'SourceControlUpdateParameters',
     'SourceControlSyncJob',
+    'SourceControlSyncJobCreateParameters',
     'SourceControlSyncJobByIdErrors',
     'SourceControlSyncJobById',
     'DscNode',
     'DscNodeConfiguration',
-    'DscNodeConfigurationCreateOrUpdateParametersProperties',
     'AutomationAccountPaged',
     'OperationPaged',
     'StatisticsPaged',

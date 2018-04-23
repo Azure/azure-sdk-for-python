@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -26,6 +26,9 @@ from .operations.api_policy_operations import ApiPolicyOperations
 from .operations.api_schema_operations import ApiSchemaOperations
 from .operations.api_diagnostic_operations import ApiDiagnosticOperations
 from .operations.api_diagnostic_logger_operations import ApiDiagnosticLoggerOperations
+from .operations.api_issue_operations import ApiIssueOperations
+from .operations.api_issue_comment_operations import ApiIssueCommentOperations
+from .operations.api_issue_attachment_operations import ApiIssueAttachmentOperations
 from .operations.authorization_server_operations import AuthorizationServerOperations
 from .operations.backend_operations import BackendOperations
 from .operations.certificate_operations import CertificateOperations
@@ -106,7 +109,7 @@ class ApiManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ApiManagementClient(object):
+class ApiManagementClient(SDKClient):
     """ApiManagement Client
 
     :ivar config: Configuration for client.
@@ -138,6 +141,12 @@ class ApiManagementClient(object):
     :vartype api_diagnostic: azure.mgmt.apimanagement.operations.ApiDiagnosticOperations
     :ivar api_diagnostic_logger: ApiDiagnosticLogger operations
     :vartype api_diagnostic_logger: azure.mgmt.apimanagement.operations.ApiDiagnosticLoggerOperations
+    :ivar api_issue: ApiIssue operations
+    :vartype api_issue: azure.mgmt.apimanagement.operations.ApiIssueOperations
+    :ivar api_issue_comment: ApiIssueComment operations
+    :vartype api_issue_comment: azure.mgmt.apimanagement.operations.ApiIssueCommentOperations
+    :ivar api_issue_attachment: ApiIssueAttachment operations
+    :vartype api_issue_attachment: azure.mgmt.apimanagement.operations.ApiIssueAttachmentOperations
     :ivar authorization_server: AuthorizationServer operations
     :vartype authorization_server: azure.mgmt.apimanagement.operations.AuthorizationServerOperations
     :ivar backend: Backend operations
@@ -239,7 +248,7 @@ class ApiManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = ApiManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ApiManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-01-01'
@@ -271,6 +280,12 @@ class ApiManagementClient(object):
         self.api_diagnostic = ApiDiagnosticOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.api_diagnostic_logger = ApiDiagnosticLoggerOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue = ApiIssueOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue_comment = ApiIssueCommentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.api_issue_attachment = ApiIssueAttachmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.authorization_server = AuthorizationServerOperations(
             self._client, self.config, self._serialize, self._deserialize)

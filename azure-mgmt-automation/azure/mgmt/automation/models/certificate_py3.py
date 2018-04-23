@@ -62,7 +62,7 @@ class Certificate(ProxyResource):
     }
 
     def __init__(self, *, description: str=None, **kwargs) -> None:
-        super(Certificate, self).__init__(, **kwargs)
+        super(Certificate, self).__init__(**kwargs)
         self.thumbprint = None
         self.expiry_time = None
         self.is_exportable = None

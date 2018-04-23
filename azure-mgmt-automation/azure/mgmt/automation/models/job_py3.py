@@ -55,8 +55,8 @@ class Job(ProxyResource):
     :type last_status_modified_time: datetime
     :param parameters: Gets or sets the parameters of the job.
     :type parameters: dict[str, str]
-    :param provisioning_state: The provisioning state of a resource.
-    :type provisioning_state:
+    :ivar provisioning_state: The provisioning state of a resource.
+    :vartype provisioning_state:
      ~azure.mgmt.automation.models.JobProvisioningStateProperty
     """
 
@@ -64,6 +64,7 @@ class Job(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -86,8 +87,8 @@ class Job(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'JobProvisioningStateProperty'},
     }
 
-    def __init__(self, *, runbook=None, started_by: str=None, run_on: str=None, job_id: str=None, creation_time=None, status=None, status_details: str=None, start_time=None, end_time=None, exception: str=None, last_modified_time=None, last_status_modified_time=None, parameters=None, provisioning_state=None, **kwargs) -> None:
-        super(Job, self).__init__(, **kwargs)
+    def __init__(self, *, runbook=None, started_by: str=None, run_on: str=None, job_id: str=None, creation_time=None, status=None, status_details: str=None, start_time=None, end_time=None, exception: str=None, last_modified_time=None, last_status_modified_time=None, parameters=None, **kwargs) -> None:
+        super(Job, self).__init__(**kwargs)
         self.runbook = runbook
         self.started_by = started_by
         self.run_on = run_on
@@ -101,4 +102,4 @@ class Job(ProxyResource):
         self.last_modified_time = last_modified_time
         self.last_status_modified_time = last_status_modified_time
         self.parameters = parameters
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None

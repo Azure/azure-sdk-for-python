@@ -46,6 +46,6 @@ class SuppressionContract(Resource):
     }
 
     def __init__(self, *, suppression_id: str=None, ttl: str=None, **kwargs) -> None:
-        super(SuppressionContract, self).__init__(, **kwargs)
+        super(SuppressionContract, self).__init__(**kwargs)
         self.suppression_id = suppression_id
         self.ttl = ttl

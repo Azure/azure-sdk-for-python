@@ -42,5 +42,5 @@ class RecipientUserContract(Resource):
     }
 
     def __init__(self, *, user_id: str=None, **kwargs) -> None:
-        super(RecipientUserContract, self).__init__(, **kwargs)
+        super(RecipientUserContract, self).__init__(**kwargs)
         self.user_id = user_id

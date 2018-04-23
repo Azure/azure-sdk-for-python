@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -52,7 +52,7 @@ class AdvisorManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class AdvisorManagementClient(object):
+class AdvisorManagementClient(SDKClient):
     """REST APIs for Azure Advisor
 
     :ivar config: Configuration for client.
@@ -79,7 +79,7 @@ class AdvisorManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = AdvisorManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(AdvisorManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-04-19'

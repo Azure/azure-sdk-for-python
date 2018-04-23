@@ -59,7 +59,7 @@ class DscNodeConfiguration(ProxyResource):
     }
 
     def __init__(self, *, last_modified_time=None, creation_time=None, configuration=None, source: str=None, node_count: int=None, increment_node_configuration_build: bool=None, **kwargs) -> None:
-        super(DscNodeConfiguration, self).__init__(, **kwargs)
+        super(DscNodeConfiguration, self).__init__(**kwargs)
         self.last_modified_time = last_modified_time
         self.creation_time = creation_time
         self.configuration = configuration

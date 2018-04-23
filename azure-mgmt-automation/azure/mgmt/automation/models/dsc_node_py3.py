@@ -68,7 +68,7 @@ class DscNode(ProxyResource):
     }
 
     def __init__(self, *, last_seen=None, registration_time=None, ip: str=None, account_id: str=None, dsc_node_name: str=None, status: str=None, node_id: str=None, etag: str=None, extension_handler=None, **kwargs) -> None:
-        super(DscNode, self).__init__(, **kwargs)
+        super(DscNode, self).__init__(**kwargs)
         self.last_seen = last_seen
         self.registration_time = registration_time
         self.ip = ip

@@ -52,7 +52,7 @@ class NotificationContract(Resource):
     }
 
     def __init__(self, *, title: str, description: str=None, recipients=None, **kwargs) -> None:
-        super(NotificationContract, self).__init__(, **kwargs)
+        super(NotificationContract, self).__init__(**kwargs)
         self.title = title
         self.description = description
         self.recipients = recipients
