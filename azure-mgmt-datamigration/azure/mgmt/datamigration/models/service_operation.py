@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServiceOperation(Model):
-    """Description of an action supported by the Data Migration Service.
+    """Description of an action supported by the Database Migration Service.
 
     :param name: The fully qualified action name, e.g.
      Microsoft.DataMigration/services/read

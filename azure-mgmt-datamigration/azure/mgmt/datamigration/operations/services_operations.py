@@ -24,7 +24,7 @@ class ServicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API. Constant value: "2018-03-31-preview".
+    :ivar api_version: Version of the API. Constant value: "2018-04-19".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-31-preview"
+        self.api_version = "2018-04-19"
 
         self.config = config
 
@@ -93,15 +93,16 @@ class ServicesOperations(object):
         """Create or update DMS Instance.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. The PUT method creates a new service or updates
-        an existing one. When a service is updated, existing child resources
-        (i.e. tasks) are unaffected. Services currently support a single kind,
-        "vm", which refers to a VM-based service, although other kinds may be
-        added in the future. This method can change the kind, SKU, and network
-        of the service, but if tasks are currently running (i.e. the service is
-        busy), this will fail with 400 Bad Request ("ServiceIsBusy"). The
-        provider will reply when successful with 200 OK or 201 Created.
-        Long-running operations use the provisioningState property.
+        Database Migration Service. The PUT method creates a new service or
+        updates an existing one. When a service is updated, existing child
+        resources (i.e. tasks) are unaffected. Services currently support a
+        single kind, "vm", which refers to a VM-based service, although other
+        kinds may be added in the future. This method can change the kind, SKU,
+        and network of the service, but if tasks are currently running (i.e.
+        the service is busy), this will fail with 400 Bad Request
+        ("ServiceIsBusy"). The provider will reply when successful with 200 OK
+        or 201 Created. Long-running operations use the provisioningState
+        property.
 
         :param parameters: Information about the service
         :type parameters:
@@ -156,8 +157,8 @@ class ServicesOperations(object):
         """Get DMS Service Instance.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. The GET method retrieves information about a
-        service instance.
+        Database Migration Service. The GET method retrieves information about
+        a service instance.
 
         :param group_name: Name of the resource group
         :type group_name: str
@@ -260,7 +261,7 @@ class ServicesOperations(object):
         """Delete DMS Service Instance.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. The DELETE method deletes a service. Any
+        Database Migration Service. The DELETE method deletes a service. Any
         running tasks will be canceled.
 
         :param group_name: Name of the resource group
@@ -358,10 +359,10 @@ class ServicesOperations(object):
         """Create or update DMS Service Instance.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. The PATCH method updates an existing service.
-        This method can change the kind, SKU, and network of the service, but
-        if tasks are currently running (i.e. the service is busy), this will
-        fail with 400 Bad Request ("ServiceIsBusy").
+        Database Migration Service. The PATCH method updates an existing
+        service. This method can change the kind, SKU, and network of the
+        service, but if tasks are currently running (i.e. the service is busy),
+        this will fail with 400 Bad Request ("ServiceIsBusy").
 
         :param parameters: Information about the service
         :type parameters:
@@ -416,8 +417,8 @@ class ServicesOperations(object):
         """Check service health status.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. This action performs a health check and returns
-        the status of the service and virtual machine size.
+        Database Migration Service. This action performs a health check and
+        returns the status of the service and virtual machine size.
 
         :param group_name: Name of the resource group
         :type group_name: str
@@ -520,8 +521,8 @@ class ServicesOperations(object):
         """Start service.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. This action starts the service and the service
-        can be used for data migration.
+        Database Migration Service. This action starts the service and the
+        service can be used for data migration.
 
         :param group_name: Name of the resource group
         :type group_name: str
@@ -603,9 +604,9 @@ class ServicesOperations(object):
         """Stop service.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. This action stops the service and the service
-        cannot be used for data migration. The service owner won't be billed
-        when the service is stopped.
+        Database Migration Service. This action stops the service and the
+        service cannot be used for data migration. The service owner won't be
+        billed when the service is stopped.
 
         :param group_name: Name of the resource group
         :type group_name: str
@@ -650,8 +651,8 @@ class ServicesOperations(object):
         """Get compatible SKUs.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. The skus action returns the list of SKUs that a
-        service resource can be updated to.
+        Database Migration Service. The skus action returns the list of SKUs
+        that a service resource can be updated to.
 
         :param group_name: Name of the resource group
         :type group_name: str
@@ -798,8 +799,8 @@ class ServicesOperations(object):
         """Get services in resource group.
 
         The Services resource is the top-level resource that represents the
-        Data Migration Service. This method returns a list of service resources
-        in a resource group.
+        Database Migration Service. This method returns a list of service
+        resources in a resource group.
 
         :param group_name: Name of the resource group
         :type group_name: str
@@ -869,8 +870,8 @@ class ServicesOperations(object):
         """Get services in subscription.
 
         The services resource is the top-level resource that represents the
-        Data Migration Service. This method returns a list of service resources
-        in a subscription.
+        Database Migration Service. This method returns a list of service
+        resources in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

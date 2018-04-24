@@ -45,9 +45,9 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
     :ivar database_summary: Summary of database results in the migration
     :vartype database_summary: dict[str,
      ~azure.mgmt.datamigration.models.DatabaseSummaryResult]
-    :param migration_report_result: Migration Report Result, provides unique
-     url for downloading your migration report.
-    :type migration_report_result:
+    :ivar migration_report: Migration Report Result, provides unique url for
+     downloading your migration report.
+    :vartype migration_report:
      ~azure.mgmt.datamigration.models.MigrationReportResult
     :ivar source_server_version: Source server version
     :vartype source_server_version: str
@@ -73,6 +73,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         'message': {'readonly': True},
         'databases': {'readonly': True},
         'database_summary': {'readonly': True},
+        'migration_report': {'readonly': True},
         'source_server_version': {'readonly': True},
         'source_server_brand_version': {'readonly': True},
         'target_server_version': {'readonly': True},
@@ -91,7 +92,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         'message': {'key': 'message', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '{str}'},
         'database_summary': {'key': 'databaseSummary', 'type': '{DatabaseSummaryResult}'},
-        'migration_report_result': {'key': 'migrationReportResult', 'type': 'MigrationReportResult'},
+        'migration_report': {'key': 'migrationReport', 'type': 'MigrationReportResult'},
         'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
         'target_server_version': {'key': 'targetServerVersion', 'type': 'str'},
@@ -109,7 +110,7 @@ class MigrateSqlServerSqlDbTaskOutputMigrationLevel(MigrateSqlServerSqlDbTaskOut
         self.message = None
         self.databases = None
         self.database_summary = None
-        self.migration_report_result = kwargs.get('migration_report_result', None)
+        self.migration_report = None
         self.source_server_version = None
         self.source_server_brand_version = None
         self.target_server_version = None

@@ -22,7 +22,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API. Constant value: "2018-03-31-preview".
+    :ivar api_version: Version of the API. Constant value: "2018-04-19".
     """
 
     models = models
@@ -32,7 +32,7 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-31-preview"
+        self.api_version = "2018-04-19"
 
         self.config = config
 
@@ -40,7 +40,7 @@ class Operations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Get available resource provider actions (operations).
 
-        Lists all available actions exposed by the Data Migration Service
+        Lists all available actions exposed by the Database Migration Service
         resource provider.
 
         :param dict custom_headers: headers that will be added to the request

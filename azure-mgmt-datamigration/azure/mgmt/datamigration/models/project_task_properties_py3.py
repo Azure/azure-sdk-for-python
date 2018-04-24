@@ -17,10 +17,9 @@ class ProjectTaskProperties(Model):
     by current client, this object is returned.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ValidateMigrationInputSqlServerSqlMITaskProperties,
-    MigrateSqlServerSqlDbTaskProperties, MigrateSqlServerSqlMITaskProperties,
+    sub-classes are: MigrateSqlServerSqlDbTaskProperties,
     GetUserTablesSqlTaskProperties, ConnectToTargetSqlDbTaskProperties,
-    ConnectToTargetSqlMITaskProperties, ConnectToSourceSqlServerTaskProperties
+    ConnectToSourceSqlServerTaskProperties
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -50,7 +49,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties'}
+        'task_type': {'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties'}
     }
 
     def __init__(self, **kwargs) -> None:
