@@ -52,6 +52,7 @@ from .connection_type import ConnectionType
 from .connection_type_create_or_update_parameters import ConnectionTypeCreateOrUpdateParameters
 from .credential_update_parameters import CredentialUpdateParameters
 from .credential_create_or_update_parameters import CredentialCreateOrUpdateParameters
+from .activity_parameter_validation_set import ActivityParameterValidationSet
 from .activity_parameter import ActivityParameter
 from .activity_parameter_set import ActivityParameterSet
 from .activity_output_type import ActivityOutputType
@@ -226,6 +227,7 @@ __all__ = [
     'ConnectionTypeCreateOrUpdateParameters',
     'CredentialUpdateParameters',
     'CredentialCreateOrUpdateParameters',
+    'ActivityParameterValidationSet',
     'ActivityParameter',
     'ActivityParameterSet',
     'ActivityOutputType',

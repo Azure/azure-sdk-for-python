@@ -55,6 +55,8 @@ class Module(TrackedResource):
     :type last_modified_time: datetime
     :param description: Gets or sets the description.
     :type description: str
+    :param is_composite: Gets or sets type of module, if its composite or not.
+    :type is_composite: bool
     :param etag: Gets or sets the etag of the resource.
     :type etag: str
     """
@@ -81,10 +83,11 @@ class Module(TrackedResource):
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
+        'is_composite': {'key': 'properties.isComposite', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, location=None, is_global=None, version=None, size_in_bytes=None, activity_count=None, provisioning_state=None, content_link=None, error=None, creation_time=None, last_modified_time=None, description=None, etag=None):
+    def __init__(self, tags=None, location=None, is_global=None, version=None, size_in_bytes=None, activity_count=None, provisioning_state=None, content_link=None, error=None, creation_time=None, last_modified_time=None, description=None, is_composite=None, etag=None):
         super(Module, self).__init__(tags=tags, location=location)
         self.is_global = is_global
         self.version = version
@@ -96,4 +99,5 @@ class Module(TrackedResource):
         self.creation_time = creation_time
         self.last_modified_time = last_modified_time
         self.description = description
+        self.is_composite = is_composite
         self.etag = etag
