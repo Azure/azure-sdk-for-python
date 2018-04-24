@@ -10,8 +10,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .import_source_py3 import ImportSource
-    from .import_image_parameters_py3 import ImportImageParameters
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
     from .registry_name_status_py3 import RegistryNameStatus
     from .operation_display_definition_py3 import OperationDisplayDefinition
@@ -43,8 +41,6 @@ try:
     from .event_py3 import Event
     from .resource_py3 import Resource
 except (SyntaxError, ImportError):
-    from .import_source import ImportSource
-    from .import_image_parameters import ImportImageParameters
     from .registry_name_check_request import RegistryNameCheckRequest
     from .registry_name_status import RegistryNameStatus
     from .operation_display_definition import OperationDisplayDefinition
@@ -81,7 +77,6 @@ from .replication_paged import ReplicationPaged
 from .webhook_paged import WebhookPaged
 from .event_paged import EventPaged
 from .container_registry_management_client_enums import (
-    ImportMode,
     SkuName,
     SkuTier,
     ProvisioningState,
@@ -92,8 +87,6 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
-    'ImportSource',
-    'ImportImageParameters',
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
     'OperationDisplayDefinition',
@@ -129,7 +122,6 @@ __all__ = [
     'ReplicationPaged',
     'WebhookPaged',
     'EventPaged',
-    'ImportMode',
     'SkuName',
     'SkuTier',
     'ProvisioningState',

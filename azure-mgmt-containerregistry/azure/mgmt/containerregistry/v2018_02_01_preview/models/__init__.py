@@ -10,8 +10,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .import_source_py3 import ImportSource
-    from .import_image_parameters_py3 import ImportImageParameters
     from .registry_name_check_request_py3 import RegistryNameCheckRequest
     from .registry_name_status_py3 import RegistryNameStatus
     from .operation_display_definition_py3 import OperationDisplayDefinition
@@ -70,8 +68,6 @@ try:
     from .build_task_build_request_py3 import BuildTaskBuildRequest
     from .quick_build_request_py3 import QuickBuildRequest
 except (SyntaxError, ImportError):
-    from .import_source import ImportSource
-    from .import_image_parameters import ImportImageParameters
     from .registry_name_check_request import RegistryNameCheckRequest
     from .registry_name_status import RegistryNameStatus
     from .operation_display_definition import OperationDisplayDefinition
@@ -139,7 +135,6 @@ from .build_step_paged import BuildStepPaged
 from .build_argument_paged import BuildArgumentPaged
 from .build_task_paged import BuildTaskPaged
 from .container_registry_management_client_enums import (
-    ImportMode,
     SkuName,
     SkuTier,
     ProvisioningState,
@@ -158,8 +153,6 @@ from .container_registry_management_client_enums import (
 )
 
 __all__ = [
-    'ImportSource',
-    'ImportImageParameters',
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
     'OperationDisplayDefinition',
@@ -226,7 +219,6 @@ __all__ = [
     'BuildStepPaged',
     'BuildArgumentPaged',
     'BuildTaskPaged',
-    'ImportMode',
     'SkuName',
     'SkuTier',
     'ProvisioningState',

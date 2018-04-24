@@ -12,12 +12,6 @@
 from enum import Enum
 
 
-class ImportMode(str, Enum):
-
-    no_force = "NoForce"
-    force = "Force"
-
-
 class SkuName(str, Enum):
 
     classic = "Classic"
