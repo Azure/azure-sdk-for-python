@@ -49,6 +49,17 @@ class MetricTrigger(Model):
     :param threshold: Required. the threshold of the metric that triggers the
      scale action.
     :type threshold: float
+    :param threshold_operator: Evaluation operation for Metric -'GreaterThan'
+     or 'LessThan' or 'Equal'. Possible values include: 'GreaterThan',
+     'LessThan', 'Equal'
+    :type threshold_operator: str or
+     ~azure.mgmt.monitor.models.ConditionalOperator
+    :param metric_trigger_type: Metric Trigger Type - 'Consecutive' or
+     'Total'. Possible values include: 'Consecutive', 'Total'
+    :type metric_trigger_type: str or
+     ~azure.mgmt.monitor.models.MetricTriggerType
+    :param metric_column: Evaluation of metric on a particular column
+    :type metric_column: str
     """
 
     _validation = {
@@ -71,6 +82,9 @@ class MetricTrigger(Model):
         'time_aggregation': {'key': 'timeAggregation', 'type': 'TimeAggregationType'},
         'operator': {'key': 'operator', 'type': 'ComparisonOperationType'},
         'threshold': {'key': 'threshold', 'type': 'float'},
+        'threshold_operator': {'key': 'thresholdOperator', 'type': 'str'},
+        'metric_trigger_type': {'key': 'metricTriggerType', 'type': 'str'},
+        'metric_column': {'key': 'metricColumn', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -83,3 +97,6 @@ class MetricTrigger(Model):
         self.time_aggregation = kwargs.get('time_aggregation', None)
         self.operator = kwargs.get('operator', None)
         self.threshold = kwargs.get('threshold', None)
+        self.threshold_operator = kwargs.get('threshold_operator', None)
+        self.metric_trigger_type = kwargs.get('metric_trigger_type', None)
+        self.metric_column = kwargs.get('metric_column', None)

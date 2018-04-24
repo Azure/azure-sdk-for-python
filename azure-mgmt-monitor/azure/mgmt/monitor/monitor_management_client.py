@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -28,6 +28,9 @@ from .operations.tenant_activity_logs_operations import TenantActivityLogsOperat
 from .operations.metric_definitions_operations import MetricDefinitionsOperations
 from .operations.metrics_operations import MetricsOperations
 from .operations.metric_baseline_operations import MetricBaselineOperations
+from .operations.metric_alerts_operations import MetricAlertsOperations
+from .operations.metric_alerts_status_operations import MetricAlertsStatusOperations
+from .operations.scheduled_query_rules_operations import ScheduledQueryRulesOperations
 from . import models
 
 
@@ -63,7 +66,7 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class MonitorManagementClient(object):
+class MonitorManagementClient(SDKClient):
     """Monitor Management Client
 
     :ivar config: Configuration for client.
@@ -99,6 +102,12 @@ class MonitorManagementClient(object):
     :vartype metrics: azure.mgmt.monitor.operations.MetricsOperations
     :ivar metric_baseline: MetricBaseline operations
     :vartype metric_baseline: azure.mgmt.monitor.operations.MetricBaselineOperations
+    :ivar metric_alerts: MetricAlerts operations
+    :vartype metric_alerts: azure.mgmt.monitor.operations.MetricAlertsOperations
+    :ivar metric_alerts_status: MetricAlertsStatus operations
+    :vartype metric_alerts_status: azure.mgmt.monitor.operations.MetricAlertsStatusOperations
+    :ivar scheduled_query_rules: ScheduledQueryRules operations
+    :vartype scheduled_query_rules: azure.mgmt.monitor.operations.ScheduledQueryRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -112,7 +121,7 @@ class MonitorManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(MonitorManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -147,4 +156,10 @@ class MonitorManagementClient(object):
         self.metrics = MetricsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_baseline = MetricBaselineOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_alerts = MetricAlertsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_alerts_status = MetricAlertsStatusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.scheduled_query_rules = ScheduledQueryRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
