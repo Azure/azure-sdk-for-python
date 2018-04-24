@@ -34,6 +34,8 @@ class NodeCounts(Model):
     :param start_task_failed: The number of nodes in the startTaskFailed
      state.
     :type start_task_failed: int
+    :param leaving_pool: The number of nodes in the leavingPool state.
+    :type leaving_pool: int
     :param unknown: The number of nodes in the unknown state.
     :type unknown: int
     :param unusable: The number of nodes in the unusable state.
@@ -55,6 +57,7 @@ class NodeCounts(Model):
         'running': {'required': True},
         'starting': {'required': True},
         'start_task_failed': {'required': True},
+        'leaving_pool': {'required': True},
         'unknown': {'required': True},
         'unusable': {'required': True},
         'waiting_for_start_task': {'required': True},
@@ -71,13 +74,14 @@ class NodeCounts(Model):
         'running': {'key': 'running', 'type': 'int'},
         'starting': {'key': 'starting', 'type': 'int'},
         'start_task_failed': {'key': 'startTaskFailed', 'type': 'int'},
+        'leaving_pool': {'key': 'leavingPool', 'type': 'int'},
         'unknown': {'key': 'unknown', 'type': 'int'},
         'unusable': {'key': 'unusable', 'type': 'int'},
         'waiting_for_start_task': {'key': 'waitingForStartTask', 'type': 'int'},
         'total': {'key': 'total', 'type': 'int'},
     }
 
-    def __init__(self, creating, idle, offline, preempted, rebooting, reimaging, running, starting, start_task_failed, unknown, unusable, waiting_for_start_task, total):
+    def __init__(self, creating, idle, offline, preempted, rebooting, reimaging, running, starting, start_task_failed, leaving_pool, unknown, unusable, waiting_for_start_task, total):
         super(NodeCounts, self).__init__()
         self.creating = creating
         self.idle = idle
@@ -88,6 +92,7 @@ class NodeCounts(Model):
         self.running = running
         self.starting = starting
         self.start_task_failed = start_task_failed
+        self.leaving_pool = leaving_pool
         self.unknown = unknown
         self.unusable = unusable
         self.waiting_for_start_task = waiting_for_start_task

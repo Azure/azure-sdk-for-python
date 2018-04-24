@@ -186,6 +186,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(counts[0].pool_id, test_iaas_pool.id)
         self.assertIsNotNone(counts[0].dedicated)
         self.assertEqual(counts[0].dedicated.total, 0)
+        self.assertEqual(counts[0].dedicated.leaving_pool, 0)
         self.assertEqual(counts[0].low_priority.total, 0)
 
         # Test Create Pool with Network Configuration
