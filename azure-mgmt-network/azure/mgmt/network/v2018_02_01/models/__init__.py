@@ -137,7 +137,7 @@ try:
     from .connectivity_source_py3 import ConnectivitySource
     from .connectivity_destination_py3 import ConnectivityDestination
     from .http_header_py3 import HTTPHeader
-    from .http_configuration_py3 import HttpConfiguration
+    from .http_configuration_py3 import HTTPConfiguration
     from .protocol_configuration_py3 import ProtocolConfiguration
     from .connectivity_parameters_py3 import ConnectivityParameters
     from .connectivity_issue_py3 import ConnectivityIssue
@@ -330,7 +330,7 @@ except (SyntaxError, ImportError):
     from .connectivity_source import ConnectivitySource
     from .connectivity_destination import ConnectivityDestination
     from .http_header import HTTPHeader
-    from .http_configuration import HttpConfiguration
+    from .http_configuration import HTTPConfiguration
     from .protocol_configuration import ProtocolConfiguration
     from .connectivity_parameters import ConnectivityParameters
     from .connectivity_issue import ConnectivityIssue
@@ -638,7 +638,7 @@ __all__ = [
     'ConnectivitySource',
     'ConnectivityDestination',
     'HTTPHeader',
-    'HttpConfiguration',
+    'HTTPConfiguration',
     'ProtocolConfiguration',
     'ConnectivityParameters',
     'ConnectivityIssue',
