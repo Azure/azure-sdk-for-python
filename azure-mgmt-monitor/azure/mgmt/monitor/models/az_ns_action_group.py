@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AzNsActionGroup(Model):
     """azns notification group.
 
-    :param action_group: azns notification group reference.
+    :param action_group: Azure Group reference.
     :type action_group: list[str]
     :param email_subject: Custom subject for Azns email
     :type email_subject: str
