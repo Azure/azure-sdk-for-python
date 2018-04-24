@@ -50,8 +50,8 @@ class ExpressRouteCrossConnectionPeering(SubResource):
     :ivar provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :vartype provisioning_state: str
-    :ivar gateway_manager_etag: The GatewayManager Etag.
-    :vartype gateway_manager_etag: str
+    :param gateway_manager_etag: The GatewayManager Etag.
+    :type gateway_manager_etag: str
     :param last_modified_by: Gets whether the provider or the customer last
      modified the peering.
     :type last_modified_by: str
@@ -72,7 +72,6 @@ class ExpressRouteCrossConnectionPeering(SubResource):
         'primary_azure_port': {'readonly': True},
         'secondary_azure_port': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'gateway_manager_etag': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -111,7 +110,7 @@ class ExpressRouteCrossConnectionPeering(SubResource):
         self.vlan_id = kwargs.get('vlan_id', None)
         self.microsoft_peering_config = kwargs.get('microsoft_peering_config', None)
         self.provisioning_state = None
-        self.gateway_manager_etag = None
+        self.gateway_manager_etag = kwargs.get('gateway_manager_etag', None)
         self.last_modified_by = kwargs.get('last_modified_by', None)
         self.ipv6_peering_config = kwargs.get('ipv6_peering_config', None)
         self.name = kwargs.get('name', None)

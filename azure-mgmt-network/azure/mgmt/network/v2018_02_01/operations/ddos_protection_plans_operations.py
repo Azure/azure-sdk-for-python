@@ -185,7 +185,9 @@ class DdosProtectionPlansOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, ddos_protection_plan_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, ddos_protection_plan_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.DdosProtectionPlan(location=location, tags=tags)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -236,7 +238,7 @@ class DdosProtectionPlansOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, ddos_protection_plan_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, ddos_protection_plan_name, location=None, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a DDoS protection plan.
 
         :param resource_group_name: The name of the resource group.
@@ -244,10 +246,10 @@ class DdosProtectionPlansOperations(object):
         :param ddos_protection_plan_name: The name of the DDoS protection
          plan.
         :type ddos_protection_plan_name: str
-        :param parameters: Parameters supplied to the create or update
-         operation.
-        :type parameters:
-         ~azure.mgmt.network.v2018_02_01.models.DdosProtectionPlan
+        :param location: Resource location.
+        :type location: str
+        :param tags: Resource tags.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -264,7 +266,8 @@ class DdosProtectionPlansOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             ddos_protection_plan_name=ddos_protection_plan_name,
-            parameters=parameters,
+            location=location,
+            tags=tags,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
