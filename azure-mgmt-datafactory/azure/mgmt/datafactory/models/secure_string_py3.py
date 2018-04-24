@@ -35,6 +35,6 @@ class SecureString(SecretBase):
     }
 
     def __init__(self, *, value: str, **kwargs) -> None:
-        super(SecureString, self).__init__(, **kwargs)
+        super(SecureString, self).__init__(**kwargs)
         self.value = value
         self.type = 'SecureString'

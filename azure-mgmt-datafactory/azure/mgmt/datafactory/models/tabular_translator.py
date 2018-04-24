@@ -22,11 +22,12 @@ class TabularTranslator(CopyTranslator):
     :type additional_properties: dict[str, object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param column_mappings: Column mappings. Type: string (or Expression with
-     resultType string).
+    :param column_mappings: Column mappings. Example: "UserId: MyUserId,
+     Group: MyGroup, Name: MyName" Type: string (or Expression with resultType
+     string).
     :type column_mappings: object
     :param schema_mapping: The schema mapping to map between tabular data and
-     hierarchical data.  Example: {"Column1": "$.Column1", "Column2":
+     hierarchical data. Example: {"Column1": "$.Column1", "Column2":
      "$.Column2.Property1", "Column3": "$.Column2.Property2"}. Type: object (or
      Expression with resultType object).
     :type schema_mapping: object
