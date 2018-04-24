@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class ReasonCode(Enum):
+class ReasonCode(str, Enum):
 
     quota_id = "QuotaId"
     not_available_for_subscription = "NotAvailableForSubscription"
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     standard_lrs = "Standard_LRS"
     standard_grs = "Standard_GRS"
@@ -27,37 +27,37 @@ class SkuName(Enum):
     premium_lrs = "Premium_LRS"
 
 
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     standard = "Standard"
     premium = "Premium"
 
 
-class Kind(Enum):
+class Kind(str, Enum):
 
     storage = "Storage"
     storage_v2 = "StorageV2"
     blob_storage = "BlobStorage"
 
 
-class Reason(Enum):
+class Reason(str, Enum):
 
     account_name_invalid = "AccountNameInvalid"
     already_exists = "AlreadyExists"
 
 
-class KeySource(Enum):
+class KeySource(str, Enum):
 
     microsoft_storage = "Microsoft.Storage"
     microsoft_keyvault = "Microsoft.Keyvault"
 
 
-class Action(Enum):
+class Action(str, Enum):
 
     allow = "Allow"
 
 
-class State(Enum):
+class State(str, Enum):
 
     provisioning = "provisioning"
     deprovisioning = "deprovisioning"
@@ -66,7 +66,7 @@ class State(Enum):
     network_source_deleted = "networkSourceDeleted"
 
 
-class Bypass(Enum):
+class Bypass(str, Enum):
 
     none = "None"
     logging = "Logging"
@@ -74,38 +74,38 @@ class Bypass(Enum):
     azure_services = "AzureServices"
 
 
-class DefaultAction(Enum):
+class DefaultAction(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
 
 
-class AccessTier(Enum):
+class AccessTier(str, Enum):
 
     hot = "Hot"
     cool = "Cool"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "Creating"
     resolving_dns = "ResolvingDNS"
     succeeded = "Succeeded"
 
 
-class AccountStatus(Enum):
+class AccountStatus(str, Enum):
 
     available = "available"
     unavailable = "unavailable"
 
 
-class KeyPermission(Enum):
+class KeyPermission(str, Enum):
 
     read = "Read"
     full = "Full"
 
 
-class UsageUnit(Enum):
+class UsageUnit(str, Enum):
 
     count = "Count"
     bytes = "Bytes"
@@ -115,7 +115,7 @@ class UsageUnit(Enum):
     bytes_per_second = "BytesPerSecond"
 
 
-class Services(Enum):
+class Services(str, Enum):
 
     b = "b"
     q = "q"
@@ -123,14 +123,14 @@ class Services(Enum):
     f = "f"
 
 
-class SignedResourceTypes(Enum):
+class SignedResourceTypes(str, Enum):
 
     s = "s"
     c = "c"
     o = "o"
 
 
-class Permissions(Enum):
+class Permissions(str, Enum):
 
     r = "r"
     d = "d"
@@ -142,13 +142,13 @@ class Permissions(Enum):
     p = "p"
 
 
-class HttpProtocol(Enum):
+class HttpProtocol(str, Enum):
 
     httpshttp = "https,http"
     https = "https"
 
 
-class SignedResource(Enum):
+class SignedResource(str, Enum):
 
     b = "b"
     c = "c"

@@ -18,11 +18,13 @@ class Encryption(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param services: List of services which support encryption.
     :type services: ~azure.mgmt.storage.v2016_12_01.models.EncryptionServices
-    :ivar key_source: The encryption keySource (provider). Possible values
-     (case-insensitive):  Microsoft.Storage. Default value: "Microsoft.Storage"
-     .
+    :ivar key_source: Required. The encryption keySource (provider). Possible
+     values (case-insensitive):  Microsoft.Storage. Default value:
+     "Microsoft.Storage" .
     :vartype key_source: str
     """
 
@@ -37,6 +39,6 @@ class Encryption(Model):
 
     key_source = "Microsoft.Storage"
 
-    def __init__(self, services=None):
-        super(Encryption, self).__init__()
-        self.services = services
+    def __init__(self, **kwargs):
+        super(Encryption, self).__init__(**kwargs)
+        self.services = kwargs.get('services', None)

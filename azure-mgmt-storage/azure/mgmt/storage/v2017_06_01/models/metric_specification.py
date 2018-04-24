@@ -50,14 +50,14 @@ class MetricSpecification(Model):
         'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display_name=None, display_description=None, unit=None, dimensions=None, aggregation_type=None, fill_gap_with_zero=None, category=None, resource_id_dimension_name_override=None):
-        super(MetricSpecification, self).__init__()
-        self.name = name
-        self.display_name = display_name
-        self.display_description = display_description
-        self.unit = unit
-        self.dimensions = dimensions
-        self.aggregation_type = aggregation_type
-        self.fill_gap_with_zero = fill_gap_with_zero
-        self.category = category
-        self.resource_id_dimension_name_override = resource_id_dimension_name_override
+    def __init__(self, **kwargs):
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.category = kwargs.get('category', None)
+        self.resource_id_dimension_name_override = kwargs.get('resource_id_dimension_name_override', None)
