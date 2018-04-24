@@ -50,7 +50,7 @@ class DscConfiguration(TrackedResource):
     :type last_modified_time: datetime
     :param node_configuration_count: Gets the number of compiled node
      configurations.
-    :type node_configuration_count: long
+    :type node_configuration_count: int
     :param description: Gets or sets the description.
     :type description: str
     :param etag: Gets or sets the etag of the resource.
@@ -77,7 +77,7 @@ class DscConfiguration(TrackedResource):
         'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'node_configuration_count': {'key': 'properties.nodeConfigurationCount', 'type': 'long'},
+        'node_configuration_count': {'key': 'properties.nodeConfigurationCount', 'type': 'int'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }

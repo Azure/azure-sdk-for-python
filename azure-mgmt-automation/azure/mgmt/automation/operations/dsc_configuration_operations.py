@@ -369,13 +369,21 @@ class DscConfigurationOperations(object):
     get_content.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations/{configurationName}/content'}
 
     def list_by_automation_account(
-            self, resource_group_name, automation_account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, automation_account_name, filter=None, skip=None, top=None, inlinecount=None, custom_headers=None, raw=False, **operation_config):
         """Retrieve a list of configurations.
 
         :param resource_group_name: Name of an Azure Resource group.
         :type resource_group_name: str
         :param automation_account_name: The automation account name.
         :type automation_account_name: str
+        :param filter: The filter to apply on the operation.
+        :type filter: str
+        :param skip: The number of rows to skip.
+        :type skip: int
+        :param top: The the number of rows to take.
+        :type top: int
+        :param inlinecount: Return total rows.
+        :type inlinecount: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -402,6 +410,14 @@ class DscConfigurationOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if inlinecount is not None:
+                    query_parameters['$inlinecount'] = self._serialize.query("inlinecount", inlinecount, 'str')
 
             else:
                 url = next_link
