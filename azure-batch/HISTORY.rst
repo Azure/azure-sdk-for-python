@@ -3,6 +3,12 @@
 Release History
 ===============
 
+4.1.3 (2018-04-24)
+++++++++++++++++++
+
+- Update some APIs' comments
+- New property `leaving_pool` in `node_counts` type.
+
 4.1.2 (2018-04-23)
 ++++++++++++++++++
 
