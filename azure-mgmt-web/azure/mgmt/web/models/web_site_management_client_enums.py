@@ -302,6 +302,14 @@ class SolutionType(Enum):
     best_practices = "BestPractices"
 
 
+class RenderingType(Enum):
+
+    no_graph = "NoGraph"
+    table = "Table"
+    time_series = "TimeSeries"
+    time_series_per_instance = "TimeSeriesPerInstance"
+
+
 class ResourceScopeType(Enum):
 
     server_farm = "ServerFarm"
