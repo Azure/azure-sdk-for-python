@@ -17,11 +17,11 @@ class ProtocolConfiguration(Model):
 
     :param http_configuration:
     :type http_configuration:
-     ~azure.mgmt.network.v2018_02_01.models.HTTPConfiguration
+     ~azure.mgmt.network.v2018_02_01.models.HttpConfiguration
     """
 
     _attribute_map = {
-        'http_configuration': {'key': 'HTTPConfiguration', 'type': 'HTTPConfiguration'},
+        'http_configuration': {'key': 'HttpConfiguration', 'type': 'HttpConfiguration'},
     }
 
     def __init__(self, **kwargs):

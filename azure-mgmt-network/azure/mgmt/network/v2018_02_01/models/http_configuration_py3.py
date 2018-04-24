@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class HTTPConfiguration(Model):
+class HttpConfiguration(Model):
     """HTTP configuration of the connectivity check.
 
     :param method: HTTP method. Possible values include: 'Get'
@@ -30,7 +30,7 @@ class HTTPConfiguration(Model):
     }
 
     def __init__(self, *, method=None, headers=None, valid_status_codes=None, **kwargs) -> None:
-        super(HTTPConfiguration, self).__init__(**kwargs)
+        super(HttpConfiguration, self).__init__(**kwargs)
         self.method = method
         self.headers = headers
         self.valid_status_codes = valid_status_codes
