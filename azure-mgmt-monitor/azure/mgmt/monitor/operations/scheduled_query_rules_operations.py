@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ActionGroupsOperations(object):
-    """ActionGroupsOperations operations.
+class ScheduledQueryRulesOperations(object):
+    """ScheduledQueryRulesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-03-01".
+    :ivar api_version: Client Api Version. Constant value: "2018-04-16".
     """
 
     models = models
@@ -32,27 +32,27 @@ class ActionGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01"
+        self.api_version = "2018-04-16"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, action_group_name, action_group, custom_headers=None, raw=False, **operation_config):
-        """Create a new action group or update an existing one.
+            self, resource_group_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an log search rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param action_group_name: The name of the action group.
-        :type action_group_name: str
-        :param action_group: The action group to create or use for the update.
-        :type action_group: ~azure.mgmt.monitor.models.ActionGroupResource
+        :param rule_name: The name of the rule.
+        :type rule_name: str
+        :param parameters: The parameters of the rule to create or update.
+        :type parameters: ~azure.mgmt.monitor.models.LogSearchRuleResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ActionGroupResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
+        :return: LogSearchRuleResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
@@ -60,9 +60,9 @@ class ActionGroupsOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -81,7 +81,7 @@ class ActionGroupsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(action_group, 'ActionGroupResource')
+        body_content = self._serialize.body(parameters, 'LogSearchRuleResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -94,32 +94,32 @@ class ActionGroupsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ActionGroupResource', response)
+            deserialized = self._deserialize('LogSearchRuleResource', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('ActionGroupResource', response)
+            deserialized = self._deserialize('LogSearchRuleResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
 
     def get(
-            self, resource_group_name, action_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get an action group.
+            self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an Log Search rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param action_group_name: The name of the action group.
-        :type action_group_name: str
+        :param rule_name: The name of the rule.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ActionGroupResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
+        :return: LogSearchRuleResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.monitor.models.LogSearchRuleResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
@@ -128,7 +128,7 @@ class ActionGroupsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -157,23 +157,23 @@ class ActionGroupsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ActionGroupResource', response)
+            deserialized = self._deserialize('LogSearchRuleResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
 
     def delete(
-            self, resource_group_name, action_group_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an action group.
+            self, resource_group_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a Log Search rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param action_group_name: The name of the action group.
-        :type action_group_name: str
+        :param rule_name: The name of the rule.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -188,7 +188,7 @@ class ActionGroupsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -217,94 +217,24 @@ class ActionGroupsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules/{ruleName}'}
 
-    def update(
-            self, resource_group_name, action_group_name, tags=None, enabled=True, custom_headers=None, raw=False, **operation_config):
-        """Updates an existing action group's tags. To update other fields use the
-        CreateOrUpdate method.
+    def list_by_subscription(
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """List the Log Search rules within a subscription group.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param action_group_name: The name of the action group.
-        :type action_group_name: str
-        :param tags: Resource tags
-        :type tags: dict[str, str]
-        :param enabled: Indicates whether this action group is enabled. If an
-         action group is not enabled, then none of its actions will be
-         activated.
-        :type enabled: bool
+        :param filter: The filter to apply on the operation. For more
+         information please see
+         https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ActionGroupResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.monitor.models.ActionGroupResource or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
-        """
-        action_group_patch = models.ActionGroupPatchBody(tags=tags, enabled=enabled)
-
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(action_group_patch, 'ActionGroupPatchBody')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ActionGroupResource', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}'}
-
-    def list_by_subscription_id(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Get a list of all action groups in a subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ActionGroupResource
+        :return: An iterator like instance of LogSearchRuleResource
         :rtype:
-         ~azure.mgmt.monitor.models.ActionGroupResourcePaged[~azure.mgmt.monitor.models.ActionGroupResource]
+         ~azure.mgmt.monitor.models.LogSearchRuleResourcePaged[~azure.mgmt.monitor.models.LogSearchRuleResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -312,7 +242,7 @@ class ActionGroupsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_subscription_id.metadata['url']
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -321,6 +251,8 @@ class ActionGroupsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -347,30 +279,34 @@ class ActionGroupsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_subscription_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/actionGroups'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/scheduledQueryRules'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get a list of all action groups in a resource group.
+            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
+        """List the Log Search rules within a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
+        :param filter: The filter to apply on the operation. For more
+         information please see
+         https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ActionGroupResource
+        :return: An iterator like instance of LogSearchRuleResource
         :rtype:
-         ~azure.mgmt.monitor.models.ActionGroupResourcePaged[~azure.mgmt.monitor.models.ActionGroupResource]
+         ~azure.mgmt.monitor.models.LogSearchRuleResourcePaged[~azure.mgmt.monitor.models.LogSearchRuleResource]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
@@ -388,6 +324,8 @@ class ActionGroupsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -414,75 +352,12 @@ class ActionGroupsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ActionGroupResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.LogSearchRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups'}
-
-    def enable_receiver(
-            self, resource_group_name, action_group_name, receiver_name, custom_headers=None, raw=False, **operation_config):
-        """Enable a receiver in an action group. This changes the receiver's
-        status from Disabled to Enabled. This operation is only supported for
-        Email or SMS receivers.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param action_group_name: The name of the action group.
-        :type action_group_name: str
-        :param receiver_name: The name of the receiver to resubscribe.
-        :type receiver_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
-        """
-        enable_request = models.EnableRequest(receiver_name=receiver_name)
-
-        # Construct URL
-        url = self.enable_receiver.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionGroupName': self._serialize.url("action_group_name", action_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(enable_request, 'EnableRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
-
-        if response.status_code not in [200, 409]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    enable_receiver.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/actionGroups/{actionGroupName}/subscribe'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/scheduledQueryRules'}
