@@ -37,14 +37,12 @@ class WorkbooksOperations(object):
         self.config = config
 
     def list_by_resource_group(
-            self, resource_group_name, location, category, tags=None, can_fetch_content=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, category, tags=None, can_fetch_content=None, custom_headers=None, raw=False, **operation_config):
         """Get all Workbooks defined within a specified resource group and
         category.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param location: The name of location where workbook is stored.
-        :type location: str
         :param category: Category of workbook to return. Possible values
          include: 'workbook', 'TSG', 'performance', 'retention'
         :type category: str or
@@ -76,7 +74,6 @@ class WorkbooksOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['location'] = self._serialize.query("location", location, 'str')
         query_parameters['category'] = self._serialize.query("category", category, 'str')
         if tags is not None:
             query_parameters['tags'] = self._serialize.query("tags", tags, '[str]', div=',')
