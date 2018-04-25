@@ -23,14 +23,19 @@ class LinuxProperties(Model):
     :param excluded_package_name_masks: packages excluded from the software
      update configuration.
     :type excluded_package_name_masks: list[str]
+    :param reboot_setting: Reboot setting for the software update
+     configuration.
+    :type reboot_setting: str
     """
 
     _attribute_map = {
         'included_package_classifications': {'key': 'includedPackageClassifications', 'type': 'str'},
         'excluded_package_name_masks': {'key': 'excludedPackageNameMasks', 'type': '[str]'},
+        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
     }
 
-    def __init__(self, included_package_classifications=None, excluded_package_name_masks=None):
+    def __init__(self, included_package_classifications=None, excluded_package_name_masks=None, reboot_setting=None):
         super(LinuxProperties, self).__init__()
         self.included_package_classifications = included_package_classifications
         self.excluded_package_name_masks = excluded_package_name_masks
+        self.reboot_setting = reboot_setting
