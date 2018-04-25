@@ -24,6 +24,16 @@ class PerformanceTierServiceLevelObjectives(Model):
     :param hardware_generation: Hardware generation associated with the
      service level objective
     :type hardware_generation: str
+    :param max_backup_retention_days: Maximum Backup retention in days for the
+     performance tier edition
+    :type max_backup_retention_days: int
+    :param min_backup_retention_days: Minimum Backup retention in days for the
+     performance tier edition
+    :type min_backup_retention_days: int
+    :param max_storage_mb: Max storage allowed for a server.
+    :type max_storage_mb: int
+    :param min_storage_mb: Max storage allowed for a server.
+    :type min_storage_mb: int
     """
 
     _attribute_map = {
@@ -31,6 +41,10 @@ class PerformanceTierServiceLevelObjectives(Model):
         'edition': {'key': 'edition', 'type': 'str'},
         'v_core': {'key': 'vCore', 'type': 'int'},
         'hardware_generation': {'key': 'hardwareGeneration', 'type': 'str'},
+        'max_backup_retention_days': {'key': 'maxBackupRetentionDays', 'type': 'int'},
+        'min_backup_retention_days': {'key': 'minBackupRetentionDays', 'type': 'int'},
+        'max_storage_mb': {'key': 'maxStorageMB', 'type': 'int'},
+        'min_storage_mb': {'key': 'minStorageMB', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -39,3 +53,7 @@ class PerformanceTierServiceLevelObjectives(Model):
         self.edition = kwargs.get('edition', None)
         self.v_core = kwargs.get('v_core', None)
         self.hardware_generation = kwargs.get('hardware_generation', None)
+        self.max_backup_retention_days = kwargs.get('max_backup_retention_days', None)
+        self.min_backup_retention_days = kwargs.get('min_backup_retention_days', None)
+        self.max_storage_mb = kwargs.get('max_storage_mb', None)
+        self.min_storage_mb = kwargs.get('min_storage_mb', None)

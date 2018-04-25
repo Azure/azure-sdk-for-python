@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -21,6 +21,7 @@ from .operations.log_files_operations import LogFilesOperations
 from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
 from .operations.operations import Operations
+from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from . import models
 
 
@@ -57,7 +58,7 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class PostgreSQLManagementClient(object):
+class PostgreSQLManagementClient(SDKClient):
     """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, log files and configurations with new business model.
 
     :ivar config: Configuration for client.
@@ -79,6 +80,8 @@ class PostgreSQLManagementClient(object):
     :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -93,10 +96,10 @@ class PostgreSQLManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = PostgreSQLManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(PostgreSQLManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-12-01-preview'
+        self.api_version = '2017-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -115,4 +118,6 @@ class PostgreSQLManagementClient(object):
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)

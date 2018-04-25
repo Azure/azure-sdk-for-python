@@ -49,3 +49,9 @@ class OperationOrigin(str, Enum):
     not_specified = "NotSpecified"
     user = "user"
     system = "system"
+
+
+class ServerSecurityAlertPolicyState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
