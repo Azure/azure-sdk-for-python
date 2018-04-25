@@ -127,7 +127,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         usages = list(self.client.database_usages.list_by_database(resource_group.name, server.name, db_name))
         self.assertTrue(any(usage.name == 'database_size' for usage in usages))
 
-        self.client.databases.delete(resource_group.name, server.name, db_name)
+        self.client.databases.delete(resource_group.name, server.name, db_name).wait()
 
 
 #------------------------------------------------------------------------------
