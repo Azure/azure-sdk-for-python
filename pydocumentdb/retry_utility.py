@@ -61,10 +61,10 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
         except errors.HTTPFailure as e:
             retry_policy = None
 
-            if (e.status_code == http_constants.HttpStatusCodes.FORBIDDEN
-                    and e.sub_status == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.WRITE_FORBIDDEN_SUB_STATUS_CODE):
+            if (e.status_code == http_constants.StatusCodes.FORBIDDEN
+                    and e.sub_status == http_constants.SubStatusCodes.WRITE_FORBIDDEN):
                 retry_policy = endpointDiscovery_retry_policy
-            elif e.status_code == http_constants.HttpStatusCodes.TOO_MANY_REQUESTS:
+            elif e.status_code == http_constants.StatusCodes.TOO_MANY_REQUESTS:
                 retry_policy = resourceThrottle_retry_policy
 
             # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and 

@@ -150,10 +150,10 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         else:
             self.endpoint_discovery_retry_count += 1
             location_changed = True
-            raise errors.HTTPFailure(http_constants.HttpStatusCodes.FORBIDDEN, "Forbidden", {'x-ms-substatus' : 3})
+            raise errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN, "Forbidden", {'x-ms-substatus' : 3})
 
     def MockGetDatabaseAccountStub(self, endpoint):
-        raise errors.HTTPFailure(http_constants.HttpStatusCodes.SERVICE_UNAVAILABLE, "Service unavailable")
+        raise errors.HTTPFailure(http_constants.StatusCodes.SERVICE_UNAVAILABLE, "Service unavailable")
     
     def MockCreateDatabase(self, client, database):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
