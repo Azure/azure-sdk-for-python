@@ -18,6 +18,8 @@ class ServerConnectionPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -28,8 +30,8 @@ class ServerConnectionPolicy(ProxyResource):
     :vartype kind: str
     :ivar location: Resource location.
     :vartype location: str
-    :param connection_type: The server connection type. Possible values
-     include: 'Default', 'Proxy', 'Redirect'
+    :param connection_type: Required. The server connection type. Possible
+     values include: 'Default', 'Proxy', 'Redirect'
     :type connection_type: str or ~azure.mgmt.sql.models.ServerConnectionType
     """
 
@@ -51,8 +53,8 @@ class ServerConnectionPolicy(ProxyResource):
         'connection_type': {'key': 'properties.connectionType', 'type': 'ServerConnectionType'},
     }
 
-    def __init__(self, connection_type):
-        super(ServerConnectionPolicy, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServerConnectionPolicy, self).__init__(**kwargs)
         self.kind = None
         self.location = None
-        self.connection_type = connection_type
+        self.connection_type = kwargs.get('connection_type', None)

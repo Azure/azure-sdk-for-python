@@ -60,8 +60,8 @@ class ServiceObjective(ProxyResource):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(ServiceObjective, self).__init__()
+    def __init__(self, **kwargs):
+        super(ServiceObjective, self).__init__(**kwargs)
         self.service_objective_name = None
         self.is_default = None
         self.is_system = None
