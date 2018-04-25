@@ -15,12 +15,20 @@ from msrest.serialization import Model
 class ValidationError(Model):
     """Description about the errors happen while performing migration validation.
 
-    :param text: Error Text
-    :type text: str
-    :param severity: Severity of the error. Possible values include:
-     'Message', 'Warning', 'Error'
-    :type severity: str or ~azure.mgmt.datamigration.models.Severity
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar text: Error Text
+    :vartype text: str
+    :ivar severity: Severity of the error. Possible values include: 'Message',
+     'Warning', 'Error'
+    :vartype severity: str or ~azure.mgmt.datamigration.models.Severity
     """
+
+    _validation = {
+        'text': {'readonly': True},
+        'severity': {'readonly': True},
+    }
 
     _attribute_map = {
         'text': {'key': 'text', 'type': 'str'},
@@ -29,5 +37,5 @@ class ValidationError(Model):
 
     def __init__(self, **kwargs):
         super(ValidationError, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
-        self.severity = kwargs.get('severity', None)
+        self.text = None
+        self.severity = None
