@@ -31,7 +31,7 @@ class SqlServerPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             async_server_create = self.test_class_instance.client.servers.create_or_update(
-                kwargs['resource_group'],
+                kwargs['resource_group'].name,
                 name,
                 get_server_params(kwargs['location'])
             )
