@@ -105,9 +105,9 @@ class ElasticPoolDatabaseActivity(ProxyResource):
         'state': {'key': 'properties.state', 'type': 'str'},
     }
 
-    def __init__(self, location=None):
-        super(ElasticPoolDatabaseActivity, self).__init__()
-        self.location = location
+    def __init__(self, **kwargs):
+        super(ElasticPoolDatabaseActivity, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
         self.database_name = None
         self.end_time = None
         self.error_code = None

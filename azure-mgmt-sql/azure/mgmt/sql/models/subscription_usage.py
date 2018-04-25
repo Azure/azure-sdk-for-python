@@ -54,8 +54,8 @@ class SubscriptionUsage(ProxyResource):
         'unit': {'key': 'properties.unit', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SubscriptionUsage, self).__init__()
+    def __init__(self, **kwargs):
+        super(SubscriptionUsage, self).__init__(**kwargs)
         self.display_name = None
         self.current_value = None
         self.limit = None

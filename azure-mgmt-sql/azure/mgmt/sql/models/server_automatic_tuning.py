@@ -53,8 +53,8 @@ class ServerAutomaticTuning(ProxyResource):
         'options': {'key': 'properties.options', 'type': '{AutomaticTuningServerOptions}'},
     }
 
-    def __init__(self, desired_state=None, options=None):
-        super(ServerAutomaticTuning, self).__init__()
-        self.desired_state = desired_state
+    def __init__(self, **kwargs):
+        super(ServerAutomaticTuning, self).__init__(**kwargs)
+        self.desired_state = kwargs.get('desired_state', None)
         self.actual_state = None
-        self.options = options
+        self.options = kwargs.get('options', None)

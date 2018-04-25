@@ -70,13 +70,13 @@ class SyncGroup(ProxyResource):
         'schema': {'key': 'properties.schema', 'type': 'SyncGroupSchema'},
     }
 
-    def __init__(self, interval=None, conflict_resolution_policy=None, sync_database_id=None, hub_database_user_name=None, hub_database_password=None, schema=None):
-        super(SyncGroup, self).__init__()
-        self.interval = interval
+    def __init__(self, **kwargs):
+        super(SyncGroup, self).__init__(**kwargs)
+        self.interval = kwargs.get('interval', None)
         self.last_sync_time = None
-        self.conflict_resolution_policy = conflict_resolution_policy
-        self.sync_database_id = sync_database_id
-        self.hub_database_user_name = hub_database_user_name
-        self.hub_database_password = hub_database_password
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self.sync_database_id = kwargs.get('sync_database_id', None)
+        self.hub_database_user_name = kwargs.get('hub_database_user_name', None)
+        self.hub_database_password = kwargs.get('hub_database_password', None)
         self.sync_state = None
-        self.schema = schema
+        self.schema = kwargs.get('schema', None)
