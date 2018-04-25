@@ -46,8 +46,8 @@ class CheckNameAvailabilityResponse(Model):
         'reason': {'key': 'reason', 'type': 'CheckNameAvailabilityReason'},
     }
 
-    def __init__(self):
-        super(CheckNameAvailabilityResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
         self.available = None
         self.message = None
         self.name = None

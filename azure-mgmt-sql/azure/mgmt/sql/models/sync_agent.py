@@ -67,10 +67,10 @@ class SyncAgent(ProxyResource):
         'version': {'key': 'properties.version', 'type': 'str'},
     }
 
-    def __init__(self, sync_database_id=None):
-        super(SyncAgent, self).__init__()
+    def __init__(self, **kwargs):
+        super(SyncAgent, self).__init__(**kwargs)
         self.sync_agent_name = None
-        self.sync_database_id = sync_database_id
+        self.sync_database_id = kwargs.get('sync_database_id', None)
         self.last_alive_time = None
         self.state = None
         self.is_up_to_date = None

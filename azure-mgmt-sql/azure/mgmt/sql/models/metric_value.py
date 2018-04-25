@@ -50,8 +50,8 @@ class MetricValue(Model):
         'total': {'key': 'total', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(MetricValue, self).__init__()
+    def __init__(self, **kwargs):
+        super(MetricValue, self).__init__(**kwargs)
         self.count = None
         self.average = None
         self.maximum = None
