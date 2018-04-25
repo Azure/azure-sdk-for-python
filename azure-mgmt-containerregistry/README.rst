@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Container Registry
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-containerregistry.html>`__
+<https://docs.microsoft.com/python/api/overview/azure/container-registry>`__
 on readthedocs.org.
 
 
