@@ -48,9 +48,9 @@ class AutomaticTuningServerOptions(Model):
         'reason_desc': {'key': 'reasonDesc', 'type': 'AutomaticTuningServerReason'},
     }
 
-    def __init__(self, desired_state=None):
-        super(AutomaticTuningServerOptions, self).__init__()
-        self.desired_state = desired_state
+    def __init__(self, **kwargs):
+        super(AutomaticTuningServerOptions, self).__init__(**kwargs)
+        self.desired_state = kwargs.get('desired_state', None)
         self.actual_state = None
         self.reason_code = None
         self.reason_desc = None

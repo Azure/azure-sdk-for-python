@@ -18,6 +18,8 @@ class ServerKey(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -31,9 +33,9 @@ class ServerKey(ProxyResource):
     :vartype location: str
     :ivar subregion: Subregion of the server key.
     :vartype subregion: str
-    :param server_key_type: The server key type like 'ServiceManaged',
-     'AzureKeyVault'. Possible values include: 'ServiceManaged',
-     'AzureKeyVault'
+    :param server_key_type: Required. The server key type like
+     'ServiceManaged', 'AzureKeyVault'. Possible values include:
+     'ServiceManaged', 'AzureKeyVault'
     :type server_key_type: str or ~azure.mgmt.sql.models.ServerKeyType
     :param uri: The URI of the server key.
     :type uri: str
@@ -65,12 +67,12 @@ class ServerKey(ProxyResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, server_key_type, kind=None, uri=None, thumbprint=None, creation_date=None):
-        super(ServerKey, self).__init__()
-        self.kind = kind
+    def __init__(self, **kwargs):
+        super(ServerKey, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)
         self.location = None
         self.subregion = None
-        self.server_key_type = server_key_type
-        self.uri = uri
-        self.thumbprint = thumbprint
-        self.creation_date = creation_date
+        self.server_key_type = kwargs.get('server_key_type', None)
+        self.uri = kwargs.get('uri', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.creation_date = kwargs.get('creation_date', None)
