@@ -31,6 +31,17 @@ This version uses a next-generation code generator that *might* introduce breaki
   - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
   - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
 
+**SQL Breaking changes**
+
+- Database and ElasticPool now use Sku property for scale and tier-related properties. We have made this change in order to allow future support of autoscale, and to allow for new vCore-based editions.
+   * Database.sku has replaced Database.requested_service_objective_name and Database.edition. Database scale can be set by setting Sku.name to the requested service objective name (e.g. S0, P1, or GP_Gen4_1), or by setting Sku.name to the sku name (e.g. Standard, Premium, or GP_Gen4) and set Sku.capacity to the scale measured in DTU or vCores.
+   * Database.current_sku has replaced Database.service_level_objetive.
+   * Database.current_service_objective_id and Database.requested_service_objective_id have been removed.
+   * ElasticPool.sku has replaced ElasticPool.dtu. Elastic pool scale can be set by setting Sku.name to the requested sku name (e.g. StandardPool, PremiumPool, or GP_Gen4) and setting Sku.capacity to the scale measured in DTU or vCores.
+   * ElasticPool.per_database_settings has replaced ElasticPool.database_dtu_min and ElasticPool.database_dtu_max.
+- Database.max_size_bytes is now an integer instead of string.
+- LocationCapabilities tree has been changed in order to support capabilities of new vCore-based database and elastic pool editions. 
+
 **Features**
 
 - Added support for List and Cancel operation on Azure database and elastic pool REST API
