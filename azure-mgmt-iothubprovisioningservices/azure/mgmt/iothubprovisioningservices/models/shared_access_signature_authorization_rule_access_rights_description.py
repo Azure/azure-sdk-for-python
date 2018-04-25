@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(Model):
     """Description of the shared access key.
 
-    :param key_name: Name of the key.
+    All required parameters must be populated in order to send to Azure.
+
+    :param key_name: Required. Name of the key.
     :type key_name: str
     :param primary_key: Primary SAS key value.
     :type primary_key: str
     :param secondary_key: Secondary SAS key value.
     :type secondary_key: str
-    :param rights: Rights that this key has. Possible values include:
-     'ServiceConfig', 'EnrollmentRead', 'EnrollmentWrite', 'DeviceConnect',
-     'RegistrationStatusRead', 'RegistrationStatusWrite'
+    :param rights: Required. Rights that this key has. Possible values
+     include: 'ServiceConfig', 'EnrollmentRead', 'EnrollmentWrite',
+     'DeviceConnect', 'RegistrationStatusRead', 'RegistrationStatusWrite'
     :type rights: str or
      ~azure.mgmt.iothubprovisioningservices.models.AccessRightsDescription
     """
@@ -40,9 +42,9 @@ class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(Model):
         'rights': {'key': 'rights', 'type': 'str'},
     }
 
-    def __init__(self, key_name, rights, primary_key=None, secondary_key=None):
-        super(SharedAccessSignatureAuthorizationRuleAccessRightsDescription, self).__init__()
-        self.key_name = key_name
-        self.primary_key = primary_key
-        self.secondary_key = secondary_key
-        self.rights = rights
+    def __init__(self, **kwargs):
+        super(SharedAccessSignatureAuthorizationRuleAccessRightsDescription, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)
+        self.rights = kwargs.get('rights', None)

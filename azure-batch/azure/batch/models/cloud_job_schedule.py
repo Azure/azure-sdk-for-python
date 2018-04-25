@@ -64,6 +64,9 @@ class CloudJobSchedule(Model):
      is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param stats: The lifetime resource usage statistics for the job schedule.
+     The statistics may not be immediately available. The Batch service
+     performs periodic roll-up of statistics. The typical delay is about 30
+     minutes.
     :type stats: ~azure.batch.models.JobScheduleStatistics
     """
 
@@ -86,6 +89,7 @@ class CloudJobSchedule(Model):
     }
 
     def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, schedule=None, job_specification=None, execution_info=None, metadata=None, stats=None):
+        super(CloudJobSchedule, self).__init__()
         self.id = id
         self.display_name = display_name
         self.url = url

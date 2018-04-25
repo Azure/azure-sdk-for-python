@@ -40,9 +40,9 @@ class Tag(Model):
         'image_count': {'key': 'ImageCount', 'type': 'int'},
     }
 
-    def __init__(self, name=None, description=None):
-        super(Tag, self).__init__()
+    def __init__(self, **kwargs):
+        super(Tag, self).__init__(**kwargs)
         self.id = None
-        self.name = name
-        self.description = description
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
         self.image_count = None

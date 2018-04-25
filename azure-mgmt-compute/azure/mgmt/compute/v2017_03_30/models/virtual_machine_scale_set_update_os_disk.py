@@ -37,9 +37,9 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, caching=None, image=None, vhd_containers=None, managed_disk=None):
-        super(VirtualMachineScaleSetUpdateOSDisk, self).__init__()
-        self.caching = caching
-        self.image = image
-        self.vhd_containers = vhd_containers
-        self.managed_disk = managed_disk
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetUpdateOSDisk, self).__init__(**kwargs)
+        self.caching = kwargs.get('caching', None)
+        self.image = kwargs.get('image', None)
+        self.vhd_containers = kwargs.get('vhd_containers', None)
+        self.managed_disk = kwargs.get('managed_disk', None)

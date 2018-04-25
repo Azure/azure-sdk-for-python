@@ -47,13 +47,13 @@ class DeploymentOperationProperties(Model):
         'response': {'key': 'response', 'type': 'HttpMessage'},
     }
 
-    def __init__(self, provisioning_state=None, timestamp=None, service_request_id=None, status_code=None, status_message=None, target_resource=None, request=None, response=None):
-        super(DeploymentOperationProperties, self).__init__()
-        self.provisioning_state = provisioning_state
-        self.timestamp = timestamp
-        self.service_request_id = service_request_id
-        self.status_code = status_code
-        self.status_message = status_message
-        self.target_resource = target_resource
-        self.request = request
-        self.response = response
+    def __init__(self, **kwargs):
+        super(DeploymentOperationProperties, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.service_request_id = kwargs.get('service_request_id', None)
+        self.status_code = kwargs.get('status_code', None)
+        self.status_message = kwargs.get('status_message', None)
+        self.target_resource = kwargs.get('target_resource', None)
+        self.request = kwargs.get('request', None)
+        self.response = kwargs.get('response', None)

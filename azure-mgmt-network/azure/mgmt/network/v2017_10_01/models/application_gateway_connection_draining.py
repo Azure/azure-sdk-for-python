@@ -17,10 +17,12 @@ class ApplicationGatewayConnectionDraining(Model):
     active for a specified time after the backend server got removed from the
     configuration.
 
-    :param enabled: Whether connection draining is enabled or not.
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Whether connection draining is enabled or not.
     :type enabled: bool
-    :param drain_timeout_in_sec: The number of seconds connection draining is
-     active. Acceptable values are from 1 second to 3600 seconds.
+    :param drain_timeout_in_sec: Required. The number of seconds connection
+     draining is active. Acceptable values are from 1 second to 3600 seconds.
     :type drain_timeout_in_sec: int
     """
 
@@ -34,7 +36,7 @@ class ApplicationGatewayConnectionDraining(Model):
         'drain_timeout_in_sec': {'key': 'drainTimeoutInSec', 'type': 'int'},
     }
 
-    def __init__(self, enabled, drain_timeout_in_sec):
-        super(ApplicationGatewayConnectionDraining, self).__init__()
-        self.enabled = enabled
-        self.drain_timeout_in_sec = drain_timeout_in_sec
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayConnectionDraining, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.drain_timeout_in_sec = kwargs.get('drain_timeout_in_sec', None)

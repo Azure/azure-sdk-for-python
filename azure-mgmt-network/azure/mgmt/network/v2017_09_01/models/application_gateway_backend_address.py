@@ -26,7 +26,7 @@ class ApplicationGatewayBackendAddress(Model):
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
     }
 
-    def __init__(self, fqdn=None, ip_address=None):
-        super(ApplicationGatewayBackendAddress, self).__init__()
-        self.fqdn = fqdn
-        self.ip_address = ip_address
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayBackendAddress, self).__init__(**kwargs)
+        self.fqdn = kwargs.get('fqdn', None)
+        self.ip_address = kwargs.get('ip_address', None)

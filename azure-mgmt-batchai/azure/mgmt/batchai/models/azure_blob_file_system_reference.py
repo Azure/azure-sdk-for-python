@@ -16,18 +16,21 @@ class AzureBlobFileSystemReference(Model):
     """Provides required information, for the service to be able to mount Azure
     Blob Storage container on the cluster nodes.
 
-    :param account_name: Name of the Azure Blob Storage account.
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. Name of the Azure Blob Storage account.
     :type account_name: str
-    :param container_name: Name of the Azure Blob Storage container to mount
-     on the cluster.
+    :param container_name: Required. Name of the Azure Blob Storage container
+     to mount on the cluster.
     :type container_name: str
-    :param credentials: Information of the Azure Blob Storage account
-     credentials.
-    :type credentials: :class:`AzureStorageCredentialsInfo
-     <azure.mgmt.batchai.models.AzureStorageCredentialsInfo>`
-    :param relative_mount_path: Specifies the relative path on the compute
-     node where the Azure Blob file system will be mounted. Note that all blob
-     file systems will be mounted under $AZ_BATCHAI_MOUNT_ROOT location.
+    :param credentials: Required. Information of the Azure Blob Storage
+     account credentials.
+    :type credentials: ~azure.mgmt.batchai.models.AzureStorageCredentialsInfo
+    :param relative_mount_path: Required. Specifies the relative path on the
+     compute node where the Azure Blob file system will be mounted. Note that
+     all cluster level blob file systems will be mounted under
+     $AZ_BATCHAI_MOUNT_ROOT location and all job level blob file systems will
+     be mounted under $AZ_BATCHAI_JOB_MOUNT_ROOT.
     :type relative_mount_path: str
     :param mount_options: Specifies the various mount options that can be used
      to configure Blob file system.
@@ -49,9 +52,10 @@ class AzureBlobFileSystemReference(Model):
         'mount_options': {'key': 'mountOptions', 'type': 'str'},
     }
 
-    def __init__(self, account_name, container_name, credentials, relative_mount_path, mount_options=None):
-        self.account_name = account_name
-        self.container_name = container_name
-        self.credentials = credentials
-        self.relative_mount_path = relative_mount_path
-        self.mount_options = mount_options
+    def __init__(self, **kwargs):
+        super(AzureBlobFileSystemReference, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.relative_mount_path = kwargs.get('relative_mount_path', None)
+        self.mount_options = kwargs.get('mount_options', None)

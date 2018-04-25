@@ -21,16 +21,18 @@ class JobOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2017-09-01.6.0".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2018-03-01.6.1".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-01.6.0"
+        self.api_version = "2018-03-01.6.1"
 
         self.config = config
 
@@ -41,7 +43,9 @@ class JobOperations(object):
 
         Statistics are aggregated across all jobs that have ever existed in the
         account, from account creation to the last update time of the
-        statistics.
+        statistics. The statistics may not be immediately available. The Batch
+        service performs periodic roll-up of statistics. The typical delay is
+        about 30 minutes.
 
         :param job_get_all_lifetime_statistics_options: Additional parameters
          for the operation
@@ -72,7 +76,7 @@ class JobOperations(object):
             ocp_date = job_get_all_lifetime_statistics_options.ocp_date
 
         # Construct URL
-        url = '/lifetimejobstats'
+        url = self.get_all_lifetime_statistics.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -82,7 +86,7 @@ class JobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -98,7 +102,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -121,6 +125,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get_all_lifetime_statistics.metadata = {'url': '/lifetimejobstats'}
 
     def delete(
             self, job_id, job_delete_options=None, custom_headers=None, raw=False, **operation_config):
@@ -176,7 +181,7 @@ class JobOperations(object):
             if_unmodified_since = job_delete_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -190,7 +195,7 @@ class JobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -214,7 +219,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -226,6 +231,7 @@ class JobOperations(object):
                 'request-id': 'str',
             })
             return client_raw_response
+    delete.metadata = {'url': '/jobs/{jobId}'}
 
     def get(
             self, job_id, job_get_options=None, custom_headers=None, raw=False, **operation_config):
@@ -278,7 +284,7 @@ class JobOperations(object):
             if_unmodified_since = job_get_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -296,7 +302,7 @@ class JobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -320,7 +326,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -343,6 +349,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/jobs/{jobId}'}
 
     def patch(
             self, job_id, job_patch_parameter, job_patch_options=None, custom_headers=None, raw=False, **operation_config):
@@ -394,7 +401,7 @@ class JobOperations(object):
             if_unmodified_since = job_patch_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}'
+        url = self.patch.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -436,7 +443,7 @@ class JobOperations(object):
         # Construct and send request
         request = self._client.patch(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -451,6 +458,7 @@ class JobOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    patch.metadata = {'url': '/jobs/{jobId}'}
 
     def update(
             self, job_id, job_update_parameter, job_update_options=None, custom_headers=None, raw=False, **operation_config):
@@ -503,7 +511,7 @@ class JobOperations(object):
             if_unmodified_since = job_update_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}'
+        url = self.update.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -545,7 +553,7 @@ class JobOperations(object):
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -560,6 +568,7 @@ class JobOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    update.metadata = {'url': '/jobs/{jobId}'}
 
     def disable(
             self, job_id, disable_tasks, job_disable_options=None, custom_headers=None, raw=False, **operation_config):
@@ -578,12 +587,7 @@ class JobOperations(object):
         :param job_id: The ID of the job to disable.
         :type job_id: str
         :param disable_tasks: What to do with active tasks associated with the
-         job. Values are:
-         requeue - Terminate running tasks and requeue them. The tasks will run
-         again when the job is enabled.
-         terminate - Terminate running tasks. The tasks will not run again.
-         wait - Allow currently running tasks to complete. Possible values
-         include: 'requeue', 'terminate', 'wait'
+         job. Possible values include: 'requeue', 'terminate', 'wait'
         :type disable_tasks: str or ~azure.batch.models.DisableJobOption
         :param job_disable_options: Additional parameters for the operation
         :type job_disable_options: ~azure.batch.models.JobDisableOptions
@@ -624,7 +628,7 @@ class JobOperations(object):
         job_disable_parameter = models.JobDisableParameter(disable_tasks=disable_tasks)
 
         # Construct URL
-        url = '/jobs/{jobId}/disable'
+        url = self.disable.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -666,7 +670,7 @@ class JobOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -681,6 +685,7 @@ class JobOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    disable.metadata = {'url': '/jobs/{jobId}/disable'}
 
     def enable(
             self, job_id, job_enable_options=None, custom_headers=None, raw=False, **operation_config):
@@ -733,7 +738,7 @@ class JobOperations(object):
             if_unmodified_since = job_enable_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}/enable'
+        url = self.enable.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -747,7 +752,7 @@ class JobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -771,7 +776,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -786,6 +791,7 @@ class JobOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    enable.metadata = {'url': '/jobs/{jobId}/enable'}
 
     def terminate(
             self, job_id, job_terminate_options=None, terminate_reason=None, custom_headers=None, raw=False, **operation_config):
@@ -793,8 +799,11 @@ class JobOperations(object):
 
         When a Terminate Job request is received, the Batch service sets the
         job to the terminating state. The Batch service then terminates any
-        active or running tasks associated with the job, and runs any required
-        Job Release tasks. The job then moves into the completed state.
+        running tasks associated with the job and runs any required job release
+        tasks. Then the job moves into the completed state. If there are any
+        tasks in the job in the active state, they will remain in the active
+        state. Once a job is terminated, new tasks cannot be added and any
+        remaining active tasks will not be scheduled.
 
         :param job_id: The ID of the job to terminate.
         :type job_id: str
@@ -842,7 +851,7 @@ class JobOperations(object):
             job_terminate_parameter = models.JobTerminateParameter(terminate_reason=terminate_reason)
 
         # Construct URL
-        url = '/jobs/{jobId}/terminate'
+        url = self.terminate.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -887,7 +896,7 @@ class JobOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [202]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -902,6 +911,7 @@ class JobOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    terminate.metadata = {'url': '/jobs/{jobId}/terminate'}
 
     def add(
             self, job, job_add_options=None, custom_headers=None, raw=False, **operation_config):
@@ -946,7 +956,7 @@ class JobOperations(object):
             ocp_date = job_add_options.ocp_date
 
         # Construct URL
-        url = '/jobs'
+        url = self.add.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -976,7 +986,7 @@ class JobOperations(object):
         # Construct and send request
         request = self._client.post(url, query_parameters)
         response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            request, header_parameters, body_content, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -991,6 +1001,7 @@ class JobOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+    add.metadata = {'url': '/jobs'}
 
     def list(
             self, job_list_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1038,7 +1049,7 @@ class JobOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobs'
+                url = self.list.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
@@ -1060,7 +1071,7 @@ class JobOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1077,7 +1088,7 @@ class JobOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -1093,6 +1104,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/jobs'}
 
     def list_from_job_schedule(
             self, job_schedule_id, job_list_from_job_schedule_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1145,7 +1157,7 @@ class JobOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobschedules/{jobScheduleId}/jobs'
+                url = self.list_from_job_schedule.metadata['url']
                 path_format_arguments = {
                     'jobScheduleId': self._serialize.url("job_schedule_id", job_schedule_id, 'str')
                 }
@@ -1171,7 +1183,7 @@ class JobOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1188,7 +1200,7 @@ class JobOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -1204,6 +1216,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    list_from_job_schedule.metadata = {'url': '/jobschedules/{jobScheduleId}/jobs'}
 
     def list_preparation_and_release_task_status(
             self, job_id, job_list_preparation_and_release_task_status_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1261,7 +1274,7 @@ class JobOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/jobs/{jobId}/jobpreparationandreleasetaskstatus'
+                url = self.list_preparation_and_release_task_status.metadata['url']
                 path_format_arguments = {
                     'jobId': self._serialize.url("job_id", job_id, 'str')
                 }
@@ -1285,7 +1298,7 @@ class JobOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
             if self.config.generate_client_request_id:
                 header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1302,7 +1315,7 @@ class JobOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.BatchErrorException(self._deserialize, response)
@@ -1318,6 +1331,7 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    list_preparation_and_release_task_status.metadata = {'url': '/jobs/{jobId}/jobpreparationandreleasetaskstatus'}
 
     def get_task_counts(
             self, job_id, job_get_task_counts_options=None, custom_headers=None, raw=False, **operation_config):
@@ -1362,7 +1376,7 @@ class JobOperations(object):
             ocp_date = job_get_task_counts_options.ocp_date
 
         # Construct URL
-        url = '/jobs/{jobId}/taskcounts'
+        url = self.get_task_counts.metadata['url']
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
@@ -1376,7 +1390,7 @@ class JobOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1392,7 +1406,7 @@ class JobOperations(object):
 
         # Construct and send request
         request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.BatchErrorException(self._deserialize, response)
@@ -1413,3 +1427,4 @@ class JobOperations(object):
             return client_raw_response
 
         return deserialized
+    get_task_counts.metadata = {'url': '/jobs/{jobId}/taskcounts'}

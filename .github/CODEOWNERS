@@ -14,6 +14,7 @@
 /azure-mgmt-datafactory/ @hvermis
 /azure-mgmt-datalake-analytics/ @ro-joowan
 /azure-mgmt-datalake-store/ @ro-joowan
+/azure-mgmt-datamigration/ @vchske
 /azure-mgmt-eventgrid/ @kalyanaj
 /azure-mgmt-keyvault/ @schaabs
 /azure-mgmt-machinelearningcompute/ @shutchings

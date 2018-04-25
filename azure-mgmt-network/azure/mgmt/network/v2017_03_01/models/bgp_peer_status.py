@@ -59,8 +59,8 @@ class BgpPeerStatus(Model):
         'messages_received': {'key': 'messagesReceived', 'type': 'long'},
     }
 
-    def __init__(self):
-        super(BgpPeerStatus, self).__init__()
+    def __init__(self, **kwargs):
+        super(BgpPeerStatus, self).__init__(**kwargs)
         self.local_address = None
         self.neighbor = None
         self.asn = None

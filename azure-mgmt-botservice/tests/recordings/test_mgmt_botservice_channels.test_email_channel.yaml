@@ -1,0 +1,256 @@
+interactions:
+- request:
+    body: '{"location": "global", "sku": {"name": "Free"}, "kind": "Bot", "properties":
+      {"displayName": "this is a test bot", "description": "this is a description
+      for a test bot", "endpoint": "https://bing.com/messages/", "msaAppId": "056d9ad9-17a9-4cc7-aebb-43bf6f293a08",
+      "developerAppInsightKey": "59513bad-10a7-4d41-b4d0-b1c34c6af511", "developerAppInsightsApiKey":
+      "w24iw5ocbhcig71su7ibaj63hey5ieaozeuwdv11", "developerAppInsightsApplicationId":
+      "cf03484e-3fdb-4b5e-9ad7-94bde32e5a11"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['481']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2017-12-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2","name":"azurebotservicee60013a2","type":"Microsoft.BotService/botServices","etag":"W/\"datetime''2018-04-02T18%3A36%3A34.9983667Z''\"","location":"global","sku":{"name":""},"kind":"Bot","properties":{"displayName":"this
+        is a test bot","description":"this is a description for a test bot","iconUrl":"//intercom-scratch.azureedge.net/bot-icons-v1/bot-framework-default.png","endpoint":"https://bing.com/messages/","msaAppId":"056d9ad9-17a9-4cc7-aebb-43bf6f293a08","developerAppInsightKey":"59513bad-10a7-4d41-b4d0-b1c34c6af511","developerAppInsightsApplicationId":"cf03484e-3fdb-4b5e-9ad7-94bde32e5a11","luisAppIds":[],"endpointVersion":"3.0","configuredChannels":["webchat"],"enabledChannels":["webchat","directline"],"isDeveloperAppInsightsApiKeySet":true,"provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['950']
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 02 Apr 2018 18:36:35 GMT']
+      etag: [W/"datetime'2018-04-02T18%3A36%3A34.9983667Z'"]
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"location": "global", "properties": {"channelName": "EmailChannel", "properties":
+      {"emailAddress": "swagatm2@outlook.com", "password": "Botuser123@", "isEnabled":
+      true}}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['171']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel","name":"azurebotservicee60013a2/EmailChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"8148c55803b448c0dab50af27c73b1084/2/2018
+        6:36:42 PM\"","location":"global","properties":{"properties":{"emailAddress":"swagatm2@outlook.com","password":"Botuser123@","isEnabled":true},"etag":"W/\"8148c55803b448c0dab50af27c73b1084/2/2018
+        6:36:42 PM\"","channelName":"EmailChannel","location":"global","provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['627']
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 02 Apr 2018 18:36:42 GMT']
+      etag: ['W/"8148c55803b448c0dab50af27c73b1084/2/2018 6:36:42 PM"']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-powered-by: [ASP.NET]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel","name":"azurebotservicee60013a2/EmailChannel","type":"Microsoft.BotService/botServices/channels","etag":"W/\"c319754c4cd79482a41125d9543e108b4/2/2018
+        6:36:43 PM\"","location":"global","properties":{"properties":{"emailAddress":"swagatm2@outlook.com","password":"Botuser123@","isEnabled":true},"etag":"W/\"c319754c4cd79482a41125d9543e108b4/2/2018
+        6:36:43 PM\"","channelName":"EmailChannel","location":"global","provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['627']
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 02 Apr 2018 18:36:43 GMT']
+      etag: ['W/"c319754c4cd79482a41125d9543e108b4/2/2018 6:36:43 PM"']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Mon, 02 Apr 2018 18:36:45 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"ResourceNotFound","message":"The Resource ''Microsoft.BotService/botServices/azurebotservicee60013a2/channels/EmailChannel''
+        under resource group ''pythonsdkbote60013a2'' was not found."}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['202']
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 02 Apr 2018 18:36:46 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [gateway]
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2017-12-01
+  response:
+    body: {string: '{"error":{"code":"UnknownError","message":"message: The remote
+        server returned an error: (412) Precondition Failed. original trace:    at
+        Microsoft.WindowsAzure.Storage.Core.Executor.Executor.EndExecuteAsync[T](IAsyncResult
+        result) in c:\\Program Files (x86)\\Jenkins\\workspace\\release_dotnet_master\\Lib\\ClassLibraryCommon\\Core\\Executor\\Executor.cs:line
+        50\r\n   at Microsoft.WindowsAzure.Storage.Core.Util.AsyncExtensions.<>c__DisplayClass2`1.<CreateCallback>b__0(IAsyncResult
+        ar) in c:\\Program Files (x86)\\Jenkins\\workspace\\release_dotnet_master\\Lib\\ClassLibraryCommon\\Core\\Util\\AsyncExtensions.cs:line
+        69\r\n--- End of stack trace from previous location where exception was thrown
+        ---\r\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n   at
+        System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task
+        task)\r\n   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()\r\n   at
+        Intercom.Azure.Helpers.CloudTableObjectExtensions.<TransformObjectAsync>d__13`1.MoveNext()
+        in E:\\_work\\3\\s\\Utilities\\Intercom.Storage.Helpers\\CloudTableObjectExtensions.cs:line
+        323\r\n--- End of stack trace from previous location where exception was thrown
+        ---\r\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n   at
+        System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task
+        task)\r\n   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()\r\n   at
+        Intercom.Azure.Helpers.CloudTableObjectExtensions.<TransformObjectAsync>d__12`1.MoveNext()
+        in E:\\_work\\3\\s\\Utilities\\Intercom.Storage.Helpers\\CloudTableObjectExtensions.cs:line
+        268\r\n--- End of stack trace from previous location where exception was thrown
+        ---\r\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n   at
+        System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task
+        task)\r\n   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()\r\n   at
+        Intercom.Models.Storage.<TransformBotAsync>d__80.MoveNext() in E:\\_work\\3\\s\\Intercom.Models\\Storage\\BotOperators.cs:line
+        272\r\n--- End of stack trace from previous location where exception was thrown
+        ---\r\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n   at
+        System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task
+        task)\r\n   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1.ConfiguredTaskAwaiter.GetResult()\r\n   at
+        Intercom.Models.Storage.<DeleteBotChannelAccountsAsync>d__95.MoveNext() in
+        E:\\_work\\3\\s\\Intercom.Models\\Storage\\BotOperators.cs:line 740\r\n---
+        End of stack trace from previous location where exception was thrown ---\r\n   at
+        System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task
+        task)\r\n   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable.ConfiguredTaskAwaiter.GetResult()\r\n   at
+        DevPortalLib.Helpers.BotHelper.<DeleteBotAsync>d__16.MoveNext() in E:\\_work\\3\\s\\DevPortalLib\\Helpers\\BotHelper.cs:line
+        222\r\n--- End of stack trace from previous location where exception was thrown
+        ---\r\n   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n   at
+        System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task
+        task)\r\n   at System.Runtime.CompilerServices.ConfiguredTaskAwaitable.ConfiguredTaskAwaiter.GetResult()\r\n   at
+        Intercom.ResourceProvider.DataProviders.ResourceDataProvider.<DeleteResourceAsync>d__3.MoveNext()
+        in E:\\_work\\3\\s\\Intercom.ResourceProvider\\DataProviders\\ResourceDataProvider.cs:line
+        203"}}'}
+    headers:
+      cache-control: [no-cache]
+      connection: [close]
+      content-length: ['3788']
+      content-type: [application/json; charset=utf-8]
+      date: ['Mon, 02 Apr 2018 18:36:52 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [service]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-powered-by: [ASP.NET]
+    status: {code: 500, message: Internal Server Error}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
+          msrest_azure/0.4.21 azure-mgmt-botservice/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdkbote60013a2/providers/Microsoft.BotService/botServices/azurebotservicee60013a2?api-version=2017-12-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['0']
+      date: ['Mon, 02 Apr 2018 18:37:00 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-context: ['appId=cid-v1:bb9497da-769a-4aa5-9960-4ba1cbfd7df7']
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

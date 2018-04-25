@@ -36,7 +36,7 @@ class PredictionQuery(Model):
         'token': {'key': 'Token', 'type': 'PredictionQueryToken'},
     }
 
-    def __init__(self):
-        super(PredictionQuery, self).__init__()
+    def __init__(self, **kwargs):
+        super(PredictionQuery, self).__init__(**kwargs)
         self.results = None
         self.token = None

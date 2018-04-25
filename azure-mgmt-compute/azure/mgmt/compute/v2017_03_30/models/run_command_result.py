@@ -49,6 +49,6 @@ class RunCommandResult(OperationStatusResponse):
         'output': {'key': 'properties.output', 'type': 'object'},
     }
 
-    def __init__(self, output=None):
-        super(RunCommandResult, self).__init__()
-        self.output = output
+    def __init__(self, **kwargs):
+        super(RunCommandResult, self).__init__(**kwargs)
+        self.output = kwargs.get('output', None)

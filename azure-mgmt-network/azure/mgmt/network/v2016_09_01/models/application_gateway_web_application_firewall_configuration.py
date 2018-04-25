@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     """Application gateway web application firewall configuration.
 
-    :param enabled: Whether the web application firewall is enabled.
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Whether the web application firewall is enabled.
     :type enabled: bool
     :param firewall_mode: Web application firewall mode. Possible values are:
      'Detection' and 'Prevention'. Possible values include: 'Detection',
@@ -33,7 +35,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
         'firewall_mode': {'key': 'firewallMode', 'type': 'str'},
     }
 
-    def __init__(self, enabled, firewall_mode=None):
-        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__()
-        self.enabled = enabled
-        self.firewall_mode = firewall_mode
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayWebApplicationFirewallConfiguration, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.firewall_mode = kwargs.get('firewall_mode', None)

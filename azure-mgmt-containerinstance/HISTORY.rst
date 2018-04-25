@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.4.0 (2018-03-19)
+++++++++++++++++++
+
+**Breaking changes**
+
+- container_groups.create_or_update is now a Long Running operation
+
+**Features**
+
+- New start_container operation group
+
 0.3.1 (2018-02-05)
 ++++++++++++++++++
 

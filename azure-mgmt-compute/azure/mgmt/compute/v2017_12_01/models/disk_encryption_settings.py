@@ -34,8 +34,8 @@ class DiskEncryptionSettings(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, disk_encryption_key=None, key_encryption_key=None, enabled=None):
-        super(DiskEncryptionSettings, self).__init__()
-        self.disk_encryption_key = disk_encryption_key
-        self.key_encryption_key = key_encryption_key
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(DiskEncryptionSettings, self).__init__(**kwargs)
+        self.disk_encryption_key = kwargs.get('disk_encryption_key', None)
+        self.key_encryption_key = kwargs.get('key_encryption_key', None)
+        self.enabled = kwargs.get('enabled', None)

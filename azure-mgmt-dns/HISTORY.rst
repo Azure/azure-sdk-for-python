@@ -3,6 +3,21 @@
 Release History
 ===============
 
+2.0.0rc1 (2018-03-14)
++++++++++++++++++++++
+
+**Features**
+
+- Add public/private zone
+- Add record_sets.list_all_by_dns_zone operation
+- Add zones.update operation
+
+**Breaking changes**
+
+- 'zone_type' is now required when creating a zone ('Public' is equivalent as previous behavior)
+
+New API version 2018-03-01-preview
+
 1.2.0 (2017-10-26)
 ++++++++++++++++++
 

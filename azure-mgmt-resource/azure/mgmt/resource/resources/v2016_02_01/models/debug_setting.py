@@ -23,6 +23,6 @@ class DebugSetting(Model):
         'detail_level': {'key': 'detailLevel', 'type': 'str'},
     }
 
-    def __init__(self, detail_level=None):
-        super(DebugSetting, self).__init__()
-        self.detail_level = detail_level
+    def __init__(self, **kwargs):
+        super(DebugSetting, self).__init__(**kwargs)
+        self.detail_level = kwargs.get('detail_level', None)

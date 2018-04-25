@@ -30,8 +30,8 @@ class DeploymentOperation(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentOperationProperties'},
     }
 
-    def __init__(self, id=None, operation_id=None, properties=None):
-        super(DeploymentOperation, self).__init__()
-        self.id = id
-        self.operation_id = operation_id
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(DeploymentOperation, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.operation_id = kwargs.get('operation_id', None)
+        self.properties = kwargs.get('properties', None)

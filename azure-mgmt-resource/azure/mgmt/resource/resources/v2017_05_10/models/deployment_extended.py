@@ -15,9 +15,14 @@ from msrest.serialization import Model
 class DeploymentExtended(Model):
     """Deployment information.
 
-    :param id: The ID of the deployment.
-    :type id: str
-    :param name: The name of the deployment.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The ID of the deployment.
+    :vartype id: str
+    :param name: Required. The name of the deployment.
     :type name: str
     :param properties: Deployment properties.
     :type properties:
@@ -25,6 +30,7 @@ class DeploymentExtended(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'required': True},
     }
 
@@ -34,8 +40,8 @@ class DeploymentExtended(Model):
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, name, id=None, properties=None):
-        super(DeploymentExtended, self).__init__()
-        self.id = id
-        self.name = name
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(DeploymentExtended, self).__init__(**kwargs)
+        self.id = None
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)

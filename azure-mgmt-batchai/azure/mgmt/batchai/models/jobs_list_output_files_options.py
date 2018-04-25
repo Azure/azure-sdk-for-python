@@ -15,10 +15,14 @@ from msrest.serialization import Model
 class JobsListOutputFilesOptions(Model):
     """Additional parameters for list_output_files operation.
 
-    :param outputdirectoryid: Id of the job output directory. This is the
-     OutputDirectory-->id parameter that is given by the user during Create
-     Job.
+    All required parameters must be populated in order to send to Azure.
+
+    :param outputdirectoryid: Required. Id of the job output directory. This
+     is the OutputDirectory-->id parameter that is given by the user during
+     Create Job.
     :type outputdirectoryid: str
+    :param directory: The path to the directory. Default value: "." .
+    :type directory: str
     :param linkexpiryinminutes: The number of minutes after which the download
      link will expire. Default value: 60 .
     :type linkexpiryinminutes: int
@@ -31,7 +35,16 @@ class JobsListOutputFilesOptions(Model):
         'outputdirectoryid': {'required': True},
     }
 
-    def __init__(self, outputdirectoryid, linkexpiryinminutes=60, max_results=1000):
-        self.outputdirectoryid = outputdirectoryid
-        self.linkexpiryinminutes = linkexpiryinminutes
-        self.max_results = max_results
+    _attribute_map = {
+        'outputdirectoryid': {'key': '', 'type': 'str'},
+        'directory': {'key': '', 'type': 'str'},
+        'linkexpiryinminutes': {'key': '', 'type': 'int'},
+        'max_results': {'key': '', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(JobsListOutputFilesOptions, self).__init__(**kwargs)
+        self.outputdirectoryid = kwargs.get('outputdirectoryid', None)
+        self.directory = kwargs.get('directory', ".")
+        self.linkexpiryinminutes = kwargs.get('linkexpiryinminutes', 60)
+        self.max_results = kwargs.get('max_results', 1000)

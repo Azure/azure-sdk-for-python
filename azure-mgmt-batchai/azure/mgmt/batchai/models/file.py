@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class File(Model):
-    """Properties of the file.
+    """Properties of the file or directory.
 
-    :param name: file name
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of the file.
     :type name: str
-    :param download_url: file downloand url, example:
-     https://mystg.blob.core.windows.net/mycontainer/myModel_1.dnn. This will
-     be returned only if the model has been archived. During job run, this
-     won't be returned and customers can use SSH tunneling to download. Users
-     can use Get Remote Login Information API to get the IP address and port
-     information of all the compute nodes running the job.
+    :param is_directory: Required. Indicates if the file is a directory.
+    :type is_directory: bool
+    :param download_url: Will contain an URL to download the corresponding
+     file. The downloadUrl is not returned for directories.
     :type download_url: str
     :param last_modified: The time at which the file was last modified. The
      time at which the file was last modified.
@@ -33,18 +33,21 @@ class File(Model):
 
     _validation = {
         'name': {'required': True},
-        'download_url': {'required': True},
+        'is_directory': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'is_directory': {'key': 'isDirectory', 'type': 'bool'},
         'download_url': {'key': 'downloadUrl', 'type': 'str'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'content_length': {'key': 'properties.contentLength', 'type': 'long'},
     }
 
-    def __init__(self, name, download_url, last_modified=None, content_length=None):
-        self.name = name
-        self.download_url = download_url
-        self.last_modified = last_modified
-        self.content_length = content_length
+    def __init__(self, **kwargs):
+        super(File, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.is_directory = kwargs.get('is_directory', None)
+        self.download_url = kwargs.get('download_url', None)
+        self.last_modified = kwargs.get('last_modified', None)
+        self.content_length = kwargs.get('content_length', None)

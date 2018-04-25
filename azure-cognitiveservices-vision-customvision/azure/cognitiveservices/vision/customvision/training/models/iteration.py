@@ -67,11 +67,11 @@ class Iteration(Model):
         'domain_id': {'key': 'DomainId', 'type': 'str'},
     }
 
-    def __init__(self, name=None, is_default=None):
-        super(Iteration, self).__init__()
+    def __init__(self, **kwargs):
+        super(Iteration, self).__init__(**kwargs)
         self.id = None
-        self.name = name
-        self.is_default = is_default
+        self.name = kwargs.get('name', None)
+        self.is_default = kwargs.get('is_default', None)
         self.status = None
         self.created = None
         self.last_modified = None

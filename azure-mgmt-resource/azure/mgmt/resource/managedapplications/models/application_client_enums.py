@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     accepted = "Accepted"
     running = "Running"
@@ -27,19 +27,19 @@ class ProvisioningState(Enum):
     updating = "Updating"
 
 
-class ApplicationLockLevel(Enum):
+class ApplicationLockLevel(str, Enum):
 
     can_not_delete = "CanNotDelete"
     read_only = "ReadOnly"
     none = "None"
 
 
-class ApplicationArtifactType(Enum):
+class ApplicationArtifactType(str, Enum):
 
     template = "Template"
     custom = "Custom"
 
 
-class ResourceIdentityType(Enum):
+class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"

@@ -18,6 +18,8 @@ class Application(GenericResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID
     :vartype id: str
     :ivar name: Resource name
@@ -34,7 +36,7 @@ class Application(GenericResource):
     :type sku: ~azure.mgmt.resource.managedapplications.models.Sku
     :param identity: The identity of the resource.
     :type identity: ~azure.mgmt.resource.managedapplications.models.Identity
-    :param managed_resource_group_id: The managed resource group Id.
+    :param managed_resource_group_id: Required. The managed resource group Id.
     :type managed_resource_group_id: str
     :param application_definition_id: The fully qualified path of managed
      application definition Id.
@@ -56,8 +58,8 @@ class Application(GenericResource):
     :type ui_definition_uri: str
     :param plan: The plan information.
     :type plan: ~azure.mgmt.resource.managedapplications.models.Plan
-    :param kind: The kind of the managed application. Allowed values are
-     MarketPlace and ServiceCatalog.
+    :param kind: Required. The kind of the managed application. Allowed values
+     are MarketPlace and ServiceCatalog.
     :type kind: str
     """
 
@@ -90,13 +92,13 @@ class Application(GenericResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, managed_resource_group_id, kind, location=None, tags=None, managed_by=None, sku=None, identity=None, application_definition_id=None, parameters=None, ui_definition_uri=None, plan=None):
-        super(Application, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
-        self.managed_resource_group_id = managed_resource_group_id
-        self.application_definition_id = application_definition_id
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(Application, self).__init__(**kwargs)
+        self.managed_resource_group_id = kwargs.get('managed_resource_group_id', None)
+        self.application_definition_id = kwargs.get('application_definition_id', None)
+        self.parameters = kwargs.get('parameters', None)
         self.outputs = None
         self.provisioning_state = None
-        self.ui_definition_uri = ui_definition_uri
-        self.plan = plan
-        self.kind = kind
+        self.ui_definition_uri = kwargs.get('ui_definition_uri', None)
+        self.plan = kwargs.get('plan', None)
+        self.kind = kwargs.get('kind', None)

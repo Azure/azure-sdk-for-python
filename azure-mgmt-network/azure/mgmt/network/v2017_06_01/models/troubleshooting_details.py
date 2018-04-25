@@ -36,10 +36,10 @@ class TroubleshootingDetails(Model):
         'recommended_actions': {'key': 'recommendedActions', 'type': '[TroubleshootingRecommendedActions]'},
     }
 
-    def __init__(self, id=None, reason_type=None, summary=None, detail=None, recommended_actions=None):
-        super(TroubleshootingDetails, self).__init__()
-        self.id = id
-        self.reason_type = reason_type
-        self.summary = summary
-        self.detail = detail
-        self.recommended_actions = recommended_actions
+    def __init__(self, **kwargs):
+        super(TroubleshootingDetails, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.reason_type = kwargs.get('reason_type', None)
+        self.summary = kwargs.get('summary', None)
+        self.detail = kwargs.get('detail', None)
+        self.recommended_actions = kwargs.get('recommended_actions', None)

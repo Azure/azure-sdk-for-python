@@ -28,7 +28,7 @@ from devtools_testutils import (
 )
 
 
-AZURE_LOCATION = 'japanwest'
+AZURE_LOCATION = 'westcentralus'
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 
 
@@ -76,7 +76,7 @@ class BatchTest(AzureMgmtTestCase):
             self.fail("Expected BatchErrorExcption, instead got: {!r}".format(err))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
-    @StorageAccountPreparer(name_prefix='batch', location=AZURE_LOCATION)
+    @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
     @JobPreparer()
     def test_batch_applications(self, batch_job, **kwargs):
@@ -178,6 +178,16 @@ class BatchTest(AzureMgmtTestCase):
         )
         response = client.pool.add(test_iaas_pool)
         self.assertIsNone(response)
+
+        # Test list pool node counnt
+        counts = list(client.account.list_pool_node_counts())
+        self.assertIsNotNone(counts)
+        self.assertEqual(len(counts), 1)
+        self.assertEqual(counts[0].pool_id, test_iaas_pool.id)
+        self.assertIsNotNone(counts[0].dedicated)
+        self.assertEqual(counts[0].dedicated.total, 0)
+        self.assertEqual(counts[0].dedicated.leaving_pool, 0)
+        self.assertEqual(counts[0].low_priority.total, 0)
 
         # Test Create Pool with Network Configuration
         network_config = models.NetworkConfiguration('/subscriptions/00000000-0000-0000-0000-000000000000'
@@ -553,7 +563,7 @@ class BatchTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
-    @PoolPreparer(location=AZURE_LOCATION, size=2, config='paas')
+    @PoolPreparer(location=AZURE_LOCATION, size=2, config='iaas')
     def test_batch_compute_nodes(self, batch_pool, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test List Compute Nodes
@@ -568,6 +578,15 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsInstance(node, models.ComputeNode)
         self.assertEqual(node.scheduling_state, models.SchedulingState.enabled)
         self.assertTrue(node.is_dedicated)
+
+        # Test Upload Log
+        config = models.UploadBatchServiceLogsConfiguration(
+            container_url = "https://test.blob.core.windows.net:443/test-container", 
+            start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=6))
+        result = client.compute_node.upload_batch_service_logs(batch_pool.name, nodes[0].id, config)
+        self.assertIsNotNone(result)
+        self.assertTrue(result.number_of_files_uploaded > 0)
+        self.assertIsNotNone(result.virtual_directory_name)
 
         # Test Disable Scheduling
         response = client.compute_node.disable_scheduling(batch_pool.name, nodes[0].id)

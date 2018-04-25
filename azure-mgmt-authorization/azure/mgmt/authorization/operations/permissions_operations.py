@@ -22,16 +22,18 @@ class PermissionsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2015-07-01".
+    :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for this operation. Constant value: "2018-01-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-07-01"
+        self.api_version = "2018-01-01-preview"
 
         self.config = config
 
@@ -39,8 +41,7 @@ class PermissionsOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets all permissions the caller has for a resource group.
 
-        :param resource_group_name: The name of the resource group to get the
-         permissions for. The name is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -56,7 +57,7 @@ class PermissionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Authorization/permissions'
+                url = self.list_for_resource_group.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -84,7 +85,7 @@ class PermissionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -102,13 +103,13 @@ class PermissionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Authorization/permissions'}
 
     def list_for_resource(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets all permissions the caller has for a resource.
 
-        :param resource_group_name: The name of the resource group containing
-         the resource. The name is case insensitive.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param resource_provider_namespace: The namespace of the resource
          provider.
@@ -134,7 +135,7 @@ class PermissionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/permissions'
+                url = self.list_for_resource.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'resourceProviderNamespace': self._serialize.url("resource_provider_namespace", resource_provider_namespace, 'str'),
@@ -166,7 +167,7 @@ class PermissionsOperations(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -184,3 +185,4 @@ class PermissionsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_for_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/permissions'}

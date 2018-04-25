@@ -12,6 +12,7 @@ from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     AbstractPreparer, GeneralNameReplacer,
     OAuthRequestResponsesFilter, DeploymentNameReplacer,
+    RequestUrlNormalizer
 )
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
@@ -73,7 +74,7 @@ class AzureMgmtTestCase(ReplayableTest):
             recording_dir=recording_dir,
             recording_name=recording_name or self.qualified_test_name,
             recording_processors=recording_processors or self._get_recording_processors(),
-            replay_processors=replay_processors,
+            replay_processors=replay_processors or self._get_replay_processors(),
             recording_patches=recording_patches,
             replay_patches=replay_patches,
         )
@@ -99,7 +100,13 @@ class AzureMgmtTestCase(ReplayableTest):
         return [
             self.scrubber,
             OAuthRequestResponsesFilter(),
-            DeploymentNameReplacer(),
+            # DeploymentNameReplacer(), Not use this one, give me full control on deployment name
+            RequestUrlNormalizer()
+        ]
+
+    def _get_replay_processors(self):
+        return [
+            RequestUrlNormalizer()
         ]
 
     def is_playback(self):

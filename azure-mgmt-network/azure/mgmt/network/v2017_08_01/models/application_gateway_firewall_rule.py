@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class ApplicationGatewayFirewallRule(Model):
     """A web application firewall rule.
 
-    :param rule_id: The identifier of the web application firewall rule.
+    All required parameters must be populated in order to send to Azure.
+
+    :param rule_id: Required. The identifier of the web application firewall
+     rule.
     :type rule_id: int
     :param description: The description of the web application firewall rule.
     :type description: str
@@ -30,7 +33,7 @@ class ApplicationGatewayFirewallRule(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, rule_id, description=None):
-        super(ApplicationGatewayFirewallRule, self).__init__()
-        self.rule_id = rule_id
-        self.description = description
+    def __init__(self, **kwargs):
+        super(ApplicationGatewayFirewallRule, self).__init__(**kwargs)
+        self.rule_id = kwargs.get('rule_id', None)
+        self.description = kwargs.get('description', None)

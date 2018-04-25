@@ -39,8 +39,8 @@ class Quota(Model):
         'time_until_reset': {'key': 'TimeUntilReset', 'type': 'duration'},
     }
 
-    def __init__(self):
-        super(Quota, self).__init__()
+    def __init__(self, **kwargs):
+        super(Quota, self).__init__(**kwargs)
         self.total = None
         self.used = None
         self.time_until_reset = None

@@ -17,11 +17,16 @@ class RoleDefinitionFilter(Model):
 
     :param role_name: Returns role definition with the specific name.
     :type role_name: str
+    :param type: Returns role definition with the specific type.
+    :type type: str
     """
 
     _attribute_map = {
         'role_name': {'key': 'roleName', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, role_name=None):
-        self.role_name = role_name
+    def __init__(self, **kwargs):
+        super(RoleDefinitionFilter, self).__init__(**kwargs)
+        self.role_name = kwargs.get('role_name', None)
+        self.type = kwargs.get('type', None)

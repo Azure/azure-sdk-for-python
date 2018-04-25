@@ -26,7 +26,7 @@ class DatabaseAccountPatchParameters(Model):
         'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, tags=None, capabilities=None):
-        super(DatabaseAccountPatchParameters, self).__init__()
-        self.tags = tags
-        self.capabilities = capabilities
+    def __init__(self, **kwargs):
+        super(DatabaseAccountPatchParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.capabilities = kwargs.get('capabilities', None)

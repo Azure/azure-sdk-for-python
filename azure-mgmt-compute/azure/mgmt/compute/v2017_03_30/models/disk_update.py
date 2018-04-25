@@ -42,8 +42,8 @@ class DiskUpdate(ResourceUpdate):
         'encryption_settings': {'key': 'properties.encryptionSettings', 'type': 'EncryptionSettings'},
     }
 
-    def __init__(self, tags=None, sku=None, os_type=None, disk_size_gb=None, encryption_settings=None):
-        super(DiskUpdate, self).__init__(tags=tags, sku=sku)
-        self.os_type = os_type
-        self.disk_size_gb = disk_size_gb
-        self.encryption_settings = encryption_settings
+    def __init__(self, **kwargs):
+        super(DiskUpdate, self).__init__(**kwargs)
+        self.os_type = kwargs.get('os_type', None)
+        self.disk_size_gb = kwargs.get('disk_size_gb', None)
+        self.encryption_settings = kwargs.get('encryption_settings', None)

@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ParametersLink(Model):
     """Entity representing the reference to the deployment paramaters.
 
-    :param uri: URI referencing the template.
+    All required parameters must be populated in order to send to Azure.
+
+    :param uri: Required. URI referencing the template.
     :type uri: str
     :param content_version: If included it must match the ContentVersion in
      the template.
@@ -31,7 +33,7 @@ class ParametersLink(Model):
         'content_version': {'key': 'contentVersion', 'type': 'str'},
     }
 
-    def __init__(self, uri, content_version=None):
-        super(ParametersLink, self).__init__()
-        self.uri = uri
-        self.content_version = content_version
+    def __init__(self, **kwargs):
+        super(ParametersLink, self).__init__(**kwargs)
+        self.uri = kwargs.get('uri', None)
+        self.content_version = kwargs.get('content_version', None)

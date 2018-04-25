@@ -40,30 +40,14 @@ class CloudPool(Model):
     :type last_modified: datetime
     :param creation_time: The creation time of the pool.
     :type creation_time: datetime
-    :param state: The current state of the pool. Values are:
-     active - The pool is available to run tasks subject to the availability of
-     compute nodes.
-     deleting - The user has requested that the pool be deleted, but the delete
-     operation has not yet completed.
-     upgrading - The user has requested that the operating system of the pool's
-     nodes be upgraded, but the upgrade operation has not yet completed (that
-     is, some nodes in the pool have not yet been upgraded). While upgrading,
-     the pool may be able to run tasks (with reduced capacity) but this is not
-     guaranteed. Possible values include: 'active', 'deleting', 'upgrading'
+    :param state: The current state of the pool. Possible values include:
+     'active', 'deleting', 'upgrading'
     :type state: str or ~azure.batch.models.PoolState
     :param state_transition_time: The time at which the pool entered its
      current state.
     :type state_transition_time: datetime
-    :param allocation_state: Whether the pool is resizing. Values are:
-     steady - The pool is not resizing. There are no changes to the number of
-     nodes in the pool in progress. A pool enters this state when it is created
-     and when no operations are being performed on the pool to change the
-     number of dedicated nodes.
-     resizing - The pool is resizing; that is, compute nodes are being added to
-     or removed from the pool.
-     stopping - The pool was resizing, but the user has requested that the
-     resize be stopped, but the stop request has not yet been completed.
-     Possible values include: 'steady', 'resizing', 'stopping'
+    :param allocation_state: Whether the pool is resizing. Possible values
+     include: 'steady', 'resizing', 'stopping'
     :type allocation_state: str or ~azure.batch.models.AllocationState
     :param allocation_state_transition_time: The time at which the pool
      entered its current allocation state.
@@ -72,7 +56,7 @@ class CloudPool(Model):
      machines in a pool are the same size. For information about available
      sizes of virtual machines for Cloud Services pools (pools created with
      cloudServiceConfiguration), see Sizes for Cloud Services
-     (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
+     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
      Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
      A2V2. For information about available VM sizes for pools using images from
      the Virtual Machines Marketplace (pools created with
@@ -181,7 +165,9 @@ class CloudPool(Model):
      metadata.
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param stats: Utilization and resource usage statistics for the entire
-     lifetime of the pool.
+     lifetime of the pool. The statistics may not be immediately available. The
+     Batch service performs periodic roll-up of statistics. The typical delay
+     is about 30 minutes.
     :type stats: ~azure.batch.models.PoolStatistics
     """
 
@@ -223,6 +209,7 @@ class CloudPool(Model):
     }
 
     def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes=None, current_low_priority_nodes=None, target_dedicated_nodes=None, target_low_priority_nodes=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None):
+        super(CloudPool, self).__init__()
         self.id = id
         self.display_name = display_name
         self.url = url
