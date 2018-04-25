@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class AzureResource(Model):
-    """An Azure Resource Manager resource.
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
+    :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
@@ -41,7 +42,4 @@ class AzureResource(Model):
     }
 
     def __init__(self, **kwargs):
-        super(AzureResource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        super(ProxyResource, self).__init__(**kwargs)

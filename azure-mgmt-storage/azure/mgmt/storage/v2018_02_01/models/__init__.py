@@ -38,11 +38,14 @@ try:
     from .storage_account_update_parameters_py3 import StorageAccountUpdateParameters
     from .usage_name_py3 import UsageName
     from .usage_py3 import Usage
-    from .resource_py3 import Resource
     from .account_sas_parameters_py3 import AccountSasParameters
     from .list_account_sas_response_py3 import ListAccountSasResponse
     from .service_sas_parameters_py3 import ServiceSasParameters
     from .list_service_sas_response_py3 import ListServiceSasResponse
+    from .proxy_resource_py3 import ProxyResource
+    from .azure_entity_resource_py3 import AzureEntityResource
+    from .resource_py3 import Resource
+    from .tracked_resource_py3 import TrackedResource
     from .update_history_property_py3 import UpdateHistoryProperty
     from .immutability_policy_properties_py3 import ImmutabilityPolicyProperties
     from .tag_property_py3 import TagProperty
@@ -52,8 +55,6 @@ try:
     from .legal_hold_py3 import LegalHold
     from .list_container_item_py3 import ListContainerItem
     from .list_container_items_py3 import ListContainerItems
-    from .azure_resource_py3 import AzureResource
-    from .azure_entity_resource_py3 import AzureEntityResource
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .dimension import Dimension
@@ -83,11 +84,14 @@ except (SyntaxError, ImportError):
     from .storage_account_update_parameters import StorageAccountUpdateParameters
     from .usage_name import UsageName
     from .usage import Usage
-    from .resource import Resource
     from .account_sas_parameters import AccountSasParameters
     from .list_account_sas_response import ListAccountSasResponse
     from .service_sas_parameters import ServiceSasParameters
     from .list_service_sas_response import ListServiceSasResponse
+    from .proxy_resource import ProxyResource
+    from .azure_entity_resource import AzureEntityResource
+    from .resource import Resource
+    from .tracked_resource import TrackedResource
     from .update_history_property import UpdateHistoryProperty
     from .immutability_policy_properties import ImmutabilityPolicyProperties
     from .tag_property import TagProperty
@@ -97,8 +101,6 @@ except (SyntaxError, ImportError):
     from .legal_hold import LegalHold
     from .list_container_item import ListContainerItem
     from .list_container_items import ListContainerItems
-    from .azure_resource import AzureResource
-    from .azure_entity_resource import AzureEntityResource
 from .operation_paged import OperationPaged
 from .sku_paged import SkuPaged
 from .storage_account_paged import StorageAccountPaged
@@ -161,11 +163,14 @@ __all__ = [
     'StorageAccountUpdateParameters',
     'UsageName',
     'Usage',
-    'Resource',
     'AccountSasParameters',
     'ListAccountSasResponse',
     'ServiceSasParameters',
     'ListServiceSasResponse',
+    'ProxyResource',
+    'AzureEntityResource',
+    'Resource',
+    'TrackedResource',
     'UpdateHistoryProperty',
     'ImmutabilityPolicyProperties',
     'TagProperty',
@@ -175,8 +180,6 @@ __all__ = [
     'LegalHold',
     'ListContainerItem',
     'ListContainerItems',
-    'AzureResource',
-    'AzureEntityResource',
     'OperationPaged',
     'SkuPaged',
     'StorageAccountPaged',

@@ -9,26 +9,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class StorageAccount(Resource):
+class StorageAccount(TrackedResource):
     """The storage account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Tags assigned to a resource; can be used for viewing and
-     grouping a resource (across resource groups).
+    :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
     :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2018_02_01.models.Sku
     :ivar kind: Gets the Kind. Possible values include: 'Storage',
@@ -102,6 +105,7 @@ class StorageAccount(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'sku': {'readonly': True},
         'kind': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -123,8 +127,8 @@ class StorageAccount(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'kind': {'key': 'kind', 'type': 'Kind'},
         'identity': {'key': 'identity', 'type': 'Identity'},
@@ -144,8 +148,8 @@ class StorageAccount(Resource):
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, identity=None, enable_https_traffic_only: bool=False, **kwargs) -> None:
-        super(StorageAccount, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: str, tags=None, identity=None, enable_https_traffic_only: bool=False, **kwargs) -> None:
+        super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = None
         self.kind = None
         self.identity = identity
