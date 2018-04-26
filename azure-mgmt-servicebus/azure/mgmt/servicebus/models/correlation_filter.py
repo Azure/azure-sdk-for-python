@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class CorrelationFilter(Model):
     """Represents the correlation filter expression.
 
+    :param properties: dictionary object for custom filters
+    :type properties: dict[str, str]
     :param correlation_id: Identifier of the correlation.
     :type correlation_id: str
     :param message_id: Identifier of the message.
@@ -37,6 +39,7 @@ class CorrelationFilter(Model):
     """
 
     _attribute_map = {
+        'properties': {'key': 'properties', 'type': '{str}'},
         'correlation_id': {'key': 'correlationId', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
         'to': {'key': 'to', 'type': 'str'},
@@ -50,6 +53,7 @@ class CorrelationFilter(Model):
 
     def __init__(self, **kwargs):
         super(CorrelationFilter, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.correlation_id = kwargs.get('correlation_id', None)
         self.message_id = kwargs.get('message_id', None)
         self.to = kwargs.get('to', None)

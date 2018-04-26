@@ -110,7 +110,7 @@ class SBTopic(Resource):
     }
 
     def __init__(self, *, default_message_time_to_live=None, max_size_in_megabytes: int=None, requires_duplicate_detection: bool=None, duplicate_detection_history_time_window=None, enable_batched_operations: bool=None, status=None, support_ordering: bool=None, auto_delete_on_idle=None, enable_partitioning: bool=None, enable_express: bool=None, **kwargs) -> None:
-        super(SBTopic, self).__init__(, **kwargs)
+        super(SBTopic, self).__init__(**kwargs)
         self.size_in_bytes = None
         self.created_at = None
         self.updated_at = None
