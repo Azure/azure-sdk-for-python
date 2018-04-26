@@ -25,6 +25,6 @@ class ContainerRegistryEventActor(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, **kwargs) -> None:
         super(ContainerRegistryEventActor, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name

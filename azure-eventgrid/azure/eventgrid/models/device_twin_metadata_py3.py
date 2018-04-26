@@ -12,19 +12,18 @@
 from msrest.serialization import Model
 
 
-class ContainerRegistryEventActor(Model):
-    """The agent that initiated the event. For most situations, this could be from
-    the authorization context of the request.
+class DeviceTwinMetadata(Model):
+    """Metadata information for the properties JSON document.
 
-    :param name: The subject or username associated with the request context
-     that generated the event.
-    :type name: str
+    :param last_updated: The ISO8601 timestamp of the last time the properties
+     were updated.
+    :type last_updated: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'last_updated': {'key': 'lastUpdated', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerRegistryEventActor, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, last_updated: str=None, **kwargs) -> None:
+        super(DeviceTwinMetadata, self).__init__(**kwargs)
+        self.last_updated = last_updated

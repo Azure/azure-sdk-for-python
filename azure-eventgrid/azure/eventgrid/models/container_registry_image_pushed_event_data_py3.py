@@ -12,9 +12,9 @@
 from .container_registry_event_data import ContainerRegistryEventData
 
 
-class ContainerRegistryImageDeletedEventData(ContainerRegistryEventData):
+class ContainerRegistryImagePushedEventData(ContainerRegistryEventData):
     """Schema of the Data property of an EventGridEvent for a
-    Microsoft.ContainerRegistry.ImageDeleted event.
+    Microsoft.ContainerRegistry.ImagePushed event.
 
     :param id: The event ID.
     :type id: str
@@ -44,5 +44,5 @@ class ContainerRegistryImageDeletedEventData(ContainerRegistryEventData):
         'source': {'key': 'source', 'type': 'ContainerRegistryEventSource'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerRegistryImageDeletedEventData, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, timestamp=None, action: str=None, target=None, request=None, actor=None, source=None, **kwargs) -> None:
+        super(ContainerRegistryImagePushedEventData, self).__init__(id=id, timestamp=timestamp, action=action, target=target, request=request, actor=actor, source=source, **kwargs)

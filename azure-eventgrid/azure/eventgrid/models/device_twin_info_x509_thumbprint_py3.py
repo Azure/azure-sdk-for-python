@@ -30,7 +30,7 @@ class DeviceTwinInfoX509Thumbprint(Model):
         'secondary_thumbprint': {'key': 'secondaryThumbprint', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, primary_thumbprint: str=None, secondary_thumbprint: str=None, **kwargs) -> None:
         super(DeviceTwinInfoX509Thumbprint, self).__init__(**kwargs)
-        self.primary_thumbprint = kwargs.get('primary_thumbprint', None)
-        self.secondary_thumbprint = kwargs.get('secondary_thumbprint', None)
+        self.primary_thumbprint = primary_thumbprint
+        self.secondary_thumbprint = secondary_thumbprint

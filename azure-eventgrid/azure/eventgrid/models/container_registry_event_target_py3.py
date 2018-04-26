@@ -42,12 +42,12 @@ class ContainerRegistryEventTarget(Model):
         'tag': {'key': 'tag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, media_type: str=None, size: int=None, digest: str=None, length: int=None, repository: str=None, url: str=None, tag: str=None, **kwargs) -> None:
         super(ContainerRegistryEventTarget, self).__init__(**kwargs)
-        self.media_type = kwargs.get('media_type', None)
-        self.size = kwargs.get('size', None)
-        self.digest = kwargs.get('digest', None)
-        self.length = kwargs.get('length', None)
-        self.repository = kwargs.get('repository', None)
-        self.url = kwargs.get('url', None)
-        self.tag = kwargs.get('tag', None)
+        self.media_type = media_type
+        self.size = size
+        self.digest = digest
+        self.length = length
+        self.repository = repository
+        self.url = url
+        self.tag = tag

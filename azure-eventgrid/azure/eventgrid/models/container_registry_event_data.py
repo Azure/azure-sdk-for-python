@@ -43,12 +43,12 @@ class ContainerRegistryEventData(Model):
         'source': {'key': 'source', 'type': 'ContainerRegistryEventSource'},
     }
 
-    def __init__(self, id=None, timestamp=None, action=None, target=None, request=None, actor=None, source=None):
-        super(ContainerRegistryEventData, self).__init__()
-        self.id = id
-        self.timestamp = timestamp
-        self.action = action
-        self.target = target
-        self.request = request
-        self.actor = actor
-        self.source = source
+    def __init__(self, **kwargs):
+        super(ContainerRegistryEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.action = kwargs.get('action', None)
+        self.target = kwargs.get('target', None)
+        self.request = kwargs.get('request', None)
+        self.actor = kwargs.get('actor', None)
+        self.source = kwargs.get('source', None)

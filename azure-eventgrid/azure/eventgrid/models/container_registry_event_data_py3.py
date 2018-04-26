@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_registry_event_data import ContainerRegistryEventData
+from msrest.serialization import Model
 
 
-class ContainerRegistryImageDeletedEventData(ContainerRegistryEventData):
-    """Schema of the Data property of an EventGridEvent for a
-    Microsoft.ContainerRegistry.ImageDeleted event.
+class ContainerRegistryEventData(Model):
+    """The content of the event request message.
 
     :param id: The event ID.
     :type id: str
@@ -44,5 +43,12 @@ class ContainerRegistryImageDeletedEventData(ContainerRegistryEventData):
         'source': {'key': 'source', 'type': 'ContainerRegistryEventSource'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerRegistryImageDeletedEventData, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, timestamp=None, action: str=None, target=None, request=None, actor=None, source=None, **kwargs) -> None:
+        super(ContainerRegistryEventData, self).__init__(**kwargs)
+        self.id = id
+        self.timestamp = timestamp
+        self.action = action
+        self.target = target
+        self.request = request
+        self.actor = actor
+        self.source = source

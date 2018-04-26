@@ -44,5 +44,5 @@ class ContainerRegistryImageDeletedEventData(ContainerRegistryEventData):
         'source': {'key': 'source', 'type': 'ContainerRegistryEventSource'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerRegistryImageDeletedEventData, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, timestamp=None, action: str=None, target=None, request=None, actor=None, source=None, **kwargs) -> None:
+        super(ContainerRegistryImageDeletedEventData, self).__init__(id=id, timestamp=timestamp, action=action, target=target, request=request, actor=actor, source=source, **kwargs)

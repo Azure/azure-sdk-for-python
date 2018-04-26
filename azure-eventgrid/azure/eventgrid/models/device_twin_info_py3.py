@@ -63,16 +63,16 @@ class DeviceTwinInfo(Model):
         'x509_thumbprint': {'key': 'x509Thumbprint', 'type': 'DeviceTwinInfoX509Thumbprint'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, authentication_type: str=None, cloud_to_device_message_count: float=None, connection_state: str=None, device_id: str=None, etag: str=None, last_activity_time: str=None, properties=None, status: str=None, status_update_time: str=None, version: float=None, x509_thumbprint=None, **kwargs) -> None:
         super(DeviceTwinInfo, self).__init__(**kwargs)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.cloud_to_device_message_count = kwargs.get('cloud_to_device_message_count', None)
-        self.connection_state = kwargs.get('connection_state', None)
-        self.device_id = kwargs.get('device_id', None)
-        self.etag = kwargs.get('etag', None)
-        self.last_activity_time = kwargs.get('last_activity_time', None)
-        self.properties = kwargs.get('properties', None)
-        self.status = kwargs.get('status', None)
-        self.status_update_time = kwargs.get('status_update_time', None)
-        self.version = kwargs.get('version', None)
-        self.x509_thumbprint = kwargs.get('x509_thumbprint', None)
+        self.authentication_type = authentication_type
+        self.cloud_to_device_message_count = cloud_to_device_message_count
+        self.connection_state = connection_state
+        self.device_id = device_id
+        self.etag = etag
+        self.last_activity_time = last_activity_time
+        self.properties = properties
+        self.status = status
+        self.status_update_time = status_update_time
+        self.version = version
+        self.x509_thumbprint = x509_thumbprint

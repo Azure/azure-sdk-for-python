@@ -9,31 +9,58 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_blob_created_event_data import StorageBlobCreatedEventData
-from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
-from .event_hub_capture_file_created_event_data import EventHubCaptureFileCreatedEventData
-from .resource_write_success_data import ResourceWriteSuccessData
-from .resource_write_failure_data import ResourceWriteFailureData
-from .resource_write_cancel_data import ResourceWriteCancelData
-from .resource_delete_success_data import ResourceDeleteSuccessData
-from .resource_delete_failure_data import ResourceDeleteFailureData
-from .resource_delete_cancel_data import ResourceDeleteCancelData
-from .event_grid_event import EventGridEvent
-from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
-from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
-from .device_twin_metadata import DeviceTwinMetadata
-from .device_twin_properties import DeviceTwinProperties
-from .device_twin_info_properties import DeviceTwinInfoProperties
-from .device_twin_info_x509_thumbprint import DeviceTwinInfoX509Thumbprint
-from .device_twin_info import DeviceTwinInfo
-from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
-from .container_registry_image_pushed_event_data import ContainerRegistryImagePushedEventData
-from .container_registry_image_deleted_event_data import ContainerRegistryImageDeletedEventData
-from .container_registry_event_target import ContainerRegistryEventTarget
-from .container_registry_event_request import ContainerRegistryEventRequest
-from .container_registry_event_actor import ContainerRegistryEventActor
-from .container_registry_event_source import ContainerRegistryEventSource
-from .container_registry_event_data import ContainerRegistryEventData
+try:
+    from .storage_blob_created_event_data_py3 import StorageBlobCreatedEventData
+    from .storage_blob_deleted_event_data_py3 import StorageBlobDeletedEventData
+    from .event_hub_capture_file_created_event_data_py3 import EventHubCaptureFileCreatedEventData
+    from .resource_write_success_data_py3 import ResourceWriteSuccessData
+    from .resource_write_failure_data_py3 import ResourceWriteFailureData
+    from .resource_write_cancel_data_py3 import ResourceWriteCancelData
+    from .resource_delete_success_data_py3 import ResourceDeleteSuccessData
+    from .resource_delete_failure_data_py3 import ResourceDeleteFailureData
+    from .resource_delete_cancel_data_py3 import ResourceDeleteCancelData
+    from .event_grid_event_py3 import EventGridEvent
+    from .iot_hub_device_created_event_data_py3 import IotHubDeviceCreatedEventData
+    from .iot_hub_device_deleted_event_data_py3 import IotHubDeviceDeletedEventData
+    from .device_twin_metadata_py3 import DeviceTwinMetadata
+    from .device_twin_properties_py3 import DeviceTwinProperties
+    from .device_twin_info_properties_py3 import DeviceTwinInfoProperties
+    from .device_twin_info_x509_thumbprint_py3 import DeviceTwinInfoX509Thumbprint
+    from .device_twin_info_py3 import DeviceTwinInfo
+    from .device_life_cycle_event_properties_py3 import DeviceLifeCycleEventProperties
+    from .container_registry_image_pushed_event_data_py3 import ContainerRegistryImagePushedEventData
+    from .container_registry_image_deleted_event_data_py3 import ContainerRegistryImageDeletedEventData
+    from .container_registry_event_target_py3 import ContainerRegistryEventTarget
+    from .container_registry_event_request_py3 import ContainerRegistryEventRequest
+    from .container_registry_event_actor_py3 import ContainerRegistryEventActor
+    from .container_registry_event_source_py3 import ContainerRegistryEventSource
+    from .container_registry_event_data_py3 import ContainerRegistryEventData
+except (SyntaxError, ImportError):
+    from .storage_blob_created_event_data import StorageBlobCreatedEventData
+    from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
+    from .event_hub_capture_file_created_event_data import EventHubCaptureFileCreatedEventData
+    from .resource_write_success_data import ResourceWriteSuccessData
+    from .resource_write_failure_data import ResourceWriteFailureData
+    from .resource_write_cancel_data import ResourceWriteCancelData
+    from .resource_delete_success_data import ResourceDeleteSuccessData
+    from .resource_delete_failure_data import ResourceDeleteFailureData
+    from .resource_delete_cancel_data import ResourceDeleteCancelData
+    from .event_grid_event import EventGridEvent
+    from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
+    from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
+    from .device_twin_metadata import DeviceTwinMetadata
+    from .device_twin_properties import DeviceTwinProperties
+    from .device_twin_info_properties import DeviceTwinInfoProperties
+    from .device_twin_info_x509_thumbprint import DeviceTwinInfoX509Thumbprint
+    from .device_twin_info import DeviceTwinInfo
+    from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
+    from .container_registry_image_pushed_event_data import ContainerRegistryImagePushedEventData
+    from .container_registry_image_deleted_event_data import ContainerRegistryImageDeletedEventData
+    from .container_registry_event_target import ContainerRegistryEventTarget
+    from .container_registry_event_request import ContainerRegistryEventRequest
+    from .container_registry_event_actor import ContainerRegistryEventActor
+    from .container_registry_event_source import ContainerRegistryEventSource
+    from .container_registry_event_data import ContainerRegistryEventData
 
 __all__ = [
     'StorageBlobCreatedEventData',

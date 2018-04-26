@@ -24,6 +24,6 @@ class DeviceTwinMetadata(Model):
         'last_updated': {'key': 'lastUpdated', 'type': 'str'},
     }
 
-    def __init__(self, last_updated=None):
-        super(DeviceTwinMetadata, self).__init__()
-        self.last_updated = last_updated
+    def __init__(self, **kwargs):
+        super(DeviceTwinMetadata, self).__init__(**kwargs)
+        self.last_updated = kwargs.get('last_updated', None)
