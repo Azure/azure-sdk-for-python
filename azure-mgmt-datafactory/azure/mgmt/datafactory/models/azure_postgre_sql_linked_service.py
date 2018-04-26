@@ -33,8 +33,9 @@ class AzurePostgreSqlLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: An ODBC connection string.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :param connection_string: An ODBC connection string. Type: string,
+     SecureString or AzureKeyVaultSecretReference.
+    :type connection_string: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -52,7 +53,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 

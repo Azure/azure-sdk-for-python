@@ -49,5 +49,5 @@ class TriggerResource(SubResource):
     }
 
     def __init__(self, *, properties, **kwargs) -> None:
-        super(TriggerResource, self).__init__(, **kwargs)
+        super(TriggerResource, self).__init__(**kwargs)
         self.properties = properties

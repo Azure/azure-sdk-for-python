@@ -34,6 +34,6 @@ class LinkedIntegrationRuntimeKey(LinkedIntegrationRuntimeProperties):
     }
 
     def __init__(self, *, key, **kwargs) -> None:
-        super(LinkedIntegrationRuntimeKey, self).__init__(, **kwargs)
+        super(LinkedIntegrationRuntimeKey, self).__init__(**kwargs)
         self.key = key
         self.authorization_type = 'Key'
