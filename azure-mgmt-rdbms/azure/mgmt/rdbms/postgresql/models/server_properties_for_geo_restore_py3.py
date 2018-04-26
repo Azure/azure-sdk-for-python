@@ -12,8 +12,9 @@
 from .server_properties_for_create import ServerPropertiesForCreate
 
 
-class ServerPropertiesForRestore(ServerPropertiesForCreate):
-    """The properties used to create a new server by restoring from a backup.
+class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
+    """The properties used to create a new server by restoring to a different
+    region from a geo replicated backup.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -29,15 +30,11 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
     :type create_mode: str
     :param source_server_id: Required. The source server id to restore from.
     :type source_server_id: str
-    :param restore_point_in_time: Required. Restore point creation time
-     (ISO8601 format), specifying the time to restore from.
-    :type restore_point_in_time: datetime
     """
 
     _validation = {
         'create_mode': {'required': True},
         'source_server_id': {'required': True},
-        'restore_point_in_time': {'required': True},
     }
 
     _attribute_map = {
@@ -46,11 +43,9 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
-        'restore_point_in_time': {'key': 'restorePointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServerPropertiesForRestore, self).__init__(**kwargs)
-        self.source_server_id = kwargs.get('source_server_id', None)
-        self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
-        self.create_mode = 'PointInTimeRestore'
+    def __init__(self, *, source_server_id: str, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:
+        super(ServerPropertiesForGeoRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, storage_profile=storage_profile, **kwargs)
+        self.source_server_id = source_server_id
+        self.create_mode = 'GeoRestore'
