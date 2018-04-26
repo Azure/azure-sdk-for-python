@@ -59,13 +59,13 @@ class EventGridEvent(Model):
         'data_version': {'key': 'dataVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str, subject: str, data, event_type: str, event_time, data_version: str, topic: str=None, **kwargs) -> None:
         super(EventGridEvent, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.topic = kwargs.get('topic', None)
-        self.subject = kwargs.get('subject', None)
-        self.data = kwargs.get('data', None)
-        self.event_type = kwargs.get('event_type', None)
-        self.event_time = kwargs.get('event_time', None)
+        self.id = id
+        self.topic = topic
+        self.subject = subject
+        self.data = data
+        self.event_type = event_type
+        self.event_time = event_time
         self.metadata_version = None
-        self.data_version = kwargs.get('data_version', None)
+        self.data_version = data_version

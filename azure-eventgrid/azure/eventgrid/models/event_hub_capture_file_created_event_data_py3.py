@@ -48,14 +48,14 @@ class EventHubCaptureFileCreatedEventData(Model):
         'last_enqueue_time': {'key': 'lastEnqueueTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, fileurl: str=None, file_type: str=None, partition_id: str=None, size_in_bytes: int=None, event_count: int=None, first_sequence_number: int=None, last_sequence_number: int=None, first_enqueue_time=None, last_enqueue_time=None, **kwargs) -> None:
         super(EventHubCaptureFileCreatedEventData, self).__init__(**kwargs)
-        self.fileurl = kwargs.get('fileurl', None)
-        self.file_type = kwargs.get('file_type', None)
-        self.partition_id = kwargs.get('partition_id', None)
-        self.size_in_bytes = kwargs.get('size_in_bytes', None)
-        self.event_count = kwargs.get('event_count', None)
-        self.first_sequence_number = kwargs.get('first_sequence_number', None)
-        self.last_sequence_number = kwargs.get('last_sequence_number', None)
-        self.first_enqueue_time = kwargs.get('first_enqueue_time', None)
-        self.last_enqueue_time = kwargs.get('last_enqueue_time', None)
+        self.fileurl = fileurl
+        self.file_type = file_type
+        self.partition_id = partition_id
+        self.size_in_bytes = size_in_bytes
+        self.event_count = event_count
+        self.first_sequence_number = first_sequence_number
+        self.last_sequence_number = last_sequence_number
+        self.first_enqueue_time = first_enqueue_time
+        self.last_enqueue_time = last_enqueue_time
