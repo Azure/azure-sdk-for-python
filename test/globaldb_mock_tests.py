@@ -26,7 +26,7 @@ import pydocumentdb.document_client as document_client
 import pydocumentdb.documents as documents
 import pydocumentdb.errors as errors
 import pydocumentdb.constants as constants
-import pydocumentdb.http_constants as http_constants
+from pydocumentdb.http_constants import StatusCodes
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 import pydocumentdb.retry_utility as retry_utility
 import test.test_config as test_config
@@ -150,10 +150,10 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         else:
             self.endpoint_discovery_retry_count += 1
             location_changed = True
-            raise errors.HTTPFailure(http_constants.StatusCodes.FORBIDDEN, "Forbidden", {'x-ms-substatus' : 3})
+            raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Forbidden", {'x-ms-substatus' : 3})
 
     def MockGetDatabaseAccountStub(self, endpoint):
-        raise errors.HTTPFailure(http_constants.StatusCodes.SERVICE_UNAVAILABLE, "Service unavailable")
+        raise errors.HTTPFailure(StatusCodes.SERVICE_UNAVAILABLE, "Service unavailable")
     
     def MockCreateDatabase(self, client, database):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction

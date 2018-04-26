@@ -38,7 +38,7 @@ import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
 import pydocumentdb.hash_partition_resolver as hash_partition_resolver
-import pydocumentdb.http_constants as http_constants
+from pydocumentdb.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import pydocumentdb.murmur_hash as murmur_hash
 import pydocumentdb.range_partition_resolver as range_partition_resolver
 import pydocumentdb.range as partition_range
@@ -140,7 +140,7 @@ class CRUDTests(unittest.TestCase):
         # delete database.
         client.DeleteDatabase(self.GetDatabaseLink(created_db, is_name_based))
         # read database after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadDatabase,
                                            self.GetDatabaseLink(created_db, is_name_based))
 
@@ -213,7 +213,7 @@ class CRUDTests(unittest.TestCase):
         # Replacing collection Id should fail.
         change_collection = created_collection.copy()
         change_collection['id'] = 'try_change_id'
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.BAD_REQUEST,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.BAD_REQUEST,
                                            client.ReplaceCollection,
                                            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
                                            change_collection)
@@ -222,7 +222,7 @@ class CRUDTests(unittest.TestCase):
         # delete collection
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection, is_name_based))
         # read collection after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadCollection,
                                            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based))
 
@@ -295,7 +295,7 @@ class CRUDTests(unittest.TestCase):
         options = { 'partitionKey': 'NY' }
 
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.CreateDocument,
             self.GetDocumentCollectionLink(created_db, created_collection),
             document_definition,
@@ -441,7 +441,7 @@ class CRUDTests(unittest.TestCase):
 
         # For ReadDocument, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.ReadDocument,
             self.GetDocumentLink(created_db, created_collection, created_document))
 
@@ -484,7 +484,7 @@ class CRUDTests(unittest.TestCase):
 
         # For DeleteDocument, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.DeleteDocument,
             self.GetDocumentLink(created_db, created_collection, upserted_document))
 
@@ -596,7 +596,7 @@ class CRUDTests(unittest.TestCase):
 
         # Create document in read_collection should fail since it has only read permissions for this collection
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.FORBIDDEN,
+            StatusCodes.FORBIDDEN,
             restricted_client.CreateDocument,
             self.GetDocumentCollectionLink(created_db, read_collection, False),
             document_definition)
@@ -613,7 +613,7 @@ class CRUDTests(unittest.TestCase):
         options = { 'partitionKey': document_definition.get('key') }
         # Create document should fail since the partitionKey is 2 which is different that what is specified as resourcePartitionKey in permission object
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.FORBIDDEN,
+            StatusCodes.FORBIDDEN,
             restricted_client.CreateDocument,
             self.GetDocumentCollectionLink(created_db, all_collection, False),
             document_definition,
@@ -628,7 +628,7 @@ class CRUDTests(unittest.TestCase):
 
         # Delete document in read_collection should fail since it has only read permissions for this collection
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.FORBIDDEN,
+            StatusCodes.FORBIDDEN,
             restricted_client.DeleteDocument,
             self.GetDocumentCollectionLink(created_db, read_collection, False),
             options)
@@ -673,7 +673,7 @@ class CRUDTests(unittest.TestCase):
 
         # Partiton Key value different than what is specified in the stored procedure body will cause a bad request(400) error
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.ExecuteStoredProcedure,
             self.GetStoredProcedureLink(created_db, created_collection, created_sproc),
             None,
@@ -746,7 +746,7 @@ class CRUDTests(unittest.TestCase):
 
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.CreateAttachmentAndUploadMedia,
             self.GetDocumentLink(db, collection, document),
             content_stream,
@@ -782,7 +782,7 @@ class CRUDTests(unittest.TestCase):
                     'contentType': 'application/text' }
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.UpsertAttachmentAndUploadMedia,
             self.GetDocumentLink(db, collection, document),
             content_stream,
@@ -817,7 +817,7 @@ class CRUDTests(unittest.TestCase):
 
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.CreateAttachment,
             self.GetDocumentLink(db, collection, document),
             dynamic_attachment)
@@ -838,7 +838,7 @@ class CRUDTests(unittest.TestCase):
         
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.ReadAttachment,
             self.GetAttachmentLink(db, collection, document, attachment))
 
@@ -853,7 +853,7 @@ class CRUDTests(unittest.TestCase):
         
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.ReplaceAttachment,
             self.GetAttachmentLink(db, collection, document, attachment),
             attachment)
@@ -870,7 +870,7 @@ class CRUDTests(unittest.TestCase):
 
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.UpsertAttachment,
             self.GetDocumentLink(db, collection, document),
             attachment)
@@ -904,7 +904,7 @@ class CRUDTests(unittest.TestCase):
 
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.DeleteAttachment,
             self.GetAttachmentLink(db, collection, document, attachment))
 
@@ -1009,14 +1009,14 @@ class CRUDTests(unittest.TestCase):
 
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.ReadConflict,
             self.GetConflictLink(created_db, created_collection, conflict_definition))
 
         # read conflict here will return resource not found(404) since there is no conflict here
         options = { 'partitionKey': conflict_definition.get('id') }
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.NOT_FOUND,
+            StatusCodes.NOT_FOUND,
             client.ReadConflict,
             self.GetConflictLink(created_db, created_collection, conflict_definition),
             options)
@@ -1027,14 +1027,14 @@ class CRUDTests(unittest.TestCase):
 
         # Currently, we require to have the partitionKey to be specified as part of options otherwise we get BadRequest(status code 400)
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.DeleteConflict,
             self.GetConflictLink(created_db, created_collection, conflict_definition))
 
         # delete conflict here will return resource not found(404) since there is no conflict here
         options = { 'partitionKey': conflict_definition.get('id') }
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.NOT_FOUND,
+            StatusCodes.NOT_FOUND,
             client.DeleteConflict,
             self.GetConflictLink(created_db, created_collection, conflict_definition),
             options)
@@ -1096,7 +1096,7 @@ class CRUDTests(unittest.TestCase):
                                'key': 'value'}
         # Should throw an error because automatic id generation is disabled.
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.CreateDocument,
             self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
             document_definition,
@@ -1120,7 +1120,7 @@ class CRUDTests(unittest.TestCase):
         # duplicated documents are not allowed when 'id' is provided.
         duplicated_definition_with_id = document_definition.copy()
         duplicated_definition_with_id['id'] = created_document['id']
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.CONFLICT,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,
                                            client.CreateDocument,
                                            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
                                            duplicated_definition_with_id)
@@ -1174,7 +1174,7 @@ class CRUDTests(unittest.TestCase):
         # delete document
         client.DeleteDocument(self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
         # read documents after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadDocument,
                                            self.GetDocumentLink(created_db, created_collection, replaced_document, is_name_based))
     
@@ -1833,7 +1833,7 @@ class CRUDTests(unittest.TestCase):
         # create attachment with invalid content-type
         content_stream = ReadableStream()
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST,
+            StatusCodes.BAD_REQUEST,
             client.CreateAttachmentAndUploadMedia,
             self.GetDocumentLink(db, collection, document, is_name_based),
             content_stream,
@@ -1849,7 +1849,7 @@ class CRUDTests(unittest.TestCase):
         content_stream = ReadableStream()
         # create colliding attachment
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.CONFLICT,
+            StatusCodes.CONFLICT,
             client.CreateAttachmentAndUploadMedia,
             self.GetDocumentLink(db, collection, document, is_name_based),
             content_stream,
@@ -2154,7 +2154,7 @@ class CRUDTests(unittest.TestCase):
         # delete user
         client.DeleteUser(self.GetUserLink(db, user, is_name_based))
         # read user after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadUser,
                                            self.GetUserLink(db, user, is_name_based))
 
@@ -2279,7 +2279,7 @@ class CRUDTests(unittest.TestCase):
         # delete permission
         client.DeletePermission(self.GetPermissionLink(db, user, replaced_permission, is_name_based))
         # read permission after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadPermission,
                                            self.GetPermissionLink(db, user, permission, is_name_based))
 
@@ -2462,7 +2462,7 @@ class CRUDTests(unittest.TestCase):
 
         # Client without any authorization will fail.
         client = document_client.DocumentClient(CRUDTests.host, {})
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.UNAUTHORIZED,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
                                            client.ReadDatabases())
         # Client with master key.
@@ -2481,7 +2481,7 @@ class CRUDTests(unittest.TestCase):
         success_coll1 = col1_client.ReadCollection(
             entities['coll1']['_self'])
         # 2. Failure-- Use Col1 Permission to delete
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.FORBIDDEN,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
                                            col1_client.DeleteCollection,
                                            success_coll1['_self'])
         # 3. Success-- Use Col1 Permission to Read All Docs
@@ -2588,7 +2588,7 @@ class CRUDTests(unittest.TestCase):
         # delete trigger
         res = client.DeleteTrigger(self.GetTriggerLink(db, collection, replaced_trigger, is_name_based))
         # read triggers after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadTrigger,
                                            self.GetTriggerLink(db, collection, replaced_trigger, is_name_based))
 
@@ -2746,7 +2746,7 @@ class CRUDTests(unittest.TestCase):
         # delete udf
         res = client.DeleteUserDefinedFunction(self.GetUserDefinedFunctionLink(db, collection, replaced_udf, is_name_based))
         # read udfs after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadUserDefinedFunction,
                                            self.GetUserDefinedFunctionLink(db, collection, replaced_udf, is_name_based))
 
@@ -2910,7 +2910,7 @@ class CRUDTests(unittest.TestCase):
         # delete sproc
         res = client.DeleteStoredProcedure(self.GetStoredProcedureLink(db, collection, replaced_sproc, is_name_based))
         # read sprocs after deletion
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND,
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            client.ReadStoredProcedure,
                                            self.GetStoredProcedureLink(db, collection, replaced_sproc, is_name_based))
 
@@ -3036,19 +3036,19 @@ class CRUDTests(unittest.TestCase):
         result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None)
 
         self.assertEqual(result, 'Success!')
-        self.assertFalse(http_constants.HttpHeaders.ScriptLogResults in client.last_response_headers)
+        self.assertFalse(HttpHeaders.ScriptLogResults in client.last_response_headers)
 
         options = { 'enableScriptLogging': True }
         result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None, options)
 
         self.assertEqual(result, 'Success!')
-        self.assertEqual('The value of x is 1.', client.last_response_headers.get(http_constants.HttpHeaders.ScriptLogResults))
+        self.assertEqual('The value of x is 1.', client.last_response_headers.get(HttpHeaders.ScriptLogResults))
 
         options = { 'enableScriptLogging': False }
         result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None, options)
 
         self.assertEqual(result, 'Success!')
-        self.assertFalse(http_constants.HttpHeaders.ScriptLogResults in client.last_response_headers)
+        self.assertFalse(HttpHeaders.ScriptLogResults in client.last_response_headers)
         
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
         
@@ -3588,11 +3588,11 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(expected_offer.get('_self'), query_one_offer.get('_self'))
         self.assertEqual(expected_offer.get('resource'), query_one_offer.get('resource'))
         # Expects an exception when reading offer with bad offer link.
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.BAD_REQUEST, client.ReadOffer, expected_offer.get('_self')[:-1] + 'x')
+        self.__AssertHTTPFailureWithStatus(StatusCodes.BAD_REQUEST, client.ReadOffer, expected_offer.get('_self')[:-1] + 'x')
         # Now delete the collection.
         client.DeleteCollection(collection.get('_self'))
         # Reading fails.
-        self.__AssertHTTPFailureWithStatus(http_constants.StatusCodes.NOT_FOUND, client.ReadOffer, expected_offer.get('_self'))
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, client.ReadOffer, expected_offer.get('_self'))
         # Read feed now returns 0 results.
         offers = list(client.ReadOffers())
         self.assertEqual(initial_count, len(offers))
@@ -3623,18 +3623,18 @@ class CRUDTests(unittest.TestCase):
         offer_to_replace_bad_id = dict(offer_to_replace)
         offer_to_replace_bad_id['_rid'] = 'NotAllowed'
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST, client.ReplaceOffer, offer_to_replace_bad_id['_self'], offer_to_replace_bad_id)
+            StatusCodes.BAD_REQUEST, client.ReplaceOffer, offer_to_replace_bad_id['_self'], offer_to_replace_bad_id)
         # Expects an exception when replacing an offer with bad rid.
         offer_to_replace_bad_rid = dict(offer_to_replace)
         offer_to_replace_bad_rid['_rid'] = 'InvalidRid'
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST, client.ReplaceOffer, offer_to_replace_bad_rid['_self'], offer_to_replace_bad_rid)
+            StatusCodes.BAD_REQUEST, client.ReplaceOffer, offer_to_replace_bad_rid['_self'], offer_to_replace_bad_rid)
         # Expects an exception when replaceing an offer with null id and rid.
         offer_to_replace_null_ids = dict(offer_to_replace)
         offer_to_replace_null_ids['id'] = None
         offer_to_replace_null_ids['_rid'] = None
         self.__AssertHTTPFailureWithStatus(
-            http_constants.StatusCodes.BAD_REQUEST, client.ReplaceOffer, offer_to_replace_null_ids['_self'], offer_to_replace_null_ids)
+            StatusCodes.BAD_REQUEST, client.ReplaceOffer, offer_to_replace_null_ids['_self'], offer_to_replace_null_ids)
 
     def test_collection_with_offer_type(self):
         client = document_client.DocumentClient(CRUDTests.host,
@@ -3673,18 +3673,18 @@ class CRUDTests(unittest.TestCase):
         database_account = client.GetDatabaseAccount()
         self.assertEqual(database_account.DatabasesLink, '/dbs/')
         self.assertEqual(database_account.MediaLink, '/media/')
-        if (http_constants.HttpHeaders.MaxMediaStorageUsageInMB in
+        if (HttpHeaders.MaxMediaStorageUsageInMB in
             client.last_response_headers):
             self.assertEqual(
                 database_account.MaxMediaStorageUsageInMB,
                 client.last_response_headers[
-                    http_constants.HttpHeaders.MaxMediaStorageUsageInMB])
-        if (http_constants.HttpHeaders.CurrentMediaStorageUsageInMB in
+                    HttpHeaders.MaxMediaStorageUsageInMB])
+        if (HttpHeaders.CurrentMediaStorageUsageInMB in
             client.last_response_headers):
             self.assertEqual(
                 database_account.CurrentMediaStorageUsageInMB,
                 client.last_response_headers[
-                    http_constants.HttpHeaders.
+                    HttpHeaders.
                     CurrentMediaStorageUsageInMB])
         self.assertTrue(
             database_account.ConsistencyPolicy['defaultConsistencyLevel']
@@ -3701,24 +3701,24 @@ class CRUDTests(unittest.TestCase):
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         consistent_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'consistent_coll' })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
-        self.assertFalse(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
-        self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
+        self.assertFalse(HttpHeaders.LazyIndexingProgress in client.last_response_headers)
+        self.assertTrue(HttpHeaders.IndexTransformationProgress in client.last_response_headers)
         lazy_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
             {
                 'id': 'lazy_coll',
                 'indexingPolicy': { 'indexingMode' : documents.IndexingMode.Lazy }
             })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, lazy_coll, is_name_based))
-        self.assertTrue(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
-        self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
+        self.assertTrue(HttpHeaders.LazyIndexingProgress in client.last_response_headers)
+        self.assertTrue(HttpHeaders.IndexTransformationProgress in client.last_response_headers)
         none_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based),
             {
                 'id': 'none_coll',
                 'indexingPolicy': { 'indexingMode': documents.IndexingMode.NoIndex, 'automatic': False }
             })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, none_coll, is_name_based))
-        self.assertFalse(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
-        self.assertTrue(http_constants.HttpHeaders.IndexTransformationProgress in client.last_response_headers)
+        self.assertFalse(HttpHeaders.LazyIndexingProgress in client.last_response_headers)
+        self.assertTrue(HttpHeaders.IndexTransformationProgress in client.last_response_headers)
 
     # To run this test, please provide your own CA certs file or download one from
     #     http://curl.haxx.se/docs/caextract.html
