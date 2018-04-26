@@ -31,6 +31,6 @@ class ListServiceSasResponse(Model):
         'service_sas_token': {'key': 'serviceSasToken', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ListServiceSasResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(ListServiceSasResponse, self).__init__(**kwargs)
         self.service_sas_token = None
