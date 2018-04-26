@@ -25,6 +25,11 @@
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+log_formatter = logging.Formatter('%(levelname)s:%(message)s')
+log_handler = logging.StreamHandler()
+log_handler.setFormatter(log_formatter)
+logger.addHandler(log_handler)
 
 
 class _EndpointDiscoveryRetryPolicy(object):
@@ -43,7 +48,6 @@ class _EndpointDiscoveryRetryPolicy(object):
         self._max_retry_attempt_count = _EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
         self.current_retry_attempt_count = 0
         self.retry_after_in_milliseconds = _EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
-        logger.setLevel(logging.INFO)
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
