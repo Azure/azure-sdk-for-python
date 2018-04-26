@@ -71,7 +71,7 @@ class Eventhub(Resource):
     }
 
     def __init__(self, *, message_retention_in_days: int=None, partition_count: int=None, status=None, capture_description=None, **kwargs) -> None:
-        super(Eventhub, self).__init__(, **kwargs)
+        super(Eventhub, self).__init__(**kwargs)
         self.partition_ids = None
         self.created_at = None
         self.updated_at = None

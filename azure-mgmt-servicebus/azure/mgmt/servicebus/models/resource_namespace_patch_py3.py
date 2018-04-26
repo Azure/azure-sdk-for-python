@@ -45,6 +45,6 @@ class ResourceNamespacePatch(Resource):
     }
 
     def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
-        super(ResourceNamespacePatch, self).__init__(, **kwargs)
+        super(ResourceNamespacePatch, self).__init__(**kwargs)
         self.location = location
         self.tags = tags

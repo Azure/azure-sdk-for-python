@@ -105,10 +105,18 @@ class NamespacesOperations(object):
     check_name_availability_method.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/CheckNameAvailability'}
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all the available namespaces within the subscription, irrespective
         of the resource groups.
 
+        :param skip: Skip is only used if a previous operation returned a
+         partial result. If a previous response contains a nextLink element,
+         the value of the nextLink element will include a skip parameter that
+         specifies a starting point to use for subsequent calls.
+        :type skip: int
+        :param top: May be used to limit the number of results to the most
+         recent N usageDetails.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -133,6 +141,10 @@ class NamespacesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', maximum=1000, minimum=0)
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
             else:
                 url = next_link
@@ -170,12 +182,20 @@ class NamespacesOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/namespaces'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets the available namespaces within a resource group.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
         :type resource_group_name: str
+        :param skip: Skip is only used if a previous operation returned a
+         partial result. If a previous response contains a nextLink element,
+         the value of the nextLink element will include a skip parameter that
+         specifies a starting point to use for subsequent calls.
+        :type skip: int
+        :param top: May be used to limit the number of results to the most
+         recent N usageDetails.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -201,6 +221,10 @@ class NamespacesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', maximum=1000, minimum=0)
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
             else:
                 url = next_link

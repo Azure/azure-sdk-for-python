@@ -37,7 +37,7 @@ class RulesOperations(object):
         self.config = config
 
     def list_by_subscriptions(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, topic_name, subscription_name, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all the rules within given topic-subscription.
 
         :param resource_group_name: Name of the Resource group within the
@@ -49,6 +49,14 @@ class RulesOperations(object):
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
+        :param skip: Skip is only used if a previous operation returned a
+         partial result. If a previous response contains a nextLink element,
+         the value of the nextLink element will include a skip parameter that
+         specifies a starting point to use for subsequent calls.
+        :type skip: int
+        :param top: May be used to limit the number of results to the most
+         recent N usageDetails.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -77,6 +85,10 @@ class RulesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', maximum=1000, minimum=0)
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
             else:
                 url = next_link
