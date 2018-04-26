@@ -18,10 +18,12 @@ class ContractualRulesTextAttribution(ContractualRulesAttribution):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar target_property_name: The name of the field that the rule applies
      to.
     :vartype target_property_name: str
-    :param _type: Constant filled by server.
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar must_be_close_to_content: A Boolean value that determines whether
      the contents of the rule must be placed in close proximity to the field
@@ -29,11 +31,11 @@ class ContractualRulesTextAttribution(ContractualRulesAttribution):
      proximity. If false, or this field does not exist, the contents may be
      placed at the caller's discretion.
     :vartype must_be_close_to_content: bool
-    :param text: The attribution text. Text attribution applies to the entity
-     as a whole and should be displayed immediately following the entity
-     presentation. If there are multiple text or link attribution rules that do
-     not specify a target, you should concatenate them and display them using a
-     "Data from:" label.
+    :param text: Required. The attribution text. Text attribution applies to
+     the entity as a whole and should be displayed immediately following the
+     entity presentation. If there are multiple text or link attribution rules
+     that do not specify a target, you should concatenate them and display them
+     using a "Data from:" label.
     :type text: str
     :ivar optional_for_list_display: Indicates whether this provider's
      attribution is optional.
@@ -56,8 +58,8 @@ class ContractualRulesTextAttribution(ContractualRulesAttribution):
         'optional_for_list_display': {'key': 'optionalForListDisplay', 'type': 'bool'},
     }
 
-    def __init__(self, text):
-        super(ContractualRulesTextAttribution, self).__init__()
-        self.text = text
+    def __init__(self, **kwargs):
+        super(ContractualRulesTextAttribution, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
         self.optional_for_list_display = None
         self._type = 'ContractualRules/TextAttribution'

@@ -26,7 +26,7 @@ class Input(Model):
         'text': {'key': 'text', 'type': 'str'},
     }
 
-    def __init__(self, id=None, text=None):
-        super(Input, self).__init__()
-        self.id = id
-        self.text = text
+    def __init__(self, **kwargs):
+        super(Input, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.text = kwargs.get('text', None)

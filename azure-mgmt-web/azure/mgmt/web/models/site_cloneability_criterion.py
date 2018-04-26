@@ -26,7 +26,7 @@ class SiteCloneabilityCriterion(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, name=None, description=None):
-        super(SiteCloneabilityCriterion, self).__init__()
-        self.name = name
-        self.description = description
+    def __init__(self, **kwargs):
+        super(SiteCloneabilityCriterion, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)

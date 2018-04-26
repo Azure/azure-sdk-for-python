@@ -31,6 +31,6 @@ class RecipesModule(Model):
         'value': {'key': 'value', 'type': '[Recipe]'},
     }
 
-    def __init__(self):
-        super(RecipesModule, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecipesModule, self).__init__(**kwargs)
         self.value = None

@@ -30,8 +30,8 @@ class InternalError(Model):
         'inner_error': {'key': 'innerError', 'type': 'InternalError'},
     }
 
-    def __init__(self, code=None, message=None, inner_error=None):
-        super(InternalError, self).__init__()
-        self.code = code
-        self.message = message
-        self.inner_error = inner_error
+    def __init__(self, **kwargs):
+        super(InternalError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.inner_error = kwargs.get('inner_error', None)

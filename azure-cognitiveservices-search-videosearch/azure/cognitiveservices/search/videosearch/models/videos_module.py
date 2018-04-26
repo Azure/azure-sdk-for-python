@@ -31,6 +31,6 @@ class VideosModule(Model):
         'value': {'key': 'value', 'type': '[VideoObject]'},
     }
 
-    def __init__(self):
-        super(VideosModule, self).__init__()
+    def __init__(self, **kwargs):
+        super(VideosModule, self).__init__(**kwargs)
         self.value = None

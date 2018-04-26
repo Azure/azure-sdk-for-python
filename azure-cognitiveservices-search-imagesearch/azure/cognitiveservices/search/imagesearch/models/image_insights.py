@@ -24,7 +24,9 @@ class ImageInsights(Response):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -132,8 +134,8 @@ class ImageInsights(Response):
         'image_tags': {'key': 'imageTags', 'type': 'ImageTagsModule'},
     }
 
-    def __init__(self):
-        super(ImageInsights, self).__init__()
+    def __init__(self, **kwargs):
+        super(ImageInsights, self).__init__(**kwargs)
         self.image_insights_token = None
         self.best_representative_query = None
         self.image_caption = None

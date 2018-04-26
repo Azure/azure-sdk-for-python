@@ -9,20 +9,36 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .multi_language_input import MultiLanguageInput
-from .multi_language_batch_input import MultiLanguageBatchInput
-from .key_phrase_batch_result_item import KeyPhraseBatchResultItem
-from .error_record import ErrorRecord
-from .key_phrase_batch_result import KeyPhraseBatchResult
-from .internal_error import InternalError
-from .error_response import ErrorResponse, ErrorResponseException
-from .input import Input
-from .batch_input import BatchInput
-from .detected_language import DetectedLanguage
-from .language_batch_result_item import LanguageBatchResultItem
-from .language_batch_result import LanguageBatchResult
-from .sentiment_batch_result_item import SentimentBatchResultItem
-from .sentiment_batch_result import SentimentBatchResult
+try:
+    from .multi_language_input_py3 import MultiLanguageInput
+    from .multi_language_batch_input_py3 import MultiLanguageBatchInput
+    from .key_phrase_batch_result_item_py3 import KeyPhraseBatchResultItem
+    from .error_record_py3 import ErrorRecord
+    from .key_phrase_batch_result_py3 import KeyPhraseBatchResult
+    from .internal_error_py3 import InternalError
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .input_py3 import Input
+    from .batch_input_py3 import BatchInput
+    from .detected_language_py3 import DetectedLanguage
+    from .language_batch_result_item_py3 import LanguageBatchResultItem
+    from .language_batch_result_py3 import LanguageBatchResult
+    from .sentiment_batch_result_item_py3 import SentimentBatchResultItem
+    from .sentiment_batch_result_py3 import SentimentBatchResult
+except (SyntaxError, ImportError):
+    from .multi_language_input import MultiLanguageInput
+    from .multi_language_batch_input import MultiLanguageBatchInput
+    from .key_phrase_batch_result_item import KeyPhraseBatchResultItem
+    from .error_record import ErrorRecord
+    from .key_phrase_batch_result import KeyPhraseBatchResult
+    from .internal_error import InternalError
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .input import Input
+    from .batch_input import BatchInput
+    from .detected_language import DetectedLanguage
+    from .language_batch_result_item import LanguageBatchResultItem
+    from .language_batch_result import LanguageBatchResult
+    from .sentiment_batch_result_item import SentimentBatchResultItem
+    from .sentiment_batch_result import SentimentBatchResult
 from .text_analytics_api_enums import (
     AzureRegions,
 )

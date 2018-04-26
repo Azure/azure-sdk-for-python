@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.news_operations import NewsOperations
@@ -42,7 +42,7 @@ class NewsSearchAPIConfiguration(Configuration):
         self.credentials = credentials
 
 
-class NewsSearchAPI(object):
+class NewsSearchAPI(SDKClient):
     """The News Search API lets you send a search query to Bing and get back a list of news that are relevant to the search query. This section provides technical details about the query parameters and headers that you use to request news and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the web for news](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-news-search/search-the-web).
 
     :ivar config: Configuration for client.
@@ -61,7 +61,7 @@ class NewsSearchAPI(object):
             self, credentials, base_url=None):
 
         self.config = NewsSearchAPIConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(NewsSearchAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

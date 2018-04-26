@@ -49,7 +49,7 @@ class SiteConfigurationSnapshotInfo(ProxyOnlyResource):
         'site_configuration_snapshot_info_id': {'key': 'properties.id', 'type': 'int'},
     }
 
-    def __init__(self, kind=None):
-        super(SiteConfigurationSnapshotInfo, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(SiteConfigurationSnapshotInfo, self).__init__(**kwargs)
         self.time = None
         self.site_configuration_snapshot_info_id = None
