@@ -15,11 +15,14 @@ from msrest.serialization import Model
 class ServiceSasParameters(Model):
     """The parameters to list service SAS credentials of a speicific resource.
 
-    :param canonicalized_resource: The canonical path to the signed resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :param canonicalized_resource: Required. The canonical path to the signed
+     resource.
     :type canonicalized_resource: str
-    :param resource: The signed services accessible with the service SAS.
-     Possible values include: Blob (b), Container (c), File (f), Share (s).
-     Possible values include: 'b', 'c', 'f', 's'
+    :param resource: Required. The signed services accessible with the service
+     SAS. Possible values include: Blob (b), Container (c), File (f), Share
+     (s). Possible values include: 'b', 'c', 'f', 's'
     :type resource: str or
      ~azure.mgmt.storage.v2017_10_01.models.SignedResource
     :param permissions: The signed permissions for the service SAS. Possible
@@ -96,23 +99,23 @@ class ServiceSasParameters(Model):
         'content_type': {'key': 'rsct', 'type': 'str'},
     }
 
-    def __init__(self, canonicalized_resource, resource, permissions=None, ip_address_or_range=None, protocols=None, shared_access_start_time=None, shared_access_expiry_time=None, identifier=None, partition_key_start=None, partition_key_end=None, row_key_start=None, row_key_end=None, key_to_sign=None, cache_control=None, content_disposition=None, content_encoding=None, content_language=None, content_type=None):
-        super(ServiceSasParameters, self).__init__()
-        self.canonicalized_resource = canonicalized_resource
-        self.resource = resource
-        self.permissions = permissions
-        self.ip_address_or_range = ip_address_or_range
-        self.protocols = protocols
-        self.shared_access_start_time = shared_access_start_time
-        self.shared_access_expiry_time = shared_access_expiry_time
-        self.identifier = identifier
-        self.partition_key_start = partition_key_start
-        self.partition_key_end = partition_key_end
-        self.row_key_start = row_key_start
-        self.row_key_end = row_key_end
-        self.key_to_sign = key_to_sign
-        self.cache_control = cache_control
-        self.content_disposition = content_disposition
-        self.content_encoding = content_encoding
-        self.content_language = content_language
-        self.content_type = content_type
+    def __init__(self, **kwargs):
+        super(ServiceSasParameters, self).__init__(**kwargs)
+        self.canonicalized_resource = kwargs.get('canonicalized_resource', None)
+        self.resource = kwargs.get('resource', None)
+        self.permissions = kwargs.get('permissions', None)
+        self.ip_address_or_range = kwargs.get('ip_address_or_range', None)
+        self.protocols = kwargs.get('protocols', None)
+        self.shared_access_start_time = kwargs.get('shared_access_start_time', None)
+        self.shared_access_expiry_time = kwargs.get('shared_access_expiry_time', None)
+        self.identifier = kwargs.get('identifier', None)
+        self.partition_key_start = kwargs.get('partition_key_start', None)
+        self.partition_key_end = kwargs.get('partition_key_end', None)
+        self.row_key_start = kwargs.get('row_key_start', None)
+        self.row_key_end = kwargs.get('row_key_end', None)
+        self.key_to_sign = kwargs.get('key_to_sign', None)
+        self.cache_control = kwargs.get('cache_control', None)
+        self.content_disposition = kwargs.get('content_disposition', None)
+        self.content_encoding = kwargs.get('content_encoding', None)
+        self.content_language = kwargs.get('content_language', None)
+        self.content_type = kwargs.get('content_type', None)
