@@ -61,7 +61,7 @@ class EventSubscription(Resource):
     }
 
     def __init__(self, *, destination=None, filter=None, labels=None, **kwargs) -> None:
-        super(EventSubscription, self).__init__(, **kwargs)
+        super(EventSubscription, self).__init__(**kwargs)
         self.topic = None
         self.provisioning_state = None
         self.destination = destination

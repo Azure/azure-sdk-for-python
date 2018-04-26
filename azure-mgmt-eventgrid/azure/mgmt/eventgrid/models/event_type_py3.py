@@ -48,7 +48,7 @@ class EventType(Resource):
     }
 
     def __init__(self, *, display_name: str=None, description: str=None, schema_url: str=None, **kwargs) -> None:
-        super(EventType, self).__init__(, **kwargs)
+        super(EventType, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
         self.schema_url = schema_url

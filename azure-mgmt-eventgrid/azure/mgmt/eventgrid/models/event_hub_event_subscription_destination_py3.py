@@ -34,6 +34,6 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination):
     }
 
     def __init__(self, *, resource_id: str=None, **kwargs) -> None:
-        super(EventHubEventSubscriptionDestination, self).__init__(, **kwargs)
+        super(EventHubEventSubscriptionDestination, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.endpoint_type = 'EventHub'

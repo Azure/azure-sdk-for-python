@@ -63,7 +63,7 @@ class TopicTypeInfo(Resource):
     }
 
     def __init__(self, *, provider: str=None, display_name: str=None, description: str=None, resource_region_type=None, provisioning_state=None, supported_locations=None, **kwargs) -> None:
-        super(TopicTypeInfo, self).__init__(, **kwargs)
+        super(TopicTypeInfo, self).__init__(**kwargs)
         self.provider = provider
         self.display_name = display_name
         self.description = description
