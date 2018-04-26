@@ -38,10 +38,10 @@ class ContainerRegistryEventRequest(Model):
         'useragent': {'key': 'useragent', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, addr: str=None, host: str=None, method: str=None, useragent: str=None, **kwargs) -> None:
         super(ContainerRegistryEventRequest, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.addr = kwargs.get('addr', None)
-        self.host = kwargs.get('host', None)
-        self.method = kwargs.get('method', None)
-        self.useragent = kwargs.get('useragent', None)
+        self.id = id
+        self.addr = addr
+        self.host = host
+        self.method = method
+        self.useragent = useragent

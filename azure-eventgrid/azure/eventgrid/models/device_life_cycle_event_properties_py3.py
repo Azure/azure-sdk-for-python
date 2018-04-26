@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
+from msrest.serialization import Model
 
 
-class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
-    """Event data for Microsoft.Devices.DeviceCreated event.
+class DeviceLifeCycleEventProperties(Model):
+    """Schema of the Data property of an EventGridEvent for a device life cycle
+    event (DeviceCreated, DeviceDeleted).
 
     :param device_id: The unique identifier of the device. This case-sensitive
      string can be up to 128 characters long, and supports ASCII 7-bit
@@ -41,5 +42,10 @@ class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
         'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
     }
 
-    def __init__(self, **kwargs):
-        super(IotHubDeviceCreatedEventData, self).__init__(**kwargs)
+    def __init__(self, *, device_id: str=None, hub_name: str=None, op_type: str=None, operation_timestamp: str=None, twin=None, **kwargs) -> None:
+        super(DeviceLifeCycleEventProperties, self).__init__(**kwargs)
+        self.device_id = device_id
+        self.hub_name = hub_name
+        self.op_type = op_type
+        self.operation_timestamp = operation_timestamp
+        self.twin = twin

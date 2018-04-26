@@ -41,5 +41,5 @@ class IotHubDeviceCreatedEventData(DeviceLifeCycleEventProperties):
         'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
     }
 
-    def __init__(self, **kwargs):
-        super(IotHubDeviceCreatedEventData, self).__init__(**kwargs)
+    def __init__(self, *, device_id: str=None, hub_name: str=None, op_type: str=None, operation_timestamp: str=None, twin=None, **kwargs) -> None:
+        super(IotHubDeviceCreatedEventData, self).__init__(device_id=device_id, hub_name=hub_name, op_type=op_type, operation_timestamp=operation_timestamp, twin=twin, **kwargs)

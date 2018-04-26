@@ -34,5 +34,15 @@ class ContainerRegistryImagePushedEventData(ContainerRegistryEventData):
     :type source: ~azure.eventgrid.models.ContainerRegistryEventSource
     """
 
-    def __init__(self, id=None, timestamp=None, action=None, target=None, request=None, actor=None, source=None):
-        super(ContainerRegistryImagePushedEventData, self).__init__(id=id, timestamp=timestamp, action=action, target=target, request=request, actor=actor, source=source)
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'action': {'key': 'action', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'ContainerRegistryEventTarget'},
+        'request': {'key': 'request', 'type': 'ContainerRegistryEventRequest'},
+        'actor': {'key': 'actor', 'type': 'ContainerRegistryEventActor'},
+        'source': {'key': 'source', 'type': 'ContainerRegistryEventSource'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerRegistryImagePushedEventData, self).__init__(**kwargs)

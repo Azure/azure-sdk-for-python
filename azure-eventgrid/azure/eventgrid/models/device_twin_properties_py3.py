@@ -27,7 +27,7 @@ class DeviceTwinProperties(Model):
         'version': {'key': 'version', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, metadata=None, version: float=None, **kwargs) -> None:
         super(DeviceTwinProperties, self).__init__(**kwargs)
-        self.metadata = kwargs.get('metadata', None)
-        self.version = kwargs.get('version', None)
+        self.metadata = metadata
+        self.version = version

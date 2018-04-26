@@ -33,5 +33,13 @@ class IotHubDeviceDeletedEventData(DeviceLifeCycleEventProperties):
     :type twin: ~azure.eventgrid.models.DeviceTwinInfo
     """
 
-    def __init__(self, device_id=None, hub_name=None, op_type=None, operation_timestamp=None, twin=None):
-        super(IotHubDeviceDeletedEventData, self).__init__(device_id=device_id, hub_name=hub_name, op_type=op_type, operation_timestamp=operation_timestamp, twin=twin)
+    _attribute_map = {
+        'device_id': {'key': 'deviceId', 'type': 'str'},
+        'hub_name': {'key': 'hubName', 'type': 'str'},
+        'op_type': {'key': 'opType', 'type': 'str'},
+        'operation_timestamp': {'key': 'operationTimestamp', 'type': 'str'},
+        'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IotHubDeviceDeletedEventData, self).__init__(**kwargs)

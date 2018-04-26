@@ -30,7 +30,7 @@ class ContainerRegistryEventSource(Model):
         'instance_id': {'key': 'instanceID', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, addr: str=None, instance_id: str=None, **kwargs) -> None:
         super(ContainerRegistryEventSource, self).__init__(**kwargs)
-        self.addr = kwargs.get('addr', None)
-        self.instance_id = kwargs.get('instance_id', None)
+        self.addr = addr
+        self.instance_id = instance_id

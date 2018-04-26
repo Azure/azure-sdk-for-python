@@ -42,10 +42,10 @@ class DeviceLifeCycleEventProperties(Model):
         'twin': {'key': 'twin', 'type': 'DeviceTwinInfo'},
     }
 
-    def __init__(self, device_id=None, hub_name=None, op_type=None, operation_timestamp=None, twin=None):
-        super(DeviceLifeCycleEventProperties, self).__init__()
-        self.device_id = device_id
-        self.hub_name = hub_name
-        self.op_type = op_type
-        self.operation_timestamp = operation_timestamp
-        self.twin = twin
+    def __init__(self, **kwargs):
+        super(DeviceLifeCycleEventProperties, self).__init__(**kwargs)
+        self.device_id = kwargs.get('device_id', None)
+        self.hub_name = kwargs.get('hub_name', None)
+        self.op_type = kwargs.get('op_type', None)
+        self.operation_timestamp = kwargs.get('operation_timestamp', None)
+        self.twin = kwargs.get('twin', None)
