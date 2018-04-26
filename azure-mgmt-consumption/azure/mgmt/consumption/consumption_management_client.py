@@ -218,4 +218,4 @@ class ConsumptionManagementClient(object):
             return client_raw_response
 
         return deserialized
-    get_balances_by_billing_account.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/balances'}
+    get_balances_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/balances'}

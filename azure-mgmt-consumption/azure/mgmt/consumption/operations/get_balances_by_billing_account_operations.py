@@ -95,4 +95,4 @@ class GetBalancesByBillingAccountOperations(object):
             return client_raw_response
 
         return deserialized
-    by_billing_period.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/balances'}
+    by_billing_period.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/balances'}

@@ -91,7 +91,7 @@ class CostTagsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
 
     def create_or_update(
             self, billing_account_id, e_tag=None, cost_tags=None, custom_headers=None, raw=False, **operation_config):
@@ -165,4 +165,4 @@ class CostTagsOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/providers/Microsoft.CostManagement/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}
+    create_or_update.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/costTags'}

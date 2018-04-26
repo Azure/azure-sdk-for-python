@@ -122,7 +122,7 @@ class MarketplacesByEnrollmentAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.CostManagement/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Consumption/marketplaces'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Consumption/marketplaces'}
 
     def list_by_billing_period(
             self, enrollment_account_id, billing_period_name, filter=None, top=None, skiptoken=None, custom_headers=None, raw=False, **operation_config):
@@ -213,4 +213,4 @@ class MarketplacesByEnrollmentAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_period.metadata = {'url': '/providers/Microsoft.CostManagement/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/marketplaces'}
+    list_by_billing_period.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{enrollmentAccountId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/marketplaces'}

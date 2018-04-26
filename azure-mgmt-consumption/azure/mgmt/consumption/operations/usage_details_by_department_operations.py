@@ -139,7 +139,7 @@ class UsageDetailsByDepartmentOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.CostManagement/departments/{departmentId}/providers/Microsoft.Consumption/usageDetails'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Consumption/usageDetails'}
 
     def list_by_billing_period(
             self, department_id, billing_period_name, expand=None, filter=None, skiptoken=None, top=None, query_options=None, custom_headers=None, raw=False, **operation_config):
@@ -247,4 +247,4 @@ class UsageDetailsByDepartmentOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_period.metadata = {'url': '/providers/Microsoft.CostManagement/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/usageDetails'}
+    list_by_billing_period.metadata = {'url': '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}/providers/Microsoft.Consumption/usageDetails'}
