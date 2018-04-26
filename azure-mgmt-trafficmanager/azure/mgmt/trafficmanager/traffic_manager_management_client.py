@@ -17,7 +17,6 @@ from .operations.endpoints_operations import EndpointsOperations
 from .operations.profiles_operations import ProfilesOperations
 from .operations.geographic_hierarchies_operations import GeographicHierarchiesOperations
 from .operations.heat_map_operations import HeatMapOperations
-from .operations.traffic_manager_user_metrics_keys_operations import TrafficManagerUserMetricsKeysOperations
 from . import models
 
 
@@ -69,8 +68,6 @@ class TrafficManagerManagementClient(object):
     :vartype geographic_hierarchies: azure.mgmt.trafficmanager.operations.GeographicHierarchiesOperations
     :ivar heat_map: HeatMap operations
     :vartype heat_map: azure.mgmt.trafficmanager.operations.HeatMapOperations
-    :ivar traffic_manager_user_metrics_keys: TrafficManagerUserMetricsKeys operations
-    :vartype traffic_manager_user_metrics_keys: azure.mgmt.trafficmanager.operations.TrafficManagerUserMetricsKeysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -89,6 +86,7 @@ class TrafficManagerManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2018-03-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -99,6 +97,4 @@ class TrafficManagerManagementClient(object):
         self.geographic_hierarchies = GeographicHierarchiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.heat_map = HeatMapOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.traffic_manager_user_metrics_keys = TrafficManagerUserMetricsKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
