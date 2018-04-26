@@ -427,7 +427,8 @@ class ActionGroupsOperations(object):
     def enable_receiver(
             self, resource_group_name, action_group_name, receiver_name, custom_headers=None, raw=False, **operation_config):
         """Enable a receiver in an action group. This changes the receiver's
-        status from Disabled to Enabled.
+        status from Disabled to Enabled. This operation is only supported for
+        Email or SMS receivers.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

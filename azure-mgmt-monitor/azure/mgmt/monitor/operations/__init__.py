@@ -26,6 +26,7 @@ from .metrics_operations import MetricsOperations
 from .metric_baseline_operations import MetricBaselineOperations
 from .metric_alerts_operations import MetricAlertsOperations
 from .metric_alerts_status_operations import MetricAlertsStatusOperations
+from .scheduled_query_rules_operations import ScheduledQueryRulesOperations
 
 __all__ = [
     'AutoscaleSettingsOperations',
@@ -45,4 +46,5 @@ __all__ = [
     'MetricBaselineOperations',
     'MetricAlertsOperations',
     'MetricAlertsStatusOperations',
+    'ScheduledQueryRulesOperations',
 ]

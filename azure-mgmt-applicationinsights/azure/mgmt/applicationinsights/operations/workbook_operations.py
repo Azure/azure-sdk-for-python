@@ -37,7 +37,7 @@ class WorkbookOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, resource_name, location, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Get a single workbook by its resourceName.
 
         :param resource_group_name: The name of the resource group.
@@ -45,8 +45,6 @@ class WorkbookOperations(object):
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param location: The name of location where workbook is stored.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -69,7 +67,6 @@ class WorkbookOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['location'] = self._serialize.query("location", location, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -102,7 +99,7 @@ class WorkbookOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooks/{resourceName}'}
 
     def delete(
-            self, resource_group_name, resource_name, location, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Delete a workbook.
 
         :param resource_group_name: The name of the resource group.
@@ -110,8 +107,6 @@ class WorkbookOperations(object):
         :param resource_name: The name of the Application Insights component
          resource.
         :type resource_name: str
-        :param location: The name of location where workbook is stored.
-        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -133,7 +128,6 @@ class WorkbookOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['location'] = self._serialize.query("location", location, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers

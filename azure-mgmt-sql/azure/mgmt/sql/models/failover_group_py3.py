@@ -77,7 +77,7 @@ class FailoverGroup(ProxyResource):
     }
 
     def __init__(self, *, read_write_endpoint, partner_servers, tags=None, read_only_endpoint=None, databases=None, **kwargs) -> None:
-        super(FailoverGroup, self).__init__(, **kwargs)
+        super(FailoverGroup, self).__init__(**kwargs)
         self.location = None
         self.tags = tags
         self.read_write_endpoint = read_write_endpoint

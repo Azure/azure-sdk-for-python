@@ -63,7 +63,7 @@ class RestorePoint(ProxyResource):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(RestorePoint, self).__init__(, **kwargs)
+        super(RestorePoint, self).__init__(**kwargs)
         self.location = None
         self.restore_point_type = None
         self.earliest_restore_date = None
