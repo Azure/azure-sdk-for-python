@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class EventType(Resource):
-    """Event Type for a subject under a topic.
+class Resource(Model):
+    """Definition of a Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,12 +24,6 @@ class EventType(Resource):
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
-    :param display_name: Display name of the event type.
-    :type display_name: str
-    :param description: Description of the event type.
-    :type description: str
-    :param schema_url: Url of the schema for this event type.
-    :type schema_url: str
     """
 
     _validation = {
@@ -42,13 +36,10 @@ class EventType(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'schema_url': {'key': 'properties.schemaUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(EventType, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.description = kwargs.get('description', None)
-        self.schema_url = kwargs.get('schema_url', None)
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None

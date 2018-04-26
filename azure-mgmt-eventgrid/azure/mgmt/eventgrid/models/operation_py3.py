@@ -32,9 +32,9 @@ class Operation(Model):
         'properties': {'key': 'properties', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, display=None, origin: str=None, properties=None, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
-        self.origin = kwargs.get('origin', None)
-        self.properties = kwargs.get('properties', None)
+        self.name = name
+        self.display = display
+        self.origin = origin
+        self.properties = properties

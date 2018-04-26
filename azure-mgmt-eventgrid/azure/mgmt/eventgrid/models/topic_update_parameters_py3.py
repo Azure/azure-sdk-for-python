@@ -12,23 +12,17 @@
 from msrest.serialization import Model
 
 
-class TopicRegenerateKeyRequest(Model):
-    """Topic regenerate share access key key request.
+class TopicUpdateParameters(Model):
+    """Properties of the Topic update.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param key_name: Required. Key name to regenerate key1 or key2
-    :type key_name: str
+    :param tags: Tags of the resource
+    :type tags: dict[str, str]
     """
 
-    _validation = {
-        'key_name': {'required': True},
-    }
-
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(TopicRegenerateKeyRequest, self).__init__(**kwargs)
-        self.key_name = kwargs.get('key_name', None)
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(TopicUpdateParameters, self).__init__(**kwargs)
+        self.tags = tags
