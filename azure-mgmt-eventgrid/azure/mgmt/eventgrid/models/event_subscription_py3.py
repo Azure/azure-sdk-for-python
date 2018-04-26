@@ -60,10 +60,10 @@ class EventSubscription(Resource):
         'labels': {'key': 'properties.labels', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, destination=None, filter=None, labels=None, **kwargs) -> None:
         super(EventSubscription, self).__init__(**kwargs)
         self.topic = None
         self.provisioning_state = None
-        self.destination = kwargs.get('destination', None)
-        self.filter = kwargs.get('filter', None)
-        self.labels = kwargs.get('labels', None)
+        self.destination = destination
+        self.filter = filter
+        self.labels = labels
