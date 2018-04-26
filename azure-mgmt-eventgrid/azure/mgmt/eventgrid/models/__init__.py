@@ -9,23 +9,42 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_subscription_destination import EventSubscriptionDestination
-from .event_subscription_filter import EventSubscriptionFilter
-from .resource import Resource
-from .web_hook_event_subscription_destination import WebHookEventSubscriptionDestination
-from .event_hub_event_subscription_destination import EventHubEventSubscriptionDestination
-from .event_subscription import EventSubscription
-from .event_subscription_update_parameters import EventSubscriptionUpdateParameters
-from .event_subscription_full_url import EventSubscriptionFullUrl
-from .operation_info import OperationInfo
-from .operation import Operation
-from .tracked_resource import TrackedResource
-from .topic import Topic
-from .topic_update_parameters import TopicUpdateParameters
-from .topic_shared_access_keys import TopicSharedAccessKeys
-from .topic_regenerate_key_request import TopicRegenerateKeyRequest
-from .event_type import EventType
-from .topic_type_info import TopicTypeInfo
+try:
+    from .event_subscription_destination_py3 import EventSubscriptionDestination
+    from .event_subscription_filter_py3 import EventSubscriptionFilter
+    from .resource_py3 import Resource
+    from .web_hook_event_subscription_destination_py3 import WebHookEventSubscriptionDestination
+    from .event_hub_event_subscription_destination_py3 import EventHubEventSubscriptionDestination
+    from .event_subscription_py3 import EventSubscription
+    from .event_subscription_update_parameters_py3 import EventSubscriptionUpdateParameters
+    from .event_subscription_full_url_py3 import EventSubscriptionFullUrl
+    from .operation_info_py3 import OperationInfo
+    from .operation_py3 import Operation
+    from .tracked_resource_py3 import TrackedResource
+    from .topic_py3 import Topic
+    from .topic_update_parameters_py3 import TopicUpdateParameters
+    from .topic_shared_access_keys_py3 import TopicSharedAccessKeys
+    from .topic_regenerate_key_request_py3 import TopicRegenerateKeyRequest
+    from .event_type_py3 import EventType
+    from .topic_type_info_py3 import TopicTypeInfo
+except (SyntaxError, ImportError):
+    from .event_subscription_destination import EventSubscriptionDestination
+    from .event_subscription_filter import EventSubscriptionFilter
+    from .resource import Resource
+    from .web_hook_event_subscription_destination import WebHookEventSubscriptionDestination
+    from .event_hub_event_subscription_destination import EventHubEventSubscriptionDestination
+    from .event_subscription import EventSubscription
+    from .event_subscription_update_parameters import EventSubscriptionUpdateParameters
+    from .event_subscription_full_url import EventSubscriptionFullUrl
+    from .operation_info import OperationInfo
+    from .operation import Operation
+    from .tracked_resource import TrackedResource
+    from .topic import Topic
+    from .topic_update_parameters import TopicUpdateParameters
+    from .topic_shared_access_keys import TopicSharedAccessKeys
+    from .topic_regenerate_key_request import TopicRegenerateKeyRequest
+    from .event_type import EventType
+    from .topic_type_info import TopicTypeInfo
 from .event_subscription_paged import EventSubscriptionPaged
 from .operation_paged import OperationPaged
 from .topic_paged import TopicPaged
