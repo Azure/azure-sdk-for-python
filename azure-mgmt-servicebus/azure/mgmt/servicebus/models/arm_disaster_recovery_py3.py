@@ -61,7 +61,7 @@ class ArmDisasterRecovery(Resource):
     }
 
     def __init__(self, *, partner_namespace: str=None, alternate_name: str=None, **kwargs) -> None:
-        super(ArmDisasterRecovery, self).__init__(, **kwargs)
+        super(ArmDisasterRecovery, self).__init__(**kwargs)
         self.provisioning_state = None
         self.partner_namespace = partner_namespace
         self.alternate_name = alternate_name

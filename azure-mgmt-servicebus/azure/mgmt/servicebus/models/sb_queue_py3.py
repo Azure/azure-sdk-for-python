@@ -132,7 +132,7 @@ class SBQueue(Resource):
     }
 
     def __init__(self, *, lock_duration=None, max_size_in_megabytes: int=None, requires_duplicate_detection: bool=None, requires_session: bool=None, default_message_time_to_live=None, dead_lettering_on_message_expiration: bool=None, duplicate_detection_history_time_window=None, max_delivery_count: int=None, status=None, enable_batched_operations: bool=None, auto_delete_on_idle=None, enable_partitioning: bool=None, enable_express: bool=None, forward_to: str=None, forward_dead_lettered_messages_to: str=None, **kwargs) -> None:
-        super(SBQueue, self).__init__(, **kwargs)
+        super(SBQueue, self).__init__(**kwargs)
         self.count_details = None
         self.created_at = None
         self.updated_at = None
