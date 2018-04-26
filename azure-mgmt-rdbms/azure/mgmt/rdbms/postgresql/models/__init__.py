@@ -32,7 +32,6 @@ try:
     from .performance_tier_properties_py3 import PerformanceTierProperties
     from .name_availability_request_py3 import NameAvailabilityRequest
     from .name_availability_py3 import NameAvailability
-    from .resource_py3 import Resource
     from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
 except (SyntaxError, ImportError):
     from .proxy_resource import ProxyResource
@@ -57,7 +56,6 @@ except (SyntaxError, ImportError):
     from .performance_tier_properties import PerformanceTierProperties
     from .name_availability_request import NameAvailabilityRequest
     from .name_availability import NameAvailability
-    from .resource import Resource
     from .server_security_alert_policy import ServerSecurityAlertPolicy
 from .server_paged import ServerPaged
 from .firewall_rule_paged import FirewallRulePaged
@@ -98,7 +96,6 @@ __all__ = [
     'PerformanceTierProperties',
     'NameAvailabilityRequest',
     'NameAvailability',
-    'Resource',
     'ServerSecurityAlertPolicy',
     'ServerPaged',
     'FirewallRulePaged',

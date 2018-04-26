@@ -20,8 +20,8 @@ from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
 from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
-from .operations.operations import Operations
 from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -59,7 +59,7 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
 
 
 class PostgreSQLManagementClient(SDKClient):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, log files and configurations with new business model.
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, security alert policies, log files and configurations with new business model.
 
     :ivar config: Configuration for client.
     :vartype config: PostgreSQLManagementClientConfiguration
@@ -78,10 +78,10 @@ class PostgreSQLManagementClient(SDKClient):
     :vartype location_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
     :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
     :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -117,7 +117,7 @@ class PostgreSQLManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
