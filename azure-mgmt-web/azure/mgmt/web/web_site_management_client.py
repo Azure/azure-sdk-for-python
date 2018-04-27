@@ -9,13 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
 from .operations.certificate_registration_provider_operations import CertificateRegistrationProviderOperations
@@ -27,6 +28,8 @@ from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
 from .operations.diagnostics_operations import DiagnosticsOperations
 from .operations.provider_operations import ProviderOperations
 from .operations.recommendations_operations import RecommendationsOperations
+from .operations.resource_health_metadata_operations import ResourceHealthMetadataOperations
+from .operations.billing_meters_operations import BillingMetersOperations
 from .operations.web_apps_operations import WebAppsOperations
 from .operations.app_service_environments_operations import AppServiceEnvironmentsOperations
 from .operations.app_service_plans_operations import AppServicePlansOperations
@@ -66,7 +69,7 @@ class WebSiteManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class WebSiteManagementClient(object):
+class WebSiteManagementClient(SDKClient):
     """WebSite Management Client
 
     :ivar config: Configuration for client.
@@ -92,6 +95,10 @@ class WebSiteManagementClient(object):
     :vartype provider: azure.mgmt.web.operations.ProviderOperations
     :ivar recommendations: Recommendations operations
     :vartype recommendations: azure.mgmt.web.operations.RecommendationsOperations
+    :ivar resource_health_metadata: ResourceHealthMetadata operations
+    :vartype resource_health_metadata: azure.mgmt.web.operations.ResourceHealthMetadataOperations
+    :ivar billing_meters: BillingMeters operations
+    :vartype billing_meters: azure.mgmt.web.operations.BillingMetersOperations
     :ivar web_apps: WebApps operations
     :vartype web_apps: azure.mgmt.web.operations.WebAppsOperations
     :ivar app_service_environments: AppServiceEnvironments operations
@@ -112,7 +119,7 @@ class WebSiteManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = WebSiteManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(WebSiteManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -137,6 +144,10 @@ class WebSiteManagementClient(object):
         self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommendations = RecommendationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_health_metadata = ResourceHealthMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_meters = BillingMetersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.web_apps = WebAppsOperations(
             self._client, self.config, self._serialize, self._deserialize)

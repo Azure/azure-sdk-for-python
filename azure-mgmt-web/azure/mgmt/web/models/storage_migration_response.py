@@ -46,6 +46,6 @@ class StorageMigrationResponse(ProxyOnlyResource):
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        super(StorageMigrationResponse, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(StorageMigrationResponse, self).__init__(**kwargs)
         self.operation_id = None

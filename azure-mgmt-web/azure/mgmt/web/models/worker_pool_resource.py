@@ -62,11 +62,11 @@ class WorkerPoolResource(ProxyOnlyResource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, kind=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, sku=None):
-        super(WorkerPoolResource, self).__init__(kind=kind)
-        self.worker_size_id = worker_size_id
-        self.compute_mode = compute_mode
-        self.worker_size = worker_size
-        self.worker_count = worker_count
+    def __init__(self, **kwargs):
+        super(WorkerPoolResource, self).__init__(**kwargs)
+        self.worker_size_id = kwargs.get('worker_size_id', None)
+        self.compute_mode = kwargs.get('compute_mode', None)
+        self.worker_size = kwargs.get('worker_size', None)
+        self.worker_count = kwargs.get('worker_count', None)
         self.instance_names = None
-        self.sku = sku
+        self.sku = kwargs.get('sku', None)

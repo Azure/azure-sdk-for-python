@@ -35,10 +35,10 @@ class ApplicationStack(Model):
         'frameworks': {'key': 'frameworks', 'type': '[ApplicationStack]'},
     }
 
-    def __init__(self, name=None, display=None, dependency=None, major_versions=None, frameworks=None):
-        super(ApplicationStack, self).__init__()
-        self.name = name
-        self.display = display
-        self.dependency = dependency
-        self.major_versions = major_versions
-        self.frameworks = frameworks
+    def __init__(self, **kwargs):
+        super(ApplicationStack, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.dependency = kwargs.get('dependency', None)
+        self.major_versions = kwargs.get('major_versions', None)
+        self.frameworks = kwargs.get('frameworks', None)

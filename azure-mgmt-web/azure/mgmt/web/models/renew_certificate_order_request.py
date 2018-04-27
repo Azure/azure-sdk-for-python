@@ -51,8 +51,8 @@ class RenewCertificateOrderRequest(ProxyOnlyResource):
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, kind=None, key_size=None, csr=None, is_private_key_external=None):
-        super(RenewCertificateOrderRequest, self).__init__(kind=kind)
-        self.key_size = key_size
-        self.csr = csr
-        self.is_private_key_external = is_private_key_external
+    def __init__(self, **kwargs):
+        super(RenewCertificateOrderRequest, self).__init__(**kwargs)
+        self.key_size = kwargs.get('key_size', None)
+        self.csr = kwargs.get('csr', None)
+        self.is_private_key_external = kwargs.get('is_private_key_external', None)

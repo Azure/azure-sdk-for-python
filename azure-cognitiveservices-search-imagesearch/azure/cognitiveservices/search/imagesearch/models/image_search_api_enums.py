@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class Currency(Enum):
+class Currency(str, Enum):
 
     usd = "USD"
     cad = "CAD"
@@ -177,7 +177,7 @@ class Currency(Enum):
     zmw = "ZMW"
 
 
-class ItemAvailability(Enum):
+class ItemAvailability(str, Enum):
 
     discontinued = "Discontinued"
     in_stock = "InStock"
@@ -189,7 +189,7 @@ class ItemAvailability(Enum):
     sold_out = "SoldOut"
 
 
-class ErrorCode(Enum):
+class ErrorCode(str, Enum):
 
     none = "None"
     server_error = "ServerError"
@@ -199,7 +199,7 @@ class ErrorCode(Enum):
     insufficient_authorization = "InsufficientAuthorization"
 
 
-class ErrorSubCode(Enum):
+class ErrorSubCode(str, Enum):
 
     unexpected_error = "UnexpectedError"
     resource_error = "ResourceError"
@@ -214,7 +214,7 @@ class ErrorSubCode(Enum):
     authorization_expired = "AuthorizationExpired"
 
 
-class ImageAspect(Enum):
+class ImageAspect(str, Enum):
 
     all = "All"
     square = "Square"
@@ -222,7 +222,7 @@ class ImageAspect(Enum):
     tall = "Tall"
 
 
-class ImageColor(Enum):
+class ImageColor(str, Enum):
 
     color_only = "ColorOnly"
     monochrome = "Monochrome"
@@ -240,20 +240,20 @@ class ImageColor(Enum):
     yellow = "Yellow"
 
 
-class Freshness(Enum):
+class Freshness(str, Enum):
 
     day = "Day"
     week = "Week"
     month = "Month"
 
 
-class ImageContent(Enum):
+class ImageContent(str, Enum):
 
     face = "Face"
     portrait = "Portrait"
 
 
-class ImageType(Enum):
+class ImageType(str, Enum):
 
     animated_gif = "AnimatedGif"
     clipart = "Clipart"
@@ -263,7 +263,7 @@ class ImageType(Enum):
     transparent = "Transparent"
 
 
-class ImageLicense(Enum):
+class ImageLicense(str, Enum):
 
     all = "All"
     any = "Any"
@@ -274,14 +274,14 @@ class ImageLicense(Enum):
     modify_commercially = "ModifyCommercially"
 
 
-class SafeSearch(Enum):
+class SafeSearch(str, Enum):
 
     off = "Off"
     moderate = "Moderate"
     strict = "Strict"
 
 
-class ImageSize(Enum):
+class ImageSize(str, Enum):
 
     all = "All"
     small = "Small"
@@ -290,12 +290,12 @@ class ImageSize(Enum):
     wallpaper = "Wallpaper"
 
 
-class ImageCropType(Enum):
+class ImageCropType(str, Enum):
 
     rectangular = "Rectangular"
 
 
-class ImageInsightModule(Enum):
+class ImageInsightModule(str, Enum):
 
     all = "All"
     brq = "BRQ"

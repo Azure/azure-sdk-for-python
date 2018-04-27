@@ -32,9 +32,9 @@ class SiteMachineKey(Model):
         'decryption_key': {'key': 'decryptionKey', 'type': 'str'},
     }
 
-    def __init__(self, validation=None, validation_key=None, decryption=None, decryption_key=None):
-        super(SiteMachineKey, self).__init__()
-        self.validation = validation
-        self.validation_key = validation_key
-        self.decryption = decryption
-        self.decryption_key = decryption_key
+    def __init__(self, **kwargs):
+        super(SiteMachineKey, self).__init__(**kwargs)
+        self.validation = kwargs.get('validation', None)
+        self.validation_key = kwargs.get('validation_key', None)
+        self.decryption = kwargs.get('decryption', None)
+        self.decryption_key = kwargs.get('decryption_key', None)

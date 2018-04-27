@@ -18,6 +18,8 @@ class User(ProxyOnlyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id.
     :vartype id: str
     :ivar name: Resource Name.
@@ -28,7 +30,7 @@ class User(ProxyOnlyResource):
     :vartype type: str
     :param user_name: Username
     :type user_name: str
-    :param publishing_user_name: Username used for publishing.
+    :param publishing_user_name: Required. Username used for publishing.
     :type publishing_user_name: str
     :param publishing_password: Password used for publishing.
     :type publishing_password: str
@@ -58,10 +60,10 @@ class User(ProxyOnlyResource):
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
     }
 
-    def __init__(self, publishing_user_name, kind=None, user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
-        super(User, self).__init__(kind=kind)
-        self.user_name = user_name
-        self.publishing_user_name = publishing_user_name
-        self.publishing_password = publishing_password
-        self.publishing_password_hash = publishing_password_hash
-        self.publishing_password_hash_salt = publishing_password_hash_salt
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.user_name = kwargs.get('user_name', None)
+        self.publishing_user_name = kwargs.get('publishing_user_name', None)
+        self.publishing_password = kwargs.get('publishing_password', None)
+        self.publishing_password_hash = kwargs.get('publishing_password_hash', None)
+        self.publishing_password_hash_salt = kwargs.get('publishing_password_hash_salt', None)

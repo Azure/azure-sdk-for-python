@@ -18,8 +18,10 @@ class Error(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param code: The error code that identifies the category of error.
-     Possible values include: 'None', 'ServerError', 'InvalidRequest',
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code that identifies the category of
+     error. Possible values include: 'None', 'ServerError', 'InvalidRequest',
      'RateLimitExceeded', 'InvalidAuthorization', 'InsufficientAuthorization'.
      Default value: "None" .
     :type code: str or
@@ -31,7 +33,7 @@ class Error(Model):
      'AuthorizationRedundancy', 'AuthorizationDisabled', 'AuthorizationExpired'
     :vartype sub_code: str or
      ~azure.cognitiveservices.search.videosearch.models.ErrorSubCode
-    :param message: A description of the error.
+    :param message: Required. A description of the error.
     :type message: str
     :ivar more_details: A description that provides additional information
      about the error.
@@ -60,11 +62,11 @@ class Error(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, message, code="None"):
-        super(Error, self).__init__()
-        self.code = code
+    def __init__(self, **kwargs):
+        super(Error, self).__init__(**kwargs)
+        self.code = kwargs.get('code', "None")
         self.sub_code = None
-        self.message = message
+        self.message = kwargs.get('message', None)
         self.more_details = None
         self.parameter = None
         self.value = None

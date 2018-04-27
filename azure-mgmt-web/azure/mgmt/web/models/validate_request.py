@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class ValidateRequest(Model):
     """Resource validation request content.
 
-    :param name: Resource name to verify.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Resource name to verify.
     :type name: str
-    :param type: Resource type used for verification. Possible values include:
-     'ServerFarm', 'Site'
+    :param type: Required. Resource type used for verification. Possible
+     values include: 'ServerFarm', 'Site'
     :type type: str or ~azure.mgmt.web.models.ValidateResourceTypes
-    :param location: Expected location of the resource.
+    :param location: Required. Expected location of the resource.
     :type location: str
     :param server_farm_id: ARM resource ID of an App Service plan that would
      host the app.
@@ -59,14 +61,14 @@ class ValidateRequest(Model):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, name, type, location, server_farm_id=None, sku_name=None, need_linux_workers=None, is_spot=None, capacity=None, hosting_environment=None):
-        super(ValidateRequest, self).__init__()
-        self.name = name
-        self.type = type
-        self.location = location
-        self.server_farm_id = server_farm_id
-        self.sku_name = sku_name
-        self.need_linux_workers = need_linux_workers
-        self.is_spot = is_spot
-        self.capacity = capacity
-        self.hosting_environment = hosting_environment
+    def __init__(self, **kwargs):
+        super(ValidateRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+        self.location = kwargs.get('location', None)
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.sku_name = kwargs.get('sku_name', None)
+        self.need_linux_workers = kwargs.get('need_linux_workers', None)
+        self.is_spot = kwargs.get('is_spot', None)
+        self.capacity = kwargs.get('capacity', None)
+        self.hosting_environment = kwargs.get('hosting_environment', None)

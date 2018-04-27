@@ -27,7 +27,7 @@ class SiteSealRequest(Model):
         'locale': {'key': 'locale', 'type': 'str'},
     }
 
-    def __init__(self, light_theme=None, locale=None):
-        super(SiteSealRequest, self).__init__()
-        self.light_theme = light_theme
-        self.locale = locale
+    def __init__(self, **kwargs):
+        super(SiteSealRequest, self).__init__(**kwargs)
+        self.light_theme = kwargs.get('light_theme', None)
+        self.locale = kwargs.get('locale', None)

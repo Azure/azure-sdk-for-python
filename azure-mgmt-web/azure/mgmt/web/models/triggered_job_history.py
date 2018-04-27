@@ -45,6 +45,6 @@ class TriggeredJobHistory(ProxyOnlyResource):
         'triggered_job_runs': {'key': 'properties.triggeredJobRuns', 'type': '[TriggeredJobRun]'},
     }
 
-    def __init__(self, kind=None, triggered_job_runs=None):
-        super(TriggeredJobHistory, self).__init__(kind=kind)
-        self.triggered_job_runs = triggered_job_runs
+    def __init__(self, **kwargs):
+        super(TriggeredJobHistory, self).__init__(**kwargs)
+        self.triggered_job_runs = kwargs.get('triggered_job_runs', None)

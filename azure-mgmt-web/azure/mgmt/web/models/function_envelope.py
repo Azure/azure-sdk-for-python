@@ -73,15 +73,15 @@ class FunctionEnvelope(ProxyOnlyResource):
         'test_data': {'key': 'properties.testData', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, script_root_path_href=None, script_href=None, config_href=None, secrets_file_href=None, href=None, config=None, files=None, test_data=None):
-        super(FunctionEnvelope, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(FunctionEnvelope, self).__init__(**kwargs)
         self.function_envelope_name = None
         self.function_app_id = None
-        self.script_root_path_href = script_root_path_href
-        self.script_href = script_href
-        self.config_href = config_href
-        self.secrets_file_href = secrets_file_href
-        self.href = href
-        self.config = config
-        self.files = files
-        self.test_data = test_data
+        self.script_root_path_href = kwargs.get('script_root_path_href', None)
+        self.script_href = kwargs.get('script_href', None)
+        self.config_href = kwargs.get('config_href', None)
+        self.secrets_file_href = kwargs.get('secrets_file_href', None)
+        self.href = kwargs.get('href', None)
+        self.config = kwargs.get('config', None)
+        self.files = kwargs.get('files', None)
+        self.test_data = kwargs.get('test_data', None)

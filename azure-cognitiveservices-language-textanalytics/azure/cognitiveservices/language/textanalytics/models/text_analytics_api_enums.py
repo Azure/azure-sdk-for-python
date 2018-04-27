@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AzureRegions(Enum):
+class AzureRegions(str, Enum):
 
     westus = "westus"
     westeurope = "westeurope"

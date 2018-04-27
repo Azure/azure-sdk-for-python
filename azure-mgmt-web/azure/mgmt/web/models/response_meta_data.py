@@ -23,6 +23,6 @@ class ResponseMetaData(Model):
         'data_source': {'key': 'dataSource', 'type': 'DataSource'},
     }
 
-    def __init__(self, data_source=None):
-        super(ResponseMetaData, self).__init__()
-        self.data_source = data_source
+    def __init__(self, **kwargs):
+        super(ResponseMetaData, self).__init__(**kwargs)
+        self.data_source = kwargs.get('data_source', None)
