@@ -755,14 +755,14 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'region': self._serialize.url("region", region, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['region'] = self._serialize.query("region", region, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -841,14 +841,14 @@ class DatabaseAccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'region': self._serialize.url("region", region, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['region'] = self._serialize.query("region", region, 'str')
 
         # Construct headers
         header_parameters = {}
