@@ -15,30 +15,35 @@ from msrest.serialization import Model
 class File(Model):
     """Properties of the file or directory.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param name: Required. Name of the file.
-    :type name: str
-    :param is_directory: Required. Indicates if the file is a directory.
-    :type is_directory: bool
-    :param download_url: Will contain an URL to download the corresponding
+    :ivar name: Name of the file.
+    :vartype name: str
+    :ivar file_type: Contains information about file type. Possible values
+     include: 'file', 'directory'
+    :vartype file_type: str or ~azure.mgmt.batchai.models.FileType
+    :ivar download_url: Will contain an URL to download the corresponding
      file. The downloadUrl is not returned for directories.
-    :type download_url: str
-    :param last_modified: The time at which the file was last modified. The
+    :vartype download_url: str
+    :ivar last_modified: The time at which the file was last modified. The
      time at which the file was last modified.
-    :type last_modified: datetime
-    :param content_length: The file size. The file size.
-    :type content_length: long
+    :vartype last_modified: datetime
+    :ivar content_length: The file size. The file size.
+    :vartype content_length: long
     """
 
     _validation = {
-        'name': {'required': True},
-        'is_directory': {'required': True},
+        'name': {'readonly': True},
+        'file_type': {'readonly': True},
+        'download_url': {'readonly': True},
+        'last_modified': {'readonly': True},
+        'content_length': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'is_directory': {'key': 'isDirectory', 'type': 'bool'},
+        'file_type': {'key': 'fileType', 'type': 'str'},
         'download_url': {'key': 'downloadUrl', 'type': 'str'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'content_length': {'key': 'properties.contentLength', 'type': 'long'},
@@ -46,8 +51,8 @@ class File(Model):
 
     def __init__(self, **kwargs):
         super(File, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.is_directory = kwargs.get('is_directory', None)
-        self.download_url = kwargs.get('download_url', None)
-        self.last_modified = kwargs.get('last_modified', None)
-        self.content_length = kwargs.get('content_length', None)
+        self.name = None
+        self.file_type = None
+        self.download_url = None
+        self.last_modified = None
+        self.content_length = None

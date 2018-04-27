@@ -15,25 +15,15 @@ from msrest.serialization import Model
 class FileServersListByResourceGroupOptions(Model):
     """Additional parameters for list_by_resource_group operation.
 
-    :param filter: An OData $filter clause.. Used to filter results that are
-     returned in the GET respnose.
-    :type filter: str
-    :param select: An OData $select clause. Used to select the properties to
-     be returned in the GET respnose.
-    :type select: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 files can be returned. Default value: 1000 .
     :type max_results: int
     """
 
     _attribute_map = {
-        'filter': {'key': '', 'type': 'str'},
-        'select': {'key': '', 'type': 'str'},
         'max_results': {'key': '', 'type': 'int'},
     }
 
-    def __init__(self, *, filter: str=None, select: str=None, max_results: int=1000, **kwargs) -> None:
+    def __init__(self, *, max_results: int=1000, **kwargs) -> None:
         super(FileServersListByResourceGroupOptions, self).__init__(**kwargs)
-        self.filter = filter
-        self.select = select
         self.max_results = max_results
