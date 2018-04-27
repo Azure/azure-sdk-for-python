@@ -60,8 +60,8 @@ class AccessKeys(Model):
         'key_name': {'key': 'keyName', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(AccessKeys, self).__init__()
+    def __init__(self, **kwargs):
+        super(AccessKeys, self).__init__(**kwargs)
         self.primary_connection_string = None
         self.secondary_connection_string = None
         self.alias_primary_connection_string = None
