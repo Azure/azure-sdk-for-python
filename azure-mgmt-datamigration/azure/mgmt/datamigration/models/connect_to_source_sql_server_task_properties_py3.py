@@ -21,8 +21,8 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar errors: Array of errors. This is ignored if submitted.
-    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :param errors: Array of errors. This is ignored if submitted.
+    :type errors: list[~azure.mgmt.datamigration.models.ODataError]
     :ivar state: The state of the task. This is ignored if submitted. Possible
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
@@ -38,7 +38,6 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
     """
 
     _validation = {
-        'errors': {'readonly': True},
         'state': {'readonly': True},
         'task_type': {'required': True},
         'output': {'readonly': True},
@@ -52,8 +51,8 @@ class ConnectToSourceSqlServerTaskProperties(ProjectTaskProperties):
         'output': {'key': 'output', 'type': '[ConnectToSourceSqlServerTaskOutput]'},
     }
 
-    def __init__(self, *, input=None, **kwargs) -> None:
-        super(ConnectToSourceSqlServerTaskProperties, self).__init__(**kwargs)
+    def __init__(self, *, errors=None, input=None, **kwargs) -> None:
+        super(ConnectToSourceSqlServerTaskProperties, self).__init__(errors=errors, **kwargs)
         self.input = input
         self.output = None
         self.task_type = 'ConnectToSource.SqlServer'

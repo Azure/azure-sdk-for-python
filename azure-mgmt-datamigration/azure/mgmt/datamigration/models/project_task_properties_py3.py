@@ -26,8 +26,8 @@ class ProjectTaskProperties(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar errors: Array of errors. This is ignored if submitted.
-    :vartype errors: list[~azure.mgmt.datamigration.models.ODataError]
+    :param errors: Array of errors. This is ignored if submitted.
+    :type errors: list[~azure.mgmt.datamigration.models.ODataError]
     :ivar state: The state of the task. This is ignored if submitted. Possible
      values include: 'Unknown', 'Queued', 'Running', 'Canceled', 'Succeeded',
      'Failed', 'FailedInputValidation', 'Faulted'
@@ -37,7 +37,6 @@ class ProjectTaskProperties(Model):
     """
 
     _validation = {
-        'errors': {'readonly': True},
         'state': {'readonly': True},
         'task_type': {'required': True},
     }
@@ -52,8 +51,8 @@ class ProjectTaskProperties(Model):
         'task_type': {'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties'}
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, errors=None, **kwargs) -> None:
         super(ProjectTaskProperties, self).__init__(**kwargs)
-        self.errors = None
+        self.errors = errors
         self.state = None
         self.task_type = None
