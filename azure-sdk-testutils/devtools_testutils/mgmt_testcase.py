@@ -156,6 +156,7 @@ class AzureMgmtTestCase(ReplayableTest):
         )
         if self.is_playback():
             client.config.long_running_operation_timeout = 0
+        client.config.keep_alive = True
         return client
 
     def create_mgmt_client(self, client_class, **kwargs):
@@ -223,8 +224,10 @@ class AzureMgmtPreparer(AbstractPreparer):
         return self.resource_moniker
 
     def create_mgmt_client(self, client_class):
-        return client_class(
+        client = client_class(
             credentials=self.test_class_instance.settings.get_credentials(),
             subscription_id=self.test_class_instance.settings.SUBSCRIPTION_ID,
             **self.client_kwargs
         )
+        client.config.keep_alive = True
+        return client
