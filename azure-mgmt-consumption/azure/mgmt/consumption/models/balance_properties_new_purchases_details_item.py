@@ -21,7 +21,7 @@ class BalancePropertiesNewPurchasesDetailsItem(Model):
     :ivar name: the name of new purchase.
     :vartype name: str
     :ivar value: the value of new purchase.
-    :vartype value: object
+    :vartype value: decimal.Decimal
     """
 
     _validation = {
@@ -31,7 +31,7 @@ class BalancePropertiesNewPurchasesDetailsItem(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
+        'value': {'key': 'value', 'type': 'decimal'},
     }
 
     def __init__(self):
