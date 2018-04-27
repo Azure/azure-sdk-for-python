@@ -21,7 +21,7 @@ class RulesOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client API version. Constant value: "2017-04-01".
     """
 
@@ -37,7 +37,7 @@ class RulesOperations(object):
         self.config = config
 
     def list_by_subscriptions(
-            self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, topic_name, subscription_name, skip=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all the rules within given topic-subscription.
 
         :param resource_group_name: Name of the Resource group within the
@@ -49,6 +49,14 @@ class RulesOperations(object):
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
+        :param skip: Skip is only used if a previous operation returned a
+         partial result. If a previous response contains a nextLink element,
+         the value of the nextLink element will include a skip parameter that
+         specifies a starting point to use for subsequent calls.
+        :type skip: int
+        :param top: May be used to limit the number of results to the most
+         recent N usageDetails.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -64,7 +72,7 @@ class RulesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules'
+                url = self.list_by_subscriptions.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -77,6 +85,10 @@ class RulesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', maximum=1000, minimum=0)
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
 
             else:
                 url = next_link
@@ -111,6 +123,7 @@ class RulesOperations(object):
             return client_raw_response
 
         return deserialized
+    list_by_subscriptions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules'}
 
     def create_or_update(
             self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -141,7 +154,7 @@ class RulesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -187,6 +200,7 @@ class RulesOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}
 
     def delete(
             self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -214,7 +228,7 @@ class RulesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -249,6 +263,7 @@ class RulesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}
 
     def get(
             self, resource_group_name, namespace_name, topic_name, subscription_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -277,7 +292,7 @@ class RulesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
@@ -319,3 +334,4 @@ class RulesOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}

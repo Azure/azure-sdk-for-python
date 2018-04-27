@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class SBSku(Model):
     """SKU of the namespace.
 
-    :param name: Name of this SKU. Possible values include: 'Basic',
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of this SKU. Possible values include: 'Basic',
      'Standard', 'Premium'
     :type name: str or ~azure.mgmt.servicebus.models.SkuName
     :param tier: The billing tier of this particular SKU. Possible values
@@ -36,8 +38,8 @@ class SBSku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name, tier=None, capacity=None):
-        super(SBSku, self).__init__()
-        self.name = name
-        self.tier = tier
-        self.capacity = capacity
+    def __init__(self, **kwargs):
+        super(SBSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.capacity = kwargs.get('capacity', None)
