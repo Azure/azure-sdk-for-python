@@ -30,6 +30,6 @@ class BackupSecretResult(Model):
         'value': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self):
-        super(BackupSecretResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(BackupSecretResult, self).__init__(**kwargs)
         self.value = None

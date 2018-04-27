@@ -42,8 +42,8 @@ class SasDefinitionItem(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self):
-        super(SasDefinitionItem, self).__init__()
+    def __init__(self, **kwargs):
+        super(SasDefinitionItem, self).__init__(**kwargs)
         self.id = None
         self.secret_id = None
         self.attributes = None

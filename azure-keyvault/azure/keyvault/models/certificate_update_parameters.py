@@ -30,8 +30,8 @@ class CertificateUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, certificate_policy=None, certificate_attributes=None, tags=None):
-        super(CertificateUpdateParameters, self).__init__()
-        self.certificate_policy = certificate_policy
-        self.certificate_attributes = certificate_attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(CertificateUpdateParameters, self).__init__(**kwargs)
+        self.certificate_policy = kwargs.get('certificate_policy', None)
+        self.certificate_attributes = kwargs.get('certificate_attributes', None)
+        self.tags = kwargs.get('tags', None)
