@@ -34,6 +34,9 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
     :ivar target_image_reference: Image Reference details
     :vartype target_image_reference:
      ~azure.mgmt.compute.v2017_12_01.models.ImageReference
+    :ivar rollback_info: Information about OS rollback if performed
+    :vartype rollback_info:
+     ~azure.mgmt.compute.v2017_12_01.models.RollbackStatusInfo
     """
 
     _validation = {
@@ -42,6 +45,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
         'error': {'readonly': True},
         'started_by': {'readonly': True},
         'target_image_reference': {'readonly': True},
+        'rollback_info': {'readonly': True},
     }
 
     _attribute_map = {
@@ -50,6 +54,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
         'error': {'key': 'error', 'type': 'ApiError'},
         'started_by': {'key': 'startedBy', 'type': 'UpgradeOperationInvoker'},
         'target_image_reference': {'key': 'targetImageReference', 'type': 'ImageReference'},
+        'rollback_info': {'key': 'rollbackInfo', 'type': 'RollbackStatusInfo'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -59,3 +64,4 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
         self.error = None
         self.started_by = None
         self.target_image_reference = None
+        self.rollback_info = None
