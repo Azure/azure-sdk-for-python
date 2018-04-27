@@ -37,14 +37,18 @@ from .notification_list_response import NotificationListResponse
 from .operation_paged import OperationPaged
 from .redis_resource_paged import RedisResourcePaged
 from .redis_firewall_rule_paged import RedisFirewallRulePaged
+from .redis_patch_schedule_paged import RedisPatchSchedulePaged
 from .redis_linked_server_with_properties_paged import RedisLinkedServerWithPropertiesPaged
 from .redis_management_client_enums import (
     SkuName,
     SkuFamily,
+    TlsVersion,
+    ProvisioningState,
     RedisKeyType,
     RebootType,
     DayOfWeek,
     ReplicationRole,
+    DefaultName,
 )
 
 __all__ = [
@@ -76,11 +80,15 @@ __all__ = [
     'OperationPaged',
     'RedisResourcePaged',
     'RedisFirewallRulePaged',
+    'RedisPatchSchedulePaged',
     'RedisLinkedServerWithPropertiesPaged',
     'SkuName',
     'SkuFamily',
+    'TlsVersion',
+    'ProvisioningState',
     'RedisKeyType',
     'RebootType',
     'DayOfWeek',
     'ReplicationRole',
+    'DefaultName',
 ]

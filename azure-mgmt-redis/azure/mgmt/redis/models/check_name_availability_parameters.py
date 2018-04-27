@@ -13,12 +13,13 @@ from msrest.serialization import Model
 
 
 class CheckNameAvailabilityParameters(Model):
-    """Parameters body to pass for  name availability check.
+    """Parameters body to pass for resource name availability check.
 
     :param name: Resource name.
     :type name: str
-    :param type: Resource type.
-    :type type: str
+    :param type: Resource type to check name availability of, e.g.
+     'Microsoft.Cache/redis'. Possible values include: 'Microsoft.Cache/redis'
+    :type type: str or ~azure.mgmt.redis.models.DefaultName
     """
 
     _attribute_map = {
