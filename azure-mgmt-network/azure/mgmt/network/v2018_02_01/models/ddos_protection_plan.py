@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class DdosProtectionPlan(Resource):
+class DdosProtectionPlan(Model):
     """A DDoS protection plan in a resource group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource ID.
-    :type id: str
+    :ivar id: Resource ID.
+    :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
@@ -47,6 +47,7 @@ class DdosProtectionPlan(Resource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'resource_guid': {'readonly': True},
@@ -69,6 +70,11 @@ class DdosProtectionPlan(Resource):
 
     def __init__(self, **kwargs):
         super(DdosProtectionPlan, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
         self.resource_guid = None
         self.provisioning_state = None
         self.virtual_networks = None
