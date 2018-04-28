@@ -50,8 +50,8 @@ class ExpressRouteCrossConnectionPeering(SubResource):
     :ivar provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :vartype provisioning_state: str
-    :ivar gateway_manager_etag: The GatewayManager Etag.
-    :vartype gateway_manager_etag: str
+    :param gateway_manager_etag: The GatewayManager Etag.
+    :type gateway_manager_etag: str
     :param last_modified_by: Gets whether the provider or the customer last
      modified the peering.
     :type last_modified_by: str
@@ -72,7 +72,6 @@ class ExpressRouteCrossConnectionPeering(SubResource):
         'primary_azure_port': {'readonly': True},
         'secondary_azure_port': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'gateway_manager_etag': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -97,7 +96,7 @@ class ExpressRouteCrossConnectionPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, peering_type=None, state=None, peer_asn: int=None, primary_peer_address_prefix: str=None, secondary_peer_address_prefix: str=None, shared_key: str=None, vlan_id: int=None, microsoft_peering_config=None, last_modified_by: str=None, ipv6_peering_config=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, peering_type=None, state=None, peer_asn: int=None, primary_peer_address_prefix: str=None, secondary_peer_address_prefix: str=None, shared_key: str=None, vlan_id: int=None, microsoft_peering_config=None, gateway_manager_etag: str=None, last_modified_by: str=None, ipv6_peering_config=None, name: str=None, **kwargs) -> None:
         super(ExpressRouteCrossConnectionPeering, self).__init__(id=id, **kwargs)
         self.peering_type = peering_type
         self.state = state
@@ -111,7 +110,7 @@ class ExpressRouteCrossConnectionPeering(SubResource):
         self.vlan_id = vlan_id
         self.microsoft_peering_config = microsoft_peering_config
         self.provisioning_state = None
-        self.gateway_manager_etag = None
+        self.gateway_manager_etag = gateway_manager_etag
         self.last_modified_by = last_modified_by
         self.ipv6_peering_config = ipv6_peering_config
         self.name = name
