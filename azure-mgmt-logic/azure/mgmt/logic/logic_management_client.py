@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -22,7 +22,12 @@ from .operations.workflow_triggers_operations import WorkflowTriggersOperations
 from .operations.workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations
 from .operations.workflow_runs_operations import WorkflowRunsOperations
 from .operations.workflow_run_actions_operations import WorkflowRunActionsOperations
+from .operations.workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
+from .operations.workflow_run_action_scoped_repetitions_operations import WorkflowRunActionScopedRepetitionsOperations
+from .operations.workflow_run_operations import WorkflowRunOperations
 from .operations.integration_accounts_operations import IntegrationAccountsOperations
+from .operations.integration_account_assemblies_operations import IntegrationAccountAssembliesOperations
+from .operations.integration_account_batch_configurations_operations import IntegrationAccountBatchConfigurationsOperations
 from .operations.schemas_operations import SchemasOperations
 from .operations.maps_operations import MapsOperations
 from .operations.partners_operations import PartnersOperations
@@ -52,52 +57,60 @@ class LogicManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(LogicManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('logicmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-logic/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class LogicManagementClient(object):
+class LogicManagementClient(SDKClient):
     """REST API for Azure Logic Apps.
 
     :ivar config: Configuration for client.
     :vartype config: LogicManagementClientConfiguration
 
     :ivar workflows: Workflows operations
-    :vartype workflows: .operations.WorkflowsOperations
+    :vartype workflows: azure.mgmt.logic.operations.WorkflowsOperations
     :ivar workflow_versions: WorkflowVersions operations
-    :vartype workflow_versions: .operations.WorkflowVersionsOperations
+    :vartype workflow_versions: azure.mgmt.logic.operations.WorkflowVersionsOperations
     :ivar workflow_triggers: WorkflowTriggers operations
-    :vartype workflow_triggers: .operations.WorkflowTriggersOperations
+    :vartype workflow_triggers: azure.mgmt.logic.operations.WorkflowTriggersOperations
     :ivar workflow_trigger_histories: WorkflowTriggerHistories operations
-    :vartype workflow_trigger_histories: .operations.WorkflowTriggerHistoriesOperations
+    :vartype workflow_trigger_histories: azure.mgmt.logic.operations.WorkflowTriggerHistoriesOperations
     :ivar workflow_runs: WorkflowRuns operations
-    :vartype workflow_runs: .operations.WorkflowRunsOperations
+    :vartype workflow_runs: azure.mgmt.logic.operations.WorkflowRunsOperations
     :ivar workflow_run_actions: WorkflowRunActions operations
-    :vartype workflow_run_actions: .operations.WorkflowRunActionsOperations
+    :vartype workflow_run_actions: azure.mgmt.logic.operations.WorkflowRunActionsOperations
+    :ivar workflow_run_action_repetitions: WorkflowRunActionRepetitions operations
+    :vartype workflow_run_action_repetitions: azure.mgmt.logic.operations.WorkflowRunActionRepetitionsOperations
+    :ivar workflow_run_action_scoped_repetitions: WorkflowRunActionScopedRepetitions operations
+    :vartype workflow_run_action_scoped_repetitions: azure.mgmt.logic.operations.WorkflowRunActionScopedRepetitionsOperations
+    :ivar workflow_run_operations: WorkflowRunOperations operations
+    :vartype workflow_run_operations: azure.mgmt.logic.operations.WorkflowRunOperations
     :ivar integration_accounts: IntegrationAccounts operations
-    :vartype integration_accounts: .operations.IntegrationAccountsOperations
+    :vartype integration_accounts: azure.mgmt.logic.operations.IntegrationAccountsOperations
+    :ivar integration_account_assemblies: IntegrationAccountAssemblies operations
+    :vartype integration_account_assemblies: azure.mgmt.logic.operations.IntegrationAccountAssembliesOperations
+    :ivar integration_account_batch_configurations: IntegrationAccountBatchConfigurations operations
+    :vartype integration_account_batch_configurations: azure.mgmt.logic.operations.IntegrationAccountBatchConfigurationsOperations
     :ivar schemas: Schemas operations
-    :vartype schemas: .operations.SchemasOperations
+    :vartype schemas: azure.mgmt.logic.operations.SchemasOperations
     :ivar maps: Maps operations
-    :vartype maps: .operations.MapsOperations
+    :vartype maps: azure.mgmt.logic.operations.MapsOperations
     :ivar partners: Partners operations
-    :vartype partners: .operations.PartnersOperations
+    :vartype partners: azure.mgmt.logic.operations.PartnersOperations
     :ivar agreements: Agreements operations
-    :vartype agreements: .operations.AgreementsOperations
+    :vartype agreements: azure.mgmt.logic.operations.AgreementsOperations
     :ivar certificates: Certificates operations
-    :vartype certificates: .operations.CertificatesOperations
+    :vartype certificates: azure.mgmt.logic.operations.CertificatesOperations
     :ivar sessions: Sessions operations
-    :vartype sessions: .operations.SessionsOperations
+    :vartype sessions: azure.mgmt.logic.operations.SessionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -111,7 +124,7 @@ class LogicManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = LogicManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(LogicManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-06-01'
@@ -130,7 +143,17 @@ class LogicManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_run_actions = WorkflowRunActionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_run_action_scoped_repetitions = WorkflowRunActionScopedRepetitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workflow_run_operations = WorkflowRunOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.integration_accounts = IntegrationAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_account_assemblies = IntegrationAccountAssembliesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_account_batch_configurations = IntegrationAccountBatchConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.schemas = SchemasOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -154,8 +177,9 @@ class LogicManagementClient(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationPaged
-         <azure.mgmt.logic.models.OperationPaged>`
+        :return: An iterator like instance of Operation
+        :rtype:
+         ~azure.mgmt.logic.models.OperationPaged[~azure.mgmt.logic.models.Operation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
@@ -163,11 +187,11 @@ class LogicManagementClient(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/Microsoft.Logic/operations'
+                url = self.list_operations.metadata['url']
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -186,7 +210,7 @@ class LogicManagementClient(object):
             # Construct and send request
             request = self._client.get(url, query_parameters)
             response = self._client.send(
-                request, header_parameters, **operation_config)
+                request, header_parameters, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -202,3 +226,4 @@ class LogicManagementClient(object):
             return client_raw_response
 
         return deserialized
+    list_operations.metadata = {'url': '/providers/Microsoft.Logic/operations'}

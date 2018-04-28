@@ -15,25 +15,26 @@ from msrest.serialization import Model
 class X12FramingSettings(Model):
     """The X12 agreement framing settings.
 
-    :param data_element_separator: The data element separator.
+    All required parameters must be populated in order to send to Azure.
+
+    :param data_element_separator: Required. The data element separator.
     :type data_element_separator: int
-    :param component_separator: The component separator.
+    :param component_separator: Required. The component separator.
     :type component_separator: int
-    :param replace_separators_in_payload: The value indicating whether to
-     replace separators in payload.
+    :param replace_separators_in_payload: Required. The value indicating
+     whether to replace separators in payload.
     :type replace_separators_in_payload: bool
-    :param replace_character: The replacement character.
+    :param replace_character: Required. The replacement character.
     :type replace_character: int
-    :param segment_terminator: The segment terminator.
+    :param segment_terminator: Required. The segment terminator.
     :type segment_terminator: int
-    :param character_set: The X12 character set. Possible values include:
-     'NotSpecified', 'Basic', 'Extended', 'UTF8'
-    :type character_set: str or :class:`X12CharacterSet
-     <azure.mgmt.logic.models.X12CharacterSet>`
-    :param segment_terminator_suffix: The segment terminator suffix. Possible
-     values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
-    :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
-     <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
+    :param character_set: Required. The X12 character set. Possible values
+     include: 'NotSpecified', 'Basic', 'Extended', 'UTF8'
+    :type character_set: str or ~azure.mgmt.logic.models.X12CharacterSet
+    :param segment_terminator_suffix: Required. The segment terminator suffix.
+     Possible values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
+    :type segment_terminator_suffix: str or
+     ~azure.mgmt.logic.models.SegmentTerminatorSuffix
     """
 
     _validation = {
@@ -56,11 +57,12 @@ class X12FramingSettings(Model):
         'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'SegmentTerminatorSuffix'},
     }
 
-    def __init__(self, data_element_separator, component_separator, replace_separators_in_payload, replace_character, segment_terminator, character_set, segment_terminator_suffix):
-        self.data_element_separator = data_element_separator
-        self.component_separator = component_separator
-        self.replace_separators_in_payload = replace_separators_in_payload
-        self.replace_character = replace_character
-        self.segment_terminator = segment_terminator
-        self.character_set = character_set
-        self.segment_terminator_suffix = segment_terminator_suffix
+    def __init__(self, **kwargs):
+        super(X12FramingSettings, self).__init__(**kwargs)
+        self.data_element_separator = kwargs.get('data_element_separator', None)
+        self.component_separator = kwargs.get('component_separator', None)
+        self.replace_separators_in_payload = kwargs.get('replace_separators_in_payload', None)
+        self.replace_character = kwargs.get('replace_character', None)
+        self.segment_terminator = kwargs.get('segment_terminator', None)
+        self.character_set = kwargs.get('character_set', None)
+        self.segment_terminator_suffix = kwargs.get('segment_terminator_suffix', None)

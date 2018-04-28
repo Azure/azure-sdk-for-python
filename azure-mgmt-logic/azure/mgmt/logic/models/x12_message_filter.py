@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class X12MessageFilter(Model):
     """The X12 message filter for odata query.
 
-    :param message_filter_type: The message filter type. Possible values
-     include: 'NotSpecified', 'Include', 'Exclude'
-    :type message_filter_type: str or :class:`MessageFilterType
-     <azure.mgmt.logic.models.MessageFilterType>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_filter_type: Required. The message filter type. Possible
+     values include: 'NotSpecified', 'Include', 'Exclude'
+    :type message_filter_type: str or
+     ~azure.mgmt.logic.models.MessageFilterType
     """
 
     _validation = {
@@ -29,5 +31,6 @@ class X12MessageFilter(Model):
         'message_filter_type': {'key': 'messageFilterType', 'type': 'MessageFilterType'},
     }
 
-    def __init__(self, message_filter_type):
-        self.message_filter_type = message_filter_type
+    def __init__(self, **kwargs):
+        super(X12MessageFilter, self).__init__(**kwargs)
+        self.message_filter_type = kwargs.get('message_filter_type', None)

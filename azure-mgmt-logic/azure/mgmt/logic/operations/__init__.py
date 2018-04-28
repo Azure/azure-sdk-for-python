@@ -15,7 +15,12 @@ from .workflow_triggers_operations import WorkflowTriggersOperations
 from .workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations
 from .workflow_runs_operations import WorkflowRunsOperations
 from .workflow_run_actions_operations import WorkflowRunActionsOperations
+from .workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
+from .workflow_run_action_scoped_repetitions_operations import WorkflowRunActionScopedRepetitionsOperations
+from .workflow_run_operations import WorkflowRunOperations
 from .integration_accounts_operations import IntegrationAccountsOperations
+from .integration_account_assemblies_operations import IntegrationAccountAssembliesOperations
+from .integration_account_batch_configurations_operations import IntegrationAccountBatchConfigurationsOperations
 from .schemas_operations import SchemasOperations
 from .maps_operations import MapsOperations
 from .partners_operations import PartnersOperations
@@ -30,7 +35,12 @@ __all__ = [
     'WorkflowTriggerHistoriesOperations',
     'WorkflowRunsOperations',
     'WorkflowRunActionsOperations',
+    'WorkflowRunActionRepetitionsOperations',
+    'WorkflowRunActionScopedRepetitionsOperations',
+    'WorkflowRunOperations',
     'IntegrationAccountsOperations',
+    'IntegrationAccountAssembliesOperations',
+    'IntegrationAccountBatchConfigurationsOperations',
     'SchemasOperations',
     'MapsOperations',
     'PartnersOperations',

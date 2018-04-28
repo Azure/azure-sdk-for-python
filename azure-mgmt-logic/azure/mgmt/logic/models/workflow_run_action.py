@@ -27,8 +27,7 @@ class WorkflowRunAction(SubResource):
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
      'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
-    :vartype status: str or :class:`WorkflowStatus
-     <azure.mgmt.logic.models.WorkflowStatus>`
+    :vartype status: str or ~azure.mgmt.logic.models.WorkflowStatus
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
@@ -36,19 +35,15 @@ class WorkflowRunAction(SubResource):
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
     :param correlation: The correlation properties.
-    :type correlation: :class:`Correlation
-     <azure.mgmt.logic.models.Correlation>`
+    :type correlation: ~azure.mgmt.logic.models.Correlation
     :ivar inputs_link: Gets the link to inputs.
-    :vartype inputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs_link: Gets the link to outputs.
-    :vartype outputs_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar tracked_properties: Gets the tracked properties.
     :vartype tracked_properties: object
     :param retry_history: Gets the retry histories.
-    :type retry_history: list of :class:`RetryHistory
-     <azure.mgmt.logic.models.RetryHistory>`
+    :type retry_history: list[~azure.mgmt.logic.models.RetryHistory]
     :ivar name: Gets the workflow run action name.
     :vartype name: str
     :ivar type: Gets the workflow run action type.
@@ -87,18 +82,18 @@ class WorkflowRunAction(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, correlation=None, retry_history=None):
-        super(WorkflowRunAction, self).__init__()
+    def __init__(self, **kwargs):
+        super(WorkflowRunAction, self).__init__(**kwargs)
         self.start_time = None
         self.end_time = None
         self.status = None
         self.code = None
         self.error = None
         self.tracking_id = None
-        self.correlation = correlation
+        self.correlation = kwargs.get('correlation', None)
         self.inputs_link = None
         self.outputs_link = None
         self.tracked_properties = None
-        self.retry_history = retry_history
+        self.retry_history = kwargs.get('retry_history', None)
         self.name = None
         self.type = None

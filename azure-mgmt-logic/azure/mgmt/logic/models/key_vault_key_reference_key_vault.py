@@ -37,7 +37,8 @@ class KeyVaultKeyReferenceKeyVault(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        self.id = id
+    def __init__(self, **kwargs):
+        super(KeyVaultKeyReferenceKeyVault, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
         self.name = None
         self.type = None

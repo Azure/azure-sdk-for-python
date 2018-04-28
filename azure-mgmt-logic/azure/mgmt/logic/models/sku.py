@@ -15,12 +15,13 @@ from msrest.serialization import Model
 class Sku(Model):
     """The sku type.
 
-    :param name: The name. Possible values include: 'NotSpecified', 'Free',
-     'Shared', 'Basic', 'Standard', 'Premium'
-    :type name: str or :class:`SkuName <azure.mgmt.logic.models.SkuName>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name. Possible values include: 'NotSpecified',
+     'Free', 'Shared', 'Basic', 'Standard', 'Premium'
+    :type name: str or ~azure.mgmt.logic.models.SkuName
     :param plan: The reference to plan.
-    :type plan: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+    :type plan: ~azure.mgmt.logic.models.ResourceReference
     """
 
     _validation = {
@@ -32,6 +33,7 @@ class Sku(Model):
         'plan': {'key': 'plan', 'type': 'ResourceReference'},
     }
 
-    def __init__(self, name, plan=None):
-        self.name = name
-        self.plan = plan
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.plan = kwargs.get('plan', None)

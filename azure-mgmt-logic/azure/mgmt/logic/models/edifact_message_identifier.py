@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class EdifactMessageIdentifier(Model):
     """The Edifact message identifier.
 
-    :param message_id: The message id on which this envelope settings has to
-     be applied.
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_id: Required. The message id on which this envelope
+     settings has to be applied.
     :type message_id: str
     """
 
@@ -28,5 +30,6 @@ class EdifactMessageIdentifier(Model):
         'message_id': {'key': 'messageId', 'type': 'str'},
     }
 
-    def __init__(self, message_id):
-        self.message_id = message_id
+    def __init__(self, **kwargs):
+        super(EdifactMessageIdentifier, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)

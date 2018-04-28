@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class WorkflowVersionPaged(Paged):
     """
-    A paging container for iterating over a list of WorkflowVersion object
+    A paging container for iterating over a list of :class:`WorkflowVersion <azure.mgmt.logic.models.WorkflowVersion>` object
     """
 
     _attribute_map = {

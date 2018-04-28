@@ -27,28 +27,26 @@ class WorkflowVersion(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :ivar created_time: Gets the created time.
     :vartype created_time: datetime
     :ivar changed_time: Gets the changed time.
     :vartype changed_time: datetime
     :param state: The state. Possible values include: 'NotSpecified',
      'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :type state: str or :class:`WorkflowState
-     <azure.mgmt.logic.models.WorkflowState>`
+    :type state: str or ~azure.mgmt.logic.models.WorkflowState
     :ivar version: Gets the version.
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.
     :vartype access_endpoint: str
     :param sku: The sku.
-    :type sku: :class:`Sku <azure.mgmt.logic.models.Sku>`
+    :type sku: ~azure.mgmt.logic.models.Sku
     :param integration_account: The integration account.
-    :type integration_account: :class:`ResourceReference
-     <azure.mgmt.logic.models.ResourceReference>`
+    :type integration_account: ~azure.mgmt.logic.models.ResourceReference
     :param definition: The definition.
     :type definition: object
     :param parameters: The parameters.
-    :type parameters: dict
+    :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
     """
 
     _validation = {
@@ -78,14 +76,14 @@ class WorkflowVersion(Resource):
         'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}'},
     }
 
-    def __init__(self, location=None, tags=None, state=None, sku=None, integration_account=None, definition=None, parameters=None):
-        super(WorkflowVersion, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(WorkflowVersion, self).__init__(**kwargs)
         self.created_time = None
         self.changed_time = None
-        self.state = state
+        self.state = kwargs.get('state', None)
         self.version = None
         self.access_endpoint = None
-        self.sku = sku
-        self.integration_account = integration_account
-        self.definition = definition
-        self.parameters = parameters
+        self.sku = kwargs.get('sku', None)
+        self.integration_account = kwargs.get('integration_account', None)
+        self.definition = kwargs.get('definition', None)
+        self.parameters = kwargs.get('parameters', None)

@@ -15,12 +15,12 @@ from msrest.serialization import Model
 class AS2AgreementContent(Model):
     """The integration account AS2 agreement content.
 
-    :param receive_agreement: The AS2 one-way receive agreement.
-    :type receive_agreement: :class:`AS2OneWayAgreement
-     <azure.mgmt.logic.models.AS2OneWayAgreement>`
-    :param send_agreement: The AS2 one-way send agreement.
-    :type send_agreement: :class:`AS2OneWayAgreement
-     <azure.mgmt.logic.models.AS2OneWayAgreement>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param receive_agreement: Required. The AS2 one-way receive agreement.
+    :type receive_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
+    :param send_agreement: Required. The AS2 one-way send agreement.
+    :type send_agreement: ~azure.mgmt.logic.models.AS2OneWayAgreement
     """
 
     _validation = {
@@ -33,6 +33,7 @@ class AS2AgreementContent(Model):
         'send_agreement': {'key': 'sendAgreement', 'type': 'AS2OneWayAgreement'},
     }
 
-    def __init__(self, receive_agreement, send_agreement):
-        self.receive_agreement = receive_agreement
-        self.send_agreement = send_agreement
+    def __init__(self, **kwargs):
+        super(AS2AgreementContent, self).__init__(**kwargs)
+        self.receive_agreement = kwargs.get('receive_agreement', None)
+        self.send_agreement = kwargs.get('send_agreement', None)

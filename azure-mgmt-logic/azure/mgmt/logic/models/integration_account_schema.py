@@ -18,6 +18,8 @@ class IntegrationAccountSchema(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource id.
     :vartype id: str
     :ivar name: Gets the resource name.
@@ -27,11 +29,10 @@ class IntegrationAccountSchema(Resource):
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
-    :type tags: dict
-    :param schema_type: The schema type. Possible values include:
+    :type tags: dict[str, str]
+    :param schema_type: Required. The schema type. Possible values include:
      'NotSpecified', 'Xml'
-    :type schema_type: str or :class:`SchemaType
-     <azure.mgmt.logic.models.SchemaType>`
+    :type schema_type: str or ~azure.mgmt.logic.models.SchemaType
     :param target_namespace: The target namespace of the schema.
     :type target_namespace: str
     :param document_name: The document name.
@@ -49,8 +50,7 @@ class IntegrationAccountSchema(Resource):
     :param content_type: The content type.
     :type content_type: str
     :ivar content_link: The content link.
-    :vartype content_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
+    :vartype content_link: ~azure.mgmt.logic.models.ContentLink
     """
 
     _validation = {
@@ -81,15 +81,15 @@ class IntegrationAccountSchema(Resource):
         'content_link': {'key': 'properties.contentLink', 'type': 'ContentLink'},
     }
 
-    def __init__(self, schema_type, location=None, tags=None, target_namespace=None, document_name=None, file_name=None, metadata=None, content=None, content_type=None):
-        super(IntegrationAccountSchema, self).__init__(location=location, tags=tags)
-        self.schema_type = schema_type
-        self.target_namespace = target_namespace
-        self.document_name = document_name
-        self.file_name = file_name
+    def __init__(self, **kwargs):
+        super(IntegrationAccountSchema, self).__init__(**kwargs)
+        self.schema_type = kwargs.get('schema_type', None)
+        self.target_namespace = kwargs.get('target_namespace', None)
+        self.document_name = kwargs.get('document_name', None)
+        self.file_name = kwargs.get('file_name', None)
         self.created_time = None
         self.changed_time = None
-        self.metadata = metadata
-        self.content = content
-        self.content_type = content_type
+        self.metadata = kwargs.get('metadata', None)
+        self.content = kwargs.get('content', None)
+        self.content_type = kwargs.get('content_type', None)
         self.content_link = None

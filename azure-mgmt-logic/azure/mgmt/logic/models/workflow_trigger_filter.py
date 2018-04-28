@@ -17,13 +17,13 @@ class WorkflowTriggerFilter(Model):
 
     :param state: The state of workflow trigger. Possible values include:
      'NotSpecified', 'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
-    :type state: str or :class:`WorkflowState
-     <azure.mgmt.logic.models.WorkflowState>`
+    :type state: str or ~azure.mgmt.logic.models.WorkflowState
     """
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'WorkflowState'},
     }
 
-    def __init__(self, state=None):
-        self.state = state
+    def __init__(self, **kwargs):
+        super(WorkflowTriggerFilter, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)

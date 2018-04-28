@@ -15,28 +15,31 @@ from msrest.serialization import Model
 class X12ValidationOverride(Model):
     """The X12 validation override settings.
 
-    :param message_id: The message id on which the validation settings has to
-     be applied.
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_id: Required. The message id on which the validation
+     settings has to be applied.
     :type message_id: str
-    :param validate_edi_types: The value indicating whether to validate EDI
-     types.
+    :param validate_edi_types: Required. The value indicating whether to
+     validate EDI types.
     :type validate_edi_types: bool
-    :param validate_xsd_types: The value indicating whether to validate XSD
-     types.
+    :param validate_xsd_types: Required. The value indicating whether to
+     validate XSD types.
     :type validate_xsd_types: bool
-    :param allow_leading_and_trailing_spaces_and_zeroes: The value indicating
-     whether to allow leading and trailing spaces and zeroes.
+    :param allow_leading_and_trailing_spaces_and_zeroes: Required. The value
+     indicating whether to allow leading and trailing spaces and zeroes.
     :type allow_leading_and_trailing_spaces_and_zeroes: bool
-    :param validate_character_set: The value indicating whether to validate
-     character Set.
+    :param validate_character_set: Required. The value indicating whether to
+     validate character Set.
     :type validate_character_set: bool
-    :param trim_leading_and_trailing_spaces_and_zeroes: The value indicating
-     whether to trim leading and trailing spaces and zeroes.
+    :param trim_leading_and_trailing_spaces_and_zeroes: Required. The value
+     indicating whether to trim leading and trailing spaces and zeroes.
     :type trim_leading_and_trailing_spaces_and_zeroes: bool
-    :param trailing_separator_policy: The trailing separator policy. Possible
-     values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
-    :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
-     <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
+    :param trailing_separator_policy: Required. The trailing separator policy.
+     Possible values include: 'NotSpecified', 'NotAllowed', 'Optional',
+     'Mandatory'
+    :type trailing_separator_policy: str or
+     ~azure.mgmt.logic.models.TrailingSeparatorPolicy
     """
 
     _validation = {
@@ -59,11 +62,12 @@ class X12ValidationOverride(Model):
         'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
     }
 
-    def __init__(self, message_id, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, validate_character_set, trim_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy):
-        self.message_id = message_id
-        self.validate_edi_types = validate_edi_types
-        self.validate_xsd_types = validate_xsd_types
-        self.allow_leading_and_trailing_spaces_and_zeroes = allow_leading_and_trailing_spaces_and_zeroes
-        self.validate_character_set = validate_character_set
-        self.trim_leading_and_trailing_spaces_and_zeroes = trim_leading_and_trailing_spaces_and_zeroes
-        self.trailing_separator_policy = trailing_separator_policy
+    def __init__(self, **kwargs):
+        super(X12ValidationOverride, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)
+        self.validate_edi_types = kwargs.get('validate_edi_types', None)
+        self.validate_xsd_types = kwargs.get('validate_xsd_types', None)
+        self.allow_leading_and_trailing_spaces_and_zeroes = kwargs.get('allow_leading_and_trailing_spaces_and_zeroes', None)
+        self.validate_character_set = kwargs.get('validate_character_set', None)
+        self.trim_leading_and_trailing_spaces_and_zeroes = kwargs.get('trim_leading_and_trailing_spaces_and_zeroes', None)
+        self.trailing_separator_policy = kwargs.get('trailing_separator_policy', None)
