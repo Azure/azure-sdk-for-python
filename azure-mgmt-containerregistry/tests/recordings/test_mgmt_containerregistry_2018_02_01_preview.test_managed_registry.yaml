@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"name": "pyacrff1e1477", "type": "Microsoft.ContainerRegistry/registries"}'
+    body: '{"name": "pyacr916b1a6e", "type": "Microsoft.ContainerRegistry/registries"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
@@ -18,7 +18,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['22']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 28 Apr 2018 06:19:59 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:15 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -28,26 +28,26 @@ interactions:
       x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
-    body: 'b''b\''b\\\''{"location": "westcentralus", "sku": {"name": "Classic"},
-      "properties": {"adminUserEnabled": false, "storageAccount": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.Storage/storageAccounts/pyacrff1e1477"}}}\\\''\'''''
+    body: '{"location": "eastus", "sku": {"name": "Premium"}, "properties": {"adminUserEnabled":
+      false}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['312']
+      Content-Length: ['93']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.28
           msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e?api-version=2017-10-01
   response:
-    body: {string: '{"sku":{"name":"Classic","tier":"Classic"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477","name":"pyacrff1e1477","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrff1e1477.azurecr.io","creationDate":"2018-04-28T06:20:01.7884219Z","provisioningState":"Succeeded","adminUserEnabled":false,"storageAccount":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.Storage/storageAccounts/pyacrff1e1477"}}}'}
+    body: {string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e","name":"pyacr916b1a6e","location":"eastus","tags":{},"properties":{"loginServer":"pyacr916b1a6e.azurecr.io","creationDate":"2018-04-28T06:46:16.8358722Z","provisioningState":"Succeeded","adminUserEnabled":false}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['714']
+      content-length: ['517']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 28 Apr 2018 06:20:05 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:17 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -55,7 +55,7 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-ratelimit-remaining-subscription-writes: ['1192']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -68,14 +68,14 @@ interactions:
           msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries?api-version=2017-10-01
   response:
-    body: {string: '{"value":[{"sku":{"name":"Classic","tier":"Classic"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477","name":"pyacrff1e1477","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrff1e1477.azurecr.io","creationDate":"2018-04-28T06:20:01.7884219Z","provisioningState":"Succeeded","adminUserEnabled":false,"storageAccount":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.Storage/storageAccounts/pyacrff1e1477"}}}]}'}
+    body: {string: '{"value":[{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e","name":"pyacr916b1a6e","location":"eastus","tags":{},"properties":{"loginServer":"pyacr916b1a6e.azurecr.io","creationDate":"2018-04-28T06:46:16.8358722Z","provisioningState":"Succeeded","adminUserEnabled":false}}]}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['726']
+      content-length: ['529']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 28 Apr 2018 06:20:05 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:18 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -96,14 +96,14 @@ interactions:
           msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e?api-version=2017-10-01
   response:
-    body: {string: '{"sku":{"name":"Classic","tier":"Classic"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477","name":"pyacrff1e1477","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrff1e1477.azurecr.io","creationDate":"2018-04-28T06:20:01.7884219Z","provisioningState":"Succeeded","adminUserEnabled":true,"storageAccount":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.Storage/storageAccounts/pyacrff1e1477"}}}'}
+    body: {string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e","name":"pyacr916b1a6e","location":"eastus","tags":{"key":"value"},"properties":{"loginServer":"pyacr916b1a6e.azurecr.io","creationDate":"2018-04-28T06:46:16.8358722Z","provisioningState":"Succeeded","adminUserEnabled":true}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['726']
+      content-length: ['529']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 28 Apr 2018 06:20:07 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:20 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -111,7 +111,7 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -124,14 +124,14 @@ interactions:
           msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e?api-version=2017-10-01
   response:
-    body: {string: '{"sku":{"name":"Classic","tier":"Classic"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477","name":"pyacrff1e1477","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrff1e1477.azurecr.io","creationDate":"2018-04-28T06:20:01.7884219Z","provisioningState":"Succeeded","adminUserEnabled":true,"storageAccount":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.Storage/storageAccounts/pyacrff1e1477"}}}'}
+    body: {string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e","name":"pyacr916b1a6e","location":"eastus","tags":{"key":"value"},"properties":{"loginServer":"pyacr916b1a6e.azurecr.io","creationDate":"2018-04-28T06:46:16.8358722Z","provisioningState":"Succeeded","adminUserEnabled":true}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['726']
+      content-length: ['529']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 28 Apr 2018 06:20:07 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:21 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -152,14 +152,14 @@ interactions:
           msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477/listCredentials?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e/listCredentials?api-version=2017-10-01
   response:
-    body: {string: '{"username":"pyacrff1e1477","passwords":[{"name":"password","value":"lAR8UYHtB1LgM=vbBLKgj9DMCXhopcFQ"},{"name":"password2","value":"5p0oSq7WKMI==7HUBf4l5f3muP6K040j"}]}'}
+    body: {string: '{"username":"pyacr916b1a6e","passwords":[{"name":"password","value":"p0zVLCS/8wHaaf4tzBecMQyRQGLAjZUJ"},{"name":"password2","value":"C5W8kneH=lgiaXV=sbLj95QWKNYyNdPr"}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['169']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 28 Apr 2018 06:20:08 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:22 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -167,7 +167,7 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
     status: {code: 200, message: OK}
 - request:
     body: '{"name": "password"}'
@@ -181,14 +181,14 @@ interactions:
           msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477/regenerateCredential?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e/regenerateCredential?api-version=2017-10-01
   response:
-    body: {string: '{"username":"pyacrff1e1477","passwords":[{"name":"password","value":"4VbrDWGN+1PlwB5JreQygsQ0jMQrCqfy"},{"name":"password2","value":"5p0oSq7WKMI==7HUBf4l5f3muP6K040j"}]}'}
+    body: {string: '{"username":"pyacr916b1a6e","passwords":[{"name":"password","value":"YPeLuaX0gihCYjbEfqKLuLWtkw7/Xls2"},{"name":"password2","value":"C5W8kneH=lgiaXV=sbLj95QWKNYyNdPr"}]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['169']
       content-type: [application/json; charset=utf-8]
-      date: ['Sat, 28 Apr 2018 06:20:10 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:23 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
@@ -196,7 +196,34 @@ interactions:
       transfer-encoding: [chunked]
       vary: [Accept-Encoding]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.28
+          msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e/listUsages?api-version=2017-10-01
+  response:
+    body: {string: '{"value":[{"name":"Size","limit":536870912000,"currentValue":0,"unit":"Bytes"},{"name":"Webhooks","limit":100,"currentValue":0,"unit":"Count"}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['144']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sat, 28 Apr 2018 06:46:25 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -210,18 +237,18 @@ interactions:
           msrest_azure/0.4.28 containerregistrymanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_classic_registryff1e1477/providers/Microsoft.ContainerRegistry/registries/pyacrff1e1477?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2018_02_01_preview_test_managed_registry916b1a6e/providers/Microsoft.ContainerRegistry/registries/pyacr916b1a6e?api-version=2017-10-01
   response:
     body: {string: ''}
     headers:
       cache-control: [no-cache]
       content-length: ['0']
-      date: ['Sat, 28 Apr 2018 06:20:15 GMT']
+      date: ['Sat, 28 Apr 2018 06:46:27 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-ratelimit-remaining-subscription-writes: ['1195']
     status: {code: 200, message: OK}
 version: 1
