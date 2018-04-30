@@ -23,6 +23,8 @@ class WorkflowTriggerListCallbackUrlQueries(Model):
     :type sv: str
     :param sig: The SAS signature.
     :type sig: str
+    :param se: The SAS timestamp.
+    :type se: str
     """
 
     _attribute_map = {
@@ -30,11 +32,13 @@ class WorkflowTriggerListCallbackUrlQueries(Model):
         'sp': {'key': 'sp', 'type': 'str'},
         'sv': {'key': 'sv', 'type': 'str'},
         'sig': {'key': 'sig', 'type': 'str'},
+        'se': {'key': 'se', 'type': 'str'},
     }
 
-    def __init__(self, *, api_version: str=None, sp: str=None, sv: str=None, sig: str=None, **kwargs) -> None:
+    def __init__(self, *, api_version: str=None, sp: str=None, sv: str=None, sig: str=None, se: str=None, **kwargs) -> None:
         super(WorkflowTriggerListCallbackUrlQueries, self).__init__(**kwargs)
         self.api_version = api_version
         self.sp = sp
         self.sv = sv
         self.sig = sig
+        self.se = se

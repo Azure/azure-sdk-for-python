@@ -115,6 +115,8 @@ try:
     from .tracking_events_definition_py3 import TrackingEventsDefinition
     from .access_key_regenerate_action_definition_py3 import AccessKeyRegenerateActionDefinition
     from .set_trigger_state_action_definition_py3 import SetTriggerStateActionDefinition
+    from .expression_root_py3 import ExpressionRoot
+    from .expression_traces_py3 import ExpressionTraces
     from .azure_resource_error_info_py3 import AzureResourceErrorInfo
     from .expression_py3 import Expression
     from .error_info_py3 import ErrorInfo
@@ -240,6 +242,8 @@ except (SyntaxError, ImportError):
     from .tracking_events_definition import TrackingEventsDefinition
     from .access_key_regenerate_action_definition import AccessKeyRegenerateActionDefinition
     from .set_trigger_state_action_definition import SetTriggerStateActionDefinition
+    from .expression_root import ExpressionRoot
+    from .expression_traces import ExpressionTraces
     from .azure_resource_error_info import AzureResourceErrorInfo
     from .expression import Expression
     from .error_info import ErrorInfo
@@ -413,6 +417,8 @@ __all__ = [
     'TrackingEventsDefinition',
     'AccessKeyRegenerateActionDefinition',
     'SetTriggerStateActionDefinition',
+    'ExpressionRoot',
+    'ExpressionTraces',
     'AzureResourceErrorInfo',
     'Expression',
     'ErrorInfo',

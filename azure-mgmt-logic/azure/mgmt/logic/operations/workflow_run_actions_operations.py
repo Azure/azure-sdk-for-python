@@ -204,8 +204,8 @@ class WorkflowRunActionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: dict or ClientRawResponse if raw=true
-        :rtype: dict[str, list[~azure.mgmt.logic.models.Expression]] or
+        :return: ExpressionTraces or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.ExpressionTraces or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -246,7 +246,7 @@ class WorkflowRunActionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('{[Expression]}', response)
+            deserialized = self._deserialize('ExpressionTraces', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
