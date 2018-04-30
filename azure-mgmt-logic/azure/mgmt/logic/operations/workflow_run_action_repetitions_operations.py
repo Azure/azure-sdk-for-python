@@ -54,9 +54,10 @@ class WorkflowRunActionRepetitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
+        :return: WorkflowRunActionRepetitionDefinitionCollection or
+         ClientRawResponse if raw=true
         :rtype:
-         list[~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinition]
+         ~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinitionCollection
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -97,7 +98,7 @@ class WorkflowRunActionRepetitionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('[WorkflowRunActionRepetitionDefinition]', response)
+            deserialized = self._deserialize('WorkflowRunActionRepetitionDefinitionCollection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

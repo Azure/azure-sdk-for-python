@@ -21,9 +21,9 @@ class WorkflowTriggerRecurrence(Model):
     :param interval: The interval.
     :type interval: int
     :param start_time: The start time.
-    :type start_time: datetime
+    :type start_time: str
     :param end_time: The end time.
-    :type end_time: datetime
+    :type end_time: str
     :param time_zone: The time zone.
     :type time_zone: str
     :param schedule: The recurrence schedule.
@@ -33,13 +33,13 @@ class WorkflowTriggerRecurrence(Model):
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
         'interval': {'key': 'interval', 'type': 'int'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
     }
 
-    def __init__(self, *, frequency=None, interval: int=None, start_time=None, end_time=None, time_zone: str=None, schedule=None, **kwargs) -> None:
+    def __init__(self, *, frequency=None, interval: int=None, start_time: str=None, end_time: str=None, time_zone: str=None, schedule=None, **kwargs) -> None:
         super(WorkflowTriggerRecurrence, self).__init__(**kwargs)
         self.frequency = frequency
         self.interval = interval

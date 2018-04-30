@@ -20,6 +20,8 @@ class WorkflowRun(SubResource):
 
     :ivar id: The resource id.
     :vartype id: str
+    :ivar wait_end_time: Gets the wait end time.
+    :vartype wait_end_time: datetime
     :ivar start_time: Gets the start time.
     :vartype start_time: datetime
     :ivar end_time: Gets the end time.
@@ -53,6 +55,7 @@ class WorkflowRun(SubResource):
 
     _validation = {
         'id': {'readonly': True},
+        'wait_end_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'status': {'readonly': True},
@@ -69,6 +72,7 @@ class WorkflowRun(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'wait_end_time': {'key': 'properties.waitEndTime', 'type': 'iso-8601'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'status': {'key': 'properties.status', 'type': 'WorkflowStatus'},
@@ -86,6 +90,7 @@ class WorkflowRun(SubResource):
 
     def __init__(self, *, correlation=None, **kwargs) -> None:
         super(WorkflowRun, self).__init__(**kwargs)
+        self.wait_end_time = None
         self.start_time = None
         self.end_time = None
         self.status = None
