@@ -24,7 +24,14 @@ class MultiApiClientMixin(object):
         # Consume "api_version" and "profile", to avoid sending them to base class
         api_version = kwargs.pop("api_version", None)
         profile = kwargs.pop("profile", KnownProfiles.default)
-        super(MultiApiClientMixin, self).__init__(*args, **kwargs)
+
+        # Can't do "super" call here all the time, or I would break old client with:
+        # TypeError: object.__init__() takes no parameters
+        # So I try to detect if I correctly use this class as a Mixin, or the messed-up
+        # approach like before. If I think it's the messed-up old approach,
+        # don't call super
+        if args or "creds" in kwargs or "config" in kwargs:
+            super(MultiApiClientMixin, self).__init__(*args, **kwargs)
 
         try:
             type(self).LATEST_PROFILE

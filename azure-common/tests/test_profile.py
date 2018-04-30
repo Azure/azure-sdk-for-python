@@ -89,3 +89,37 @@ def test_multiapi_client():
     })
     with pytest.raises(ValueError):
         client.operations() == "1789-07-14"
+
+def test_multiapi_client_legacy():
+    """The messed-up way old Profile was.
+    Note that this was only released on RC packages, so as soon as the
+    CLI does not use RC packages anymore, I have no trouble to
+    remove that legacy.
+    """
+
+    class TestClient(MultiApiClientMixin):
+        DEFAULT_API_VERSION = "2216-08-09"
+        _PROFILE_TAG = "azure.mgmt.compute.ComputeManagementClient"
+        LATEST_PROFILE = ProfileDefinition({
+            _PROFILE_TAG: {
+                None: DEFAULT_API_VERSION
+            }},
+            _PROFILE_TAG + " latest"
+        )
+
+        def __init__(self, creds="creds", config="config", api_version=None, profile=KnownProfiles.default):
+            super(TestClient, self).__init__(
+                credentials="credentials",
+                subscription_id="subscription_id",
+                api_version=api_version,
+                base_url="base_url",
+                profile=profile
+            )
+
+        def operations(self):
+            return self._get_api_version("operations")
+
+    # Creating a client that does not raise with:
+    # TypeError: object.__init__() takes no parameters
+    # is enough to show the legacy work
+    TestClient()
