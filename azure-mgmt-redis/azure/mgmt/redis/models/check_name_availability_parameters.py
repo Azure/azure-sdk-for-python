@@ -24,7 +24,7 @@ class CheckNameAvailabilityParameters(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'DefaultName'},
     }
 
     def __init__(self, name=None, type=None):
