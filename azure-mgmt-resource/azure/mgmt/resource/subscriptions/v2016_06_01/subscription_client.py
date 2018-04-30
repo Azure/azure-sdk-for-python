@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -45,7 +45,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class SubscriptionClient(object):
+class SubscriptionClient(SDKClient):
     """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
 
     :ivar config: Configuration for client.
@@ -66,7 +66,7 @@ class SubscriptionClient(object):
             self, credentials, base_url=None):
 
         self.config = SubscriptionClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-06-01'
