@@ -18,14 +18,6 @@ from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
 
 
-should_log = os.getenv('SDK_TESTS_LOG', '0')
-if should_log.lower() == 'true' or should_log == '1':
-    import logging
-    logger = logging.getLogger('msrest')
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler())
-
-
 class HttpStatusCode(object):
     OK = 200
     Created = 201
@@ -156,6 +148,7 @@ class AzureMgmtTestCase(ReplayableTest):
         )
         if self.is_playback():
             client.config.long_running_operation_timeout = 0
+        client.config.enable_http_logger = True
         return client
 
     def create_mgmt_client(self, client_class, **kwargs):

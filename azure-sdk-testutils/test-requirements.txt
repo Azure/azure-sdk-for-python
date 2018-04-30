@@ -1,7 +1,7 @@
 -r ../requirements.txt
 
 pytest-cov
-pytest>=3.2.0
+pytest>=3.5.1
 azure-devtools>=0.4.1
 vcrpy
 readme_renderer
