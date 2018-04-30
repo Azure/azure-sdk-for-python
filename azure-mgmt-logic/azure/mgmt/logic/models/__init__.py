@@ -108,14 +108,12 @@ try:
     from .list_key_vault_keys_definition_py3 import ListKeyVaultKeysDefinition
     from .key_vault_key_attributes_py3 import KeyVaultKeyAttributes
     from .key_vault_key_py3 import KeyVaultKey
-    from .key_vault_key_collection_py3 import KeyVaultKeyCollection
     from .tracking_event_error_info_py3 import TrackingEventErrorInfo
     from .tracking_event_py3 import TrackingEvent
     from .tracking_events_definition_py3 import TrackingEventsDefinition
     from .access_key_regenerate_action_definition_py3 import AccessKeyRegenerateActionDefinition
     from .set_trigger_state_action_definition_py3 import SetTriggerStateActionDefinition
     from .expression_root_py3 import ExpressionRoot
-    from .expression_traces_py3 import ExpressionTraces
     from .azure_resource_error_info_py3 import AzureResourceErrorInfo
     from .expression_py3 import Expression
     from .error_info_py3 import ErrorInfo
@@ -233,14 +231,12 @@ except (SyntaxError, ImportError):
     from .list_key_vault_keys_definition import ListKeyVaultKeysDefinition
     from .key_vault_key_attributes import KeyVaultKeyAttributes
     from .key_vault_key import KeyVaultKey
-    from .key_vault_key_collection import KeyVaultKeyCollection
     from .tracking_event_error_info import TrackingEventErrorInfo
     from .tracking_event import TrackingEvent
     from .tracking_events_definition import TrackingEventsDefinition
     from .access_key_regenerate_action_definition import AccessKeyRegenerateActionDefinition
     from .set_trigger_state_action_definition import SetTriggerStateActionDefinition
     from .expression_root import ExpressionRoot
-    from .expression_traces import ExpressionTraces
     from .azure_resource_error_info import AzureResourceErrorInfo
     from .expression import Expression
     from .error_info import ErrorInfo
@@ -265,7 +261,10 @@ from .workflow_trigger_paged import WorkflowTriggerPaged
 from .workflow_trigger_history_paged import WorkflowTriggerHistoryPaged
 from .workflow_run_paged import WorkflowRunPaged
 from .workflow_run_action_paged import WorkflowRunActionPaged
+from .expression_root_paged import ExpressionRootPaged
+from .workflow_run_action_repetition_definition_paged import WorkflowRunActionRepetitionDefinitionPaged
 from .integration_account_paged import IntegrationAccountPaged
+from .key_vault_key_paged import KeyVaultKeyPaged
 from .assembly_definition_paged import AssemblyDefinitionPaged
 from .batch_configuration_paged import BatchConfigurationPaged
 from .integration_account_schema_paged import IntegrationAccountSchemaPaged
@@ -408,14 +407,12 @@ __all__ = [
     'ListKeyVaultKeysDefinition',
     'KeyVaultKeyAttributes',
     'KeyVaultKey',
-    'KeyVaultKeyCollection',
     'TrackingEventErrorInfo',
     'TrackingEvent',
     'TrackingEventsDefinition',
     'AccessKeyRegenerateActionDefinition',
     'SetTriggerStateActionDefinition',
     'ExpressionRoot',
-    'ExpressionTraces',
     'AzureResourceErrorInfo',
     'Expression',
     'ErrorInfo',
@@ -440,7 +437,10 @@ __all__ = [
     'WorkflowTriggerHistoryPaged',
     'WorkflowRunPaged',
     'WorkflowRunActionPaged',
+    'ExpressionRootPaged',
+    'WorkflowRunActionRepetitionDefinitionPaged',
     'IntegrationAccountPaged',
+    'KeyVaultKeyPaged',
     'AssemblyDefinitionPaged',
     'BatchConfigurationPaged',
     'IntegrationAccountSchemaPaged',

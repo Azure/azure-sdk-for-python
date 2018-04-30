@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ExpressionTraces(Model):
-    """ExpressionTraces.
-
-    :param inputs:
-    :type inputs: list[~azure.mgmt.logic.models.ExpressionRoot]
+class KeyVaultKeyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`KeyVaultKey <azure.mgmt.logic.models.KeyVaultKey>` object
     """
 
     _attribute_map = {
-        'inputs': {'key': 'inputs', 'type': '[ExpressionRoot]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[KeyVaultKey]'}
     }
 
-    def __init__(self, *, inputs=None, **kwargs) -> None:
-        super(ExpressionTraces, self).__init__(**kwargs)
-        self.inputs = inputs
+    def __init__(self, *args, **kwargs):
+
+        super(KeyVaultKeyPaged, self).__init__(*args, **kwargs)

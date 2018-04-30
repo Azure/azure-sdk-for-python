@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ExpressionTraces(Model):
-    """ExpressionTraces.
-
-    :param inputs:
-    :type inputs: list[~azure.mgmt.logic.models.ExpressionRoot]
+class ExpressionRootPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExpressionRoot <azure.mgmt.logic.models.ExpressionRoot>` object
     """
 
     _attribute_map = {
-        'inputs': {'key': 'inputs', 'type': '[ExpressionRoot]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'inputs', 'type': '[ExpressionRoot]'}
     }
 
-    def __init__(self, **kwargs):
-        super(ExpressionTraces, self).__init__(**kwargs)
-        self.inputs = kwargs.get('inputs', None)
+    def __init__(self, *args, **kwargs):
+
+        super(ExpressionRootPaged, self).__init__(*args, **kwargs)
