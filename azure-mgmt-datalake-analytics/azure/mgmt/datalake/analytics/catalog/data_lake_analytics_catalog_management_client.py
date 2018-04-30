@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 import warnings
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -49,7 +49,7 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
         self.adla_catalog_dns_suffix = adla_catalog_dns_suffix
 
 
-class DataLakeAnalyticsCatalogManagementClient(object):
+class DataLakeAnalyticsCatalogManagementClient(SDKClient):
     """Creates an Azure Data Lake Analytics catalog client.
 
     :ivar config: Configuration for client.
@@ -70,7 +70,7 @@ class DataLakeAnalyticsCatalogManagementClient(object):
             self, credentials, adla_catalog_dns_suffix):
 
         self.config = DataLakeAnalyticsCatalogManagementClientConfiguration(credentials, adla_catalog_dns_suffix)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataLakeAnalyticsCatalogManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-11-01'

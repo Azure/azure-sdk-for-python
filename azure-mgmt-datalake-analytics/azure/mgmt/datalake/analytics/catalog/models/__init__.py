@@ -30,6 +30,7 @@ try:
     from .external_table_py3 import ExternalTable
     from .type_field_info_py3 import TypeFieldInfo
     from .usql_table_py3 import USqlTable
+    from .usql_table_fragment_py3 import USqlTableFragment
     from .usql_table_type_py3 import USqlTableType
     from .usql_view_py3 import USqlView
     from .usql_package_py3 import USqlPackage
@@ -66,6 +67,7 @@ except (SyntaxError, ImportError):
     from .external_table import ExternalTable
     from .type_field_info import TypeFieldInfo
     from .usql_table import USqlTable
+    from .usql_table_fragment import USqlTableFragment
     from .usql_table_type import USqlTableType
     from .usql_view import USqlView
     from .usql_package import USqlPackage
@@ -84,6 +86,7 @@ except (SyntaxError, ImportError):
 from .usql_credential_paged import USqlCredentialPaged
 from .usql_external_data_source_paged import USqlExternalDataSourcePaged
 from .usql_procedure_paged import USqlProcedurePaged
+from .usql_table_fragment_paged import USqlTableFragmentPaged
 from .usql_table_paged import USqlTablePaged
 from .usql_table_statistics_paged import USqlTableStatisticsPaged
 from .usql_table_type_paged import USqlTableTypePaged
@@ -123,6 +126,7 @@ __all__ = [
     'ExternalTable',
     'TypeFieldInfo',
     'USqlTable',
+    'USqlTableFragment',
     'USqlTableType',
     'USqlView',
     'USqlPackage',
@@ -141,6 +145,7 @@ __all__ = [
     'USqlCredentialPaged',
     'USqlExternalDataSourcePaged',
     'USqlProcedurePaged',
+    'USqlTableFragmentPaged',
     'USqlTablePaged',
     'USqlTableStatisticsPaged',
     'USqlTableTypePaged',
