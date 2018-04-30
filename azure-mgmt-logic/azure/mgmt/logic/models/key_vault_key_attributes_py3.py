@@ -16,7 +16,7 @@ class KeyVaultKeyAttributes(Model):
     """The key attributes.
 
     :param enabled: Whether the key is enabled or not.
-    :type enabled: str
+    :type enabled: bool
     :param created: When the key was created.
     :type created: long
     :param updated: When the key was updated.
@@ -24,12 +24,12 @@ class KeyVaultKeyAttributes(Model):
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
         'created': {'key': 'created', 'type': 'long'},
         'updated': {'key': 'updated', 'type': 'long'},
     }
 
-    def __init__(self, *, enabled: str=None, created: int=None, updated: int=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool=None, created: int=None, updated: int=None, **kwargs) -> None:
         super(KeyVaultKeyAttributes, self).__init__(**kwargs)
         self.enabled = enabled
         self.created = created
