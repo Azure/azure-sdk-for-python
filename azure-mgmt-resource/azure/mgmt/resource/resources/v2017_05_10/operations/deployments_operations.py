@@ -40,10 +40,10 @@ class DeploymentsOperations(object):
         self.config = config
 
 
-    def _delete_initial(
+    def _delete_at_subscription_scope_initial(
             self, deployment_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete.metadata['url']
+        url = self.delete_at_subscription_scope.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -77,7 +77,7 @@ class DeploymentsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete(
+    def delete_at_subscription_scope(
             self, deployment_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a deployment from the deployment history.
 
@@ -105,7 +105,7 @@ class DeploymentsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_initial(
+        raw_result = self._delete_at_subscription_scope_initial(
             deployment_name=deployment_name,
             custom_headers=custom_headers,
             raw=True,
@@ -124,9 +124,9 @@ class DeploymentsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    delete_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
-    def check_existence(
+    def check_existence_at_subscription_scope(
             self, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Checks whether the deployment exists.
 
@@ -142,7 +142,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.check_existence.metadata['url']
+        url = self.check_existence_at_subscription_scope.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -177,15 +177,15 @@ class DeploymentsOperations(object):
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
         return deserialized
-    check_existence.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    check_existence_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
 
-    def _create_or_update_initial(
+    def _create_or_update_at_subscription_scope_initial(
             self, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.Deployment(location=location, properties=properties)
 
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create_or_update_at_subscription_scope.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -232,7 +232,7 @@ class DeploymentsOperations(object):
 
         return deserialized
 
-    def create_or_update(
+    def create_or_update_at_subscription_scope(
             self, deployment_name, properties, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deploys resources at subscription scope.
 
@@ -259,7 +259,7 @@ class DeploymentsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2017_05_10.models.DeploymentExtended]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_or_update_initial(
+        raw_result = self._create_or_update_at_subscription_scope_initial(
             deployment_name=deployment_name,
             properties=properties,
             location=location,
@@ -284,9 +284,9 @@ class DeploymentsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    create_or_update_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
-    def get(
+    def get_at_subscription_scope(
             self, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Gets a deployment.
 
@@ -304,7 +304,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get_at_subscription_scope.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -344,9 +344,9 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    get_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
-    def cancel(
+    def cancel_at_subscription_scope(
             self, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Cancels a currently running template deployment.
 
@@ -368,7 +368,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.cancel.metadata['url']
+        url = self.cancel_at_subscription_scope.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -401,9 +401,9 @@ class DeploymentsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
+    cancel_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
-    def validate(
+    def validate_at_subscription_scope(
             self, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
         """Validates whether the specified template is syntactically correct and
         will be accepted by Azure Resource Manager..
@@ -429,7 +429,7 @@ class DeploymentsOperations(object):
         parameters = models.Deployment(location=location, properties=properties)
 
         # Construct URL
-        url = self.validate.metadata['url']
+        url = self.validate_at_subscription_scope.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -475,9 +475,9 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
-    validate.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
+    validate_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
 
-    def export_template(
+    def export_template_at_subscription_scope(
             self, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Exports the template used for specified deployment.
 
@@ -496,7 +496,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.export_template.metadata['url']
+        url = self.export_template_at_subscription_scope.metadata['url']
         path_format_arguments = {
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -536,9 +536,9 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
-    export_template.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate'}
+    export_template_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate'}
 
-    def list(
+    def list_at_subscription_scope(
             self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get all the deployments at subscription scope.
 
@@ -562,7 +562,7 @@ class DeploymentsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_at_subscription_scope.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -611,13 +611,13 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/'}
+    list_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/'}
 
 
-    def _delete1_initial(
+    def _delete_initial(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete1.metadata['url']
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -652,7 +652,7 @@ class DeploymentsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete1(
+    def delete(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes a deployment from the deployment history.
 
@@ -684,7 +684,7 @@ class DeploymentsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete1_initial(
+        raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             custom_headers=custom_headers,
@@ -704,9 +704,9 @@ class DeploymentsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete1.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
-    def check_existence1(
+    def check_existence(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Checks whether the deployment exists.
 
@@ -725,7 +725,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.check_existence1.metadata['url']
+        url = self.check_existence.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -761,15 +761,15 @@ class DeploymentsOperations(object):
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
         return deserialized
-    check_existence1.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    check_existence.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
 
-    def _create_or_update1_initial(
+    def _create_or_update_initial(
             self, resource_group_name, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.Deployment(location=location, properties=properties)
 
         # Construct URL
-        url = self.create_or_update1.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -817,7 +817,7 @@ class DeploymentsOperations(object):
 
         return deserialized
 
-    def create_or_update1(
+    def create_or_update(
             self, resource_group_name, deployment_name, properties, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deploys resources to a resource group.
 
@@ -848,7 +848,7 @@ class DeploymentsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.resource.resources.v2017_05_10.models.DeploymentExtended]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_or_update1_initial(
+        raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             properties=properties,
@@ -874,9 +874,9 @@ class DeploymentsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update1.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
-    def get1(
+    def get(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Gets a deployment.
 
@@ -897,7 +897,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get1.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -938,9 +938,9 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
-    get1.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'}
 
-    def cancel1(
+    def cancel(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Cancels a currently running template deployment.
 
@@ -965,7 +965,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.cancel1.metadata['url']
+        url = self.cancel.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -999,9 +999,9 @@ class DeploymentsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    cancel1.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
+    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'}
 
-    def validate1(
+    def validate(
             self, resource_group_name, deployment_name, properties, location=None, custom_headers=None, raw=False, **operation_config):
         """Validates whether the specified template is syntactically correct and
         will be accepted by Azure Resource Manager..
@@ -1030,7 +1030,7 @@ class DeploymentsOperations(object):
         parameters = models.Deployment(location=location, properties=properties)
 
         # Construct URL
-        url = self.validate1.metadata['url']
+        url = self.validate.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -1077,9 +1077,9 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
-    validate1.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
+    validate.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'}
 
-    def export_template1(
+    def export_template(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
         """Exports the template used for specified deployment.
 
@@ -1101,7 +1101,7 @@ class DeploymentsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.export_template1.metadata['url']
+        url = self.export_template.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -1142,7 +1142,7 @@ class DeploymentsOperations(object):
             return client_raw_response
 
         return deserialized
-    export_template1.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate'}
+    export_template.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate'}
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
