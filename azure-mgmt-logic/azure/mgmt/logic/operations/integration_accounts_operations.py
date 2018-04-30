@@ -506,7 +506,7 @@ class IntegrationAccountsOperations(object):
     list_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/listCallbackUrl'}
 
     def list_key_vault_keys(
-            self, resource_group_name, integration_account_name, key_vault, skip_token=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, integration_account_name, key_vault, skip_token=None, skip_token1=None, custom_headers=None, raw=False, **operation_config):
         """Gets the integration account's Key Vault keys.
 
         :param resource_group_name: The resource group name.
@@ -517,6 +517,8 @@ class IntegrationAccountsOperations(object):
         :type key_vault: ~azure.mgmt.logic.models.KeyVaultReference
         :param skip_token: The skip token.
         :type skip_token: str
+        :param skip_token1: The skip token.
+        :type skip_token1: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -527,7 +529,7 @@ class IntegrationAccountsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.ListKeyVaultKeysDefinition(key_vault=key_vault, skip_token=skip_token)
+        list_key_vault_keys1 = models.ListKeyVaultKeysDefinition(key_vault=key_vault)
 
         # Construct URL
         url = self.list_key_vault_keys.metadata['url']
@@ -541,6 +543,8 @@ class IntegrationAccountsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if skip_token is not None:
+            query_parameters['skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -553,7 +557,7 @@ class IntegrationAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ListKeyVaultKeysDefinition')
+        body_content = self._serialize.body(list_key_vault_keys1, 'ListKeyVaultKeysDefinition')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)

@@ -54,8 +54,8 @@ class WorkflowRunOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WorkflowRunProperties or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.logic.models.WorkflowRunProperties or
+        :return: WorkflowRun or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.logic.models.WorkflowRun or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -96,7 +96,7 @@ class WorkflowRunOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WorkflowRunProperties', response)
+            deserialized = self._deserialize('WorkflowRun', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

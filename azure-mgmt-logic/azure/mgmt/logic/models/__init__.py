@@ -32,7 +32,6 @@ try:
     from .workflow_trigger_history_filter_py3 import WorkflowTriggerHistoryFilter
     from .workflow_run_trigger_py3 import WorkflowRunTrigger
     from .workflow_output_parameter_py3 import WorkflowOutputParameter
-    from .workflow_run_properties_py3 import WorkflowRunProperties
     from .workflow_run_py3 import WorkflowRun
     from .workflow_run_filter_py3 import WorkflowRunFilter
     from .error_properties_py3 import ErrorProperties
@@ -122,6 +121,7 @@ try:
     from .error_info_py3 import ErrorInfo
     from .repetition_index_py3 import RepetitionIndex
     from .workflow_run_action_repetition_definition_py3 import WorkflowRunActionRepetitionDefinition
+    from .workflow_run_action_repetition_definition_collection_py3 import WorkflowRunActionRepetitionDefinitionCollection
     from .operation_result_py3 import OperationResult
     from .run_action_correlation_py3 import RunActionCorrelation
     from .operation_result_properties_py3 import OperationResultProperties
@@ -159,7 +159,6 @@ except (SyntaxError, ImportError):
     from .workflow_trigger_history_filter import WorkflowTriggerHistoryFilter
     from .workflow_run_trigger import WorkflowRunTrigger
     from .workflow_output_parameter import WorkflowOutputParameter
-    from .workflow_run_properties import WorkflowRunProperties
     from .workflow_run import WorkflowRun
     from .workflow_run_filter import WorkflowRunFilter
     from .error_properties import ErrorProperties
@@ -249,6 +248,7 @@ except (SyntaxError, ImportError):
     from .error_info import ErrorInfo
     from .repetition_index import RepetitionIndex
     from .workflow_run_action_repetition_definition import WorkflowRunActionRepetitionDefinition
+    from .workflow_run_action_repetition_definition_collection import WorkflowRunActionRepetitionDefinitionCollection
     from .operation_result import OperationResult
     from .run_action_correlation import RunActionCorrelation
     from .operation_result_properties import OperationResultProperties
@@ -334,7 +334,6 @@ __all__ = [
     'WorkflowTriggerHistoryFilter',
     'WorkflowRunTrigger',
     'WorkflowOutputParameter',
-    'WorkflowRunProperties',
     'WorkflowRun',
     'WorkflowRunFilter',
     'ErrorProperties',
@@ -424,6 +423,7 @@ __all__ = [
     'ErrorInfo',
     'RepetitionIndex',
     'WorkflowRunActionRepetitionDefinition',
+    'WorkflowRunActionRepetitionDefinitionCollection',
     'OperationResult',
     'RunActionCorrelation',
     'OperationResultProperties',
