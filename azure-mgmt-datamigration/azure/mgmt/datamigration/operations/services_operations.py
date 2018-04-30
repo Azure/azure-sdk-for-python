@@ -720,7 +720,7 @@ class ServicesOperations(object):
         return deserialized
     list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.DataMigration/services/{serviceName}/skus'}
 
-    def check_children_name_availability(
+    def nested_check_name_availability(
             self, group_name, service_name, name=None, type=None, custom_headers=None, raw=False, **operation_config):
         """Check nested resource name validity and availability.
 
@@ -749,7 +749,7 @@ class ServicesOperations(object):
         parameters = models.NameAvailabilityRequest(name=name, type=type)
 
         # Construct URL
-        url = self.check_children_name_availability.metadata['url']
+        url = self.nested_check_name_availability.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'groupName': self._serialize.url("group_name", group_name, 'str'),
@@ -792,7 +792,7 @@ class ServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    check_children_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.DataMigration/services/{serviceName}/checkNameAvailability'}
+    nested_check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.DataMigration/services/{serviceName}/checkNameAvailability'}
 
     def list_by_resource_group(
             self, group_name, custom_headers=None, raw=False, **operation_config):
