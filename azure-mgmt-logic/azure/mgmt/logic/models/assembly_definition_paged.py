@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class AssemblyCollection(Model):
-    """A collection of assembly definitions.
-
-    :param value:
-    :type value: list[~azure.mgmt.logic.models.AssemblyDefinition]
+class AssemblyDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AssemblyDefinition <azure.mgmt.logic.models.AssemblyDefinition>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AssemblyDefinition]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AssemblyDefinition]'}
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(AssemblyCollection, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(AssemblyDefinitionPaged, self).__init__(*args, **kwargs)

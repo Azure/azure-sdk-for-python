@@ -426,7 +426,7 @@ class WorkflowTriggersOperations(object):
 
     def list_callback_url(
             self, resource_group_name, workflow_name, trigger_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the callback URL for a workflow trigger.
+        """Get the callback URL for a workflow trigger.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

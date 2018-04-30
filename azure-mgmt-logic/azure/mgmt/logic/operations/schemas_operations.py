@@ -313,7 +313,7 @@ class SchemasOperations(object):
 
     def list_content_callback_url(
             self, resource_group_name, integration_account_name, schema_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
-        """List content callback url.
+        """Get the content callback url.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

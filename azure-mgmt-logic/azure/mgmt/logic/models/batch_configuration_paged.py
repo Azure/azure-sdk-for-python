@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class BatchConfigurationCollection(Model):
-    """A collection of batch configurations.
-
-    :param value:
-    :type value: list[~azure.mgmt.logic.models.BatchConfiguration]
+class BatchConfigurationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BatchConfiguration <azure.mgmt.logic.models.BatchConfiguration>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BatchConfiguration]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BatchConfiguration]'}
     }
 
-    def __init__(self, **kwargs):
-        super(BatchConfigurationCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(BatchConfigurationPaged, self).__init__(*args, **kwargs)

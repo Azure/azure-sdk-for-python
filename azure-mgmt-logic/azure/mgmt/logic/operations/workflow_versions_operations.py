@@ -179,7 +179,7 @@ class WorkflowVersionsOperations(object):
 
     def list_callback_url(
             self, resource_group_name, workflow_name, version_id, trigger_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the callback URL for a trigger of a workflow version.
+        """Get the callback url for a trigger of a workflow version.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

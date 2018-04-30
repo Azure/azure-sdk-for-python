@@ -129,13 +129,11 @@ try:
     from .json_schema_py3 import JsonSchema
     from .assembly_properties_py3 import AssemblyProperties
     from .assembly_definition_py3 import AssemblyDefinition
-    from .assembly_collection_py3 import AssemblyCollection
     from .artifact_content_properties_definition_py3 import ArtifactContentPropertiesDefinition
     from .artifact_properties_py3 import ArtifactProperties
     from .batch_release_criteria_py3 import BatchReleaseCriteria
     from .batch_configuration_properties_py3 import BatchConfigurationProperties
     from .batch_configuration_py3 import BatchConfiguration
-    from .batch_configuration_collection_py3 import BatchConfigurationCollection
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .sub_resource import SubResource
@@ -256,13 +254,11 @@ except (SyntaxError, ImportError):
     from .json_schema import JsonSchema
     from .assembly_properties import AssemblyProperties
     from .assembly_definition import AssemblyDefinition
-    from .assembly_collection import AssemblyCollection
     from .artifact_content_properties_definition import ArtifactContentPropertiesDefinition
     from .artifact_properties import ArtifactProperties
     from .batch_release_criteria import BatchReleaseCriteria
     from .batch_configuration_properties import BatchConfigurationProperties
     from .batch_configuration import BatchConfiguration
-    from .batch_configuration_collection import BatchConfigurationCollection
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
@@ -270,6 +266,8 @@ from .workflow_trigger_history_paged import WorkflowTriggerHistoryPaged
 from .workflow_run_paged import WorkflowRunPaged
 from .workflow_run_action_paged import WorkflowRunActionPaged
 from .integration_account_paged import IntegrationAccountPaged
+from .assembly_definition_paged import AssemblyDefinitionPaged
+from .batch_configuration_paged import BatchConfigurationPaged
 from .integration_account_schema_paged import IntegrationAccountSchemaPaged
 from .integration_account_map_paged import IntegrationAccountMapPaged
 from .integration_account_partner_paged import IntegrationAccountPartnerPaged
@@ -431,13 +429,11 @@ __all__ = [
     'JsonSchema',
     'AssemblyProperties',
     'AssemblyDefinition',
-    'AssemblyCollection',
     'ArtifactContentPropertiesDefinition',
     'ArtifactProperties',
     'BatchReleaseCriteria',
     'BatchConfigurationProperties',
     'BatchConfiguration',
-    'BatchConfigurationCollection',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
@@ -445,6 +441,8 @@ __all__ = [
     'WorkflowRunPaged',
     'WorkflowRunActionPaged',
     'IntegrationAccountPaged',
+    'AssemblyDefinitionPaged',
+    'BatchConfigurationPaged',
     'IntegrationAccountSchemaPaged',
     'IntegrationAccountMapPaged',
     'IntegrationAccountPartnerPaged',

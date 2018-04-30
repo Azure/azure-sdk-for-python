@@ -619,7 +619,7 @@ class WorkflowsOperations(object):
 
     def list_callback_url(
             self, resource_group_name, workflow_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
-        """Lists workflow callback Url.
+        """Get the workflow callback Url.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -759,7 +759,7 @@ class WorkflowsOperations(object):
         :type resource_group_name: str
         :param workflow_name: The workflow name.
         :type workflow_name: str
-        :param move: The workflow id to move.
+        :param move: The workflow to move.
         :type move: ~azure.mgmt.logic.models.Workflow
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
