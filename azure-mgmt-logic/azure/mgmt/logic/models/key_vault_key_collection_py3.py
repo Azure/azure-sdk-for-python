@@ -16,13 +16,13 @@ class KeyVaultKeyCollection(Model):
     """Collection of key vault keys.
 
     :param value: The key vault keys.
-    :type value: list[~azure.mgmt.logic.models.ListKeyVaultKeysDefinition]
+    :type value: list[~azure.mgmt.logic.models.KeyVaultKey]
     :param skip_token: The skip token.
     :type skip_token: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ListKeyVaultKeysDefinition]'},
+        'value': {'key': 'value', 'type': '[KeyVaultKey]'},
         'skip_token': {'key': 'skipToken', 'type': 'str'},
     }
 

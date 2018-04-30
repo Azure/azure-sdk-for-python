@@ -106,9 +106,9 @@ try:
     from .operation_py3 import Operation
     from .key_vault_reference_py3 import KeyVaultReference
     from .list_key_vault_keys_definition_py3 import ListKeyVaultKeysDefinition
-    from .key_vault_key_collection_py3 import KeyVaultKeyCollection
     from .key_vault_key_attributes_py3 import KeyVaultKeyAttributes
     from .key_vault_key_py3 import KeyVaultKey
+    from .key_vault_key_collection_py3 import KeyVaultKeyCollection
     from .tracking_event_error_info_py3 import TrackingEventErrorInfo
     from .tracking_event_py3 import TrackingEvent
     from .tracking_events_definition_py3 import TrackingEventsDefinition
@@ -233,9 +233,9 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .key_vault_reference import KeyVaultReference
     from .list_key_vault_keys_definition import ListKeyVaultKeysDefinition
-    from .key_vault_key_collection import KeyVaultKeyCollection
     from .key_vault_key_attributes import KeyVaultKeyAttributes
     from .key_vault_key import KeyVaultKey
+    from .key_vault_key_collection import KeyVaultKeyCollection
     from .tracking_event_error_info import TrackingEventErrorInfo
     from .tracking_event import TrackingEvent
     from .tracking_events_definition import TrackingEventsDefinition
@@ -408,9 +408,9 @@ __all__ = [
     'Operation',
     'KeyVaultReference',
     'ListKeyVaultKeysDefinition',
-    'KeyVaultKeyCollection',
     'KeyVaultKeyAttributes',
     'KeyVaultKey',
+    'KeyVaultKeyCollection',
     'TrackingEventErrorInfo',
     'TrackingEvent',
     'TrackingEventsDefinition',

@@ -28,6 +28,8 @@ class WorkflowRunTrigger(Model):
     :vartype outputs: object
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
+    :ivar scheduled_time: Gets the scheduled time.
+    :vartype scheduled_time: datetime
     :ivar start_time: Gets the start time.
     :vartype start_time: datetime
     :ivar end_time: Gets the end time.
@@ -54,6 +56,7 @@ class WorkflowRunTrigger(Model):
         'inputs_link': {'readonly': True},
         'outputs': {'readonly': True},
         'outputs_link': {'readonly': True},
+        'scheduled_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'tracking_id': {'readonly': True},
@@ -69,6 +72,7 @@ class WorkflowRunTrigger(Model):
         'inputs_link': {'key': 'inputsLink', 'type': 'ContentLink'},
         'outputs': {'key': 'outputs', 'type': 'object'},
         'outputs_link': {'key': 'outputsLink', 'type': 'ContentLink'},
+        'scheduled_time': {'key': 'scheduledTime', 'type': 'iso-8601'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
@@ -86,6 +90,7 @@ class WorkflowRunTrigger(Model):
         self.inputs_link = None
         self.outputs = None
         self.outputs_link = None
+        self.scheduled_time = None
         self.start_time = None
         self.end_time = None
         self.tracking_id = None
