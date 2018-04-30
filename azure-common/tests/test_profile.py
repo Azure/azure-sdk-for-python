@@ -21,7 +21,13 @@ def test_default_profile():
 
 def test_multiapi_client():
 
-    class TestClient(MultiApiClientMixin):
+    class SDKClient(object):
+        # Mock msrest.SDKClient to not import it
+        def __init__(self, creds, config):
+            assert creds == "creds"
+            assert config == "config"
+
+    class TestClient(MultiApiClientMixin, SDKClient):
         DEFAULT_API_VERSION = "2216-08-09"
         _PROFILE_TAG = "azure.mgmt.compute.ComputeManagementClient"
         LATEST_PROFILE = ProfileDefinition({
@@ -31,8 +37,13 @@ def test_multiapi_client():
             _PROFILE_TAG + " latest"
         )
 
-        def __init__(self, api_version=None, profile=KnownProfiles.default):
-            super(TestClient, self).__init__(api_version=api_version, profile=profile)
+        def __init__(self, creds="creds", config="config", api_version=None, profile=KnownProfiles.default):
+            super(TestClient, self).__init__(
+                creds,
+                config,
+                api_version=api_version,
+                profile=profile
+            )
 
         def operations(self):
             return self._get_api_version("operations")

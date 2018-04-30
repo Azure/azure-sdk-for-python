@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.1.10 (2018-04-30)
++++++++++++++++++++
+
+**Bugfixes**
+
+- Fix MultiApiClientMixin.__init__ to be a real mixin
+
 1.1.9 (2018-04-03)
 ++++++++++++++++++
 
