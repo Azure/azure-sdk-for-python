@@ -43,6 +43,8 @@ class JobCollectionItem(ProxyResource):
     :vartype last_modified_time: datetime
     :ivar provisioning_state: The provisioning state of a resource.
     :vartype provisioning_state: str
+    :param run_on: Specifies the runOn group name where the job was executed.
+    :type run_on: str
     """
 
     _validation = {
@@ -71,9 +73,10 @@ class JobCollectionItem(ProxyResource):
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'run_on': {'key': 'properties.runOn', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, run_on=None):
         super(JobCollectionItem, self).__init__()
         self.runbook = None
         self.job_id = None
@@ -83,3 +86,4 @@ class JobCollectionItem(ProxyResource):
         self.end_time = None
         self.last_modified_time = None
         self.provisioning_state = None
+        self.run_on = run_on
