@@ -17,6 +17,7 @@ try:
     from .virtual_network_rule_py3 import VirtualNetworkRule
     from .database_account_py3 import DatabaseAccount
     from .failover_policies_py3 import FailoverPolicies
+    from .region_for_online_offline_py3 import RegionForOnlineOffline
     from .resource_py3 import Resource
     from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
@@ -45,6 +46,7 @@ except (SyntaxError, ImportError):
     from .virtual_network_rule import VirtualNetworkRule
     from .database_account import DatabaseAccount
     from .failover_policies import FailoverPolicies
+    from .region_for_online_offline import RegionForOnlineOffline
     from .resource import Resource
     from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters import DatabaseAccountPatchParameters
@@ -90,6 +92,7 @@ __all__ = [
     'VirtualNetworkRule',
     'DatabaseAccount',
     'FailoverPolicies',
+    'RegionForOnlineOffline',
     'Resource',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',
