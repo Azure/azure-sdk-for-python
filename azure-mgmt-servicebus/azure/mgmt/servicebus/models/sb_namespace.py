@@ -18,13 +18,15 @@ class SBNamespace(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: The Geo-location where the resource lives
+    :param location: Required. The Geo-location where the resource lives
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -69,9 +71,9 @@ class SBNamespace(TrackedResource):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, sku=None):
-        super(SBNamespace, self).__init__(location=location, tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(SBNamespace, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None

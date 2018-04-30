@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -41,7 +41,7 @@ class EventGridClientConfiguration(Configuration):
         self.credentials = credentials
 
 
-class EventGridClient(object):
+class EventGridClient(SDKClient):
     """EventGrid Client
 
     :ivar config: Configuration for client.
@@ -56,7 +56,7 @@ class EventGridClient(object):
             self, credentials):
 
         self.config = EventGridClientConfiguration(credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(EventGridClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-01-01'
@@ -84,7 +84,7 @@ class EventGridClient(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = '/api/events'
+        url = self.publish_events.metadata['url']
         path_format_arguments = {
             'topicHostname': self._serialize.url("topic_hostname", topic_hostname, 'str', skip_quote=True)
         }
@@ -114,3 +114,4 @@ class EventGridClient(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    publish_events.metadata = {'url': '/api/events'}

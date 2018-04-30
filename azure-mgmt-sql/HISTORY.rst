@@ -3,6 +3,54 @@
 Release History
 ===============
 
+0.9.0 (2018-04-25)
+++++++++++++++++++
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**SQL Breaking changes**
+
+- Database and ElasticPool now use Sku property for scale and tier-related properties. We have made this change in order to allow future support of autoscale, and to allow for new vCore-based editions.
+   * Database.sku has replaced Database.requested_service_objective_name and Database.edition. Database scale can be set by setting Sku.name to the requested service objective name (e.g. S0, P1, or GP_Gen4_1), or by setting Sku.name to the sku name (e.g. Standard, Premium, or GP_Gen4) and set Sku.capacity to the scale measured in DTU or vCores.
+   * Database.current_sku has replaced Database.service_level_objetive.
+   * Database.current_service_objective_id and Database.requested_service_objective_id have been removed.
+   * ElasticPool.sku has replaced ElasticPool.dtu. Elastic pool scale can be set by setting Sku.name to the requested sku name (e.g. StandardPool, PremiumPool, or GP_Gen4) and setting Sku.capacity to the scale measured in DTU or vCores.
+   * ElasticPool.per_database_settings has replaced ElasticPool.database_dtu_min and ElasticPool.database_dtu_max.
+- Database.max_size_bytes is now an integer instead of string.
+- LocationCapabilities tree has been changed in order to support capabilities of new vCore-based database and elastic pool editions. 
+
+**Features**
+
+- Added support for List and Cancel operation on Azure database and elastic pool REST API
+- Added Long Term Retention V2 commands, including getting backups, deleting backups, setting the V2 policies, and getting the V2 policies
+
+  * Removed support for managing Vaults used for Long Term Retention V1
+  * Changed BackupLongTermRetentionPolicy class, removing the Long Term Retention V1 properties and adding the Long Term Retention V2 properties
+  * Removed BackupLongTermRetentionPolicyState 
+
 0.8.6 (2018-03-22)
 ++++++++++++++++++
 

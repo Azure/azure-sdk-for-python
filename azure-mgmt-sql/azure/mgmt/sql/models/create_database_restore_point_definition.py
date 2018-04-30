@@ -16,7 +16,9 @@ class CreateDatabaseRestorePointDefinition(Model):
     """Contains the information necessary to perform a create database restore
     point operation.
 
-    :param restore_point_label: The restore point label to apply
+    All required parameters must be populated in order to send to Azure.
+
+    :param restore_point_label: Required. The restore point label to apply
     :type restore_point_label: str
     """
 
@@ -28,6 +30,6 @@ class CreateDatabaseRestorePointDefinition(Model):
         'restore_point_label': {'key': 'restorePointLabel', 'type': 'str'},
     }
 
-    def __init__(self, restore_point_label):
-        super(CreateDatabaseRestorePointDefinition, self).__init__()
-        self.restore_point_label = restore_point_label
+    def __init__(self, **kwargs):
+        super(CreateDatabaseRestorePointDefinition, self).__init__(**kwargs)
+        self.restore_point_label = kwargs.get('restore_point_label', None)

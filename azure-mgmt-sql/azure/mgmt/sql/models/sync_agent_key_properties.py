@@ -30,6 +30,6 @@ class SyncAgentKeyProperties(Model):
         'sync_agent_key': {'key': 'syncAgentKey', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SyncAgentKeyProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(SyncAgentKeyProperties, self).__init__(**kwargs)
         self.sync_agent_key = None
