@@ -51,12 +51,12 @@ class SecretBundle(Model):
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
-    def __init__(self, value=None, id=None, content_type=None, attributes=None, tags=None):
-        super(SecretBundle, self).__init__()
-        self.value = value
-        self.id = id
-        self.content_type = content_type
-        self.attributes = attributes
-        self.tags = tags
+    def __init__(self, **kwargs):
+        super(SecretBundle, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.id = kwargs.get('id', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.attributes = kwargs.get('attributes', None)
+        self.tags = kwargs.get('tags', None)
         self.kid = None
         self.managed = None

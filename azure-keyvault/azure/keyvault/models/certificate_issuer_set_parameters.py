@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class CertificateIssuerSetParameters(Model):
     """The certificate issuer set parameters.
 
-    :param provider: The issuer provider.
+    All required parameters must be populated in order to send to Azure.
+
+    :param provider: Required. The issuer provider.
     :type provider: str
     :param credentials: The credentials to be used for the issuer.
     :type credentials: ~azure.keyvault.models.IssuerCredentials
@@ -37,9 +39,9 @@ class CertificateIssuerSetParameters(Model):
         'attributes': {'key': 'attributes', 'type': 'IssuerAttributes'},
     }
 
-    def __init__(self, provider, credentials=None, organization_details=None, attributes=None):
-        super(CertificateIssuerSetParameters, self).__init__()
-        self.provider = provider
-        self.credentials = credentials
-        self.organization_details = organization_details
-        self.attributes = attributes
+    def __init__(self, **kwargs):
+        super(CertificateIssuerSetParameters, self).__init__(**kwargs)
+        self.provider = kwargs.get('provider', None)
+        self.credentials = kwargs.get('credentials', None)
+        self.organization_details = kwargs.get('organization_details', None)
+        self.attributes = kwargs.get('attributes', None)

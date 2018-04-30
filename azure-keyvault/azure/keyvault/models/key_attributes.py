@@ -53,6 +53,6 @@ class KeyAttributes(Attributes):
         'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
     }
 
-    def __init__(self, enabled=None, not_before=None, expires=None):
-        super(KeyAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires)
+    def __init__(self, **kwargs):
+        super(KeyAttributes, self).__init__(**kwargs)
         self.recovery_level = None
