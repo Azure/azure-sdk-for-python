@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 
@@ -50,7 +50,7 @@ class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class ContainerRegistryManagementClient(MultiApiClientMixin):
+class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
     """ContainerRegistryManagementClient
 
     :ivar config: Configuration for client.
@@ -77,16 +77,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin):
     )
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
+        self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, base_url)
         super(ContainerRegistryManagementClient, self).__init__(
-            credentials=credentials,
-            subscription_id=subscription_id,
+            credentials,
+            self.config,
             api_version=api_version,
-            base_url=base_url,
             profile=profile
         )
-
-        self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
 
 ############ Generated from here ############
 
