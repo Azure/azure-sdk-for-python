@@ -19767,7 +19767,7 @@ class WebAppsOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -19775,6 +19775,10 @@ class WebAppsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('SiteSourceControl', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('SiteSourceControl', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('SiteSourceControl', response)
 
         if raw:
@@ -19819,7 +19823,7 @@ class WebAppsOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -19829,6 +19833,8 @@ class WebAppsOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('SiteSourceControl', response)
         if response.status_code == 201:
+            deserialized = self._deserialize('SiteSourceControl', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('SiteSourceControl', response)
 
         if raw:
@@ -19893,7 +19899,7 @@ class WebAppsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 201]:
+            if response.status_code not in [200, 201, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
