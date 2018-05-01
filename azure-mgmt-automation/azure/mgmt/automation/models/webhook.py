@@ -45,6 +45,8 @@ class Webhook(ProxyResource):
     :type creation_time: datetime
     :param last_modified_time: Gets or sets the last modified time.
     :type last_modified_time: datetime
+    :param last_modified_by: Details of the user who last modified the Webhook
+    :type last_modified_by: str
     :param description: Gets or sets the description.
     :type description: str
     """
@@ -68,10 +70,11 @@ class Webhook(ProxyResource):
         'run_on': {'key': 'properties.runOn', 'type': 'str'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, is_enabled=False, uri=None, expiry_time=None, last_invoked_time=None, parameters=None, runbook=None, run_on=None, creation_time=None, last_modified_time=None, description=None):
+    def __init__(self, is_enabled=False, uri=None, expiry_time=None, last_invoked_time=None, parameters=None, runbook=None, run_on=None, creation_time=None, last_modified_time=None, last_modified_by=None, description=None):
         super(Webhook, self).__init__()
         self.is_enabled = is_enabled
         self.uri = uri
@@ -82,4 +85,5 @@ class Webhook(ProxyResource):
         self.run_on = run_on
         self.creation_time = creation_time
         self.last_modified_time = last_modified_time
+        self.last_modified_by = last_modified_by
         self.description = description
