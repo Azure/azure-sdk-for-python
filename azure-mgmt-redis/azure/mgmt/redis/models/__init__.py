@@ -48,7 +48,6 @@ from .redis_management_client_enums import (
     RebootType,
     DayOfWeek,
     ReplicationRole,
-    DefaultName,
 )
 
 __all__ = [
@@ -90,5 +89,4 @@ __all__ = [
     'RebootType',
     'DayOfWeek',
     'ReplicationRole',
-    'DefaultName',
 ]

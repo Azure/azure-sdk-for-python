@@ -17,17 +17,22 @@ class CheckNameAvailabilityParameters(Model):
 
     :param name: Resource name.
     :type name: str
-    :param type: Resource type to check name availability of, e.g.
-     'Microsoft.Cache/redis'. Possible values include: 'Microsoft.Cache/redis'
-    :type type: str or ~azure.mgmt.redis.models.DefaultName
+    :param type: Resource type. The only legal value of this property for
+     checking redis cache name availability is 'Microsoft.Cache/redis'.
+    :type type: str
     """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'DefaultName'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None, type=None):
+    def __init__(self, name, type):
         super(CheckNameAvailabilityParameters, self).__init__()
         self.name = name
         self.type = type

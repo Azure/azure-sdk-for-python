@@ -78,8 +78,3 @@ class ReplicationRole(Enum):
 
     primary = "Primary"
     secondary = "Secondary"
-
-
-class DefaultName(Enum):
-
-    microsoft_cacheredis = "Microsoft.Cache/redis"

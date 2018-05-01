@@ -40,15 +40,14 @@ class RedisOperations(object):
         self.config = config
 
     def check_name_availability(
-            self, name=None, type=None, custom_headers=None, raw=False, **operation_config):
+            self, name, type, custom_headers=None, raw=False, **operation_config):
         """Checks that the redis cache name is valid and is not already in use.
 
         :param name: Resource name.
         :type name: str
-        :param type: Resource type to check name availability of, e.g.
-         'Microsoft.Cache/redis'. Possible values include:
-         'Microsoft.Cache/redis'
-        :type type: str or ~azure.mgmt.redis.models.DefaultName
+        :param type: Resource type. The only legal value of this property for
+         checking redis cache name availability is 'Microsoft.Cache/redis'.
+        :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
