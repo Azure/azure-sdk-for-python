@@ -117,6 +117,11 @@ try:
     from .elastic_pool_per_database_settings_py3 import ElasticPoolPerDatabaseSettings
     from .elastic_pool_py3 import ElasticPool
     from .elastic_pool_update_py3 import ElasticPoolUpdate
+    from .vulnerability_assessment_recurring_scans_properties_py3 import VulnerabilityAssessmentRecurringScansProperties
+    from .database_vulnerability_assessment_py3 import DatabaseVulnerabilityAssessment
+    from .vulnerability_assessment_scan_error_py3 import VulnerabilityAssessmentScanError
+    from .vulnerability_assessment_scan_record_py3 import VulnerabilityAssessmentScanRecord
+    from .database_vulnerability_assessment_scans_export_py3 import DatabaseVulnerabilityAssessmentScansExport
     from .instance_failover_group_read_write_endpoint_py3 import InstanceFailoverGroupReadWriteEndpoint
     from .instance_failover_group_read_only_endpoint_py3 import InstanceFailoverGroupReadOnlyEndpoint
     from .partner_region_info_py3 import PartnerRegionInfo
@@ -231,6 +236,11 @@ except (SyntaxError, ImportError):
     from .elastic_pool_per_database_settings import ElasticPoolPerDatabaseSettings
     from .elastic_pool import ElasticPool
     from .elastic_pool_update import ElasticPoolUpdate
+    from .vulnerability_assessment_recurring_scans_properties import VulnerabilityAssessmentRecurringScansProperties
+    from .database_vulnerability_assessment import DatabaseVulnerabilityAssessment
+    from .vulnerability_assessment_scan_error import VulnerabilityAssessmentScanError
+    from .vulnerability_assessment_scan_record import VulnerabilityAssessmentScanRecord
+    from .database_vulnerability_assessment_scans_export import DatabaseVulnerabilityAssessmentScansExport
     from .instance_failover_group_read_write_endpoint import InstanceFailoverGroupReadWriteEndpoint
     from .instance_failover_group_read_only_endpoint import InstanceFailoverGroupReadOnlyEndpoint
     from .partner_region_info import PartnerRegionInfo
@@ -279,6 +289,7 @@ from .server_dns_alias_paged import ServerDnsAliasPaged
 from .restore_point_paged import RestorePointPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
+from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
 from .instance_failover_group_paged import InstanceFailoverGroupPaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
@@ -342,6 +353,8 @@ from .sql_management_client_enums import (
     DatabaseReadScale,
     ElasticPoolState,
     ElasticPoolLicenseType,
+    VulnerabilityAssessmentScanTriggerType,
+    VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     LongTermRetentionDatabaseState,
     CapabilityGroup,
@@ -455,6 +468,11 @@ __all__ = [
     'ElasticPoolPerDatabaseSettings',
     'ElasticPool',
     'ElasticPoolUpdate',
+    'VulnerabilityAssessmentRecurringScansProperties',
+    'DatabaseVulnerabilityAssessment',
+    'VulnerabilityAssessmentScanError',
+    'VulnerabilityAssessmentScanRecord',
+    'DatabaseVulnerabilityAssessmentScansExport',
     'InstanceFailoverGroupReadWriteEndpoint',
     'InstanceFailoverGroupReadOnlyEndpoint',
     'PartnerRegionInfo',
@@ -503,6 +521,7 @@ __all__ = [
     'RestorePointPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
+    'VulnerabilityAssessmentScanRecordPaged',
     'InstanceFailoverGroupPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
@@ -565,6 +584,8 @@ __all__ = [
     'DatabaseReadScale',
     'ElasticPoolState',
     'ElasticPoolLicenseType',
+    'VulnerabilityAssessmentScanTriggerType',
+    'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'LongTermRetentionDatabaseState',
     'CapabilityGroup',

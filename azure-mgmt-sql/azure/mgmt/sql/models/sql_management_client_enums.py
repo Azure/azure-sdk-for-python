@@ -562,6 +562,20 @@ class ElasticPoolLicenseType(str, Enum):
     base_price = "BasePrice"
 
 
+class VulnerabilityAssessmentScanTriggerType(str, Enum):
+
+    on_demand = "OnDemand"
+    recurring = "Recurring"
+
+
+class VulnerabilityAssessmentScanState(str, Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    failed_to_run = "FailedToRun"
+    in_progress = "InProgress"
+
+
 class InstanceFailoverGroupReplicationRole(str, Enum):
 
     primary = "Primary"
