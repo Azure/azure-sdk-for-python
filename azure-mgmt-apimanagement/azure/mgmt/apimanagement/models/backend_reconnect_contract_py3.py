@@ -43,5 +43,5 @@ class BackendReconnectContract(Resource):
     }
 
     def __init__(self, *, after=None, **kwargs) -> None:
-        super(BackendReconnectContract, self).__init__(, **kwargs)
+        super(BackendReconnectContract, self).__init__(**kwargs)
         self.after = after

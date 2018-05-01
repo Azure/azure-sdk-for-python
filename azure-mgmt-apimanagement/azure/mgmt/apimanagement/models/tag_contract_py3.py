@@ -45,5 +45,5 @@ class TagContract(Resource):
     }
 
     def __init__(self, *, display_name: str, **kwargs) -> None:
-        super(TagContract, self).__init__(, **kwargs)
+        super(TagContract, self).__init__(**kwargs)
         self.display_name = display_name

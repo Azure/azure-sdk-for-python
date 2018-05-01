@@ -77,7 +77,7 @@ class BackendContract(Resource):
     }
 
     def __init__(self, *, url: str, protocol, title: str=None, description: str=None, resource_id: str=None, properties=None, credentials=None, proxy=None, tls=None, **kwargs) -> None:
-        super(BackendContract, self).__init__(, **kwargs)
+        super(BackendContract, self).__init__(**kwargs)
         self.title = title
         self.description = description
         self.resource_id = resource_id

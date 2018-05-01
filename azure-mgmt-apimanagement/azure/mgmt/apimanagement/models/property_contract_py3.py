@@ -60,7 +60,7 @@ class PropertyContract(Resource):
     }
 
     def __init__(self, *, display_name: str, value: str, tags=None, secret: bool=None, **kwargs) -> None:
-        super(PropertyContract, self).__init__(, **kwargs)
+        super(PropertyContract, self).__init__(**kwargs)
         self.tags = tags
         self.secret = secret
         self.display_name = display_name

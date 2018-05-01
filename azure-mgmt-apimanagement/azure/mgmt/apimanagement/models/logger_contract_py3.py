@@ -60,7 +60,7 @@ class LoggerContract(Resource):
     }
 
     def __init__(self, *, logger_type, credentials, description: str=None, is_buffered: bool=None, **kwargs) -> None:
-        super(LoggerContract, self).__init__(, **kwargs)
+        super(LoggerContract, self).__init__(**kwargs)
         self.logger_type = logger_type
         self.description = description
         self.credentials = credentials

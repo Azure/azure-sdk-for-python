@@ -53,7 +53,7 @@ class IssueCommentContract(Resource):
     }
 
     def __init__(self, *, text: str, user_id: str, created_date=None, **kwargs) -> None:
-        super(IssueCommentContract, self).__init__(, **kwargs)
+        super(IssueCommentContract, self).__init__(**kwargs)
         self.text = text
         self.created_date = created_date
         self.user_id = user_id

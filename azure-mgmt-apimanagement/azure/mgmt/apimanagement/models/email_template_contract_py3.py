@@ -65,7 +65,7 @@ class EmailTemplateContract(Resource):
     }
 
     def __init__(self, *, subject: str, body: str, title: str=None, description: str=None, parameters=None, **kwargs) -> None:
-        super(EmailTemplateContract, self).__init__(, **kwargs)
+        super(EmailTemplateContract, self).__init__(**kwargs)
         self.subject = subject
         self.body = body
         self.title = title

@@ -55,7 +55,7 @@ class TagDescriptionContract(Resource):
     }
 
     def __init__(self, *, description: str=None, external_docs_url: str=None, external_docs_description: str=None, display_name: str=None, **kwargs) -> None:
-        super(TagDescriptionContract, self).__init__(, **kwargs)
+        super(TagDescriptionContract, self).__init__(**kwargs)
         self.description = description
         self.external_docs_url = external_docs_url
         self.external_docs_description = external_docs_description

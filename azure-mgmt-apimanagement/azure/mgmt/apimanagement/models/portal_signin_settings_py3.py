@@ -42,5 +42,5 @@ class PortalSigninSettings(Resource):
     }
 
     def __init__(self, *, enabled: bool=None, **kwargs) -> None:
-        super(PortalSigninSettings, self).__init__(, **kwargs)
+        super(PortalSigninSettings, self).__init__(**kwargs)
         self.enabled = enabled

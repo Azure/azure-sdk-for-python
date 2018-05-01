@@ -55,7 +55,7 @@ class IssueAttachmentContract(Resource):
     }
 
     def __init__(self, *, title: str, content_format: str, content: str, **kwargs) -> None:
-        super(IssueAttachmentContract, self).__init__(, **kwargs)
+        super(IssueAttachmentContract, self).__init__(**kwargs)
         self.title = title
         self.content_format = content_format
         self.content = content

@@ -54,7 +54,7 @@ class PortalDelegationSettings(Resource):
     }
 
     def __init__(self, *, url: str=None, validation_key: str=None, subscriptions=None, user_registration=None, **kwargs) -> None:
-        super(PortalDelegationSettings, self).__init__(, **kwargs)
+        super(PortalDelegationSettings, self).__init__(**kwargs)
         self.url = url
         self.validation_key = validation_key
         self.subscriptions = subscriptions

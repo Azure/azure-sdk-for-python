@@ -65,7 +65,7 @@ class IssueContract(Resource):
     }
 
     def __init__(self, *, title: str, description: str, user_id: str, created_date=None, state=None, api_id: str=None, **kwargs) -> None:
-        super(IssueContract, self).__init__(, **kwargs)
+        super(IssueContract, self).__init__(**kwargs)
         self.title = title
         self.description = description
         self.created_date = created_date

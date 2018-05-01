@@ -104,7 +104,7 @@ class ApiContract(Resource):
     }
 
     def __init__(self, *, path: str, description: str=None, authentication_settings=None, subscription_key_parameter_names=None, api_type=None, api_revision: str=None, api_version: str=None, api_version_set_id: str=None, display_name: str=None, service_url: str=None, protocols=None, api_version_set=None, **kwargs) -> None:
-        super(ApiContract, self).__init__(, **kwargs)
+        super(ApiContract, self).__init__(**kwargs)
         self.description = description
         self.authentication_settings = authentication_settings
         self.subscription_key_parameter_names = subscription_key_parameter_names

@@ -74,7 +74,7 @@ class OperationContract(Resource):
     }
 
     def __init__(self, *, display_name: str, method: str, url_template: str, template_parameters=None, description: str=None, request=None, responses=None, policies: str=None, **kwargs) -> None:
-        super(OperationContract, self).__init__(, **kwargs)
+        super(OperationContract, self).__init__(**kwargs)
         self.template_parameters = template_parameters
         self.description = description
         self.request = request

@@ -73,7 +73,7 @@ class UserContract(Resource):
     }
 
     def __init__(self, *, state="active", note: str=None, first_name: str=None, last_name: str=None, email: str=None, registration_date=None, **kwargs) -> None:
-        super(UserContract, self).__init__(, **kwargs)
+        super(UserContract, self).__init__(**kwargs)
         self.state = state
         self.note = note
         self.identities = None

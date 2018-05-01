@@ -85,7 +85,7 @@ class IdentityProviderContract(Resource):
     }
 
     def __init__(self, *, client_id: str, client_secret: str, identity_provider_contract_type=None, allowed_tenants=None, signup_policy_name: str=None, signin_policy_name: str=None, profile_editing_policy_name: str=None, password_reset_policy_name: str=None, **kwargs) -> None:
-        super(IdentityProviderContract, self).__init__(, **kwargs)
+        super(IdentityProviderContract, self).__init__(**kwargs)
         self.identity_provider_contract_type = identity_provider_contract_type
         self.allowed_tenants = allowed_tenants
         self.signup_policy_name = signup_policy_name
