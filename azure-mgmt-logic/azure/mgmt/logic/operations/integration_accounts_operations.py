@@ -432,7 +432,7 @@ class IntegrationAccountsOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'}
 
-    def list_callback_url(
+    def get_callback_url(
             self, resource_group_name, integration_account_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
         """Gets the integration account callback URL.
 
@@ -458,7 +458,7 @@ class IntegrationAccountsOperations(object):
         parameters = models.GetCallbackUrlParameters(not_after=not_after, key_type=key_type)
 
         # Construct URL
-        url = self.list_callback_url.metadata['url']
+        url = self.get_callback_url.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -503,7 +503,7 @@ class IntegrationAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/listCallbackUrl'}
+    get_callback_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/listCallbackUrl'}
 
     def list_key_vault_keys(
             self, resource_group_name, integration_account_name, key_vault, skip_token=None, custom_headers=None, raw=False, **operation_config):
